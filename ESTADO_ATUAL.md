@@ -13,6 +13,47 @@ verificação independente dos achados graves.
 
 ---
 
+## 0. CORREÇÃO — esta auditoria foi testada e tinha defeitos
+
+> Adicionado em 2026-08-16, após meta-auditoria. **O texto original abaixo foi preservado**;
+> leia-o com as ressalvas desta seção. Detalhe completo em `docs/estado/_meta-00-consolidado.md`.
+
+O que **resistiu** ao teste: nenhuma citação `arquivo:linha` fabricada (22/22 na amostra),
+nenhuma contradição entre lotes, lista de código morto íntegra (4/4 na amostra), e todos os
+achados graves confirmados. O achado principal (§4.1) ficou **mais forte**.
+
+O que **falhou**:
+
+**a) A régua do ✅ foi frouxa.** Duas refutações adversariais independentes atacaram 55 itens ✅ e
+derrubaram **17 (31%)**. A amostra foi enviesada de propósito para os itens mais ambiciosos, e os
+lotes de segurança (05, 06, 09) resistiram a 18 ataques sem uma única derrubada — então **não
+extrapolo os 31%**. A faixa defensável é **10–20% dos 492 ✅ (~50 a 100 itens)** que deveriam ser
+🟨 ou 🟦. Piso comprovado: 17.
+
+⇒ **Os 52% de ✅ da tabela abaixo são, na prática, algo entre 43% e 47%.**
+
+Causa raiz: em vários casos a coluna de observação **já descrevia o defeito** e o selo ✅ foi
+mantido assim mesmo. O erro concentra-se no lote 10 (67% de erro, padrão "montado ≠ funciona") e
+no lote 07 (33%, padrão "grava mas ninguém lê").
+
+Exemplos de ✅ indevidos confirmados: `/code-quality` (painel de saúde do código com números
+literais — informa `anyUsageCount: 0` enquanto o gate `any-ratchet` está vermelho);
+`/master-api` (zero referências a `supabase` em 234 linhas); par QR Code gerador↔leitor
+incompatível (`JobQRCode.tsx:23` emite URL, `QRScanner.tsx:91-95` exige JSON).
+
+**b) A contagem tem precisão falsa.** Os "938 itens" somam 8 linhas de legenda de tabela, 3
+linhas contadas duas vezes, e duplicação semântica **provada** — `erp-api` aparece classificado
+em duas tabelas do mesmo lote 07. Número honesto: **~926 classificações emitidas**; o total de
+funcionalidades **distintas** é menor e não foi determinado (entre ~845 e 926).
+
+**c) Três erros numéricos meus:** são **135** tabelas (não 136) e **55** páginas (não 57 — contei
+2 arquivos `*.test.tsx`).
+
+**Não testado:** as categorias 🟨 (212) e 🟦 (100) não passaram por refutação — e é para lá que
+os ✅ derrubados migram.
+
+---
+
 ## 1. Veredito em uma tela
 
 O sistema é **grande e real**, não uma casca. O núcleo operacional — jobs, Kanban, produção,
