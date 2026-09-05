@@ -151,6 +151,31 @@ Deno.serve(async (req: Request): Promise<Response> => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Accept service-role key (internal Edge Function calls) or valid user JWT
+    const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
+    const providedKey = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (!providedKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    let callerUserId: string | null = null;
+    const isServiceRole = providedKey === supabaseServiceKey;
+    if (!isServiceRole) {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(supabaseUrl, anonKey);
+      const { data: { user }, error: authError } = await userClient.auth.getUser(providedKey);
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      callerUserId = user.id;
+    }
+
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
     const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:admin@fastgrava.com";
@@ -207,11 +232,44 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
+    // Broadcast requires service-role key or admin/manager role.
+    // Filter by eligible roles before limit(1) to handle users with multiple role rows.
+    if (broadcast && !isServiceRole && callerUserId) {
+      const { data: roleRows } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", callerUserId)
+        .in("role", ["admin", "manager"])
+        .limit(1);
+      if (!roleRows || roleRows.length === 0) {
+        return new Response(JSON.stringify({ error: "Forbidden: broadcast requires admin or manager role" }), {
+          status: 403,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Non-broadcast requests must always provide a user_id
+    if (!broadcast) {
+      if (!user_id) {
+        return new Response(JSON.stringify({ error: "user_id is required for non-broadcast push" }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      if (!isServiceRole && user_id !== callerUserId) {
+        return new Response(JSON.stringify({ error: "Forbidden: cannot send to another user's subscriptions" }), {
+          status: 403,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+    }
+
     console.log("Sending push notification:", { user_id, title, broadcast });
 
     // Fetch subscriptions
     let subscriptionsQuery = supabase.from("push_subscriptions").select("*");
-    
+
     if (!broadcast && user_id) {
       subscriptionsQuery = subscriptionsQuery.eq("user_id", user_id);
     }

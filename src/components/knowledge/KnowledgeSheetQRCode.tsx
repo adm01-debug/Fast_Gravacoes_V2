@@ -36,6 +36,7 @@ export const KnowledgeSheetQRCode = ({ sheetId, title }: KnowledgeSheetQRCodePro
       <style>body{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif}
       h2{margin-bottom:16px;font-size:18px}p{color:#666;font-size:12px;margin-top:8px}</style></head>
       <body><h2>${safeTitle}</h2>${svgData}<p>Escaneie para acessar a ficha técnica</p></body></html>
+
     `);
     printWindow.document.close();
     printWindow.print();

@@ -15,6 +15,18 @@ export type RealtimeMock = {
   emitFor: (table: string, payload?: unknown) => void;
   readonly hasHandler: boolean;
   readonly handlerCount: number;
+  /**
+   * Clears every handler captured so far. `useRealtimeChannel`'s registry is a
+   * module-level singleton keyed by channel name, so mounting/unmounting the
+   * same hook across multiple `it()` blocks in one file re-registers a new
+   * `.on()` handler each time without ever discarding the previous one here
+   * (real unsubscription isn't simulated). Left unchecked, a later `emit()`/
+   * `emitFor()` fires every stale handler too, each of which resolves back to
+   * the *current* live registry entry by name — so one emitted event ends up
+   * invoking the listener once per accumulated handler instead of once.
+   * Call this in `beforeEach` for test-to-test isolation.
+   */
+  reset: () => void;
 };
 
 /**
@@ -65,6 +77,9 @@ export function createRealtimeMock(): RealtimeMock {
     },
     get handlerCount() {
       return handlers.length;
+    },
+    reset: () => {
+      handlers.length = 0;
     },
   };
 }

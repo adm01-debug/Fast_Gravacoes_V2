@@ -22,30 +22,29 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
-    // Require an authenticated caller and derive the identity from the JWT so a
-    // caller cannot forge device records or trigger alert emails for arbitrary
-    // users/addresses.
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
         status: 401,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
-    const authClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user: authUser } } = await authClient.auth.getUser();
-    if (!authUser) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
+    const userClient = createClient(supabaseUrl, anonKey);
+    const { data: { user }, error: authError } = await userClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Token inválido' }), {
         status: 401,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
+
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const rawBody = await req.json().catch(() => null);
     if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
@@ -55,24 +54,24 @@ Deno.serve(async (req) => {
       });
     }
     const deviceInfo: DeviceInfo = rawBody as DeviceInfo;
-    // Trust the token, not the body, for identity fields. Do NOT fall back to
-    // the body email when the token has none — that would re-open forged
-    // alert recipients.
-    deviceInfo.user_id = authUser.id;
-    deviceInfo.user_email = authUser.email ?? '';
+    // Trust the already-verified JWT principal, not the body, for identity
+    // fields — a caller must not be able to forge device records or trigger
+    // alert emails for arbitrary users/addresses.
+    deviceInfo.user_id = user.id;
+    deviceInfo.user_email = user.email ?? '';
     // Derive IP from the request, not the caller-supplied body, to prevent
     // a malicious caller from injecting a forged IP into DB rows and alert emails.
     const forwardedFor = req.headers.get('x-forwarded-for');
     deviceInfo.ip_address = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
 
-    console.log('Checking device for user:', deviceInfo.user_id);
+    console.log('Checking device for user:', user.id);
     console.log('Device fingerprint:', deviceInfo.device_fingerprint);
 
     // Verificar se o dispositivo já existe
     const { data: existingDevice, error: deviceError } = await supabase
       .from('user_devices')
       .select('*')
-      .eq('user_id', deviceInfo.user_id)
+      .eq('user_id', user.id)
       .eq('device_fingerprint', deviceInfo.device_fingerprint)
       .maybeSingle();
 
@@ -111,7 +110,7 @@ Deno.serve(async (req) => {
       const { data: newDevice, error: insertError } = await supabase
         .from('user_devices')
         .insert({
-          user_id: deviceInfo.user_id,
+          user_id: user.id,
           device_fingerprint: deviceInfo.device_fingerprint,
           ip_address: deviceInfo.ip_address,
           user_agent: deviceInfo.user_agent,
@@ -134,7 +133,7 @@ Deno.serve(async (req) => {
       const { error: alertError } = await supabase
         .from('new_device_alerts')
         .insert({
-          user_id: deviceInfo.user_id,
+          user_id: user.id,
           device_id: deviceId,
           ip_address: deviceInfo.ip_address,
           user_agent: deviceInfo.user_agent
@@ -145,10 +144,10 @@ Deno.serve(async (req) => {
       }
 
       // Enviar email de alerta
-      if (resendApiKey && deviceInfo.user_email) {
+      if (resendApiKey && user.email) {
         try {
           const resend = new Resend(resendApiKey);
-          
+
           const browserInfo = deviceInfo.browser_name || 'Navegador desconhecido';
           const osInfo = deviceInfo.os_name || 'Sistema operacional desconhecido';
           const deviceTypeInfo = deviceInfo.device_type || 'desktop';
@@ -165,7 +164,7 @@ Deno.serve(async (req) => {
 
           const emailResponse = await resend.emails.send({
             from: 'Segurança <onboarding@resend.dev>',
-            to: [deviceInfo.user_email],
+            to: [user.email],
             subject: '⚠️ Novo dispositivo detectado na sua conta',
             html: `
               <!DOCTYPE html>
@@ -248,12 +247,12 @@ Deno.serve(async (req) => {
           // Atualizar alerta com status do email
           await supabase
             .from('new_device_alerts')
-            .update({ 
-              email_sent: true, 
-              email_sent_at: now 
+            .update({
+              email_sent: true,
+              email_sent_at: now
             })
             .eq('device_id', deviceId)
-            .eq('user_id', deviceInfo.user_id);
+            .eq('user_id', user.id);
 
         } catch (emailError) {
           console.error('Error sending alert email:', emailError);
@@ -266,7 +265,7 @@ Deno.serve(async (req) => {
         const osInfo = deviceInfo.os_name || 'Sistema desconhecido';
         
         const pushPayload = {
-          user_id: deviceInfo.user_id,
+          user_id: user.id,
           title: '🔐 Novo Dispositivo Detectado',
           body: `Login detectado de ${browserInfo} em ${osInfo}. IP: ${deviceInfo.ip_address || 'desconhecido'}`,
           data: { 

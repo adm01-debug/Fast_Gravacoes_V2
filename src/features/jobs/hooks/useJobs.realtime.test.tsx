@@ -41,6 +41,10 @@ describe('useJobs — Realtime invalidation', () => {
     holder.getAllMock.mockReset();
     holder.getAllMock.mockResolvedValue([{ id: 'j1', status: 'queue' }]);
     assertNonNull(holder.realtime, 'realtime').removeChannel.mockClear();
+    // Discard handlers captured by a previous test in this file — the mock
+    // never simulates real unsubscription, so stale handlers would otherwise
+    // double-fire alongside this test's own handler (see RealtimeMock.reset).
+    assertNonNull(holder.realtime, 'realtime').reset();
   });
 
 

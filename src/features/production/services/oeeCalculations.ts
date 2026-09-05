@@ -60,7 +60,7 @@ export function calculateRealOEE(jobs: DbJob[]) {
     ? Math.min(100, (totalEstimatedMinutes / totalActualMinutes) * 100)
     : 100;
 
-  const goodPieces = totalProducedPieces - totalLostPieces;
+  const goodPieces = Math.max(0, totalProducedPieces - totalLostPieces);
   const quality = totalProducedPieces > 0
     ? Math.min(100, (goodPieces / totalProducedPieces) * 100)
     : 100;

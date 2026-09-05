@@ -27,10 +27,23 @@ serve(async (req) => {
   if (unauthorized) return unauthorized;
 
   try {
+    // Validate webhook caller: accept service-role key or WEBHOOK_API_KEY
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const webhookApiKey = Deno.env.get('WEBHOOK_API_KEY');
+    const authHeader = req.headers.get('authorization');
+    const providedKey = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1] || req.headers.get('x-api-key');
+    const isServiceRole = providedKey === supabaseKey;
+    const isWebhookKey = webhookApiKey && providedKey === webhookApiKey;
+    if (!isServiceRole && !isWebhookKey) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
-    
+
     const supabase = createClient(supabaseUrl, supabaseKey);
     const payload = await req.json();
     

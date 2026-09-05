@@ -198,6 +198,18 @@ export function ProductionRegistrationModal({
       toast.error('Quantidades não podem ser negativas');
       return;
     }
+    if (producedQuantity > job.quantity * 3) {
+      toast.error(`Quantidade produzida muito alta (máximo ${(job.quantity * 3).toLocaleString()})`);
+      return;
+    }
+    // Build finalNotes first so the length check covers the full string
+    const checklistStr = `[Protocolo Qualidade: ${qualityChecks.color ? 'COR OK, ' : 'COR PENDENTE, '}${qualityChecks.burrs ? 'REBARBA OK, ' : 'REBARBA PENDENTE, '}${qualityChecks.dimensions ? 'DIMENSÕES OK, ' : 'DIMENSÕES PENDENTE, '}${qualityChecks.packaging ? 'EMBALAGEM OK' : 'EMBALAGEM PENDENTE'}]`;
+    const finalNotes = notes ? `${notes}\n\n${checklistStr}` : checklistStr;
+
+    if (finalNotes.length > 2000) {
+      toast.error('Observações excedem o limite de 2000 caracteres');
+      return;
+    }
 
     if (!canTransition(job.status as JobStatus, 'finished')) {
       toast.error(`Job não pode ser finalizado no estado atual: "${job.status}"`);
@@ -207,9 +219,6 @@ export function ProductionRegistrationModal({
     setIsSaving(true);
 
     try {
-      // Append checklist to notes for traceability
-      const checklistStr = `[Protocolo Qualidade: ${qualityChecks.color ? 'COR OK, ' : 'COR PENDENTE, '}${qualityChecks.burrs ? 'REBARBA OK, ' : 'REBARBA PENDENTE, '}${qualityChecks.dimensions ? 'DIMENSÕES OK, ' : 'DIMENSÕES PENDENTE, '}${qualityChecks.packaging ? 'EMBALAGEM OK' : 'EMBALAGEM PENDENTE'}]`;
-      const finalNotes = notes ? `${notes}\n\n${checklistStr}` : checklistStr;
 
       // Montar payload com todos os campos desejados
       const rawPayload = {
@@ -283,6 +292,7 @@ export function ProductionRegistrationModal({
                 id="produced"
                 type="number"
                 min={0}
+                max={job.quantity * 3}
                 value={producedQuantity}
                 onChange={(e) => setProducedQuantity(safeParseInt(e.target.value, 0))}
                 className="bg-background"
@@ -372,6 +382,7 @@ export function ProductionRegistrationModal({
                 placeholder="Adicione observações sobre a produção..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                maxLength={2000}
                 className="bg-background min-h-[80px]"
               />
             </div>

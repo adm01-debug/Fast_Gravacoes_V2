@@ -143,6 +143,9 @@ export function useDataExport(tableName: TableName) {
         downloadFile(json, `${exportFileName}.json`, 'application/json');
       }
 
+      if (data.length === 10_000) {
+        toast.warning('Exportação limitada a 10.000 registros. Pode haver dados adicionais não exportados.');
+      }
       toast.success(`${data.length} registros exportados`);
     } catch (error) {
       showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro na exportação');

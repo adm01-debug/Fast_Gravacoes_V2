@@ -1,7 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps --
-   Dependências intencionalmente omitidas: incluí-las causaria loops
-   infinitos, invalidação excessiva de cache ou recomputação em cada
-   render. Callbacks/valores externos são estáveis por contrato. */
+ 
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { endOfDay } from 'date-fns';
@@ -80,7 +77,7 @@ export function PlanningEfficiencyDashboard() {
                              (balancingSuggestions?.some(s => s.currentLoad > 90));
 
     return { efficiencyScore, deadlineHealth, totalJobs, delayedCount, estimatedOEE, oeeData, hasHighBottleneck };
-  }, [jobs, oeeData]);
+  }, [jobs, oeeData, sequencingSuggestions, balancingSuggestions]);
 
   if (!stats) return null;
 

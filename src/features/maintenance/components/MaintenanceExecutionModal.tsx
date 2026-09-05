@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps, react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 /* eslint-disable react-hooks/set-state-in-effect --
    Effects nesse arquivo sincronizam com sistemas externos legítimos
    (URL params, localStorage, timers, subscriptions Supabase realtime,
@@ -190,39 +190,42 @@ export function MaintenanceExecutionModal({
     if (!sheet) return;
 
     const ranges = sheet?.settings_ranges || {};
-    const newAlerts: typeof activeAlerts = [];
 
-    const checkRange = (name: string, value: string, range: { min?: string; max?: string } | undefined) => {
-      if (!range || (!range.min && !range.max)) return;
-      const val = parseFloat(value.replace(/[^0-9.]/g, ''));
-      if (isNaN(val) && value !== '') return;
+    // Use functional update so we read the *current* activeAlerts (not a stale
+    // closure capture) when preserving evidence_urls on existing alerts.
+    setActiveAlerts(prevAlerts => {
+      const newAlerts: typeof prevAlerts = [];
 
-      const min = range.min ? parseFloat(range.min.replace(/[^0-9.]/g, '')) : -Infinity;
-      const max = range.max ? parseFloat(range.max.replace(/[^0-9.]/g, '')) : Infinity;
+      const checkRange = (name: string, value: string, range: { min?: string; max?: string } | undefined) => {
+        if (!range || (!range.min && !range.max)) return;
+        const val = parseFloat(value.replace(/[^0-9.]/g, ''));
+        if (isNaN(val) && value !== '') return;
 
-      if (!isNaN(val) && (val < min || val > max)) {
-        // Find existing alert to preserve evidence_urls
-        const existingAlert = activeAlerts.find(a => a.parameter_name === name);
+        const min = range.min ? parseFloat(range.min.replace(/[^0-9.]/g, '')) : -Infinity;
+        const max = range.max ? parseFloat(range.max.replace(/[^0-9.]/g, '')) : Infinity;
 
-        newAlerts.push({
-          alert_type: 'out_of_range',
-          parameter_name: name,
-          expected_range: `Mín: ${range.min || '-'} / Máx: ${range.max || '-'}`,
-          actual_value: value,
-          severity: 'critical',
-          description: `Risco de Perda: ${name} fora do intervalo recomendado (${value}).`,
-          evidence_urls: existingAlert?.evidence_urls || [],
-          is_critical_risk: true
-        });
-      }
-    };
+        if (!isNaN(val) && (val < min || val > max)) {
+          const existingAlert = prevAlerts.find(a => a.parameter_name === name);
+          newAlerts.push({
+            alert_type: 'out_of_range',
+            parameter_name: name,
+            expected_range: `Mín: ${range.min || '-'} / Máx: ${range.max || '-'}`,
+            actual_value: value,
+            severity: 'critical',
+            description: `Risco de Perda: ${name} fora do intervalo recomendado (${value}).`,
+            evidence_urls: existingAlert?.evidence_urls || [],
+            is_critical_risk: true
+          });
+        }
+      };
 
-    checkRange('Passadas de Rodo', adjustmentParams.squeegee_passes, ranges.squeegee_passes);
-    checkRange('Pressão', adjustmentParams.pressure, ranges.pressure);
-    checkRange('Velocidade', adjustmentParams.speed, ranges.speed);
-    checkRange('Temperatura', adjustmentParams.temperature, ranges.temperature);
+      checkRange('Passadas de Rodo', adjustmentParams.squeegee_passes, ranges.squeegee_passes);
+      checkRange('Pressão', adjustmentParams.pressure, ranges.pressure);
+      checkRange('Velocidade', adjustmentParams.speed, ranges.speed);
+      checkRange('Temperatura', adjustmentParams.temperature, ranges.temperature);
 
-    setActiveAlerts(newAlerts);
+      return newAlerts;
+    });
   }, [adjustmentParams, selectedSheetId, technicalSheets]);
 
   useEffect(() => {

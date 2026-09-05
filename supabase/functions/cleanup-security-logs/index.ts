@@ -14,6 +14,21 @@ Deno.serve(async (req) => {
   if (unauthorized) return unauthorized;
 
   try {
+    const apiKey = Deno.env.get('CRON_API_KEY');
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+    const provided = req.headers.get('x-api-key') || req.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (provided !== apiKey) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+
     console.log('Starting security logs cleanup...');
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;

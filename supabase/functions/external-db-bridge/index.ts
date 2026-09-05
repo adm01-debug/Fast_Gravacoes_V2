@@ -179,7 +179,8 @@ Deno.serve(async (req: Request) => {
   try {
     // Auth check
     const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
+    const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (!token) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
@@ -188,7 +189,6 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const token = authHeader.replace("Bearer ", "");
 
     // Verify JWT
     const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
@@ -202,24 +202,28 @@ Deno.serve(async (req: Request) => {
     }
 
     // This bridge runs with the service-role key (bypassing RLS), so it must be
-    // restricted to administrators. Without this, any authenticated user could
-    // run arbitrary CRUD against any table (privilege escalation / data loss).
+    // restricted to administrators/managers. Without this, any authenticated user
+    // could run arbitrary CRUD against any table (privilege escalation / data loss).
+    // Filter by eligible + active roles directly in the query so a query failure
+    // can't be mistaken for "no matching role" below.
     const serviceClient = createClient(supabaseUrl, serviceRoleKey);
     const { data: roleRows, error: roleError } = await serviceClient
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
-      .eq("is_active", true);
+      .eq("is_active", true)
+      .in("role", ["admin", "manager"])
+      .limit(1);
     if (roleError) {
       // A backend failure must not masquerade as an authorization denial.
+      console.error("[external-db-bridge] Role query error:", roleError.message);
       return new Response(JSON.stringify({ error: "Failed to verify user role" }), {
         status: 500,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
-    const isAdmin = (roleRows ?? []).some((r: { role: string }) => r.role === "admin");
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: "Forbidden: admin role required" }), {
+    if (!roleRows || roleRows.length === 0) {
+      return new Response(JSON.stringify({ error: "Forbidden: admin or manager role required" }), {
         status: 403,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });

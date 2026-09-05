@@ -16,6 +16,7 @@ export function useMachineUtilization(
   return useMemo(() => {
     const totalMinutes = (endHour - startHour) * 60;
     const acc: Record<string, number> = {};
+    if (totalMinutes <= 0) return acc;
     jobs.forEach((job) => {
       if (!job.machine_id || !job.start_time || !job.end_time) return;
       const [sh, sm] = job.start_time.split(':').map(Number);

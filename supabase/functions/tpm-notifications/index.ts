@@ -89,7 +89,7 @@ serve(async (req) => {
       } catch (e: unknown) {
         console.error('Error processing TPM notification item:', item.id, e)
         const nextRetry = new Date()
-        nextRetry.setMinutes(nextRetry.getMinutes() + Math.pow(2, item.retry_count + 1)) // Exponential backoff
+        nextRetry.setMinutes(nextRetry.getMinutes() + Math.pow(2, item.retry_count + 1))
 
         await supabase
           .from('tpm_notification_queue')
@@ -107,8 +107,8 @@ serve(async (req) => {
       JSON.stringify({ success: true, processed: queueItems?.length || 0 }),
       { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
-  } catch (error) {
-    console.error('Erro no processamento TPM:', error)
+  } catch (error: unknown) {
+    console.error('Erro no processamento TPM:', error instanceof Error ? error.message : String(error))
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }

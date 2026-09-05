@@ -18,7 +18,7 @@ export function QualityHistogram({ parameter, measurements }: QualityHistogramPr
     const max = Math.max(...values, parameter.upper_spec_limit);
     const range = max - min;
     const binCount = 10;
-    const binSize = range / binCount;
+    const binSize = range > 0 ? range / binCount : 1;
 
     const bins = Array.from({ length: binCount }, (_, i) => ({
       binStart: min + i * binSize,

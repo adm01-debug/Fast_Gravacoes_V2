@@ -150,7 +150,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
     const min = Math.min(...values);
     const diff = max - min;
     const avg = values.reduce((a, b) => a + b, 0) / values.length;
-    const deviation = (diff / avg) * 100;
+    const deviation = avg > 0 ? (diff / avg) * 100 : 0;
     let status = 'Equilibrado';
     let color = 'text-success';
     if (deviation > 50) { status = 'Desequilibrado'; color = 'text-destructive'; }

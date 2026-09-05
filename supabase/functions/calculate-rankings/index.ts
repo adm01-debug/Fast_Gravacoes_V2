@@ -17,9 +17,56 @@ serve(async (req: Request): Promise<Response> => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+  // Accept CRON_API_KEY (scheduled jobs) or valid user JWT (frontend)
+  const cronApiKey = Deno.env.get("CRON_API_KEY");
+  const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
+  const providedKey = req.headers.get("x-api-key") || authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
+  const isCronKey = cronApiKey && providedKey === cronApiKey;
+  const hasBearer = authHeader?.startsWith("Bearer ");
+
+  if (!isCronKey && !hasBearer) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
+
+  if (!isCronKey && hasBearer) {
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(supabaseUrl, anonKey);
+    const { data: { user }, error: authError } = await userClient.auth.getUser(
+      authHeader!.match(/^Bearer\s+(.+)$/i)?.[1]
+    );
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    // Restrict to admin, manager, or coordinator role
+    const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: roleRows, error: roleError } = await serviceClient.from('user_roles')
+      .select('role').eq('user_id', user.id).in('role', ['admin', 'manager', 'coordinator']).limit(1);
+    if (roleError) {
+      console.error('[calculate-rankings] Role query error:', roleError.message);
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+        status: 500,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    if (!roleRows || roleRows.length === 0) {
+      return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
+        status: 403,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+  }
+
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get("Authorization");
@@ -129,10 +176,14 @@ serve(async (req: Request): Promise<Response> => {
     const operatorStats: Record<string, RankingResult> = {};
 
     (jobs || []).forEach((job) => {
-      // Prefer the job's own operator_id; fall back to the machine-assignment
-      // map for legacy jobs recorded before operator_id was captured directly.
-      const operatorId = job.operator_id || machineToOperator[job.machine_id];
-      if (!operatorId) return;
+      // Only attribute jobs that have a recorded operator_id (written by updateStatus
+      // when production starts). Falling back to the current machine→operator map would
+      // silently misattribute credit when assignments change or operators share machines.
+      const operatorId = job.operator_id;
+      if (!operatorId) {
+        console.warn(`Job ${job.id} has no operator_id — skipping from rankings`);
+        return;
+      }
 
       if (!operatorStats[operatorId]) {
         operatorStats[operatorId] = {

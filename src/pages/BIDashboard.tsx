@@ -166,12 +166,12 @@ export default function BIDashboard() {
       const produced = dayJobs.reduce((sum, j) => sum + (j.produced_quantity ?? 0), 0);
       const lost = dayJobs.reduce((sum, j) => sum + (j.lost_pieces ?? 0), 0);
       dailyTrend.push({
-        date: format(date, 'dd/MM', { locale: ptBR }), 
+        date: format(date, 'dd/MM', { locale: ptBR }),
         fullDate: format(date, 'dd MMM', { locale: ptBR }),
-        jobs: dayJobs.length, 
-        produced, 
-        lost, 
-        efficiency: produced > 0 ? ((produced - lost) / produced * 100) : 0,
+        jobs: dayJobs.length,
+        produced,
+        lost,
+        efficiency: produced > 0 ? Math.max(0, (produced - lost) / produced * 100) : 0,
       });
     }
 
@@ -182,7 +182,7 @@ export default function BIDashboard() {
       return {
         id: tech.id, name: tech.short_name || tech.name, jobs: techJobs.length,
         produced: totalProduced, lost: totalLost, machines: machines.filter(m => m.technique_id === tech.id).length,
-        quality: totalProduced > 0 ? ((totalProduced - totalLost) / totalProduced * 100) : 100, color: tech.color,
+        quality: totalProduced > 0 ? Math.max(0, (totalProduced - totalLost) / totalProduced * 100) : 100, color: tech.color,
       };
     }).filter(t => t.jobs > 0).sort((a, b) => b.produced - a.produced);
 
@@ -308,10 +308,10 @@ export default function BIDashboard() {
             isLoading={isLoading} 
           />
         ) : (
-          <BINormalView 
-            biMetrics={biMetrics} 
-            kpis={kpis} 
-            oeeData={oeeData} 
+          <BINormalView
+            biMetrics={biMetrics}
+            kpis={kpis}
+            oeeData={oeeData}
             getPeriodLabel={getPeriodLabel}
             onDrillDown={handleDrillDown}
           />

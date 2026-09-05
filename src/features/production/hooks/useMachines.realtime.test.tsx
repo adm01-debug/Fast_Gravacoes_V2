@@ -32,6 +32,10 @@ describe('useMachines — Realtime invalidation', () => {
     holder.getActiveMock.mockReset();
     holder.getActiveMock.mockResolvedValue([{ id: 'm1', name: 'Laser-01', is_active: true }]);
     assertNonNull(holder.realtime, 'realtime').removeChannel.mockClear();
+    // Discard handlers captured by a previous test in this file — the mock
+    // never simulates real unsubscription, so stale handlers would otherwise
+    // double-fire alongside this test's own handler (see RealtimeMock.reset).
+    assertNonNull(holder.realtime, 'realtime').reset();
   });
 
   it('chama removeChannel no unmount e ignora eventos posteriores', async () => {

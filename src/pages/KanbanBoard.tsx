@@ -227,14 +227,20 @@ export default function KanbanBoard() {
       if (targetStatus === 'production') updateData.actual_start_time = new Date().toISOString();
       if (targetStatus === 'finished') updateData.actual_end_time = new Date().toISOString();
 
-      try {
-        const updates = selectedJobsList.map(j => supabase.from('jobs').update(updateData).eq('id', j.id));
-        await Promise.all(updates);
-        toast.success(`${selectedJobs.size} jobs movidos para "${targetStatus}"`);
-      } catch {
-        toast.error('Erro ao mover jobs');
+      const updates = selectedJobsList.map(j =>
+        supabase.from('jobs').update(updateData).eq('id', j.id)
+      );
+      const settled = await Promise.allSettled(updates);
+      const errors = settled.flatMap(r =>
+        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
+      );
+      if (errors.length > 0) {
+        toast.error(`Erro ao mover jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
+      const allColumns = [...statusColumns, ...exceptionStatuses];
+      const statusLabel = allColumns.find(c => c.status === targetStatus)?.label ?? targetStatus;
+      toast.success(`${selectedJobs.size} jobs movidos para "${statusLabel}"`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'rework') {
@@ -243,25 +249,33 @@ export default function KanbanBoard() {
         toast.error(`${invalid.length} job(s) não podem ser enviados para Retrabalho a partir do estado atual`);
         return;
       }
-      try {
-        await Promise.all(selectedJobsList.map(j =>
-          supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', j.id)
-        ));
-        toast.success(`${selectedJobs.size} jobs marcados como Retrabalho`);
-      } catch {
-        toast.error('Erro ao mover jobs para retrabalho');
+      const updates = selectedJobsList.map(j =>
+        supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', j.id)
+      );
+      const settled = await Promise.allSettled(updates);
+      const errors = settled.flatMap(r =>
+        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
+      );
+      if (errors.length > 0) {
+        toast.error(`Erro ao marcar retrabalho: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
+      toast.success(`${selectedJobs.size} jobs marcados como Retrabalho`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-      try {
-        await Promise.all(Array.from(selectedJobs).map(id => supabase.from('jobs').delete().eq('id', id)));
-        toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
-      } catch {
-        toast.error('Erro ao excluir jobs');
+      const updates = Array.from(selectedJobs).map(id =>
+        supabase.from('jobs').delete().eq('id', id)
+      );
+      const settled = await Promise.allSettled(updates);
+      const errors = settled.flatMap(r =>
+        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
+      );
+      if (errors.length > 0) {
+        toast.error(`Erro ao excluir jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
+      toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     }

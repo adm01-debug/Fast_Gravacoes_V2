@@ -56,14 +56,19 @@ export default function PublicTrackingPage() {
     e?.preventDefault();
     if (!query) return;
 
+    // Trim only — the query is passed via .eq() parameterized call, not injected into a filter string
+    const safeQuery = query.trim();
+    if (!safeQuery) return;
+
     setLoading(true);
     setError(null);
     setJob(null);
 
     try {
-      const { data, error: supabaseError } = await supabase
-        .from('jobs')
-        .select(`
+      // Use separate parameterized queries instead of embedding user input in filter string
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(safeQuery);
+
+      const selectClause = `
           *,
           shipment:shipments(
             tracking_code,
@@ -72,9 +77,32 @@ export default function PublicTrackingPage() {
             actual_delivery,
             provider:shipping_providers(name)
           )
-        `)
-        .or(`order_number.eq.${query},id.eq.${query}`)
-        .maybeSingle();
+        `;
+
+      let data = null;
+      let supabaseError = null;
+
+      if (isUUID) {
+        ({ data, error: supabaseError } = await supabase
+          .from('jobs')
+          .select(selectClause)
+          .eq('id', safeQuery)
+          .maybeSingle());
+        // A UUID-shaped string is a valid order_number value; fall back if id lookup missed.
+        if (!supabaseError && !data) {
+          ({ data, error: supabaseError } = await supabase
+            .from('jobs')
+            .select(selectClause)
+            .eq('order_number', safeQuery)
+            .maybeSingle());
+        }
+      } else {
+        ({ data, error: supabaseError } = await supabase
+          .from('jobs')
+          .select(selectClause)
+          .eq('order_number', safeQuery)
+          .maybeSingle());
+      }
 
       if (supabaseError) throw supabaseError;
 

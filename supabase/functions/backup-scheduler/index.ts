@@ -38,6 +38,22 @@ serve(async (req) => {
   if (unauthorized) return unauthorized;
 
   try {
+    // Guard with a shared secret so only cron infrastructure can trigger this
+    const apiKey = Deno.env.get("BACKUP_API_KEY");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    const provided = req.headers.get("x-api-key") || req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (provided !== apiKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""

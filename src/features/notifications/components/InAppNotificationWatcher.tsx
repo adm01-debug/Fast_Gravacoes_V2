@@ -19,10 +19,18 @@ export function InAppNotificationWatcher() {
   const { add } = useNotificationsContext();
   const notifiedRef = useRef<Set<string>>(new Set());
   const userIdRef = useRef<string | undefined>(undefined);
-  userIdRef.current = user?.id;
+  // Keep the ref mirroring the latest user id without mutating it during
+  // render (React refs must only be read/written in effects or handlers).
+  useEffect(() => {
+    userIdRef.current = user?.id;
+  }, [user?.id]);
 
   // Watch job status changes — filtered to jobs assigned to this operator.
-  useRealtimeChannel('inapp-job-notifications', [{ table: 'jobs', filter: `assigned_operator_id=eq.${userIdRef.current ?? ''}` }], (payload) => {
+  // (`user?.id` is read directly here, not via the ref: this value is only
+  // consumed once, at the effect's first run inside useRealtimeChannel, to
+  // build the postgres filter string — reading a ref during render is
+  // disallowed, and it would evaluate to the same value at this point anyway.)
+  useRealtimeChannel('inapp-job-notifications', [{ table: 'jobs', filter: `assigned_operator_id=eq.${user?.id ?? ''}` }], (payload) => {
     if (!userIdRef.current) return;
     const newJob = payload.new as Record<string, unknown>;
     const oldJob = payload.old as Record<string, unknown>;

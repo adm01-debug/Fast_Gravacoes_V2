@@ -186,9 +186,10 @@ export function useSPCMutations() {
       notes?: string;
     }) => {
       // Calculate statistics
-      const values = data.values;
+      const values = data.values.filter(v => Number.isFinite(v));
+      if (values.length === 0) throw new Error('Nenhum valor finito fornecido para medição');
       const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const range = Math.max(...values) - Math.min(...values);
+      const range = values.length > 1 ? Math.max(...values) - Math.min(...values) : 0;
       const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
       const stdDev = Math.sqrt(variance);
 
@@ -223,7 +224,7 @@ export function useSPCMutations() {
         .insert({
           parameter_id: data.parameter_id,
           sample_number: (count || 0) + 1,
-          values: data.values,
+          values: values,
           mean_value: mean,
           range_value: range,
           std_deviation: stdDev,

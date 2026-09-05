@@ -38,15 +38,15 @@ export function FactoryFloorMap() {
   const [heatmapType, setHeatmapType] = useState<'none' | 'load' | 'temp'>('none');
   const [selectedMachine, setSelectedMachine] = useState<string | null>(null);
 
-  // The simulation interval reads the latest jobs through a ref so the fetch
-  // effect doesn't need activeJobs in its deps — with it there, every
-  // setActiveJobs (new object reference) re-ran the effect, firing another
-  // query and resetting the interval in a continuous loop.
+  // Refs let the interval callback always read the latest state without being
+  // included in effect deps (which would cause infinite re-fetch loops).
+  const machinesRef = useRef(machines);
   const activeJobsRef = useRef(activeJobs);
-  useEffect(() => {
-    activeJobsRef.current = activeJobs;
-  }, [activeJobs]);
+  useEffect(() => { machinesRef.current = machines; }, [machines]);
+  useEffect(() => { activeJobsRef.current = activeJobs; }, [activeJobs]);
 
+  // Fetch active jobs on mount and poll every 30 s so the map doesn't go stale
+  // when operators start/finish jobs without a full page reload.
   useEffect(() => {
     let mounted = true;
     const fetchActiveJobs = async () => {
@@ -71,20 +71,22 @@ export function FactoryFloorMap() {
     };
 
     fetchActiveJobs();
-    // Deliberate polling: jobs enter/leave production while the map stays
-    // mounted (machines rarely changes), so refresh on a fixed cadence
-    // instead of relying on dependency changes.
-    const pollInterval = setInterval(fetchActiveJobs, 15_000);
+    const pollInterval = setInterval(fetchActiveJobs, 30_000);
+
     return () => {
       mounted = false;
       clearInterval(pollInterval);
     };
   }, [machines]);
 
+  // Simulated live telemetry tick (independent of fetch cycle). Reads
+  // machines/activeJobs through refs so this effect never needs to depend on
+  // either — depending on `machines` directly would re-create the interval
+  // on every reference change (e.g. while the TPM query is still loading).
   useEffect(() => {
     const interval = setInterval(() => {
       const newData: Record<string, MachineLive> = {};
-      machines.forEach((m: MachineRow) => {
+      machinesRef.current.forEach((m: MachineRow) => {
         const hasJob = !!activeJobsRef.current[m.id];
         newData[m.id] = {
           load: hasJob ? Math.floor(Math.random() * 20) + 80 : 0,
@@ -96,7 +98,7 @@ export function FactoryFloorMap() {
       setLiveData(newData);
     }, 3000);
     return () => clearInterval(interval);
-  }, [machines]);
+  }, []);
 
   return (
     <div className="space-y-4">

@@ -199,8 +199,8 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
     const startDate = filters?.startDate || startOfDay(subDays(now, validDaysBack));
     const endDate = filters?.endDate || endOfDay(now);
 
-    const previousStartDate = startOfDay(subDays(startDate, daysBack));
-    const previousEndDate = startOfDay(startDate);
+    const previousStartDate = startOfDay(subDays(startDate, comparisonDaysBack));
+    const previousEndDate = new Date(startOfDay(startDate).getTime() - 1);
 
     const allRelevantJobs = jobs.filter(job => {
       if (filters?.machineId && job.machine_id !== filters.machineId) return false;
@@ -242,7 +242,7 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
       const planned = Math.max(machineDays * plannedMinPerDay, estimated);
       const avail = planned > 0 ? Math.min(100, (actual / planned) * 100) : 100;
       const perf = actual > 0 ? Math.min(100, (estimated / actual) * 100) : 100;
-      const qual = produced > 0 ? Math.min(100, ((produced - lost) / produced) * 100) : 100;
+      const qual = produced > 0 ? Math.max(0, Math.min(100, ((produced - lost) / produced) * 100)) : 100;
       const oee = (avail / 100) * (perf / 100) * (qual / 100) * 100;
       return { oee, avail, perf, qual, actual, estimated, produced, lost, planned };
     };
@@ -278,7 +278,7 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
         idealCycleMinutes: current.estimated,
         actualCycleMinutes: current.actual,
         totalPiecesProduced: current.produced,
-        goodPieces: current.produced - current.lost,
+        goodPieces: Math.max(0, current.produced - current.lost),
         lostPieces: current.lost,
         totalJobs: machineJobs.length,
         completedJobs: machineJobs.length,
@@ -416,6 +416,12 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
     const overallPerformance = globalOEE.performance;
     const overallQuality = globalOEE.quality;
 
+    const prevMetrics = calculateMetrics(prevPeriodJobs, Math.max(1, comparisonDaysBack), PLANNED_MINUTES_PER_DAY);
+    const prevOEE = Math.round(prevMetrics.oee * 10) / 10;
+    const prevAvail = Math.round(prevMetrics.avail * 10) / 10;
+    const prevPerf = Math.round(prevMetrics.perf * 10) / 10;
+    const prevQual = Math.round(prevMetrics.qual * 10) / 10;
+
     // Group periodJobs by date for efficient trend calculation
     const jobsByDate = new Map<string, typeof periodJobs>();
     periodJobs.forEach(job => {
@@ -511,54 +517,18 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
       performanceLosses: 100 - overallPerformance,
       qualityLosses: 100 - overallQuality,
       byShift,
-      comparison: (() => {
-        const prevMachinesWithData = Array.from(machineOEEMap.values()).filter(m => {
-          const pJobs = prevPeriodJobs.filter(j => j.machine_id === m.machineId);
-          return pJobs.length > 0;
-        });
-        const prevOEE = prevMachinesWithData.length > 0
-          ? prevMachinesWithData.reduce((s, m) => s + (m.previousOee ?? m.oee), 0) / prevMachinesWithData.length
-          : overallOEE;
-        const prevAvail = prevMachinesWithData.length > 0
-          ? byMachine.reduce((s, m) => {
-              const pJobs = prevPeriodJobs.filter(j => j.machine_id === m.machineId);
-              if (!pJobs.length) return s;
-              const pDays = new Set(pJobs.map(j => asStr(j.actual_end_time).slice(0, 10))).size || 1;
-              const pm = calculateMetrics(pJobs, pDays, PLANNED_MINUTES_PER_DAY);
-              return s + pm.avail;
-            }, 0) / Math.max(prevMachinesWithData.length, 1)
-          : overallAvailability;
-        const prevPerf = prevMachinesWithData.length > 0
-          ? byMachine.reduce((s, m) => {
-              const pJobs = prevPeriodJobs.filter(j => j.machine_id === m.machineId);
-              if (!pJobs.length) return s;
-              const pDays = new Set(pJobs.map(j => asStr(j.actual_end_time).slice(0, 10))).size || 1;
-              const pm = calculateMetrics(pJobs, pDays, PLANNED_MINUTES_PER_DAY);
-              return s + pm.perf;
-            }, 0) / Math.max(prevMachinesWithData.length, 1)
-          : overallPerformance;
-        const prevQual = prevMachinesWithData.length > 0
-          ? byMachine.reduce((s, m) => {
-              const pJobs = prevPeriodJobs.filter(j => j.machine_id === m.machineId);
-              if (!pJobs.length) return s;
-              const pDays = new Set(pJobs.map(j => asStr(j.actual_end_time).slice(0, 10))).size || 1;
-              const pm = calculateMetrics(pJobs, pDays, PLANNED_MINUTES_PER_DAY);
-              return s + pm.qual;
-            }, 0) / Math.max(prevMachinesWithData.length, 1)
-          : overallQuality;
-        return {
-          currentOEE: overallOEE,
-          previousOEE: Math.round(prevOEE * 10) / 10,
-          currentAvailability: overallAvailability,
-          previousAvailability: Math.round(prevAvail * 10) / 10,
-          currentPerformance: overallPerformance,
-          previousPerformance: Math.round(prevPerf * 10) / 10,
-          currentQuality: overallQuality,
-          previousQuality: Math.round(prevQual * 10) / 10,
-        };
-      })()
+      comparison: {
+        currentOEE: overallOEE,
+        previousOEE: prevOEE,
+        currentAvailability: overallAvailability,
+        previousAvailability: prevAvail,
+        currentPerformance: overallPerformance,
+        previousPerformance: prevPerf,
+        currentQuality: overallQuality,
+        previousQuality: prevQual,
+      }
     };
-  }, [jobs, machines, techniques, effectiveDaysBack, daysBack, filters, PLANNED_MINUTES_PER_DAY]);
+  }, [jobs, machines, techniques, effectiveDaysBack, daysBack, comparisonDaysBack, filters, PLANNED_MINUTES_PER_DAY]);
 
   const downloadReport = async (format: 'excel' | 'pdf' | 'csv') => {
     // Basic implementation

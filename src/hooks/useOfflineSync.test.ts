@@ -56,7 +56,7 @@ describe('useOfflineSync', () => {
     const { result } = renderHook(() => useOfflineSync());
 
     await act(async () => {
-      result.current.updateJobOffline('job-1', { status: 'in_progress' });
+      result.current.updateJobOffline('job-1', { status: 'production' });
     });
 
     expect(result.current.pendingActionsCount).toBe(1);
@@ -67,7 +67,7 @@ describe('useOfflineSync', () => {
     const { result } = renderHook(() => useOfflineSync());
 
     await act(async () => {
-      result.current.updateJobOffline('job-1', { status: 'in_progress' });
+      result.current.updateJobOffline('job-1', { status: 'production' });
     });
 
     type MockTable = { then: { mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void } };
@@ -93,7 +93,7 @@ describe('useOfflineSync', () => {
     const { result } = renderHook(() => useOfflineSync());
 
     await act(async () => {
-      result.current.updateJobOffline('job-1', { status: 'in_progress' });
+      result.current.updateJobOffline('job-1', { status: 'production' });
     });
 
     type MockTable = { then: { mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void } };

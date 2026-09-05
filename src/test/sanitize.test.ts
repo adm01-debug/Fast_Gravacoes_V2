@@ -64,6 +64,21 @@ describe('sanitizeUrl', () => {
   it('blocks unknown protocols', () => {
     expect(sanitizeUrl('ftp://files.example.com')).toBe('');
   });
+
+  it('trims whitespace before checking protocol', () => {
+    expect(sanitizeUrl('   javascript:alert(1)')).toBe('');
+    expect(sanitizeUrl('\tdata:text/html,<b>x</b>')).toBe('');
+  });
+
+  it('returns empty string for empty/whitespace input', () => {
+    expect(sanitizeUrl('')).toBe('');
+    expect(sanitizeUrl('   ')).toBe('');
+  });
+
+  it('allows protocol-relative URLs (start with /)', () => {
+    // //host form starts with '/' → allowed (browser uses current protocol)
+    expect(sanitizeUrl('//cdn.example.com/script.js')).toBe('//cdn.example.com/script.js');
+  });
 });
 
 describe('sanitizeControlChars', () => {

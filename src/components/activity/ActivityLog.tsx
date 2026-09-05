@@ -54,14 +54,18 @@ export function ActivityLog({
   showGrouping = true,
   className,
 }: ActivityLogProps) {
-  // Group entries by date
+  // Group entries by date — compute reference dates outside useMemo to avoid
+  // calling impure Date constructors inside the memoized computation.
+  const todayStr = new Date().toDateString();
+  const yesterdayStr = new Date(Date.now() - 86400000).toDateString();
+
   const groupedEntries = React.useMemo(() => {
     if (!showGrouping) return { all: entries };
 
     return entries.reduce((groups, entry) => {
       const date = new Date(entry.timestamp).toDateString();
-      const today = new Date().toDateString();
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      const today = todayStr;
+      const yesterday = yesterdayStr;
 
       let groupKey: string;
       if (date === today) {
@@ -82,7 +86,8 @@ export function ActivityLog({
       groups[groupKey].push(entry);
       return groups;
     }, {} as Record<string, ActivityLogEntry[]>);
-  }, [entries, showGrouping]);
+   
+  }, [entries, showGrouping, todayStr, yesterdayStr]);
 
   return (
     <Card className={className}>

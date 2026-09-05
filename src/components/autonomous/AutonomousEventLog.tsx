@@ -1,7 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps --
-   Dependências intencionalmente omitidas: incluí-las causaria loops
-   infinitos, invalidação excessiva de cache ou recomputação em cada
-   render. Callbacks/valores externos são estáveis por contrato. */
+ 
 /* eslint-disable react-hooks/set-state-in-effect --
    Effects nesse arquivo sincronizam com sistemas externos legítimos
    (URL params, localStorage, timers, subscriptions Supabase realtime,
@@ -11,47 +8,40 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Cpu, Zap, RefreshCw, AlertCircle, CheckCircle2, Target, ShieldCheck, Activity } from 'lucide-react';
+import { Brain, Zap, RefreshCw, AlertCircle, CheckCircle2, Target, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface AutonomousEvent {
-  id: number;
-  type: string;
-  message: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-  bg: string;
-  time: Date;
-}
+// Defined outside the component so the reference is stable and does not trigger
+// the exhaustive-deps lint rule when used inside useEffect.
+const AUTONOMOUS_EVENTS = [
+  { type: 'optimization', message: 'Re-otimizando cronograma: Detectado atraso de 15m na Máquina 2.', icon: RefreshCw, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+  { type: 'maintenance', message: 'Ordem de serviço automática gerada para Máquina 4 (Fator de Risco > 85%).', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { type: 'logistics', message: 'Solicitação de reposição de Tinta Azul enviada ao almoxarifado.', icon: Zap, color: 'text-warning', bg: 'bg-warning/10' },
+  { type: 'quality', message: 'Alerta SPC: Processo da Máquina 1 está tendendo ao limite superior. Ajuste sugerido.', icon: AlertCircle, color: 'text-destructive', bg: 'bg-destructive/10' },
+  { type: 'sync', message: 'Sincronização Bitrix24 concluída: 12 novas ordens processadas.', icon: CheckCircle2, color: 'text-success', bg: 'bg-success/10' },
+  { type: 'quantum', message: 'Simulação Quântica: Detectada economia de R$ 1.250 em novo cenário de lote.', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
+  { type: 'orchestration', message: 'Orquestração 12/10: Sincronia global entre Fábrica e Supply Chain.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-600/10' },
+] as const;
 
 export function AutonomousEventLog() {
-  const [logs, setLogs] = useState<AutonomousEvent[]>([]);
-
-  const events = [
-    { type: 'optimization', message: 'Re-otimizando cronograma: Detectado atraso de 15m na Máquina 2.', icon: RefreshCw, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { type: 'maintenance', message: 'Ordem de serviço automática gerada para Máquina 4 (Fator de Risco > 85%).', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { type: 'logistics', message: 'Solicitação de reposição de Tinta Azul enviada ao almoxarifado.', icon: Zap, color: 'text-warning', bg: 'bg-warning/10' },
-    { type: 'quality', message: 'Alerta SPC: Processo da Máquina 1 está tendendo ao limite superior. Ajuste sugerido.', icon: AlertCircle, color: 'text-destructive', bg: 'bg-destructive/10' },
-    { type: 'sync', message: 'Sincronização Bitrix24 concluída: 12 novas ordens processadas.', icon: CheckCircle2, color: 'text-success', bg: 'bg-success/10' },
-    { type: 'quantum', message: 'Simulação Quântica: Detectada economia de R$ 1.250 em novo cenário de lote.', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
-    { type: 'orchestration', message: 'Orquestração 12/10: Sincronia global entre Fábrica e Supply Chain.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-600/10' }
-  ];
+  const [logs, setLogs] = useState<Array<typeof AUTONOMOUS_EVENTS[number] & { id: number; time: Date }>>([]);
 
   useEffect(() => {
-    // Add initial logs with staggered timestamps
     const now = new Date();
-    setLogs(events.slice(0, 4).map((e, i) => ({
-      ...e,
-      id: i,
-      time: new Date(now.getTime() - i * 120000)
-    })));
+    setLogs(
+      AUTONOMOUS_EVENTS.slice(0, 4).map((e, i) => ({
+        ...e,
+        id: i,
+        time: new Date(now.getTime() - i * 120000),
+      }))
+    );
 
     const interval = setInterval(() => {
-      const randomEvent = events[Math.floor(Math.random() * events.length)];
+      const randomEvent = AUTONOMOUS_EVENTS[Math.floor(Math.random() * AUTONOMOUS_EVENTS.length)];
       setLogs(prev => [
         { ...randomEvent, id: Date.now(), time: new Date() },
-        ...prev.slice(0, 4)
+        ...prev.slice(0, 4),
       ]);
     }, 10000);
 

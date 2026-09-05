@@ -68,8 +68,12 @@ export const ScanHistory = ({ jobId, limit = 200 }: ScanHistoryProps) => {
   const soundEnabledRef = useRef(soundEnabled);
   const setNewScanIdsRef = useRef(setNewScanIds);
   const highlightTimeoutRef = useRef<number | null>(null);
-  soundEnabledRef.current = soundEnabled;
-  setNewScanIdsRef.current = setNewScanIds;
+  // Keep the refs mirroring the latest props without mutating them during
+  // render (React refs must only be read/written in effects or handlers).
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled;
+    setNewScanIdsRef.current = setNewScanIds;
+  }, [soundEnabled, setNewScanIds]);
 
   // Ref-based callback for the realtime listener — avoids stale closures and
   // ensures the channel uses the shared singleton from realtimeChannel.ts.

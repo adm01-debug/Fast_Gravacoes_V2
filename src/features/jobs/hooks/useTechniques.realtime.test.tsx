@@ -32,6 +32,10 @@ describe('useTechniques — Realtime invalidation', () => {
     holder.getAllMock.mockReset();
     holder.getAllMock.mockResolvedValue([{ id: '1', name: 'Bordado' }]);
     assertNonNull(holder.realtime, 'realtime').removeChannel.mockClear();
+    // Discard handlers captured by a previous test in this file — the mock
+    // never simulates real unsubscription, so stale handlers would otherwise
+    // double-fire alongside this test's own handler (see RealtimeMock.reset).
+    assertNonNull(holder.realtime, 'realtime').reset();
   });
 
   it('chama removeChannel no unmount e ignora eventos posteriores', async () => {

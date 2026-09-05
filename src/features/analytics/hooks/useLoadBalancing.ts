@@ -1,7 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps --
-   Dependências intencionalmente omitidas: incluí-las causaria loops
-   infinitos, invalidação excessiva de cache ou recomputação em cada
-   render. Callbacks/valores externos são estáveis por contrato. */
+ 
 import { useMemo } from 'react';
 import { useJobs, useTechniques, DbJob, DbMachine, DbTechnique } from '@/features/jobs';
 import { useMachines } from '@/features/production';
@@ -188,7 +185,7 @@ export function useLoadBalancing(targetDate?: Date) {
       suggestions: allSuggestions,
       isLoading: false
     };
-  }, [jobs, machines, techniques, targetDate]);
+  }, [jobs, machines, techniques, targetDate, DAILY_CAPACITY_MINUTES, configLoading]);
 
   return analysis;
 }

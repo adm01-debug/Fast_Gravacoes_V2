@@ -17,7 +17,7 @@ serve(async (req) => {
     const supabaseClient = createClient(supabaseUrl, serviceRoleKey)
 
     // Allow either a verified cron invocation (x-cron-secret) OR an
-    // authenticated coordinator/admin call. A missing Authorization header no
+    // authenticated coordinator/manager/admin call. A missing Authorization header no
     // longer implies "trusted cron" — that was bypassable by simply omitting
     // the header, running job-state mutations unauthenticated.
     const authHeader = req.headers.get('Authorization')
@@ -38,7 +38,7 @@ serve(async (req) => {
         .eq('user_id', user.id)
         .eq('is_active', true)
       const roles = (roleRows ?? []).map((r: { role: string }) => r.role)
-      if (!roles.some((role) => ['coordinator', 'admin'].includes(role))) {
+      if (!roles.some((role) => ['coordinator', 'manager', 'admin'].includes(role))) {
         return new Response(JSON.stringify({ error: 'Sem permissão' }), {
           status: 403,
           headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },

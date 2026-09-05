@@ -16,7 +16,7 @@ serve(async (req) => {
     const todayStart = new Date(now);
     todayStart.setHours(0, 0, 0, 0);
     const todayStartISO = todayStart.toISOString();
-    const metrics: Record<string, any> = {};
+    const metrics: Record<string, unknown> = {};
 
     // Jobs metrics
     const { count: totalJobs } = await supabase.from("jobs").select("*", { count: "exact", head: true });

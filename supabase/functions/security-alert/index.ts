@@ -20,6 +20,28 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // This endpoint is gated by CRON_SECRET above, so it may legitimately be
+    // called by trusted server-side code with no end-user context (system
+    // events). When the caller DOES forward an end-user's session, though,
+    // verify it and bind the event to that JWT-derived identity so a caller
+    // can't forge audit records attributed to another user.
+    const authHeader = req.headers.get('authorization');
+    let jwtIdentity: { id: string; email: string | null } | null = null;
+    if (authHeader?.startsWith('Bearer ')) {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const userClient = createClient(supabaseUrl, anonKey);
+      const { data: { user }, error: authError } = await userClient.auth.getUser(
+        authHeader.replace('Bearer ', '')
+      );
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'Token inválido' }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
+      }
+      jwtIdentity = { id: user.id, email: user.email ?? null };
+    }
+
     const payload = await req.json().catch(() => null);
     if (!payload || typeof payload !== 'object') {
       return new Response(JSON.stringify({ error: 'Invalid request body' }), {
@@ -48,13 +70,23 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Reject if the caller-supplied user_id doesn't match the authenticated
+    // JWT principal (when one was provided) — prevents forging audit records
+    // for other users.
+    if (jwtIdentity && payload.user_id && payload.user_id !== jwtIdentity.id) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+
     const { data: event, error } = await supabase
       .from('security_events')
       .insert({
         event_type: payload.event_type,
         severity: payload.severity,
-        user_id: payload.user_id ?? null,
-        user_email: payload.user_email ?? null,
+        user_id: jwtIdentity?.id ?? payload.user_id ?? null,
+        user_email: jwtIdentity?.email ?? payload.user_email ?? null,
         ip_address: payload.ip_address ?? null,
         user_agent: payload.user_agent ?? null,
         details: typeof payload.details === 'object' && payload.details !== null ? payload.details : {},

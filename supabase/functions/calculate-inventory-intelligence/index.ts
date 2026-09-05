@@ -21,6 +21,34 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // requireUserOrCronSecret above accepts either an authenticated user or the
+    // cron secret. When a user session is presented, also enforce that the user
+    // holds the admin role — this endpoint recalculates data for the entire
+    // inventory and must not be callable by any signed-in user.
+    const authHeader = req.headers.get('authorization');
+    if (authHeader) {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (user) {
+        const { data: roleRows, error: roleError } = await supabase.from('user_roles')
+          .select('role').eq('user_id', user.id).in('role', ['admin']).limit(1);
+        if (roleError) {
+          console.error('[calculate-inventory-intelligence] Role query error:', roleError.message);
+          return new Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
+          });
+        }
+        if (!roleRows || roleRows.length === 0) {
+          return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
+            status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
+          });
+        }
+      }
+    }
+
     console.log('Starting inventory intelligence calculation...');
 
     // 1. Fetch all items
@@ -72,7 +100,7 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in inventory intelligence:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,

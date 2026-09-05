@@ -15,7 +15,10 @@ export function useSoundFeedback() {
 
   const playSound = (type: SoundType) => {
     if (!audioContext.current) {
-      audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextCtor =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      audioContext.current = new AudioContextCtor();
     }
 
     const ctx = audioContext.current;

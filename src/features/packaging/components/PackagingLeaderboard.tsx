@@ -15,7 +15,9 @@ export function PackagingLeaderboard() {
   const { data: leaderboard, isLoading } = useQuery({
     queryKey: ['packaging-leaderboard'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_packaging_leaderboard' as any);
+      const { data, error } = await supabase.rpc(
+        'get_packaging_leaderboard' as unknown as Parameters<typeof supabase.rpc>[0]
+      );
       if (error) throw error;
       return data as unknown as LeaderboardEntry[];
     },

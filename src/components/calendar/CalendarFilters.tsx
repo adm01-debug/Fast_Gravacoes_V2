@@ -31,17 +31,14 @@ interface CalendarFiltersProps {
   onClear: () => void;
 }
 
-function Section({
-  title,
-  items,
-  selected,
-  onItemToggle,
-}: {
+interface FilterSectionProps {
   title: string;
   items: { value: string; label: string; color?: string }[];
   selected: string[];
   onItemToggle: (v: string) => void;
-}) {
+}
+
+function FilterSection({ title, items, selected, onItemToggle }: FilterSectionProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -143,21 +140,21 @@ export function CalendarFilters({
           </div>
           <ScrollArea className="max-h-[60vh]">
             <div className="p-3 space-y-4">
-              <Section
+              <FilterSection
                 title="Técnicas"
                 items={techniques.map((t) => ({ value: t.id, label: t.short_name || t.name, color: t.color }))}
                 selected={filters.techniques}
                 onItemToggle={(v) => onToggle('techniques', v)}
               />
               <Separator />
-              <Section
+              <FilterSection
                 title="Status"
                 items={statusEntries.map(([value, label]) => ({ value, label }))}
                 selected={filters.statuses}
                 onItemToggle={(v) => onToggle('statuses', v)}
               />
               <Separator />
-              <Section
+              <FilterSection
                 title="Prioridade"
                 items={priorityEntries.map(([value, label]) => ({ value, label }))}
                 selected={filters.priorities}
@@ -166,7 +163,7 @@ export function CalendarFilters({
               {uniqueClients.length > 0 && uniqueClients.length <= 30 && (
                 <>
                   <Separator />
-                  <Section
+                  <FilterSection
                     title="Clientes"
                     items={uniqueClients.map((c) => ({ value: c, label: c }))}
                     selected={filters.clients}

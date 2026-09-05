@@ -72,9 +72,13 @@ export const NotificationIntegrator = () => {
   const previousJobsRef = useRef<Map<string, string>>(new Map());
   const notifiedAlertsRef = useRef<Set<string>>(new Set());
   const permissionRef = useRef<string | undefined>(undefined);
-  permissionRef.current = permission;
   const userIdRef = useRef<string | undefined>(undefined);
-  userIdRef.current = user?.id;
+  // Keep the refs mirroring the latest values without mutating them during
+  // render (React refs must only be read/written in effects or handlers).
+  useEffect(() => {
+    permissionRef.current = permission;
+    userIdRef.current = user?.id;
+  }, [permission, user?.id]);
 
   // Listen to job status changes
   useRealtimeChannel('job-notifications', [{ table: 'jobs' }], async (payload) => {

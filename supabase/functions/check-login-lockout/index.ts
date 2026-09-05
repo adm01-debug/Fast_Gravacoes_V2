@@ -4,7 +4,6 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 
-
 const MAX_FAILED_ATTEMPTS = 5;
 const BASE_LOCKOUT_MINUTES = 1; // First lockout: 1 minute
 
@@ -73,6 +72,13 @@ serve(async (req) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+    // Reject malformed email addresses to prevent abuse
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 254) {
+      return new Response(JSON.stringify({ error: 'Invalid email' }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
 
     // record_success must prove the caller actually holds a session for this
     // email — otherwise anyone could call action=record_success for any

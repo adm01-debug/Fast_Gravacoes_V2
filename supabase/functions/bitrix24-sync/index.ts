@@ -169,12 +169,42 @@ async function refreshAccessToken(refreshToken: string, supabase: any): Promise<
   }
 }
 
+// Generate a HMAC-signed, time-bound state token for OAuth CSRF protection
+async function generateOAuthState(): Promise<string> {
+  const ts = Date.now().toString();
+  const keyMat = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!keyMat) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(keyMat), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(ts)));
+  const sigHex = Array.from(sig).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `${ts}.${sigHex}`;
+}
+
+async function verifyOAuthState(state: string): Promise<boolean> {
+  if (!state) return false;
+  const dot = state.lastIndexOf('.');
+  if (dot === -1) return false;
+  const ts = state.slice(0, dot);
+  const sig = state.slice(dot + 1);
+  const tsNum = parseInt(ts, 10);
+  if (isNaN(tsNum) || Date.now() - tsNum > 15 * 60 * 1000) return false;
+  const keyMat = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!keyMat) return false;
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(keyMat), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const expected = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(ts)));
+  const expectedHex = Array.from(expected).map(b => b.toString(16).padStart(2, '0')).join('');
+  return sig === expectedHex;
+}
+
 // Generate OAuth authorization URL for reauthorization
-function getAuthorizationUrl(redirectUri: string): string {
+function getAuthorizationUrl(redirectUri: string, state: string): string {
   const params = new URLSearchParams({
     client_id: BITRIX24_CLIENT_ID || '',
     response_type: 'code',
-    redirect_uri: redirectUri
+    redirect_uri: redirectUri,
+    state
   });
   return `${BITRIX24_DOMAIN}/oauth/authorize/?${params.toString()}`;
 }
@@ -928,6 +958,22 @@ serve(async (req) => {
       }
 
       case 'webhook': {
+        // Verify request comes from Bitrix24 using a pre-shared token.
+        // Fail-closed: BITRIX24_WEBHOOK_TOKEN must be configured before webhooks work.
+        const webhookToken = Deno.env.get('BITRIX24_WEBHOOK_TOKEN');
+        if (!webhookToken) {
+          return new Response(JSON.stringify({ error: 'Webhook not configured: BITRIX24_WEBHOOK_TOKEN required' }), {
+            status: 503,
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
+        const providedToken = url.searchParams.get('token') || req.headers.get('x-webhook-secret');
+        if (providedToken !== webhookToken) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
         // Handle incoming Bitrix24 webhook
         const webhookPayload = await req.json();
         result = await handleBitrixWebhook(webhookPayload, supabase);
@@ -1122,7 +1168,7 @@ serve(async (req) => {
           needsReauthorization,
           reauthorizationReason,
           hasClientCredentials: !!(BITRIX24_CLIENT_ID && BITRIX24_CLIENT_SECRET),
-          authorizationUrl: getAuthorizationUrl(redirectUri),
+          authorizationUrl: getAuthorizationUrl(redirectUri, await generateOAuthState()),
           instructions: {
             pt: needsReauthorization 
               ? 'Reautorização necessária. Acesse a URL de autorização para reconectar sua conta Bitrix24.'
@@ -1136,6 +1182,18 @@ serve(async (req) => {
       }
 
       case 'oauth-callback': {
+        // Validate OAuth state to prevent CSRF token replacement
+        const oauthState = url.searchParams.get('state');
+        if (!oauthState || !(await verifyOAuthState(oauthState))) {
+          return new Response(JSON.stringify({
+            error: 'Invalid or expired OAuth state parameter',
+            message: 'Restart the authorization flow using action=oauth-status'
+          }), {
+            status: 400,
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
+
         // Handle OAuth callback with authorization code
         const code = url.searchParams.get('code');
         const callbackRedirectUri = url.searchParams.get('redirect_uri') || `${url.origin}/bitrix24-sync?action=oauth-callback`;
