@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, Cell } from '@/lib/recharts';
 import { SPCParameter } from '@/features/analytics/hooks/useSPC';
 
 interface QualityHistogramProps {
   parameter: SPCParameter;
-  measurements: any[];
+  measurements: Array<{ mean_value?: number; values?: number[] }>;
 }
 
 export function QualityHistogram({ parameter, measurements }: QualityHistogramProps) {
@@ -13,7 +13,7 @@ export function QualityHistogram({ parameter, measurements }: QualityHistogramPr
     if (!measurements || measurements.length === 0) return [];
 
     // Flatten all individual measurements from samples if available, or use mean values
-    const values = measurements.flatMap(m => m.values || [m.mean_value]);
+    const values = measurements.flatMap(m => m.values ?? (m.mean_value !== undefined ? [m.mean_value] : [])).filter((v): v is number => typeof v === 'number');
     const min = Math.min(...values, parameter.lower_spec_limit);
     const max = Math.max(...values, parameter.upper_spec_limit);
     const range = max - min;
@@ -38,7 +38,7 @@ export function QualityHistogram({ parameter, measurements }: QualityHistogramPr
   return (
     <Card className="glass-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display uppercase tracking-wider text-muted-foreground">Distribuição de Frequência (Histograma)</CardTitle>
+        <CardTitle className="text-sm text-title uppercase tracking-wider text-muted-foreground">Distribuição de Frequência (Histograma)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-48 w-full">

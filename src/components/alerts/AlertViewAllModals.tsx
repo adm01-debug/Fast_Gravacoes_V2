@@ -7,6 +7,7 @@ import { DbJob, StuckJob } from "@/features/jobs";
 import { parseDateOnly } from "@/lib/dateUtils";
 import { BottleneckAlert, LoadBalancingSuggestion } from "@/features/analytics";
 import { priorityColors, priorityLabels } from "./AlertJobCard";
+import { clickableProps } from "@/lib/a11y";
 
 
 interface JobsViewAllProps {
@@ -24,8 +25,8 @@ export function JobsViewAll({ jobs, onJobClick, getTechniqueById }: JobsViewAllP
           return (
             <div
               key={job.id}
-              onClick={() => onJobClick(job)}
-              className="p-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors cursor-pointer group"
+              {...clickableProps(() => onJobClick(job), { label: `Abrir job ${job.order_number}` })}
+              className="p-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
@@ -39,7 +40,7 @@ export function JobsViewAll({ jobs, onJobClick, getTechniqueById }: JobsViewAllP
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {job.scheduled_date ? parseDateOnly(job.scheduled_date)!.toLocaleDateString('pt-BR') : '-'}
+                      {job.scheduled_date ? (parseDateOnly(job.scheduled_date)?.toLocaleDateString('pt-BR') ?? '-') : '-'}
                     </span>
                     <Badge
                       variant="outline"
@@ -137,11 +138,11 @@ export function StuckJobsViewAll({ stuckJobs, onJobClick, getTechniqueById }: St
           return (
             <div
               key={stuck.job.id}
-              onClick={() => onJobClick(stuck.job)}
-              className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+              {...clickableProps(() => onJobClick(stuck.job), { label: `Abrir job travado ${stuck.job.order_number}` })}
+              className={`p-3 rounded-lg border cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 stuck.severity === 'critical'
                   ? 'bg-primary/10 border-primary/30 hover:bg-primary/20'
-                  : 'bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20'
+                  : 'bg-warning/10 border-warning/30 hover:bg-warning/20'
               }`}
             >
               <div className="flex items-center justify-between">

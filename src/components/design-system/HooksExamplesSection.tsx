@@ -28,7 +28,7 @@ export function HooksExamplesSection() {
             Demonstrações funcionais dos principais hooks do sistema
           </p>
         </div>
-        <a href="/docs/HOOKS_API.md" target="_blank" className="text-sm text-primary hover:underline flex items-center gap-1">
+        <a href="/docs/HOOKS_API.md" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
           <BookOpen className="h-4 w-4" />
           Documentação completa
         </a>

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import type { Database } from '@/integrations/supabase/types';
 
 type TableName = keyof Database['public']['Tables'];
@@ -52,7 +53,7 @@ export function useRecordDuplication(tableName: TableName) {
       toast.success('Registro duplicado com sucesso');
     },
     onError: (error) => {
-      toast.error(`Erro ao duplicar: ${error.message}`);
+      showErrorToast(error, 'Erro ao duplicar');
     },
   });
 
@@ -87,13 +88,13 @@ export function useRecordDuplication(tableName: TableName) {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data: any[]) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [tableName] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       toast.success(`${data?.length ?? 0} registros duplicados`);
     },
     onError: (error) => {
-      toast.error(`Erro na duplicação em lote: ${error.message}`);
+      showErrorToast(error, 'Erro na duplicação em lote');
     },
   });
 

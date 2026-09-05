@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Brain, RefreshCw, AlertTriangle, Shield, TrendingUp, Zap, Settings } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ export default function MLPredictionsDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-display font-black tracking-tighter flex items-center gap-3 uppercase">
+            <h1 className="text-3xl text-title font-black tracking-tighter flex items-center gap-3 uppercase">
               <Brain className="h-8 w-8 text-primary" />
               FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO
             </h1>
@@ -95,7 +95,7 @@ export default function MLPredictionsDashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Previsões</p>
-                  <p className="text-2xl font-bold font-display">{stats.totalPredictions}</p>
+                  <p className="text-2xl font-bold text-title">{stats.totalPredictions}</p>
                 </div>
               </div>
             </CardContent>
@@ -109,7 +109,7 @@ export default function MLPredictionsDashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Alto Risco</p>
-                  <p className="text-2xl font-bold font-display text-red-500">{stats.highRisk}</p>
+                  <p className="text-2xl font-bold text-title text-red-500">{stats.highRisk}</p>
                 </div>
               </div>
             </CardContent>
@@ -118,12 +118,12 @@ export default function MLPredictionsDashboard() {
           <Card className="card-glass hover-lift">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-amber-500/10">
-                  <TrendingUp className="h-6 w-6 text-amber-500" />
+                <div className="p-3 rounded-xl bg-warning/10">
+                  <TrendingUp className="h-6 w-6 text-warning" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Risco Médio</p>
-                  <p className="text-2xl font-bold font-display text-amber-500">{stats.mediumRisk}</p>
+                  <p className="text-2xl font-bold text-title text-warning">{stats.mediumRisk}</p>
                 </div>
               </div>
             </CardContent>
@@ -132,12 +132,12 @@ export default function MLPredictionsDashboard() {
           <Card className="card-glass hover-lift">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-emerald-500/10">
-                  <Shield className="h-6 w-6 text-emerald-500" />
+                <div className="p-3 rounded-xl bg-success/10">
+                  <Shield className="h-6 w-6 text-success" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Risco Baixo</p>
-                  <p className="text-2xl font-bold font-display text-emerald-500">{stats.lowRisk}</p>
+                  <p className="text-2xl font-bold text-title text-success">{stats.lowRisk}</p>
                 </div>
               </div>
             </CardContent>
@@ -151,7 +151,7 @@ export default function MLPredictionsDashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Confiança Média</p>
-                  <p className="text-2xl font-bold font-display text-purple-500">{stats.avgConfidence}%</p>
+                  <p className="text-2xl font-bold text-title text-purple-500">{stats.avgConfidence}%</p>
                 </div>
               </div>
             </CardContent>

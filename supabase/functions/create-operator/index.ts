@@ -1,25 +1,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
-
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import { checkRateLimit } from '../_shared/rateLimit.ts'
+import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: getCorsHeaders(req) })
-  }
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
+
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: 'create-operator', requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -47,30 +37,77 @@ Deno.serve(async (req) => {
 
     const { data: { user: requestingUser } } = await supabaseClient.auth.getUser()
     if (!requestingUser) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
+      return new Response(JSON.stringify({ error: 'Não autorizado', requestId }), {
         status: 401,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Rate limit: 10 operator-creations per hour per requesting user.
+    const rateLimited = await checkRateLimit(supabaseAdmin, {
+      endpoint: 'create-operator',
+      identity: { userId: requestingUser.id, email: requestingUser.email ?? null },
+      max: 10,
+      windowSeconds: 3600,
+      corsHeaders: cors,
+      requestId,
+    })
+    if (rateLimited) {
+      log.warn('rate_limited', { userId: requestingUser.id })
+      return rateLimited
+    }
+
+    // Check if requesting user is coordinator/admin. Fetch all role rows: a
+    // user may have more than one, and .single() would error in that case.
+    const { data: roleRows, error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', requestingUser.id)
+      .eq('is_active', true)
+
+    if (roleError) {
+      // Backend failure must not be reported as an authorization denial.
+      return new Response(JSON.stringify({ error: 'Falha ao verificar permissão' }), {
+        status: 500,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       })
     }
 
-    // Check if requesting user is coordinator
-    const { data: roleData } = await supabaseAdmin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', requestingUser.id)
-      .single()
-
-    if (roleData?.role !== 'coordinator') {
-      return new Response(JSON.stringify({ error: 'Apenas coordenadores podem criar operadores' }), {
+    const requesterRoles = (roleRows ?? []).map((r: { role: string }) => r.role)
+    if (!requesterRoles.some((role) => ['coordinator', 'admin'].includes(role))) {
+      return new Response(JSON.stringify({ error: 'Apenas coordenadores e administradores podem criar operadores' }), {
         status: 403,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       })
     }
 
-    const { email, password, full_name, phone } = await req.json()
+    const rawBody = await req.json().catch(() => null)
+    if (!rawBody || typeof rawBody !== 'object') {
+      return new Response(JSON.stringify({ error: 'Corpo da requisição inválido' }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
+    const { email, password, full_name, phone } = rawBody
 
     if (!email || !password || !full_name) {
       return new Response(JSON.stringify({ error: 'Email, senha e nome são obrigatórios' }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Basic email format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new Response(JSON.stringify({ error: 'Formato de email inválido' }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Minimum password length
+    if (password.length < 8) {
+      return new Response(JSON.stringify({ error: 'A senha deve ter no mínimo 8 caracteres' }), {
         status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       })
@@ -85,8 +122,8 @@ Deno.serve(async (req) => {
     })
 
     if (createError) {
-      console.error('Error creating user:', createError)
-      return new Response(JSON.stringify({ error: createError.message }), {
+      console.error('Error creating user:', createError.message)
+      return new Response(JSON.stringify({ error: 'Erro ao criar usuário' }), {
         status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       })

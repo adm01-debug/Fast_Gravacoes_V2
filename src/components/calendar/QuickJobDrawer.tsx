@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -110,7 +111,7 @@ export function QuickJobDrawer({
 
       if (error) {
         if (error.message?.includes('Conflito de agendamento')) {
-          toast.error(error.message);
+          toast.error('Conflito de agendamento: máquina já possui job neste horário.');
           return;
         }
         throw error;
@@ -131,7 +132,7 @@ export function QuickJobDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md border-l border-border/40 bg-card/95 backdrop-blur-md">
         <SheetHeader className="pb-6">
-          <SheetTitle className="flex items-center gap-2 text-xl font-display font-bold gradient-text">
+          <SheetTitle className="flex items-center gap-2 text-title gradient-text">
             <Zap className="w-5 h-5 text-primary animate-pulse" />
             Agendamento Rápido
           </SheetTitle>

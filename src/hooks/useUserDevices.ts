@@ -27,7 +27,7 @@ export function useUserDevices() {
   const { data: devices, isLoading, refetch } = useQuery({
     queryKey: ['user-devices', user?.id],
     queryFn: async () => {
-      if (!user) return [];
+      if (!user?.id) return [];
 
       const { data, error } = await supabase
         .from('user_devices')
@@ -41,7 +41,7 @@ export function useUserDevices() {
 
       return data as UserDevice[];
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   const trustDevice = useMutation({

@@ -138,15 +138,25 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
       })).filter(t => t.count > 0);
 
       const topOperators = calculateTopOperators(completedJobs, profiles);
+      // Period duration in minutes — denominator for time-based utilization.
+      const periodMinutes = differenceInMinutes(dateRange.end, dateRange.start) || 1;
       const machinePerformance = machines
         .filter(m => m.is_active)
         .slice(0, 10)
         .map(m => {
           const machineJobs = jobs.filter(j => j.machine_id === m.id);
           const machineMetrics = healthMetrics.find(h => h.machine_id === m.id);
+          // Sum actual run-time for jobs that have both timestamps; fall back to
+          // estimated_duration for jobs missing real timestamps.
+          const runTimeMinutes = machineJobs.reduce((sum, j) => {
+            if (j.actual_start_time && j.actual_end_time) {
+              return sum + Math.max(0, differenceInMinutes(new Date(j.actual_end_time), new Date(j.actual_start_time)));
+            }
+            return sum + (j.estimated_duration || 0);
+          }, 0);
           return {
             machine: m.code || m.name,
-            utilization: machineJobs.length > 0 ? Math.min(100, machineJobs.length * 15) : 0,
+            utilization: Math.min(100, (runTimeMinutes / periodMinutes) * 100),
             oee: machineMetrics?.oee_score || 0,
           };
         });
@@ -281,7 +291,10 @@ function calculateEfficiencyTrend(jobs: Job[], prevJobs: Job[], dateRange: DateR
 function calculateTopOperators(completedJobs: Job[], profiles: Profile[]) {
   const operatorStats: Record<string, { produced: number; jobs: number }> = {};
   completedJobs.forEach(job => {
-    const key = job.operator_id || 'unknown';
+    // Group by operator_id; jobs without one (legacy data) cannot be reliably
+    // attributed and are skipped to avoid incorrect rankings.
+    const key = job.operator_id;
+    if (!key) return;
     if (!operatorStats[key]) operatorStats[key] = { produced: 0, jobs: 0 };
     operatorStats[key].produced += job.produced_quantity || 0;
     operatorStats[key].jobs += 1;
@@ -290,10 +303,10 @@ function calculateTopOperators(completedJobs: Job[], profiles: Profile[]) {
   return Object.entries(operatorStats)
     .sort(([, a], [, b]) => b.produced - a.produced)
     .slice(0, 5)
-    .map(([id, stats], index) => {
-      const profile = id !== 'unknown' ? profiles.find(p => p.id === id) : undefined;
+    .map(([userId, stats], index) => {
+      const profile = profiles.find(p => p.id === userId);
       return {
-        name: profile?.full_name || (id === 'unknown' ? 'Sem operador' : `Operador ${index + 1}`),
+        name: profile?.full_name || `Operador ${index + 1}`,
         produced: stats.produced,
         efficiency: stats.jobs > 0 ? Math.min(100, (stats.produced / (stats.jobs * 100)) * 100) : 0,
       };

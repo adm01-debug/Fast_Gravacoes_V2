@@ -7,13 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { History, CheckCircle2, AlertCircle, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, Webhook, Filter, BarChart3, Clock, TrendingUp, Activity } from 'lucide-react';
 import { formatDistanceToNow, format, subDays, parseISO, startOfDay, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from '@/lib/recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 interface SyncDetails {
   synced_ids?: string[];
   failed_ids?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface SyncHistoryItem {
@@ -39,16 +40,7 @@ export const Bitrix24SyncHistory = () => {
   const { data: history, isLoading } = useQuery({
     queryKey: ['bitrix24-sync-history'],
     queryFn: async () => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=history&limit=50`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          }
-        }
-      );
+      const response = await edgeFunctionFetch('bitrix24-sync?action=history&limit=50');
       const data = await response.json();
       return data.history as SyncHistoryItem[];
     },
@@ -110,7 +102,7 @@ export const Bitrix24SyncHistory = () => {
     let avgTimeSeconds = 0;
     if (completedSyncs.length > 0) {
       const totalSeconds = completedSyncs.reduce((acc, item) => {
-        const diff = differenceInSeconds(parseISO(item.completed_at!), parseISO(item.started_at));
+        const diff = differenceInSeconds(parseISO(item.completed_at ?? item.started_at), parseISO(item.started_at));
         return acc + Math.max(0, diff);
       }, 0);
       avgTimeSeconds = Math.round(totalSeconds / completedSyncs.length);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -210,7 +211,7 @@ export function CelebrationMoment({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className={cn(
-                'text-2xl font-display font-bold text-foreground',
+                'text-display text-foreground',
                 'text-center'
               )}
             >

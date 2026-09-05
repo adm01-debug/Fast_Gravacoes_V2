@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface GeoBlockingSettings {
   id: string;
@@ -158,7 +159,7 @@ export function useUpdateGeoSettings() {
       toast.success('Configurações atualizadas');
     },
     onError: (error) => {
-      toast.error('Erro ao atualizar configurações: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar configurações');
     },
   });
 }
@@ -206,7 +207,7 @@ export function useAddCountryRule() {
       toast.success('País adicionado à lista');
     },
     onError: (error) => {
-      toast.error('Erro ao adicionar país: ' + error.message);
+      showErrorToast(error, 'Erro ao adicionar país');
     },
   });
 }
@@ -228,7 +229,7 @@ export function useRemoveCountryRule() {
       toast.success('País removido da lista');
     },
     onError: (error) => {
-      toast.error('Erro ao remover país: ' + error.message);
+      showErrorToast(error, 'Erro ao remover país');
     },
   });
 }
@@ -252,7 +253,7 @@ export function useToggleCountryRule() {
       queryClient.invalidateQueries({ queryKey: ['geo-blocking-rules'] });
     },
     onError: (error) => {
-      toast.error('Erro ao atualizar regra: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar regra');
     },
   });
 }

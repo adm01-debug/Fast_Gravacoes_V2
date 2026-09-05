@@ -11,6 +11,7 @@ import { ProductionLot } from '@/features/inventory';
 import { format } from 'date-fns';
 import { parseDateOnly } from '@/lib/dateUtils';
 import { toast } from 'sonner';
+import { escapeHtml } from '@/lib/sanitize';
 
 interface LotLabelPrintProps {
   lots: ProductionLot[];
@@ -33,12 +34,6 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
 
   const config = LABEL_CONFIGS[labelSize];
 
-  const escHtml = (s: string) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-  const escAttr = (s: string) =>
-    escHtml(s).replace(/"/g, '&quot;');
-
   const generateQrValue = (lot: ProductionLot) => {
     return `LOT:${lot.lot_number}`;
   };
@@ -46,6 +41,9 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
   const buildLabelHTML = (lot: ProductionLot, cfg: typeof config) => {
     const qrValue = generateQrValue(lot);
     const isLandscape = cfg.w > cfg.h;
+    const safeLotNumber = escapeHtml(lot.lot_number);
+    const safeProductName = escapeHtml(lot.product_name);
+    const safeQuantity = escapeHtml(String(lot.quantity));
 
     return `
       <div style="
@@ -58,33 +56,33 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
         page-break-inside:avoid;break-inside:avoid;
       ">
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
-          <div id="qr-placeholder-${lot.id}" data-value="${escAttr(qrValue)}" data-size="${cfg.qrSize}"></div>
+          <div id="qr-placeholder-${escapeHtml(lot.id)}" data-value="${escapeHtml(qrValue)}" data-size="${cfg.qrSize}"></div>
         </div>
         <div style="text-align:${isLandscape ? 'left' : 'center'};flex:1;min-width:0;overflow:hidden;">
           <div style="font-size:${isLandscape ? '13px' : '16px'};font-weight:bold;margin-bottom:4px;word-break:break-word;">
-            ${escHtml(lot.lot_number)}
+            ${safeLotNumber}
           </div>
           <div style="font-size:${isLandscape ? '11px' : '13px'};color:#333;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-            ${escHtml(lot.product_name)}
+            ${safeProductName}
           </div>
           <div style="font-size:${isLandscape ? '10px' : '11px'};color:#666;margin-bottom:2px;">
-            Qtd: ${lot.quantity} un
+            Qtd: ${safeQuantity} un
           </div>
           <div style="font-size:${isLandscape ? '10px' : '11px'};color:#666;margin-bottom:2px;">
-            Produção: ${format(parseDateOnly(lot.production_date)!, 'dd/MM/yyyy')}
+            Produção: ${format(parseDateOnly(lot.production_date) ?? new Date(), 'dd/MM/yyyy')}
           </div>
           ${lot.expiration_date ? `
             <div style="font-size:${isLandscape ? '10px' : '11px'};color:#c00;font-weight:bold;">
-              Val: ${format(parseDateOnly(lot.expiration_date)!, 'dd/MM/yyyy')}
+              Val: ${format(parseDateOnly(lot.expiration_date) ?? new Date(), 'dd/MM/yyyy')}
             </div>
           ` : ''}
           ${lot.job ? `
             <div style="font-size:${isLandscape ? '9px' : '10px'};color:#999;margin-top:4px;">
-              OS: ${escHtml(lot.job.order_number)}
+              OS: ${escapeHtml(lot.job.order_number)}
             </div>
           ` : ''}
           <div style="font-size:8px;color:#bbb;margin-top:6px;">
-            ${escHtml(lot.lot_number)}
+            ${safeLotNumber}
           </div>
         </div>
       </div>
@@ -245,11 +243,11 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
                     <div style={{ fontSize: `${12 * zoom}px` }} className="text-muted-foreground truncate">{lots[0].product_name}</div>
                     <div style={{ fontSize: `${10 * zoom}px` }} className="text-muted-foreground font-medium">Qtd: {lots[0].quantity} un</div>
                     <div style={{ fontSize: `${10 * zoom}px` }} className="text-muted-foreground">
-                      {format(parseDateOnly(lots[0].production_date)!, 'dd/MM/yyyy')}
+                      {format(parseDateOnly(lots[0].production_date) ?? new Date(), 'dd/MM/yyyy')}
                     </div>
                     {lots[0].expiration_date && (
                       <div style={{ fontSize: `${10 * zoom}px` }} className="text-destructive font-bold">
-                        Val: {format(parseDateOnly(lots[0].expiration_date)!, 'dd/MM/yyyy')}
+                        Val: {format(parseDateOnly(lots[0].expiration_date) ?? new Date(), 'dd/MM/yyyy')}
                       </div>
                     )}
                   </div>

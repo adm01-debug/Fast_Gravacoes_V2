@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
-} from 'recharts';
+} from '@/lib/recharts';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
@@ -130,7 +130,7 @@ export function EnergyChartTabs({ stats, alerts, onResolveAlert, isResolving }: 
       <TabsContent value="alerts">
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-amber-500" />Alertas de Energia</CardTitle>
+            <CardTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-warning" />Alertas de Energia</CardTitle>
           </CardHeader>
           <CardContent>
             {alerts.length === 0 ? (
@@ -144,8 +144,8 @@ export function EnergyChartTabs({ stats, alerts, onResolveAlert, isResolving }: 
                 {alerts.map((alert) => (
                   <div key={alert.id} className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${alert.severity === 'critical' ? 'bg-destructive/10' : alert.severity === 'warning' ? 'bg-amber-500/10' : 'bg-blue-500/10'}`}>
-                        <AlertTriangle className={`h-5 w-5 ${alert.severity === 'critical' ? 'text-destructive' : alert.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${alert.severity === 'critical' ? 'bg-destructive/10' : alert.severity === 'warning' ? 'bg-warning/10' : 'bg-blue-500/10'}`}>
+                        <AlertTriangle className={`h-5 w-5 ${alert.severity === 'critical' ? 'text-destructive' : alert.severity === 'warning' ? 'text-warning' : 'text-blue-500'}`} />
                       </div>
                       <div>
                         <p className="font-medium">{alert.message}</p>

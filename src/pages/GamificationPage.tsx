@@ -88,7 +88,7 @@ export default function GamificationPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-display font-bold">
+              <h1 className="text-2xl sm:text-3xl text-title font-bold">
                 <span className="gradient-text">{t('gamification.ranking')}</span>
               </h1>
               <FavoriteButton
@@ -183,7 +183,7 @@ export default function GamificationPage() {
                       {redeemReward.isPending && redeemReward.variables?.id === reward.id ? t('gamification.redeeming') : t('gamification.redeem')}
                     </Button>
                     <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span className={balance < reward.cost_points ? 'text-destructive' : 'text-emerald-500'}>
+                      <span className={balance < reward.cost_points ? 'text-destructive' : 'text-success'}>
                         {balance < reward.cost_points ? t('gamification.pointsNeeded', { points: (reward.cost_points - balance).toLocaleString() }) : t('gamification.sufficientBalance')}
                       </span>
                       <span className="text-muted-foreground">{reward.stock ? t('gamification.stock', { stock: reward.stock }) : t('gamification.infiniteStock')}</span>
@@ -252,7 +252,7 @@ export default function GamificationPage() {
         <Card className="glass-card overflow-hidden">
           <CardHeader className="pb-2 bg-gradient-to-r from-amber-500/10 via-gray-500/10 to-orange-500/10">
             <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-amber-500" />
+              <Trophy className="h-5 w-5 text-warning" />
               Pódio
             </CardTitle>
           </CardHeader>
@@ -279,18 +279,18 @@ export default function GamificationPage() {
               {/* 1st Place */}
               {topThree[0] && (
                 <div className="flex flex-col items-center -mt-4">
-                  <Crown className="w-8 h-8 text-amber-500 mb-1 animate-bounce" />
+                  <Crown className="w-8 h-8 text-warning mb-1 animate-bounce" />
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-2 shadow-xl ring-4 ring-amber-300/50">
-                    <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-amber-900" />
+                    <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-warning" />
                   </div>
                   <div className="text-center">
                     <p className="font-bold text-base sm:text-lg truncate max-w-[120px]">
                       {topThree[0].profile?.full_name}
                     </p>
-                    <p className="text-sm text-amber-500 font-semibold">{topThree[0].total_points} pts</p>
+                    <p className="text-sm text-warning font-semibold">{topThree[0].total_points} pts</p>
                   </div>
                   <div className="w-24 sm:w-28 h-24 sm:h-28 bg-gradient-to-t from-amber-600 to-amber-500 rounded-t-lg mt-2 flex items-center justify-center">
-                    <span className="text-3xl font-bold text-amber-900">1</span>
+                    <span className="text-3xl font-bold text-warning">1</span>
                   </div>
                 </div>
               )}
@@ -363,7 +363,7 @@ export default function GamificationPage() {
                       <div className="text-right hidden sm:block">
                         <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('gamification.xpProgress')}</p>
                         <div className="w-32">
-                          <Progress value={(r.xp_progress! / r.xp_target!) * 100} className="h-1.5 bg-muted/50" />
+                          <Progress value={((r.xp_progress ?? 0) / (r.xp_target || 1)) * 100} className="h-1.5 bg-muted/50" />
                           <p className="text-[9px] text-muted-foreground mt-1">
                             {r.xp_progress} / {r.xp_target} XP
                           </p>
@@ -387,7 +387,7 @@ export default function GamificationPage() {
           <Card className="glass-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-amber-500" />
+                <Star className="h-5 w-5 text-warning" />
                 {t('gamification.recentAchievements')}
               </CardTitle>
             </CardHeader>
@@ -397,8 +397,8 @@ export default function GamificationPage() {
                   const Icon = achievementIcons[a.icon] || Trophy;
                   return (
                     <div key={a.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30">
-                      <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-amber-500" />
+                      <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                        <Icon className="w-5 h-5 text-warning" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{a.achievement_name}</p>

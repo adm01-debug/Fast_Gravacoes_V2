@@ -123,7 +123,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
               <Sparkles className="h-5 w-5 text-primary animate-pulse" />
             </div>
             <div>
-              <span className="font-display tracking-[0.2em] uppercase text-sm block">Core Inteligência</span>
+              <span className="text-title tracking-[0.2em] uppercase text-sm block">Core Inteligência</span>
               <span className="text-[10px] text-primary/60 font-mono tracking-widest uppercase">Neural Analytics 4.0</span>
             </div>
           </div>
@@ -152,8 +152,8 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
               <div className="flex gap-5">
                 <div className={cn(
                   "mt-1 p-3 rounded-xl h-fit shadow-lg transition-transform duration-300 group-hover/item:scale-110",
-                  insight.type === 'success' ? "bg-emerald-500/10 text-emerald-500 shadow-emerald-500/10" :
-                  insight.type === 'warning' ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
+                  insight.type === 'success' ? "bg-success/10 text-success shadow-emerald-500/10" :
+                  insight.type === 'warning' ? "bg-warning/10 text-warning shadow-amber-500/10" :
                   insight.type === 'danger' ? "bg-rose-500/10 text-rose-500 shadow-rose-500/10" :
                   "bg-primary/10 text-primary shadow-primary/10"
                 )}>
@@ -166,7 +166,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
                       <span className={cn(
                         "text-[9px] uppercase font-bold px-2.5 py-0.5 rounded-md border backdrop-blur-md",
                         insight.impact === 'Crítico' ? "border-rose-500/30 text-rose-500 bg-rose-500/5" :
-                        insight.impact === 'Alto' ? "border-amber-500/30 text-amber-500 bg-amber-500/5" :
+                        insight.impact === 'Alto' ? "border-warning/30 text-warning bg-warning/5" :
                         "border-primary/30 text-primary bg-primary/5"
                       )}>
                         {insight.impact}
@@ -282,7 +282,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-black text-white tracking-tighter">{simulationResult.oee.toFixed(1)}%</span>
-                    <div className="flex items-center text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
+                    <div className="flex items-center text-[10px] text-success font-bold bg-success/10 px-1.5 py-0.5 rounded-md">
                       <TrendingUp className="h-2.5 w-2.5 mr-1" />
                       +{(simulationResult.oee - oeeData.overallOEE).toFixed(1)}%
                     </div>
@@ -297,7 +297,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
                     <span className="text-2xl font-black text-white tracking-tighter">
                       R$ {simulationResult.revenue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
                     </span>
-                    <div className="flex items-center text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
+                    <div className="flex items-center text-[10px] text-success font-bold bg-success/10 px-1.5 py-0.5 rounded-md">
                       <TrendingUp className="h-2.5 w-2.5 mr-1" />
                       +28%
                     </div>

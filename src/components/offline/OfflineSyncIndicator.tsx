@@ -50,7 +50,7 @@ export function OfflineSyncIndicator({
             {pendingActionsCount > 0 && (
               <Badge
                 variant="secondary"
-                className="h-5 px-1.5 text-xs bg-amber-500/20 text-amber-500"
+                className="h-5 px-1.5 text-xs bg-warning/20 text-warning"
               >
                 {pendingActionsCount}
               </Badge>
@@ -86,13 +86,13 @@ export function OfflineSyncIndicator({
       'flex items-center gap-3 p-3 rounded-lg border',
       isOnline
         ? 'bg-green-500/5 border-green-500/20'
-        : 'bg-amber-500/5 border-amber-500/20',
+        : 'bg-warning/5 border-warning/20',
       className
     )}>
       {/* Status Icon */}
       <div className={cn(
         'w-10 h-10 rounded-lg flex items-center justify-center',
-        isOnline ? 'bg-green-500/10' : 'bg-amber-500/10'
+        isOnline ? 'bg-green-500/10' : 'bg-warning/10'
       )}>
         {isOnline ? (
           isSyncing ? (
@@ -101,7 +101,7 @@ export function OfflineSyncIndicator({
             <Cloud className="w-5 h-5 text-green-500" />
           )
         ) : (
-          <CloudOff className="w-5 h-5 text-amber-500" />
+          <CloudOff className="w-5 h-5 text-warning" />
         )}
       </div>
 
@@ -110,7 +110,7 @@ export function OfflineSyncIndicator({
         <div className="flex items-center gap-2">
           <p className={cn(
             'font-medium text-sm',
-            isOnline ? 'text-green-500' : 'text-amber-500'
+            isOnline ? 'text-green-500' : 'text-warning'
           )}>
             {isOnline ? (isSyncing ? 'Sincronizando...' : 'Conectado') : 'Modo Offline'}
           </p>
@@ -124,7 +124,7 @@ export function OfflineSyncIndicator({
 
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {pendingActionsCount > 0 ? (
-            <span className="flex items-center gap-1 text-amber-500">
+            <span className="flex items-center gap-1 text-warning">
               <AlertCircle className="w-3 h-3" />
               {pendingActionsCount} ação(ões) pendente(s)
             </span>

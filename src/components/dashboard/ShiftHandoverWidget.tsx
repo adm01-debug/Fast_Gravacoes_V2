@@ -35,7 +35,7 @@ export function ShiftHandoverWidget() {
   return (
     <Card className="glass-card card-interactive animate-fade-in-up opacity-0 [animation-fill-mode:forwards] [animation-delay:0.35s]">
       <CardHeader className="pb-2 pt-3 px-3">
-        <CardTitle className="text-sm font-display flex items-center justify-between">
+        <CardTitle className="text-sm text-title flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-orange-500/20">
               <ArrowRightLeft className="h-3.5 w-3.5 text-orange-400" />
@@ -76,7 +76,7 @@ export function ShiftHandoverWidget() {
                   {lastHandover.outgoing_profile?.full_name?.split(' ')[0]} → {lastHandover.incoming_profile?.full_name?.split(' ')[0] || 'Pendente'}
                 </p>
                 <p className="text-[9px] text-muted-foreground">
-                  {format(parseDateOnly(lastHandover.shift_date)!, "dd 'de' MMM", { locale: ptBR })}
+                  {format(parseDateOnly(lastHandover.shift_date) ?? new Date(), "dd 'de' MMM", { locale: ptBR })}
                 </p>
               </div>
             </div>

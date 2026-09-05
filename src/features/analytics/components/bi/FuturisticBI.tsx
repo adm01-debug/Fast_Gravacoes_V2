@@ -9,7 +9,7 @@ import {
 import {
   AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend
-} from 'recharts';
+} from '@/lib/recharts';
 
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -31,8 +31,12 @@ const BIAIInsights = lazy(() => import('./BIAIInsights').then(m => ({ default: m
 import { BIPredictiveROI } from './BIPredictiveROI';
 import { CHART_COLORS, GRADIENTS } from '@/constants/biConstants';
 
-import { BIJob, BIMetrics, BIProps } from '@/features/analytics/types';
+import { BIJob, BIMetrics, BIProps } from './types';
+import { BIMetrics as BIPredictiveROIMetrics } from '@/features/analytics/types';
 import { Job } from '@/types/job';
+
+type MachineUtil = NonNullable<BIMetrics['machineUtilization']>[number];
+type StatusSlice = BIMetrics['statusDistribution'][number];
 
 export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
   const navigate = useNavigate();
@@ -119,17 +123,17 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
 
   const studioData = useMemo(() => {
     if (!biMetrics.machineUtilization) return [];
-    const machineGroups: Record<string, BIMetrics['machineUtilization']> = {};
-    (biMetrics.machineUtilization as BIMetrics['machineUtilization']).forEach((m) => {
+    const machineGroups: Record<string, MachineUtil[]> = {};
+    (biMetrics.machineUtilization || []).forEach((m: MachineUtil) => {
       const studioName = m.technique.includes('Laser') ? 'Studio Alfa' :
                         m.technique.includes('UV') ? 'Studio Beta' :
                         'Studio Gamma';
       if (!machineGroups[studioName]) machineGroups[studioName] = [];
       machineGroups[studioName].push(m);
     });
-    return Object.entries(machineGroups).map(([name, machines]) => {
-      const totalJobs = machines.reduce((sum: number, m) => sum + m.totalJobs, 0);
-      const avgUtilization = machines.reduce((sum: number, m) => sum + m.utilization, 0) / machines.length;
+    return Object.entries(machineGroups).map(([name, machines]: [string, MachineUtil[]]) => {
+      const totalJobs = (machines || []).reduce((sum: number, m: MachineUtil) => sum + (m.totalJobs || 0), 0);
+      const avgUtilization = (machines || []).reduce((sum: number, m: MachineUtil) => sum + (m.utilization || 0), 0) / (machines?.length || 1);
       return {
         name,
         jobs: totalJobs,
@@ -232,7 +236,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-3">
               <Activity className="h-5 w-5 text-primary" />
-              <span className="font-display tracking-wider uppercase">Fluxo de Produção</span>
+              <span className="text-title tracking-wider uppercase">Fluxo de Produção</span>
             </CardTitle>
             <div className="flex items-center gap-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
               <TooltipProvider>
@@ -332,14 +336,14 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <PieChart className="h-5 w-5 text-primary" />
-              <span className="font-display tracking-wider uppercase">Distribuição de Status</span>
+              <span className="text-title tracking-wider uppercase">Distribuição de Status</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <RechartsPieChart>
                 <Pie data={biMetrics.statusDistribution} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                  {biMetrics.statusDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  {biMetrics.statusDistribution.map((entry: StatusSlice, index: number) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
                 <RechartsTooltip content={<BITooltip />} />
                 <Legend layout="vertical" align="right" verticalAlign="middle" />
@@ -352,7 +356,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <LossesTable
-            jobs={jobsWithLosses}
+            jobs={jobsWithLosses as unknown as Job[]}
             onExport={handleExport}
             onShowDetails={(job) => handleDrillDown(`PERDAS DETALHADAS: ${job.order_number || job.id}`, 'lost')}
           />
@@ -360,7 +364,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
         <Suspense fallback={<div className="h-full bg-black/20 animate-pulse rounded-2xl" />}>
           <BIAIInsights biMetrics={biMetrics} oeeData={oeeData} />
         </Suspense>
-        <BIPredictiveROI biMetrics={biMetrics} />
+        <BIPredictiveROI biMetrics={biMetrics as unknown as BIPredictiveROIMetrics} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -368,7 +372,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Gauge className="h-5 w-5 text-primary" />
-              <span className="font-display tracking-wider uppercase">Eficiência Geral</span>
+              <span className="text-title tracking-wider uppercase">Eficiência Geral</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">

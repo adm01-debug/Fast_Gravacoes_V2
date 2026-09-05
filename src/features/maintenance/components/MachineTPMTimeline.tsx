@@ -23,16 +23,16 @@ export function MachineTPMTimeline({ machineId }: MachineTimelineProps) {
 
   const machineRecords = useMemo(() => {
     return records
-      .filter((r: any) => r.machine_id === machineId)
-      .sort((a: any, b: any) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime());
+      .filter((r) => r.machine_id === machineId)
+      .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime());
   }, [records, machineId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'approved':
-        return <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
+        return <CheckCircle2 className="h-5 w-5 text-success" />;
       case 'completed':
-        return <Clock className="h-5 w-5 text-amber-500" />;
+        return <Clock className="h-5 w-5 text-warning" />;
       case 'in_progress':
         return <Wrench className="h-5 w-5 text-blue-500" />;
       default:
@@ -48,10 +48,10 @@ export function MachineTPMTimeline({ machineId }: MachineTimelineProps) {
   return (
     <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/20 before:via-border before:to-transparent">
       {machineRecords.length > 0 ? (
-        machineRecords.map((record: any, index: number) => (
+        machineRecords.map((record, index: number) => (
           <div key={record.id} className="relative flex items-start gap-6 stagger-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
             {/* Dot/Icon */}
-            <div className="absolute left-0 flex items-center justify-center w-10 h-10 rounded-full bg-background border-2 border-border shadow-sm z-10 cursor-pointer hover:border-primary transition-colors" onClick={() => handleViewDetails(record.id)}>
+            <div role="button" tabIndex={0} aria-label="Ver detalhes do registro" className="absolute left-0 flex items-center justify-center w-10 h-10 rounded-full bg-background border-2 border-border shadow-sm z-10 cursor-pointer hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" onClick={() => handleViewDetails(record.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleViewDetails(record.id); } }}>
               {getStatusIcon(record.status)}
             </div>
 
@@ -72,7 +72,7 @@ export function MachineTPMTimeline({ machineId }: MachineTimelineProps) {
                     </span>
                   </div>
                   {record.status === 'approved' && (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200 text-[10px]">
+                    <Badge className="bg-success/10 text-success border-success text-[10px]">
                       APROVADO
                     </Badge>
                   )}

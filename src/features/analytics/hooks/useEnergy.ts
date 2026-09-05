@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
+import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface EnergyConsumption {
   id: string;
@@ -246,6 +248,9 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['energy-consumption'] });
     },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao registrar consumo');
+    },
   });
 
   // Resolve alert
@@ -260,6 +265,9 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['energy-alerts'] });
     },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao resolver alerta de energia');
+    },
   });
 
   // Create target
@@ -272,6 +280,9 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['energy-targets'] });
+    },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao criar meta de energia');
     },
   });
 

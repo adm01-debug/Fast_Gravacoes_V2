@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface SPCParameter {
   id: string;
@@ -172,7 +173,7 @@ export function useSPCMutations() {
       queryClient.invalidateQueries({ queryKey: ['spc-parameters'] });
       toast.success('Parâmetro SPC criado');
     },
-    onError: (error) => toast.error('Erro: ' + error.message)
+    onError: (error) => showErrorToast(error, 'Erro')
   });
 
   const addMeasurement = useMutation({
@@ -254,7 +255,7 @@ export function useSPCMutations() {
       queryClient.invalidateQueries({ queryKey: ['spc-alerts'] });
       toast.success('Medição registrada');
     },
-    onError: (error) => toast.error('Erro: ' + error.message)
+    onError: (error) => showErrorToast(error, 'Erro')
   });
 
   const acknowledgeAlert = useMutation({
@@ -274,7 +275,7 @@ export function useSPCMutations() {
       queryClient.invalidateQueries({ queryKey: ['spc-alerts'] });
       toast.success('Alerta reconhecido');
     },
-    onError: (error) => toast.error('Erro: ' + error.message)
+    onError: (error) => showErrorToast(error, 'Erro')
   });
 
   const calculateControlLimits = useMutation({
@@ -328,7 +329,7 @@ export function useSPCMutations() {
       queryClient.invalidateQueries({ queryKey: ['spc-parameters'] });
       toast.success('Limites de controle calculados');
     },
-    onError: (error) => toast.error('Erro: ' + error.message)
+    onError: (error) => showErrorToast(error, 'Erro')
   });
 
   return {

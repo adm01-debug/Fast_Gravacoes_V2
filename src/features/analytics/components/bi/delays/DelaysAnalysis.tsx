@@ -24,7 +24,7 @@ export function DelaysAnalysis({ delayedJobs, rootCauses, onExport }: DelaysAnal
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-3">
           <Timer className="h-5 w-5 text-primary" />
-          <span className="font-display tracking-wider uppercase">{t('bi.delaysAndCauses', 'Atrasos & Causa Raiz')}</span>
+          <span className="text-title tracking-wider uppercase">{t('bi.delaysAndCauses', 'Atrasos & Causa Raiz')}</span>
         </CardTitle>
         <div className="flex items-center gap-2">
           <Button

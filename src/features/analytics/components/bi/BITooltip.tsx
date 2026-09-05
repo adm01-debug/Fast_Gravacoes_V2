@@ -6,7 +6,7 @@ interface BITooltipProps {
     value: number;
     name: string;
     color: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
   label?: string;
   prefix?: string;

@@ -40,8 +40,8 @@ export const KnowledgeBaseStats = ({ sheets, techniques }: KnowledgeBaseStatsPro
       label: 'Total de Acessos',
       value: totalViews,
       icon: CheckCircle2,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-500/10',
+      color: 'text-success',
+      bg: 'bg-success/10',
     },
   ];
 

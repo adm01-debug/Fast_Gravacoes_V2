@@ -18,7 +18,7 @@ export function OperatorProductivityStatCard({
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold font-display">{value}</p>
+            <p className="text-3xl font-bold text-display">{value}</p>
             {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
           </div>
           <div className={`p-3 rounded-xl ${

@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useOperatorDashboardData } from '@/features/production';
 import { useSchedulingData } from '@/features/jobs';
-import { exportShiftReportPDF } from '@/lib/shiftReportPdf';
+import { exportShiftReportPDF, type ShiftReportData } from '@/lib/shiftReportPdf';
 import { toast } from 'sonner';
 import {
   FileText, CheckCircle2, AlertTriangle, Clock,
@@ -31,9 +31,9 @@ export function AutoShiftSummary() {
         shiftName,
         shiftStart,
         shiftEnd,
-        jobs: jobs as any,
-        machines: machines as any,
-        techniques: techniques as any,
+        jobs: jobs as unknown as ShiftReportData['jobs'],
+        machines: machines as unknown as ShiftReportData['machines'],
+        techniques: techniques as unknown as ShiftReportData['techniques'],
       });
       toast.success('Relatório PDF gerado com sucesso!');
     } catch {

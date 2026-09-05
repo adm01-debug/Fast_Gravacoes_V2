@@ -1,6 +1,6 @@
 import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from '@/lib/recharts';
 import { TechniqueCostSummary } from '@/hooks/useABCCosts';
 
 interface ABCTechniqueChartProps {
@@ -34,7 +34,7 @@ export function ABCTechniqueChart({ data }: ABCTechniqueChartProps) {
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-title">
           <BarChart3 className="h-5 w-5 text-primary" />
           Custo Unitário por Técnica
         </CardTitle>

@@ -5,18 +5,10 @@ import { CheckCircle2, History } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import type { EfficiencyAlertHistory } from '@/features/analytics';
+
 interface HistoryTabProps {
-  resolvedAlerts: Array<{
-    id: string;
-    title: string;
-    description: string;
-    alert_type: string;
-    severity: string;
-    detected_at: string;
-    resolved_at?: string | null;
-    resolution_notes?: string | null;
-    [key: string]: any;
-  }>;
+  resolvedAlerts: EfficiencyAlertHistory[];
   isLoading: boolean;
 }
 
@@ -44,7 +36,7 @@ export function HistoryTab({ resolvedAlerts, isLoading }: HistoryTabProps) {
               <div className="flex items-center justify-between">
                 <h4 className="font-medium text-sm">{alert.title}</h4>
                 <Badge variant="secondary" className="text-xs">
-                  {alert.severity === 'critical' ? 'Crítico' : alert.severity === 'warning' ? 'Atenção' : 'Info'}
+                  {alert.severity === 'error' ? 'Crítico' : alert.severity === 'warning' ? 'Atenção' : 'Info'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">{alert.description}</p>

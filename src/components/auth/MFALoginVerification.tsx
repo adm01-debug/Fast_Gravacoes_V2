@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { Loader2, ShieldCheck } from 'lucide-react';
 
 interface MFALoginVerificationProps {
@@ -42,8 +43,7 @@ export function MFALoginVerification({ factorId, onSuccess, onCancel }: MFALogin
       toast.success('Autenticação confirmada!');
       onSuccess();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Código inválido';
-      toast.error(message);
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Código de verificação inválido');
     } finally {
       setIsVerifying(false);
     }
@@ -74,6 +74,7 @@ export function MFALoginVerification({ factorId, onSuccess, onCancel }: MFALogin
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
             className="text-center text-3xl tracking-[0.5em] font-mono h-14"
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- foco imediato no campo de código MFA é UX crítica
             autoFocus
           />
         </div>

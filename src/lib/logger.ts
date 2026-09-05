@@ -15,10 +15,11 @@ export interface LogEntry {
   level: LogLevel;
   message: string;
   context?: string;
-  data?: any;
+  data?: unknown;
   timestamp: string;
   severity?: number; // 0-4 scale for monitoring
 }
+
 
 const SEVERITY_MAP: Record<LogLevel, number> = {
   debug: 0,
@@ -91,16 +92,18 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
   });
 }
 
-function enqueuePersist(level: LogLevel, message: string, context: string | undefined, data: any): void {
+function enqueuePersist(level: LogLevel, message: string, context: string | undefined, data: unknown): void {
+  const rawStack = data instanceof Error ? data.stack ?? null : (data !== undefined ? safeStringify(data) : null);
+  const rawData = data instanceof Error ? { name: data.name, message: data.message } : data;
   persistQueue.push({
-    message,
-    stack: data instanceof Error ? data.stack ?? null : (data !== undefined ? safeStringify(data) : null),
+    message: redactString(message),
+    stack: rawStack ? redactString(rawStack) : null,
     component_name: context || 'global',
-    url: typeof window !== 'undefined' ? window.location.href : '',
+    url: typeof window !== 'undefined' ? redactUrl(window.location.href) : '',
     metadata: {
       level,
       severity: SEVERITY_MAP[level],
-      data: data instanceof Error ? { name: data.name, message: data.message } : data,
+      data: redactDeep(rawData) as never,
     },
   });
   // Bound memory: drop the oldest entries if the DB is unreachable for a while.
@@ -110,6 +113,7 @@ function enqueuePersist(level: LogLevel, message: string, context: string | unde
   scheduleFlush();
 }
 
+
 function safeStringify(value: unknown): string {
   try {
     return JSON.stringify(value);
@@ -118,12 +122,53 @@ function safeStringify(value: unknown): string {
   }
 }
 
+// --- PII redaction ----------------------------------------------------------
+// This module's own contract ("Never logs PII") was not actually enforced:
+// error.message/stack can embed literal values (e.g. a Postgres unique-
+// constraint violation echoes the offending column value back in the
+// message), and `data`/`url` were persisted to error_logs and forwarded to
+// the alert webhook completely unredacted. Scrub emails and JWT-shaped
+// tokens from any string before it is persisted or sent externally, and
+// strip query strings from URLs (which can carry tokens/emails/ids).
+const EMAIL_RE = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const JWT_RE = /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g;
+
+function redactString(value: string): string {
+  return value.replace(EMAIL_RE, '[REDACTED_EMAIL]').replace(JWT_RE, '[REDACTED_TOKEN]');
+}
+
+function redactUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.origin}${parsed.pathname}`;
+  } catch {
+    // Not a full URL (e.g. relative path) — still strip anything after '?'/'#'.
+    return url.split(/[?#]/)[0];
+  }
+}
+
+/** Recursively redacts PII-shaped strings anywhere in a value before it is
+ * persisted/forwarded. Depth-limited to avoid pathological input. */
+function redactDeep(value: unknown, depth = 0): unknown {
+  if (depth > 5) return '[REDACTED_DEPTH_LIMIT]';
+  if (typeof value === 'string') return redactString(value);
+  if (Array.isArray(value)) return value.map((v) => redactDeep(v, depth + 1));
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = redactDeep(v, depth + 1);
+    }
+    return out;
+  }
+  return value;
+}
+
 function formatEntry(entry: LogEntry): string {
   const prefix = `[${entry.timestamp}] [${entry.level.toUpperCase()}]`;
   return entry.context ? `${prefix} [${entry.context}] ${entry.message}` : `${prefix} ${entry.message}`;
 }
 
-function createEntry(level: LogLevel, message: string, context?: string, data?: any): LogEntry {
+function createEntry(level: LogLevel, message: string, context?: string, data?: unknown): LogEntry {
   const entry = {
     level,
     message,
@@ -146,26 +191,26 @@ function createEntry(level: LogLevel, message: string, context?: string, data?: 
 }
 
 export const logger = {
-  debug(message: string, data?: any, context?: string) {
+  debug(message: string, data?: unknown, context?: string) {
     if (!isDev) return;
     const entry = createEntry('debug', message, context, data);
     console.debug(formatEntry(entry), data ?? '');
   },
 
-  info(message: string, data?: any, context?: string) {
+  info(message: string, data?: unknown, context?: string) {
     if (!isDev) return;
     const entry = createEntry('info', message, context, data);
     console.info(formatEntry(entry), data ?? '');
   },
 
-  warn(message: string, data?: any, context?: string) {
+  warn(message: string, data?: unknown, context?: string) {
     const entry = createEntry('warn', message, context, data);
     if (isDev) {
       console.warn(formatEntry(entry), data ?? '');
     }
   },
 
-  error(message: string, error?: any, context?: string) {
+  error(message: string, error?: unknown, context?: string) {
     const entry = createEntry('error', message, context, error);
     if (isDev) {
       console.error(formatEntry(entry), error ?? '');
@@ -174,9 +219,10 @@ export const logger = {
     }
   },
 
-  critical(message: string, error?: any, context?: string) {
+  critical(message: string, error?: unknown, context?: string) {
     const entry = createEntry('critical', message, context, error);
     console.error(`[CRITICAL] ${formatEntry(entry)}`, error ?? '');
+
     
     const WEBHOOK_URL = import.meta.env.VITE_ALERT_WEBHOOK_URL;
     if (!isDev && WEBHOOK_URL) {
@@ -185,8 +231,8 @@ export const logger = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'CRITICAL_ERROR',
-          message,
-          error: error instanceof Error ? error.message : String(error),
+          message: redactString(message),
+          error: redactString(error instanceof Error ? error.message : String(error)),
           context,
           timestamp: entry.timestamp,
           system: 'FAST_GRAVAÇÕES_PROD'

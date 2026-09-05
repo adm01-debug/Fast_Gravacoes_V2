@@ -53,6 +53,7 @@
     "noResults": "No se encontraron resultados",
     "required": "Obligatorio",
     "language": "Idioma",
+    "changeLanguage": "Cambiar idioma",
     "optional": "Opcional",
     "today": "Hoy",
     "yesterday": "Ayer",
@@ -72,7 +73,8 @@
     "piecesShort": "PZAS",
     "close": "Cerrar",
     "finish": "Finalizar",
-    "skip": "Omitir"
+    "skip": "Omitir",
+    "average": "media"
   },
   "intelligence": {
     "title": "Inteligencia"
@@ -106,7 +108,10 @@
     "loginSuccess": "¡Inicio de sesión exitoso!",
     "loginError": "Error al iniciar sesión",
     "logoutSuccess": "¡Cierre de sesión exitoso!",
-    "resetRequestSent": "¡Solicitud enviada! Esperando aprobación del gestor."
+    "resetRequestSent": "¡Solicitud enviada! Esperando aprobación del gestor.",
+    "resetNeedsApproval": "Ingresa tu correo. La solicitud se enviará para aprobación del gestor.",
+    "resetApprovalNote": "Tu solicitud será revisada por un gestor antes de enviar el correo de restablecimiento.",
+    "sendRequest": "Enviar Solicitud"
   },
   "dashboard": {
     "title": "Panel Principal",
@@ -124,6 +129,9 @@
     "recentJobs": "Trabajos Recientes",
     "topOperators": "Mejores Operadores",
     "machineStatus": "Estado de las Máquinas",
+    "machineOccupancy": "Ocupación de las Máquinas",
+    "noOccupancyData": "Ninguna máquina con datos de ocupación",
+    "smartLogistics": "Logística Inteligente",
     "overview": "Resumen",
     "timeline": "Línea de Tiempo"
   },
@@ -172,7 +180,8 @@
     "deleteJob": "Eliminar Trabajo",
     "deleteConfirmation": "¿Está seguro de que desea eliminar el trabajo {{order}}? Esta acción no se puede deshacer.",
     "detailsFor": "Detalles del trabajo {{order}}",
-    "instructions": "Instrucciones"
+    "instructions": "Instrucciones",
+    "noJobsFound": "Ningún trabajo encontrado"
   },
   "operators": {
     "title": "Operadores",
@@ -359,5 +368,27 @@
     "url": "URL inválida",
     "passwordUppercase": "Debe contener al menos una letra mayúscula",
     "passwordNumber": "Debe contener al menos un número"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "¡Bienvenido a FAST GRAVAÇÕES!",
+      "content": "Hagamos un recorrido rápido para mostrarle las principales funcionalidades de su nueva Fábrica Autónoma."
+    },
+    "navigation": {
+      "title": "Menú Principal",
+      "content": "Aquí accedes a todos los módulos del sistema: Producción, Inventario, OEE y mucho más."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "content": "En esta área visualizas los principales indicadores de rendimiento en tiempo real."
+    },
+    "toolbar": {
+      "title": "Acciones Rápidas",
+      "content": "Atajos para favoritos, estado de red, notificaciones y cambio de tema."
+    },
+    "newJob": {
+      "title": "Agendamientos",
+      "content": "Crea nuevos trabajos y agenda producciones directamente aquí."
+    }
   }
 }

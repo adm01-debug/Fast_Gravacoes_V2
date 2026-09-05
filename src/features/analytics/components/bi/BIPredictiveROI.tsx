@@ -41,7 +41,7 @@ export function BIPredictiveROI({ biMetrics }: BIPredictiveROIProps) {
             <BrainCircuit className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="font-display tracking-wider uppercase text-lg">Projeção ROI IA</span>
+            <span className="text-title tracking-wider uppercase text-lg">Projeção ROI IA</span>
             <span className="text-[10px] text-muted-foreground font-sans uppercase tracking-widest">Simulação de Ganhos Preditivos</span>
           </div>
         </CardTitle>
@@ -58,8 +58,8 @@ export function BIPredictiveROI({ biMetrics }: BIPredictiveROIProps) {
           <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
             <p className="text-[10px] text-primary uppercase font-bold mb-1">Economia Potencial</p>
             <div className="flex items-center gap-2">
-              <span className="text-lg font-black text-emerald-500">R$ {calculations.potentialSaving.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px]">
+              <span className="text-lg font-black text-success">R$ {calculations.potentialSaving.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-[10px]">
                 +{calculations.gainPercentage}%
               </Badge>
             </div>

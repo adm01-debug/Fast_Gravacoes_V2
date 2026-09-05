@@ -22,13 +22,13 @@ export function TraceabilityStatsCards({ lots }: TraceabilityStatsCardsProps) {
     // Expiration alerts
     const expiringIn7Days = lots.filter(l => {
       if (!l.expiration_date || l.status !== 'active') return false;
-      const daysLeft = differenceInDays(parseDateOnly(l.expiration_date)!, now);
+      const daysLeft = differenceInDays(parseDateOnly(l.expiration_date) ?? now, now);
       return daysLeft >= 0 && daysLeft <= 7;
     }).length;
 
     const expired = lots.filter(l => {
       if (!l.expiration_date) return false;
-      return differenceInDays(parseDateOnly(l.expiration_date)!, now) < 0;
+      return differenceInDays(parseDateOnly(l.expiration_date) ?? now, now) < 0;
     }).length;
 
     // Trends (last 30 days vs previous 30)
@@ -55,8 +55,8 @@ export function TraceabilityStatsCards({ lots }: TraceabilityStatsCardsProps) {
       />
       <StatCard
         icon={CheckCircle}
-        iconClass="text-emerald-500"
-        bgClass="bg-emerald-500/10"
+        iconClass="text-success"
+        bgClass="bg-success/10"
         label="Lotes Ativos"
         value={stats.active}
       />
@@ -134,7 +134,7 @@ function StatCard({ icon: Icon, iconClass, bgClass, label, value, trend, trendLa
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Badge variant="outline" className={`text-[10px] gap-0.5 ${trend > 0 ? 'text-emerald-500' : 'text-destructive'}`}>
+                      <Badge variant="outline" className={`text-[10px] gap-0.5 ${trend > 0 ? 'text-success' : 'text-destructive'}`}>
                         {trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                         {Math.abs(trend).toFixed(0)}%
                       </Badge>

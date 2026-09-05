@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect, useCallback, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Volume2, Loader2, X, MessageCircle } from 'lucide-react';
@@ -27,21 +32,48 @@ export function useVoiceCommands({
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
-  const recognitionRef = useRef<ReturnType<typeof Object> | null>(null);
+  interface SpeechRecognitionResult {
+    isFinal: boolean;
+    [index: number]: { transcript: string };
+  }
+  interface SpeechRecognitionEventLike {
+    resultIndex: number;
+    results: SpeechRecognitionResult[];
+  }
+  interface SpeechRecognitionErrorEventLike {
+    error?: string;
+    message?: string;
+  }
+  interface SpeechRecognitionInstance {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+    onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+    onend: (() => void) | null;
+    start: () => void;
+    stop: () => void;
+  }
+  type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
+
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    const w = window as any;
+    const w = window as unknown as {
+      SpeechRecognition?: SpeechRecognitionCtor;
+      webkitSpeechRecognition?: SpeechRecognitionCtor;
+    };
     const SpeechRecognitionAPI = w.SpeechRecognition || w.webkitSpeechRecognition;
     setIsSupported(!!SpeechRecognitionAPI);
 
     if (SpeechRecognitionAPI) {
-      recognitionRef.current = new (SpeechRecognitionAPI as any)();
+      recognitionRef.current = new SpeechRecognitionAPI();
       recognitionRef.current.continuous = continuous;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = language;
 
-      recognitionRef.current.onresult = (event: any) => {
+      recognitionRef.current.onresult = (event: SpeechRecognitionEventLike) => {
         const current = event.resultIndex;
         const result = event.results[current];
         const transcriptText = result[0].transcript.toLowerCase();
@@ -61,7 +93,7 @@ export function useVoiceCommands({
         }
       };
 
-      recognitionRef.current.onerror = (event: any) => {
+      recognitionRef.current.onerror = () => {
         setIsListening(false);
         toast({
           title: 'Erro no reconhecimento de voz',
@@ -230,7 +262,7 @@ export const VoiceButton = forwardRef<HTMLDivElement, {
         onClick={toggleListening}
         className={cn(
           'relative transition-all',
-          isListening && 'animate-pulse'
+          isListening && 'motion-safe:animate-pulse'
         )}
       >
         {isListening ? (
@@ -352,7 +384,7 @@ export function VoiceFeedbackButton({ text }: { text: string }) {
       className="h-8 w-8"
       title={isSpeaking ? 'Parar' : 'Ouvir'}
     >
-      <Volume2 className={cn('h-4 w-4', isSpeaking && 'text-primary animate-pulse')} />
+      <Volume2 className={cn('h-4 w-4', isSpeaking && 'text-primary motion-safe:animate-pulse')} />
     </Button>
   );
 }

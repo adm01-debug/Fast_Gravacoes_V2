@@ -41,7 +41,7 @@ export function AIInsights({ metrics }: AIInsightsProps) {
     if (topTech) {
       list.push({
         type: 'info',
-        icon: <Lightbulb className="h-4 w-4 text-amber-500" />,
+        icon: <Lightbulb className="h-4 w-4 text-warning" />,
         text: `Destaque: A técnica ${topTech.name} é a mais produtiva, representando grande parte do output.`,
       });
     }
@@ -51,7 +51,7 @@ export function AIInsights({ metrics }: AIInsightsProps) {
     if (lowUtilized) {
       list.push({
         type: 'warning',
-        icon: <AlertCircle className="h-4 w-4 text-amber-500" />,
+        icon: <AlertCircle className="h-4 w-4 text-warning" />,
         text: `Ociosidade: Máquina ${lowUtilized.name} apresenta baixa utilização (${lowUtilized.utilization.toFixed(0)}%). Avaliar distribuição de jobs.`,
       });
     }

@@ -9,10 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useInventory } from '@/features/inventory';
+import { useInventory, type InventoryItem } from '@/features/inventory';
 
 interface WarehouseMapProps {
-  items: any[];
+  items: InventoryItem[];
 }
 
 export function WarehouseMap({ items }: WarehouseMapProps) {
@@ -65,7 +65,7 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
 
     try {
       await transferItems({
-        fromLocation: selectedLocation!,
+        fromLocation: selectedLocation ?? '',
         toLocation: newLocation,
         itemIds
       });
@@ -81,7 +81,7 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
   return (
     <Card className="glass-card">
       <CardHeader>
-        <CardTitle className="text-sm font-display flex items-center gap-2">
+        <CardTitle className="text-sm text-title flex items-center gap-2">
           <MapPin className="h-4 w-4 text-primary" />
           Mapa do Almoxarifado (WMS)
         </CardTitle>
@@ -103,9 +103,13 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Localização ${area}${level}`}
                             onClick={() => handleTransferInit(`${area}${level}`)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTransferInit(`${area}${level}`); } }}
                             className={cn(
-                            "h-12 border rounded-md flex items-center justify-center transition-all cursor-pointer relative group active:scale-95",
+                            "h-12 border rounded-md flex items-center justify-center transition-all cursor-pointer relative group active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                             locationItems.length > 0 ? "bg-primary/5 border-primary/20" : "bg-muted/10 border-border/30 opacity-50",
                             isLow && "bg-destructive/10 border-destructive/30"
                           )}>
@@ -132,7 +136,7 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
                               locationItems.map(item => (
                                 <div key={item.id} className="flex items-center justify-between gap-4 text-[10px]">
                                   <span>{item.name}</span>
-                                  <span className={cn("font-bold", item.current_stock <= item.min_stock_level ? "text-destructive" : "text-emerald-500")}>
+                                  <span className={cn("font-bold", item.current_stock <= item.min_stock_level ? "text-destructive" : "text-success")}>
                                     {item.current_stock} {item.unit}
                                   </span>
                                 </div>
@@ -213,9 +217,9 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
       </Dialog>
 
       <Dialog open={isConfirming} onOpenChange={setIsConfirming}>
-        <DialogContent className="sm:max-w-[350px] border-amber-500/50 bg-amber-500/5">
+        <DialogContent className="sm:max-w-[350px] border-warning/50 bg-warning/5">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-500">
+            <DialogTitle className="flex items-center gap-2 text-warning">
               <AlertCircle className="h-5 w-5" />
               Confirmar Operação
             </DialogTitle>
@@ -227,7 +231,7 @@ export function WarehouseMap({ items }: WarehouseMapProps) {
             <Button variant="outline" className="flex-1" onClick={() => setIsConfirming(false)} disabled={isApiProcessing}>
               Cancelar
             </Button>
-            <Button className="flex-1 bg-amber-500 hover:bg-amber-600 text-white" onClick={confirmTransfer} disabled={isApiProcessing}>
+            <Button className="flex-1 bg-warning hover:bg-warning text-white" onClick={confirmTransfer} disabled={isApiProcessing}>
               {isApiProcessing ? "Transferindo..." : "Confirmar"}
             </Button>
           </DialogFooter>

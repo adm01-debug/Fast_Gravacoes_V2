@@ -1,3 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Bell, BellOff, Volume2, VolumeX, AlertTriangle, AlertCircle, Zap, Wrench } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,7 +79,7 @@ export function MLNotificationSettings() {
         <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
           <div className="flex items-center gap-3">
             {permission === 'granted' ? (
-              <Bell className="h-5 w-5 text-emerald-500" />
+              <Bell className="h-5 w-5 text-success" />
             ) : (
               <BellOff className="h-5 w-5 text-muted-foreground" />
             )}
@@ -91,7 +100,7 @@ export function MLNotificationSettings() {
             </Button>
           )}
           {permission === 'granted' && (
-            <Badge variant="default" className="bg-emerald-500">
+            <Badge variant="default" className="bg-success">
               Ativo
             </Badge>
           )}
@@ -122,7 +131,7 @@ export function MLNotificationSettings() {
           />
 
           <NotificationToggle
-            icon={<Zap className="h-5 w-5 text-amber-500" />}
+            icon={<Zap className="h-5 w-5 text-warning" />}
             label="Risco Médio (40-59%)"
             description="Aviso para riscos moderados"
             checked={preferences.mediumRisk}

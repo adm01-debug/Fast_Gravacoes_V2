@@ -94,9 +94,13 @@ export function JobQualityTab({ jobId, techniqueId, machineId }: JobQualityTabPr
             {parameters.map(param => (
               <div
                 key={param.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Selecionar parâmetro ${param.name}`}
                 onClick={() => setSelectedParamId(param.id)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedParamId(param.id); } }}
                 className={cn(
-                  "p-3 rounded-lg border transition-all cursor-pointer flex items-center justify-between",
+                  "p-3 rounded-lg border transition-all cursor-pointer flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   selectedParamId === param.id
                     ? "bg-primary/10 border-primary shadow-sm"
                     : "bg-secondary/30 border-border/50 hover:bg-secondary/50"

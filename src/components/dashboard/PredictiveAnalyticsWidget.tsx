@@ -29,7 +29,7 @@ export function PredictiveAnalyticsWidget() {
   return (
     <Card className="glass-card card-interactive animate-fade-in-up opacity-0 [animation-fill-mode:forwards] [animation-delay:0.3s]">
       <CardHeader className="pb-2 pt-3 px-3">
-        <CardTitle className="text-sm font-display flex items-center justify-between">
+        <CardTitle className="text-sm text-title flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-primary/20">
               <BrainCircuit className="h-3.5 w-3.5 text-primary" />

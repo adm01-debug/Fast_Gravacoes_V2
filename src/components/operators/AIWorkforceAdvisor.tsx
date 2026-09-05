@@ -9,13 +9,13 @@ export function AIWorkforceAdvisor() {
       type: 'success',
       title: 'Alta Eficiência em Sublimação',
       description: 'O time de operadores do turno matutino atingiu 92% de eficiência média em sublimação, superando a meta em 5%.',
-      icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+      icon: <CheckCircle2 className="h-4 w-4 text-success" />
     },
     {
       type: 'warning',
       title: 'Gargalo em CNC - Turno B',
       description: 'Identificada queda de 12% na produtividade da CNC 02. Recomenda-se redistribuição de carga ou treinamento de reforço.',
-      icon: <AlertCircle className="h-4 w-4 text-amber-500" />
+      icon: <AlertCircle className="h-4 w-4 text-warning" />
     },
     {
       type: 'info',

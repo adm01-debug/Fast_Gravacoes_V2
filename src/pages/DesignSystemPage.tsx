@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { MainLayout } from '@/components/layout/MainLayout';
 import { HooksExamplesSection } from '@/components/design-system/HooksExamplesSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -88,7 +93,7 @@ export default function DesignSystemPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-4xl font-display font-black tracking-tighter gradient-text">Design System</h1>
+            <h1 className="text-4xl text-title font-black tracking-tighter gradient-text">Design System</h1>
             <p className="text-muted-foreground">
               Biblioteca completa de componentes, variantes e animações do sistema.
             </p>

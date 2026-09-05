@@ -1,29 +1,44 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 interface ValidateIPRequest {
   user_id?: string;
   user_email: string;
-  ip_address?: string;
   user_agent?: string;
   action: 'login_attempt' | 'login_success' | 'login_failed' | 'mfa_required' | 'mfa_failed' | 'mfa_success';
   failure_reason?: string;
+}
+
+// IPv4-only general-prefix CIDR match (any /0-/32, not just /8, /16, /24).
+function ipv4ToInt(ip: string): number | null {
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(p => Number.isNaN(p) || p < 0 || p > 255)) return null;
+  return ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+}
+
+function ipMatchesCidr(ip: string, cidr: string): boolean {
+  if (!cidr.includes('/')) return ip === cidr;
+  const [network, bitsStr] = cidr.split('/');
+  const bits = parseInt(bitsStr, 10);
+  const ipInt = ipv4ToInt(ip);
+  const networkInt = ipv4ToInt(network);
+  if (ipInt === null || networkInt === null || Number.isNaN(bits) || bits < 0 || bits > 32) return false;
+  if (bits === 0) return true;
+  const mask = (0xffffffff << (32 - bits)) >>> 0;
+  return (ipInt & mask) === (networkInt & mask);
+}
+
+// The client cannot be trusted to report its own IP — that defeats the whole
+// point of an allowlist. Derive it from the platform-set forwarding header.
+function getClientIp(req: Request): string | null {
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) return forwardedFor.split(',')[0].trim();
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
+  return null;
 }
 
 serve(async (req) => {
@@ -53,9 +68,22 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { user_id, user_email, ip_address, user_agent, action, failure_reason }: ValidateIPRequest = await req.json();
+    const { user_id, user_email, user_agent, action, failure_reason }: ValidateIPRequest = await req.json();
+    // Server-derived — never trust a client-supplied IP for an allowlist decision.
+    const ip_address = getClientIp(req);
 
-    console.log(`[validate-login-ip] Action: ${action}, Email: ${user_email}, IP: ${ip_address}`);
+    // Abuse mitigation: este endpoint é público (verify_jwt = false) e grava em
+    // login_audit. Limitamos por IP para impedir enumeração/flood de registros.
+    const limited = await checkRateLimit(supabase, {
+      endpoint: 'validate-login-ip',
+      identity: { ip: ip_address },
+      max: 30,
+      windowSeconds: 60,
+      corsHeaders: getCorsHeaders(req),
+    });
+    if (limited) return limited;
+
+    console.log(`[validate-login-ip] Action: ${action}, IP: ${ip_address}`);
 
     // Check if IP allowlist is configured and validate
     let ipBlocked = false;
@@ -84,29 +112,7 @@ serve(async (req) => {
 
         const allowedIPs = [...globalIPs, ...userIPs];
 
-        // Simple IP matching (for exact match or CIDR we'd need more complex logic)
-        const isAllowed = allowedIPs.some(entry => {
-          const entryIP = entry.ip_address;
-          // Handle CIDR notation (simplified - just check prefix)
-          if (entryIP.includes('/')) {
-            const [network, bits] = entryIP.split('/');
-            const networkParts = network.split('.');
-            const ipParts = ip_address.split('.');
-            const mask = parseInt(bits);
-            
-            // Simplified CIDR check for common cases
-            if (mask === 24) {
-              return networkParts.slice(0, 3).join('.') === ipParts.slice(0, 3).join('.');
-            } else if (mask === 16) {
-              return networkParts.slice(0, 2).join('.') === ipParts.slice(0, 2).join('.');
-            } else if (mask === 8) {
-              return networkParts[0] === ipParts[0];
-            }
-          }
-          
-          // Exact match
-          return entryIP === ip_address;
-        });
+        const isAllowed = allowedIPs.some(entry => ipMatchesCidr(ip_address, entry.ip_address));
 
         if (!isAllowed) {
           ipBlocked = true;
@@ -176,10 +182,9 @@ serve(async (req) => {
     );
 
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('[validate-login-ip] Error:', error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Internal server error' }),
       {
         status: 500,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },

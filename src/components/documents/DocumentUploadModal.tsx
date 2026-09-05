@@ -95,7 +95,10 @@ export function DocumentUploadModal({ open, onOpenChange, technicalSheetId }: Do
         <div className="space-y-4 py-4">
           {/* Drag and Drop Area */}
           <div
-            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+            role="button"
+            tabIndex={0}
+            aria-label="Selecionar arquivo para upload"
+            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               dragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
             }`}
             onDragEnter={handleDrag}
@@ -103,6 +106,7 @@ export function DocumentUploadModal({ open, onOpenChange, technicalSheetId }: Do
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInputRef.current?.click(); } }}
           >
             <input
               ref={fileInputRef}

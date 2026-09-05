@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Wrench, Calendar, History, Plus, AlertTriangle, CheckCircle2, Clock, Settings, Layout } from 'lucide-react';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
+import { useNavigate } from 'react-router-dom';
 import { format, isPast, isToday, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,14 +17,37 @@ interface MachineTPMPanelProps {
   onOpenCreateSchedule?: () => void;
 }
 
+interface TPMSchedule {
+  id: string;
+  machine_id: string;
+  name: string;
+  next_due_at: string;
+}
+
+interface TPMRecord {
+  id: string;
+  machine_id: string;
+  started_at: string;
+  status: string;
+  performed_by_name?: string | null;
+}
+
+interface TPMAlert {
+  id: string;
+  machine_id: string;
+  message: string;
+  is_resolved: boolean;
+}
+
 export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSchedule }: MachineTPMPanelProps) {
   const { schedules, records, alerts } = useTPM();
+  const navigate = useNavigate();
 
-  const machineSchedules = schedules.filter((s: any) => s.machine_id === machineId);
-  const machineRecords = records.filter((r: any) => r.machine_id === machineId).slice(0, 10);
-  const machineAlerts = alerts.filter((a: any) => a.machine_id === machineId && !a.is_resolved);
+  const machineSchedules = (schedules as TPMSchedule[]).filter((s) => s.machine_id === machineId);
+  const machineRecords = (records as TPMRecord[]).filter((r) => r.machine_id === machineId).slice(0, 10);
+  const machineAlerts = (alerts as TPMAlert[]).filter((a) => a.machine_id === machineId && !a.is_resolved);
 
-  const getStatusBadge = (schedule: any) => {
+  const getStatusBadge = (schedule: TPMSchedule) => {
     const dueDate = new Date(schedule.next_due_at);
     const daysUntil = differenceInDays(dueDate, new Date());
 
@@ -34,7 +58,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
       return <Badge className="bg-blue-500 text-[10px] h-5">Hoje</Badge>;
     }
     if (daysUntil <= 3) {
-      return <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 text-[10px] h-5">Próximo</Badge>;
+      return <Badge variant="secondary" className="bg-warning/20 text-warning text-[10px] h-5">Próximo</Badge>;
     }
     return <Badge variant="outline" className="text-[10px] h-5">Agendado</Badge>;
   };
@@ -58,7 +82,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
         {/* Next Schedules */}
         <Card className="glass-card border-primary/20">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-display flex items-center justify-between">
+            <CardTitle className="text-sm text-title flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary" />
                 Próximas Manutenções
@@ -73,7 +97,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
           <CardContent>
             {machineSchedules.length > 0 ? (
               <div className="space-y-3">
-                {machineSchedules.slice(0, 3).map((schedule: any) => (
+                {machineSchedules.slice(0, 3).map((schedule: TPMSchedule) => (
                   <div key={schedule.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/20 border border-border/50">
                     <div className="flex-1 min-w-0 mr-2">
                       <p className="text-xs font-medium truncate">{schedule.name}</p>
@@ -101,7 +125,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
         {/* Active Alerts */}
         <Card className={`glass-card ${machineAlerts.length > 0 ? 'border-destructive/30 bg-destructive/5' : ''}`}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-display flex items-center gap-2">
+            <CardTitle className="text-sm text-title flex items-center gap-2">
               <AlertTriangle className={`h-4 w-4 ${machineAlerts.length > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
               Alertas Ativos
             </CardTitle>
@@ -109,7 +133,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
           <CardContent>
             {machineAlerts.length > 0 ? (
               <div className="space-y-2">
-                {machineAlerts.map((alert: any) => (
+                {machineAlerts.map((alert: TPMAlert) => (
                   <div key={alert.id} className="flex items-start gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20">
                     <AlertTriangle className="h-3 w-3 text-destructive mt-0.5" />
                     <p className="text-[10px] leading-tight font-medium text-destructive">{alert.message}</p>
@@ -129,7 +153,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
       {/* History */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-display flex items-center gap-2">
+          <CardTitle className="text-sm text-title flex items-center gap-2">
             <History className="h-4 w-4 text-primary" />
             Histórico Recente
           </CardTitle>
@@ -138,7 +162,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
           <ScrollArea className="h-[150px]">
             <div className="space-y-2 pr-4">
               {machineRecords.length > 0 ? (
-                machineRecords.map((record: any) => (
+                machineRecords.map((record: TPMRecord) => (
                   <div key={record.id} className="flex items-center justify-between p-2 rounded border border-border/30 text-[11px]">
                     <div className="flex items-center gap-2">
                       <Clock className="h-3 w-3 text-muted-foreground" />
@@ -160,7 +184,7 @@ export function MachineTPMPanel({ machineId, onStartMaintenance, onOpenCreateSch
       </Card>
 
       <div className="flex justify-end">
-        <Button variant="link" size="sm" className="text-xs gap-1" onClick={() => window.location.href = '/tpm'}>
+        <Button variant="link" size="sm" className="text-xs gap-1" onClick={() => navigate('/tpm')}>
           Ver Painel TPM Completo <Clock className="h-3 w-3" />
         </Button>
       </div>

@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useMemo, createContext, useContext, ReactNode } from 'react';
-import { toast } from 'sonner';
+import { useState, useCallback, useEffect, useMemo, useRef, createContext, useContext, ReactNode } from 'react';
+import { logger } from '@/lib/logger';
 
 /**
  * Persists state in localStorage with automatic JSON serialization and error handling.
@@ -13,7 +13,7 @@ export function useLocalStorage<T>(
       const item = window.localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : initialValue;
     } catch (e) {
-      console.error(`Failed to load value for key "${key}" from localStorage:`, e);
+      logger.error(`Failed to load value for key "${key}" from localStorage`, e, 'useLocalStorage');
       return initialValue;
     }
   });
@@ -25,7 +25,7 @@ export function useLocalStorage<T>(
         try {
           window.localStorage.setItem(key, JSON.stringify(nextValue));
         } catch (e) {
-          console.error(`Failed to set value for key "${key}" to localStorage:`, e);
+          logger.error(`Failed to set value for key "${key}" to localStorage`, e, 'useLocalStorage');
         }
         return nextValue;
       });
@@ -38,7 +38,7 @@ export function useLocalStorage<T>(
       window.localStorage.removeItem(key);
       setStoredValue(initialValue);
     } catch (e) {
-      console.error(`Failed to remove key "${key}" from localStorage:`, e);
+      logger.error(`Failed to remove key "${key}" from localStorage`, e, 'useLocalStorage');
     }
   }, [key, initialValue]);
 
@@ -49,7 +49,7 @@ interface PendingAction {
   id: string;
   type: 'create' | 'update' | 'delete';
   entity: string;
-  data: any;
+  data: unknown;
   timestamp: string;
   retries: number;
 }
@@ -78,16 +78,16 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
   const [isSyncing, setIsSyncing] = useState(false);
   const [pendingActions, setPendingActions] = useLocalStorage<PendingAction[]>('pending-actions', []);
 
+  // No toast here: OfflineSyncProvider (useOfflineSync) already toasts on
+  // these same browser online/offline events for its real pending-actions
+  // queue. Three independent providers (this one, OfflineSyncProvider, and
+  // NetworkStatusProvider) each listening+toasting on the same two events
+  // was showing users 2-3 stacked "conexão restaurada" toasts per network
+  // change. This provider keeps tracking isOnline/pendingActions (consumed
+  // by OfflineBanner/ConnectionStatus below) without adding a duplicate.
   useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      toast.success('Conexão restaurada. Sincronizando dados...');
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast.error('Sem conexão. As alterações serão salvas localmente.');
-    };
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -98,36 +98,38 @@ export function OfflineProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // NOTE: this generic {type, entity, data} action queue has no real network
+  // sync implementation wired to it (it previously awaited a fake 500ms
+  // delay and marked every action "successful", silently discarding queued
+  // writes without ever sending them). Nothing in the app currently calls
+  // addPendingAction on this context — the concrete, real offline-write path
+  // is useOfflineSync (see src/hooks/useOfflineSync.ts / OfflineSyncContext),
+  // which knows how to replay update_job/register_production/qr_scan against
+  // Supabase. If this queue ever gains a real caller, wire an actual sync
+  // here first — do not resurrect the fake-success stub, it causes data loss.
   const syncNow = useCallback(async () => {
     if (!isOnline || isSyncing || pendingActions.length === 0) return;
 
-    setIsSyncing(true);
-    const successfulIds: string[] = [];
+    logger.error(
+      'OfflineProvider.syncNow: pending actions queued but no real sync is implemented for this context — leaving them queued instead of discarding them.',
+      { count: pendingActions.length },
+      'useLocalStorage'
+    );
+  }, [isOnline, isSyncing, pendingActions]);
 
-    for (const action of pendingActions) {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        successfulIds.push(action.id);
-      } catch (error) {
-        setPendingActions(prev =>
-          prev.map(a => a.id === action.id ? { ...a, retries: a.retries + 1 } : a)
-        );
-      }
-    }
-
-    setPendingActions(prev => prev.filter(a => !successfulIds.includes(a.id)));
-    setIsSyncing(false);
-
-    if (successfulIds.length > 0) {
-      toast.success(`${successfulIds.length} ações sincronizadas.`);
-    }
-  }, [isOnline, isSyncing, pendingActions, setPendingActions]);
-
+  // Trigger sync when coming back online, keeping the effect free of direct
+  // setState calls. syncNow is stored in a ref so we don't rerun on every
+  // callback identity change.
+  const syncNowRef = useRef(syncNow);
+  useEffect(() => {
+    syncNowRef.current = syncNow;
+  }, [syncNow]);
   useEffect(() => {
     if (isOnline && pendingActions.length > 0) {
-      syncNow();
+      void syncNowRef.current();
     }
-  }, [isOnline, pendingActions.length, syncNow]);
+  }, [isOnline, pendingActions.length]);
+
 
   const addPendingAction = useCallback((action: Omit<PendingAction, 'id' | 'timestamp' | 'retries'>) => {
     const newAction: PendingAction = {

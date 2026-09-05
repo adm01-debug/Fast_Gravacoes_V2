@@ -45,6 +45,14 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
   });
 
   const touchStart = React.useRef<{ x: number; y: number; time: number } | null>(null);
+  // Live mirror of the swipe state so touchend reads the latest values without
+  // forcing `state` into the effect deps (which re-binds listeners every move).
+  const swipeRef = React.useRef<SwipeState>({
+    swiping: false,
+    direction: null,
+    distance: 0,
+    velocity: 0,
+  });
 
   React.useEffect(() => {
     const element = ref.current;
@@ -57,12 +65,14 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
         y: touch.clientY,
         time: Date.now(),
       };
-      setState({
+      const next: SwipeState = {
         swiping: true,
         direction: null,
         distance: 0,
         velocity: 0,
-      });
+      };
+      swipeRef.current = next;
+      setState(next);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -92,18 +102,20 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
       const elapsed = Date.now() - touchStart.current.time;
       const velocity = distance / Math.max(elapsed, 1);
 
-      setState({
+      const next: SwipeState = {
         swiping: true,
         direction,
         distance,
         velocity,
-      });
+      };
+      swipeRef.current = next;
+      setState(next);
     };
 
     const handleTouchEnd = () => {
       if (!touchStart.current) return;
 
-      const { direction, distance, velocity } = state;
+      const { direction, distance, velocity } = swipeRef.current;
 
       // Check if swipe meets thresholds
       if (direction && (distance >= threshold || velocity >= velocityThreshold)) {
@@ -125,22 +137,16 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
       }
 
       touchStart.current = null;
-      setState({
-        swiping: false,
-        direction: null,
-        distance: 0,
-        velocity: 0,
-      });
+      const reset: SwipeState = { swiping: false, direction: null, distance: 0, velocity: 0 };
+      swipeRef.current = reset;
+      setState(reset);
     };
 
     const handleTouchCancel = () => {
       touchStart.current = null;
-      setState({
-        swiping: false,
-        direction: null,
-        distance: 0,
-        velocity: 0,
-      });
+      const reset: SwipeState = { swiping: false, direction: null, distance: 0, velocity: 0 };
+      swipeRef.current = reset;
+      setState(reset);
     };
 
     element.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -154,7 +160,7 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
       element.removeEventListener('touchend', handleTouchEnd);
       element.removeEventListener('touchcancel', handleTouchCancel);
     };
-  }, [disabled, onSwipe, onSwipeDown, onSwipeLeft, onSwipeRight, onSwipeUp, preventScroll, state, threshold, velocityThreshold]);
+  }, [disabled, onSwipe, onSwipeDown, onSwipeLeft, onSwipeRight, onSwipeUp, preventScroll, threshold, velocityThreshold]);
 
   return { ref, ...state };
 }

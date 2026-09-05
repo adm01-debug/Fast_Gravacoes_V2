@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface ProductionLot {
   id: string;
@@ -214,7 +215,7 @@ export function useTraceabilityMutations() {
       toast.success('Lote criado com sucesso');
     },
     onError: (error) => {
-      toast.error('Erro ao criar lote: ' + error.message);
+      showErrorToast(error, 'Erro ao criar lote');
     }
   });
 
@@ -233,7 +234,7 @@ export function useTraceabilityMutations() {
       toast.success('Lote atualizado');
     },
     onError: (error) => {
-      toast.error('Erro ao atualizar lote: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar lote');
     }
   });
 
@@ -260,7 +261,7 @@ export function useTraceabilityMutations() {
       toast.success('Componente adicionado');
     },
     onError: (error) => {
-      toast.error('Erro ao adicionar componente: ' + error.message);
+      showErrorToast(error, 'Erro ao adicionar componente');
     }
   });
 
@@ -285,7 +286,7 @@ export function useTraceabilityMutations() {
       toast.success('Movimentação registrada');
     },
     onError: (error) => {
-      toast.error('Erro ao registrar movimentação: ' + error.message);
+      showErrorToast(error, 'Erro ao registrar movimentação');
     }
   });
 
@@ -310,7 +311,7 @@ export function useTraceabilityMutations() {
       toast.success('Inspeção registrada');
     },
     onError: (error) => {
-      toast.error('Erro ao registrar inspeção: ' + error.message);
+      showErrorToast(error, 'Erro ao registrar inspeção');
     }
   });
 

@@ -66,7 +66,7 @@ export function MaterialCalculator({
             <div key={idx} className={cn(
               "flex flex-col p-3 bg-muted/30 rounded-lg border border-border/50 group hover:border-primary/30 transition-colors",
               isOutOfStock && "border-red-500/30 bg-red-500/5",
-              isLowStock && !isOutOfStock && "border-amber-500/30 bg-amber-500/5"
+              isLowStock && !isOutOfStock && "border-warning/30 bg-warning/5"
             )}>
               <div className="flex items-start justify-between">
                 <div className="flex flex-col">
@@ -84,7 +84,7 @@ export function MaterialCalculator({
                 <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between">
                   <span className={cn(
                     "text-[9px] font-black uppercase tracking-tighter",
-                    isOutOfStock ? "text-red-500" : isLowStock ? "text-amber-600" : "text-emerald-600"
+                    isOutOfStock ? "text-red-500" : isLowStock ? "text-warning" : "text-success"
                   )}>
                     {isOutOfStock ? "SEM ESTOQUE" : isLowStock ? "ESTOQUE CRÍTICO" : "DISPONÍVEL"}
                   </span>

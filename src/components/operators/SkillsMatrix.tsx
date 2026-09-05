@@ -36,7 +36,7 @@ export function SkillsMatrix() {
   const getLevelBadge = (level: SkillLevel | null) => {
     switch (level) {
       case 'expert':
-        return <Badge className="bg-emerald-500 hover:bg-emerald-600 border-none shadow-glow-success"><Star className="h-3 w-3 mr-1" /> Expert</Badge>;
+        return <Badge className="bg-success hover:bg-success border-none shadow-glow-success"><Star className="h-3 w-3 mr-1" /> Expert</Badge>;
       case 'advanced':
         return <Badge className="bg-blue-500 hover:bg-blue-600 border-none shadow-glow-primary"><Award className="h-3 w-3 mr-1" /> Sênior</Badge>;
       case 'basic':

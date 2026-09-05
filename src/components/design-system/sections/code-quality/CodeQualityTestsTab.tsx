@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FileCode } from 'lucide-react';
-import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from '@/lib/recharts';
 
 interface Props {
   testDistributionData: { name: string; value: number; color: string }[];

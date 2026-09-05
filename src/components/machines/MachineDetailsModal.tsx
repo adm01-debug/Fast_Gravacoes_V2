@@ -22,8 +22,16 @@ import { Badge } from "@/components/ui/badge";
 import { calculateRealOEE } from "@/features/production";
 import { useSchedulingData } from "@/features/jobs";
 
+interface MachineSummary {
+  id: string;
+  code: string;
+  name: string;
+  is_active: boolean;
+  technique_id?: string | null;
+}
+
 interface MachineDetailsModalProps {
-  machine: any | null;
+  machine: MachineSummary | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -142,7 +150,7 @@ function MachineHistoryTab({ machineId }: { machineId: string }) {
     fromDate: period.fromDate,
     toDate: period.toDate,
   });
-  const { exportAuditTrail } = useDataExport('machines' as any);
+  const { exportAuditTrail } = useDataExport('machines');
 
   const handleExport = useCallback(() => {
     exportAuditTrail({

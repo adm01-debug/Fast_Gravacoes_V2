@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { FactoryFloorMap } from '@/components/digital-twin/FactoryFloorMap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,14 +40,14 @@ export default function DigitalTwin() {
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-display font-black tracking-tighter flex items-center gap-3">
-              <Cpu className="h-8 w-8 text-primary animate-pulse" />
+            <h1 className="text-3xl text-title font-black tracking-tighter flex items-center gap-3">
+              <Cpu className="h-8 w-8 text-primary motion-safe:animate-pulse" />
               Gêmeo Digital 12/10 (IA Quântica)
             </h1>
             <p className="text-muted-foreground mt-1 font-medium italic">Simulação de Hiper-Performance e Orquestração Global Autônoma</p>
           </div>
           <div className="flex flex-wrap gap-2">
-             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 font-black gap-2 h-9 px-4">
+             <Badge variant="outline" className="bg-success/10 text-success border-success/20 font-black gap-2 h-9 px-4">
                 <Sparkles className="h-4 w-4" /> SECURE HASH: 100% OK
              </Badge>
              <Button variant="outline" className="gap-2 border-primary/20 hover:bg-primary/5">
@@ -75,7 +75,7 @@ export default function DigitalTwin() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-black">{totalEnergyToday.toFixed(1)} <span className="text-sm font-bold text-muted-foreground">kW/h</span></p>
-                    <div className="mt-2 flex items-center gap-1 text-emerald-500 text-[10px] font-bold">
+                    <div className="mt-2 flex items-center gap-1 text-success text-[10px] font-bold">
                        <TrendingUp className="h-3 w-3" /> Sincronizado com Fábrica
                     </div>
                   </CardContent>
@@ -90,7 +90,7 @@ export default function DigitalTwin() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-black text-primary">{oee.toFixed(1)} <span className="text-sm font-bold text-muted-foreground">%</span></p>
-                    <div className="mt-2 flex items-center gap-1 text-emerald-500 text-[10px] font-bold">
+                    <div className="mt-2 flex items-center gap-1 text-success text-[10px] font-bold">
                        <TrendingUp className="h-3 w-3" /> {oee > 90 ? 'Excelente' : 'Abaixo da Meta'}
                     </div>
                   </CardContent>
@@ -105,7 +105,7 @@ export default function DigitalTwin() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-black">{machinesCount} <span className="text-sm font-bold text-muted-foreground">Estatísticas</span></p>
-                    <div className="mt-2 flex items-center gap-1 text-amber-500 text-[10px] font-bold">
+                    <div className="mt-2 flex items-center gap-1 text-warning text-[10px] font-bold">
                        <Info className="h-3 w-3" /> {kpiData?.inProgressJobs || 0} OPs em execução
                     </div>
                   </CardContent>

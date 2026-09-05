@@ -75,7 +75,7 @@ export function ABCActivityRatesCard({
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-title">
           <Activity className="h-5 w-5 text-primary" />
           Taxas por Atividade
         </CardTitle>

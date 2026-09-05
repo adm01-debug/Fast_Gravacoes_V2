@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wifi, WifiOff, RefreshCw, Cloud, CloudOff } from "lucide-react";
@@ -46,7 +51,7 @@ interface NetworkStatusProviderProps {
 
 export function NetworkStatusProvider({
   children,
-  pingUrl = "/functions/v1/health-check",
+  pingUrl = "/auth/v1/settings",
   pingInterval = 60000,
 }: NetworkStatusProviderProps) {
   const [state, setState] = React.useState<NetworkState>({

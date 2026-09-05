@@ -25,11 +25,28 @@ import { parseDateOnly } from '@/lib/dateUtils';
 import { ProductionPhotos } from '@/components/production/ProductionPhotos';
 import { Skeleton } from '@/components/ui/skeleton';
 
+interface TrackingJob {
+  id: string;
+  order_number: string;
+  status: string;
+  client: string | null;
+  product: string | null;
+  scheduled_date: string | null;
+  production_photos?: string[] | null;
+  shipment?: {
+    tracking_code?: string | null;
+    status?: string | null;
+    estimated_delivery?: string | null;
+    actual_delivery?: string | null;
+    provider?: { name?: string | null } | null;
+  } | null;
+}
+
 export default function PublicTrackingPage() {
   const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [job, setJob] = useState<any>(null);
+  const [job, setJob] = useState<TrackingJob | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,7 +111,7 @@ export default function PublicTrackingPage() {
       } else {
         setJob(data);
       }
-    } catch (err: any) {
+    } catch {
       setError(t('tracking.errorFetching'));
 
     } finally {
@@ -110,7 +127,7 @@ export default function PublicTrackingPage() {
   });
 
   const getStatusInfo = (status: string) => {
-    const maps: Record<string, { label: string, color: string, icon: any }> = {
+    const maps: Record<string, { label: string, color: string, icon: React.ComponentType<{ className?: string }> }> = {
       queue: { label: t('jobs.statuses.queue'), color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20', icon: Clock },
       ready: { label: t('jobs.statuses.ready'), color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Package },
       scheduled: { label: t('jobs.statuses.scheduled'), color: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Calendar },
@@ -139,7 +156,7 @@ export default function PublicTrackingPage() {
             <ShieldCheck className="h-3 w-3" />
             {t('tracking.portalName')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter mb-4">
+          <h1 className="text-4xl sm:text-5xl text-title font-black tracking-tighter mb-4">
             {t('tracking.title')}
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
@@ -265,7 +282,7 @@ export default function PublicTrackingPage() {
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('tracking.deliveryForecast')}</p>
                       <div className="flex items-center gap-2 text-lg font-bold">
                         <Calendar className="h-5 w-5 text-primary/70" />
-                        {job.scheduled_date ? format(parseDateOnly(job.scheduled_date)!, "dd 'de' MMMM", { locale: dateLocale }) : t('common.none')}
+                        {job.scheduled_date ? format(parseDateOnly(job.scheduled_date) ?? new Date(), "dd 'de' MMMM", { locale: dateLocale }) : t('common.none')}
                       </div>
                     </div>
                     {job.shipment && (
@@ -273,7 +290,7 @@ export default function PublicTrackingPage() {
                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('tracking.shippingStatus')} ({job.shipment.provider?.name})</p>
                         <div className="flex items-center gap-2 text-lg font-bold">
                           <Truck className="h-5 w-5 text-primary/70" />
-                          {shippingStatusMap[job.shipment.status] || t('logistics.status.pending')}
+                          {(job.shipment.status && shippingStatusMap[job.shipment.status]) || t('logistics.status.pending')}
                         </div>
                       </div>
                     )}
@@ -306,6 +323,6 @@ export default function PublicTrackingPage() {
   );
 }
 
-function cn(...inputs: any[]) {
+function cn(...inputs: Array<string | false | null | undefined>) {
   return inputs.filter(Boolean).join(' ');
 }

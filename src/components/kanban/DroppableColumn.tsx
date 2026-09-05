@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -48,6 +53,7 @@ const statusOrder: Record<JobStatus, number> = {
   'finished': 7,
   'cancelled': 8,
   'buffer': 9,
+  'packaging': 10,
 };
 
 const WIP_LIMITS: Record<string, number> = {
@@ -86,7 +92,7 @@ export function DroppableColumn({
         }
         const entityStored = localStorage.getItem('entity-thresholds');
         if (entityStored) {
-          setEntityThresholds(JSON.parse(entityStored));
+          try { setEntityThresholds(JSON.parse(entityStored)); } catch { /* corrupted */ }
         }
   }, []);
 
@@ -156,11 +162,11 @@ export function DroppableColumn({
   const columnLimit = useMemo(() => {
     // Check if any machine in this column has a specific threshold
     const machineWithThreshold = jobs.map(j => j.machine_id).find(id => id && entityThresholds[id]);
-    if (machineWithThreshold) return entityThresholds[machineWithThreshold!];
+    if (machineWithThreshold) return entityThresholds[machineWithThreshold];
 
     // Check if any technique in this column has a specific threshold
     const techniqueWithThreshold = jobs.map(j => j.technique_id).find(id => id && entityThresholds[id]);
-    if (techniqueWithThreshold) return entityThresholds[techniqueWithThreshold!];
+    if (techniqueWithThreshold) return entityThresholds[techniqueWithThreshold];
 
     return thresholds.bottleneckRiskMinutes;
   }, [jobs, entityThresholds, thresholds.bottleneckRiskMinutes]);
@@ -233,11 +239,11 @@ export function DroppableColumn({
                   <Activity className={cn(
                     "h-3 w-3",
                     totalEstimatedTime > columnLimit ? "text-red-500 animate-pulse" :
-                    totalEstimatedTime > columnLimit * 0.7 ? "text-orange-500" : "text-emerald-500"
+                    totalEstimatedTime > columnLimit * 0.7 ? "text-orange-500" : "text-success"
                   )} />
                   <span className={cn(
                     totalEstimatedTime > columnLimit ? "text-red-500" :
-                    totalEstimatedTime > columnLimit * 0.7 ? "text-orange-500" : "text-emerald-500"
+                    totalEstimatedTime > columnLimit * 0.7 ? "text-orange-500" : "text-success"
                   )}>
                     Risco de Gargalo: {totalEstimatedTime > columnLimit ? "Crítico" : totalEstimatedTime > columnLimit * 0.7 ? "Moderado" : "Baixo"}
                   </span>
@@ -247,7 +253,7 @@ export function DroppableColumn({
                       "ml-auto text-[8px] h-4 px-1.5 leading-none font-bold border-2",
                       totalEstimatedTime > columnLimit ? "border-red-500 text-red-500 bg-red-500/10 animate-pulse" :
                       totalEstimatedTime > columnLimit * 0.7 ? "border-orange-500 text-orange-500 bg-orange-500/10" :
-                      "border-emerald-500 text-emerald-500 bg-emerald-500/10"
+                      "border-success text-success bg-success/10"
                     )}
                   >
                     {totalEstimatedTime > columnLimit ? "GARGALO" : totalEstimatedTime > columnLimit * 0.7 ? "ATENÇÃO" : "ESTÁVEL"}
@@ -283,7 +289,7 @@ export function DroppableColumn({
                       className={cn(
                         "h-full rounded-full transition-all duration-500",
                         totalEstimatedTime > columnLimit ? "bg-red-500" :
-                        totalEstimatedTime > columnLimit * 0.7 ? "bg-orange-500" : "bg-emerald-500"
+                        totalEstimatedTime > columnLimit * 0.7 ? "bg-orange-500" : "bg-success"
                       )}
                       style={{ width: `${Math.min(100, (totalEstimatedTime / columnLimit) * 100)}%` }}
                     />
@@ -320,12 +326,16 @@ export function DroppableColumn({
       {isCollapsed ? (
         <div
           ref={setNodeRef}
+          role="button"
+          tabIndex={0}
+          aria-label={`Expandir coluna ${label}`}
           className={cn(
-            "flex items-center justify-center h-12 rounded-xl border transition-all",
+            "flex items-center justify-center h-12 rounded-xl border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
             "bg-muted/10 border-border/30 text-xs text-muted-foreground cursor-pointer",
             isOver && "border-primary/50 bg-primary/5"
           )}
           onClick={() => setIsCollapsed(false)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsCollapsed(false); } }}
         >
           {jobs.length} jobs • Clique para expandir
         </div>

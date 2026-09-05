@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { logger } from '@/lib/logger';
 
 export type Machine = Database['public']['Tables']['machines']['Row'];
 export type MachineHealthMetric = Database['public']['Tables']['machine_health_metrics']['Row'];
@@ -8,8 +9,10 @@ export const machinesService = {
   async getAll(): Promise<Machine[]> {
     const { data, error } = await supabase.from('machines').select('*').order('name');
     if (error) {
-      console.error('Failed to fetch machines:', error);
-      return [];
+      // Throw instead of swallowing: a connectivity/RLS failure must not be
+      // indistinguishable from "no machines" (see jobsService.getAll).
+      logger.error('Failed to fetch machines', error, 'machinesService');
+      throw error;
     }
     return data || [];
   },

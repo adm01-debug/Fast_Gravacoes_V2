@@ -25,7 +25,7 @@ export function OperatorLeaderboard() {
     switch (position) {
       case 1: return <Trophy className="h-6 w-6 text-yellow-500 animate-bounce" />;
       case 2: return <Medal className="h-6 w-6 text-slate-400" />;
-      case 3: return <Medal className="h-6 w-6 text-amber-600" />;
+      case 3: return <Medal className="h-6 w-6 text-warning" />;
       default: return <span className="font-bold text-lg text-muted-foreground">#{position}</span>;
     }
   };
@@ -88,7 +88,7 @@ export function OperatorLeaderboard() {
                       {ranking.efficiencyRate}% Eficiência
                     </div>
                     <div className="flex items-center gap-1 text-[10px] text-muted-foreground uppercase font-bold">
-                      <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                      <ShieldCheck className="h-3 w-3 text-success" />
                       {ranking.qualityRate}% Qualidade
                     </div>
                     <div className="flex items-center gap-1 text-[10px] text-muted-foreground uppercase font-bold">

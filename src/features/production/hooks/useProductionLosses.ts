@@ -67,45 +67,52 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
 
   const recordLoss = useMutation({
     mutationFn: async (data: Omit<ProductionLoss, 'id' | 'created_at'>) => {
-      const { data: result, error } = await supabase
-        .from('production_losses')
-        .insert(data)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Update total lost_pieces on the job
-      const { data: job } = await supabase.from('jobs').select('lost_pieces, start_time, actual_start_time').eq('id', data.job_id).single();
-      const currentLosses = job?.lost_pieces || 0;
-
-      // Auto-detect shift based on job time if not provided
+      // Resolve shift before insert to avoid a follow-up UPDATE
       let shift = data.shift;
       if (!shift) {
+        const { data: job } = await supabase
+          .from('jobs')
+          .select('start_time, actual_start_time')
+          .eq('id', data.job_id)
+          .single();
         const timeToUse = job?.actual_start_time || job?.start_time;
         if (timeToUse) {
-          let hour: number;
-          if (timeToUse.includes('T')) {
-            hour = new Date(timeToUse).getHours();
-          } else {
-            hour = parseInt(timeToUse.split(':')[0], 10);
-          }
-          
+          const hour = timeToUse.includes('T')
+            ? new Date(timeToUse).getHours()
+            : parseInt(timeToUse.split(':')[0], 10);
           if (hour >= 7 && hour < 15) shift = '1';
           else if (hour >= 15 && hour < 23) shift = '2';
           else shift = '3';
         }
       }
 
-      await supabase
+      const { data: result, error } = await supabase
         .from('production_losses')
-        .update({ shift })
-        .eq('id', result.id);
+        .insert({ ...data, shift })
+        .select()
+        .single();
 
-      await supabase
-        .from('jobs')
-        .update({ lost_pieces: currentLosses + data.quantity })
-        .eq('id', data.job_id);
+      if (error) throw error;
+
+      // Use atomic SQL increment to avoid lost-update race condition
+      // RPC não presente nos tipos gerados; cast controlado via `never` do postgrest-js.
+      const { error: rpcError } = await supabase.rpc('increment_job_lost_pieces' as never, {
+        p_job_id: data.job_id,
+        p_amount: data.quantity,
+      } as never);
+
+      if (rpcError) {
+        // Fallback: read-modify-write (less safe under concurrency)
+        const { data: job } = await supabase
+          .from('jobs')
+          .select('lost_pieces')
+          .eq('id', data.job_id)
+          .single();
+        await supabase
+          .from('jobs')
+          .update({ lost_pieces: (job?.lost_pieces || 0) + data.quantity })
+          .eq('id', data.job_id);
+      }
 
       return result;
     },
@@ -114,8 +121,8 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       toast.success('Perda registrada com sucesso');
     },
-    onError: (error: Error) => {
-      toast.error('Erro ao registrar perda: ' + error.message);
+    onError: () => {
+      toast.error('Erro ao registrar perda. Tente novamente.');
     }
   });
 

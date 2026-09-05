@@ -9,6 +9,7 @@ vi.mock('@/integrations/supabase/client', () => {
     select: vi.fn().mockReturnThis(),
     update: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
@@ -69,8 +70,9 @@ describe('useOfflineSync', () => {
       result.current.updateJobOffline('job-1', { status: 'production' });
     });
 
-    const mockTable = (supabase.from('jobs') as any);
-    mockTable.then.mockImplementationOnce((onFulfilled: any) => {
+    type MockTable = { then: { mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void } };
+    const mockTable = supabase.from('jobs') as unknown as MockTable;
+    mockTable.then.mockImplementationOnce((onFulfilled) => {
       return Promise.resolve({ data: [], error: null }).then(onFulfilled);
     });
 
@@ -94,8 +96,9 @@ describe('useOfflineSync', () => {
       result.current.updateJobOffline('job-1', { status: 'production' });
     });
 
-    const mockTable = (supabase.from('jobs') as any);
-    mockTable.then.mockImplementationOnce((onFulfilled: any) => {
+    type MockTable = { then: { mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void } };
+    const mockTable = supabase.from('jobs') as unknown as MockTable;
+    mockTable.then.mockImplementationOnce((onFulfilled) => {
       return Promise.resolve({ data: null, error: new Error('Network error') }).then(onFulfilled);
     });
 
@@ -110,5 +113,86 @@ describe('useOfflineSync', () => {
 
     expect(result.current.pendingActionsCount).toBe(1);
     expect(result.current.pendingActions[0].retryCount).toBe(1);
+  });
+
+  it('detects a conflict instead of blindly overwriting a job that changed on the server while queued', async () => {
+    type MockTable = {
+      then: {
+        mockImplementation: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void;
+        mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void;
+      };
+    };
+    const mockTable = supabase.from('jobs') as unknown as MockTable;
+
+    // cacheData() resolves jobs/machines/techniques in parallel — seed a job
+    // with updated_at='t1' so updateJobOffline can capture it as baseUpdatedAt.
+    mockTable.then.mockImplementation((onFulfilled: (v: unknown) => unknown) =>
+      Promise.resolve({ data: [{ id: 'job-1', updated_at: 't1' }], error: null }).then(onFulfilled)
+    );
+
+    const { result } = renderHook(() => useOfflineSync());
+    await act(async () => {
+      await result.current.cacheData();
+    });
+    expect(result.current.cachedData?.jobs[0]).toMatchObject({ id: 'job-1', updated_at: 't1' });
+
+    await act(async () => {
+      setOnline(false);
+    });
+    await act(async () => {
+      result.current.updateJobOffline('job-1', { status: 'production' });
+    });
+    expect(result.current.pendingActionsCount).toBe(1);
+
+    // Server row's updated_at no longer matches 't1' — the conditional
+    // .eq('updated_at', baseUpdatedAt) filters it out, so the update matches
+    // zero rows. That must surface as a conflict, not a silent no-op success.
+    mockTable.then.mockImplementationOnce((onFulfilled: (v: unknown) => unknown) =>
+      Promise.resolve({ data: [], error: null }).then(onFulfilled)
+    );
+
+    await act(async () => {
+      setOnline(true);
+    });
+    await act(async () => {
+      await result.current.syncPendingActions();
+    });
+
+    expect(result.current.pendingActionsCount).toBe(0);
+    expect(result.current.failedActionsCount).toBe(1);
+    expect(result.current.failedActions[0].reason).toBe('conflict');
+  });
+
+  it('replays a queued QR scan via upsert keyed on the action id (idempotent retry)', async () => {
+    type MockTable = {
+      then: { mockImplementationOnce: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void };
+      upsert: ReturnType<typeof vi.fn>;
+    };
+    const mockTable = supabase.from('qr_scan_history') as unknown as MockTable;
+
+    setOnline(false);
+    const { result } = renderHook(() => useOfflineSync());
+    await act(async () => {
+      result.current.recordQRScanOffline('job-1', 'operator-1', 'start');
+    });
+    expect(result.current.pendingActionsCount).toBe(1);
+    const queuedId = result.current.pendingActions[0].id;
+
+    mockTable.then.mockImplementationOnce((onFulfilled: (v: unknown) => unknown) =>
+      Promise.resolve({ data: null, error: null }).then(onFulfilled)
+    );
+
+    await act(async () => {
+      setOnline(true);
+    });
+    await act(async () => {
+      await result.current.syncPendingActions();
+    });
+
+    expect(result.current.pendingActionsCount).toBe(0);
+    expect(mockTable.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ id: queuedId, job_id: 'job-1' }),
+      { onConflict: 'id' }
+    );
   });
 });

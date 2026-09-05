@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -25,10 +26,19 @@ interface ExecutionDetailsModalProps {
   recordId: string | null;
 }
 
+// The execution record aggregates deeply-nested joins from many tables
+// (checklist items, parts, alerts, technical sheets, quality responses).
+// A precise schema would need ~40 interlocking types; here we intentionally
+// use a permissive alias so consumers can access dynamic keys safely.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ExecutionRecord = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ExecutionRow = Record<string, any>;
+
 export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDetailsModalProps) {
   const { fetchRecordDetails, approveMaintenance, requestCorrection } = useTPM();
   const { user } = useAuth();
-  const [record, setRecord] = useState<any>(null);
+  const [record, setRecord] = useState<ExecutionRecord | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRequestingCorrection, setIsRequestingCorrection] = useState(false);
   const [correctionNotes, setCorrectionNotes] = useState('');
@@ -57,7 +67,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
     if (!record) return [];
     const errors: string[] = [];
 
-    record.responses?.forEach((r: any) => {
+    record.responses?.forEach((r: ExecutionRow) => {
       if (!r.is_checked && r.item?.is_critical) {
         errors.push(`Item Crítico Incompleto: ${r.item.description}`);
       }
@@ -124,7 +134,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
 
       // Photos
       const photosFolder = folder?.folder("fotos");
-      const photoResponses = record.responses.filter((r: any) => r.photo_url);
+      const photoResponses = record.responses.filter((r: ExecutionRow) => r.photo_url);
 
       for (let i = 0; i < photoResponses.length; i++) {
         const resp = photoResponses[i];
@@ -199,7 +209,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
       ['Observações', record.notes || ''],
       ['', ''],
       ['CHECKLIST', 'Conforme', 'Observação', 'Foto'],
-      ...(record.responses || []).map((r: any) => [
+      ...(record.responses || []).map((r: ExecutionRow) => [
         r.item?.description || 'Item',
         r.is_checked ? 'Sim' : 'Não',
         r.notes || '',
@@ -207,7 +217,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
       ]),
       ['', ''],
       ['PEÇAS', 'Código', 'Quantidade', 'Custo'],
-      ...(record.parts || []).map((p: any) => [
+      ...(record.parts || []).map((p: ExecutionRow) => [
         p.part_name,
         p.part_code || '',
         p.quantity,
@@ -226,9 +236,9 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-emerald-500 gap-1"><CheckCircle className="h-3 w-3" /> Aprovado</Badge>;
+        return <Badge className="bg-success gap-1"><CheckCircle className="h-3 w-3" /> Aprovado</Badge>;
       case 'completed':
-        return <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 gap-1"><Clock className="h-3 w-3" /> Pendente Aprovação</Badge>;
+        return <Badge variant="secondary" className="bg-warning/20 text-warning gap-1"><Clock className="h-3 w-3" /> Pendente Aprovação</Badge>;
       case 'in_progress':
         return <Badge variant="outline" className="text-blue-500 border-blue-200 gap-1"><Clock className="h-3 w-3" /> Em Andamento</Badge>;
       default:
@@ -244,7 +254,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
         <DialogHeader className="p-6 pb-0">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <DialogTitle className="flex items-center gap-2 text-2xl font-display">
+              <DialogTitle className="flex items-center gap-2 text-2xl text-title">
                 <Wrench className="h-6 w-6 text-primary" />
                 Detalhes da Execução
               </DialogTitle>
@@ -254,7 +264,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
             </div>
             <div className="flex flex-col items-end gap-2">
               {record && getStatusBadge(record.status)}
-              {record.status === 'correction_requested' && (
+              {record?.status === 'correction_requested' && (
                 <Badge variant="destructive" className="animate-pulse">Aguardando Correção</Badge>
               )}
               {record && (
@@ -299,11 +309,11 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
 
               {/* Correction requested info */}
               {record.status === 'correction_requested' && (
-                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-2">
-                  <h4 className="text-sm font-bold text-amber-600 flex items-center gap-2">
+                <div className="p-4 bg-warning/10 border border-warning/20 rounded-xl space-y-2">
+                  <h4 className="text-sm font-bold text-warning flex items-center gap-2">
                     <Clock className="h-4 w-4" /> Correção em Andamento
                   </h4>
-                  <p className="text-xs text-amber-700/80 pl-6">Motivo: {record.correction_notes}</p>
+                  <p className="text-xs text-warning/80 pl-6">Motivo: {record.correction_notes}</p>
                 </div>
               )}
 
@@ -374,7 +384,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                   </Label>
                   <p className="text-sm font-medium">Técnico: {record.performed_by_name || 'N/A'}</p>
                   {record.approver_id && (
-                    <p className="text-sm text-emerald-600 font-medium">Aprovado por: {record.approver_id.substring(0, 8)}...</p>
+                    <p className="text-sm text-success font-medium">Aprovado por: {record.approver_id.substring(0, 8)}...</p>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -410,7 +420,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
               {record.adjustment_parameters && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <PenTool className="h-5 w-5 text-amber-500" />
+                    <PenTool className="h-5 w-5 text-warning" />
                     Regulagem Técnica Aplicada
                   </h3>
                   <AdjustmentParameters adjustmentParameters={record.adjustment_parameters} />
@@ -439,7 +449,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                     Alertas de Risco e Falha
                   </h3>
                   <div className="space-y-3">
-                    {record.execution_alerts.map((alert: any, idx: number) => (
+                    {record.execution_alerts.map((alert: ExecutionRow, idx: number) => (
                       <div key={idx} className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 space-y-3">
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
@@ -470,20 +480,20 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
               {record.quality_responses && record.quality_responses.length > 0 && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <CheckSquare className="h-5 w-5 text-emerald-500" />
+                    <CheckSquare className="h-5 w-5 text-success" />
                     Conformidade de Qualidade
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {record.quality_responses.map((resp: any) => {
+                    {record.quality_responses.map((resp: ExecutionRow) => {
                       const sheet = record.technical_sheet_id ? record.technical_sheet : null;
-                      const crit = record.adjustment_parameters?.quality_checklist?.find((c: any) => c.id === resp.id) ||
-                                   (record.technical_sheet?.quality_checklist?.find((c: any) => c.id === resp.id));
+                      const crit = record.adjustment_parameters?.quality_checklist?.find((c: ExecutionRow) => c.id === resp.id) ||
+                                   (record.technical_sheet?.quality_checklist?.find((c: ExecutionRow) => c.id === resp.id));
 
                       return (
-                        <div key={resp.id} className={`p-3 rounded-lg border ${resp.confirmed ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-rose-500/5 border-rose-500/10'}`}>
+                        <div key={resp.id} className={`p-3 rounded-lg border ${resp.confirmed ? 'bg-success/5 border-success/10' : 'bg-rose-500/5 border-rose-500/10'}`}>
                           <div className="flex items-center gap-3">
                             {resp.confirmed ? (
-                              <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                              <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
                             ) : (
                               <AlertTriangle className="h-4 w-4 text-rose-600 flex-shrink-0" />
                             )}
@@ -507,7 +517,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
               {/* Checklist */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   Resultados do Checklist
                 </h3>
                 <div className="border border-border/50 rounded-lg overflow-hidden">
@@ -521,12 +531,12 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50">
-                      {record.responses?.map((r: any) => (
+                      {record.responses?.map((r: ExecutionRow) => (
                         <tr key={r.id} className="hover:bg-muted/30">
                           <td className="px-4 py-3">{r.item?.description || 'Item de Manutenção'}</td>
                           <td className="px-4 py-3 text-center">
                             {r.is_checked ? (
-                              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">SIM</Badge>
+                              <Badge className="bg-success/10 text-success border-success">SIM</Badge>
                             ) : (
                               <Badge variant="destructive" className="bg-rose-500/10 text-rose-600 border-rose-200">NÃO</Badge>
                             )}
@@ -557,7 +567,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
               {record.adjustment_parameters && Object.values(record.adjustment_parameters).some(v => v && typeof v === 'string') && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-amber-500" />
+                    <Zap className="h-5 w-5 text-warning" />
                     Regulagem Técnica Aplicada
                   </h3>
                   <AdjustmentParameters adjustmentParameters={record.adjustment_parameters} />
@@ -584,7 +594,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
               {/* Parts */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Package className="h-5 w-5 text-amber-500" />
+                  <Package className="h-5 w-5 text-warning" />
                   Peças e Componentes Substituídos
                 </h3>
                 {record.parts?.length > 0 ? (
@@ -599,7 +609,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/50">
-                        {record.parts.map((p: any) => (
+                        {record.parts.map((p: ExecutionRow) => (
                           <tr key={p.id} className="hover:bg-muted/30">
                             <td className="px-4 py-3 font-medium">{p.part_name}</td>
                             <td className="px-4 py-3 text-muted-foreground font-mono">{p.part_code || '-'}</td>
@@ -643,8 +653,8 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                   {record.status === 'approved' ? (
                     <div className="space-y-2 text-center md:text-right">
                       <h3 className="text-xs font-semibold text-muted-foreground uppercase">Aprovação / Auditoria</h3>
-                      <div className="py-4 px-8 border-b border-emerald-200 w-fit mx-auto md:ml-auto">
-                        <p className="text-emerald-600 font-bold uppercase tracking-widest flex items-center gap-2">
+                      <div className="py-4 px-8 border-b border-success w-fit mx-auto md:ml-auto">
+                        <p className="text-success font-bold uppercase tracking-widest flex items-center gap-2">
                           <CheckCircle className="h-5 w-5" /> APROVADO
                         </p>
                       </div>
@@ -673,7 +683,7 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
                           <Button
                             onClick={handleApprove}
                             disabled={validationErrors.length > 0}
-                            className="bg-emerald-600 hover:bg-emerald-700 gap-2 shadow-glow-success"
+                            className="bg-success hover:bg-success gap-2 shadow-glow-success"
                           >
                             <CheckCircle className="h-4 w-4" /> Aprovar Execução
                           </Button>

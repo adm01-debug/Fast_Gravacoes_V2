@@ -52,11 +52,11 @@ export function HolographicReliabilityWidget() {
 
            <div className="p-3 rounded-xl bg-background/60 border border-border/50 backdrop-blur-md">
               <div className="flex items-center gap-2 mb-2">
-                 <Zap className="h-3.5 w-3.5 text-amber-500" />
+                 <Zap className="h-3.5 w-3.5 text-warning" />
                  <span className="text-[10px] font-black uppercase">Predictive Peak</span>
               </div>
               <p className="text-[9px] text-muted-foreground">Zero paradas não planejadas detectadas nas últimas 480h.</p>
-              <Badge variant="outline" className="mt-2 text-[8px] h-4 border-amber-500/20 text-amber-600">ZERO DOWNTIME</Badge>
+              <Badge variant="outline" className="mt-2 text-[8px] h-4 border-warning/20 text-warning">ZERO DOWNTIME</Badge>
            </div>
         </div>
       </CardContent>

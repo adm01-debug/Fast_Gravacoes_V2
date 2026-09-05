@@ -39,7 +39,8 @@ function getAgingIndicator(updatedAt: string): { color: string; label: string; d
 
 function getDeadlineInfo(job: DbJob): { label: string; isOverdue: boolean; color: string } | null {
   if (!job.scheduled_date) return null;
-  const scheduled = parseDateOnly(job.scheduled_date)!;
+  const scheduled = parseDateOnly(job.scheduled_date);
+  if (!scheduled) return null;
   const now = new Date();
   const diffDays = differenceInDays(scheduled, now);
 
@@ -83,10 +84,13 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
     return (
       <div
         ref={setNodeRef}
+        role="button"
+        tabIndex={0}
+        aria-label={`Abrir job ${job.order_number} - ${job.client}`}
         className={cn(
           "flex items-center gap-2 px-2 py-1.5 rounded-md border border-l-2 cursor-pointer transition-all",
           "bg-card/50 border-border/30 hover:bg-card hover:border-border",
-          "group touch-none text-xs",
+          "group touch-none text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           isDragging && "opacity-50 shadow-xl scale-105 z-50 ring-2 ring-primary",
           isSelected && "ring-2 ring-primary bg-primary/5"
         )}
@@ -95,8 +99,23 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
           borderLeftColor: technique?.color || 'transparent',
         }}
         onClick={onClick}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+            e.preventDefault();
+            onClick();
+          }
+        }}
       >
-        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing" onClick={(e) => e.stopPropagation()}>
+        <div
+          {...attributes}
+          {...listeners}
+          role="button"
+          tabIndex={-1}
+          aria-label="Arrastar job"
+          className="cursor-grab active:cursor-grabbing"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           <GripVertical className="h-3 w-3 text-muted-foreground" />
         </div>
         {onSelect && (
@@ -131,6 +150,9 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
   return (
     <div
       ref={setNodeRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`Abrir job ${job.order_number} - ${job.client}`}
       style={{
         ...style,
         borderLeftColor: technique?.color || undefined,
@@ -139,13 +161,19 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
         "p-3 rounded-lg border border-l-[3px] cursor-pointer transition-all duration-300",
         "bg-card/40 backdrop-blur-md border-border/40 shadow-sm",
         "hover:bg-card/70 hover:border-primary/40 hover:shadow-2xl hover:-translate-y-1",
-        "active:scale-95",
+        "active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "relative overflow-hidden group",
         isDragging && "opacity-50 shadow-2xl scale-105 z-50 ring-2 ring-primary",
         isSorting && "cursor-grabbing",
         isSelected && "ring-2 ring-primary bg-primary/10"
       )}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       {/* Background Glow Effect */}
       <div 
@@ -167,8 +195,12 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
           <div
             {...attributes}
             {...listeners}
+            role="button"
+            tabIndex={-1}
+            aria-label="Arrastar job"
             className="flex items-center gap-1 cursor-grab active:cursor-grabbing"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
           >
             <GripVertical className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
           </div>
@@ -224,7 +256,7 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
           {job.scheduled_date && (
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {format(parseDateOnly(job.scheduled_date)!, "dd/MM", { locale: ptBR })}
+              {format(parseDateOnly(job.scheduled_date) ?? new Date(), "dd/MM", { locale: ptBR })}
               {job.start_time && <span>{job.start_time}</span>}
             </span>
           )}
@@ -243,7 +275,7 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
             </Badge>
           ))}
           {outOfStockItems.length === 0 && lowStockItems.map(item => (
-            <Badge key={item} variant="outline" className="text-[8px] px-1 py-0 h-4 font-black uppercase bg-amber-500/10 text-amber-500 border-amber-500/30">
+            <Badge key={item} variant="outline" className="text-[8px] px-1 py-0 h-4 font-black uppercase bg-warning/10 text-warning border-warning/30">
               BAIXO {item}
             </Badge>
           ))}

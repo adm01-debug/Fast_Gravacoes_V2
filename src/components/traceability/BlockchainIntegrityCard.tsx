@@ -33,17 +33,17 @@ export function BlockchainIntegrityCard() {
                       <span className="text-[9px] font-mono text-muted-foreground">{block.hash}</span>
                    </div>
                 </div>
-                <Badge variant={block.status === 'verified' ? 'outline' : 'secondary'} className={block.status === 'verified' ? 'text-emerald-500 border-emerald-500/20' : 'animate-pulse'}>
+                <Badge variant={block.status === 'verified' ? 'outline' : 'secondary'} className={block.status === 'verified' ? 'text-success border-success/20' : 'animate-pulse'}>
                    {block.status === 'verified' ? 'VALID' : 'SYNC...'}
                 </Badge>
              </div>
            ))}
         </div>
 
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+        <div className="p-3 rounded-xl bg-success/10 border border-success/20">
            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              <span className="text-[10px] font-black text-emerald-600 uppercase">Integridade Garantida</span>
+              <ShieldCheck className="h-3.5 w-3.5 text-success" />
+              <span className="text-[10px] font-black text-success uppercase">Integridade Garantida</span>
            </div>
            <p className="text-[9px] text-muted-foreground leading-relaxed">
              Toda a genealogia de lotes está criptografada e vinculada à Master API industrial, garantindo zero-falsificação em auditorias.

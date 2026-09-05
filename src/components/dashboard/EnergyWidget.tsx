@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer
-} from 'recharts';
+} from '@/lib/recharts';
 
 export function EnergyWidget() {
   const { stats, isLoading } = useEnergy();
@@ -34,7 +34,7 @@ export function EnergyWidget() {
   return (
     <Card className="glass-card card-interactive animate-fade-in-up opacity-0 [animation-fill-mode:forwards] [animation-delay:0.25s]">
       <CardHeader className="pb-2 pt-3 px-3">
-        <CardTitle className="text-sm font-display flex items-center justify-between">
+        <CardTitle className="text-sm text-title flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg bg-yellow-500/20 flex items-center justify-center">
               <Zap className="w-3 h-3 text-yellow-500" />

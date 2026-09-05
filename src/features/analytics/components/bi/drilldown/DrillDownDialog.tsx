@@ -61,7 +61,7 @@ export function DrillDownDialog({ open, onOpenChange, title, jobs, onExport }: D
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-col">
               <div className="flex items-center gap-3">
-                <DialogTitle className="text-2xl font-display tracking-widest text-primary uppercase">
+                <DialogTitle className="text-2xl text-title tracking-widest text-primary uppercase">
                   {title}
                 </DialogTitle>
                 <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 h-6">
@@ -79,7 +79,7 @@ export function DrillDownDialog({ open, onOpenChange, title, jobs, onExport }: D
                 className="h-9 gap-2 bg-white/5 border-white/10 hover:bg-primary/20 text-xs text-white"
                 onClick={() => onExport('csv')}
               >
-                <FileSpreadsheet className="h-4 w-4 text-emerald-400" /> CSV
+                <FileSpreadsheet className="h-4 w-4 text-success" /> CSV
               </Button>
               <Button
                 variant="outline"
@@ -133,10 +133,10 @@ export function DrillDownDialog({ open, onOpenChange, title, jobs, onExport }: D
                       <TableCell className="text-center">
                         <Badge variant="outline" className={cn(
                           "text-[9px] uppercase tracking-tighter",
-                          job.status === 'finished' ? "text-emerald-400 border-emerald-400/30 bg-emerald-400/10" :
+                          job.status === 'finished' ? "text-success border-success/30 bg-success/10" :
                           job.status === 'production' ? "text-blue-400 border-blue-400/30 bg-blue-400/10" :
                           job.status === 'delayed' ? "text-primary border-primary/30 bg-primary/10" :
-                          "text-amber-400 border-amber-400/30 bg-amber-400/10"
+                          "text-warning border-warning/30 bg-warning/10"
                         )}>
                           {job.status}
                         </Badge>
@@ -146,7 +146,7 @@ export function DrillDownDialog({ open, onOpenChange, title, jobs, onExport }: D
                         {(job.lost_pieces || 0) > 0 ? (
                           <span className="text-primary font-bold text-xs">-{job.lost_pieces}</span>
                         ) : (
-                          <span className="text-emerald-400/50 text-xs">0</span>
+                          <span className="text-success/50 text-xs">0</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right font-mono text-primary/80">

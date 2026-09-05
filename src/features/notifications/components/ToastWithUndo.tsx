@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { X, Undo2, Check, AlertCircle, Info, AlertTriangle, Loader2, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { sanitizeUrl } from "@/lib/sanitize";
 
 type ToastType = "success" | "error" | "warning" | "info" | "default" | "loading" | "promise";
 
@@ -242,7 +243,7 @@ function ToastItem({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => window.open(link.href, "_blank")}
+                onClick={() => window.open(sanitizeUrl(link.href), "_blank")}
                 className="h-7 px-2"
               >
                 <ExternalLink className="h-3.5 w-3.5 mr-1" />
@@ -411,14 +412,14 @@ export const toast = {
 
     try {
       const result = await promise;
-      window.__toastManager?.updateToast(id!, {
+      window.__toastManager?.updateToast(String(id), {
         title: typeof messages.success === "function" ? messages.success(result) : messages.success,
         type: "success",
         duration: 5000,
       });
       return result;
     } catch (err) {
-      window.__toastManager?.updateToast(id!, {
+      window.__toastManager?.updateToast(String(id), {
         title: typeof messages.error === "function" ? messages.error(err as Error) : messages.error,
         type: "error",
         duration: 8000,

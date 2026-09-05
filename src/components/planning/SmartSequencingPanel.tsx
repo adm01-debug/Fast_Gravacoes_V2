@@ -81,8 +81,8 @@ export function SmartSequencingPanel({ onExplain }: SmartSequencingPanelProps) {
                     <Badge variant="outline" className={cn(
                       "text-[9px] font-black uppercase px-1.5 h-4",
                       suggestion.setupComplexity === 'high' ? "bg-red-500/10 text-red-500 border-red-500/20" :
-                      suggestion.setupComplexity === 'medium' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
-                      "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                      suggestion.setupComplexity === 'medium' ? "bg-warning/10 text-warning border-warning/20" :
+                      "bg-success/10 text-success border-success/20"
                     )}>
                       Setup {suggestion.setupComplexity === 'high' ? 'Complexo' : suggestion.setupComplexity === 'medium' ? 'Médio' : 'Simples'}
                     </Badge>
@@ -93,7 +93,7 @@ export function SmartSequencingPanel({ onExplain }: SmartSequencingPanelProps) {
                   </div>
                   <div className={cn(
                     "text-[10px] font-black flex items-center gap-1 uppercase tracking-tighter",
-                    suggestion.bottleneckRisk === 'high' ? "text-red-500" : suggestion.bottleneckRisk === 'medium' ? "text-amber-500" : "text-emerald-500"
+                    suggestion.bottleneckRisk === 'high' ? "text-red-500" : suggestion.bottleneckRisk === 'medium' ? "text-warning" : "text-success"
                   )}>
                     <Activity className="h-2.5 w-2.5" />
                     {suggestion.bottleneckRisk === 'high' ? 'Crítico' : suggestion.bottleneckRisk === 'medium' ? 'Alerta' : 'Estável'}

@@ -1,20 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 
 interface TelemetryPayload {
   operation: string;
@@ -90,6 +75,56 @@ export async function emitTelemetry(
   }
 }
 
+/**
+ * Validates a columns string to prevent FK path traversal.
+ * Only simple comma-separated identifiers are allowed — no spaces, no nested
+ * selects, no FK relationship expansion (e.g. "*, related_table(*)").
+ */
+const COLUMNS_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*(,[a-zA-Z_][a-zA-Z0-9_]*)*$/;
+
+export function validateColumns(columns: unknown): string | null {
+  if (!columns || columns === "*") return "*";
+  if (typeof columns !== "string") return null;
+  const trimmed = columns.trim();
+  if (!COLUMNS_PATTERN.test(trimmed)) return null;
+  return trimmed;
+}
+
+/**
+ * Defense-in-depth allowlist. Even admins must not use this bridge to
+ * hit auth/storage internals or arbitrary security-definer functions.
+ * Extend cautiously — every entry bypasses RLS.
+ */
+export const ALLOWED_TABLES = new Set<string>([
+  "jobs",
+  "job_status_audit",
+  "machines",
+  "operators",
+  "profiles",
+  "user_roles",
+  "inventory_items",
+  "inventory_movements",
+  "technical_sheets",
+  "maintenance_records",
+  "maintenance_schedules",
+  "audit_log",
+  "security_events",
+  "push_subscriptions",
+  "query_telemetry",
+  "webhook_logs",
+  "bitrix24_sync_history",
+]);
+
+export const ALLOWED_RPCS = new Set<string>([
+  "get_user_role",
+  "has_role",
+  "has_any_active_role",
+  "verify_audit_chain",
+  "increment_sheet_view_count",
+  "check_and_notify_kpi_alert",
+  "refresh_operator_rankings",
+]);
+
 /** Validate incoming bridge request */
 export function validateBridgeRequest(body: any): {
   valid: boolean;
@@ -109,13 +144,22 @@ export function validateBridgeRequest(body: any): {
   }
   const validActions = ["select", "insert", "update", "delete", "rpc", "upsert"];
   if (!validActions.includes(body.action)) {
-    return { valid: false, error: `Invalid action: ${body.action}. Allowed: ${validActions.join(", ")}` };
+    return { valid: false, error: `Ação inválida. Permitidas: ${validActions.join(", ")}` };
   }
-  if (body.action === "rpc" && (!body.rpc || typeof body.rpc !== "string")) {
-    return { valid: false, error: "RPC action requires a 'rpc' field" };
-  }
-  if (body.action !== "rpc" && (!body.table || typeof body.table !== "string")) {
-    return { valid: false, error: "Non-RPC actions require a 'table' field" };
+  if (body.action === "rpc") {
+    if (!body.rpc || typeof body.rpc !== "string") {
+      return { valid: false, error: "RPC action requires a 'rpc' field" };
+    }
+    if (!ALLOWED_RPCS.has(body.rpc)) {
+      return { valid: false, error: "RPC não permitida" };
+    }
+  } else {
+    if (!body.table || typeof body.table !== "string") {
+      return { valid: false, error: "Non-RPC actions require a 'table' field" };
+    }
+    if (!ALLOWED_TABLES.has(body.table)) {
+      return { valid: false, error: "Tabela não permitida" };
+    }
   }
   return {
     valid: true,
@@ -129,9 +173,8 @@ export function validateBridgeRequest(body: any): {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: getCorsHeaders(req) });
-  }
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
 
   try {
     // Auth check
@@ -158,26 +201,29 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Role check — only admin/manager may use this service-role bridge.
-    // Filter by eligible roles before limit(1) to handle users with multiple role rows.
-    const adminClient = createClient(supabaseUrl, serviceRoleKey);
-    const { data: roleRows, error: roleError } = await adminClient
+    // This bridge runs with the service-role key (bypassing RLS), so it must be
+    // restricted to administrators/managers. Without this, any authenticated user
+    // could run arbitrary CRUD against any table (privilege escalation / data loss).
+    // Filter by eligible + active roles directly in the query so a query failure
+    // can't be mistaken for "no matching role" below.
+    const serviceClient = createClient(supabaseUrl, serviceRoleKey);
+    const { data: roleRows, error: roleError } = await serviceClient
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
+      .eq("is_active", true)
       .in("role", ["admin", "manager"])
       .limit(1);
-
     if (roleError) {
+      // A backend failure must not masquerade as an authorization denial.
       console.error("[external-db-bridge] Role query error:", roleError.message);
-      return new Response(JSON.stringify({ error: "Internal server error" }), {
+      return new Response(JSON.stringify({ error: "Failed to verify user role" }), {
         status: 500,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
-
     if (!roleRows || roleRows.length === 0) {
-      return new Response(JSON.stringify({ error: "Insufficient permissions" }), {
+      return new Response(JSON.stringify({ error: "Forbidden: admin or manager role required" }), {
         status: 403,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
@@ -194,6 +240,19 @@ Deno.serve(async (req: Request) => {
     }
 
     const { action, table, rpc, params } = validation.data!;
+
+    // Defense-in-depth: never allow an unscoped (empty match) update/delete,
+    // which would mutate/wipe an entire table.
+    if (action === "delete" || action === "update") {
+      const match = params?.match;
+      const hasScope = match && typeof match === "object" && Object.keys(match as object).length > 0;
+      if (!hasScope) {
+        return new Response(
+          JSON.stringify({ error: `Action '${action}' requires a non-empty 'match' filter` }),
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        );
+      }
+    }
     const startTime = performance.now();
     let result: any = null;
     let errorMessage: string | null = null;
@@ -211,7 +270,14 @@ Deno.serve(async (req: Request) => {
         const query = supabase.from(table!);
         switch (action) {
           case "select": {
-            const q = query.select(params?.columns as string || "*");
+            const cols = validateColumns(params?.columns);
+            if (cols === null) {
+              return new Response(
+                JSON.stringify({ error: "Invalid 'columns' parameter: only simple comma-separated identifiers are allowed" }),
+                { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+              );
+            }
+            const q = query.select(cols);
             if (params?.limit) q.limit(params.limit as number);
             if (params?.offset) q.range(params.offset as number, (params.offset as number) + ((params.limit as number) || 100) - 1);
             const { data, error } = await q;
@@ -276,8 +342,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (errorMessage) {
+      // Log the detailed error server-side; return only a generic message to the caller
+      // to prevent DB internals (table names, column names, constraint names) from leaking.
+      console.error("[external-db-bridge] Operation error:", errorMessage);
       return new Response(
-        JSON.stringify({ error: errorMessage, telemetry: { severity: telemetry.severity, duration_ms: telemetry.duration_ms } }),
+        JSON.stringify({ error: "Operation failed", telemetry: { severity: telemetry.severity, duration_ms: telemetry.duration_ms } }),
         { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
@@ -294,8 +363,8 @@ Deno.serve(async (req: Request) => {
       { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ error: msg }), {
+    console.error("[external-db-bridge] Unhandled exception:", err instanceof Error ? err.message : String(err));
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

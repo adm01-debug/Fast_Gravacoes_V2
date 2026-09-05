@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { ProductionLot, useTraceabilityMutations } from '@/features/inventory';
+import { ProductionLot, useTraceabilityMutations, type LotQualityInspection } from '@/features/inventory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { validateFileMagicBytes } from '@/lib/file-validation';
@@ -22,7 +22,7 @@ const INSPECTION_RESULTS: Record<string, { label: string; variant: 'default' | '
 
 interface LotInspectionsTabProps {
   lot: ProductionLot;
-  inspections: any[] | undefined;
+  inspections: LotQualityInspection[] | undefined;
 }
 
 export function LotInspectionsTab({ lot, inspections }: LotInspectionsTabProps) {
@@ -215,8 +215,8 @@ export function LotInspectionsTab({ lot, inspections }: LotInspectionsTabProps) 
                   <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] text-muted-foreground">
                     <span>📅 {format(new Date(insp.inspected_at), 'dd/MM/yyyy HH:mm')}</span>
                     {insp.inspector_name && <span>👤 {insp.inspector_name}</span>}
-                    {insp.sample_size > 0 && <span>📊 Amostra: {insp.sample_size}</span>}
-                    {insp.defects_found > 0 && <span className="text-destructive font-bold">⚠ {insp.defects_found} defeitos</span>}
+                    {(insp.sample_size ?? 0) > 0 && <span>📊 Amostra: {insp.sample_size}</span>}
+                    {(insp.defects_found ?? 0) > 0 && <span className="text-destructive font-bold">⚠ {insp.defects_found} defeitos</span>}
                   </div>
                   {insp.notes && <p className="text-sm text-muted-foreground mt-2 bg-muted/30 p-2 rounded italic border-l-2 border-primary/20">{insp.notes}</p>}
 

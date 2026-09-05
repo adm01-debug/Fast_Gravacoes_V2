@@ -75,7 +75,7 @@ export function SettingsGeneralTab({ settings, onSettingChange }: SettingsGenera
       <Card className="glass-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+            <AlertTriangle className="h-5 w-5 text-warning" />
             Configuração de Risco de Gargalo
           </CardTitle>
           <CardDescription>Defina os gatilhos para alertas de saturação de capacidade</CardDescription>
@@ -83,10 +83,10 @@ export function SettingsGeneralTab({ settings, onSettingChange }: SettingsGenera
         <CardContent className="space-y-8">
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <Label className="text-xs font-bold uppercase tracking-wider text-amber-500/80">
+              <Label className="text-xs font-bold uppercase tracking-wider text-warning/80">
                 Aviso de Carga (Médio)
               </Label>
-              <span className="text-sm font-mono font-bold bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded">
+              <span className="text-sm font-mono font-bold bg-warning/10 text-warning px-2 py-0.5 rounded">
                 {warningThreshold}%
               </span>
             </div>

@@ -58,7 +58,7 @@ export function JobTraceabilityTab({ jobId }: JobTraceabilityTabProps) {
               <div>
                 <h3 className="text-lg font-bold">Lote: {jobLot.lot_number}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Produzido em {format(parseDateOnly(jobLot.production_date)!, "dd/MM/yyyy", { locale: ptBR })}
+                  Produzido em {format(parseDateOnly(jobLot.production_date) ?? new Date(), "dd/MM/yyyy", { locale: ptBR })}
                 </p>
               </div>
             </div>
@@ -156,7 +156,7 @@ export function JobTraceabilityTab({ jobId }: JobTraceabilityTabProps) {
                 ) : !history || history.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">Nenhum histórico de status registrado.</p>
                 ) : (
-                  (history as any[]).map((item, idx) => (
+                  history.map((item, idx) => (
                     <div key={item.id} className="flex gap-4 items-start relative pb-4 last:pb-0">
                       {idx < history.length - 1 && (
                         <div className="absolute left-[7px] top-4 bottom-0 w-[0.5px] bg-border/50" />

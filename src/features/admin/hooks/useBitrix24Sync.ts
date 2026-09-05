@@ -1,16 +1,9 @@
+/* eslint-disable react-hooks/immutability -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { createAppError } from '@/lib/errorHandling';
-
-const BITRIX_ERROR_CONTEXT = {
-  call: { entity: 'bitrix24', operation: 'api_call' },
-  oauth: { entity: 'bitrix24', operation: 'oauth_status' },
-  pull: { entity: 'bitrix24', operation: 'pull' },
-  push: { entity: 'bitrix24', operation: 'push' },
-  test: { entity: 'bitrix24', operation: 'test_connection' },
-};
+import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 interface SyncResult {
   synced?: string[];
@@ -45,16 +38,10 @@ export const useBitrix24Sync = () => {
   const callBitrixSync = useCallback(async <T = SyncResult>(action: string, body?: Record<string, unknown>, retryCount = 0): Promise<T> => {
     const MAX_RETRIES = 3;
     const RETRY_DELAY_MS = 1000;
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    const url = `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=${action}`;
 
     try {
-      const response = await fetch(url, {
+      const response = await edgeFunctionFetch(`bitrix24-sync?action=${action}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        },
         body: body ? JSON.stringify(body) : undefined
       });
 
@@ -66,8 +53,6 @@ export const useBitrix24Sync = () => {
 
       return result;
     } catch (error: unknown) {
-      const appError = createAppError(error, { ...BITRIX_ERROR_CONTEXT.call, action });
-
       // Retry on network errors or 5xx server errors
       const errorMessage = error instanceof Error ? error.message : String(error);
       const isRetryable = errorMessage.includes('fetch') ||
@@ -94,10 +79,9 @@ export const useBitrix24Sync = () => {
       setOAuthStatus(result);
       return result;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       toast({
         title: 'Erro ao verificar OAuth',
-        description: errorMessage,
+        description: createAppError(error instanceof Error ? error : new Error(String(error))).message,
         variant: 'destructive'
       });
       throw error;
@@ -117,10 +101,9 @@ export const useBitrix24Sync = () => {
       await checkOAuthStatus();
       return result;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       toast({
         title: 'Erro ao limpar tokens',
-        description: errorMessage,
+        description: createAppError(error instanceof Error ? error : new Error(String(error))).message,
         variant: 'destructive'
       });
       throw error;
@@ -139,9 +122,9 @@ export const useBitrix24Sync = () => {
       });
       return result;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const rawMsg = error instanceof Error ? error.message : String(error);
       // Check if it's an auth error
-      if (errorMessage.includes('invalid_token') || errorMessage.includes('expired')) {
+      if (rawMsg.includes('invalid_token') || rawMsg.includes('expired')) {
         await checkOAuthStatus();
         toast({
           title: 'Token expirado',
@@ -151,7 +134,7 @@ export const useBitrix24Sync = () => {
       } else {
         toast({
           title: 'Erro de conexão',
-          description: errorMessage,
+          description: createAppError(error instanceof Error ? error : new Error(rawMsg)).message,
           variant: 'destructive'
         });
       }
@@ -176,9 +159,9 @@ export const useBitrix24Sync = () => {
 
       return result;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const rawMsg = error instanceof Error ? error.message : String(error);
       // Check if it's an auth error
-      if (errorMessage.includes('invalid_token') || errorMessage.includes('expired') || errorMessage.includes('authentication')) {
+      if (rawMsg.includes('invalid_token') || rawMsg.includes('expired') || rawMsg.includes('authentication')) {
         await checkOAuthStatus();
         toast({
           title: 'Token expirado',
@@ -188,7 +171,7 @@ export const useBitrix24Sync = () => {
       } else {
         toast({
           title: 'Erro na sincronização',
-          description: errorMessage,
+          description: createAppError(error instanceof Error ? error : new Error(rawMsg)).message,
           variant: 'destructive'
         });
       }
@@ -211,9 +194,8 @@ export const useBitrix24Sync = () => {
 
       return result;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       // Don't show error toast for non-Bitrix jobs
-      return { error: errorMessage };
+      return { error: createAppError(error instanceof Error ? error : new Error(String(error))).message };
     }
   }, [callBitrixSync, toast]);
 

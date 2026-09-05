@@ -1,25 +1,19 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { WebhookPayloadSchema, WebhookResponseSchema, validateContract } from "../_shared/contracts.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-webhook-signature, x-api-key',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
+
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "webhook-handler", requestId });
+  const started = Date.now();
+  const jsonHeaders = withRequestId({ ...getCorsHeaders(req), "Content-Type": "application/json" }, requestId);
 
   try {
     const supabase = createClient(
@@ -27,73 +21,88 @@ export const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    // Rate limit: 120 webhooks/min per source IP.
+    const rateLimited = await checkRateLimit(supabase, {
+      endpoint: "webhook-handler",
+      identity: { ip: req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") },
+      max: 120,
+      windowSeconds: 60,
+      corsHeaders: withRequestId(getCorsHeaders(req), requestId),
+      requestId,
+    });
+    if (rateLimited) {
+      log.warn("rate_limited");
+      return rateLimited;
+    }
+
     const signature = req.headers.get("x-webhook-signature");
     const bodyText = await req.text();
     let payload;
     try {
       payload = JSON.parse(bodyText);
-    } catch (e) {
-      return new Response(JSON.stringify({ error: "Invalid JSON payload" }), {
+    } catch (_e) {
+      log.warn("payload.invalid_json", { bytes: bodyText.length });
+      return new Response(JSON.stringify({ error: "Invalid JSON payload", requestId }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: jsonHeaders,
       });
     }
 
     const validation = await validateContract(WebhookPayloadSchema, payload);
-    
+
     if (!validation.success) {
-      console.warn("Received webhook failed contract validation:", validation.details);
-      return new Response(JSON.stringify({ 
-        error: validation.error, 
-        details: validation.details 
+      log.warn("contract.validation_failed", { details: validation.details });
+      return new Response(JSON.stringify({
+        error: validation.error,
+        details: validation.details,
+        requestId,
       }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: jsonHeaders,
       });
     }
 
     const { source, event, data } = validation.data;
     const sanitizedData = data;
+    const scoped = log.child({ source, event });
 
-    // HMAC verification for security (Always use production keys if available)
     const secret = Deno.env.get(`WEBHOOK_SECRET_${source.toUpperCase()}`);
-    if (secret) {
-      const encoder = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        "raw",
-        encoder.encode(secret),
-        { name: "HMAC", hash: "SHA-256" },
-        false,
-        ["verify"]
-      );
-      
-      const sigBuffer = new Uint8Array(
-        signature?.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []
-      );
-      
-      const isValid = await crypto.subtle.verify(
-        "HMAC",
-        key,
-        sigBuffer,
-        encoder.encode(bodyText)
-      );
-
-      if (!isValid) {
-        console.error(`Invalid signature for source: ${source}`);
-        return new Response(JSON.stringify({ error: "Invalid signature" }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
-      }
-    } else if (Deno.env.get("ENFORCE_WEBHOOK_SIGNATURES") === "true") {
-       console.error(`Missing secret for source: ${source}`);
-       return new Response(JSON.stringify({ error: "Security enforcement active: missing secret" }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+    if (!secret) {
+      scoped.error("hmac.secret_missing");
+      return new Response(JSON.stringify({ error: "Webhook source not configured", requestId }), {
+        status: 401,
+        headers: jsonHeaders,
+      });
     }
 
-    // Log webhook
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+
+    const sigBuffer = new Uint8Array(
+      signature?.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []
+    );
+
+    const isValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      sigBuffer,
+      encoder.encode(bodyText)
+    );
+
+    if (!isValid) {
+      scoped.error("hmac.invalid_signature");
+      return new Response(JSON.stringify({ error: "Invalid signature", requestId }), {
+        status: 401,
+        headers: jsonHeaders,
+      });
+    }
+
     const { error: logError } = await supabase.from("webhook_logs").insert({
       source,
       event,
@@ -102,44 +111,42 @@ export const handler = async (req: Request): Promise<Response> => {
     });
 
     if (logError) {
-      console.error("Error logging webhook:", logError);
+      scoped.error("webhook_logs.insert_failed", logError);
     }
 
-    // Process based on source
     let result = { processed: true };
 
     switch (source) {
       case "bitrix24":
-        result = await processBitrix24Webhook(supabase, event, sanitizedData);
+        result = await processBitrix24Webhook(supabase, event, sanitizedData, scoped);
         break;
       case "stripe":
-        result = await processStripeWebhook(supabase, event, sanitizedData);
+        result = await processStripeWebhook(supabase, event, sanitizedData, scoped);
         break;
       default:
-        console.log(`Unknown webhook source: ${source}`);
+        scoped.info("source.unknown");
     }
 
     const responsePayload = {
       ...result,
       source,
       event,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      requestId,
     };
 
     const responseValidation = WebhookResponseSchema.safeParse(responsePayload);
     if (!responseValidation.success) {
-      console.error("Outgoing webhook response failed contract validation:", responseValidation.error.format());
+      scoped.error("response.contract_failed", responseValidation.error);
     }
 
-    return new Response(JSON.stringify(responsePayload), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    scoped.info("webhook.processed", { latencyMs: Date.now() - started });
+    return new Response(JSON.stringify(responsePayload), { headers: jsonHeaders });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error("Webhook Error:", error);
-    return new Response(JSON.stringify({ error: message }), {
+    log.error("unhandled_error", error, { latencyMs: Date.now() - started });
+    return new Response(JSON.stringify({ error: "Internal server error", requestId }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: jsonHeaders,
     });
   }
 };
@@ -148,18 +155,30 @@ if (import.meta.main) {
   serve(handler);
 }
 
-async function processBitrix24Webhook(supabase: any, event: string, data: any) {
-  console.log(`Bitrix24 event received: ${event}`);
+// deno-lint-ignore no-explicit-any
+type Supa = any;
+// deno-lint-ignore no-explicit-any
+type EventData = any;
+interface ScopedLogger {
+  info(m: string, e?: Record<string, unknown>): void;
+  warn(m: string, e?: Record<string, unknown>): void;
+  error(m: string, err?: unknown, e?: Record<string, unknown>): void;
+}
 
-  // Rastreabilidade: registrar tentativa de sincronização. O mapeamento real
-  // Bitrix24 → jobs ainda não foi implementado — retornamos `processed: false`
-  // para que o emissor não considere o evento como aplicado.
-  await supabase.from("bitrix24_sync_history").insert({
-    event_type: event,
-    payload: data,
-    status: 'received',
-    sync_date: new Date().toISOString()
+async function processBitrix24Webhook(supabase: Supa, event: string, data: EventData, log: ScopedLogger) {
+  log.info("bitrix24.event_received");
+
+  const { error: logError } = await supabase.from("bitrix24_sync_history").insert({
+    sync_type: 'webhook',
+    status: 'partial',
+    triggered_by: 'webhook',
+    error_message: 'logged_only: Bitrix24 → jobs mapping not yet implemented',
+    details: { event, data },
+    completed_at: new Date().toISOString(),
   });
+  if (logError) {
+    log.error("bitrix24_sync_history.insert_failed", logError);
+  }
 
   return {
     source: "bitrix24",
@@ -171,10 +190,8 @@ async function processBitrix24Webhook(supabase: any, event: string, data: any) {
   };
 }
 
-async function processStripeWebhook(supabase: any, event: string, data: any) {
-  console.log(`Stripe event received: ${event}`);
-
-  // Handler real de Stripe ainda não implementado.
+async function processStripeWebhook(_supabase: Supa, event: string, _data: EventData, log: ScopedLogger) {
+  log.info("stripe.event_received");
   return {
     source: "stripe",
     event,

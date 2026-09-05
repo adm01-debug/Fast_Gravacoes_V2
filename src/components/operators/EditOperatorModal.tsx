@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,7 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryConfig';
 import { Loader2, Pencil } from 'lucide-react';
 import { OperatorWithProfile } from '@/features/production';
 
@@ -85,11 +92,10 @@ export function EditOperatorModal({ operator, open, onOpenChange }: EditOperator
       }
 
       toast.success('Operador atualizado com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['operators'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.OPERATORS });
       onOpenChange(false);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar operador';
-      toast.error(errorMessage);
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao atualizar operador');
     } finally {
       setIsLoading(false);
     }

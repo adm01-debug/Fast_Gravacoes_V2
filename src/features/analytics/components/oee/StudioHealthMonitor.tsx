@@ -61,6 +61,9 @@ export function StudioHealthMonitor({ studios }: StudioHealthMonitorProps) {
               
               <div className="pt-2 border-t border-primary/5">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Consumables / Wear</p>
+                {studio.consumables.length === 0 ? (
+                  <p className="text-[9px] text-muted-foreground italic">Sem dados de consumíveis para este estúdio</p>
+                ) : (
                 <div className="space-y-2">
                   {studio.consumables.map((item, idx) => (
                     <div key={idx} className="space-y-1">
@@ -86,6 +89,7 @@ export function StudioHealthMonitor({ studios }: StudioHealthMonitorProps) {
                     </div>
                   ))}
                 </div>
+                )}
               </div>
               
               {studio.maintenanceStatus !== 'optimal' && (

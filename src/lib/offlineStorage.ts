@@ -7,11 +7,11 @@ const DB_NAME = 'fastgravacoes_offline';
 const DB_VERSION = 1;
 
 interface OfflineStore {
-  jobs: any[];
-  machines: any[];
-  techniques: any[];
-  operators: any[];
-  maintenanceSchedules: any[];
+  jobs: Record<string, unknown>[];
+  machines: Record<string, unknown>[];
+  techniques: Record<string, unknown>[];
+  operators: Record<string, unknown>[];
+  maintenanceSchedules: Record<string, unknown>[];
   pendingActions: PendingAction[];
   syncMetadata: SyncMetadata;
 }
@@ -182,6 +182,12 @@ class OfflineStorageManager {
     });
   }
 
+  async clearAll(): Promise<void> {
+    const db = await this.ensureDb();
+    const storeNames = Array.from(db.objectStoreNames);
+    await Promise.allSettled(storeNames.map((name) => this.clear(name)));
+  }
+
   async getByIndex<T>(storeName: string, indexName: string, value: IDBValidKey): Promise<T[]> {
     const db = await this.ensureDb();
     return new Promise((resolve, reject) => {
@@ -272,7 +278,7 @@ export async function registerBackgroundSync(): Promise<boolean> {
     try {
       const registration = await navigator.serviceWorker.ready;
       if ('sync' in registration) {
-        await (registration as any).sync.register('sync-pending-actions');
+        await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-pending-actions');
         return true;
       }
     } catch (error) {

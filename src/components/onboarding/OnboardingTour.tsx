@@ -98,7 +98,7 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
         className="fixed inset-0 z-[100] flex items-center justify-center"
       >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={handleSkip} />
+        <div role="button" tabIndex={-1} aria-label="Fechar tour" className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={handleSkip} onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); handleSkip(); } }} />
 
         {/* Tour Card */}
         <motion.div
@@ -188,21 +188,30 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
         </motion.div>
 
         {/* Step Indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+        <div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2"
+          role="tablist"
+          aria-label="Etapas do tour"
+        >
           {steps.map((_, index) => (
             <motion.button
               key={index}
               onClick={() => setCurrentStep(index)}
-              className={`h-2 rounded-full transition-all ${
+              role="tab"
+              aria-selected={index === currentStep}
+              aria-label={`Ir para etapa ${index + 1} de ${steps.length}`}
+              className={`min-h-6 min-w-6 flex items-center justify-center rounded-full transition-all ${
                 index === currentStep
-                  ? "w-8 bg-primary"
+                  ? "w-10 bg-primary"
                   : index < currentStep
-                  ? "w-2 bg-primary/50"
-                  : "w-2 bg-muted"
+                  ? "w-6 bg-primary/50"
+                  : "w-6 bg-muted"
               }`}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
-            />
+            >
+              <span className="sr-only">Etapa {index + 1}</span>
+            </motion.button>
           ))}
         </div>
       </motion.div>

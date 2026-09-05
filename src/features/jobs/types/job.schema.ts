@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const jobStatusSchema = z.enum(['queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework', 'buffer']);
+export const jobStatusSchema = z.enum(['queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework', 'buffer', 'packaging']);
 export type JobStatus = z.infer<typeof jobStatusSchema>;
 
 export const jobPrioritySchema = z.enum(['low', 'medium', 'high', 'urgent']);

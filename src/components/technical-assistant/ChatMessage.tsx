@@ -70,7 +70,7 @@ export const ChatMessage = React.memo(({ role, content, isStreaming, highlightTe
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ node, inline, className, children, ...props }: any) {
+                  code({ inline, className, children, ...props }: { inline?: boolean; className?: string; children?: React.ReactNode } & React.HTMLAttributes<HTMLElement>) {
                     const match = /language-(\w+)/.exec(className || '');
                     const codeContent = String(children).replace(/\n$/, '');
                     if (!inline && match && match[1] === 'mermaid') {
@@ -112,7 +112,7 @@ export const ChatMessage = React.memo(({ role, content, isStreaming, highlightTe
                 <div className="w-px h-3 bg-border/50 mx-0.5" />
                 <button 
                   onClick={() => setFeedback('up')} 
-                  className={cn("p-1.5 rounded-md hover:bg-muted transition-colors", feedback === 'up' ? "text-emerald-500 bg-emerald-500/10" : "text-muted-foreground")}
+                  className={cn("p-1.5 rounded-md hover:bg-muted transition-colors", feedback === 'up' ? "text-success bg-success/10" : "text-muted-foreground")}
                 >
                   <ThumbsUp className="h-3.5 w-3.5" />
                 </button>

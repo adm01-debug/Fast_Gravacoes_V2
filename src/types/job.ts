@@ -1,6 +1,6 @@
 import { Database } from "@/integrations/supabase/types";
 
-export type JobStatus = 'queue' | 'ready' | 'scheduled' | 'production' | 'finished' | 'paused' | 'cancelled' | 'delayed' | 'rework' | 'buffer';
+export type JobStatus = 'queue' | 'ready' | 'scheduled' | 'production' | 'finished' | 'paused' | 'cancelled' | 'delayed' | 'rework' | 'buffer' | 'packaging';
 export type JobPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 type DbRow = Database['public']['Tables']['jobs']['Row'];
@@ -19,8 +19,8 @@ export interface Job {
   start_time?: string | null;
   end_time?: string | null;
   estimated_duration?: number;
-  status: JobStatus | any;
-  priority?: JobPriority | any;
+  status: JobStatus;
+  priority?: JobPriority;
   gravure_color?: string | null;
   notes?: string | null;
   actual_start_time?: string | null;

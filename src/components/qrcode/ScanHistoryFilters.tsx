@@ -44,9 +44,9 @@ export function ScanHistoryFilters({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="space-y-1">
-          <label className="text-xs text-muted-foreground">Operador</label>
+          <label htmlFor="scan-operator-filter" className="text-xs text-muted-foreground">Operador</label>
           <Select value={operatorFilter} onValueChange={onOperatorFilterChange}>
-            <SelectTrigger className="h-9"><User className="h-3 w-3 mr-2 text-muted-foreground" /><SelectValue placeholder="Todos" /></SelectTrigger>
+            <SelectTrigger id="scan-operator-filter" className="h-9"><User className="h-3 w-3 mr-2 text-muted-foreground" /><SelectValue placeholder="Todos" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os operadores</SelectItem>
               {operators.map(op => <SelectItem key={op.id} value={op.id}>{op.name}</SelectItem>)}
@@ -54,9 +54,9 @@ export function ScanHistoryFilters({
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-xs text-muted-foreground">Tipo de Ação</label>
+          <label htmlFor="scan-action-filter" className="text-xs text-muted-foreground">Tipo de Ação</label>
           <Select value={actionFilter} onValueChange={onActionFilterChange}>
-            <SelectTrigger className="h-9"><Play className="h-3 w-3 mr-2 text-muted-foreground" /><SelectValue placeholder="Todas" /></SelectTrigger>
+            <SelectTrigger id="scan-action-filter" className="h-9"><Play className="h-3 w-3 mr-2 text-muted-foreground" /><SelectValue placeholder="Todas" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as ações</SelectItem>
               {Object.entries(actionConfig).map(([key, config]) => (
@@ -68,10 +68,10 @@ export function ScanHistoryFilters({
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-xs text-muted-foreground">Período</label>
+          <label htmlFor="scan-period-filter" className="text-xs text-muted-foreground">Período</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-9", !dateRange?.from && "text-muted-foreground")}>
+              <Button id="scan-period-filter" variant="outline" className={cn("w-full justify-start text-left font-normal h-9", !dateRange?.from && "text-muted-foreground")}>
                 <CalendarIcon className="h-3 w-3 mr-2" />
                 {dateRange?.from ? (
                   dateRange.to ? (

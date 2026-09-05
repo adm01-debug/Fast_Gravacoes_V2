@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';

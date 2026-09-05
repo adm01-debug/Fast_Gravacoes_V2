@@ -17,6 +17,8 @@ import {
   List
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
+import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 interface FieldMappingData {
   fieldMapping: Record<string, string[]>;
@@ -26,8 +28,14 @@ interface FieldMappingData {
   statusToStage: Record<string, string>;
 }
 
+interface BitrixCustomField {
+  formLabel?: string;
+  title?: string;
+  type?: string;
+}
+
 interface BitrixFieldsData {
-  customFields: Record<string, any>;
+  customFields: Record<string, BitrixCustomField>;
   totalCustomFields: number;
   currentMapping: Record<string, string[]>;
   techniqueMapping: Record<string, string>;
@@ -41,16 +49,7 @@ export const Bitrix24FieldMapping = () => {
   const { data: mappingData, isLoading: mappingLoading, refetch: refetchMapping } = useQuery({
     queryKey: ['bitrix24-mapping'],
     queryFn: async () => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=mapping`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          }
-        }
-      );
+      const response = await edgeFunctionFetch('bitrix24-sync?action=mapping');
       const data = await response.json();
       return data as FieldMappingData;
     }
@@ -59,16 +58,7 @@ export const Bitrix24FieldMapping = () => {
   const { data: fieldsData, isLoading: fieldsLoading, refetch: refetchFields } = useQuery({
     queryKey: ['bitrix24-fields'],
     queryFn: async () => {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=fields`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          }
-        }
-      );
+      const response = await edgeFunctionFetch('bitrix24-sync?action=fields');
       const data = await response.json();
       return data as BitrixFieldsData;
     },
@@ -78,16 +68,7 @@ export const Bitrix24FieldMapping = () => {
   const testConnection = async () => {
     setIsTestingConnection(true);
     try {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=test`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          }
-        }
-      );
+      const response = await edgeFunctionFetch('bitrix24-sync?action=test');
       const data = await response.json();
 
       if (data.connected) {
@@ -96,8 +77,7 @@ export const Bitrix24FieldMapping = () => {
         toast.error(`Erro de conexão: ${data.error}`);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro desconhecido';
-      toast.error(`Falha na conexão: ${message}`);
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Falha na conexão com Bitrix24');
     } finally {
       setIsTestingConnection(false);
     }
@@ -303,7 +283,7 @@ export const Bitrix24FieldMapping = () => {
             </div>
             <ScrollArea className="h-[150px]">
               <div className="space-y-1">
-                {fieldsData.customFields && Object.entries(fieldsData.customFields).map(([fieldId, fieldData]: [string, any]) => (
+                {fieldsData.customFields && Object.entries(fieldsData.customFields).map(([fieldId, fieldData]) => (
                   <div
                     key={fieldId}
                     className="p-2 rounded bg-muted/10 border border-border/20 flex items-center justify-between"

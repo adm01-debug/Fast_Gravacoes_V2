@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from '@/lib/recharts';
 import { Activity, Thermometer, Gauge, Zap, TrendingUp, AlertTriangle, CheckCircle2, Cpu, Database, Network } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { clickableProps } from '@/lib/a11y';
 import { motion } from 'framer-motion';
 
 const generateMockData = () => {
@@ -45,7 +46,7 @@ export function TechnicalTelemetryPanel() {
             <Activity className="h-4 w-4 text-primary animate-pulse" />
             Telemetria Industrial
           </CardTitle>
-          <Badge variant="outline" className="text-[8px] bg-emerald-500/10 text-emerald-500 border-emerald-500/20 animate-pulse">
+          <Badge variant="outline" className="text-[8px] bg-success/10 text-success border-success/20 animate-pulse">
             SISTEMA NOMINAL
           </Badge>
         </div>
@@ -54,31 +55,31 @@ export function TechnicalTelemetryPanel() {
       <CardContent className="p-4 flex-1 overflow-y-auto space-y-6 custom-scrollbar">
         {/* Core KPIs Grid */}
         <div className="grid grid-cols-2 gap-2">
-          <div 
-            onClick={() => setActiveMetric('temp')}
+          <div
+            {...clickableProps(() => setActiveMetric('temp'), { label: 'Selecionar métrica temperatura' })}
             className={cn(
-              "p-3 rounded-xl border transition-all cursor-pointer group",
+              "p-3 rounded-xl border transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
               activeMetric === 'temp' ? "bg-orange-500/10 border-orange-500/50 shadow-lg shadow-orange-500/10" : "bg-muted/30 border-border/50 hover:bg-muted/50"
             )}
           >
             <div className="flex items-center justify-between mb-1">
               <Thermometer className={cn("h-3 w-3", activeMetric === 'temp' ? "text-orange-500" : "text-muted-foreground")} />
-              <TrendingUp className="h-2.5 w-2.5 text-emerald-500" />
+              <TrendingUp className="h-2.5 w-2.5 text-success" />
             </div>
             <p className="text-[9px] font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">Temp</p>
             <p className="text-lg font-black tracking-tight">{data[data.length - 1].temp.toFixed(1)}°C</p>
           </div>
 
-          <div 
-            onClick={() => setActiveMetric('pressure')}
+          <div
+            {...clickableProps(() => setActiveMetric('pressure'), { label: 'Selecionar métrica pressão' })}
             className={cn(
-              "p-3 rounded-xl border transition-all cursor-pointer group",
+              "p-3 rounded-xl border transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
               activeMetric === 'pressure' ? "bg-blue-500/10 border-blue-500/50 shadow-lg shadow-blue-500/10" : "bg-muted/30 border-border/50 hover:bg-muted/50"
             )}
           >
             <div className="flex items-center justify-between mb-1">
               <Gauge className={cn("h-3 w-3", activeMetric === 'pressure' ? "text-blue-500" : "text-muted-foreground")} />
-              <CheckCircle2 className="h-2.5 w-2.5 text-emerald-500" />
+              <CheckCircle2 className="h-2.5 w-2.5 text-success" />
             </div>
             <p className="text-[9px] font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">Pressão</p>
             <p className="text-lg font-black tracking-tight">{data[data.length - 1].pressure.toFixed(2)} bar</p>
@@ -161,7 +162,7 @@ export function TechnicalTelemetryPanel() {
                 <Database className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                 <span className="text-[10px] font-black uppercase tracking-tighter">Knowledge Base</span>
               </div>
-              <Badge variant="outline" className="text-[8px] h-4 border-emerald-500/20 text-emerald-500 bg-emerald-500/5">SYNCED</Badge>
+              <Badge variant="outline" className="text-[8px] h-4 border-success/20 text-success bg-success/5">SYNCED</Badge>
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/30 hover:border-primary/30 transition-all group cursor-pointer">
               <div className="flex items-center gap-2">
@@ -169,8 +170,8 @@ export function TechnicalTelemetryPanel() {
                 <span className="text-[10px] font-black uppercase tracking-tighter">API Latency</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black text-emerald-500">12ms</span>
+                <div className="w-1 h-1 rounded-full bg-success" />
+                <span className="text-[10px] font-black text-success">12ms</span>
               </div>
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/30 hover:border-primary/30 transition-all group cursor-pointer">

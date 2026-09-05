@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Bell, BellOff, Volume2, VolumeX, Clock, AlertTriangle, AlertCircle, Calendar, Mail, MessageCircle, Settings, Check, Send, History, Layout, Users, ShieldCheck, X, ListTodo, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +26,16 @@ import { TPMNotificationQueue } from './TPMNotificationQueue';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
+interface ValidationRecipient {
+  user_id: string;
+  whatsapp_number?: string | null;
+}
+interface ValidationData {
+  machine: { code: string; name: string };
+  recipients: ValidationRecipient[];
+}
+type TestChannel = 'email' | 'whatsapp' | 'push';
+
 export function TPMNotificationSettings() {
   const { permission, isSupported, requestPermission, sendTestNotification } = useTPMNotifications();
   const { settings, isLoading, updateSettings } = useNotificationSettings();
@@ -29,7 +44,7 @@ export function TPMNotificationSettings() {
   const [testMachineId, setTestMachineId] = useState<string>('');
   const [testChannel, setTestChannel] = useState<'email' | 'whatsapp' | 'push'>('push');
   const [isSendingTest, setIsSendingTest] = useState(false);
-  const [validationData, setValidationData] = useState<any>(null);
+  const [validationData, setValidationData] = useState<ValidationData | null>(null);
   const [showValidation, setShowValidation] = useState(false);
 
   useEffect(() => {
@@ -66,8 +81,8 @@ export function TPMNotificationSettings() {
     setIsSendingTest(true);
     const result = await sendTestNotification(testMachineId, testChannel, force);
 
-    if (result && result.needsValidation) {
-      setValidationData(result);
+    if (result && result.needsValidation && result.machine) {
+      setValidationData({ machine: result.machine, recipients: result.recipients as ValidationRecipient[] });
       setShowValidation(true);
     } else if (result && result.success) {
       setShowValidation(false);
@@ -129,7 +144,7 @@ export function TPMNotificationSettings() {
 
                 <div className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-secondary/10">
                   <div className="flex items-center gap-3">
-                    <Bell className="h-5 w-5 text-emerald-500" />
+                    <Bell className="h-5 w-5 text-success" />
                     <div>
                       <p className="font-medium">Push (Navegador)</p>
                       <p className="text-xs text-muted-foreground">Notificações em tempo real na tela</p>
@@ -187,7 +202,7 @@ export function TPMNotificationSettings() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select value={testChannel} onValueChange={(v: any) => setTestChannel(v)}>
+                  <Select value={testChannel} onValueChange={(v) => setTestChannel(v as TestChannel)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -285,15 +300,19 @@ export function TPMNotificationSettings() {
                   <div className="grid grid-cols-2 gap-3">
                     {[
                       { id: 'upcoming', label: 'Próximas', icon: <Calendar className="h-4 w-4 text-blue-400" /> },
-                      { id: 'due', label: 'Vence Hoje', icon: <Clock className="h-4 w-4 text-amber-400" /> },
+                      { id: 'due', label: 'Vence Hoje', icon: <Clock className="h-4 w-4 text-warning" /> },
                       { id: 'overdue', label: 'Atrasadas', icon: <AlertTriangle className="h-4 w-4 text-orange-400" /> },
                       { id: 'critical', label: 'Críticas', icon: <AlertCircle className="h-4 w-4 text-destructive" /> },
                     ].map(type => (
                       <div
                         key={type.id}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Alternar alerta ${type.label}`}
                         onClick={() => handleToggleType(type.id)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleToggleType(type.id); } }}
                         className={cn(
-                          "flex items-center gap-3 p-3 rounded-lg border border-border/50 cursor-pointer transition-all",
+                          "flex items-center gap-3 p-3 rounded-lg border border-border/50 cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                           settings?.notification_types.includes(type.id) ? "bg-primary/10 border-primary/40" : "bg-card hover:bg-secondary/20"
                         )}
                       >
@@ -399,7 +418,7 @@ export function TPMNotificationSettings() {
                 Destinatários ({validationData.recipients.length})
               </h4>
               <div className="max-h-[200px] overflow-y-auto space-y-2 pr-2">
-                {validationData.recipients.map((r: any, idx: number) => (
+                {validationData.recipients.map((r, idx) => (
                   <div key={idx} className="text-xs p-2 border rounded bg-card flex justify-between items-center">
                     <span className="truncate max-w-[150px]">{r.user_id}</span>
                     {testChannel === 'whatsapp' && r.whatsapp_number && (

@@ -41,7 +41,7 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
         id: `entity-inv-${item.id}`,
         name: item.name,
         description: `Material: ${item.current_stock} ${item.unit} | ${item.category}`,
-        icon: <Package className="h-4 w-4 text-amber-500" />,
+        icon: <Package className="h-4 w-4 text-warning" />,
         action: () => {
           navigate('/inventory');
           setOpen(false);
@@ -79,7 +79,7 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
         id: `entity-job-${job.id}`,
         name: `OP ${job.order_number || job.id.slice(0, 8)}`,
         description: `Cliente: ${job.client || 'N/A'} | Status: ${job.status}`,
-        icon: <Hash className="h-4 w-4 text-emerald-500" />,
+        icon: <Hash className="h-4 w-4 text-success" />,
         action: () => {
           navigate('/kanban');
           setOpen(false);

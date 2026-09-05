@@ -47,15 +47,15 @@ export default function MasterAPIPage() {
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl text-title font-bold flex items-center gap-3">
               <Code2 className="h-8 w-8 text-primary" />
               Master API Master Hub
             </h1>
             <p className="text-muted-foreground mt-1">Conecte sua fábrica a qualquer ERP, CRM ou BI Externo</p>
           </div>
           <div className="flex gap-2">
-             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 uppercase font-black px-3 py-1">
-               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+             <Badge variant="outline" className="bg-success/10 text-success border-success/20 uppercase font-black px-3 py-1">
+               <div className="w-1.5 h-1.5 rounded-full bg-success mr-2 animate-pulse" />
                Sistemas Operantes
              </Badge>
           </div>
@@ -92,11 +92,11 @@ export default function MasterAPIPage() {
                  </div>
                  <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Tempo Médio Resposta</span>
-                    <span className="font-bold text-emerald-600">42ms</span>
+                    <span className="font-bold text-success">42ms</span>
                  </div>
                  <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Status do Gateway</span>
-                    <Badge className="bg-emerald-500 h-4 text-[9px] font-black">ONLINE</Badge>
+                    <Badge className="bg-success h-4 text-[9px] font-black">ONLINE</Badge>
                  </div>
               </div>
             </CardContent>
@@ -167,8 +167,8 @@ export default function MasterAPIPage() {
                               <div className="flex items-center gap-3">
                                  <Badge className={cn(
                                    "font-black text-[10px] w-16 flex justify-center",
-                                   ep.method === 'GET' ? "bg-emerald-500" :
-                                   ep.method === 'POST' ? "bg-blue-500" : "bg-amber-500"
+                                   ep.method === 'GET' ? "bg-success" :
+                                   ep.method === 'POST' ? "bg-blue-500" : "bg-warning"
                                  )}>
                                     {ep.method}
                                  </Badge>
@@ -198,7 +198,7 @@ export default function MasterAPIPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                    <ScrollArea className="h-48 font-mono text-[11px] p-6 leading-relaxed">
-<pre className="text-emerald-400">
+<pre className="text-success">
 {`const response = await fetch('https://api.fastgravacoes.com/v1/jobs', {
   method: 'POST',
   headers: {

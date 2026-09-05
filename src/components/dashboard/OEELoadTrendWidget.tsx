@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Minus, BarChart3, Activity } from 'lucide-rea
 import { useOEE } from '@/features/production';
 import { useSchedulingData } from '@/features/jobs';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from '@/lib/recharts';
 import { format, subDays, startOfDay, endOfDay, eachDayOfInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -54,7 +54,7 @@ export function OEELoadTrendWidget() {
   return (
     <Card className="glass-card col-span-1 xl:col-span-2">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display flex items-center justify-between gap-2">
+        <CardTitle className="text-sm text-title flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             Tendência de Carga e OEE
@@ -62,7 +62,7 @@ export function OEELoadTrendWidget() {
           {comparisonData && (
             <Badge variant="outline" className={cn(
               "text-[10px] py-0 px-2 h-5 flex items-center gap-1",
-              comparisonData.isPositive ? "text-emerald-500 border-emerald-500/30" :
+              comparisonData.isPositive ? "text-success border-success/30" :
               comparisonData.isNegative ? "text-red-500 border-red-500/30" :
               "text-muted-foreground"
             )}>

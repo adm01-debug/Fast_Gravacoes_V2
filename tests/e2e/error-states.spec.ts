@@ -1,9 +1,10 @@
 import { test, expect, Page } from '@playwright/test';
+import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
 
 async function login(page: Page) {
   await page.goto('/auth');
-  await page.fill('input[type="email"]', 'admin@fastgravacoes.com.br');
-  await page.fill('input[type="password"]', 'Fast@2026!');
+  await page.fill('input[type="email"]', E2E_EMAIL);
+  await page.fill('input[type="password"]', E2E_PASSWORD);
   await page.click('button[type="submit"]');
   await page.waitForURL('/');
 }

@@ -20,12 +20,13 @@ interface NavGroupComponentProps {
   isActive: (href: string) => boolean;
   alertCount: number;
   notificationCount: number;
+  packagingOverdueCount?: number;
   openGroups: string[];
   toggleGroup: (id: string) => void;
 }
 
 export const NavGroupComponent = memo(function NavGroupComponent({
-  group, collapsed, isMobile, isActive, alertCount, notificationCount, openGroups, toggleGroup,
+  group, collapsed, isMobile, isActive, alertCount, notificationCount, packagingOverdueCount = 0, openGroups, toggleGroup,
 }: NavGroupComponentProps) {
   const Icon = group.icon;
   const isOpen = openGroups.includes(group.id);
@@ -35,6 +36,7 @@ export const NavGroupComponent = memo(function NavGroupComponent({
     let badgeCount: number | undefined = undefined;
     if (item.href === '/alerts') badgeCount = alertCount;
     if (item.href === '/notifications') badgeCount = notificationCount;
+    if (item.href === '/packaging') badgeCount = packagingOverdueCount;
 
     return {
       ...item,

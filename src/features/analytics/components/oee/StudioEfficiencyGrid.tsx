@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StudioOEE, getOEEColor } from '@/features/production';
@@ -8,7 +9,7 @@ interface StudioEfficiencyGridProps {
   studios: StudioOEE[];
 }
 
-const STUDIO_ICONS: Record<string, any> = {
+const STUDIO_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   'serigrafia_textil': Printer,
   'serigrafia_cilindrica': Droplets,
   'serigrafia_vinilica': Droplets,

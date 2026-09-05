@@ -17,7 +17,7 @@ export function LeaderboardWidget() {
     switch (position) {
       case 1: return <Crown className="h-4 w-4 text-yellow-500" />;
       case 2: return <Medal className="h-4 w-4 text-slate-300" />;
-      case 3: return <Medal className="h-4 w-4 text-amber-600" />;
+      case 3: return <Medal className="h-4 w-4 text-warning" />;
       default: return <Star className="h-4 w-4 text-muted-foreground/30" />;
     }
   };
@@ -34,7 +34,7 @@ export function LeaderboardWidget() {
   return (
     <Card className="glass-card card-interactive animate-fade-in-up opacity-0 [animation-fill-mode:forwards] [animation-delay:0.4s]">
       <CardHeader className="pb-2 pt-3 px-3">
-        <CardTitle className="text-sm font-display flex items-center justify-between">
+        <CardTitle className="text-sm text-title flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-yellow-500/20">
               <Trophy className="h-3.5 w-3.5 text-yellow-400" />

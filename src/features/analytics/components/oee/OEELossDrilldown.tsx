@@ -35,6 +35,25 @@ interface PathItem {
   type: 'category' | 'reason' | 'job';
 }
 
+interface LossRecord {
+  id: string;
+  quantity: number;
+  loss_type?: string | null;
+  notes?: string | null;
+  job_id: string;
+  job?: { order_number?: string | null; client?: string | null } | null;
+}
+
+interface DrilldownItem {
+  id: string;
+  label: string;
+  sublabel?: string;
+  value: number;
+  type: 'category' | 'reason' | 'job';
+  color: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
 export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEELossDrilldownProps) {
   const [path, setPath] = useState<PathItem[]>([]);
   const { losses, isLoading } = useProductionLosses(undefined, filters);
@@ -46,7 +65,7 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
 
     if (path.length === 0) {
       // Level 0: Categories
-      const categories = losses.reduce((acc: any, loss: any) => {
+      const categories = losses.reduce((acc: Record<string, number>, loss: LossRecord) => {
         const cat = loss.loss_type || (loss.notes?.includes('Qualidade') ? 'quality' : 
                      loss.notes?.includes('Performance') ? 'performance' : 
                      'availability');
@@ -57,9 +76,9 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
       return Object.entries(categories).map(([id, value]) => ({
         id,
         label: id === 'quality' ? 'Qualidade' : id === 'performance' ? 'Performance' : 'Disponibilidade',
-        value,
+        value: value as number,
         type: 'category' as const,
-        color: id === 'quality' ? 'text-amber-500' : id === 'performance' ? 'text-blue-500' : 'text-red-500',
+        color: id === 'quality' ? 'text-warning' : id === 'performance' ? 'text-blue-500' : 'text-red-500',
         icon: id === 'quality' ? Target : id === 'performance' ? Gauge : Clock
       }));
     }
@@ -67,14 +86,14 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
     if (path.length === 1 && path[0].type === 'category') {
       // Level 1: Reasons within category
       const category = path[0].id;
-      const filteredLosses = losses.filter((l: any) => {
+      const filteredLosses = losses.filter((l: LossRecord) => {
         const cat = l.loss_type || (l.notes?.includes('Qualidade') ? 'quality' : 
                      l.notes?.includes('Performance') ? 'performance' : 
                      'availability');
         return cat === category;
       });
 
-      const reasons = filteredLosses.reduce((acc: any, loss: any) => {
+      const reasons = filteredLosses.reduce((acc: Record<string, number>, loss: LossRecord) => {
         const reason = loss.notes || 'Causa não especificada';
         acc[reason] = (acc[reason] || 0) + loss.quantity;
         return acc;
@@ -83,19 +102,19 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
       return Object.entries(reasons).map(([id, value]) => ({
         id,
         label: id,
-        value,
+        value: value as number,
         type: 'reason' as const,
         color: 'text-muted-foreground',
         icon: AlertTriangle
-      })).sort((a: any, b: any) => b.value - a.value);
+      })).sort((a, b) => (b.value as number) - (a.value as number));
     }
 
     if (path.length === 2 && path[1].type === 'reason') {
       // Level 2: Jobs for a specific reason
       const reason = path[1].id;
-      const filteredLosses = losses.filter((l: any) => l.notes === reason);
+      const filteredLosses = losses.filter((l: LossRecord) => l.notes === reason);
 
-      return filteredLosses.map((l: any) => ({
+      return filteredLosses.map((l: LossRecord) => ({
         id: l.id,
         label: `Job #${l.job?.order_number || l.job_id.slice(0, 8)}`,
         sublabel: l.job?.client || 'Cliente não informado',
@@ -109,7 +128,7 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
     return [];
   }, [losses, path]);
 
-  const navigateTo = (item: any) => {
+  const navigateTo = (item: DrilldownItem) => {
     setPath([...path, { id: item.id, label: item.label, type: item.type }]);
   };
 
@@ -214,7 +233,7 @@ export const OEELossDrilldown = memo(function OEELossDrilldown({ filters }: OEEL
               </div>
             ) : drilldownData.length > 0 ? (
               <div className="space-y-2">
-                {drilldownData.map((item: any) => (
+                {drilldownData.map((item: DrilldownItem) => (
                   <button
                     key={item.id}
                     onClick={() => item.type !== 'job' && navigateTo(item)}

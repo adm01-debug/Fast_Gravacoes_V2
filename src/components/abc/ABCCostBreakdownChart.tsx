@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { PieChart as PieChartIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from '@/lib/recharts';
 import { ABCCostPool, ABCJobCost } from '@/hooks/useABCCosts';
 
 interface ABCCostBreakdownChartProps {
@@ -60,7 +60,7 @@ export const ABCCostBreakdownChart = memo(function ABCCostBreakdownChart({ costP
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-title">
           <PieChartIcon className="h-5 w-5 text-primary" />
           Distribuição de Custos
         </CardTitle>
@@ -70,7 +70,7 @@ export const ABCCostBreakdownChart = memo(function ABCCostBreakdownChart({ costP
           <>
             <div className="text-center mb-4">
               <p className="text-sm text-muted-foreground">Custo Total Alocado</p>
-              <p className="text-2xl font-bold font-display text-primary">
+              <p className="text-display text-primary">
                 {totalCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
             </div>

@@ -48,7 +48,7 @@ export function DragOverlayCard({ job, technique, machine }: DragOverlayCardProp
       {job.scheduled_date && (
         <div className="mt-2 pt-2 border-t border-border/50 flex items-center gap-1 text-xs text-muted-foreground">
           <Calendar className="h-3 w-3" />
-          <span>{format(parseDateOnly(job.scheduled_date)!, "dd/MM", { locale: ptBR })}</span>
+          <span>{format(parseDateOnly(job.scheduled_date) ?? new Date(), "dd/MM", { locale: ptBR })}</span>
           {job.start_time && (
             <span className="ml-1">{job.start_time}</span>
           )}

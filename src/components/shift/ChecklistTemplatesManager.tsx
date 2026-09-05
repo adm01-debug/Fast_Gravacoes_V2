@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { ChecklistTemplate } from '@/hooks/useShiftHandover';
 import { TemplateForm, TemplateFormData } from './checklist-templates/TemplateForm';
 import { TemplateCard } from './checklist-templates/TemplateCard';
+import { useTechniques } from '@/features/jobs';
 
 const DEFAULT_FORM: TemplateFormData = {
   name: '', description: '', technique_id: '',
@@ -32,14 +34,7 @@ export default function ChecklistTemplatesManager() {
     }
   });
 
-  const { data: techniques } = useQuery({
-    queryKey: ['techniques'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('techniques').select('id, name').order('name');
-      if (error) throw error;
-      return data;
-    }
-  });
+  const { data: techniques } = useTechniques();
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['checklist-templates'] });
@@ -58,7 +53,7 @@ export default function ChecklistTemplatesManager() {
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success('Template criado com sucesso'); setShowAddModal(false); resetForm(); },
-    onError: (error) => { toast.error('Erro ao criar template: ' + error.message); }
+    onError: (error) => { showErrorToast(error, 'Erro ao criar template'); }
   });
 
   const updateTemplate = useMutation({
@@ -73,13 +68,13 @@ export default function ChecklistTemplatesManager() {
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success('Template atualizado'); setEditingTemplate(null); resetForm(); },
-    onError: (error) => { toast.error('Erro ao atualizar: ' + error.message); }
+    onError: (error) => { showErrorToast(error, 'Erro ao atualizar'); }
   });
 
   const deleteTemplate = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('shift_checklist_templates').delete().eq('id', id); if (error) throw error; },
     onSuccess: () => { invalidate(); toast.success('Template removido'); setDeleteConfirm(null); },
-    onError: (error) => { toast.error('Erro ao remover: ' + error.message); }
+    onError: (error) => { showErrorToast(error, 'Erro ao remover'); }
   });
 
   const duplicateTemplate = useMutation({
@@ -93,7 +88,7 @@ export default function ChecklistTemplatesManager() {
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success('Template duplicado com sucesso'); },
-    onError: (error) => { toast.error('Erro ao duplicar template: ' + error.message); }
+    onError: (error) => { showErrorToast(error, 'Erro ao duplicar template'); }
   });
 
   const resetForm = () => setFormData(DEFAULT_FORM);

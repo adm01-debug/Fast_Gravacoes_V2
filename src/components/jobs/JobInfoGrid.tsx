@@ -46,7 +46,7 @@ export function JobInfoGrid({ job, machine }: JobInfoGridProps) {
         <InfoRow
           icon={Calendar}
           label={t('jobs.scheduledDate')}
-          value={job.scheduled_date ? parseDateOnly(job.scheduled_date)!.toLocaleDateString('pt-BR') : t('common.notScheduled')}
+          value={job.scheduled_date ? (parseDateOnly(job.scheduled_date)?.toLocaleDateString('pt-BR') ?? '-') : t('common.notScheduled')}
           color="bg-indicator-info/20"
         />
         <InfoRow

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
@@ -25,11 +26,12 @@ export function TPMNotificationQueue() {
           *,
           machine:machines(name, code)
         `)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50);
       if (error) throw error;
       return data;
     },
-    refetchInterval: 5000
+    refetchInterval: 30000
   });
 
   const retryMutation = useMutation({
@@ -47,6 +49,9 @@ export function TPMNotificationQueue() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tpm-notification-queue'] });
       toast.success('Notificação reenfileirada para tentativa');
+    },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao retentar notificação');
     }
   });
 
@@ -78,9 +83,9 @@ export function TPMNotificationQueue() {
             <div className="text-2xl font-bold">{stats.pending}</div>
           </CardContent>
         </Card>
-        <Card className="bg-amber-500/5 border-amber-500/20">
+        <Card className="bg-warning/5 border-warning/20">
           <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-xs font-semibold uppercase text-amber-500 flex items-center gap-2">
+            <CardTitle className="text-xs font-semibold uppercase text-warning flex items-center gap-2">
               <RefreshCw className="h-4 w-4" /> Processando
             </CardTitle>
           </CardHeader>
@@ -98,9 +103,9 @@ export function TPMNotificationQueue() {
             <div className="text-2xl font-bold">{stats.failed}</div>
           </CardContent>
         </Card>
-        <Card className="bg-emerald-500/5 border-emerald-500/20">
+        <Card className="bg-success/5 border-success/20">
           <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-xs font-semibold uppercase text-emerald-500 flex items-center gap-2">
+            <CardTitle className="text-xs font-semibold uppercase text-success flex items-center gap-2">
               <BarChart3 className="h-4 w-4" /> Total (Hoje)
             </CardTitle>
           </CardHeader>
@@ -158,8 +163,8 @@ export function TPMNotificationQueue() {
                   </TableCell>
                   <TableCell>
                     {item.status === 'pending' && <Badge variant="secondary" className="animate-pulse">Aguardando</Badge>}
-                    {item.status === 'processing' && <Badge variant="outline" className="border-amber-500 text-amber-500">Enviando...</Badge>}
-                    {item.status === 'sent' && <Badge variant="outline" className="border-emerald-500 text-emerald-500">Concluído</Badge>}
+                    {item.status === 'processing' && <Badge variant="outline" className="border-warning text-warning">Enviando...</Badge>}
+                    {item.status === 'sent' && <Badge variant="outline" className="border-success text-success">Concluído</Badge>}
                     {item.status === 'failed' && <Badge variant="destructive">Falhou</Badge>}
                   </TableCell>
                   <TableCell>

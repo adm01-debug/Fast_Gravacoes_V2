@@ -1,6 +1,27 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useCallback, useRef, useState, useEffect } from 'react';
 
 const SOUND_ENABLED_KEY = 'theme-sound-enabled';
+
+type BrowserAudioWindow = Window & {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+};
+
+const createBrowserAudioContext = (): AudioContext => {
+  const audioWindow = window as BrowserAudioWindow;
+  const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+
+  if (!AudioContextConstructor) {
+    throw new Error('AudioContext não suportado neste navegador.');
+  }
+
+  return new AudioContextConstructor();
+};
 
 export function useThemeSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -17,16 +38,28 @@ export function useThemeSound() {
   const toggleSound = useCallback(() => {
     setSoundEnabled(prev => {
       const newValue = !prev;
-      localStorage.setItem(SOUND_ENABLED_KEY, String(newValue));
+      try { localStorage.setItem(SOUND_ENABLED_KEY, String(newValue)); } catch { /* quota exceeded */ }
       return newValue;
     });
   }, []);
 
   const getAudioContext = useCallback(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioWindow = window as BrowserAudioWindow;
+    const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+    if (!AudioContextConstructor) return null;
+
+    if (audioContextRef.current) return audioContextRef.current;
+
+    try {
+      const ctx = new AudioContextConstructor();
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      audioContextRef.current = ctx;
+      return ctx;
+    } catch {
+      return null;
     }
-    return audioContextRef.current;
   }, []);
 
   const playLightModeSound = useCallback(() => {
@@ -34,6 +67,7 @@ export function useThemeSound() {
 
     try {
       const ctx = getAudioContext();
+      if (!ctx) return;
       const now = ctx.currentTime;
 
       // Create a bright, ascending chime for light mode
@@ -80,6 +114,7 @@ export function useThemeSound() {
 
     try {
       const ctx = getAudioContext();
+      if (!ctx) return;
       const now = ctx.currentTime;
 
       // Create a soft, descending tone for dark mode

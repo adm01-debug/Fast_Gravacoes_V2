@@ -1,6 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, type CardProps } from '@/components/ui/card';
 import { CodeBlock } from '@/components/ui/code-block';
 import { Coins, Layers, TrendingUp } from 'lucide-react';
+
+type CardVariant = NonNullable<CardProps['variant']>;
 
 export function CardVariants() {
   return (
@@ -11,15 +13,15 @@ export function CardVariants() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
+          {([
             { v: 'default', title: 'Default', desc: 'Variante padrão com sombra sutil' },
             { v: 'elevated', title: 'Elevated', desc: 'Maior elevação e profundidade' },
             { v: 'interactive', title: 'Interactive', desc: 'Hover com lift e glow (clicável)' },
             { v: 'glass', title: 'Glass', desc: 'Glassmorphism com blur' },
             { v: 'ghost', title: 'Ghost', desc: 'Transparente, aparece no hover' },
             { v: 'outline', title: 'Outline', desc: 'Apenas borda, sem preenchimento' },
-          ].map(c => (
-            <Card key={c.v} variant={c.v as any}>
+          ] as Array<{ v: CardVariant; title: string; desc: string }>).map(c => (
+            <Card key={c.v} variant={c.v}>
               <CardHeader><CardTitle className="text-lg">{c.title}</CardTitle><CardDescription>{c.desc}</CardDescription></CardHeader>
               <CardContent><code className="text-xs text-primary">variant="{c.v}"</code></CardContent>
             </Card>
@@ -29,7 +31,7 @@ export function CardVariants() {
             <CardContent><div className="text-2xl font-bold text-foreground">1,234</div><code className="text-xs text-primary mt-2 block">variant="stat"</code></CardContent>
           </Card>
           <Card variant="premium">
-            <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Coins className="h-4 w-4 text-amber-500" />Premium</CardTitle><CardDescription>Destaque especial com acento dourado</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Coins className="h-4 w-4 text-warning" />Premium</CardTitle><CardDescription>Destaque especial com acento dourado</CardDescription></CardHeader>
             <CardContent><code className="text-xs text-primary">variant="premium"</code></CardContent>
           </Card>
         </div>

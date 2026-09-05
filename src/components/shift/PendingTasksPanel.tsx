@@ -30,7 +30,7 @@ import { useShiftPendingTasks, useShiftHandoverMutations, ShiftPendingTask } fro
 const PRIORITY_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
   low: { label: 'Baixa', color: 'text-slate-600', bgColor: 'bg-slate-100' },
   medium: { label: 'Média', color: 'text-blue-600', bgColor: 'bg-blue-100' },
-  high: { label: 'Alta', color: 'text-amber-600', bgColor: 'bg-amber-100' },
+  high: { label: 'Alta', color: 'text-warning', bgColor: 'bg-warning' },
   critical: { label: 'Crítica', color: 'text-red-600', bgColor: 'bg-red-100' }
 };
 
@@ -88,7 +88,7 @@ export default function PendingTasksPanel() {
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-amber-500" />
+              <Clock className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-2xl font-bold">{stats.pending}</p>
                 <p className="text-xs text-muted-foreground">Pendentes</p>

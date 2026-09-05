@@ -17,7 +17,7 @@ export function AIEnergyAdvisor() {
         type: 'success',
         title: 'Eficiência Energética Excelente',
         description: `Sua fábrica opera com score ${stats.energyScore}/100. O fator de potência médio (${stats.avgPowerFactor.toFixed(2)}) está acima do limite regulatório.`,
-        icon: <Leaf className="h-4 w-4 text-emerald-500" />
+        icon: <Leaf className="h-4 w-4 text-success" />
       });
     }
 
@@ -27,7 +27,7 @@ export function AIEnergyAdvisor() {
         type: 'warning',
         title: 'Tendência de Custo em Alta',
         description: `Consumo subiu ${stats.costTrend.toFixed(1)}% em relação ao mês anterior. IA recomenda auditar máquinas com maior ociosidade ligada.`,
-        icon: <AlertTriangle className="h-4 w-4 text-amber-500" />
+        icon: <AlertTriangle className="h-4 w-4 text-warning" />
       });
     }
 
@@ -64,14 +64,14 @@ export function AIEnergyAdvisor() {
   }, [stats]);
 
   return (
-    <Card className="glass-card border-emerald-500/20 bg-emerald-500/5 overflow-hidden">
+    <Card className="glass-card border-success/20 bg-success/5 overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <BrainCircuit className="h-5 w-5 text-emerald-500 animate-pulse" />
+            <BrainCircuit className="h-5 w-5 text-success animate-pulse" />
             AI Sustainable Advisor
           </CardTitle>
-          <Badge variant="outline" className="text-[10px] uppercase font-bold border-emerald-500/30 text-emerald-500">Green Factor</Badge>
+          <Badge variant="outline" className="text-[10px] uppercase font-bold border-success/30 text-success">Green Factor</Badge>
         </div>
         <CardDescription>Inteligência artificial focada em eficiência energética e ESG</CardDescription>
       </CardHeader>
@@ -82,7 +82,7 @@ export function AIEnergyAdvisor() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.1 }}
-            className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-border/50 hover:border-emerald-500/30 transition-all duration-300 group"
+            className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-border/50 hover:border-success/30 transition-all duration-300 group"
           >
             <div className="mt-0.5 group-hover:rotate-12 transition-transform">
               {insight.icon}
@@ -98,7 +98,7 @@ export function AIEnergyAdvisor() {
         <div className="pt-2">
           <div className="p-3 rounded-xl bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-emerald-500" />
+              <TrendingDown className="h-4 w-4 text-success" />
               <span className="text-xs font-bold uppercase tracking-tighter">Sustentabilidade: {stats.energyScore}%</span>
             </div>
           </div>

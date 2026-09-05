@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryConfig';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ const roleLabels: Record<AppRole, string> = {
 const roleColors: Record<AppRole, string> = {
   operator: 'bg-blue-500/10 text-blue-500',
   coordinator: 'bg-purple-500/10 text-purple-500',
-  manager: 'bg-amber-500/10 text-amber-500',
+  manager: 'bg-warning/10 text-warning',
 };
 
 export function UserManagement() {
@@ -57,7 +58,7 @@ export function UserManagement() {
 
   // Fetch users
   const { data: users = [], isLoading } = useQuery({
-    queryKey: ['users-management'],
+    queryKey: QUERY_KEYS.USERS_MANAGEMENT,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
@@ -70,7 +71,7 @@ export function UserManagement() {
 
   // Fetch user roles
   const { data: userRoles = [] } = useQuery({
-    queryKey: ['user-roles-management'],
+    queryKey: QUERY_KEYS.USER_ROLES_MANAGEMENT,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_roles')
@@ -105,8 +106,8 @@ export function UserManagement() {
     },
     onSuccess: () => {
       toast.success('Usuário atualizado com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['users-management'] });
-      queryClient.invalidateQueries({ queryKey: ['user-roles-management'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS_MANAGEMENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USER_ROLES_MANAGEMENT });
       setShowEditModal(false);
       setSelectedUser(null);
     },
@@ -128,8 +129,8 @@ export function UserManagement() {
     },
     onSuccess: () => {
       toast.success('Usuário removido com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['users-management'] });
-      queryClient.invalidateQueries({ queryKey: ['user-roles-management'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS_MANAGEMENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USER_ROLES_MANAGEMENT });
       setShowDeleteDialog(false);
       setSelectedUser(null);
     },

@@ -12,7 +12,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   ResponsiveContainer, Legend
-} from 'recharts';
+} from '@/lib/recharts';
 import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';
 import { KPIData } from '@/features/analytics/hooks/useKPIs';
 
@@ -126,7 +126,7 @@ const KPIOverviewTabComponent = ({
                     <p className="text-xs sm:text-sm text-muted-foreground">Índice de Perdas</p>
                     <p className={cn(
                       "text-2xl sm:text-3xl font-bold",
-                      kpis.lossRate > 5 ? "text-primary" : kpis.lossRate > 2 ? "text-amber-400" : "text-green-400"
+                      kpis.lossRate > 5 ? "text-primary" : kpis.lossRate > 2 ? "text-warning" : "text-green-400"
                     )}>
                       {kpis.lossRate.toFixed(2)}%
                     </p>
@@ -143,10 +143,10 @@ const KPIOverviewTabComponent = ({
                   </div>
                   <div className={cn(
                     "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center flex-shrink-0",
-                    kpis.lossRate > 5 ? "bg-primary/20" : kpis.lossRate > 2 ? "bg-amber-500/20" : "bg-green-500/20"
+                    kpis.lossRate > 5 ? "bg-primary/20" : kpis.lossRate > 2 ? "bg-warning/20" : "bg-green-500/20"
                   )}>
                     {kpis.lossRate > 2 ? (
-                      <TrendingDown className={cn("h-5 w-5 sm:h-6 sm:w-6", kpis.lossRate > 5 ? "text-primary" : "text-amber-400")} />
+                      <TrendingDown className={cn("h-5 w-5 sm:h-6 sm:w-6", kpis.lossRate > 5 ? "text-primary" : "text-warning")} />
                     ) : (
                       <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
                     )}
@@ -340,7 +340,7 @@ const KPIOverviewTabComponent = ({
             <div className="space-y-4">
               <div className="p-3 rounded-xl bg-muted/20 border border-border/50">
                 <div className="flex items-center gap-2 mb-2">
-                  <Zap className="h-4 w-4 text-amber-400" />
+                  <Zap className="h-4 w-4 text-warning" />
                   <span className="text-xs font-bold uppercase tracking-wider">Insight da Semana</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">

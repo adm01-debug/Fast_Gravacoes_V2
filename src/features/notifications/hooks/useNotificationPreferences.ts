@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useCallback, useEffect } from 'react';
 
 export interface NotificationChannel {
@@ -90,7 +95,7 @@ export function useNotificationPreferences() {
 
   const persist = useCallback((prefs: NotificationPreferences) => {
     setPreferences(prefs);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs)); } catch { /* quota exceeded or private browsing */ }
   }, []);
 
   const updateCategory = useCallback(

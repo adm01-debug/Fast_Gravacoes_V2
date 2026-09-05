@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+/* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
 
@@ -14,9 +16,26 @@ interface UseRealtimeConnectionReturn {
 export function useRealtimeConnection(): UseRealtimeConnectionReturn {
   const [status, setStatus] = useState<ConnectionStatus>('connecting');
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  // Track the active channel so reconnects can dispose the previous one
+  // instead of leaking a RealtimeChannel on every reconnect.
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setupChannel = useCallback(() => {
     setStatus('connecting');
+
+    // Cancel any pending auto-reconnect timer so a manual reconnect (or a
+    // re-setup) doesn't trigger a second, duplicate reconnect cycle.
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
+    }
+
+    // Remove any previously active channel before opening a new one.
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
 
     const channelId = `realtime-status-monitor-${Math.random().toString(36).substring(7)}`;
     const newChannel = supabase
@@ -38,7 +57,7 @@ export function useRealtimeConnection(): UseRealtimeConnectionReturn {
         } else if (subscribeStatus === 'CLOSED') {
           setStatus('disconnected');
         } else if (subscribeStatus === 'CHANNEL_ERROR') {
-          console.warn(`Realtime connection degraded on channel ${channelId}`);
+          logger.warn(`Realtime connection degraded on channel ${channelId}`, undefined, 'useRealtimeConnection');
           setStatus('error');
           // Auto-reconnect after exponential backoff or static delay
           import('sonner').then(({ toast }) => {
@@ -47,32 +66,44 @@ export function useRealtimeConnection(): UseRealtimeConnectionReturn {
               id: 'realtime-error'
             });
           });
-          const timer = setTimeout(() => {
-            reconnect();
+          if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
+          reconnectTimerRef.current = setTimeout(() => {
+            reconnectRef.current?.();
           }, 5000);
-          return () => clearTimeout(timer);
         }
       });
 
+    channelRef.current = newChannel;
     return newChannel;
   }, []);
 
+  // Keep a stable ref to the latest reconnect so setupChannel (deps []) can
+  // call it without capturing a stale/undefined binding.
+  const reconnectRef = useRef<(() => void) | null>(null);
+
+  const reconnect = useCallback(() => {
+    setStatus('connecting');
+    setupChannel();
+  }, [setupChannel]);
+
   useEffect(() => {
-    let ch: RealtimeChannel;
+    reconnectRef.current = reconnect;
+  }, [reconnect]);
+
+  useEffect(() => {
     try {
-      ch = setupChannel();
+      setupChannel();
     } catch (e) {
       setStatus('error');
     }
 
     return () => {
-      if (ch) supabase.removeChannel(ch);
+      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [setupChannel]);
-
-  const reconnect = useCallback(() => {
-    setStatus('connecting');
-    setupChannel();
   }, [setupChannel]);
 
   return {

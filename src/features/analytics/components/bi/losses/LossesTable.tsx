@@ -29,7 +29,7 @@ export function LossesTable({ jobs, onExport, onShowDetails }: LossesTableProps)
             <Package className="h-5 w-5 text-primary" />
           </div>
           <div className="flex flex-col">
-            <span className="font-display tracking-wider uppercase text-lg">{t('bi.lossMetrics', 'Métricas de Perda por Pedido')}</span>
+            <span className="text-title tracking-wider uppercase text-lg">{t('bi.lossMetrics', 'Métricas de Perda por Pedido')}</span>
             <span className="text-[10px] text-muted-foreground font-sans uppercase tracking-widest">{t('bi.anomallyIdentification', 'Identificação de anomalias críticas')}</span>
           </div>
         </CardTitle>

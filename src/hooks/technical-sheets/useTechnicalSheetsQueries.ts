@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { createAppError } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 import {
@@ -36,29 +36,16 @@ export const useTechnicalSheets = () => {
         return data as unknown as TechnicalSheet[];
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.sheets);
-        throw error;
+        throw appError;
       }
     },
     staleTime: STALE_TIMES.STATIC,
     ...defaultQueryOptions,
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('technical-sheets-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'technical_sheets' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['technical-sheets'] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  useRealtimeChannel('technical-sheets-changes', [{ table: 'technical_sheets' }], () => {
+    queryClient.invalidateQueries({ queryKey: ['technical-sheets'] });
+  });
 
   const categoriesQuery = useQuery({
     queryKey: ['product-categories'],
@@ -73,7 +60,7 @@ export const useTechnicalSheets = () => {
         return data as ProductCategory[];
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.categories);
-        throw error;
+        throw appError;
       }
     },
     staleTime: STALE_TIMES.STATIC,
@@ -93,7 +80,7 @@ export const useTechnicalSheets = () => {
         return data as Material[];
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.materials);
-        throw error;
+        throw appError;
       }
     },
     staleTime: STALE_TIMES.STATIC,
@@ -132,7 +119,7 @@ export const useTechnicalSheetDetails = (sheetId: string | null) => {
         return data as unknown as TechnicalSheet;
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.sheetDetails);
-        throw error;
+        throw appError;
       }
     },
     enabled: !!sheetId,
@@ -155,7 +142,7 @@ export const useTechnicalSheetDetails = (sheetId: string | null) => {
         return data as TechnicalSheetStep[];
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.steps);
-        throw error;
+        throw appError;
       }
     },
     enabled: !!sheetId,
@@ -177,7 +164,7 @@ export const useTechnicalSheetDetails = (sheetId: string | null) => {
         return data as TechnicalSheetMaterial[];
       } catch (error) {
         const appError = createAppError(error, { entity: 'technical_sheet_materials', operation: 'fetch' });
-        throw error;
+        throw appError;
       }
     },
     enabled: !!sheetId,
@@ -199,7 +186,7 @@ export const useTechnicalSheetDetails = (sheetId: string | null) => {
         return data as TechnicalSheetTip[];
       } catch (error) {
         const appError = createAppError(error, SHEETS_ERROR_CONTEXT.tips);
-        throw error;
+        throw appError;
       }
     },
     enabled: !!sheetId,

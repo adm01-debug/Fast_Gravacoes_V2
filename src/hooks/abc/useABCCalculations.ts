@@ -53,7 +53,8 @@ export function useABCCalculations({ costPools, jobCosts, jobs, techniques }: Us
       const techniqueCosts = jobCosts.filter(jc => techniqueJobIds.includes(jc.job_id));
 
       const totalCost = techniqueCosts.reduce((sum, c) => sum + Number(c.total_cost), 0);
-      const totalQuantity = techniqueJobs.reduce((sum, j) => sum + (j.produced_quantity ?? j.quantity ?? 0), 0);
+      // Null produced_quantity means "not recorded" — not "fully produced".
+      const totalQuantity = techniqueJobs.reduce((sum, j) => sum + (j.produced_quantity ?? 0), 0);
 
       const costByPool = costPools.map(pool => {
         const poolCosts = techniqueCosts.filter(c => c.cost_pool_id === pool.id);
@@ -81,7 +82,7 @@ export function useABCCalculations({ costPools, jobCosts, jobs, techniques }: Us
   const totals = useMemo(() => {
     const totalBudget = costPools.reduce((sum, p) => sum + Number(p.monthly_budget), 0);
     const totalAllocatedCost = jobCosts.reduce((sum, c) => sum + Number(c.total_cost), 0);
-    const totalPiecesProduced = jobs.reduce((sum, j) => sum + (j.produced_quantity ?? j.quantity ?? 0), 0);
+    const totalPiecesProduced = jobs.reduce((sum, j) => sum + (j.produced_quantity ?? 0), 0);
     const averageUnitCost = totalPiecesProduced > 0 ? totalAllocatedCost / totalPiecesProduced : 0;
 
     return {

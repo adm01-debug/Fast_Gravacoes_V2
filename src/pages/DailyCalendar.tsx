@@ -30,6 +30,7 @@ import { useSchedulingConflicts } from '@/features/jobs';
 import { useMachineUtilization } from '@/features/production';
 import { DbJob } from '@/features/jobs';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { useDevice } from '@/hooks/use-device';
 import { exportElementToPdf, downloadICalFeed } from '@/lib/calendarExports';
 import { toast } from 'sonner';
@@ -207,7 +208,7 @@ export default function DailyCalendar() {
           />
         )}
 
-        <Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
+        <SectionErrorBoundary compact><Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
           <CalendarHeader
             title="FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO"
             subtitle="Visualização completa da agenda por máquina | QUALIDADE + VELOCIDADE"
@@ -234,7 +235,7 @@ export default function DailyCalendar() {
               />
             }
           />
-        </Suspense>
+        </Suspense></SectionErrorBoundary>
 
         <div className="hidden sm:flex print:hidden">
           <CalendarToolbar
@@ -270,7 +271,7 @@ export default function DailyCalendar() {
           <Card className="bg-card border border-border/40 rounded-xl">
             <CardHeader className="border-b border-border/40 pb-3 px-3 sm:px-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm sm:text-lg font-display gradient-text flex items-center gap-2">
+                <CardTitle className="text-sm sm:text-lg text-title gradient-text flex items-center gap-2">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   <span>{format(selectedDate, 'EEEE, dd MMM', { locale: ptBR })}</span>
                 </CardTitle>
@@ -280,7 +281,7 @@ export default function DailyCalendar() {
               </div>
             </CardHeader>
             <CardContent className="p-3 sm:p-4">
-              <Suspense fallback={<div className="h-80 bg-muted animate-pulse rounded-lg" />}>
+              <SectionErrorBoundary compact><Suspense fallback={<div className="h-80 bg-muted animate-pulse rounded-lg" />}>
                 <AgendaView
                   jobs={dayJobs}
                   machines={filteredMachines}
@@ -288,13 +289,13 @@ export default function DailyCalendar() {
                   selectedDate={selectedDate}
                   onJobClick={handleJobClick}
                 />
-              </Suspense>
+              </Suspense></SectionErrorBoundary>
             </CardContent>
           </Card>
         ) : (
           <Card className="bg-card border border-border/40 rounded-xl overflow-hidden">
             <CardHeader className="border-b border-border/40 pb-3 px-3 sm:px-6">
-              <CardTitle className="text-sm sm:text-lg font-display gradient-text flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-lg text-title gradient-text flex items-center gap-2">
                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 <span className="hidden sm:inline">
                   {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
@@ -309,7 +310,7 @@ export default function DailyCalendar() {
               <div aria-live="polite" className="sr-only">
                 {dayJobs.length} agendamentos · {dayConflicts.length} conflitos
               </div>
-              <Suspense fallback={<div className="h-80 bg-muted animate-pulse rounded-lg" />}>
+              <SectionErrorBoundary compact><Suspense fallback={<div className="h-80 bg-muted animate-pulse rounded-lg" />}>
                 <CalendarTimeline
                   machines={filteredMachines}
                   techniques={techniques}
@@ -328,7 +329,7 @@ export default function DailyCalendar() {
                   onRefresh={refetchJobs}
                   allJobs={jobs}
                 />
-              </Suspense>
+              </Suspense></SectionErrorBoundary>
             </CardContent>
           </Card>
         )}

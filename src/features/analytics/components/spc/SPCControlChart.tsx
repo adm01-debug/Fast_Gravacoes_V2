@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Activity, BarChart2, Plus, Sparkles, TrendingUp, History, Info, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ComposedChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ComposedChart, Area } from '@/lib/recharts';
 import { SPCParameter } from '@/features/analytics/hooks/useSPC';
 import { cn } from '@/lib/utils';
 
@@ -126,7 +126,7 @@ export function SPCControlChart({ selectedParameter, chartData, capability, onCa
                   <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Cp (Potencial)</p>
                   <p className={cn(
                     "text-2xl font-black",
-                    capability.cp >= 1.33 ? "text-emerald-500" : capability.cp >= 1 ? "text-amber-500" : "text-red-500"
+                    capability.cp >= 1.33 ? "text-success" : capability.cp >= 1 ? "text-warning" : "text-red-500"
                   )}>{capability.cp.toFixed(2)}</p>
                 </div>
 
@@ -137,7 +137,7 @@ export function SPCControlChart({ selectedParameter, chartData, capability, onCa
                   <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Cpk (Capabilidade)</p>
                   <p className={cn(
                     "text-2xl font-black",
-                    capability.cpk >= 1.33 ? "text-emerald-500" : capability.cpk >= 1 ? "text-amber-500" : "text-red-500"
+                    capability.cpk >= 1.33 ? "text-success" : capability.cpk >= 1 ? "text-warning" : "text-red-500"
                   )}>{capability.cpk.toFixed(2)}</p>
                 </div>
 
@@ -154,8 +154,8 @@ export function SPCControlChart({ selectedParameter, chartData, capability, onCa
                    </div>
                    <Badge variant="outline" className={cn(
                      "text-[10px] font-black uppercase tracking-tight",
-                     capability.cpk >= 1.33 ? "text-emerald-500 border-emerald-500/20 bg-emerald-500/5" :
-                     capability.cpk >= 1 ? "text-amber-500 border-amber-500/20 bg-amber-500/5" :
+                     capability.cpk >= 1.33 ? "text-success border-success/20 bg-success/5" :
+                     capability.cpk >= 1 ? "text-warning border-warning/20 bg-warning/5" :
                      "text-red-500 border-red-500/20 bg-red-500/5"
                    )}>
                      {capability.performance}

@@ -63,7 +63,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
           <Card className="w-full max-w-md border-destructive/20 shadow-2xl animate-in fade-in zoom-in duration-500">
             <CardHeader className="text-center pb-2">
               <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 ring-8 ring-destructive/5">
-                <AlertTriangle className="h-8 w-8 text-destructive animate-pulse" />
+                <AlertTriangle className="h-8 w-8 text-destructive motion-safe:animate-pulse" />
               </div>
               <CardTitle className="text-2xl font-black tracking-tight uppercase">
                 {isTelemetryError ? 'Falha na Infraestrutura' : isRealtimeError ? 'Falha de Sincronização' : 'Ops! Algo deu errado'}

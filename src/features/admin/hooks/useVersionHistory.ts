@@ -8,8 +8,8 @@ export interface VersionEntry<T = Record<string, unknown>> {
   action: 'create' | 'update' | 'delete';
   changes: Array<{
     field: string;
-    oldValue: any;
-    newValue: any;
+    oldValue: unknown;
+    newValue: unknown;
   }>;
   snapshot: T;
 }
@@ -90,7 +90,7 @@ export function useVersionHistory<T extends Record<string, unknown>>(entityType:
         ...Object.keys(versionB.snapshot),
       ]);
 
-      const diffs: Array<{ field: string; valueA: any; valueB: any }> = [];
+      const diffs: Array<{ field: string; valueA: unknown; valueB: unknown }> = [];
       allKeys.forEach(field => {
         const a = versionA.snapshot[field];
         const b = versionB.snapshot[field];

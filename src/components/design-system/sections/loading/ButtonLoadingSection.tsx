@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import { CodeBlock } from '@/components/ui/code-block';
 import { Loader2, Play, Save, Zap } from 'lucide-react';
+
+type ButtonVariant = NonNullable<ButtonProps['variant']>;
 
 export function ButtonLoadingSection() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +20,8 @@ export function ButtonLoadingSection() {
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Variantes com Loading</h4>
           <div className="flex flex-wrap gap-3">
-            {[{ v: 'default', l: 'Carregando...' }, { v: 'secondary', l: 'Processando' }, { v: 'outline', l: 'Aguarde' }, { v: 'gradient', l: 'Salvando' }, { v: 'destructive', l: 'Excluindo' }].map(b => (
-              <Button key={b.v} variant={b.v as any} disabled className={b.v === 'gradient' ? 'opacity-80' : ''}>
+            {([{ v: 'default', l: 'Carregando...' }, { v: 'secondary', l: 'Processando' }, { v: 'outline', l: 'Aguarde' }, { v: 'gradient', l: 'Salvando' }, { v: 'destructive', l: 'Excluindo' }] as Array<{ v: ButtonVariant; l: string }>).map(b => (
+              <Button key={b.v} variant={b.v} disabled className={b.v === 'gradient' ? 'opacity-80' : ''}>
                 <Loader2 className="h-4 w-4 animate-spin" />{b.l}
               </Button>
             ))}
@@ -39,8 +41,8 @@ export function ButtonLoadingSection() {
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Apenas Ícone</h4>
           <div className="flex flex-wrap gap-3">
-            {['default', 'secondary', 'outline', 'ghost'].map(v => (
-              <Button key={v} size="icon" variant={v as any} disabled><Loader2 className="h-4 w-4 animate-spin" /></Button>
+            {(['default', 'secondary', 'outline', 'ghost'] as ButtonVariant[]).map(v => (
+              <Button key={v} size="icon" variant={v} disabled><Loader2 className="h-4 w-4 animate-spin" /></Button>
             ))}
           </div>
         </div>

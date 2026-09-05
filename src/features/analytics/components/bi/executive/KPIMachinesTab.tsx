@@ -104,7 +104,7 @@ const KPIMachinesTabComponent = ({
                       <td className="text-center py-4 px-4">
                         <span className={cn(
                           "text-sm font-medium",
-                          machine.lossRate > 5 ? "text-primary" : machine.lossRate > 0 ? "text-amber-400" : "text-green-400"
+                          machine.lossRate > 5 ? "text-primary" : machine.lossRate > 0 ? "text-warning" : "text-green-400"
                         )}>
                           {machine.lossRate.toFixed(1)}%
                         </span>

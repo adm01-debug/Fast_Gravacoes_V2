@@ -12,7 +12,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine
-} from 'recharts';
+} from '@/lib/recharts';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -70,7 +70,7 @@ export const OEETrendChart = memo(function OEETrendChart({ data, worldClassBench
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className={cn(
                 "flex items-center gap-1 px-2 py-1",
-                oeeDiff > 0 ? "text-emerald-500 border-emerald-500/30 bg-emerald-500/10" :
+                oeeDiff > 0 ? "text-success border-success/30 bg-success/10" :
                 oeeDiff < 0 ? "text-red-500 border-red-500/30 bg-red-500/10" :
                 "text-muted-foreground border-border bg-muted/20"
               )}>
@@ -84,14 +84,14 @@ export const OEETrendChart = memo(function OEETrendChart({ data, worldClassBench
 
               <Badge variant="outline" className={cn(
                 "flex items-center gap-1 px-2 py-1 text-[10px]",
-                availabilityDiff >= 0 ? "text-emerald-500/80" : "text-red-500/80"
+                availabilityDiff >= 0 ? "text-success/80" : "text-red-500/80"
               )}>
                 Disponibilidade: {availabilityDiff > 0 ? '+' : ''}{availabilityDiff.toFixed(1)}%
               </Badge>
 
               <Badge variant="outline" className={cn(
                 "flex items-center gap-1 px-2 py-1 text-[10px]",
-                performanceDiff >= 0 ? "text-emerald-500/80" : "text-red-500/80"
+                performanceDiff >= 0 ? "text-success/80" : "text-red-500/80"
               )}>
                 Desempenho: {performanceDiff > 0 ? '+' : ''}{performanceDiff.toFixed(1)}%
               </Badge>

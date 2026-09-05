@@ -26,7 +26,7 @@ export function BIEmptyState({
         </div>
       </div>
 
-      <h3 className="text-xl font-display font-bold text-white mb-2 uppercase tracking-tight">{title}</h3>
+      <h3 className="text-xl text-title font-bold text-white mb-2 uppercase tracking-tight">{title}</h3>
       <p className="text-muted-foreground max-w-xs mb-8">
         {description}
       </p>

@@ -17,15 +17,17 @@ jobs:
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Run ESLint
         run: npm run lint -- --max-warnings 9999
@@ -33,32 +35,41 @@ jobs:
       - name: TypeScript type check
         run: npx tsc --noEmit
 
+      - name: Any Ratchet — impedir regressão de 'any'
+        run: npm run quality:any
+
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 2: Security scan (runs in parallel with lint)
 # ──────────────────────────────────────────────────────────────────────────
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Dependency vulnerability audit
-        run: npm audit --audit-level=critical
+        # HIGH includes secrets in env var names, path traversal in dev tools etc.
+        # CRITICAL alone misses known HIGH vulnerabilities (e.g. vite path traversal).
+        run: npm audit --audit-level=high
 
       - name: Secret scanning (TruffleHog)
-        uses: trufflesecurity/trufflehog@main
+        # Pinned to v3 tag for supply-chain safety. Update periodically.
+        uses: trufflesecurity/trufflehog@v3.82.13
         with:
           path: ./
           base: ${{ github.event.before || 'HEAD~1' }}
           head: HEAD
-          extra_args: --only-verified
+          # Removed --only-verified: unverifiable secrets (expired keys, private
+          # endpoints like Bitrix24) would otherwise be silently ignored.
 
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 3: Unit tests + coverage (blocks deploy if < thresholds)
@@ -66,16 +77,18 @@ jobs:
   unit-tests:
     name: Unit & Integration Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Run unit tests with coverage
         run: npm run test:coverage -- --reporter=verbose --reporter=json --outputFile=test-results.json
@@ -109,16 +122,18 @@ jobs:
   simulation-tests:
     name: Simulation & Fuzz Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Run webhook simulation suite
         run: npx vitest run src/test/webhookSimulation.test.ts --reporter=verbose
@@ -147,32 +162,42 @@ jobs:
   build:
     name: Production Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [security, unit-tests, simulation-tests]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Build production bundle
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # client.ts reads VITE_SUPABASE_PUBLISHABLE_KEY, not _ANON_KEY (see
+          # CLAUDE.md's documented naming inconsistency) — the build was
+          # silently shipping createClient(url, undefined) without this.
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_ALERT_WEBHOOK_URL: ${{ secrets.VITE_ALERT_WEBHOOK_URL }}
         run: npm run build
 
-      - name: Check bundle size
-        run: |
-          DIST_SIZE=$(du -sk dist/ | cut -f1)
-          echo "Bundle size: ${DIST_SIZE}KB"
-          echo "Bundle size: ${DIST_SIZE}KB" >> $GITHUB_STEP_SUMMARY
-          if [ "$DIST_SIZE" -gt 20480 ]; then
-            echo "::warning::Bundle size ${DIST_SIZE}KB exceeds 20MB threshold"
-          fi
+      - name: Generate bundle report & enforce budgets
+        run: npm run bundle:report
+
+      - name: Upload bundle report (HTML + JSON + MD)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-report-${{ github.sha }}
+          path: |
+            dist/bundle-report.html
+            dist/bundle-report.json
+            dist/bundle-report.md
+          retention-days: 30
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -182,22 +207,72 @@ jobs:
           retention-days: 7
 
 # ──────────────────────────────────────────────────────────────────────────
+# Gate 5b: Bundle diff vs main (PRs only) — comments size changes on PR
+# ──────────────────────────────────────────────────────────────────────────
+  bundle-diff:
+    name: Bundle Diff vs main
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download current PR bundle report
+        uses: actions/download-artifact@v4
+        with:
+          name: bundle-report-${{ github.sha }}
+          path: bundle-head
+
+      - name: Download latest main bundle report (baseline)
+        uses: dawidd6/action-download-artifact@v6
+        continue-on-error: true
+        with:
+          workflow: ci.yml
+          branch: main
+          name_is_regexp: true
+          name: bundle-report-.*
+          path: bundle-base
+          if_no_artifact_found: warn
+
+      - name: Generate diff markdown
+        run: |
+          BASE_JSON=$(find bundle-base -name 'bundle-report.json' | head -n1 || true)
+          HEAD_JSON=bundle-head/bundle-report.json
+          mkdir -p dist
+          node scripts/bundle-diff.mjs "$BASE_JSON" "$HEAD_JSON" dist/bundle-diff.md
+          cat dist/bundle-diff.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment bundle diff on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: bundle-diff
+          path: dist/bundle-diff.md
+
+
+# ──────────────────────────────────────────────────────────────────────────
 # Gate 6: E2E tests (only on main and PRs targeting main)
 # ──────────────────────────────────────────────────────────────────────────
   e2e:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -208,14 +283,45 @@ jobs:
           name: dist-${{ github.sha }}
           path: dist/
 
+      # The E2E suite logs into a LIVE Supabase instance with a seeded test
+      # user. Without the Supabase secrets the SPA cannot even boot
+      # (createClient throws), so every test fails at the login form — a
+      # permanently-red gate that verifies nothing. Run the suite only when
+      # the required secrets are configured; surface a loud notice otherwise
+      # so the skip is a conscious, visible state rather than silent.
+      - name: Check E2E prerequisites
+        id: e2e-prereq
+        env:
+          SUPABASE_URL_SECRET: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY_SECRET: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          E2E_EMAIL_SECRET: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD_SECRET: ${{ secrets.E2E_PASSWORD }}
+        run: |
+          if [ -n "$SUPABASE_URL_SECRET" ] && [ -n "$SUPABASE_KEY_SECRET" ] && [ -n "$E2E_EMAIL_SECRET" ] && [ -n "$E2E_PASSWORD_SECRET" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=E2E skipped::Secrets VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY / E2E_EMAIL / E2E_PASSWORD are not all configured — E2E tests require a live Supabase instance and a seeded test user. Configure the secrets to activate this gate."
+            echo "## ⏭️ E2E skipped — required secrets not configured" >> "$GITHUB_STEP_SUMMARY"
+            echo "The suite logs into a live Supabase instance and needs \`VITE_SUPABASE_URL\`, \`VITE_SUPABASE_ANON_KEY\`, \`E2E_EMAIL\` and \`E2E_PASSWORD\`." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Run E2E tests
+        if: steps.e2e-prereq.outputs.enabled == 'true'
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:8080
-        run: npm run test:e2e -- --reporter=html --reporter=list
-        continue-on-error: true
+          # Credentials for the seeded live-instance test user — required;
+          # the credentials helper fails fast when they are absent.
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+        # CI: chromium only + 2 workers to fit within the time budget.
+        # mobile-chrome and full parallelism are covered by local dev runs.
+        run: npm run test:e2e -- --project=chromium --workers=2 --reporter=html --reporter=list
+        # Removed continue-on-error: true to fail the build if E2E tests fail
+
 
       - name: Upload Playwright report
-        if: always()
+        if: always() && steps.e2e-prereq.outputs.enabled == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ github.sha }}
@@ -228,7 +334,7 @@ jobs:
   quality-gate:
     name: Quality Gate ✅
     runs-on: ubuntu-latest
-    needs: [lint, security, unit-tests, simulation-tests, build]
+    needs: [lint, security, unit-tests, simulation-tests, build, e2e]
     if: always()
     steps:
       - name: Check all gates
@@ -241,6 +347,8 @@ jobs:
             ["unit-tests"]="${{ needs.unit-tests.result }}"
             ["simulation-tests"]="${{ needs.simulation-tests.result }}"
             ["build"]="${{ needs.build.result }}"
+            ["e2e"]="${{ needs.e2e.result }}"
+
           )
 
           FAILED=0

@@ -36,7 +36,7 @@ export function BIStatCard({ title, value, subtitle, icon: Icon, trend, trendVal
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground font-medium">{title}</p>
-            <p className="text-3xl font-bold font-display bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">{value}</p>
+            <p className="text-3xl font-bold text-display bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">{value}</p>
             {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
             {trend && trendValue && (
               <div className={cn("flex items-center gap-1 text-sm font-medium", trendColor)} data-testid="trend-indicator">

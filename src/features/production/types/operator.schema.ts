@@ -6,8 +6,8 @@ export const operatorSchema = z.object({
   email: z.string().email('Email inválido').max(254, 'Email muito longo'),
   role: z.enum(['operator', 'coordinator', 'manager']),
   is_active: z.boolean().default(true),
-  phone: z.string().max(20, 'Telefone muito longo').nullable().optional(),
-  badge_number: z.string().max(50, 'Crachá muito longo').nullable().optional(),
+  phone: z.string().regex(/^[\d\s\-\(\)\+]{0,20}$/, 'Telefone inválido').nullable().optional(),
+  badge_number: z.string().max(20, 'Número de crachá muito longo').nullable().optional(),
 });
 
 export const operatorFormSchema = operatorSchema.omit({ id: true });

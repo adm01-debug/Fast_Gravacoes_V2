@@ -10,6 +10,10 @@ vi.mock('@/features/jobs', () => ({
   useSchedulingData: vi.fn(),
 }));
 
+vi.mock('@/features/auth', () => ({
+  useAuth: () => ({ user: { id: 'test-user' } }),
+}));
+
 // Mock Supabase (needed for the other useQuery calls in useOperatorProductivity)
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -51,13 +55,10 @@ describe('useOperatorProductivity', () => {
   });
 
   it('should fetch and calculate productivity data', async () => {
-    // Use a recent, relative date so the job always falls within the 7-day
-    // period filter regardless of when the test runs (avoids time-rot flakiness).
-    const recent = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
-    const recentStart = new Date(recent);
-    recentStart.setUTCHours(8, 0, 0, 0);
-    const recentEnd = new Date(recent);
-    recentEnd.setUTCHours(9, 0, 0, 0);
+    // Dates relative to "now" so the 7-day period filter in
+    // useOperatorProductivity always includes this job.
+    const endTime = new Date().toISOString();
+    const startTime = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const mockJobs = [
       {
         id: 'j1',
@@ -65,11 +66,11 @@ describe('useOperatorProductivity', () => {
         status: 'finished',
         produced_quantity: 100,
         lost_pieces: 5,
-        actual_start_time: recentStart.toISOString(),
-        actual_end_time: recentEnd.toISOString(),
+        actual_start_time: startTime,
+        actual_end_time: endTime,
         estimated_duration: 60,
         quantity: 105,
-        created_at: recentStart.toISOString()
+        created_at: startTime
       }
     ];
 

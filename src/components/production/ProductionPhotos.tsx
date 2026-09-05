@@ -73,8 +73,12 @@ export function ProductionPhotos({
           <Dialog key={index}>
             <DialogTrigger asChild>
               <div
-                className="group relative aspect-square rounded-xl overflow-hidden border border-border bg-muted cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all shadow-sm"
+                role="button"
+                tabIndex={0}
+                aria-label={`Ampliar foto ${index + 1}`}
+                className="group relative aspect-square rounded-xl overflow-hidden border border-border bg-muted cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => setSelectedPhotoIndex(index)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedPhotoIndex(index); } }}
               >
                 <img
                   src={photo}

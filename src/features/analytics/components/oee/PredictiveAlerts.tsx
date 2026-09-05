@@ -9,7 +9,7 @@ interface PredictiveAlertsProps {
   alerts: {
     machineId: string;
     machineName: string;
-    type: 'performance' | 'quality' | 'availability';
+    type: 'performance' | 'quality' | 'availability' | string;
     severity: 'high' | 'medium' | 'low';
     message: string;
     trend: number;

@@ -1,4 +1,4 @@
-import { BIMetrics, BIJob } from '@/features/analytics/types';
+import { BIMetrics, BIJob } from './types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
   LineChart as RechartsLineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
+} from '@/lib/recharts';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
 import { BITooltip } from './BITooltip';
@@ -60,7 +60,7 @@ function StatCard({ title, value, subtitle, icon: Icon, trend, trendValue, varia
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground font-medium">{title}</p>
-            <p className="text-3xl font-bold font-display bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">{value}</p>
+            <p className="text-3xl font-bold text-display bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">{value}</p>
             {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
             {trend && trendValue && (
               <div className={cn("flex items-center gap-1 text-sm font-medium", trendColor)}>
@@ -92,8 +92,8 @@ interface BINormalViewProps {
     qualityLosses: number;
     trendData: Array<{ date: string; oee: number; quality: number }>;
   };
-  getPeriodLabel: () => string;
-  onDrillDown: (title: string, segment: string) => void;
+  getPeriodLabel: (filter?: string, range?: { from: Date; to: Date }) => string;
+  onDrillDown: (title: string, jobs: BIJob[]) => void;
 }
 
 export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrillDown }: BINormalViewProps) {
@@ -110,10 +110,10 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
     <>
       {/* Primary KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard onClick={() => onDrillDown('VISÃO OEE', 'all')} title="OEE Geral" value={`${oeeData.overallOEE.toFixed(1)}%`} subtitle="Eficiência Global dos Equipamentos" icon={Gauge} variant={oeeData.overallOEE >= 85 ? 'success' : oeeData.overallOEE >= 65 ? 'warning' : 'danger'} />
-        <StatCard onClick={() => onDrillDown('TAXA DE PERDA', 'lost')} title="Taxa de Perda" value={`${biMetrics.periodLossRate.toFixed(2)}%`} subtitle={`${biMetrics.periodLostPieces.toLocaleString()} peças perdidas`} icon={Target} variant={biMetrics.periodLossRate <= 5 ? 'success' : biMetrics.periodLossRate <= 10 ? 'warning' : 'danger'} />
-        <StatCard onClick={() => onDrillDown('RECEITA ESTIMADA', 'revenue')} title="Receita Estimada" value={`R$ ${(biMetrics.periodCompletedPieces * 2.5).toLocaleString()}`} subtitle="Projeção baseada na produção" icon={TrendingUp} variant="success" />
-        <StatCard onClick={() => onDrillDown('PEDIDOS PRODUZIDOS', 'finished')} title="Peças Produzidas" value={biMetrics.periodCompletedPieces.toLocaleString()} subtitle="Volume total finalizado" icon={Package} variant="success" />
+        <StatCard onClick={() => onDrillDown('VISÃO OEE', biMetrics.periodJobsList)} title="OEE Geral" value={`${oeeData.overallOEE.toFixed(1)}%`} subtitle="Eficiência Global dos Equipamentos" icon={Gauge} variant={oeeData.overallOEE >= 85 ? 'success' : oeeData.overallOEE >= 65 ? 'warning' : 'danger'} />
+        <StatCard onClick={() => onDrillDown('TAXA DE PERDA', biMetrics.periodJobsList.filter(j => (j.lost_pieces || 0) > 0))} title="Taxa de Perda" value={`${biMetrics.periodLossRate.toFixed(2)}%`} subtitle={`${biMetrics.periodLostPieces.toLocaleString()} peças perdidas`} icon={Target} variant={biMetrics.periodLossRate <= 5 ? 'success' : biMetrics.periodLossRate <= 10 ? 'warning' : 'danger'} />
+        <StatCard onClick={() => onDrillDown('RECEITA ESTIMADA', biMetrics.periodJobsList.filter(j => j.status === 'finished'))} title="Receita Estimada" value={`R$ ${(biMetrics.periodCompletedPieces * 2.5).toLocaleString()}`} subtitle="Projeção baseada na produção" icon={TrendingUp} variant="success" />
+        <StatCard onClick={() => onDrillDown('PEDIDOS PRODUZIDOS', biMetrics.periodJobsList.filter(j => j.status === 'finished'))} title="Peças Produzidas" value={biMetrics.periodCompletedPieces.toLocaleString()} subtitle="Volume total finalizado" icon={Package} variant="success" />
 
       </div>
 
@@ -126,7 +126,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <Printer className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{biMetrics.activeMachines}</p>
+                <p className="text-2xl font-bold text-title">{biMetrics.activeMachines}</p>
                 <p className="text-xs text-muted-foreground">Máquinas Ativas</p>
               </div>
             </div>
@@ -139,14 +139,14 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <Activity className="h-5 w-5 text-xp group-hover:scale-110 transition-transform" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{biMetrics.activeTechniques}</p>
+                <p className="text-2xl font-bold text-title">{biMetrics.activeTechniques}</p>
                 <p className="text-xs text-muted-foreground">Técnicas</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card
-          onClick={() => onDrillDown('PEDIDOS EM PRODUÇÃO', 'production')}
+          onClick={() => onDrillDown('PEDIDOS EM PRODUÇÃO', biMetrics.periodJobsList.filter(j => j.status === 'production'))}
           className="card-interactive bg-gradient-to-br from-success/10 via-success/5 to-transparent border-success/20 group hover:shadow-glow-success cursor-pointer"
         >
           <CardContent className="pt-4 pb-4">
@@ -155,14 +155,14 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <TrendingUp className="h-5 w-5 text-success group-hover:scale-110 transition-transform" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{kpis.inProgressJobs}</p>
+                <p className="text-2xl font-bold text-title">{kpis.inProgressJobs}</p>
                 <p className="text-xs text-muted-foreground">Em Produção</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card
-          onClick={() => onDrillDown('PEDIDOS ATRASADOS', 'delayed')}
+          onClick={() => onDrillDown('PEDIDOS ATRASADOS', biMetrics.periodJobsList.filter(j => j.status === 'delayed'))}
           className="card-interactive bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 group hover:shadow-[0_0_20px_hsl(var(--warning)/0.3)] cursor-pointer"
         >
           <CardContent className="pt-4 pb-4">
@@ -171,7 +171,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <AlertTriangle className="h-5 w-5 text-warning group-hover:scale-110 transition-transform" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{kpis.delayedJobs}</p>
+                <p className="text-2xl font-bold text-title">{kpis.delayedJobs}</p>
                 <p className="text-xs text-muted-foreground">Atrasados</p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 data={biMetrics.dailyTrend}
                 onClick={(data) => {
                   if (data && data.activeLabel) {
-                    onDrillDown(`PEDIDOS EM ${data.activeLabel}`, 'all');
+                    onDrillDown(`PEDIDOS EM ${data.activeLabel}`, biMetrics.periodJobsList);
                   }
                 }}
               >
@@ -238,8 +238,10 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                   dataKey="value"
                   label={({ name, percent }: { name: string; percent: number }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                   labelLine={false}
-                  onClick={(data) => {
-                    if (data && data.name) onDrillDown(`PEDIDOS: ${data.name}`, data.name);
+                  onClick={(data: { name?: string }) => {
+                    if (data && data.name) {
+                      onDrillDown(`PEDIDOS: ${data.name}`, biMetrics.periodJobsList.filter(j => j.status === (data.name === 'Finalizados' ? 'finished' : data.name === 'Em Produção' ? 'production' : data.name === 'Atrasados' ? 'delayed' : 'scheduled')));
+                    }
                   }}
                 >
                   {biMetrics.statusDistribution.map((entry, index: number) => (
@@ -276,8 +278,8 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                   fill={CHART_COLORS.success}
                   name="Produzidas"
                   radius={[0, 6, 6, 0]}
-                  onClick={(data) => {
-                    if (data && data.name) onDrillDown(`TÉCNICA: ${data.name}`, data.id);
+                  onClick={(data: { name?: string; id?: string }) => {
+                    if (data && data.name) onDrillDown(`TÉCNICA: ${data.name}`, biMetrics.periodJobsList.filter(j => j.technique_id === data.id));
                   }}
                 />
                 <Bar
@@ -285,8 +287,8 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                   fill={CHART_COLORS.danger}
                   name="Perdidas"
                   radius={[0, 6, 6, 0]}
-                  onClick={(data) => {
-                    if (data && data.name) onDrillDown(`PERDAS EM ${data.name}`, data.id);
+                  onClick={(data: { name?: string; id?: string }) => {
+                    if (data && data.name) onDrillDown(`PERDAS EM ${data.name}`, biMetrics.periodJobsList.filter(j => j.technique_id === data.id && (j.lost_pieces || 0) > 0));
                   }}
                 />
               </BarChart>
@@ -341,12 +343,12 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 </tr>
               </thead>
               <tbody>
-                {biMetrics.machineUtilization.map((machine, index: number) => (
-                  <tr key={machine.id} className="border-b border-border/50 hover:bg-primary/5 transition-all duration-200 group">
+                {(biMetrics.machineUtilization || []).map((machine: { machine?: string; name?: string; technique?: string; totalJobs?: number; completedJobs?: number; utilization?: number }, index: number) => (
+                  <tr key={machine.machine || index} className="border-b border-border/50 hover:bg-primary/5 transition-all duration-200 group">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground w-5 font-medium">{index + 1}.</span>
-                        <span className="font-medium group-hover:text-primary transition-colors">{machine.name}</span>
+                        <span className="font-medium group-hover:text-primary transition-colors">{machine.machine || machine.name}</span>
                       </div>
                     </td>
                     <td className="py-3 px-4"><Badge variant="outline" className="text-xs border-primary/30">{machine.technique}</Badge></td>
@@ -356,11 +358,11 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                       <div className="flex items-center justify-end gap-2">
                         <div className="w-24 h-2.5 bg-muted rounded-full overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500" style={{
-                            width: `${machine.utilization}%`,
-                            background: machine.utilization >= 80 ? 'linear-gradient(90deg, hsl(var(--success)), hsl(var(--success) / 0.8))' : machine.utilization >= 50 ? 'linear-gradient(90deg, hsl(var(--warning)), hsl(var(--warning) / 0.8))' : 'linear-gradient(90deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8))'
+                            width: `${machine.utilization ?? 0}%`,
+                            background: (machine.utilization ?? 0) >= 80 ? 'linear-gradient(90deg, hsl(var(--success)), hsl(var(--success) / 0.8))' : (machine.utilization ?? 0) >= 50 ? 'linear-gradient(90deg, hsl(var(--warning)), hsl(var(--warning) / 0.8))' : 'linear-gradient(90deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8))'
                           }} />
                         </div>
-                        <span className="text-sm font-bold w-12 text-right">{machine.utilization.toFixed(0)}%</span>
+                        <span className="text-sm font-bold w-12 text-right">{(machine.utilization ?? 0).toFixed(0)}%</span>
                       </div>
                     </td>
                   </tr>
@@ -380,7 +382,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <Clock className="h-8 w-8 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground font-medium">Disponibilidade</p>
-              <p className="text-4xl font-bold font-display gradient-text mt-1">{oeeData.overallAvailability.toFixed(1)}%</p>
+              <p className="text-4xl font-bold text-display-lg gradient-text mt-1">{oeeData.overallAvailability.toFixed(1)}%</p>
               <p className="text-xs text-muted-foreground mt-2">Perda: {oeeData.availabilityLosses.toFixed(1)}%</p>
             </div>
           </CardContent>
@@ -392,7 +394,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <TrendingUp className="h-8 w-8 text-xp" />
               </div>
               <p className="text-sm text-muted-foreground font-medium">Performance</p>
-              <p className="text-4xl font-bold font-display text-xp mt-1">{oeeData.overallPerformance.toFixed(1)}%</p>
+              <p className="text-4xl font-bold text-display-lg text-xp mt-1">{oeeData.overallPerformance.toFixed(1)}%</p>
               <p className="text-xs text-muted-foreground mt-2">Perda: {oeeData.performanceLosses.toFixed(1)}%</p>
             </div>
           </CardContent>
@@ -404,7 +406,7 @@ export function BINormalView({ biMetrics, kpis, oeeData, getPeriodLabel, onDrill
                 <Target className="h-8 w-8 text-success" />
               </div>
               <p className="text-sm text-muted-foreground font-medium">Qualidade</p>
-              <p className="text-4xl font-bold font-display text-success mt-1">{oeeData.overallQuality.toFixed(1)}%</p>
+              <p className="text-4xl font-bold text-display-lg text-success mt-1">{oeeData.overallQuality.toFixed(1)}%</p>
               <p className="text-xs text-muted-foreground mt-2">Perda: {oeeData.qualityLosses.toFixed(1)}%</p>
             </div>
           </CardContent>

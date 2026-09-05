@@ -44,6 +44,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Only GET responses are cacheable — cache.put() rejects for other methods,
+  // which would surface as unhandled promise rejections on same-origin POSTs.
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       if (response) {
@@ -63,15 +69,24 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Background Sync
+// Background Sync — tag must match registerBackgroundSync() in
+// src/lib/offlineStorage.ts, which registers 'sync-pending-actions'
+// whenever offline work is queued.
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-data') {
+  if (event.tag === 'sync-pending-actions') {
     event.waitUntil(syncData());
   }
 });
 
+// The offline action queue lives in the app (localStorage, useOfflineSync) —
+// the SW cannot replay it directly. Wake every open window so the app runs
+// its own sync pass; if no window is open, background sync cannot help since
+// the queue is only readable from a window context.
 async function syncData() {
-  console.log('[SW] Syncing data...');
+  const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  for (const client of clientList) {
+    client.postMessage({ type: 'SYNC_PENDING_ACTIONS' });
+  }
 }
 
 // Push Notifications

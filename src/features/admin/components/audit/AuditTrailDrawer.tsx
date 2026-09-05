@@ -7,11 +7,14 @@ import { AuditEntryCard } from './AuditEntryCard';
 import { HistoryPeriodFilter, type HistoryPeriodValue } from './HistoryPeriodFilter';
 import { useState, useCallback } from 'react';
 import { useDataExport } from '@/features/admin';
+import type { Database } from '@/integrations/supabase/types';
+
+type PublicTable = keyof Database['public']['Tables'];
 
 interface AuditTrailDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  entityType: string;
+  entityType: PublicTable;
   entityId: string | undefined;
   entityLabel?: string;
 }
@@ -29,7 +32,7 @@ export function AuditTrailDrawer({
     toDate: period.toDate,
   });
 
-  const { exportAuditTrail } = useDataExport(entityType as any);
+  const { exportAuditTrail } = useDataExport(entityType);
 
   const handleExport = useCallback(() => {
     exportAuditTrail({

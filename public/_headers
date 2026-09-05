@@ -1,0 +1,18 @@
+/*
+  # Prevent clickjacking — both the legacy header and the CSP frame-ancestors directive
+  X-Frame-Options: DENY
+  # Prevent MIME-type sniffing
+  X-Content-Type-Options: nosniff
+  # Legacy XSS filter (belt-and-suspenders alongside CSP)
+  X-XSS-Protection: 1; mode=block
+  # Limit referrer information sent to cross-origin sites
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Restrict browser feature APIs the page is allowed to use
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()
+  # Force HTTPS for 2 years (only applies once TLS is live)
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  # Full CSP at HTTP level — overrides the meta-tag version and adds frame-ancestors + upgrade-insecure-requests
+  # script-src 'unsafe-eval': Mermaid uses new Function() internally (sandboxed via securityLevel:strict)
+  # script-src 'unsafe-inline': Vite injects an inline modulepreload polyfill in production bundles
+  # style-src 'unsafe-inline': Tailwind utility classes and Framer-Motion inject inline styles at runtime
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io; worker-src 'self' blob:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;

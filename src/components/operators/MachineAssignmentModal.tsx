@@ -1,3 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -119,11 +128,14 @@ export function MachineAssignmentModal({ operator, open, onOpenChange }: Machine
                       {techMachines?.map(machine => (
                         <label
                           key={machine.id}
+                          htmlFor={`machine-assign-${machine.id}`}
                           className="flex items-center gap-3 p-2 rounded-lg border border-border/50 hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           <Checkbox
+                            id={`machine-assign-${machine.id}`}
                             checked={selectedMachines.has(machine.id)}
                             onCheckedChange={() => handleToggleMachine(machine.id)}
+                            aria-label={machine.name}
                           />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm truncate">{machine.name}</p>

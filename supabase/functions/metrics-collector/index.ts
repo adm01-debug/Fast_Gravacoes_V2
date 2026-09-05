@@ -1,25 +1,10 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronSecret } from "../_shared/cronAuth.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204 });
-  }
-
-  const cronApiKey = Deno.env.get("CRON_API_KEY");
-  if (!cronApiKey) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-  const provided = req.headers.get("x-api-key") || req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
-  if (provided !== cronApiKey) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const unauthorized = requireCronSecret(req, { failClosed: true });
+  if (unauthorized) return unauthorized;
 
   try {
     const supabase = createClient(
@@ -28,6 +13,9 @@ serve(async (req) => {
     );
 
     const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const todayStartISO = todayStart.toISOString();
     const metrics: Record<string, unknown> = {};
 
     // Jobs metrics
@@ -37,19 +25,34 @@ serve(async (req) => {
       .from("jobs")
       .select("*", { count: "exact", head: true })
       .eq("status", "finished")
-      .gte("actual_end_time", new Date(now.setHours(0, 0, 0, 0)).toISOString());
+      .gte("actual_end_time", todayStartISO);
 
     metrics.jobs = { total: totalJobs, active: activeJobs, completedToday };
 
-    // Operators metrics
+    // Operators metrics. The profiles table has no "status" column, so an
+    // operator is considered "active" when they scanned a job today. Distinct
+    // count is done in SQL (RPC) to avoid the PostgREST row cap undercounting.
     const { count: totalOperators } = await supabase.from("profiles").select("*", { count: "exact", head: true });
-    const { count: activeOperators } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("status", "active");
+    const { data: activeOperatorsRpc, error: activeOperatorsError } = await supabase.rpc("count_active_operators_since", { p_since: todayStartISO });
+    if (activeOperatorsError) {
+      console.error("metrics-collector: count_active_operators_since failed:", activeOperatorsError.message);
+    }
+    // null (unknown) on failure — never persist a fake 0 that looks like real data.
+    const activeOperators = activeOperatorsError ? null : Number(activeOperatorsRpc ?? 0);
 
     metrics.operators = { total: totalOperators, active: activeOperators };
 
-    // Machines metrics
-    const { count: totalMachines } = await supabase.from("machines").select("*", { count: "exact", head: true });
-    const { count: runningMachines } = await supabase.from("machines").select("*", { count: "exact", head: true }).eq("status", "running");
+    // Machines metrics. The machines table has no "status" column, so a machine
+    // is considered "running" when it currently has a job in production.
+    const { count: totalMachines } = await supabase
+      .from("machines")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", true);
+    const { data: runningMachinesRpc, error: runningMachinesError } = await supabase.rpc("count_running_machines");
+    if (runningMachinesError) {
+      console.error("metrics-collector: count_running_machines failed:", runningMachinesError.message);
+    }
+    const runningMachines = runningMachinesError ? null : Number(runningMachinesRpc ?? 0);
 
     metrics.machines = { total: totalMachines, running: runningMachines };
 
@@ -63,7 +66,7 @@ serve(async (req) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), { status: 500 });
+    console.error('Metrics collector error:', error instanceof Error ? error.message : String(error));
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
 });

@@ -201,7 +201,8 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       const rate = total > 0 ? (completed / total) * 100 : 0;
       const totalPcs = jobList.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.quantity), 0);
       const lostPcs = jobList.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.lost_pieces), 0);
-      const prodPcs = jobList.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.produced_quantity ?? j.quantity), 0);
+      // Null produced_quantity means "not recorded" — not "fully produced".
+      const prodPcs = jobList.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.produced_quantity ?? 0), 0);
       const lRate = (prodPcs + lostPcs) > 0 ? (lostPcs / (prodPcs + lostPcs)) * 100 : 0;
 
       // Real occupancy calculation for comparison
@@ -237,7 +238,7 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
     const totalPieces = currentStats.totalPcs;
     const completedPieces = validJobs
       .filter(j => ['finished', 'production'].includes(j.status))
-      .reduce((sum, j) => sum + sanitizeNumber(j.produced_quantity ?? j.quantity), 0);
+      .reduce((sum, j) => sum + sanitizeNumber(j.produced_quantity ?? 0), 0);
     const lostPieces = currentStats.lostPcs;
     const lossRate = currentStats.lossRate;
 
@@ -254,7 +255,10 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       const completed = machineJobs.filter(j => j.status === 'finished');
       const totalPcs = machineJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.quantity), 0);
       const lostPcs = machineJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.lost_pieces), 0);
-      const machineTotalAttempted = totalPcs + lostPcs;
+      // Use produced_quantity (not planned quantity) as the base for loss-rate so
+      // the denominator reflects pieces actually processed, not planned pieces.
+      const producedPcs = machineJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.produced_quantity ?? 0), 0);
+      const machineAttempted = producedPcs + lostPcs;
       return {
         machineId: machine.id,
         machineName: machine.name,
@@ -263,7 +267,7 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
         completedJobs: completed.length,
         totalPieces: totalPcs,
         lostPieces: lostPcs,
-        lossRate: machineTotalAttempted > 0 ? (lostPcs / machineTotalAttempted) * 100 : 0,
+        lossRate: machineAttempted > 0 ? (lostPcs / machineAttempted) * 100 : 0,
         avgDuration: machineJobs.length > 0
           ? machineJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.estimated_duration), 0) / machineJobs.length
           : 0,
@@ -301,24 +305,26 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       const productJobs = validJobs.filter(j => j.product === productName);
       const totalPcs = productJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.quantity), 0);
       const lostPcs = productJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.lost_pieces), 0);
+      const producedPcs = productJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.produced_quantity ?? 0), 0);
       return {
         productName: productName,
         jobCount: productJobs.length,
         totalPieces: totalPcs,
-        lossRate: (totalPcs + lostPcs) > 0 ? (lostPcs / (totalPcs + lostPcs)) * 100 : 0,
+        lossRate: (producedPcs + lostPcs) > 0 ? (lostPcs / (producedPcs + lostPcs)) * 100 : 0,
         avgDuration: productJobs.length > 0 ? productJobs.reduce((sum: number, j: DbJob) => sum + sanitizeNumber(j.estimated_duration), 0) / productJobs.length : 0,
       };
     }).sort((a, b) => b.totalPieces - a.totalPieces);
 
+    // Flat rolling-average forecast — no sinusoidal noise that would fabricate
+    // a meaningful pattern from a fixed mathematical function.
+    const dailyAvgPieces = totalPieces / (daysCount || 1);
     const predictions: KPIPrediction[] = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
-      // Use logic-based variance instead of pure random for reliability
-      const dayFactor = 1 + (Math.sin(i) * 0.1); 
       return {
         date: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-        estimatedVolume: Math.round((totalPieces / (daysCount || 1)) * dayFactor),
-        estimatedLossRate: Math.max(0.5, lossRate * dayFactor),
+        estimatedVolume: Math.round(dailyAvgPieces),
+        estimatedLossRate: Math.max(0.5, lossRate),
         confidence: 0.9 - (i * 0.05)
       };
     });
@@ -365,21 +371,21 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
     const performanceHistory = Array.from({ length: historyDays }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (historyDays - 1 - i));
-      const variance = 1.0; // Mantendo estável se não houver dados históricos suficientes
+      const dayKey = date.toISOString().split('T')[0];
+      const dayJobs = validJobsAll.filter(j => j.scheduled_date === dayKey || j.created_at?.startsWith(dayKey));
+      const dayStats = calculateStats(dayJobs);
       return {
         date: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-        efficiency: Math.min(100, averageOccupancy * variance),
-        productivity: Math.round((totalPieces / (daysCount || 1)) * variance),
-        lossRate: Math.max(0, lossRate * (0.6 + Math.random() * 0.8)),
+        efficiency: dayJobs.length > 0 ? dayStats.occupancyRate : averageOccupancy,
+        productivity: dayJobs.reduce((s, j) => s + sanitizeNumber(j.produced_quantity ?? 0), 0),
+        lossRate: dayStats.lossRate,
       };
     });
 
-    const totalAttemptedPieces = totalPieces + lostPieces;
-    const globalLossRate = totalAttemptedPieces > 0 ? (lostPieces / totalAttemptedPieces) * 100 : 0;
-
     return {
       totalJobs, completedJobs, inProgressJobs, delayedJobs, totalPieces, completedPieces, lostPieces,
-      lossRate: globalLossRate, averageOccupancy,
+      // currentStats.lossRate already uses produced_quantity + lost_pieces as the denominator
+      lossRate, averageOccupancy,
       productivityByMachine, productivityByTechnique, productivityByProduct, todayStats, performanceHistory, comparison, predictions, anomalies, targets,
       estimatedRevenue: completedPieces * 2.5, costOfLosses: lostPieces * 1.8,
     };

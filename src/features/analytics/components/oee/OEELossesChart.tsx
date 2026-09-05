@@ -9,7 +9,7 @@ import {
   Cell,
   PieChart,
   Pie
-} from 'recharts';
+} from '@/lib/recharts';
 import { Clock, Gauge, Target, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';

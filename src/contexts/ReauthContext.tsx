@@ -7,6 +7,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Lock, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 type SensitiveAction =
   | 'change_password'
@@ -112,8 +113,7 @@ export function ReauthProvider({ children }: { children: ReactNode }) {
         onSuccessCallback();
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Falha na verificação';
-      toast.error(message);
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Falha na verificação');
 
       // Log failed attempt
       const { data: { user } } = await supabase.auth.getUser();
@@ -180,6 +180,7 @@ export function ReauthProvider({ children }: { children: ReactNode }) {
                       handleReauth();
                     }
                   }}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus -- foco no dialog de reautenticação é UX esperada
                   autoFocus
                 />
               </div>

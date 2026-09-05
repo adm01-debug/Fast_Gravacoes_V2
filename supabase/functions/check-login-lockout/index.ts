@@ -1,29 +1,22 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const BASE_LOCKOUT_MINUTES = 1; // First lockout: 1 minute
 
 interface LockoutRequest {
   email: string;
-  ip_address?: string;
   action: 'check' | 'record_failure' | 'record_success';
+}
+
+function getClientIp(req: Request): string | null {
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) return forwardedFor.split(',')[0].trim();
+  const realIp = req.headers.get('x-real-ip');
+  return realIp ? realIp.trim() : null;
 }
 
 interface LockoutRecord {
@@ -53,7 +46,23 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { email, ip_address, action }: LockoutRequest = await req.json();
+    const { email, action }: LockoutRequest = await req.json();
+    // Server-derived — a client-supplied IP would let an attacker spoof/rotate
+    // to evade IP-based lockout, or frame another IP as the failing source.
+    const ip_address = getClientIp(req);
+
+    // Endpoint público (verify_jwt = false): limita enumeração de e-mails e
+    // flood de tentativas a partir de um mesmo IP.
+    const limited = await checkRateLimit(supabase, {
+      endpoint: 'check-login-lockout',
+      identity: { ip: ip_address },
+      max: 30,
+      windowSeconds: 60,
+      corsHeaders: getCorsHeaders(req),
+    });
+    if (limited) return limited;
+
+
 
     if (!email || !action) {
       return new Response(
@@ -69,6 +78,25 @@ serve(async (req) => {
         status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
+    }
+
+    // record_success must prove the caller actually holds a session for this
+    // email — otherwise anyone could call action=record_success for any
+    // email to reset their own (or a stranger's) failed-attempt counter and
+    // brute-force indefinitely without ever having valid credentials.
+    if (action === 'record_success') {
+      const authHeader = req.headers.get('Authorization');
+      const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+      const userClient = authHeader
+        ? createClient(supabaseUrl, supabaseAnonKey, { global: { headers: { Authorization: authHeader } } })
+        : null;
+      const { data: { user } } = userClient ? await userClient.auth.getUser() : { data: { user: null } };
+      if (!user || user.email?.toLowerCase().trim() !== normalizedEmail) {
+        return new Response(
+          JSON.stringify({ error: 'Não autorizado' }),
+          { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Get current lockout status for email
@@ -103,7 +131,10 @@ serve(async (req) => {
 
     const now = new Date();
 
-    // CHECK action - verify if account is locked
+    // CHECK action - verify if account is locked.
+    // IMPORTANT: Do NOT return failed_attempts, locked_until, or lockout_count
+    // to unauthenticated callers — that would allow user enumeration (attacker
+    // can probe any email and learn its failed-attempt count).
     if (action === 'check') {
       // Check email lockout
       if (emailLockout?.locked_until) {
@@ -111,16 +142,16 @@ serve(async (req) => {
         if (lockedUntil > now) {
           const remainingSeconds = Math.ceil((lockedUntil.getTime() - now.getTime()) / 1000);
           const remainingMinutes = Math.ceil(remainingSeconds / 60);
-          
-          console.log(`Account ${normalizedEmail} is locked until ${lockedUntil.toISOString()}`);
-          
+
+          console.log(`Account locked until ${lockedUntil.toISOString()}`);
+
           return new Response(
             JSON.stringify({
               locked: true,
-              locked_until: emailLockout.locked_until,
               remaining_seconds: remainingSeconds,
               remaining_minutes: remainingMinutes,
-              failed_attempts: emailLockout.failed_attempts,
+              // Omit locked_until (exact timestamp), failed_attempts, lockout_count
+              // to prevent account enumeration by unauthenticated callers.
               message: `Conta bloqueada por ${remainingMinutes} minuto(s) devido a múltiplas tentativas falhas.`
             }),
             { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
@@ -134,16 +165,14 @@ serve(async (req) => {
         if (lockedUntil > now) {
           const remainingSeconds = Math.ceil((lockedUntil.getTime() - now.getTime()) / 1000);
           const remainingMinutes = Math.ceil(remainingSeconds / 60);
-          
+
           console.log(`IP ${ip_address} is locked until ${lockedUntil.toISOString()}`);
-          
+
           return new Response(
             JSON.stringify({
               locked: true,
-              locked_until: ipLockout.locked_until,
               remaining_seconds: remainingSeconds,
               remaining_minutes: remainingMinutes,
-              failed_attempts: ipLockout.failed_attempts,
               message: `IP bloqueado por ${remainingMinutes} minuto(s) devido a múltiplas tentativas falhas.`
             }),
             { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
@@ -151,18 +180,34 @@ serve(async (req) => {
         }
       }
 
-      // Not locked
+      // Not locked — return minimal response without attempt details
       return new Response(
-        JSON.stringify({
-          locked: false,
-          failed_attempts: emailLockout?.failed_attempts || 0,
-          attempts_remaining: MAX_FAILED_ATTEMPTS - (emailLockout?.failed_attempts || 0)
-        }),
+        JSON.stringify({ locked: false }),
         { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
-    // RECORD_FAILURE action - increment failed attempts
+    // RECORD_FAILURE action - increment failed attempts.
+    // Guard: limit how fast a single IP can call this action to prevent
+    // account-lockout DoS (attacker flooding record_failure for victim email).
+    // 20 calls per minute per IP is generous for legitimate auth flows.
+    if (action === 'record_failure') {
+      if (ip_address) {
+        const oneMinuteAgo = new Date(now.getTime() - 60_000).toISOString();
+        const { count: recentCalls } = await supabase
+          .from('login_lockouts')
+          .select('*', { count: 'exact', head: true })
+          .eq('identifier', ip_address)
+          .eq('identifier_type', 'ip')
+          .gte('last_failed_at', oneMinuteAgo);
+        if ((recentCalls ?? 0) > 20) {
+          return new Response(
+            JSON.stringify({ error: 'Too many requests from this IP' }),
+            { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
     if (action === 'record_failure') {
       const currentAttempts = (emailLockout?.failed_attempts || 0) + 1;
       const currentLockoutCount = emailLockout?.lockout_count || 0;
@@ -181,7 +226,7 @@ serve(async (req) => {
         updateData.lockout_count = currentLockoutCount + 1;
         updateData.failed_attempts = 0; // Reset attempts after lockout
 
-        console.log(`Locking account ${normalizedEmail} for ${lockoutMinutes} minutes (lockout #${currentLockoutCount + 1})`);
+        console.log(`Locking account for ${lockoutMinutes} minutes (lockout #${currentLockoutCount + 1})`);
 
         // Log security event
         await supabase.from('security_events').insert({
@@ -293,7 +338,7 @@ serve(async (req) => {
           .eq('identifier_type', 'ip');
       }
 
-      console.log(`Reset lockout for ${normalizedEmail} after successful login`);
+      console.log('Reset lockout after successful login');
 
       return new Response(
         JSON.stringify({ reset: true }),

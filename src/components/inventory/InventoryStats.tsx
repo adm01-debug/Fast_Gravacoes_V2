@@ -7,7 +7,7 @@ import { InventoryItem } from '@/features/inventory';
 interface InventoryStatsProps {
   items: InventoryItem[];
   lowStockItems: InventoryItem[];
-  stats: any;
+  stats?: { movementsCount24h?: number; inventoryValue?: number } | null;
 }
 
 export function InventoryStats({ items, lowStockItems, stats }: InventoryStatsProps) {
@@ -54,8 +54,8 @@ export function InventoryStats({ items, lowStockItems, stats }: InventoryStatsPr
       <Card className="glass-card">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 bg-amber-500/10 rounded-lg">
-              <TrendingDown className="h-5 w-5 text-amber-500" />
+            <div className="p-2 bg-warning/10 rounded-lg">
+              <TrendingDown className="h-5 w-5 text-warning" />
             </div>
           </div>
           <p className="text-3xl font-bold">R$ {((stats?.inventoryValue || 0) / 1000).toFixed(1)}k</p>

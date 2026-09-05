@@ -42,12 +42,12 @@ export function CyberResilienceScore() {
 
         <div className="grid grid-cols-3 gap-4 w-full mt-8">
            <div className="text-center p-2 rounded-xl bg-background/40 border border-border/50">
-             <Activity className="h-4 w-4 mx-auto mb-1 text-emerald-500" />
+             <Activity className="h-4 w-4 mx-auto mb-1 text-success" />
              <p className="text-[10px] font-black uppercase">Audit</p>
              <p className="text-sm font-bold">100%</p>
            </div>
            <div className="text-center p-2 rounded-xl bg-background/40 border border-border/50">
-             <Zap className="h-4 w-4 mx-auto mb-1 text-amber-500" />
+             <Zap className="h-4 w-4 mx-auto mb-1 text-warning" />
              <p className="text-[10px] font-black uppercase">Defense</p>
              <p className="text-sm font-bold">Active</p>
            </div>

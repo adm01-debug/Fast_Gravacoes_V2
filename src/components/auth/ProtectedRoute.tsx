@@ -1,8 +1,41 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth, AppRole } from '@/features/auth';
+import { toast } from 'sonner';
+import { useAuth, AppRole, useAuthenticatorAssuranceLevel } from '@/features/auth';
 import { logger } from '@/lib/logger';
 import { Loader2 } from 'lucide-react';
+
+const ROLE_LABEL: Record<AppRole, string> = {
+  admin: 'Administrador',
+  manager: 'Gestor',
+  coordinator: 'Coordenador',
+  operator: 'Operador',
+};
+
+function AccessDeniedRedirect({
+  role,
+  allowedRoles,
+  path,
+  to,
+}: {
+  role: AppRole;
+  allowedRoles: AppRole[];
+  path: string;
+  to: string;
+}) {
+  const notified = useRef(false);
+  useEffect(() => {
+    if (notified.current) return;
+    notified.current = true;
+    const needed = allowedRoles.map((r) => ROLE_LABEL[r] ?? r).join(', ');
+    toast.error('Acesso restrito', {
+      description: `Esta área requer perfil: ${needed}. Seu perfil atual (${ROLE_LABEL[role] ?? role}) não tem permissão. Fale com um administrador para solicitar acesso.`,
+      duration: 8000,
+    });
+    logger.warn('Access denied: role not allowed', { role, allowedRoles, path }, 'ProtectedRoute');
+  }, [role, allowedRoles, path]);
+  return <Navigate to={to} replace />;
+}
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -11,6 +44,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, role, isLoading } = useAuth();
+  const { checked: aalChecked, needsMfaChallenge } = useAuthenticatorAssuranceLevel();
   const location = useLocation();
 
   // Log rendering path in development
@@ -24,7 +58,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     }, 'ProtectedRoute');
   }
 
-  if (isLoading) {
+  if (isLoading || (user && !aalChecked)) {
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -38,6 +72,17 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (!user) {
     logger.info('No user session, redirecting to /auth', { path: location.pathname }, 'ProtectedRoute');
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // A session (AAL1) does not by itself prove MFA was completed. If the
+  // account has a verified MFA factor and this session hasn't stepped up to
+  // aal2, send the user back to /auth — which shows the MFA challenge for an
+  // existing session — instead of rendering protected content. Without this,
+  // MFA was enforced only by AuthPage's own UI flow and could be bypassed by
+  // navigating straight to any protected route right after password sign-in.
+  if (needsMfaChallenge) {
+    logger.info('Session has not completed MFA (aal1), redirecting to /auth', { path: location.pathname }, 'ProtectedRoute');
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
@@ -58,17 +103,15 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
-    logger.warn('Access denied: role not allowed', { 
-      role, 
-      allowedRoles, 
-      path: location.pathname 
-    }, 'ProtectedRoute');
-
-    // Redirect to appropriate page based on role
-    if (role === 'operator') {
-      return <Navigate to="/operator" replace />;
-    }
-    return <Navigate to="/" replace />;
+    const to = role === 'operator' ? '/operator' : '/';
+    return (
+      <AccessDeniedRedirect
+        role={role}
+        allowedRoles={allowedRoles}
+        path={location.pathname}
+        to={to}
+      />
+    );
   }
 
 

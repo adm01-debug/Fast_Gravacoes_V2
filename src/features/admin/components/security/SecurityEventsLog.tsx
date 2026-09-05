@@ -28,7 +28,7 @@ const severityConfig: Record<string, {
   warning: {
     icon: AlertTriangle,
     variant: 'outline',
-    className: 'text-amber-500'
+    className: 'text-warning'
   },
   error: {
     icon: AlertCircle,
@@ -123,8 +123,8 @@ export function SecurityEventsLog() {
                         {event.ip_address || '-'}
                       </TableCell>
                       <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                        {event.details?.message ||
-                         event.details?.reason ||
+                        {(event.details?.message as string | undefined) ||
+                         (event.details?.reason as string | undefined) ||
                          JSON.stringify(event.details).slice(0, 50)}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">

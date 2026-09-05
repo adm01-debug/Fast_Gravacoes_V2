@@ -6,7 +6,7 @@ import { differenceInMinutes } from "date-fns";
 
 const severityColors = {
   error: 'bg-primary/20 text-primary border-primary/30',
-  warning: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  warning: 'bg-warning/20 text-warning border-warning/30',
   info: 'bg-blue-500/20 text-blue-400 border-blue-500/30'
 };
 
@@ -38,7 +38,7 @@ export function EfficiencyAlertStatsPanel({ alerts, resolvedAlerts }: { alerts: 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[{ icon: AlertTriangle, color: 'bg-blue-500/20', iconColor: 'text-blue-400', value: stats.totalAlerts, label: 'Total de Alertas' },
           { icon: CheckCircle, color: 'bg-green-500/20', iconColor: 'text-green-400', value: `${stats.resolutionRate}%`, label: 'Taxa de Resolução' },
-          { icon: Timer, color: 'bg-amber-500/20', iconColor: 'text-amber-400', value: formatTime(stats.avgResolutionMinutes), label: 'Tempo Médio Resolução' },
+          { icon: Timer, color: 'bg-warning/20', iconColor: 'text-warning', value: formatTime(stats.avgResolutionMinutes), label: 'Tempo Médio Resolução' },
           { icon: AlertTriangle, color: 'bg-primary/20', iconColor: 'text-primary', value: stats.criticalCount, label: 'Alertas Críticos' }
         ].map((s, i) => (
           <div key={i} className="p-4 rounded-lg border border-border/50 bg-card/30 backdrop-blur-sm text-center">
@@ -53,7 +53,7 @@ export function EfficiencyAlertStatsPanel({ alerts, resolvedAlerts }: { alerts: 
           {stats.mostFrequentType ? (<div className="flex items-center gap-3"><div className={`p-2 rounded-lg ${stats.mostFrequentType === 'bottleneck' ? 'bg-pink-500/20' : 'bg-teal-500/20'}`}>{stats.mostFrequentType === 'bottleneck' ? <Zap className="h-5 w-5 text-pink-400" /> : <Scale className="h-5 w-5 text-teal-400" />}</div><div><p className="font-medium text-foreground">{stats.mostFrequentType === 'bottleneck' ? 'Gargalo' : 'Balanceamento'}</p><p className="text-xs text-muted-foreground">{alerts.filter(a => a.alert_type === stats.mostFrequentType).length} ocorrências</p></div></div>) : <p className="text-sm text-muted-foreground">Sem dados</p>}
         </div>
         <div className="p-4 rounded-lg border border-border/50 bg-card/30 backdrop-blur-sm">
-          <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-amber-400" />Severidade Mais Comum</h4>
+          <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-warning" />Severidade Mais Comum</h4>
           {stats.mostFrequentSeverity ? (<div className="flex items-center gap-3"><Badge className={`${getSeverityColor(stats.mostFrequentSeverity)} border`}>{formatSeverity(stats.mostFrequentSeverity)}</Badge><p className="text-xs text-muted-foreground">{alerts.filter(a => a.severity === stats.mostFrequentSeverity).length} ocorrências</p></div>) : <p className="text-sm text-muted-foreground">Sem dados</p>}
         </div>
       </div>

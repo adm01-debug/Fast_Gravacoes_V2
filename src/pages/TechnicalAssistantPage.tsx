@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Zap, Printer, Sun, Flame, Sparkles, Scissors, BookOpen, Settings, LayoutPanelLeft } from "lucide-react";
@@ -13,8 +18,7 @@ import { ChatArea } from "@/components/technical-assistant/ChatArea";
 import { TechnicalTelemetryPanel } from "@/components/technical-assistant/TechnicalTelemetryPanel";
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/technical-assistant`;
+import { edgeFunctionFetch } from "@/lib/edgeFunctionFetch";
 
 const techniqueSuggestions = [
   { label: "Fiber Laser", icon: Zap, question: "Quais são os parâmetros ideais para gravar aço inox com Fiber Laser?" },
@@ -79,12 +83,8 @@ const TechnicalAssistantPage = () => {
   };
 
   const streamChat = async (userMessages: { role: string; content: string }[]) => {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    const resp = await fetch(CHAT_URL, {
+    const resp = await edgeFunctionFetch("technical-assistant", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ messages: userMessages }),
     });
     if (!resp.ok || !resp.body) throw new Error("Falha ao conectar com o assistente");
@@ -113,7 +113,7 @@ const TechnicalAssistantPage = () => {
                 if (last?.role === "assistant" && last.id.startsWith('temp-')) {
                   return [...prev.slice(0, -1), { ...last, content: assistantContent }];
                 }
-                return [...prev, { id: 'temp-assistant-' + Date.now(), conversation_id: selectedConversationId!, role: "assistant", content: assistantContent, created_at: new Date().toISOString() }];
+                return [...prev, { id: 'temp-assistant-' + Date.now(), conversation_id: selectedConversationId ?? '', role: "assistant", content: assistantContent, created_at: new Date().toISOString() }];
               });
             }
           } catch (e) { /* Ignore partial JSON */ }
@@ -160,10 +160,10 @@ const TechnicalAssistantPage = () => {
       <div className="flex flex-col h-[calc(100vh-8rem)] gap-4 animate-in fade-in duration-500">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest text-primary border-primary/20 bg-primary/5">Status: Online</Badge>
+            <Badge variant="outline" className="text-[11px] font-black uppercase tracking-widest text-primary border-primary/30 bg-primary/10">Status: Online</Badge>
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Sincronizado com SPC</span>
+              <span className="w-2 h-2 rounded-full bg-success motion-safe:animate-pulse" aria-hidden="true"></span>
+              <span className="text-[11px] font-bold text-muted-foreground uppercase">Sincronizado com SPC</span>
             </div>
           </div>
           <div className="flex items-center gap-2">

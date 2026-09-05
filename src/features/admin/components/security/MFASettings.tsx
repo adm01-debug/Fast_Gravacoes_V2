@@ -58,8 +58,8 @@ export function MFASettings() {
                   <ShieldCheck className="h-6 w-6 text-green-500" />
                 </div>
               ) : (
-                <div className="p-2 rounded-full bg-amber-500/10">
-                  <ShieldOff className="h-6 w-6 text-amber-500" />
+                <div className="p-2 rounded-full bg-warning/10">
+                  <ShieldOff className="h-6 w-6 text-warning" />
                 </div>
               )}
               <div>

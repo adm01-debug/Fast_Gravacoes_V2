@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DbJob } from '@/features/jobs';
+import { DbJob, type JobUpdate } from '@/features/jobs';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { findNextAvailableSlot } from '@/features/jobs';
@@ -51,7 +51,7 @@ export function useWeeklyDragDrop({ onUpdate, allJobs }: UseWeeklyDragDropProps)
       const duration = job.estimated_duration || 60;
       const nextSlot = findNextAvailableSlot(existingJobsOnDest, duration);
 
-      const updateData: any = {
+      const updateData: JobUpdate = {
         machine_id: machineId,
         scheduled_date: date,
         updated_at: new Date().toISOString(),
@@ -76,7 +76,7 @@ export function useWeeklyDragDrop({ onUpdate, allJobs }: UseWeeklyDragDropProps)
       if (error) {
         // Check for the trigger error we just added
         if (error.message?.includes('Conflito de agendamento')) {
-          toast.error(error.message);
+          toast.error('Conflito de agendamento: máquina já possui job neste horário.');
           return;
         }
         throw error;

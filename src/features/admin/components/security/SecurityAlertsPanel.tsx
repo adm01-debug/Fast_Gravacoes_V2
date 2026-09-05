@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +39,7 @@ export function SecurityAlertsPanel() {
   const { data: alerts, isLoading, refetch } = useQuery({
     queryKey: ['security-alerts', user?.id],
     queryFn: async () => {
-      if (!user) return [];
+      if (!user?.id) return [];
 
       const { data, error } = await supabase
         .from('new_device_alerts')
@@ -53,7 +54,7 @@ export function SecurityAlertsPanel() {
 
       return data as NewDeviceAlert[];
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   const acknowledgeAlert = async (alertId: string) => {
@@ -139,14 +140,14 @@ function AlertCard({
   return (
     <div className={cn(
       "p-4 border rounded-lg transition-colors",
-      !alert.acknowledged && "border-amber-500/50 bg-amber-500/5",
+      !alert.acknowledged && "border-warning/50 bg-warning/5",
       alert.acknowledged && "bg-muted/30"
     )}>
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div className={cn(
           "p-2 rounded-full flex-shrink-0",
-          !alert.acknowledged ? "bg-amber-500/10 text-amber-600" : "bg-green-500/10 text-green-600"
+          !alert.acknowledged ? "bg-warning/10 text-warning" : "bg-green-500/10 text-green-600"
         )}>
           {!alert.acknowledged ? (
             <AlertTriangle className="h-5 w-5" />

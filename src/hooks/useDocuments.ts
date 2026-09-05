@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { createAppError } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 
 export interface TechnicalDocument {
@@ -125,7 +126,7 @@ export const useDocuments = (technicalSheetId?: string) => {
     onError: (error: Error) => {
       toast({
         title: 'Erro ao enviar documento',
-        description: error.message,
+        description: createAppError(error).message,
         variant: 'destructive'
       });
     },
@@ -212,7 +213,7 @@ export const useDocuments = (technicalSheetId?: string) => {
     onError: (error: Error) => {
       toast({
         title: 'Erro ao criar versão',
-        description: error.message,
+        description: createAppError(error).message,
         variant: 'destructive'
       });
     },
@@ -237,6 +238,9 @@ export const useDocuments = (technicalSheetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-documents'] });
       toast({ title: 'Documento aprovado!' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao aprovar documento', description: createAppError(error).message, variant: 'destructive' });
     },
   });
 
@@ -263,6 +267,9 @@ export const useDocuments = (technicalSheetId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['technical-documents'] });
       toast({ title: 'Documento rejeitado' });
     },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao rejeitar documento', description: createAppError(error).message, variant: 'destructive' });
+    },
   });
 
   // Delete document
@@ -278,6 +285,9 @@ export const useDocuments = (technicalSheetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-documents'] });
       toast({ title: 'Documento removido!' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao remover documento', description: createAppError(error).message, variant: 'destructive' });
     },
   });
 

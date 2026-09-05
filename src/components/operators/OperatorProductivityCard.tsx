@@ -83,7 +83,7 @@ export function OperatorProductivityCard({ operator, goals = [], onAddGoal, team
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div
-                      className="absolute top-0 w-0.5 h-4 -top-1 bg-amber-500/40 border-l border-amber-500 transition-all duration-500"
+                      className="absolute top-0 w-0.5 h-4 -top-1 bg-warning/40 border-l border-warning transition-all duration-500"
                       style={{ left: `${Math.min(99, personalBest)}%` }}
                     />
                   </TooltipTrigger>

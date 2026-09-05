@@ -30,7 +30,7 @@ export function AlertStatsGrid({
     { value: bottlenecks, label: 'Gargalos', Icon: Activity, bgClass: bottlenecks > 0 ? (bottlenecks > 3 ? 'bg-red-500/20' : 'bg-pink-500/20') : 'bg-muted/10', iconClass: bottlenecks > 0 ? (bottlenecks > 3 ? 'text-red-400 animate-pulse' : 'text-pink-400') : 'text-muted-foreground' },
     { value: loadBalancing, label: 'Desbalanc.', Icon: Scale, bgClass: 'bg-teal-500/20', iconClass: 'text-teal-400' },
     { value: stuckJobs, label: 'Travados', Icon: Timer, bgClass: stuckCritical > 0 ? 'bg-red-500/20' : 'bg-indigo-500/20', iconClass: stuckCritical > 0 ? 'text-red-400' : 'text-indigo-400' },
-    { value: dataIssues, label: 'Integridade', Icon: Database, bgClass: dataIssues > 0 ? 'bg-amber-500/20' : 'bg-slate-500/20', iconClass: dataIssues > 0 ? 'text-amber-400' : 'text-slate-400' },
+    { value: dataIssues, label: 'Integridade', Icon: Database, bgClass: dataIssues > 0 ? 'bg-warning/20' : 'bg-slate-500/20', iconClass: dataIssues > 0 ? 'text-warning' : 'text-slate-400' },
   ];
 
   return (

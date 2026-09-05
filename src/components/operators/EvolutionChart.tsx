@@ -1,5 +1,5 @@
 import { useMemo, memo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,7 +7,7 @@ import { TrendingUp as TrendingUpIcon } from 'lucide-react';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   Legend, Line, Area, AreaChart,
-} from 'recharts';
+} from '@/lib/recharts';
 import { format } from 'date-fns';
 
 function calculateLinearRegression(data: { x: number; y: number }[]) {
@@ -96,7 +96,7 @@ export const EvolutionChart = memo(({ evolutionData, overallDailyData, selectedO
               <TrendingUpIcon className="h-5 w-5" />
               Evolução da Eficiência
             </CardTitle>
-            <CardDescription className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
               Acompanhamento diário com tendência e previsão de {FORECAST_DAYS} dias
               {hasData && (
                 <Badge variant="outline" className={
@@ -107,7 +107,7 @@ export const EvolutionChart = memo(({ evolutionData, overallDailyData, selectedO
                   {trendDirection === 'up' ? '↑ Tendência de alta' : trendDirection === 'down' ? '↓ Tendência de queda' : '→ Estável'}
                 </Badge>
               )}
-            </CardDescription>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {hasData && (

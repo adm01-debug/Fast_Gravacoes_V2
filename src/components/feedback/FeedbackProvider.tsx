@@ -22,7 +22,7 @@ const colorMap: Record<FeedbackType, string> = {
   warning: 'text-yellow-500',
   info: 'text-blue-500',
   loading: 'text-primary',
-  celebration: 'text-amber-500',
+  celebration: 'text-warning',
 };
 
 interface FeedbackToastProps {

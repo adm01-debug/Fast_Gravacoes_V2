@@ -24,6 +24,10 @@ lint.txt
 .env
 .env.local
 .env.*.local
+# Production/staging env files may contain real secrets — never commit them.
+# Use .env.production.example / .env.staging.example for templates.
+.env.production
+.env.staging
 
 # Editor directories and files
 .vscode/*
@@ -35,3 +39,7 @@ lint.txt
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright artifacts
+playwright-report/
+test-results/

@@ -143,7 +143,7 @@ export function KanbanFiltersBar({
             <Wand2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
             <span className="hidden sm:inline">IA Otimizar</span>
             {hasSuggestions && (
-              <span className="absolute inset-0 bg-primary/10 animate-pulse-glow pointer-events-none" />
+              <span className="absolute inset-0 bg-primary/10 motion-safe:animate-pulse-glow pointer-events-none" />
             )}
           </Button>
 

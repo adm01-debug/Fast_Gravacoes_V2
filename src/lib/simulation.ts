@@ -3,13 +3,15 @@ import { logger } from "@/lib/logger";
 
 export type SimulationSource = 'bitrix24' | 'stripe' | 'system' | 'unknown' | 'iot' | 'energy';
 
+export type SimulationPayload = Record<string, unknown> | string;
+
 export interface SimulationScenario {
   id: string;
   name: string;
   source: SimulationSource;
   event: string;
   description: string;
-  payload?: Record<string, unknown> | string;
+  payload?: SimulationPayload;
   expectedStatus: number;
   severity?: 'low' | 'medium' | 'high' | 'critical';
 }
@@ -21,7 +23,7 @@ export interface SimulationResult {
   message: string;
   latency: number;
   timestamp: string;
-  errorContext?: any;
+  errorContext?: unknown;
 }
 
 export const SCENARIOS: SimulationScenario[] = [
@@ -36,16 +38,18 @@ export const SCENARIOS: SimulationScenario[] = [
   { id: 'energy-surge', name: 'Energia: Consumo Anômalo', source: 'energy', event: 'SURGE_DETECTED', description: 'Simula detecção de pico de carga elétrica', expectedStatus: 200, severity: 'high' },
 ];
 
-export const generateFuzzPayload = (basePayload: Record<string, any>): any => {
-  const mutations = [
-    (p: any) => { delete p.source; return p; },
-    (p: any) => { p.source = 123; return p; },
-    (p: any) => { p.event = null; return p; },
-    (p: any) => { p.data = { invalid: "structure" }; return p; },
-    (p: any) => { p.injection = "'; DROP TABLE machines; --"; return p; },
-    (p: any) => { p.overflow = "X".repeat(50000); return p; }, // Increased stress
-    (p: any) => { return "{ malformed_json: true "; },
-    (p: any) => { p.nested_loop = { a: { b: { c: { d: { e: "deep" } } } } }; return p; },
+type MutablePayload = Record<string, unknown>;
+
+export const generateFuzzPayload = (basePayload: MutablePayload): SimulationPayload => {
+  const mutations: Array<(p: MutablePayload) => SimulationPayload> = [
+    (p) => { delete p.source; return p; },
+    (p) => { p.source = 123; return p; },
+    (p) => { p.event = null; return p; },
+    (p) => { p.data = { invalid: "structure" }; return p; },
+    (p) => { p.injection = "'; DROP TABLE machines; --"; return p; },
+    (p) => { p.overflow = "X".repeat(50000); return p; },
+    () => "{ malformed_json: true ",
+    (p) => { p.nested_loop = { a: { b: { c: { d: { e: "deep" } } } } }; return p; },
   ];
   const mutation = mutations[Math.floor(Math.random() * mutations.length)];
   return mutation({ ...basePayload });
@@ -54,17 +58,17 @@ export const generateFuzzPayload = (basePayload: Record<string, any>): any => {
 export const generateScenarios = (count: number = 10): SimulationScenario[] => {
   const baseScenarios = SCENARIOS;
   const scenarios: SimulationScenario[] = [];
-  
+
   for (let i = 0; i < count; i++) {
     const base = baseScenarios[i % baseScenarios.length];
-    const isFuzz = Math.random() > 0.3; // 70% chance of fuzzing for better coverage
-    
+    const isFuzz = Math.random() > 0.3;
+
     if (isFuzz) {
-      const basePayload = { 
-        source: base.source, 
-        event: base.event, 
+      const basePayload: MutablePayload = {
+        source: base.source,
+        event: base.event,
         data: { id: i, ts: new Date().toISOString() },
-        meta: { iteration: i, correlation_id: crypto.randomUUID() }
+        meta: { iteration: i, correlation_id: crypto.randomUUID() },
       };
       scenarios.push({
         ...base,
@@ -72,25 +76,25 @@ export const generateScenarios = (count: number = 10): SimulationScenario[] => {
         name: `Stress Attack Vector ${i}`,
         description: 'Automated robust stress & security test vector',
         payload: generateFuzzPayload(basePayload),
-        expectedStatus: 400
+        expectedStatus: 400,
       });
     } else {
       scenarios.push({ ...base, id: `${base.id}-${i}-${Date.now()}` });
     }
   }
-  
+
   return scenarios;
 };
 
 export async function runMassiveSimulation(
-  totalCount: number = 1000, 
-  concurrency: number = 15, // Increased concurrency
+  totalCount: number = 1000,
+  concurrency: number = 15,
   onProgress?: (current: number, results: SimulationResult[]) => void
 ): Promise<SimulationResult[]> {
   const scenarios = generateScenarios(totalCount);
   const results: SimulationResult[] = [];
   const queue = [...scenarios];
-  
+
   logger.info(`Starting massive simulation: ${totalCount} scenarios with concurrency ${concurrency}`);
 
   const executeTask = async () => {
@@ -99,12 +103,12 @@ export async function runMassiveSimulation(
       if (!scenario) break;
 
       const start = performance.now();
-      
+
       try {
-        const payload = scenario.payload || {
+        const payload = scenario.payload ?? {
           source: scenario.source,
           event: scenario.event,
-          data: { id: Math.floor(Math.random() * 1000000), test_mode: true, simulated_at: new Date().toISOString() }
+          data: { id: Math.floor(Math.random() * 1000000), test_mode: true, simulated_at: new Date().toISOString() },
         };
 
         const { data, error } = await supabase.functions.invoke('webhook-handler', {
@@ -112,42 +116,43 @@ export async function runMassiveSimulation(
           headers: {
             'x-webhook-signature': 'sim-' + crypto.randomUUID(),
             'X-Simulation-Mode': 'true',
-            'X-Simulation-Severity': scenario.severity || 'low'
-          }
+            'X-Simulation-Severity': scenario.severity || 'low',
+          },
         });
 
         const latency = performance.now() - start;
-        const currentStatus = error ? (error as any).status || 500 : 200;
+        const errStatus = (error as { status?: number } | null)?.status;
+        const currentStatus = error ? errStatus ?? 500 : 200;
         const isPass = currentStatus === scenario.expectedStatus;
-        
+        const processed = (data as { processed?: boolean } | null)?.processed;
+
         results.push({
           scenarioId: scenario.id,
           status: isPass ? 'pass' : 'fail',
           statusCode: currentStatus,
-          message: error?.message || (data?.processed ? 'Processed' : 'Consistent'),
+          message: error?.message || (processed ? 'Processed' : 'Consistent'),
           latency,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
         results.push({
           scenarioId: scenario.id,
           status: 'fail',
           statusCode: 500,
-          message: err.message,
+          message,
           latency: performance.now() - start,
           timestamp: new Date().toISOString(),
-          errorContext: err
+          errorContext: err,
         });
-        
+
         logger.error(`Simulation task failed for scenario ${scenario.id}`, err, 'SimulationEngine');
       }
 
       if (onProgress) onProgress(results.length, results);
-      
-      // Dynamic pacing to prevent local browser crash but maintain high RPS
+
       if (results.length % 50 === 0) {
-        await new Promise(r => setTimeout(r, 2));
+        await new Promise((r) => setTimeout(r, 2));
       }
     }
   };
@@ -155,7 +160,7 @@ export async function runMassiveSimulation(
   const workers = Array.from({ length: Math.min(concurrency, totalCount) }, () => executeTask());
   await Promise.all(workers);
 
-  const passCount = results.filter(r => r.status === 'pass').length;
+  const passCount = results.filter((r) => r.status === 'pass').length;
   logger.info(`Simulation finished. Result: ${passCount}/${results.length} passed.`);
 
   return results;

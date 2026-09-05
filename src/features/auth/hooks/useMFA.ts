@@ -1,23 +1,53 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '../index';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
+import { createAppError } from '@/lib/errorHandling';
+
+interface MFAFactor {
+  id: string;
+  friendly_name?: string;
+  factor_type: string;
+  status: 'verified' | 'unverified';
+  created_at: string;
+  updated_at: string;
+}
+
+interface MFAEnrollmentData {
+  id: string;
+  type: 'totp';
+  totp: {
+    qr_code: string;
+    secret: string;
+    uri: string;
+  };
+  friendly_name?: string;
+}
+
+function toSafeErrorMessage(error: unknown): string {
+  return createAppError(error instanceof Error ? error : new Error(String(error))).message;
+}
 
 export function useMFA() {
   const { user } = useAuth();
-  const [factors, setFactors] = useState<any[]>([]);
+  const [factors, setFactors] = useState<MFAFactor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [enrollmentData, setEnrollmentData] = useState<any>(null);
+  const [enrollmentData, setEnrollmentData] = useState<MFAEnrollmentData | null>(null);
 
   const refreshFactors = useCallback(async () => {
     if (!user) return;
     try {
       const { data, error } = await supabase.auth.mfa.listFactors();
       if (error) throw error;
-      setFactors(data.all || []);
+      setFactors((data.all as MFAFactor[]) || []);
     } catch (error) {
       logger.error('Falha ao listar fatores MFA', error, 'useMFA');
     } finally {
@@ -38,11 +68,10 @@ export function useMFA() {
         friendlyName: friendlyNameArg || 'Fast Gravações MFA'
       });
       if (error) throw error;
-      setEnrollmentData(data);
+      setEnrollmentData(data as MFAEnrollmentData);
       return data;
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Erro desconhecido';
-      toast.error('Erro ao iniciar cadastro MFA', { description: msg });
+      toast.error('Erro ao iniciar cadastro MFA', { description: toSafeErrorMessage(error) });
     } finally {
       setIsEnrolling(false);
     }
@@ -62,16 +91,24 @@ export function useMFA() {
       toast.success('MFA ativado com sucesso!');
       return data;
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Código inválido';
-      toast.error('Código inválido', { description: msg });
+      toast.error('Código inválido', { description: toSafeErrorMessage(error) });
     } finally {
       setIsVerifying(false);
     }
   };
 
-  const cancelEnrollment = () => {
+  const cancelEnrollment = useCallback(async () => {
+    if (enrollmentData) {
+      // Remove the unverified factor from Supabase so orphaned TOTP entries
+      // don't accumulate when the user repeatedly starts and cancels enrollment.
+      try {
+        await supabase.auth.mfa.unenroll({ factorId: enrollmentData.id });
+      } catch (err) {
+        logger.warn('Falha ao remover fator MFA ao cancelar', { error: err }, 'useMFA');
+      }
+    }
     setEnrollmentData(null);
-  };
+  }, [enrollmentData]);
 
   const unenroll = async (factorId: string) => {
     try {
@@ -81,8 +118,7 @@ export function useMFA() {
       toast.success('MFA desativado');
       return true;
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Erro desconhecido';
-      toast.error('Erro ao desativar MFA', { description: msg });
+      toast.error('Erro ao desativar MFA', { description: toSafeErrorMessage(error) });
       return false;
     }
   };

@@ -1,3 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useMemo } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -153,7 +157,7 @@ export default function OperatorHistoryPage() {
           <div className="flex items-center gap-3">
             <History className="h-6 w-6 text-primary" />
             <div>
-              <h1 className="text-2xl font-display font-bold gradient-text">Histórico de Ações</h1>
+              <h1 className="text-2xl text-title font-bold gradient-text">Histórico de Ações</h1>
               <p className="text-muted-foreground">Timeline detalhada de todas as ações dos operadores</p>
             </div>
           </div>

@@ -9,8 +9,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryConfig';
 import { DbJob } from '@/features/jobs';
+import { canTransition } from '@/features/jobs/services/jobStateMachine';
+import { JobStatus } from '@/types/scheduling';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { validateFileMagicBytes } from '@/lib/file-validation';
 import { safeParseInt, safeParseFloat } from '@/lib/utils';
 import {
@@ -59,7 +63,7 @@ function sanitizeOperatorPayload(data: {
   actual_end_time?: string;
   production_photos?: string[] | null;
   notes?: string | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }): SanitizedPayload {
   const sanitized: SanitizedPayload = {};
 
@@ -207,6 +211,11 @@ export function ProductionRegistrationModal({
       return;
     }
 
+    if (!canTransition(job.status as JobStatus, 'finished')) {
+      toast.error(`Job não pode ser finalizado no estado atual: "${job.status}"`);
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -231,13 +240,13 @@ export function ProductionRegistrationModal({
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      queryClient.invalidateQueries({ queryKey: ['scheduling-data'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SCHEDULING_DATA });
       toast.success('Produção finalizada com sucesso!');
       onOpenChange(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro desconhecido';
-      toast.error(`Erro ao salvar registro de produção: ${message}`);
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao salvar registro de produção');
     } finally {
       setIsSaving(false);
     }

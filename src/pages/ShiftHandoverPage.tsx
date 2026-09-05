@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { format } from 'date-fns';
+import { useState, useEffect, useMemo } from 'react';
 import { ptBR } from 'date-fns/locale';
 import { parseDateOnly } from '@/lib/dateUtils';
 import {
@@ -164,7 +165,7 @@ export default function ShiftHandoverPage() {
         </div>
         <CardContent className="py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <div className="w-2 h-2 rounded-full bg-success animate-ping" />
             <span className="text-xs font-black uppercase tracking-tighter">Sincronização em tempo real ativa</span>
           </div>
           <p className="text-[10px] text-muted-foreground font-medium italic">
@@ -191,8 +192,8 @@ export default function ShiftHandoverPage() {
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10">
-                <ListTodo className="h-5 w-5 text-amber-500" />
+              <div className="p-2 rounded-lg bg-warning/10">
+                <ListTodo className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.pendingTasks}</p>
@@ -320,12 +321,12 @@ export default function ShiftHandoverPage() {
                       <div className="flex items-start gap-4">
                         <div className={`p-3 rounded-lg ${
                           handover.status === 'open' ? 'bg-primary/10' :
-                          handover.status === 'pending_acceptance' ? 'bg-amber-500/10' :
+                          handover.status === 'pending_acceptance' ? 'bg-warning/10' :
                           'bg-muted'
                         }`}>
                           <ArrowRightLeft className={`h-5 w-5 ${
                             handover.status === 'open' ? 'text-primary' :
-                            handover.status === 'pending_acceptance' ? 'text-amber-500' :
+                            handover.status === 'pending_acceptance' ? 'text-warning' :
                             'text-muted-foreground'
                           }`} />
                         </div>
@@ -437,8 +438,12 @@ export default function ShiftHandoverPage() {
                   handovers.map((handover) => (
                     <div
                       key={handover.id}
-                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Ver passagem de turno ${handover.shift_date}`}
+                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={() => setSelectedHandover(handover)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedHandover(handover); } }}
                     >
                       <div className="flex items-center gap-3">
                         <Badge variant={STATUS_LABELS[handover.status]?.variant || 'default'}>
@@ -446,7 +451,7 @@ export default function ShiftHandoverPage() {
                         </Badge>
                         <div>
                           <p className="font-medium">
-                            {format(parseDateOnly(handover.shift_date)!, 'dd/MM/yyyy')}
+                            {format(parseDateOnly(handover.shift_date) ?? new Date(), 'dd/MM/yyyy')}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {handover.machine?.name || 'Geral'}

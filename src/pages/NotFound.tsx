@@ -110,7 +110,7 @@ const NotFound = () => {
           </motion.div>
 
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+            <h1 className="text-2xl md:text-3xl text-title font-bold text-foreground">
               Página não encontrada
             </h1>
             <p className="text-muted-foreground">
@@ -203,8 +203,10 @@ const NotFound = () => {
             </Button>
             <Button asChild variant="gradient" className="gap-2">
               <Link to="/">
-                <Home className="w-4 h-4" />
-                Ir para Dashboard
+                <span className="inline-flex items-center gap-2">
+                  <Home className="w-4 h-4" />
+                  Ir para Dashboard
+                </span>
               </Link>
             </Button>
           </div>

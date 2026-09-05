@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
@@ -392,7 +393,7 @@ export function EmptyState({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className={cn("font-display font-semibold text-foreground mb-1.5", sizes.title)}
+        className={cn("text-title font-semibold text-foreground mb-1.5", sizes.title)}
       >
         {displayTitle}
       </motion.h3>
@@ -432,29 +433,29 @@ export function EmptyState({
 
 // Preset empty states for common use cases
 export const EmptyStates = {
-  NoJobs: () => (
-    <EmptyState
-      variant="no-data"
-      title="Nenhuma ordem de produção"
-      description="Crie sua primeira ordem de produção para começar."
-      action={{
-        label: "Nova Ordem",
-        onClick: () => (window.location.href = "/new-job"),
-      }}
-    />
-  ),
+  NoJobs: () => {
+    const navigate = useNavigate();
+    return (
+      <EmptyState
+        variant="no-data"
+        title="Nenhuma ordem de produção"
+        description="Crie sua primeira ordem de produção para começar."
+        action={{ label: "Nova Ordem", onClick: () => navigate("/new-job") }}
+      />
+    );
+  },
 
-  NoOperators: () => (
-    <EmptyState
-      variant="no-users"
-      title="Nenhum operador cadastrado"
-      description="Adicione operadores para gerenciar sua equipe."
-      action={{
-        label: "Adicionar Operador",
-        onClick: () => (window.location.href = "/operators"),
-      }}
-    />
-  ),
+  NoOperators: () => {
+    const navigate = useNavigate();
+    return (
+      <EmptyState
+        variant="no-users"
+        title="Nenhum operador cadastrado"
+        description="Adicione operadores para gerenciar sua equipe."
+        action={{ label: "Adicionar Operador", onClick: () => navigate("/operators") }}
+      />
+    );
+  },
 
   NoSearchResults: ({ query }: { query: string }) => (
     <EmptyState
@@ -473,15 +474,15 @@ export const EmptyStates = {
     />
   ),
 
-  NoMachines: () => (
-    <EmptyState
-      variant="no-data"
-      title="Nenhuma máquina cadastrada"
-      description="Cadastre suas máquinas para gerenciar a produção."
-      action={{
-        label: "Adicionar Máquina",
-        onClick: () => (window.location.href = "/machines"),
-      }}
-    />
-  ),
+  NoMachines: () => {
+    const navigate = useNavigate();
+    return (
+      <EmptyState
+        variant="no-data"
+        title="Nenhuma máquina cadastrada"
+        description="Cadastre suas máquinas para gerenciar a produção."
+        action={{ label: "Adicionar Máquina", onClick: () => navigate("/machines") }}
+      />
+    );
+  },
 };

@@ -1,66 +1,54 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireUserOrCronSecret } from "../_shared/cronAuth.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  try {
-    // Auth check — require authenticated user
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const userClient = createClient(supabaseUrl, anonKey);
-    const { data: { user }, error: authError } = await userClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Token inválido' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const unauthorized = await requireUserOrCronSecret(req, {
+    supabaseUrl,
+    supabaseAnonKey: Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    corsHeaders: getCorsHeaders(req),
+  });
+  if (unauthorized) return unauthorized;
 
+  try {
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Restrict to admin role
-    const { data: roleRows, error: roleError } = await supabase.from('user_roles')
-      .select('role').eq('user_id', user.id).in('role', ['admin']).limit(1);
-    if (roleError) {
-      console.error('[calculate-inventory-intelligence] Role query error:', roleError.message);
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
-        status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
+    // requireUserOrCronSecret above accepts either an authenticated user or the
+    // cron secret. When a user session is presented, also enforce that the user
+    // holds the admin role — this endpoint recalculates data for the entire
+    // inventory and must not be callable by any signed-in user.
+    const authHeader = req.headers.get('authorization');
+    if (authHeader) {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
       });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (user) {
+        const { data: roleRows, error: roleError } = await supabase.from('user_roles')
+          .select('role').eq('user_id', user.id).in('role', ['admin']).limit(1);
+        if (roleError) {
+          console.error('[calculate-inventory-intelligence] Role query error:', roleError.message);
+          return new Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
+          });
+        }
+        if (!roleRows || roleRows.length === 0) {
+          return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
+            status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
+          });
+        }
+      }
     }
-    if (!roleRows || roleRows.length === 0) {
-      return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
-        status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
-      });
-    }
+
     console.log('Starting inventory intelligence calculation...');
 
     // 1. Fetch all items
@@ -114,8 +102,7 @@ serve(async (req) => {
 
   } catch (error: unknown) {
     console.error('Error in inventory intelligence:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });

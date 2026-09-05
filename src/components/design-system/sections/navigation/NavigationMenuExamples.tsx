@@ -22,14 +22,14 @@ export function NavigationMenuExamples() {
                     <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] md:grid-cols-2">
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
-                          <a className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md" href="#">
+                          <a className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md" href="/design-system">
                             <Package className="h-6 w-6" /><div className="mb-2 mt-4 text-lg font-medium">Catálogo</div>
                             <p className="text-sm leading-tight text-muted-foreground">Explore nosso catálogo completo de produtos.</p>
                           </a>
                         </NavigationMenuLink>
                       </li>
                       {['Novidades', 'Promoções', 'Mais Vendidos'].map(item => (
-                        <li key={item}><NavigationMenuLink asChild><a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground" href="#"><div className="text-sm font-medium leading-none">{item}</div></a></NavigationMenuLink></li>
+                        <li key={item}><NavigationMenuLink asChild><a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground" href="/design-system"><div className="text-sm font-medium leading-none">{item}</div></a></NavigationMenuLink></li>
                       ))}
                     </ul>
                   </NavigationMenuContent>
@@ -43,13 +43,13 @@ export function NavigationMenuExamples() {
                         { icon: HelpCircle, name: 'Suporte', desc: 'Central de ajuda e FAQ.' },
                         { icon: MessageSquare, name: 'Comunidade', desc: 'Fórum e discussões.' }
                       ].map(r => (
-                        <li key={r.name}><NavigationMenuLink asChild><a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground" href="#"><div className="text-sm font-medium leading-none flex items-center gap-2"><r.icon className="h-4 w-4" />{r.name}</div><p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{r.desc}</p></a></NavigationMenuLink></li>
+                        <li key={r.name}><NavigationMenuLink asChild><a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground" href="/design-system"><div className="text-sm font-medium leading-none flex items-center gap-2"><r.icon className="h-4 w-4" />{r.name}</div><p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{r.desc}</p></a></NavigationMenuLink></li>
                       ))}
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem><NavigationMenuLink className={navigationMenuTriggerStyle()} href="#">Preços</NavigationMenuLink></NavigationMenuItem>
-                <NavigationMenuItem><NavigationMenuLink className={navigationMenuTriggerStyle()} href="#">Contato</NavigationMenuLink></NavigationMenuItem>
+                <NavigationMenuItem><NavigationMenuLink className={navigationMenuTriggerStyle()} href="/design-system">Preços</NavigationMenuLink></NavigationMenuItem>
+                <NavigationMenuItem><NavigationMenuLink className={navigationMenuTriggerStyle()} href="/design-system">Contato</NavigationMenuLink></NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>
@@ -58,7 +58,7 @@ export function NavigationMenuExamples() {
             <NavigationMenu>
               <NavigationMenuList>
                 {[{ icon: Home, label: 'Home' }, { icon: Users, label: 'Equipe' }, { icon: Settings, label: 'Configurações' }].map(l => (
-                  <NavigationMenuItem key={l.label}><NavigationMenuLink className={navigationMenuTriggerStyle()} href="#"><l.icon className="h-4 w-4 mr-2" />{l.label}</NavigationMenuLink></NavigationMenuItem>
+                  <NavigationMenuItem key={l.label}><NavigationMenuLink className={navigationMenuTriggerStyle()} href="/design-system"><l.icon className="h-4 w-4 mr-2" />{l.label}</NavigationMenuLink></NavigationMenuItem>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>

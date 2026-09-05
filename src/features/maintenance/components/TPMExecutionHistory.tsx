@@ -48,9 +48,9 @@ export function TPMExecutionHistory() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-emerald-500 gap-1"><CheckCircle className="h-3 w-3" /> Aprovado</Badge>;
+        return <Badge className="bg-success gap-1"><CheckCircle className="h-3 w-3" /> Aprovado</Badge>;
       case 'completed':
-        return <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 gap-1"><Clock className="h-3 w-3" /> Revisar</Badge>;
+        return <Badge variant="secondary" className="bg-warning/20 text-warning gap-1"><Clock className="h-3 w-3" /> Revisar</Badge>;
       case 'in_progress':
         return <Badge variant="outline" className="text-blue-500 border-blue-200 gap-1"><Clock className="h-3 w-3" /> Em Andamento</Badge>;
       case 'cancelled':
@@ -124,7 +124,7 @@ export function TPMExecutionHistory() {
               <History className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-display">Histórico de Execuções</CardTitle>
+              <CardTitle className="text-2xl text-title">Histórico de Execuções</CardTitle>
               <p className="text-sm text-muted-foreground">Consulte e aprove intervenções realizadas nas máquinas</p>
             </div>
           </div>
@@ -132,7 +132,7 @@ export function TPMExecutionHistory() {
             {selectedIds.length > 0 && (
               <Button
                 variant="default"
-                className="bg-emerald-600 hover:bg-emerald-700 animate-in fade-in zoom-in-95 gap-2"
+                className="bg-success hover:bg-success animate-in fade-in zoom-in-95 gap-2"
                 onClick={handleApproveBatch}
                 disabled={approveBatch.isPending || isBatchProcessing}
               >

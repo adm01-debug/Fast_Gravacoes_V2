@@ -38,7 +38,7 @@ import {
   ResponsiveContainer,
   Cell,
   Legend,
-} from 'recharts';
+} from '@/lib/recharts';
 
 interface GoalsHistoryCardProps {
   goals: OperatorGoal[];

@@ -36,13 +36,13 @@ export function QualityDashboardCards({ inspections }: QualityDashboardCardsProp
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-emerald-500">{stats.approvalRate.toFixed(0)}%</div>
+            <div className="text-2xl font-bold text-success">{stats.approvalRate.toFixed(0)}%</div>
             <p className="text-xs text-muted-foreground">Taxa Aprovação</p>
             <Progress value={stats.approvalRate} className="mt-1 h-1.5" />
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
-              <CheckCircle className="h-4 w-4 text-emerald-500" />
+              <CheckCircle className="h-4 w-4 text-success" />
               <span className="text-2xl font-bold">{stats.approved}</span>
             </div>
             <p className="text-xs text-muted-foreground">Aprovadas</p>

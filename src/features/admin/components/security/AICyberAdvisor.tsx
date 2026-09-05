@@ -9,13 +9,13 @@ export function AICyberAdvisor() {
       type: 'success',
       title: 'Resiliência Cibernética Ativa',
       description: 'O sistema bloqueou automaticamente 43 tentativas de brute-force na última hora via Geo-Blocking.',
-      icon: <ShieldCheck className="h-4 w-4 text-emerald-500" />
+      icon: <ShieldCheck className="h-4 w-4 text-success" />
     },
     {
       type: 'warning',
       title: 'Alerta de Login Incomum',
       description: 'Detectado login de um novo dispositivo em horário atípico para o usuário Admin. Verificação MFA solicitada.',
-      icon: <ShieldAlert className="h-4 w-4 text-amber-500" />
+      icon: <ShieldAlert className="h-4 w-4 text-warning" />
     },
     {
       type: 'info',

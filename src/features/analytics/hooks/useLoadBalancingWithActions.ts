@@ -33,28 +33,24 @@ export function useLoadBalancingWithActions(targetDate?: Date) {
   // Mutation to apply a single suggestion
   const applySuggestionMutation = useMutation({
     mutationFn: async (suggestion: LoadBalancingSuggestion): Promise<ApplySuggestionResult> => {
-      try {
-        const { error } = await supabase
-          .from('jobs')
-          .update({ machine_id: suggestion.suggestedMachineId })
-          .eq('id', suggestion.jobId);
+      const { error } = await supabase
+        .from('jobs')
+        .update({ machine_id: suggestion.suggestedMachineId })
+        .eq('id', suggestion.jobId);
 
-        if (error) throw error;
+      if (error) throw createAppError(error, LOAD_BALANCING_ERROR_CONTEXT.applySuggestion);
 
-        return {
-          success: true,
-          jobId: suggestion.jobId,
-          orderNumber: suggestion.orderNumber,
-          fromMachine: suggestion.currentMachineName,
-          toMachine: suggestion.suggestedMachineName,
-        };
-      } catch (error) {
-        const appError = createAppError(error, LOAD_BALANCING_ERROR_CONTEXT.applySuggestion);
-        throw error;
-      }
+      return {
+        success: true,
+        jobId: suggestion.jobId,
+        orderNumber: suggestion.orderNumber,
+        fromMachine: suggestion.currentMachineName,
+        toMachine: suggestion.suggestedMachineName,
+      };
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
       toast.success(`Job ${result.orderNumber} movido`, {
         description: `${result.fromMachine} → ${result.toMachine}`,
       });
@@ -64,54 +60,33 @@ export function useLoadBalancingWithActions(targetDate?: Date) {
     },
   });
 
-  // Mutation to apply multiple suggestions (parallel execution)
+  // Mutation to apply multiple suggestions — single upsert instead of N individual updates
   const applyMultipleSuggestionsMutation = useMutation({
     mutationFn: async (suggestions: LoadBalancingSuggestion[]): Promise<ApplySuggestionResult[]> => {
-      const results = await Promise.all(
-        suggestions.map(async (suggestion): Promise<ApplySuggestionResult> => {
-          try {
-            const { error } = await supabase
-              .from('jobs')
-              .update({ machine_id: suggestion.suggestedMachineId })
-              .eq('id', suggestion.jobId);
+      if (suggestions.length === 0) return [];
 
-            if (error) throw error;
+      // Single upsert: one round-trip for all job reassignments
+      const { error } = await supabase
+        .from('jobs')
+        .upsert(
+          suggestions.map(s => ({ id: s.jobId, machine_id: s.suggestedMachineId })) as never,
+          { onConflict: 'id' }
+        );
 
-            return {
-              success: true,
-              jobId: suggestion.jobId,
-              orderNumber: suggestion.orderNumber,
-              fromMachine: suggestion.currentMachineName,
-              toMachine: suggestion.suggestedMachineName,
-            };
-          } catch (error) {
-            const appError = createAppError(error, LOAD_BALANCING_ERROR_CONTEXT.applyMultiple);
-            return {
-              success: false,
-              jobId: suggestion.jobId,
-              orderNumber: suggestion.orderNumber,
-              fromMachine: suggestion.currentMachineName,
-              toMachine: suggestion.suggestedMachineName,
-            };
-          }
-        })
-      );
+      if (error) throw createAppError(error, LOAD_BALANCING_ERROR_CONTEXT.applyMultiple);
 
-      return results;
+      return suggestions.map(s => ({
+        success: true,
+        jobId: s.jobId,
+        orderNumber: s.orderNumber,
+        fromMachine: s.currentMachineName,
+        toMachine: s.suggestedMachineName,
+      }));
     },
     onSuccess: (results) => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
-
-      const successful = results.filter(r => r.success).length;
-      const failed = results.filter(r => !r.success).length;
-
-      if (successful > 0 && failed === 0) {
-        toast.success(`${successful} job(s) redistribuído(s) com sucesso`);
-      } else if (successful > 0 && failed > 0) {
-        toast.warning(`${successful} sucesso, ${failed} falha(s)`);
-      } else {
-        toast.error('Nenhum job foi redistribuído');
-      }
+      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
+      toast.success(`${results.length} job(s) redistribuído(s) com sucesso`);
     },
     onError: (error) => {
       showErrorToast(error, 'Erro ao redistribuir jobs');

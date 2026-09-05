@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { createAppError } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 
@@ -69,7 +70,7 @@ export function useMTBFMTTR(periodDays: number = 90) {
           .from('maintenance_records')
           .select('*')
           .gte('started_at', startDate.toISOString())
-          .eq('status', 'completed')
+          .in('status', ['completed', 'approved'])
           .order('started_at', { ascending: true });
 
         if (error) throw error;
@@ -84,22 +85,9 @@ export function useMTBFMTTR(periodDays: number = 90) {
   });
 
   // Realtime subscription for maintenance records
-  useEffect(() => {
-    const channel = supabase
-      .channel('mtbf-maintenance-records-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'maintenance_records' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  useRealtimeChannel('mtbf-maintenance-records-changes', [{ table: 'maintenance_records' }], () => {
+    queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
+  });
 
   // Fetch machines
   const { data: machines, isLoading: isLoadingMachines } = useQuery({

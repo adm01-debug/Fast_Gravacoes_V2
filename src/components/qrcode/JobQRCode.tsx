@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 import { forwardRef } from "react";
+import { escapeHtml } from "@/lib/sanitize";
 
 interface JobQRCodeProps {
   jobId: string;
@@ -44,9 +45,6 @@ export const JobQRCode = forwardRef<HTMLDivElement, JobQRCodeProps>(({
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
-  const escapeHtml = (str: string) =>
-    str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -56,11 +54,15 @@ export const JobQRCode = forwardRef<HTMLDivElement, JobQRCodeProps>(({
 
     const svgData = new XMLSerializer().serializeToString(svg);
 
+    const safeOrderNumber = escapeHtml(orderNumber);
+    const safeProduct = escapeHtml(product);
+    const safeClient = escapeHtml(client);
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Code - ${escapeHtml(orderNumber)}</title>
+          <title>QR Code - ${safeOrderNumber}</title>
           <style>
             body {
               display: flex;
@@ -85,9 +87,9 @@ export const JobQRCode = forwardRef<HTMLDivElement, JobQRCodeProps>(({
         </head>
         <body>
           <div class="qr-container">
-            <h2>OS: ${escapeHtml(orderNumber)}</h2>
-            <p>${escapeHtml(product)}</p>
-            <p>${escapeHtml(client)}</p>
+            <h2>OS: ${safeOrderNumber}</h2>
+            <p>${safeProduct}</p>
+            <p>${safeClient}</p>
             ${svgData}
             <p style="font-size: 12px; color: #999;">Escaneie para iniciar produção</p>
           </div>

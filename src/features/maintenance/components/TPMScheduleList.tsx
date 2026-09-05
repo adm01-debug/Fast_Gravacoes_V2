@@ -27,7 +27,7 @@ export function TPMScheduleList({ schedules, onStartMaintenance }: TPMScheduleLi
       return <Badge className="gap-1 bg-blue-500"><Wrench className="h-3 w-3" /> Vence Hoje</Badge>;
     }
     if (daysUntil <= 3) {
-      return <Badge variant="secondary" className="gap-1 bg-amber-500/20 text-amber-600"><Clock className="h-3 w-3" /> Próximo</Badge>;
+      return <Badge variant="secondary" className="gap-1 bg-warning/20 text-warning"><Clock className="h-3 w-3" /> Próximo</Badge>;
     }
     return <Badge variant="outline" className="gap-1"><CalendarCheck className="h-3 w-3" /> Agendado</Badge>;
   };
@@ -35,7 +35,7 @@ export function TPMScheduleList({ schedules, onStartMaintenance }: TPMScheduleLi
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-lg text-title">
           <Wrench className="h-5 w-5 text-primary" />
           Manutenções Programadas
         </CardTitle>

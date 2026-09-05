@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { TechnicalSheet } from '@/hooks/technical-sheets/technicalSheetsTypes';
 import { Button } from '@/components/ui/button';
+import { sanitizeUrl } from '@/lib/sanitize';
 
 interface JobInstructionsTabProps {
   techniqueId: string;
@@ -202,7 +203,7 @@ export function JobInstructionsTab({ techniqueId, productCategoryId }: JobInstru
                       size="icon"
                       variant="ghost"
                       className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => window.open(doc.file_url, '_blank')}
+                      onClick={() => window.open(sanitizeUrl(doc.file_url), '_blank')}
                     >
                       <Download className="h-4 w-4" />
                     </Button>
@@ -212,8 +213,8 @@ export function JobInstructionsTab({ techniqueId, productCategoryId }: JobInstru
             </section>
           )}
 
-          <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-2">
-            <div className="flex items-center gap-2 mb-1 text-amber-500">
+          <div className="p-4 rounded-xl bg-warning/5 border border-warning/20 space-y-2">
+            <div className="flex items-center gap-2 mb-1 text-warning">
               <Lightbulb className="h-4 w-4" />
               <h5 className="text-xs font-bold uppercase tracking-wider">Desafios e Dicas</h5>
             </div>

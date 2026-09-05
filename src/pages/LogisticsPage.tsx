@@ -74,8 +74,13 @@ export default function LogisticsPage() {
     return shipments.data?.reduce((acc, s) => acc + (s.freight_cost || 0), 0) || 0;
   }, [shipments.data]);
 
+  // Single source for the tracking URL — URLSearchParams encodes order
+  // numbers with reserved characters (e.g. "A&B") for both copy and open.
+  const buildTrackingLink = (orderNumber?: string | null) =>
+    `/track?${new URLSearchParams({ q: orderNumber ?? '' })}`;
+
   const handleCopyLink = (orderNumber: string) => {
-    const link = `${window.location.origin}/track?q=${orderNumber}`;
+    const link = `${window.location.origin}${buildTrackingLink(orderNumber)}`;
     navigator.clipboard.writeText(link);
     toast.success(t('logistics.copyLink') + '!');
   };
@@ -91,7 +96,7 @@ export default function LogisticsPage() {
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl text-title font-bold flex items-center gap-2">
               <Truck className="h-8 w-8 text-primary" />
               <span className="gradient-text">Logística Inteligente 10/10</span>
             </h1>
@@ -139,12 +144,12 @@ export default function LogisticsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Custos Totais</p>
-                  <p className="text-2xl font-black mt-1 text-emerald-500">
+                  <p className="text-2xl font-black mt-1 text-success">
                     {totalFreightCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
-                <div className="p-2 bg-emerald-500/20 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-emerald-500" />
+                <div className="p-2 bg-success/20 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-success" />
                 </div>
               </div>
             </CardContent>
@@ -269,7 +274,7 @@ export default function LogisticsPage() {
                         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                           <div className="text-right">
                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Custo Frete</p>
-                            <p className="font-bold text-sm text-emerald-500">
+                            <p className="font-bold text-sm text-success">
                               {(shipment.freight_cost || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </p>
                           </div>
@@ -284,7 +289,7 @@ export default function LogisticsPage() {
                               variant="ghost"
                               size="icon"
                               className="group-hover:text-primary"
-                              onClick={() => window.open(`/track?q=${shipment.job?.order_number}`, '_blank')}
+                              onClick={() => window.open(buildTrackingLink(shipment.job?.order_number), '_blank')}
                             >
                               <ExternalLink className="h-4 w-4" />
                             </Button>
@@ -298,7 +303,7 @@ export default function LogisticsPage() {
                                 <DropdownMenuItem onClick={() => setEditingShipment(shipment)}>
                                   Editar Envio
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleCopyLink(shipment.job?.order_number)}>
+                                <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number)}>
                                   Copiar Link
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleStatusUpdate(shipment.id, 'delivered')}>
@@ -334,7 +339,7 @@ export default function LogisticsPage() {
               <Card className="glass-card lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-emerald-500" />
+                    <DollarSign className="h-5 w-5 text-success" />
                     Detalhamento de Custos Logísticos
                   </CardTitle>
                 </CardHeader>
@@ -348,7 +353,7 @@ export default function LogisticsPage() {
                             <p className="text-xs text-muted-foreground">{s.provider?.name || 'Transportadora Própria'}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-black text-emerald-500">
+                            <p className="font-black text-success">
                               {(s.freight_cost || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </p>
                             {s.insurance_cost !== null && s.insurance_cost > 0 && <p className="text-[10px] text-muted-foreground">Seguro: {s.insurance_cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>}
@@ -382,7 +387,7 @@ export default function LogisticsPage() {
                 <Card className="glass-card">
                   <CardHeader>
                     <CardTitle className="text-sm font-black uppercase flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                      <ShieldCheck className="h-4 w-4 text-success" />
                       Conformidade Fiscal
                     </CardTitle>
                   </CardHeader>
@@ -394,7 +399,7 @@ export default function LogisticsPage() {
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">Divergências de Valor</span>
-                        <span className="font-bold text-emerald-500">Zero</span>
+                        <span className="font-bold text-success">Zero</span>
                       </div>
                     </div>
                   </CardContent>

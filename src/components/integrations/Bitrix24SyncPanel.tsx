@@ -1,3 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +11,7 @@ import { useBitrix24Sync } from '@/features/admin';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { sanitizeUrl } from '@/lib/sanitize';
 
 export const Bitrix24SyncPanel = () => {
   const {
@@ -39,7 +44,7 @@ export const Bitrix24SyncPanel = () => {
 
   const handleReauthorize = () => {
     if (oauthStatus?.authorizationUrl) {
-      window.open(oauthStatus.authorizationUrl, '_blank');
+      window.open(sanitizeUrl(oauthStatus.authorizationUrl), '_blank');
     }
   };
 

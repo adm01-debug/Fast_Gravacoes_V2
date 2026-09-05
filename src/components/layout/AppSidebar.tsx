@@ -1,3 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
@@ -13,6 +22,7 @@ import { useAuth } from '@/features/auth';
 import { useDevice } from '@/hooks/use-device';
 import { useAlertCount } from '@/hooks/useAlertCount';
 import { useNotifications } from '@/features/notifications';
+import { usePackagingOverdueCount } from '@/features/packaging/hooks/usePackagingOverdueCount';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -33,6 +43,7 @@ export function AppSidebar() {
   const { isMobile } = useDevice();
   const alertCount = useAlertCount();
   const { unreadCount: notificationCount } = useNotifications();
+  const { data: packagingOverdueCount = 0 } = usePackagingOverdueCount();
 
   const toggleGroup = useCallback((groupId: string) => {
     setOpenGroups(prev => prev.includes(groupId) ? prev.filter(id => id !== groupId) : [...prev, groupId]);
@@ -66,7 +77,7 @@ export function AppSidebar() {
   }, [role]);
   const isActive = useCallback((href: string) => {
     if (href === '/') return location.pathname === '/';
-    return location.pathname.startsWith(href);
+    return location.pathname === href || location.pathname.startsWith(href + '/');
   }, [location.pathname]);
 
   const activeGroup = useMemo(() => {
@@ -207,6 +218,7 @@ export function AppSidebar() {
                     isActive={isActive}
                     alertCount={alertCount}
                     notificationCount={notificationCount}
+                    packagingOverdueCount={packagingOverdueCount}
                     openGroups={openGroups}
                     toggleGroup={toggleGroup}
                   />

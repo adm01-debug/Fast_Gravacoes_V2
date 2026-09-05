@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryConfig';
 
 interface LoadBalancingPanelProps {
   onExplain?: (suggestion: LoadBalancingSuggestion) => void;
@@ -46,7 +47,8 @@ export function LoadBalancingPanel({ onExplain }: LoadBalancingPanelProps) {
         icon: <ArrowLeftRight className="h-4 w-4 text-primary" />
       });
 
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
     } catch (error) {
 
       toast.error('Erro ao reequilibrar carga');

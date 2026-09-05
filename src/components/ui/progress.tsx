@@ -29,13 +29,19 @@ const Progress = React.forwardRef<
     destructive: 'shadow-[0_0_20px_hsl(var(--destructive)/0.5)]',
   };
 
+  const numericValue = typeof value === 'number' ? value : 0;
+  // Fallback accessible label; caller-supplied aria-label/labelledby via ...props overrides it.
+  const defaultAriaLabel = `Progresso: ${Math.round(numericValue)}%`;
+
   return (
     <ProgressPrimitive.Root
       ref={ref}
+      aria-label={defaultAriaLabel}
       className={cn(
         "relative h-4 w-full overflow-hidden rounded-full bg-secondary dark:bg-muted",
         className
       )}
+      value={value}
       {...props}
     >
       <ProgressPrimitive.Indicator
@@ -45,7 +51,7 @@ const Progress = React.forwardRef<
           animated && "progress-animated",
           showGlow && glowStyles[variant]
         )}
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        style={{ transform: `translateX(-${100 - numericValue}%)` }}
       />
     </ProgressPrimitive.Root>
   );

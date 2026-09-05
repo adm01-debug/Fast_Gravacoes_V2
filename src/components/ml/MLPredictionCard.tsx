@@ -34,7 +34,7 @@ export function MLPredictionCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-lg text-title flex items-center gap-2">
               {prediction.machine?.name || 'Máquina'}
               <Badge variant="outline" className="text-xs font-normal">
                 {prediction.machine?.code}

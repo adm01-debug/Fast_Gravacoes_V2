@@ -114,7 +114,7 @@ export const LiveMachineStatusPanel = memo(function LiveMachineStatusPanel() {
     <Card className="glass-card">
       <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display flex items-center gap-2">
+          <CardTitle className="text-sm text-title flex items-center gap-2">
             <Cpu className="h-4 w-4 text-primary animate-float" />
             <span className="gradient-text font-black uppercase tracking-tighter">Status das Máquinas 12/10</span>
           </CardTitle>
@@ -164,20 +164,35 @@ export const LiveMachineStatusPanel = memo(function LiveMachineStatusPanel() {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex items-center">
-                              <BrainCircuit className={cn(
-                                "h-3 w-3",
-                                getRiskLevel(predictions.find(p => p.machine_id === machine.machineId)!.risk_score).color === 'destructive' ? 'text-red-400 animate-pulse' : 'text-primary/70'
-                              )} />
+                              {(() => {
+                                const pred = predictions.find(p => p.machine_id === machine.machineId);
+                                const score = pred?.risk_score ?? 0;
+                                return (
+                                  <BrainCircuit className={cn(
+                                    "h-3 w-3",
+                                    getRiskLevel(score).color === 'destructive' ? 'text-red-400 animate-pulse' : 'text-primary/70'
+                                  )} />
+                                );
+                              })()}
                             </div>
                           </TooltipTrigger>
                           <TooltipContent className="glass-card">
-                            <p className="text-xs font-bold">Saúde Preditiva (ML): {100 - predictions.find(p => p.machine_id === machine.machineId)!.risk_score}%</p>
-                            <p className="text-[10px] text-muted-foreground">{getRiskLevel(predictions.find(p => p.machine_id === machine.machineId)!.risk_score).label} risco de falha</p>
+                            {(() => {
+                              const pred = predictions.find(p => p.machine_id === machine.machineId);
+                              const score = pred?.risk_score ?? 0;
+                              return (
+                                <>
+                                  <p className="text-xs font-bold">Saúde Preditiva (ML): {100 - score}%</p>
+                                  <p className="text-[10px] text-muted-foreground">{getRiskLevel(score).label} risco de falha</p>
+                                </>
+                              );
+                            })()}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     )}
                   </div>
+
                   <div className="flex gap-1">
                     {machine.status === 'producing' && (
                       <Badge className="bg-green-500/20 text-green-400 border-green-500/50 text-[9px] px-1.5 h-4 font-bold uppercase">

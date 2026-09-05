@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ProductionLot, useTraceabilityMutations } from '@/features/inventory';
+import { ProductionLot, useTraceabilityMutations, type LotMovement } from '@/features/inventory';
 import { LotMovementTimeline } from './LotMovementTimeline';
 
 const MOVEMENT_TYPES: Record<string, string> = {
@@ -15,7 +15,7 @@ const MOVEMENT_TYPES: Record<string, string> = {
 
 interface LotMovementsTabProps {
   lot: ProductionLot;
-  movements: any[] | undefined;
+  movements: LotMovement[] | undefined;
 }
 
 export function LotMovementsTab({ lot, movements }: LotMovementsTabProps) {

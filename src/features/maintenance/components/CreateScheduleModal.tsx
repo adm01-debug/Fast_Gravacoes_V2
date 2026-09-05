@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
@@ -85,7 +90,7 @@ export function CreateScheduleModal({
       )}
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display">Nova Manutenção Programada</DialogTitle>
+          <DialogTitle className="text-title">Nova Manutenção Programada</DialogTitle>
           <DialogDescription>
             Configure os detalhes para o agendamento de uma nova manutenção preventiva.
           </DialogDescription>

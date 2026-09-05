@@ -43,7 +43,7 @@ export function OperatorProductionCard({ job, technique, machine, onPause, onFin
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Timer className="h-3 w-3" />Estimado: {job.estimated_duration}min</div>
             <ProductionTimer job={job} />
-            <div className="flex gap-2 pt-2" onClick={e => e.stopPropagation()}>
+            <div className="flex gap-2 pt-2" role="presentation" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
               <Button variant="outline" size="sm" className="flex-1 border-warning/50 text-warning hover:bg-warning/10" onClick={() => onPause(job)}><Pause className="h-4 w-4 mr-1" />Pausar</Button>
               <Button size="sm" className="flex-1 bg-success hover:bg-success/90 text-success-foreground" onClick={() => onFinish(job)}><ClipboardCheck className="h-4 w-4 mr-1" />Registrar</Button>
             </div>

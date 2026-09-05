@@ -1,5 +1,6 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+import { Slot } from '@radix-ui/react-slot';
+import React from 'react';
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
 

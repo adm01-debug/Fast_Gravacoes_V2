@@ -8,21 +8,8 @@ import {
   validateContract,
 } from "../_shared/contracts.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
 
 function jsonResponse(req: Request, data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -35,11 +22,23 @@ async function validateApiKey(req: Request, supabase: ReturnType<typeof createCl
   const authHeader = req.headers.get('authorization');
   const apiKey = req.headers.get('x-api-key');
 
-  // Accept Supabase service role JWT
+  // Accept a Supabase user JWT, but only for an elevated role — this API
+  // exposes full ERP CRUD (jobs) and operator PII (profiles); any logged-in
+  // user's JWT previously passed this check regardless of role.
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.slice(7);
     const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (!error && user) return true;
+    if (!error && user) {
+      const { data: roleRows } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+      const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
+      if (roles.some((role: string) => ['coordinator', 'manager', 'admin'].includes(role))) {
+        return true;
+      }
+    }
   }
 
   // Accept configured API keys stored in DB
@@ -87,28 +86,36 @@ serve(async (req: Request) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  const requestId = getOrCreateRequestId(req);
   const url = new URL(req.url);
   const pathParts = url.pathname.split('/').filter(Boolean);
   const erpIndex = pathParts.indexOf('erp-api');
   const apiPath = erpIndex !== -1 ? pathParts.slice(erpIndex + 1) : [];
   const endpoint = apiPath[0] || '';
   const resourceId = apiPath[1];
+  const log = createLogger({ fn: "erp-api", requestId, method: req.method, path: apiPath.join('/') });
+  const jsonHeaders = withRequestId({ ...getCorsHeaders(req), 'Content-Type': 'application/json' }, requestId);
 
-  console.log(`[ERP-API] ${req.method} /${apiPath.join('/')} - ${new Date().toISOString()}`);
+  log.info("request.received");
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Public endpoints
   if (endpoint === '' || endpoint === 'docs') {
     return jsonResponse(req, API_DOCS);
   }
 
-  // Auth required for all other endpoints
-  const isAuthorized = await validateApiKey(req, supabase);
+  let isAuthorized: boolean;
+  try {
+    isAuthorized = await validateApiKey(req, supabase);
+  } catch (authError: unknown) {
+    log.error("auth.error", authError);
+    return new Response(JSON.stringify({ error: 'Internal Server Error', requestId }), { status: 500, headers: jsonHeaders });
+  }
   if (!isAuthorized) {
-    return jsonResponse(req, { error: 'Unauthorized', message: 'Missing or invalid authentication' }, 401);
+    log.warn("auth.unauthorized");
+    return new Response(JSON.stringify({ error: 'Unauthorized', message: 'Missing or invalid authentication', requestId }), { status: 401, headers: jsonHeaders });
   }
 
   try {
@@ -127,15 +134,14 @@ serve(async (req: Request) => {
       case 'kpis':
         return await handleKPIs(req, supabase, url);
       default:
-        return jsonResponse(req, { error: 'Not Found', message: `Endpoint /${endpoint} not found` }, 404);
+        return new Response(JSON.stringify({ error: 'Not Found', message: `Endpoint /${endpoint} not found`, requestId }), { status: 404, headers: jsonHeaders });
     }
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[ERP-API] Error:', errorMessage);
-    return jsonResponse(req, { error: 'Internal Server Error', message: errorMessage }, 500);
+    log.error("handler.error", error);
+    return new Response(JSON.stringify({ error: 'Internal Server Error', requestId }), { status: 500, headers: jsonHeaders });
   }
 
-  return jsonResponse(req, { error: 'Not Found' }, 404);
+  return new Response(JSON.stringify({ error: 'Not Found', requestId }), { status: 404, headers: jsonHeaders });
 });
 
 async function handleJobs(req: Request, supabase: ReturnType<typeof createClient>, jobId: string | undefined, url: URL): Promise<Response> {
@@ -154,8 +160,11 @@ async function handleJobs(req: Request, supabase: ReturnType<typeof createClient
 
     const status = url.searchParams.get('status');
     const date = url.searchParams.get('date');
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '100'), 200);
-    const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0);
+    const parsedLimit = parseInt(url.searchParams.get('limit') || '100', 10);
+    const parsedOffset = parseInt(url.searchParams.get('offset') || '0', 10);
+    // Clamp limit to [1, 200] so zero/negative values can't break .range().
+    const limit = Math.min(Math.max(Number.isFinite(parsedLimit) ? parsedLimit : 100, 1), 200);
+    const offset = Math.max(Number.isFinite(parsedOffset) ? parsedOffset : 0, 0);
 
     let query = supabase
       .from('jobs')
@@ -230,7 +239,8 @@ async function handleLots(req: Request, supabase: ReturnType<typeof createClient
       if (error) throw error;
       return jsonResponse(req, data);
     }
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '100'), 200);
+    const parsedLimit = parseInt(url.searchParams.get('limit') || '100', 10);
+    const limit = Math.min(Math.max(Number.isFinite(parsedLimit) ? parsedLimit : 100, 1), 200);
     const { data, error } = await supabase.from('production_lots').select('*').order('created_at', { ascending: false }).limit(limit);
     if (error) throw error;
     return jsonResponse(req, data);
@@ -260,7 +270,7 @@ async function handleProductionSummary(req: Request, supabase: ReturnType<typeof
     total_jobs: jobs.length,
     completed: jobs.filter((j: { status: string }) => j.status === 'finished').length,
     in_progress: jobs.filter((j: { status: string }) => j.status === 'production').length,
-    pending: jobs.filter((j: { status: string }) => ['queue', 'scheduled'].includes(j.status)).length,
+    pending: jobs.filter((j: { status: string }) => ['queue', 'ready', 'scheduled'].includes(j.status)).length,
     total_planned: jobs.reduce((s: number, j: { quantity: number }) => s + (j.quantity || 0), 0),
     total_produced: jobs.reduce((s: number, j: { produced_quantity: number }) => s + (j.produced_quantity || 0), 0),
     total_losses: jobs.reduce((s: number, j: { lost_pieces: number }) => s + (j.lost_pieces || 0), 0),
@@ -274,11 +284,17 @@ async function handleProductionSummary(req: Request, supabase: ReturnType<typeof
 async function handleKPIs(req: Request, supabase: ReturnType<typeof createClient>, url: URL): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse(req, { error: 'Method not allowed' }, 405);
   const today = new Date().toISOString().split('T')[0];
-  const [{ data: todayJobs }, { count: machinesCount }, { count: alertsCount }] = await Promise.all([
+  const [jobsResult, machinesResult, alertsResult] = await Promise.all([
     supabase.from('jobs').select('status, quantity, produced_quantity, lost_pieces').eq('scheduled_date', today).limit(1000),
     supabase.from('machines').select('*', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('spc_alerts').select('*', { count: 'exact', head: true }).is('resolved_at', null),
   ]);
+  if (jobsResult.error) throw jobsResult.error;
+  if (machinesResult.error) throw machinesResult.error;
+  if (alertsResult.error) throw alertsResult.error;
+  const { data: todayJobs } = jobsResult;
+  const { count: machinesCount } = machinesResult;
+  const { count: alertsCount } = alertsResult;
   const jobs = todayJobs || [];
   const totalPlanned = jobs.reduce((s: number, j: { quantity: number }) => s + (j.quantity || 0), 0);
   const totalProduced = jobs.reduce((s: number, j: { produced_quantity: number }) => s + (j.produced_quantity || 0), 0);

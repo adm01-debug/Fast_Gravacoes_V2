@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +14,7 @@ import { exportExecutiveDashboardPDF } from '@/lib/pdfExport';
 import { exportExecutiveDashboardExcel } from '@/lib/excelExport';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTechniques } from '@/features/jobs';
 import {
   XAxis,
   YAxis,
@@ -27,7 +28,7 @@ import {
   Cell,
   AreaChart,
   Area
-} from 'recharts';
+} from '@/lib/recharts';
 import {
   FileDown,
   TrendingUp,
@@ -84,16 +85,12 @@ export default function ExecutiveDashboard() {
     queryFn: async () => {
       const { data } = await supabase.from('machines').select('id, name, code');
       return data || [];
-    }
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
-  const { data: techniques } = useQuery({
-    queryKey: ['techniques-list'],
-    queryFn: async () => {
-      const { data } = await supabase.from('techniques').select('id, name, short_name');
-      return data || [];
-    }
-  });
+  const { data: techniques } = useTechniques();
 
   const { data: kpis, isLoading, error } = useExecutiveDashboard(
     selectedRange,
@@ -214,8 +211,8 @@ export default function ExecutiveDashboard() {
       icon: Factory,
       trend: kpis.trends.utilization >= 0 ? 'up' : 'down',
       trendValue: kpis.trends.utilization,
-      color: 'text-amber-500',
-      bgColor: 'bg-amber-500/10',
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
     },
     {
       title: 'Ciber-Resiliência',
@@ -248,7 +245,7 @@ export default function ExecutiveDashboard() {
                 <ShieldCheck className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tighter">
+                <h1 className="text-3xl sm:text-4xl text-title font-black tracking-tighter">
                   <span className="gradient-text animate-pulse-glow">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
@@ -256,7 +253,7 @@ export default function ExecutiveDashboard() {
                     <div className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                     QUALIDADE + VELOCIDADE
                   </Badge>
-                  <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border-emerald-500/20">
+                  <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider bg-success/10 text-success dark:text-success border-emerald-500/20">
                     Governança Total Ativa
                   </Badge>
                 </div>
@@ -399,19 +396,19 @@ export default function ExecutiveDashboard() {
 
           <Card className="glass-card lg:col-span-2 border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent relative overflow-hidden group h-full flex flex-col">
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Zap className="h-32 w-32 text-amber-500" />
+              <Zap className="h-32 w-32 text-warning" />
             </div>
             <CardHeader>
-              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-amber-600 flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-warning flex items-center gap-2">
                 <Lightbulb className="h-4 w-4" />
                 AI Operational Insights
               </CardTitle>
               <CardDescription>Análise inteligente de performance do período</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4 hover:bg-amber-500/15 transition-all duration-300">
-                <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="h-5 w-5 text-amber-600" />
+              <div className="p-4 rounded-xl bg-warning/10 border border-amber-500/20 flex items-start gap-4 hover:bg-warning/15 transition-all duration-300">
+                <div className="h-10 w-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="h-5 w-5 text-warning" />
                 </div>
                 <div>
                   <h4 className="font-bold text-sm">Oportunidade de Ganho de Eficiência</h4>
@@ -449,7 +446,7 @@ export default function ExecutiveDashboard() {
         </div>
 
         {/* KPI Grid */}
-        <ExecutiveKPICardsGrid kpiCards={kpiCards as any} />
+        <ExecutiveKPICardsGrid kpiCards={kpiCards as unknown as Parameters<typeof ExecutiveKPICardsGrid>[0]['kpiCards']} />
 
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -655,7 +652,7 @@ export default function ExecutiveDashboard() {
           <Card className="glass-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Factory className="h-5 w-5 text-amber-500" />
+                <Factory className="h-5 w-5 text-warning" />
                 Performance Máquinas
               </CardTitle>
             </CardHeader>
@@ -664,8 +661,20 @@ export default function ExecutiveDashboard() {
                 {kpis.machinePerformance.slice(0, 5).map((m, index) => (
                   <div
                     key={index}
-                    className="space-y-1 cursor-pointer hover:bg-primary/5 p-1 rounded-lg transition-colors"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Filtrar por máquina ${m.machine}`}
+                    className="space-y-1 cursor-pointer hover:bg-primary/5 p-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     onClick={() => {
+                      const machine = machines?.find(mac => (mac.code || mac.name) === m.machine);
+                      if (machine) {
+                        setMachineId(machine.id);
+                        toast.success(`Filtrando por máquina: ${machine.code || machine.name}`);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter' && e.key !== ' ') return;
+                      e.preventDefault();
                       const machine = machines?.find(mac => (mac.code || mac.name) === m.machine);
                       if (machine) {
                         setMachineId(machine.id);

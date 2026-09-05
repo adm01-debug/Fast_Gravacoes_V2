@@ -138,18 +138,17 @@ export function useRBAC(): RBACResult {
     if (isLoading || !role) return [];
     
     const perms = ROLE_PERMISSIONS[role] || [];
-    // Merge dot-notated and legacy colon-notated permissions
-    const legacyPerms = perms.map(p => p.includes(':') ? p.replace(':', '.') : p);
-    const modernPerms = perms.map(p => p.includes('.') ? p.replace('.', ':') : p);
-    
-    return Array.from(new Set([...perms, ...legacyPerms, ...modernPerms]));
+    // Standardize all permissions to use ":" instead of "." and remove duplicates
+    const standardized = perms.map(p => p.replace(/\./g, ':'));
+    return Array.from(new Set(standardized));
   }, [role, isLoading]);
 
   const hasPermission = useMemo(() => {
     return (permission: string): boolean => {
       if (!role) return false;
       if (role === 'admin') return true;
-      return permissions.includes(permission);
+      const target = permission.replace(/\./g, ':');
+      return permissions.includes(target);
     };
   }, [role, permissions]);
 

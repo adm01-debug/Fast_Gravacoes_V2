@@ -3,9 +3,16 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Package } from 'lucide-react';
 
+interface SupplyItem {
+  name: string;
+  quantity: string;
+  is_checked?: boolean;
+  alternative_used?: boolean;
+}
+
 interface SupplyListProps {
-  supplies: Record<string, any>;
-  onUpdate: (id: string, updates: any) => void;
+  supplies: Record<string, SupplyItem>;
+  onUpdate: (id: string, updates: Partial<SupplyItem>) => void;
 }
 
 export function SupplyList({ supplies, onUpdate }: SupplyListProps) {

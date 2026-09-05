@@ -90,7 +90,7 @@ export const OEECalculationAudit = memo(function OEECalculationAudit({ machine, 
             <span className="text-xs text-primary">×</span>
             <span className="text-xs font-mono text-muted-foreground">({quality.toFixed(1)}% / 100)</span>
           </div>
-          <div className="text-4xl font-black font-display tracking-tighter text-primary mt-1">
+          <div className="text-4xl font-black text-display-lg tracking-tighter text-primary mt-1">
             {oee.toFixed(1)}%
           </div>
           <div className="h-px w-32 bg-primary/20 mt-1" />

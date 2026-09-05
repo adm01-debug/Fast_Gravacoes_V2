@@ -79,7 +79,7 @@ export function OfflineStatusBanner({
       'rounded-lg border p-4 space-y-3',
       isOnline
         ? 'bg-card border-border'
-        : 'bg-amber-500/5 border-amber-500/30',
+        : 'bg-warning/5 border-warning/30',
       className
     )}>
       {/* Main Status */}
@@ -87,7 +87,7 @@ export function OfflineStatusBanner({
         <div className="flex items-center gap-3">
           <div className={cn(
             'w-10 h-10 rounded-lg flex items-center justify-center',
-            isOnline ? 'bg-green-500/10' : 'bg-amber-500/10'
+            isOnline ? 'bg-green-500/10' : 'bg-warning/10'
           )}>
             {isOnline ? (
               isSyncing ? (
@@ -96,7 +96,7 @@ export function OfflineStatusBanner({
                 <Cloud className="w-5 h-5 text-green-500" />
               )
             ) : (
-              <CloudOff className="w-5 h-5 text-amber-500" />
+              <CloudOff className="w-5 h-5 text-warning" />
             )}
           </div>
 
@@ -104,18 +104,18 @@ export function OfflineStatusBanner({
             <div className="flex items-center gap-2">
               <h3 className={cn(
                 'font-semibold',
-                isOnline ? 'text-green-500' : 'text-amber-500'
+                isOnline ? 'text-green-500' : 'text-warning'
               )}>
                 {isOnline ? (isSyncing ? 'Sincronizando...' : 'Online') : 'Modo Offline'}
               </h3>
               {!isOnline && (
-                <WifiOff className="w-4 h-4 text-amber-500" />
+                <WifiOff className="w-4 h-4 text-warning" />
               )}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {pendingActionsCount > 0 ? (
-                <span className="flex items-center gap-1 text-amber-500">
+                <span className="flex items-center gap-1 text-warning">
                   <AlertCircle className="w-3.5 h-3.5" />
                   {pendingActionsCount} ação(ões) pendente(s)
                 </span>
@@ -190,7 +190,7 @@ export function OfflineStatusBanner({
 
       {/* Offline Tips */}
       {!isOnline && (
-        <div className="pt-2 border-t border-amber-500/20">
+        <div className="pt-2 border-t border-warning/20">
           <p className="text-sm text-muted-foreground">
             💡 <strong>Dica:</strong> Você pode continuar trabalhando normalmente.
             Todas as alterações serão sincronizadas automaticamente quando a conexão for restaurada.

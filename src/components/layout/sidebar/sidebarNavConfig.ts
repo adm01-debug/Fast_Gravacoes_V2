@@ -3,7 +3,7 @@ import {
   BarChart3, Gauge, Coins, Wrench, Brain, Code2, Zap, Bot, QrCode, RefreshCw,
   BookOpen, Palette, Download, Bell, ArrowRightLeft, Package, Activity, FileDown,
   Trophy, BatteryCharging, FileText, Cog, TrendingUp, Cpu, UserCircle, ShieldCheck,
-  Factory
+  Factory, PackageCheck
 } from 'lucide-react';
 import { NavGroup } from './NavGroupComponent';
 import { NavItem } from './NavButton';
@@ -60,6 +60,7 @@ export const navGroups: NavGroup[] = [
       { icon: Cpu, label: 'Máquinas', href: '/machines', allowedRoles: STAFF_ONLY },
       { icon: ArrowRightLeft, label: 'Comparativo Máquinas', href: '/machines/compare', allowedRoles: STAFF_ONLY },
       { icon: BatteryCharging, label: 'Energia', href: '/energy', allowedRoles: STAFF_ONLY },
+      { icon: PackageCheck, label: 'Manuseio e Embalagem', href: '/packaging', allowedRoles: ALL_ROLES },
       { icon: Package, label: 'Estoque', href: '/inventory', allowedRoles: STAFF_ONLY },
       { icon: Package, label: 'Rastreabilidade', href: '/traceability', allowedRoles: STAFF_ONLY },
     ]

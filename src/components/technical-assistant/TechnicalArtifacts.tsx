@@ -24,19 +24,22 @@ export const MermaidDiagram = ({ chart }: MermaidDiagramProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let mounted = true;
     const renderDiagram = async () => {
       if (!chart) return;
       try {
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
         const { svg } = await mermaid.render(id, chart);
+        if (!mounted) return;
         setSvg(svg);
         setError(false);
       } catch (err) {
         logger.error('Mermaid rendering failed', err, 'MermaidDiagram');
-        setError(true);
+        if (mounted) setError(true);
       }
     };
     renderDiagram();
+    return () => { mounted = false; };
   }, [chart]);
 
   if (error) return null;

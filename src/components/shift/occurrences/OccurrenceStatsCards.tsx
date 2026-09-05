@@ -27,7 +27,7 @@ export function OccurrenceStatsCards({ stats }: OccurrenceStatsCardsProps) {
       <Card>
         <CardContent className="pt-4">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-amber-500" />
+            <Clock className="h-5 w-5 text-warning" />
             <div>
               <p className="text-2xl font-bold">{stats.open}</p>
               <p className="text-xs text-muted-foreground">Abertas</p>

@@ -36,7 +36,7 @@ export function OperatorSkillsModal({ operator, open, onOpenChange }: OperatorSk
 
   const getLevelIcon = (level: SkillLevel) => {
     switch (level) {
-      case 'expert': return <Star className="h-3 w-3 text-emerald-500" />;
+      case 'expert': return <Star className="h-3 w-3 text-success" />;
       case 'advanced': return <Award className="h-3 w-3 text-blue-500" />;
       default: return <ShieldCheck className="h-3 w-3 text-slate-400" />;
     }

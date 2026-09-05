@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -82,7 +87,7 @@ export function EditShipmentModal({ shipment, open, onOpenChange }: EditShipment
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('common.status')}</Label>
-              <Select value={status} onValueChange={(v: any) => setStatus(v)}>
+              <Select value={status} onValueChange={(v) => setStatus(v as DbShipment['status'])}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

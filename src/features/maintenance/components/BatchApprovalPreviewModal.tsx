@@ -5,8 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { AlertCircle, CheckCircle2, XCircle, Clock, Eye, FileSpreadsheet, Download } from 'lucide-react';
 import { MaintenanceRecord } from '@/features/maintenance/hooks/types';
 import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { ExecutionDetailsModal } from './ExecutionDetailsModal';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface BatchApprovalPreviewModalProps {
@@ -32,14 +34,44 @@ export function BatchApprovalPreviewModal({
     return records.filter((r: MaintenanceRecord) => recordIds.includes(r.id));
   }, [records, recordIds]);
 
+  // The maintenance-records list query doesn't include checklist responses,
+  // so "foto obrigatória ausente" (the same rule approveBatch enforces
+  // server-side) couldn't be checked here before — this preview showed
+  // "Pronto" for records the server would then reject. Fetch responses
+  // (with the checklist item's requires_photo) scoped to just the selected
+  // records so the preview matches what approveBatch will actually enforce.
+  const { data: photoRequirementByRecord, isLoading: isCheckingPhotoRequirement } = useQuery({
+    queryKey: ['batch-approval-photo-check', recordIds],
+    queryFn: async () => {
+      if (recordIds.length === 0) return {} as Record<string, boolean>;
+      const { data, error } = await supabase
+        .from('maintenance_item_responses')
+        .select('record_id, photo_url, checklist_item:maintenance_checklist_items(requires_photo)')
+        .in('record_id', recordIds);
+      if (error) throw error;
+
+      const byRecord = new Map<string, { requiresPhoto: boolean; hasPhoto: boolean }>();
+      for (const row of data as Array<{ record_id: string; photo_url: string | null; checklist_item: { requires_photo: boolean | null } | null }>) {
+        const entry = byRecord.get(row.record_id) ?? { requiresPhoto: false, hasPhoto: false };
+        if (row.checklist_item?.requires_photo) entry.requiresPhoto = true;
+        if (row.photo_url) entry.hasPhoto = true;
+        byRecord.set(row.record_id, entry);
+      }
+
+      const result: Record<string, boolean> = {};
+      for (const [recordId, { requiresPhoto, hasPhoto }] of byRecord) {
+        result[recordId] = requiresPhoto && !hasPhoto;
+      }
+      return result;
+    },
+    enabled: recordIds.length > 0,
+  });
+
   const validationResults = useMemo(() => {
     return selectedRecords.map((record: MaintenanceRecord) => {
       const issues = [];
       if (!record.signature_url) issues.push('Assinatura ausente');
-
-      // Check if any item that required photo doesn't have it
-      // Note: We'd need the full record details including responses for this
-      // For the preview, we'll check what's already in the record if available
+      if (photoRequirementByRecord?.[record.id]) issues.push('Foto obrigatória ausente');
 
       return {
         ...record,
@@ -47,9 +79,9 @@ export function BatchApprovalPreviewModal({
         issues
       };
     });
-  }, [selectedRecords]);
+  }, [selectedRecords, photoRequirementByRecord]);
 
-  const allValid = validationResults.every((v: any) => v.isValid);
+  const allValid = validationResults.every((v) => v.isValid);
 
   const handleViewDetails = (id: string) => {
     setSelectedRecordId(id);
@@ -59,7 +91,7 @@ export function BatchApprovalPreviewModal({
   const handleExportCSV = () => {
     if (validationResults.length === 0) return;
     const headers = ['Máquina', 'Código', 'Data', 'Status Validação', 'Pendências'];
-    const rows = validationResults.map((v: any) => [
+    const rows = validationResults.map((v) => [
       v.machine?.name || '',
       v.machine?.code || '',
       v.completed_at ? new Date(v.completed_at).toLocaleDateString() : 'N/A',
@@ -109,7 +141,7 @@ export function BatchApprovalPreviewModal({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {validationResults.map((v: any) => (
+              {validationResults.map((v) => (
                 <TableRow key={v.id}>
                   <TableCell className="font-medium">
                     {v.machine?.name}
@@ -120,7 +152,7 @@ export function BatchApprovalPreviewModal({
                   </TableCell>
                   <TableCell>
                     {v.isValid ? (
-                      <Badge className="bg-emerald-500 gap-1">
+                      <Badge className="bg-success gap-1">
                         <CheckCircle2 className="h-3 w-3" /> Pronto
                       </Badge>
                     ) : (
@@ -160,11 +192,11 @@ export function BatchApprovalPreviewModal({
           </Button>
           <Button
             onClick={onConfirm}
-            disabled={!allValid || isProcessing || recordIds.length === 0}
+            disabled={!allValid || isProcessing || isCheckingPhotoRequirement || recordIds.length === 0}
             className="gap-2"
           >
-            {isProcessing ? <Clock className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-            Confirmar Aprovação ({recordIds.length})
+            {isProcessing || isCheckingPhotoRequirement ? <Clock className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+            {isCheckingPhotoRequirement ? 'Verificando...' : `Confirmar Aprovação (${recordIds.length})`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -320,7 +320,7 @@ export function TPMReports() {
             </div>
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Disponibilidade</p>
-              <p className="text-lg font-bold text-emerald-400">
+              <p className="text-lg font-bold text-success">
                 {selectedMachineId === 'all'
                   ? summary.averageAvailability.toFixed(1) + '%'
                   : (metrics.find(m => m.machineId === selectedMachineId)?.availability.toFixed(1) + '%' || '100%')

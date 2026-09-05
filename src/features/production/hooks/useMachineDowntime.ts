@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export type DowntimeType = 'setup' | 'maintenance' | 'breakdown' | 'idle' | 'other';
 
@@ -48,6 +49,9 @@ export function useMachineDowntime(machineId?: string) {
       queryClient.invalidateQueries({ queryKey: ['machine-downtime'] });
       toast.success('Parada registrada com sucesso');
     },
+    onError: (error: unknown) => {
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao registrar parada');
+    },
   });
 
   const endDowntime = useMutation({
@@ -62,6 +66,9 @@ export function useMachineDowntime(machineId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['machine-downtime'] });
       toast.success('Parada encerrada');
+    },
+    onError: (error: unknown) => {
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao encerrar parada');
     },
   });
 

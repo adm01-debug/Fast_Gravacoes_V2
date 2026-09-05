@@ -9,6 +9,9 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }),
+      onAuthStateChange: vi.fn().mockReturnValue({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      }),
     },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
@@ -60,7 +63,7 @@ describe('useNotifications', () => {
 
   it('should handle unread count', async () => {
     const { supabase } = await import('@/integrations/supabase/client');
-    // @ts-ignore
+    // @ts-expect-error mock override em cliente Supabase tipado
     supabase.from.mockImplementation((table: string) => {
       if (table === 'push_notifications') {
         return {

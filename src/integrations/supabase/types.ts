@@ -437,6 +437,99 @@ export type Database = {
         }
         Relationships: []
       }
+      cron_health_history: {
+        Row: {
+          active: boolean | null
+          captured_at: string
+          consecutive_failures: number
+          created_at: string
+          expected_interval_minutes: number | null
+          id: string
+          is_stale: boolean
+          jobid: number
+          jobname: string | null
+          last_duration_ms: number | null
+          last_error: string | null
+          last_run: string | null
+          last_status: string | null
+          schedule: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          captured_at?: string
+          consecutive_failures?: number
+          created_at?: string
+          expected_interval_minutes?: number | null
+          id?: string
+          is_stale?: boolean
+          jobid: number
+          jobname?: string | null
+          last_duration_ms?: number | null
+          last_error?: string | null
+          last_run?: string | null
+          last_status?: string | null
+          schedule?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          captured_at?: string
+          consecutive_failures?: number
+          created_at?: string
+          expected_interval_minutes?: number | null
+          id?: string
+          is_stale?: boolean
+          jobid?: number
+          jobname?: string | null
+          last_duration_ms?: number | null
+          last_error?: string | null
+          last_run?: string | null
+          last_status?: string | null
+          schedule?: string | null
+        }
+        Relationships: []
+      }
+      cron_p95_daily: {
+        Row: {
+          avg_ms: number | null
+          created_at: string
+          day: string
+          failure_rate_pct: number
+          id: string
+          jobid: number
+          jobname: string | null
+          max_ms: number | null
+          p95_ms: number | null
+          samples: number
+          updated_at: string
+        }
+        Insert: {
+          avg_ms?: number | null
+          created_at?: string
+          day: string
+          failure_rate_pct?: number
+          id?: string
+          jobid: number
+          jobname?: string | null
+          max_ms?: number | null
+          p95_ms?: number | null
+          samples?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_ms?: number | null
+          created_at?: string
+          day?: string
+          failure_rate_pct?: number
+          id?: string
+          jobid?: number
+          jobname?: string | null
+          max_ms?: number | null
+          p95_ms?: number | null
+          samples?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_summaries: {
         Row: {
           created_at: string
@@ -561,6 +654,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      edge_health_history: {
+        Row: {
+          captured_at: string
+          checks: Json
+          created_at: string
+          id: string
+          latency_ms: number | null
+          source: string
+          status: string
+        }
+        Insert: {
+          captured_at?: string
+          checks?: Json
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          source?: string
+          status: string
+        }
+        Update: {
+          captured_at?: string
+          checks?: Json
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          source?: string
+          status?: string
+        }
+        Relationships: []
       }
       efficiency_alert_history: {
         Row: {
@@ -1276,6 +1399,7 @@ export type Database = {
           notes: string | null
           operator_id: string | null
           order_number: string
+          parent_job_id: string | null
           priority: string
           produced_quantity: number | null
           product: string
@@ -1308,6 +1432,7 @@ export type Database = {
           notes?: string | null
           operator_id?: string | null
           order_number: string
+          parent_job_id?: string | null
           priority?: string
           produced_quantity?: number | null
           product: string
@@ -1340,6 +1465,7 @@ export type Database = {
           notes?: string | null
           operator_id?: string | null
           order_number?: string
+          parent_job_id?: string | null
           priority?: string
           produced_quantity?: number | null
           product?: string
@@ -1362,6 +1488,13 @@ export type Database = {
             columns: ["machine_id"]
             isOneToOne: false
             referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_parent_job_id_fkey"
+            columns: ["parent_job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
           {
@@ -2625,6 +2758,368 @@ export type Database = {
           reason?: string | null
         }
         Relationships: []
+      }
+      packaging_checklist_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          is_required: boolean
+          item_order: number
+          label: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          item_order?: number
+          label: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          item_order?: number
+          label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      packaging_defects: {
+        Row: {
+          created_at: string
+          decision: string
+          defect_type: string
+          id: string
+          notes: string | null
+          packaging_task_id: string
+          photo_url: string | null
+          quantity: number
+          reported_by: string | null
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          decision?: string
+          defect_type: string
+          id?: string
+          notes?: string | null
+          packaging_task_id: string
+          photo_url?: string | null
+          quantity: number
+          reported_by?: string | null
+          severity?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          decision?: string
+          defect_type?: string
+          id?: string
+          notes?: string | null
+          packaging_task_id?: string
+          photo_url?: string | null
+          quantity?: number
+          reported_by?: string | null
+          severity?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packaging_defects_packaging_task_id_fkey"
+            columns: ["packaging_task_id"]
+            isOneToOne: false
+            referencedRelation: "packaging_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packaging_equipment: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_maintenance_at: string | null
+          name: string
+          next_maintenance_at: string | null
+          status: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_maintenance_at?: string | null
+          name: string
+          next_maintenance_at?: string | null
+          status?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_maintenance_at?: string | null
+          name?: string
+          next_maintenance_at?: string | null
+          status?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
+      packaging_settings: {
+        Row: {
+          created_at: string
+          defect_reasons: string[]
+          id: string
+          package_types: string[]
+          sla_packaging_hours: number
+          sla_total_hours: number
+          sla_triage_hours: number
+          updated_at: string
+          warning_threshold_pct: number
+          weight_unit: string
+        }
+        Insert: {
+          created_at?: string
+          defect_reasons?: string[]
+          id?: string
+          package_types?: string[]
+          sla_packaging_hours?: number
+          sla_total_hours?: number
+          sla_triage_hours?: number
+          updated_at?: string
+          warning_threshold_pct?: number
+          weight_unit?: string
+        }
+        Update: {
+          created_at?: string
+          defect_reasons?: string[]
+          id?: string
+          package_types?: string[]
+          sla_packaging_hours?: number
+          sla_total_hours?: number
+          sla_triage_hours?: number
+          updated_at?: string
+          warning_threshold_pct?: number
+          weight_unit?: string
+        }
+        Relationships: []
+      }
+      packaging_sla_overrides: {
+        Row: {
+          client: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          sla_packaging_hours: number
+          sla_total_hours: number
+          sla_triage_hours: number
+          technique_id: string | null
+          updated_at: string
+          warning_threshold_pct: number
+        }
+        Insert: {
+          client?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          sla_packaging_hours?: number
+          sla_total_hours?: number
+          sla_triage_hours?: number
+          technique_id?: string | null
+          updated_at?: string
+          warning_threshold_pct?: number
+        }
+        Update: {
+          client?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          sla_packaging_hours?: number
+          sla_total_hours?: number
+          sla_triage_hours?: number
+          technique_id?: string | null
+          updated_at?: string
+          warning_threshold_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packaging_sla_overrides_technique_id_fkey"
+            columns: ["technique_id"]
+            isOneToOne: false
+            referencedRelation: "techniques"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packaging_task_checklist: {
+        Row: {
+          checked_at: string | null
+          checked_by: string | null
+          created_at: string
+          id: string
+          is_checked: boolean
+          item_id: string
+          notes: string | null
+          packaging_task_id: string
+          updated_at: string
+        }
+        Insert: {
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_checked?: boolean
+          item_id: string
+          notes?: string | null
+          packaging_task_id: string
+          updated_at?: string
+        }
+        Update: {
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_checked?: boolean
+          item_id?: string
+          notes?: string | null
+          packaging_task_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packaging_task_checklist_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "packaging_checklist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "packaging_task_checklist_packaging_task_id_fkey"
+            columns: ["packaging_task_id"]
+            isOneToOne: false
+            referencedRelation: "packaging_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packaging_tasks: {
+        Row: {
+          approved_quantity: number
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          delay_category: string | null
+          delay_reason: string | null
+          id: string
+          job_id: string
+          notes: string | null
+          package_type: string | null
+          packages_count: number | null
+          received_quantity: number
+          rejected_quantity: number
+          started_at: string | null
+          status: string
+          total_weight_kg: number | null
+          updated_at: string
+          was_overdue_on_complete: boolean
+        }
+        Insert: {
+          approved_quantity?: number
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          delay_category?: string | null
+          delay_reason?: string | null
+          id?: string
+          job_id: string
+          notes?: string | null
+          package_type?: string | null
+          packages_count?: number | null
+          received_quantity?: number
+          rejected_quantity?: number
+          started_at?: string | null
+          status?: string
+          total_weight_kg?: number | null
+          updated_at?: string
+          was_overdue_on_complete?: boolean
+        }
+        Update: {
+          approved_quantity?: number
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          delay_category?: string | null
+          delay_reason?: string | null
+          id?: string
+          job_id?: string
+          notes?: string | null
+          package_type?: string | null
+          packages_count?: number | null
+          received_quantity?: number
+          rejected_quantity?: number
+          started_at?: string | null
+          status?: string
+          total_weight_kg?: number | null
+          updated_at?: string
+          was_overdue_on_complete?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packaging_tasks_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packaging_waste: {
+        Row: {
+          created_at: string | null
+          id: string
+          material_type: string
+          operator_id: string | null
+          task_id: string | null
+          weight_kg: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          material_type: string
+          operator_id?: string | null
+          task_id?: string | null
+          weight_kg: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          material_type?: string
+          operator_id?: string | null
+          task_id?: string | null
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packaging_waste_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "packaging_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       password_reset_requests: {
         Row: {
@@ -5483,6 +5978,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_reassign_stale_packaging_tasks: { Args: never; Returns: undefined }
       calculate_audit_hash: {
         Args: { rec: Database["public"]["Tables"]["audit_log"]["Row"] }
         Returns: string
@@ -5511,10 +6007,61 @@ export type Database = {
         }
         Returns: string
       }
+      cron_expected_interval_minutes: {
+        Args: { _schedule: string }
+        Returns: number
+      }
+      get_cron_health: {
+        Args: never
+        Returns: {
+          active: boolean
+          consecutive_failures: number
+          jobid: number
+          jobname: string
+          last_duration_ms: number
+          last_error: string
+          last_run: string
+          last_status: string
+          schedule: string
+        }[]
+      }
+      get_packaging_leaderboard: {
+        Args: never
+        Returns: {
+          avg_time_minutes: number
+          operator_name: string
+          quality_rate: number
+          tasks_completed: number
+        }[]
+      }
+      get_packaging_manifest: {
+        Args: { p_task_ids: string[] }
+        Returns: {
+          client_name: string
+          order_number: string
+          package_type: string
+          packages_count: number
+          shipping_address: string
+          total_weight: number
+        }[]
+      }
+      get_system_status_summary: {
+        Args: never
+        Returns: {
+          edge_last_check: string
+          edge_status: string
+          failing_jobs: number
+          healthy_jobs: number
+          last_capture: string
+          stale_jobs: number
+          total_jobs: number
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      has_any_active_role: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -5526,11 +6073,37 @@ export type Database = {
         Args: { sheet_id: string }
         Returns: undefined
       }
+      packaging_task_sla_status: {
+        Args: {
+          _created_at: string
+          _sla_packaging: number
+          _sla_total: number
+          _sla_triage: number
+          _started_at: string
+          _status: string
+          _warn_pct: number
+        }
+        Returns: {
+          elapsed_hours: number
+          level: string
+          progress_pct: number
+          sla_hours: number
+        }[]
+      }
       process_tpm_notifications_cron: { Args: never; Returns: undefined }
+      purge_old_logs: {
+        Args: never
+        Returns: {
+          deleted_count: number
+          table_name: string
+        }[]
+      }
       refresh_operator_rankings: {
         Args: { p_type: string }
         Returns: undefined
       }
+      rollup_cron_p95_daily: { Args: { _days?: number }; Returns: number }
+      snapshot_cron_health: { Args: never; Returns: number }
       test_rls_policies: {
         Args: { p_role: string; p_table_name: string; p_test_user_id: string }
         Returns: {

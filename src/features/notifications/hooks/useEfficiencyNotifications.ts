@@ -192,15 +192,23 @@ export function useEfficiencyNotifications(config: Partial<EfficiencyNotificatio
     prevSuggestionIds.current = currentIds;
   }, [loadBalancingSuggestions, settings.enableLoadBalancingAlerts, recordAlert]);
 
+  // Keep the latest dataset in a ref so the baseline can be seeded from the
+  // data present when initialization completes (not the empty data at mount).
+  const latestDataRef = useRef({ criticalCount, warningCount, bottleneckAlerts, loadBalancingSuggestions });
+  useEffect(() => {
+    latestDataRef.current = { criticalCount, warningCount, bottleneckAlerts, loadBalancingSuggestions };
+  }, [criticalCount, warningCount, bottleneckAlerts, loadBalancingSuggestions]);
+
   // Initialize and run first check after a delay
   useEffect(() => {
-    // Set initial values without triggering notifications
-    prevBottleneckCount.current = (criticalCount ?? 0) + (warningCount ?? 0);
-    prevLoadBalancingCount.current = loadBalancingSuggestions.length;
-    prevBottleneckIds.current = new Set(bottleneckAlerts.map(a => `${a.techniqueId}-${a.date.toISOString().split('T')[0]}`));
-    prevSuggestionIds.current = new Set(loadBalancingSuggestions.map(s => `${s.jobId}-${s.currentMachineId}-${s.suggestedMachineId}`));
-
     const initTimeout = setTimeout(() => {
+      // Seed baselines from the data available at init time, so the first real
+      // dataset that arrives during loading is not flagged as entirely "new".
+      const data = latestDataRef.current;
+      prevBottleneckCount.current = (data.criticalCount ?? 0) + (data.warningCount ?? 0);
+      prevLoadBalancingCount.current = data.loadBalancingSuggestions.length;
+      prevBottleneckIds.current = new Set(data.bottleneckAlerts.map(a => `${a.techniqueId}-${a.date.toISOString().split('T')[0]}`));
+      prevSuggestionIds.current = new Set(data.loadBalancingSuggestions.map(s => `${s.jobId}-${s.currentMachineId}-${s.suggestedMachineId}`));
       hasInitialized.current = true;
     }, 3000);
 

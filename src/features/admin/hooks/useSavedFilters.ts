@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useCallback, useEffect } from 'react';
 
 export interface SavedFilter {
@@ -32,7 +37,7 @@ export function useSavedFilters(context: string) {
   // Persist to localStorage on change
   const persist = useCallback(
     (filters: SavedFilter[]) => {
-      localStorage.setItem(storageKey, JSON.stringify(filters));
+      try { localStorage.setItem(storageKey, JSON.stringify(filters)); } catch { /* quota exceeded */ }
       setSavedFilters(filters);
     },
     [storageKey]

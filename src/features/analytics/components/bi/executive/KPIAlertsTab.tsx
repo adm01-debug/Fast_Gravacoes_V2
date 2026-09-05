@@ -31,9 +31,9 @@ const KPIAlertsTabComponent = ({
         {/* Goals Alerts */}
         <div className="space-y-6">
           {goalAlerts.length > 0 && (
-            <Card className="glass-card border-amber-500/20 bg-amber-500/5">
+            <Card className="glass-card border-warning/20 bg-warning/5">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2 text-amber-500">
+                <CardTitle className="text-lg flex items-center gap-2 text-warning">
                   <Target className="h-5 w-5" />
                   Alertas de Metas
                 </CardTitle>
@@ -43,7 +43,7 @@ const KPIAlertsTabComponent = ({
                 {goalAlerts.map((alert) => (
                   <div key={alert.goalId} className={cn(
                     "p-4 rounded-xl border flex items-center justify-between",
-                    alert.riskLevel === 'critical' ? "bg-red-500/10 border-red-500/20" : "bg-amber-500/10 border-amber-500/20"
+                    alert.riskLevel === 'critical' ? "bg-red-500/10 border-red-500/20" : "bg-warning/10 border-warning/20"
                   )}>
                     <div>
                       <p className="font-bold text-sm">{alert.operatorName}</p>
@@ -52,7 +52,7 @@ const KPIAlertsTabComponent = ({
                     <div className="text-right">
                       <span className={cn(
                         "text-lg font-bold",
-                        alert.riskLevel === 'critical' ? "text-red-500" : "text-amber-500"
+                        alert.riskLevel === 'critical' ? "text-red-500" : "text-warning"
                       )}>
                         {alert.progressPercentage.toFixed(0)}%
                       </span>
@@ -77,15 +77,15 @@ const KPIAlertsTabComponent = ({
                 {kpis.anomalies.map((anomaly) => (
                   <div key={anomaly.id} className={cn(
                     "flex items-start gap-4 p-4 rounded-xl border animate-in fade-in slide-in-from-left-4 duration-300",
-                    anomaly.severity === 'high' ? "border-primary/40 bg-primary/10" : "border-amber-500/20 bg-amber-500/5"
+                    anomaly.severity === 'high' ? "border-primary/40 bg-primary/10" : "border-warning/20 bg-warning/5"
                   )}>
                     <div className={cn(
                       "p-2 rounded-lg",
-                      anomaly.severity === 'high' ? "bg-primary/20" : "bg-amber-500/20"
+                      anomaly.severity === 'high' ? "bg-primary/20" : "bg-warning/20"
                     )}>
-                      {anomaly.type === 'loss' ? <Percent className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-amber-500")} /> :
-                       anomaly.type === 'delay' ? <Clock className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-amber-500")} /> :
-                       <AlertTriangle className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-amber-500")} />}
+                      {anomaly.type === 'loss' ? <Percent className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-warning")} /> :
+                       anomaly.type === 'delay' ? <Clock className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-warning")} /> :
+                       <AlertTriangle className={cn("h-5 w-5", anomaly.severity === 'high' ? "text-primary" : "text-warning")} />}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">

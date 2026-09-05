@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
 
 test.describe('Dashboard de Manutenção (TPM)', () => {
   test.beforeEach(async ({ page }) => {
     // Login automático
     await page.goto('/auth');
-    await page.fill('input[type="email"]', 'admin@fastgravacoes.com.br');
-    await page.fill('input[type="password"]', 'Fast@2026!');
+    await page.fill('input[type="email"]', E2E_EMAIL);
+    await page.fill('input[type="password"]', E2E_PASSWORD);
     await page.click('button[type="submit"]');
     await page.waitForURL('/');
   });

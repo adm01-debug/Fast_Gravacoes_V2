@@ -19,7 +19,7 @@ export interface ParseError {
  * Safely parse a single value against a Zod schema.
  * Logs validation failures in dev mode.
  */
-export function safeParse<T>(schema: ZodSchema<T>, data: any, context?: string): ParseResult<T> | ParseError {
+export function safeParse<T>(schema: ZodSchema<T>, data: unknown, context?: string): ParseResult<T> | ParseError {
   const result = schema.safeParse(data);
   if (!result.success) {
     logger.warn(
@@ -38,7 +38,7 @@ export function safeParse<T>(schema: ZodSchema<T>, data: any, context?: string):
  */
 export function safeParseArray<T>(
   schema: ZodSchema<T>,
-  items: any[],
+  items: unknown[],
   context?: string
 ): { valid: T[]; rejected: number } {
   const valid: T[] = [];

@@ -15,10 +15,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   showSubtitle = true 
 }) => {
   const sizes = {
-    sm: { icon: 32, fontMain: "text-[1.125rem]", fontSub: "text-[10px]", gap: "gap-2.5" },
-    md: { icon: 52, fontMain: "text-[1.625rem]", fontSub: "text-[11px]", gap: "gap-3" },
-    lg: { icon: 94, fontMain: "text-5xl", fontSub: "text-base", gap: "gap-4" },
-    xl: { icon: 182, fontMain: "text-7xl", fontSub: "text-2xl", gap: "gap-5" },
+    sm: { icon: 28, fontMain: "text-xs", fontSub: "text-[9px]", gap: "gap-2" },
+    md: { icon: 40, fontMain: "text-sm", fontSub: "text-[10px]", gap: "gap-2.5" },
+    lg: { icon: 56, fontMain: "text-lg", fontSub: "text-xs", gap: "gap-3" },
+    xl: { icon: 80, fontMain: "text-2xl", fontSub: "text-sm", gap: "gap-4" },
   };
 
   const currentSize = sizes[size];
@@ -35,26 +35,28 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             background: "linear-gradient(135deg, #FF5A1F 0%, #E84D15 100%)"
           }}
         >
-          <span className="text-white font-black leading-none" style={{ fontSize: currentSize.icon * 0.58 }}>F</span>
-          {/* Shine effect */}
+          <span className="text-white font-black leading-none" style={{ fontSize: currentSize.icon * 0.55 }}>F</span>
           <div className="absolute inset-0 bg-gradient-to-tr from-white/25 to-transparent pointer-events-none" />
         </div>
 
         {/* Title */}
         {!collapsed && (
-          <h1 className={cn("font-black tracking-tighter text-white uppercase truncate leading-none", currentSize.fontMain)}>
-            FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO
-          </h1>
+          <div className="flex flex-col min-w-0">
+            <h1 className={cn("font-extrabold tracking-tight text-white uppercase truncate leading-tight", currentSize.fontMain)}>
+              FAST GRAVAÇÕES
+            </h1>
+            <span className={cn("font-medium tracking-wide text-zinc-400 uppercase truncate leading-tight", currentSize.fontSub)}>
+              Gestão de Gravação
+            </span>
+          </div>
         )}
       </div>
 
-      {/* Tagline - Below the Logo */}
+      {/* Tagline */}
       {!collapsed && showSubtitle && (
-        <div className="flex flex-col mt-2">
-          <p className={cn("font-black tracking-[0.2em] text-zinc-500 uppercase truncate leading-none", currentSize.fontSub)}>
-            QUALIDADE + VELOCIDADE
-          </p>
-        </div>
+        <p className={cn("font-bold tracking-[0.15em] text-muted-foreground uppercase truncate leading-none mt-1.5", currentSize.fontSub)}>
+          QUALIDADE + VELOCIDADE
+        </p>
       )}
     </div>
   );

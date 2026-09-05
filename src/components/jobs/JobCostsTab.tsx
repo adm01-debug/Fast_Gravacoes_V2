@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
   Legend
-} from 'recharts';
+} from '@/lib/recharts';
 
 interface JobCostsTabProps {
   jobId: string;

@@ -1,27 +1,15 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { mlPredictionPayloadSchema } from "../_shared/validation.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { parseOrError } from "../_shared/validate.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
+Deno.serve(async (req) => {
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
 
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
-
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: getCorsHeaders(req) });
-  }
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "ml-predictions", requestId });
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -50,20 +38,51 @@ serve(async (req) => {
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const body = await req.json().catch(() => ({}));
-    const validationResult = mlPredictionPayloadSchema.safeParse(body);
 
-    if (!validationResult.success) {
-      return new Response(JSON.stringify({ 
-        error: "Validation failed", 
-        details: validationResult.error.format() 
-      }), {
-        status: 400,
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user } } = await userClient.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Não autorizado" }), {
+        status: 401,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    const { action, machine_id } = validationResult.data;
+    // Only coordinators, managers, and admins can trigger AI-powered predictions
+    // (prevents operators from draining the API credit budget).
+    const { data: roleRows, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("is_active", true);
+    if (roleError) {
+      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
+        status: 500,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    if (!(roleRows ?? []).some((r: { role: string }) => ["coordinator", "manager", "admin"].includes(r.role))) {
+      return new Response(JSON.stringify({ error: "Sem permissão para gerar previsões" }), {
+        status: 403,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    const cors = withRequestId(getCorsHeaders(req), requestId);
+    const parsed = await parseOrError(mlPredictionPayloadSchema, req, { corsHeaders: cors, requestId });
+    if (parsed.response) return parsed.response;
+
+    const { action, machine_id } = parsed.data;
+
 
     console.log(`ML Predictions: action=${action}, machine_id=${machine_id || 'all'}`);
 
@@ -83,10 +102,15 @@ serve(async (req) => {
     const maintenanceSchedules = maintenanceRes.data || [];
     const maintenanceRecords = recordsRes.data || [];
 
-    // Filter to specific machine if provided
-    const targetMachines = machine_id 
-      ? machines.filter(m => m.id === machine_id) 
+    // Filter to specific machine if provided. Cap batch size so serial AI calls
+    // (each up to 25 s) don't exceed the edge function timeout. Callers should
+    // paginate by passing machine_id for large deployments.
+    const MAX_BATCH_SIZE = 10;
+    const filteredMachines = machine_id
+      ? machines.filter(m => m.id === machine_id)
       : machines;
+    const targetMachines = filteredMachines.slice(0, MAX_BATCH_SIZE);
+    const batchTruncated = filteredMachines.length > MAX_BATCH_SIZE;
 
     const predictions = [];
 
@@ -132,6 +156,7 @@ serve(async (req) => {
       // Call Lovable AI for prediction
       const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
+        signal: AbortSignal.timeout(25_000),
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
@@ -265,18 +290,21 @@ Responda APENAS com JSON no formato:
 
     console.log(`Generated ${predictions.length} predictions`);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return new Response(JSON.stringify({
+      success: true,
       predictions_generated: predictions.length,
-      predictions 
+      predictions,
+      ...(batchTruncated && {
+        warning: `Batch limited to ${MAX_BATCH_SIZE} machines. Pass machine_id to target a specific machine.`,
+        total_machines: filteredMachines.length,
+      }),
     }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
 
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("ML Predictions error:", errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    console.error("ML Predictions error:", error instanceof Error ? error.message : String(error));
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

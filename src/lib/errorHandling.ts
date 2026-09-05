@@ -10,11 +10,12 @@ export interface AppError {
   message: string;
   code?: string;
   severity: ErrorSeverity;
-  originalError?: any;
+  originalError?: unknown;
   context?: Record<string, unknown>;
   timestamp: Date;
   retryable: boolean;
 }
+
 
 /**
  * Error codes for categorization
@@ -66,7 +67,7 @@ const ErrorMessages: Record<ErrorCode, string> = {
 /**
  * Parses an error and returns a categorized ErrorCode
  */
-export function categorizeError(error: any): ErrorCode {
+export function categorizeError(error: unknown): ErrorCode {
   if (!error) return ErrorCodes.UNKNOWN_ERROR;
 
   const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
@@ -128,9 +129,10 @@ export function categorizeError(error: any): ErrorCode {
  * Creates a standardized AppError from any error
  */
 export function createAppError(
-  error: any,
+  error: unknown,
   context?: Record<string, unknown>
 ): AppError {
+
   const code = categorizeError(error);
   const message = ErrorMessages[code];
 
@@ -165,10 +167,11 @@ export function createAppError(
  * Shows an error toast with appropriate styling
  */
 export function showErrorToast(
-  error: any,
+  error: unknown,
   customMessage?: string,
   context?: Record<string, unknown>
 ): void {
+
   const appError = createAppError(error, context);
   const message = customMessage || appError.message;
 
@@ -204,8 +207,11 @@ export function showErrorToast(
       timestamp: appError.timestamp
     });
   }).catch(() => {
-    // Fallback if logger fails
-    console.error(`AppError [${appError.code}]: ${message}`, error);
+    // Fallback if logger fails: emit a single line to stderr via a safe channel.
+    // We intentionally do not re-enter the logger to avoid recursion.
+    if (typeof globalThis !== 'undefined' && typeof (globalThis as { reportError?: (e: unknown) => void }).reportError === 'function') {
+      (globalThis as { reportError: (e: unknown) => void }).reportError(new Error(`AppError [${appError.code}]: ${message}`));
+    }
   });
 }
 
@@ -257,7 +263,7 @@ export function createMutationErrorHandler(
   customMessage?: string,
   context?: Record<string, unknown>
 ) {
-  return (error: any) => {
+  return (error: unknown) => {
     showErrorToast(error, customMessage, context);
   };
 }
@@ -265,14 +271,14 @@ export function createMutationErrorHandler(
 /**
  * Checks if an error is a specific type
  */
-export function isErrorCode(error: any, code: ErrorCode): boolean {
+export function isErrorCode(error: unknown, code: ErrorCode): boolean {
   return categorizeError(error) === code;
 }
 
 /**
  * Checks if the error is network-related
  */
-export function isNetworkError(error: any): boolean {
+export function isNetworkError(error: unknown): boolean {
   const code = categorizeError(error);
   return code === ErrorCodes.NETWORK_ERROR || code === ErrorCodes.TIMEOUT;
 }
@@ -280,9 +286,10 @@ export function isNetworkError(error: any): boolean {
 /**
  * Checks if the error is auth-related
  */
-export function isAuthError(error: any): boolean {
+export function isAuthError(error: unknown): boolean {
   const code = categorizeError(error);
   return code === ErrorCodes.UNAUTHORIZED ||
          code === ErrorCodes.FORBIDDEN ||
          code === ErrorCodes.SESSION_EXPIRED;
 }
+

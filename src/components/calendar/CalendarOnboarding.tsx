@@ -50,7 +50,7 @@ export function CalendarOnboarding({ open, onClose }: CalendarOnboardingProps) {
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-md bg-card border-border/40">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="flex items-center gap-2 text-title">
             <Sparkles className="h-5 w-5 text-primary" />
             Bem-vindo à nova Agenda
           </DialogTitle>

@@ -90,7 +90,7 @@ export function OverviewWhatsNew() {
               <TrendingUp className="h-3 w-3 text-success" /><span className="text-xs font-medium">Stat Card</span>
             </Card>
             <Card variant="premium" className="p-2 inline-flex items-center gap-2 animate-bounce-in hover-lift-sm" style={{ animationDelay: '1250ms' }}>
-              <Coins className="h-3 w-3 text-amber-500" /><span className="text-xs font-medium">Premium</span>
+              <Coins className="h-3 w-3 text-warning" /><span className="text-xs font-medium">Premium</span>
             </Card>
             <div className="flex items-center gap-1.5 animate-fade-in" style={{ animationDelay: '1300ms' }}>
               <span className="h-2 w-2 rounded-full bg-success pulse-ring" /><span className="text-xs text-success">Online</span>

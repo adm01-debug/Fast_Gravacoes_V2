@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePushNotifications } from "@/features/notifications";
 import { useNotificationSounds } from "@/features/notifications";
 import { useAuth } from "@/features/auth";
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { useGoalAlerts } from "@/features/notifications";
 import { useOEEAlerts } from "@/features/production";
 import { useTPMNotifications } from "@/features/notifications";
@@ -70,134 +71,100 @@ export const NotificationIntegrator = () => {
 
   const previousJobsRef = useRef<Map<string, string>>(new Map());
   const notifiedAlertsRef = useRef<Set<string>>(new Set());
+  const permissionRef = useRef<string | undefined>(undefined);
+  const userIdRef = useRef<string | undefined>(undefined);
+  // Keep the refs mirroring the latest values without mutating them during
+  // render (React refs must only be read/written in effects or handlers).
+  useEffect(() => {
+    permissionRef.current = permission;
+    userIdRef.current = user?.id;
+  }, [permission, user?.id]);
 
   // Listen to job status changes
-  useEffect(() => {
-    if (permission !== 'granted' || !user) return;
+  useRealtimeChannel('job-notifications', [{ table: 'jobs' }], async (payload) => {
+    if (permissionRef.current !== 'granted' || !userIdRef.current) return;
+    const prefs = getPreferences();
+    const newJob = payload.new as JobPayload;
+    const oldJob = payload.old as JobPayload;
 
-    const channel = supabase
-      .channel('job-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'jobs'
-        },
-        async (payload) => {
-          const prefs = getPreferences();
-          const newJob = payload.new as JobPayload;
-          const oldJob = payload.old as JobPayload;
+    if (prefs.statusChanges && oldJob.status !== newJob.status) {
+      playStatusChangeAlert();
+      sendStatusChangeAlert({
+        orderNumber: newJob.order_number,
+        oldStatus: getStatusLabel(oldJob.status),
+        newStatus: getStatusLabel(newJob.status)
+      });
+    }
 
-          // Status change notification
-          if (prefs.statusChanges && oldJob.status !== newJob.status) {
-            playStatusChangeAlert();
-            sendStatusChangeAlert({
-              orderNumber: newJob.order_number,
-              oldStatus: getStatusLabel(oldJob.status),
-              newStatus: getStatusLabel(newJob.status)
-            });
-          }
+    if (prefs.productionComplete && newJob.status === 'finished' && oldJob.status !== 'finished') {
+      playCompleteAlert();
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userIdRef.current)
+        .maybeSingle();
 
-          // Production complete notification
-          if (prefs.productionComplete && newJob.status === 'finished' && oldJob.status !== 'finished') {
-            playCompleteAlert();
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('full_name')
-              .eq('id', user.id)
-              .maybeSingle();
+      sendProductionCompleteAlert({
+        orderNumber: newJob.order_number,
+        product: newJob.product,
+        operator: profile?.full_name || 'Operador'
+      });
+    }
 
-            sendProductionCompleteAlert({
-              orderNumber: newJob.order_number,
-              product: newJob.product,
-              operator: profile?.full_name || 'Operador'
-            });
-          }
-
-          // Delayed job notification
-          if (prefs.delayedJobs && newJob.status === 'delayed' && oldJob.status !== 'delayed') {
-            const alertKey = `delayed-${newJob.id}`;
-            if (!notifiedAlertsRef.current.has(alertKey)) {
-              notifiedAlertsRef.current.add(alertKey);
-              playDelayedAlert();
-              sendDelayedJobAlert({
-                orderNumber: newJob.order_number,
-                product: newJob.product,
-                client: newJob.client
-              });
-            }
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [permission, user, sendStatusChangeAlert, sendProductionCompleteAlert, sendDelayedJobAlert, playStatusChangeAlert, playCompleteAlert, playDelayedAlert]);
+    if (prefs.delayedJobs && newJob.status === 'delayed' && oldJob.status !== 'delayed') {
+      const alertKey = `delayed-${newJob.id}`;
+      if (!notifiedAlertsRef.current.has(alertKey)) {
+        notifiedAlertsRef.current.add(alertKey);
+        playDelayedAlert();
+        sendDelayedJobAlert({
+          orderNumber: newJob.order_number,
+          product: newJob.product,
+          client: newJob.client
+        });
+      }
+    }
+  });
 
   // Listen to efficiency alerts
-  useEffect(() => {
-    if (permission !== 'granted' || !user) return;
+  useRealtimeChannel('efficiency-notifications', [{ table: 'efficiency_alert_history' }], (payload) => {
+    if (permissionRef.current !== 'granted' || !userIdRef.current) return;
+    const prefs = getPreferences();
+    const alert = payload.new as EfficiencyAlertPayload;
 
-    const channel = supabase
-      .channel('efficiency-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'efficiency_alert_history'
-        },
-        (payload) => {
-          const prefs = getPreferences();
-          const alert = payload.new as EfficiencyAlertPayload;
+    const alertKey = `${alert.alert_type}-${alert.id}`;
+    if (notifiedAlertsRef.current.has(alertKey)) return;
+    notifiedAlertsRef.current.add(alertKey);
 
-          const alertKey = `${alert.alert_type}-${alert.id}`;
-          if (notifiedAlertsRef.current.has(alertKey)) return;
-          notifiedAlertsRef.current.add(alertKey);
+    if (prefs.bottleneck && alert.alert_type === 'bottleneck') {
+      playBottleneckAlert();
+      const metadata = alert.metadata as { occupancy?: number } || {};
+      sendBottleneckAlert(
+        alert.title.replace('Gargalo: ', ''),
+        metadata.occupancy ?? 90
+      );
+    }
 
-          if (prefs.bottleneck && alert.alert_type === 'bottleneck') {
-            playBottleneckAlert();
-            const metadata = alert.metadata as { occupancy?: number } || {};
-            sendBottleneckAlert(
-              alert.title.replace('Gargalo: ', ''),
-              metadata.occupancy ?? 90
-            );
-          }
-
-          if (prefs.lowBuffer && alert.alert_type === 'load_balancing') {
-            playBufferAlert();
-            sendLowBufferAlert(
-              alert.title.replace('Carga Desbalanceada: ', ''),
-              0
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [permission, user, sendBottleneckAlert, sendLowBufferAlert, playBottleneckAlert, playBufferAlert]);
+    if (prefs.lowBuffer && alert.alert_type === 'load_balancing') {
+      playBufferAlert();
+      sendLowBufferAlert(
+        alert.title.replace('Carga Desbalanceada: ', ''),
+        0
+      );
+    }
+  });
 
   // Goal, OEE and TPM Alerts Hooks (Self-contained)
   useGoalAlerts({ enableNotifications: getPreferences().goalAlerts });
   useOEEAlerts(); // Internal OEEAlerts already handles throttling and dispatch
   useTPMNotifications(); // Already listens to maintenance alerts via realtime
 
-  // Clean up old notification references periodically
   useEffect(() => {
     const cleanup = setInterval(() => {
-      // Keep only the last 100 notified alerts
       if (notifiedAlertsRef.current.size > 100) {
         const entries = Array.from(notifiedAlertsRef.current);
         notifiedAlertsRef.current = new Set(entries.slice(-50));
       }
     }, 60000);
-
     return () => clearInterval(cleanup);
   }, []);
 

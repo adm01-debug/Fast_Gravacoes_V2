@@ -1,21 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 // OAuth credentials from environment (initial values)
 const BITRIX24_WEBHOOK_URL = Deno.env.get('BITRIX24_WEBHOOK_URL');
@@ -25,9 +11,16 @@ const BITRIX24_ACCESS_TOKEN_ENV = Deno.env.get('BITRIX24_ACCESS_TOKEN');
 const BITRIX24_REFRESH_TOKEN_ENV = Deno.env.get('BITRIX24_REFRESH_TOKEN');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+// Shared secret Bitrix24 must send (as ?token= query param or x-bitrix-webhook-secret
+// header) on its outgoing webhook so action=webhook cannot be triggered by anyone else.
+const BITRIX24_WEBHOOK_SECRET = Deno.env.get('BITRIX24_WEBHOOK_SECRET');
 
-// Base URL for Bitrix24 REST API
-const BITRIX24_DOMAIN = 'https://promobrindes.bitrix24.com.br';
+// Base URL for Bitrix24 REST API (configurado via secret BITRIX24_DOMAIN — sem tenant hardcoded)
+const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
+if (!BITRIX24_DOMAIN) {
+  console.error('[bitrix24-sync] BITRIX24_DOMAIN secret is not configured — OAuth endpoints will fail until set');
+}
 
 // Token refresh buffer (refresh 5 minutes before expiry)
 const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000;
@@ -120,7 +113,7 @@ async function refreshAccessToken(refreshToken: string, supabase: any): Promise<
       refresh_token: refreshToken
     });
 
-    const response = await fetch(refreshUrl, { method: 'POST' });
+    const response = await fetch(refreshUrl, { method: 'POST', signal: AbortSignal.timeout(15_000) });
     const responseText = await response.text();
     
     let data;
@@ -234,7 +227,7 @@ async function exchangeCodeForTokens(code: string, redirectUri: string, supabase
       redirect_uri: redirectUri
     });
 
-    const response = await fetch(tokenUrl, { method: 'POST' });
+    const response = await fetch(tokenUrl, { method: 'POST', signal: AbortSignal.timeout(15_000) });
     const data = await response.json();
     
     if (!response.ok || data.error) {
@@ -451,6 +444,16 @@ function getMappedValueDynamic(deal: BitrixDeal, fieldName: string, fieldMapping
   return defaultValue;
 }
 
+// Safely convert a raw Bitrix date into a yyyy-MM-dd string. Returns null for
+// empty or unparseable values instead of throwing a RangeError (which would
+// abort the whole deal sync).
+function toDateOnly(rawDate: unknown): string | null {
+  if (!rawDate || typeof rawDate !== 'string') return null;
+  const d = new Date(rawDate);
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString().split('T')[0];
+}
+
 // Helper to normalize technique value using dynamic mapping
 function normalizeTechniqueDynamic(value: string | null | undefined, techniqueMapping: Record<string, string>): string {
   if (!value) return 'silk-textile';
@@ -474,6 +477,7 @@ async function callBitrix(method: string, params: Record<string, any> = {}, supa
       
       const response = await fetch(url, {
         method: 'POST',
+        signal: AbortSignal.timeout(15_000),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
       });
@@ -510,6 +514,7 @@ async function callBitrix(method: string, params: Record<string, any> = {}, supa
       
       const response = await fetch(url, {
         method: 'POST',
+        signal: AbortSignal.timeout(15_000),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
       });
@@ -596,7 +601,7 @@ async function pullFromBitrix(supabase: any, categoryId?: string) {
         status,
         priority: normalizePriorityDynamic(rawPriority, mappings.priorityMapping),
         gravure_color: getMappedValueDynamic(deal, 'gravure_color', mappings.fieldMapping),
-        scheduled_date: rawDate ? new Date(rawDate).toISOString().split('T')[0] : null,
+        scheduled_date: toDateOnly(rawDate),
         estimated_duration: parseInt(rawDuration) || 60,
         notes: getMappedValueDynamic(deal, 'notes', mappings.fieldMapping, `Importado do Bitrix24 - Deal ID: ${deal.ID}`)
       };
@@ -617,7 +622,7 @@ async function pullFromBitrix(supabase: any, categoryId?: string) {
       synced.push(orderNumber);
     } catch (error: unknown) {
       console.error(`Error syncing deal ${deal.ID}:`, error);
-      errors.push(`${deal.ID}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errors.push(`${deal.ID}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -643,7 +648,7 @@ async function pushToBitrix(jobId: string, newStatus: string, supabase: any) {
   }
 
   // Check if this is a Bitrix-synced job
-  if (!job.order_number.startsWith('BTX-')) {
+  if (!job.order_number?.startsWith('BTX-')) {
     console.log('Not a Bitrix-synced job, skipping push');
     return { skipped: true };
   }
@@ -735,7 +740,7 @@ async function handleBitrixWebhook(payload: any, supabase: any) {
         status,
         priority: normalizePriorityDynamic(rawPriority, mappings.priorityMapping),
         gravure_color: getMappedValueDynamic(deal, 'gravure_color', mappings.fieldMapping),
-        scheduled_date: rawDate ? new Date(rawDate).toISOString().split('T')[0] : null,
+        scheduled_date: toDateOnly(rawDate),
         estimated_duration: parseInt(rawDuration) || 60,
         notes: getMappedValueDynamic(deal, 'notes', mappings.fieldMapping, `Importado do Bitrix24 - Deal ID: ${dealId}`)
       };
@@ -775,6 +780,75 @@ async function logSyncHistory(
   }
 }
 
+interface AuthResult {
+  ok: boolean;
+  status?: number;
+  error?: string;
+}
+
+// Any authenticated app user may trigger a status push for a job they can see
+// (fired automatically by jobsService.syncToBitrix24 on every status change).
+async function requireAuthenticatedUser(req: Request): Promise<AuthResult> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return { ok: false, status: 401, error: 'Não autorizado' };
+  }
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: { user } } = await userClient.auth.getUser();
+  if (!user) {
+    return { ok: false, status: 401, error: 'Não autorizado' };
+  }
+  return { ok: true };
+}
+
+// Management/config actions require an active coordinator/manager/admin role.
+async function requireElevatedRole(req: Request, supabase: any): Promise<AuthResult> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return { ok: false, status: 401, error: 'Não autorizado' };
+  }
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: { user } } = await userClient.auth.getUser();
+  if (!user) {
+    return { ok: false, status: 401, error: 'Não autorizado' };
+  }
+
+  const { data: roleRows, error: roleError } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .eq('is_active', true);
+
+  if (roleError) {
+    // A backend failure must not be silently reported as an authorization denial.
+    return { ok: false, status: 500, error: 'Falha ao verificar permissão' };
+  }
+
+  const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
+  if (!roles.some((role: string) => ['coordinator', 'manager', 'admin'].includes(role))) {
+    return { ok: false, status: 403, error: 'Apenas coordenadores, gerentes e administradores podem gerenciar a integração Bitrix24' };
+  }
+  return { ok: true };
+}
+
+// action=webhook is called BY Bitrix24 itself (no Supabase session available),
+// so it is authenticated via a pre-shared secret instead of a user JWT.
+function verifyBitrixWebhookSecret(req: Request, url: URL): AuthResult {
+  if (!BITRIX24_WEBHOOK_SECRET) {
+    console.error('[bitrix24-sync] BITRIX24_WEBHOOK_SECRET is not configured — rejecting all webhook calls (fail closed).');
+    return { ok: false, status: 401, error: 'Webhook não configurado' };
+  }
+  const provided = req.headers.get('x-bitrix-webhook-secret') || url.searchParams.get('token');
+  if (provided !== BITRIX24_WEBHOOK_SECRET) {
+    return { ok: false, status: 401, error: 'Não autorizado' };
+  }
+  return { ok: true };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -789,48 +863,31 @@ serve(async (req) => {
   const action = url.searchParams.get('action');
   const triggeredBy = url.searchParams.get('triggered_by') || 'manual';
 
-  // oauth-callback comes from Bitrix24's redirect (no user session);
-  // webhook events come from Bitrix24 servers — neither carries an app user JWT.
-  const noAuthActions = new Set(['oauth-callback', 'webhook']);
-
-  if (!noAuthActions.has(action ?? '')) {
-    // Require authenticated user with admin or manager role
-    try {
-      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
-      const bearerToken = authHeader?.match(/^bearer\s+(.+)$/i)?.[1];
-
-      if (!bearerToken) {
-        return new Response(JSON.stringify({ error: 'Não autorizado' }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        });
-      }
-      const userClient = createClient(SUPABASE_URL!, anonKey);
-      const { data: { user }, error: authError } = await userClient.auth.getUser(bearerToken);
-      if (authError || !user) {
-        return new Response(JSON.stringify({ error: 'Token inválido' }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        });
-      }
-      // Filter by eligible roles before limit(1) so users with multiple role rows
-      // are handled correctly (maybeSingle would error/miss on >1 row).
-      const { data: roleRows } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .in('role', ['admin', 'manager', 'coordinator'])
-        .limit(1);
-      if (!roleRows || roleRows.length === 0) {
-        return new Response(JSON.stringify({ error: 'Permissão insuficiente' }), {
-          status: 403,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        });
-      }
-    } catch (authCheckError) {
-      return new Response(JSON.stringify({ error: 'Erro de autenticação' }), {
-        status: 401,
+  // Auth gate — every action except the OAuth browser-redirect callback
+  // (which cannot carry a Supabase session) requires either a signed-in user
+  // (push), an elevated role (management/config actions) or the Bitrix
+  // webhook shared secret (webhook).
+  if (action === 'webhook') {
+    const auth = verifyBitrixWebhookSecret(req, url);
+    if (!auth.ok) {
+      return new Response(JSON.stringify({ error: auth.error }), {
+        status: auth.status,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+  } else if (action === 'push') {
+    const auth = await requireAuthenticatedUser(req);
+    if (!auth.ok) {
+      return new Response(JSON.stringify({ error: auth.error }), {
+        status: auth.status,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+  } else if (action !== 'oauth-callback') {
+    const auth = await requireElevatedRole(req, supabase);
+    if (!auth.ok) {
+      return new Response(JSON.stringify({ error: auth.error }), {
+        status: auth.status,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
@@ -864,8 +921,26 @@ serve(async (req) => {
 
       case 'push': {
         // Push status update to Bitrix24
-        const body = await req.json();
-        result = await pushToBitrix(body.jobId, body.status, supabase);
+        const body = await req.json().catch(() => ({}));
+        const { jobId, status: newStatus } = body as Record<string, unknown>;
+
+        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const VALID_STATUSES = ['queue', 'ready', 'scheduled', 'production', 'finished', 'cancelled'];
+
+        if (typeof jobId !== 'string' || !UUID_RE.test(jobId)) {
+          return new Response(JSON.stringify({ error: 'jobId inválido' }), {
+            status: 400,
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
+        if (typeof newStatus !== 'string' || !VALID_STATUSES.includes(newStatus)) {
+          return new Response(JSON.stringify({ error: 'status inválido' }), {
+            status: 400,
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
+
+        result = await pushToBitrix(jobId, newStatus, supabase);
 
         if (!result.skipped && result.success !== undefined) {
           await logSyncHistory(
@@ -1004,7 +1079,8 @@ serve(async (req) => {
           });
 
         if (saveError) {
-          result = { error: saveError.message };
+          console.error('Error saving mapping:', saveError);
+          result = { error: 'Erro ao salvar mapeamento' };
         } else {
           clearMappingCache();
           result = { success: true, message: 'Mapeamento salvo com sucesso' };
@@ -1034,7 +1110,8 @@ serve(async (req) => {
         const { error: deleteError } = await deleteQuery;
 
         if (deleteError) {
-          result = { error: deleteError.message };
+          console.error('Error deleting mapping:', deleteError);
+          result = { error: 'Erro ao remover mapeamento' };
         } else {
           clearMappingCache();
           result = { success: true, message: 'Mapeamento removido com sucesso' };
@@ -1052,7 +1129,8 @@ serve(async (req) => {
           .order('priority', { ascending: true });
 
         if (listError) {
-          result = { error: listError.message };
+          console.error('Error listing mappings:', listError);
+          result = { error: 'Erro ao listar mapeamentos' };
         } else {
           result = { mappings: allMappings };
         }
@@ -1169,8 +1247,8 @@ serve(async (req) => {
 
   } catch (error: unknown) {
     console.error('Bitrix24 sync error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    const stack = error instanceof Error ? error.stack : undefined;
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errStack = error instanceof Error ? error.stack : undefined;
 
     // Log error to history
     if (action && ['pull', 'push', 'webhook'].includes(action)) {
@@ -1180,14 +1258,14 @@ serve(async (req) => {
         'error',
         0,
         1,
-        message,
-        { stack },
+        errMsg,
+        { stack: errStack },
         triggeredBy
       );
     }
 
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: 'Internal server error' }),
       {
         status: 500,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }

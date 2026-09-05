@@ -125,7 +125,7 @@ export default function LotGenealogyView({ lot, open, onClose }: LotGenealogyVie
                        </div>
                        <div className="flex flex-col">
                           <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Data Produção</span>
-                          <span className="text-lg font-black text-primary">{format(parseDateOnly(lot.production_date)!, 'dd/MM')}</span>
+                          <span className="text-lg font-black text-primary">{format(parseDateOnly(lot.production_date) ?? new Date(), 'dd/MM')}</span>
                        </div>
                     </div>
                   </CardContent>
@@ -140,8 +140,8 @@ export default function LotGenealogyView({ lot, open, onClose }: LotGenealogyVie
             {/* Children - Successors */}
             <section className="relative">
               <div className="flex items-center justify-between mb-6">
-                <Badge variant="outline" className="text-[9px] font-black border-emerald-500/20 text-emerald-600">{children.length} Derivados</Badge>
-                <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-emerald-600">
+                <Badge variant="outline" className="text-[9px] font-black border-success/20 text-success">{children.length} Derivados</Badge>
+                <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-success">
                   Sucessores (Produtos Derivados)
                   <ArrowRight className="h-4 w-4" />
                 </h3>
@@ -155,25 +155,25 @@ export default function LotGenealogyView({ lot, open, onClose }: LotGenealogyVie
                     transition={{ delay: idx * 0.05 }}
                     key={item.id}
                   >
-                    <Card className="border-l-4 border-l-emerald-500 bg-emerald-500/5 hover:shadow-lg transition-all group cursor-default">
+                    <Card className="border-l-4 border-l-emerald-500 bg-success/5 hover:shadow-lg transition-all group cursor-default">
                       <CardContent className="py-4 px-4 flex items-center justify-between">
                         <div className="min-w-0">
-                          <p className="font-mono text-[11px] font-black tracking-tighter truncate text-emerald-700 dark:text-emerald-400">
+                          <p className="font-mono text-[11px] font-black tracking-tighter truncate text-success dark:text-success">
                              {item.lot?.lot_number || 'N/A'}
                           </p>
                           <p className="text-xs font-bold truncate opacity-80">{item.lot?.product_name || 'Produto Final'}</p>
                         </div>
                         <div className="shrink-0 ml-3 text-right">
-                           <div className="text-[10px] font-black text-emerald-600">{item.quantity_used} {item.unit}</div>
-                           <Badge variant="outline" className="text-[8px] h-3.5 mt-1 border-emerald-500/10 uppercase">Derivado</Badge>
+                           <div className="text-[10px] font-black text-success">{item.quantity_used} {item.unit}</div>
+                           <Badge variant="outline" className="text-[8px] h-3.5 mt-1 border-success/10 uppercase">Derivado</Badge>
                         </div>
                       </CardContent>
                     </Card>
                   </motion.div>
                 )) : (
-                  <div className="col-span-full border-2 border-dashed border-emerald-500/10 rounded-2xl py-8 flex flex-col items-center justify-center opacity-40 bg-emerald-500/[0.02]">
-                    <Package className="h-8 w-8 mb-2 text-emerald-500" />
-                    <p className="text-[10px] uppercase font-black tracking-widest text-emerald-600">Lote Final (Sem derivações)</p>
+                  <div className="col-span-full border-2 border-dashed border-success/10 rounded-2xl py-8 flex flex-col items-center justify-center opacity-40 bg-success/[0.02]">
+                    <Package className="h-8 w-8 mb-2 text-success" />
+                    <p className="text-[10px] uppercase font-black tracking-widest text-success">Lote Final (Sem derivações)</p>
                   </div>
                 )}
               </div>
@@ -182,8 +182,8 @@ export default function LotGenealogyView({ lot, open, onClose }: LotGenealogyVie
             {/* Compliance Footer */}
             <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 flex items-center justify-between gap-6">
                 <div className="flex items-center gap-3">
-                   <div className="p-2 rounded-full bg-emerald-500/10">
-                      <Layers className="h-4 w-4 text-emerald-600" />
+                   <div className="p-2 rounded-full bg-success/10">
+                      <Layers className="h-4 w-4 text-success" />
                    </div>
                    <div>
                       <p className="text-[10px] font-black uppercase tracking-tighter">Chain Consistency</p>

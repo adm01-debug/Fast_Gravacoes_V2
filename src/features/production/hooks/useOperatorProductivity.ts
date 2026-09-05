@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSchedulingData } from '@/features/jobs';
 import { subDays, isAfter, parseISO } from 'date-fns';
+import { useAuth } from '@/features/auth';
 
 export type ProductivityPeriod = 7 | 30 | 90 | 'all';
 export interface OperatorProductivityMetrics {
@@ -53,6 +54,8 @@ interface OperatorMachineItem {
 }
 
 export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
+  const { user } = useAuth();
+  const isAuthenticated = Boolean(user?.id);
   const { jobs, machines, isLoading: isLoadingScheduling } = useSchedulingData();
 
   // Calculate period start date
@@ -89,6 +92,7 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
         profile: profiles?.find(p => p.id === role.user_id) || null,
       }));
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -108,6 +112,7 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
       if (error) throw error;
       return (data || []) as ScanHistoryItem[];
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,
   });
 
@@ -128,6 +133,7 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
       if (error) throw error;
       return (data || []) as OperatorMachineItem[];
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -157,35 +163,48 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
         .map(ma => ma.machines?.name)
         .filter((name): name is string => !!name);
 
-      // Get jobs on operator's machines that are finished (using filtered jobs)
-      // Also include jobs without machine_id if operator has no machine assignments (fallback)
+      // Attribute by who actually ran the job (job.operator_id, set by
+      // jobsService.updateStatus when a job moves to 'production') whenever
+      // it's recorded. Falling back to "any job on a machine this operator
+      // is assigned to" double-counts every job when two operators share a
+      // machine, and wrongly credits jobs on shared machines to operators
+      // who never touched them. The machine-based fallback only applies to
+      // jobs with no operator_id recorded (legacy data / not yet started).
       const operatorJobs = filteredJobs.filter(j => {
         if (j.status !== 'finished') return false;
-        // If operator has machines assigned, filter by those machines
+        if (j.operator_id) return j.operator_id === operatorId;
         if (machineIds.length > 0) {
           return j.machine_id && machineIds.includes(j.machine_id);
         }
-        // If no machine assignments, don't count any jobs for this operator
         return false;
       });
 
       const inProgressJobs = filteredJobs.filter(j => {
         if (j.status !== 'production') return false;
+        if (j.operator_id) return j.operator_id === operatorId;
         if (machineIds.length > 0) {
           return j.machine_id && machineIds.includes(j.machine_id);
         }
         return false;
       });
 
-      // Calculate production metrics - use produced_quantity when available, fallback to quantity - lost_pieces
-      const totalPiecesProduced = operatorJobs.reduce((sum, j) => sum + (j.produced_quantity ?? Math.max(0, j.quantity - (j.lost_pieces || 0))), 0);
+      // Null produced_quantity means "not recorded" — falling back to
+      // quantity - lost_pieces still fabricates output for jobs whose actual
+      // production was never logged.
+      const totalPiecesProduced = operatorJobs.reduce((sum, j) => sum + (j.produced_quantity ?? 0), 0);
       const totalPiecesLost = operatorJobs.reduce((sum, j) => sum + (j.lost_pieces || 0), 0);
       const totalPiecesAttempted = totalPiecesProduced + totalPiecesLost;
       const lossRate = totalPiecesAttempted > 0 ? (totalPiecesLost / totalPiecesAttempted) * 100 : 0;
 
-      // Calculate time metrics
+      // Calculate time metrics. estimatedMinutesForTimedJobs and
+      // piecesProducedForTimedJobs are accumulated over the SAME subset of
+      // jobs as totalProductionTimeMinutes (those with a valid, sane actual
+      // duration) — mixing a subset numerator with an all-jobs denominator
+      // (or vice versa) silently skews estimatedVsActualRatio and
+      // productionVelocity.
       let totalProductionTimeMinutes = 0;
-      let totalEstimatedMinutes = 0;
+      let estimatedMinutesForTimedJobs = 0;
+      let piecesProducedForTimedJobs = 0;
       let jobsWithActualTime = 0;
 
       operatorJobs.forEach(job => {
@@ -196,18 +215,19 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
           // Allow durations up to 72h for multi-shift jobs; only reject negative or unreasonably long
           if (durationMinutes > 0 && durationMinutes < 4320) {
             totalProductionTimeMinutes += durationMinutes;
+            estimatedMinutesForTimedJobs += job.estimated_duration || 0;
+            piecesProducedForTimedJobs += job.produced_quantity ?? 0;
             jobsWithActualTime++;
           }
         }
-        totalEstimatedMinutes += job.estimated_duration || 0;
       });
 
       const averageJobDurationMinutes = jobsWithActualTime > 0
         ? totalProductionTimeMinutes / jobsWithActualTime
         : 0;
 
-      const estimatedVsActualRatio = totalEstimatedMinutes > 0 && totalProductionTimeMinutes > 0
-        ? totalProductionTimeMinutes / totalEstimatedMinutes
+      const estimatedVsActualRatio = estimatedMinutesForTimedJobs > 0 && totalProductionTimeMinutes > 0
+        ? totalProductionTimeMinutes / estimatedMinutesForTimedJobs
         : 1;
 
       // Calculate efficiency score (0-100)
@@ -223,9 +243,10 @@ export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
         : 100;
       const efficiencyScore = (lossScore * 0.6 + timeScore * 0.4); // 60% weight on quality, 40% on time
 
-      // Production velocity (pieces per hour)
+      // Production velocity (pieces per hour) — numerator and denominator
+      // must be the same job subset (see note above).
       const productionVelocity = totalProductionTimeMinutes > 0
-        ? (totalPiecesProduced / totalProductionTimeMinutes) * 60
+        ? (piecesProducedForTimedJobs / totalProductionTimeMinutes) * 60
         : 0;
 
       // Get scan activity

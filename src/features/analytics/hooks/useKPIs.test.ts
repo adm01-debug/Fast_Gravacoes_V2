@@ -72,11 +72,11 @@ describe('useKPIs', () => {
       expect(result.current.data.completedJobs).toBe(2);
       
       // Verification of Calculation Logic:
-      // totalPieces (currentStats.totalPcs) = 100 + 50 + 200 = 350
-      // lostPieces (currentStats.lostPcs) = 10 + 0 + 0 = 10
-      // totalAttemptedPieces (totalPieces + lostPieces) = 350 + 10 = 360
-      // globalLossRate (lostPieces / totalAttemptedPieces) = 10 / 360 = 2.77%
-      expect(result.current.data.lossRate).toBeCloseTo(2.77, 1);
+      // prodPcs = (produced_quantity ?? 0): 90 + 50 + 0 = 140
+      //   (Job 3 has no produced_quantity → contributes 0, not planned 200)
+      // lostPcs = lost_pieces: 10 + 0 + 0 = 10
+      // lossRate = lostPcs / (prodPcs + lostPcs) = 10 / 150 = 6.67%
+      expect(result.current.data.lossRate).toBeCloseTo(6.67, 1);
     }
   });
 });

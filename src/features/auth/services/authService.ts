@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export interface LockoutStatus {
   locked: boolean;
@@ -37,48 +38,43 @@ export const AuthService = {
     return data.user;
   },
 
-  // Security Helpers
-  async checkLockout(email: string, ipAddress?: string): Promise<LockoutStatus> {
+  // Security Helpers.
+  // The client IP is no longer sent to the edge function — the server derives
+  // it from the trusted x-forwarded-for/x-real-ip request headers instead of
+  // trusting a self-reported value, which an attacker could spoof/rotate to
+  // evade or weaponize IP-based lockout (see check-login-lockout/index.ts).
+  async checkLockout(email: string): Promise<LockoutStatus> {
     try {
       const { data, error } = await supabase.functions.invoke('check-login-lockout', {
-        body: { email, ip_address: ipAddress, action: 'check' }
+        body: { email, action: 'check' }
       });
-      if (error) return { locked: false };
+      if (error) {
+        logger.warn('Lockout check returned error — brute-force protection may be inactive', { error }, 'authService');
+        return { locked: false };
+      }
       return data;
     } catch (err) {
+      logger.warn('Lockout check threw exception — brute-force protection may be inactive', { error: String(err) }, 'authService');
       return { locked: false };
     }
   },
 
-  async recordLoginAttempt(email: string, success: boolean, ipAddress?: string): Promise<LockoutStatus> {
+  async recordLoginAttempt(email: string, success: boolean): Promise<LockoutStatus> {
     try {
       const { data, error } = await supabase.functions.invoke('check-login-lockout', {
         body: {
           email,
-          ip_address: ipAddress,
           action: success ? 'record_success' : 'record_failure'
         }
       });
-      if (error) return { locked: false };
+      if (error) {
+        logger.warn('recordLoginAttempt returned error — attempt count may be inaccurate', { error }, 'authService');
+        return { locked: false };
+      }
       return data;
     } catch (err) {
+      logger.warn('recordLoginAttempt threw exception — attempt count may be inaccurate', { error: String(err) }, 'authService');
       return { locked: false };
-    }
-  },
-
-  async getClientIP(): Promise<string | undefined> {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      
-      const response = await fetch('https://api.ipify.org?format=json', {
-        signal: controller.signal
-      });
-      const data = await response.json();
-      clearTimeout(timeoutId);
-      return data.ip;
-    } catch {
-      return undefined;
     }
   }
 };

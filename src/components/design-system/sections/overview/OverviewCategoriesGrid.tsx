@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronRight, Edit, LayoutGrid, MessageSquare, Play, Sparkles, Square, TableIcon, Tag, Activity, Type, Ruler, Palette, Bell, Loader2, Package, AlertCircle, Sun, Navigation as NavigationIcon, Layers, Zap } from 'lucide-react';
+import { clickableProps } from '@/lib/a11y';
 
 interface OverviewCategoriesGridProps {
   onNavigate: (tabId: string) => void;
@@ -46,8 +47,8 @@ export function OverviewCategoriesGrid({ onNavigate }: OverviewCategoriesGridPro
             return (
               <div
                 key={category.id}
-                onClick={() => onNavigate(category.id)}
-                className="group relative p-4 rounded-xl bg-card/50 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 cursor-pointer hover-lift-sm animate-fade-in before:absolute before:inset-0 before:rounded-xl before:p-[1px] before:bg-border before:transition-all before:duration-300 hover:before:bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--primary)))] hover:before:bg-[length:200%_200%] hover:before:animate-[gradient-shift_2s_ease_infinite] before:-z-10 after:absolute after:inset-[1px] after:rounded-[11px] after:bg-card/50 group-hover:after:bg-primary/5 after:transition-all after:duration-300 after:-z-10"
+                {...clickableProps(() => onNavigate(category.id), { label: `Navegar para ${category.title}` })}
+                className="group relative p-4 rounded-xl bg-card/50 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 cursor-pointer hover-lift-sm animate-fade-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary before:absolute before:inset-0 before:rounded-xl before:p-[1px] before:bg-border before:transition-all before:duration-300 hover:before:bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--primary)))] hover:before:bg-[length:200%_200%] hover:before:animate-[gradient-shift_2s_ease_infinite] before:-z-10 after:absolute after:inset-[1px] after:rounded-[11px] after:bg-card/50 group-hover:after:bg-primary/5 after:transition-all after:duration-300 after:-z-10"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-3">

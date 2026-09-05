@@ -1,0 +1,36 @@
+{
+  "$schema": "./bundle-budget.schema.json",
+  "description": "Budgets de tamanho do bundle (em KB, gzipped). Falha o CI se exceder.",
+  "defaults": {
+    "maxChunkKb": 350,
+    "maxAssetKb": 500,
+    "maxTotalKb": 6000
+  },
+  "chunks": {
+    "vendor-react": 180,
+    "vendor-radix": 220,
+    "vendor-supabase": 160,
+    "vendor-motion": 140,
+    "vendor-icons": 120,
+    "vendor-query": 60,
+    "vendor-forms": 80,
+    "vendor-i18n": 80,
+    "lib-charts": 320,
+    "lib-mermaid": 900,
+    "lib-excel": 400,
+    "lib-pdf": 400,
+    "lib-html2canvas": 200,
+    "lib-markdown": 200,
+    "lib-qrcode": 120,
+    "lib-joyride": 120,
+    "lib-confetti": 30,
+    "lib-carousel": 60
+  },
+  "entrypoints": {
+    "/": 800,
+    "/auth": 350,
+    "/kiosk": 400,
+    "/track": 350,
+    "/operator": 500
+  }
+}

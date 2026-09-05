@@ -102,7 +102,7 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
           {isOnline ? (
             <Wifi className={cn(
               'w-4 h-4',
-              pendingActionsCount > 0 ? 'text-amber-500' : 'text-green-500'
+              pendingActionsCount > 0 ? 'text-warning' : 'text-green-500'
             )} />
           ) : (
             <WifiOff className="w-4 h-4 text-destructive" />
@@ -111,7 +111,7 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
           {pendingActionsCount > 0 && (
             <Badge
               variant="secondary"
-              className="h-5 px-1.5 text-xs bg-amber-500/20 text-amber-500"
+              className="h-5 px-1.5 text-xs bg-warning/20 text-warning"
             >
               {pendingActionsCount}
             </Badge>
@@ -132,18 +132,18 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
             <div className="flex items-center gap-2">
               <div className={cn(
                 'w-8 h-8 rounded-lg flex items-center justify-center',
-                isOnline ? 'bg-green-500/10' : 'bg-amber-500/10'
+                isOnline ? 'bg-green-500/10' : 'bg-warning/10'
               )}>
                 {isOnline ? (
                   <Wifi className="w-4 h-4 text-green-500" />
                 ) : (
-                  <WifiOff className="w-4 h-4 text-amber-500" />
+                  <WifiOff className="w-4 h-4 text-warning" />
                 )}
               </div>
               <div>
                 <p className={cn(
                   'font-medium text-sm',
-                  isOnline ? 'text-green-500' : 'text-amber-500'
+                  isOnline ? 'text-green-500' : 'text-warning'
                 )}>
                   {isOnline ? 'Conectado' : 'Offline'}
                 </p>
@@ -162,9 +162,9 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
 
           {/* Pending Actions */}
           {pendingActionsCount > 0 && (
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10">
-              <AlertCircle className="w-4 h-4 text-amber-500" />
-              <span className="text-sm text-amber-500">
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-warning/10">
+              <AlertCircle className="w-4 h-4 text-warning" />
+              <span className="text-sm text-warning">
                 {pendingActionsCount} ação(ões) aguardando sincronização
               </span>
             </div>

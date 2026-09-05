@@ -44,7 +44,7 @@ import {
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   open: { label: 'Em andamento', color: 'text-primary' },
-  pending_acceptance: { label: 'Aguardando aceite', color: 'text-amber-500' },
+  pending_acceptance: { label: 'Aguardando aceite', color: 'text-warning' },
   completed: { label: 'Concluída', color: 'text-green-500' },
   cancelled: { label: 'Cancelada', color: 'text-destructive' }
 };
@@ -58,7 +58,7 @@ const SHIFT_LABELS: Record<string, string> = {
 const PRIORITY_COLORS: Record<string, string> = {
   low: 'bg-slate-500',
   medium: 'bg-blue-500',
-  high: 'bg-amber-500',
+  high: 'bg-warning',
   critical: 'bg-destructive'
 };
 

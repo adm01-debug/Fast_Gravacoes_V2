@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subDays, eachDayOfInterval, startOfDay, parseISO, isAfter, isBefore } from 'date-fns';
+import { useAuth } from '@/features/auth';
 
 export interface DailyEfficiencyData {
   date: string;
@@ -23,6 +24,7 @@ export interface OperatorEvolutionData {
 interface FinishedJob {
   id: string;
   machine_id: string | null;
+  operator_id: string | null;
   quantity: number;
   produced_quantity: number | null;
   lost_pieces: number | null;
@@ -42,6 +44,8 @@ interface OperatorProfile {
 }
 
 export function useOperatorEvolution(days: number = 30) {
+  const { user } = useAuth();
+  const isAuthenticated = Boolean(user?.id);
   const startDate = useMemo(() => subDays(new Date(), days), [days]);
   const dateRange = useMemo(() =>
     eachDayOfInterval({ start: startDate, end: new Date() }),
@@ -54,13 +58,14 @@ export function useOperatorEvolution(days: number = 30) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('jobs')
-        .select('id, machine_id, quantity, produced_quantity, lost_pieces, estimated_duration, actual_start_time, actual_end_time')
+        .select('id, machine_id, operator_id, quantity, produced_quantity, lost_pieces, estimated_duration, actual_start_time, actual_end_time')
         .eq('status', 'finished')
         .gte('actual_end_time', startDate.toISOString());
 
       if (error) throw error;
       return (data || []) as FinishedJob[];
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,
   });
 
@@ -75,6 +80,7 @@ export function useOperatorEvolution(days: number = 30) {
       if (error) throw error;
       return (data || []) as OperatorMachineAssignment[];
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -102,6 +108,7 @@ export function useOperatorEvolution(days: number = 30) {
         full_name: p.full_name,
       })) as OperatorProfile[];
     },
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -115,10 +122,13 @@ export function useOperatorEvolution(days: number = 30) {
         .filter(ma => ma.operator_id === operator.user_id)
         .map(ma => ma.machine_id);
 
-      // Get jobs for this operator's machines
-      const operatorJobs = finishedJobs.filter(j =>
-        j.machine_id && operatorMachineIds.includes(j.machine_id)
-      );
+      // Attribute by operator_id when recorded; fall back to machine assignment
+      // only for legacy jobs where operator_id was never set. Machine-only
+      // attribution double-counts jobs on shared machines.
+      const operatorJobs = finishedJobs.filter(j => {
+        if (j.operator_id) return j.operator_id === operator.user_id;
+        return j.machine_id !== null && operatorMachineIds.includes(j.machine_id);
+      });
 
       // Calculate daily metrics
       const dailyData: DailyEfficiencyData[] = dateRange.map(date => {
@@ -134,7 +144,8 @@ export function useOperatorEvolution(days: number = 30) {
         });
 
         const jobsCompleted = dayJobs.length;
-        const piecesProduced = dayJobs.reduce((sum, j) => sum + (j.produced_quantity ?? Math.max(0, j.quantity - (j.lost_pieces || 0))), 0);
+        // Null produced_quantity means "not recorded" — not "fully produced".
+        const piecesProduced = dayJobs.reduce((sum, j) => sum + (j.produced_quantity ?? 0), 0);
         const piecesLost = dayJobs.reduce((sum, j) => sum + (j.lost_pieces || 0), 0);
         const totalPieces = piecesProduced + piecesLost;
         const lossRate = totalPieces > 0 ? (piecesLost / totalPieces) * 100 : 0;

@@ -7,7 +7,7 @@ export interface FeatureFlag {
   name: string;
   description: string | null;
   is_enabled: boolean;
-  rules: any;
+  rules: Record<string, unknown> | null;
 }
 
 /**

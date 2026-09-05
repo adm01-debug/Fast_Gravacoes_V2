@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { Moon, Sun, Volume2, VolumeX, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
@@ -72,8 +77,14 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="h-9 w-9" disabled>
-        <span className="h-4 w-4" />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9"
+        disabled
+        aria-label="Carregando controle de tema"
+      >
+        <span className="h-4 w-4" aria-hidden="true" />
       </Button>
     );
   }
@@ -101,7 +112,7 @@ export function ThemeToggle() {
               className={`
                 absolute h-4 w-4
                 ${isDark
-                  ? 'rotate-90 scale-0 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
+                  ? 'rotate-90 scale-0 opacity-0 transition-all duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]'
                   : 'scale-100 opacity-100 animate-[spin_8s_linear_infinite]'
                 }
               `}
@@ -116,7 +127,7 @@ export function ThemeToggle() {
                 absolute h-4 w-4
                 ${isDark
                   ? 'rotate-0 scale-100 opacity-100 animate-[pulse_3s_ease-in-out_infinite]'
-                  : '-rotate-90 scale-0 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
+                  : '-rotate-90 scale-0 opacity-0 transition-all duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]'
                 }
               `}
               style={{

@@ -1,23 +1,10 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { requireCronSecret } from "../_shared/cronAuth.ts"
 
 const BUFFER_TARGET = 3
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -25,39 +12,43 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabaseClient = createClient(supabaseUrl, serviceRoleKey)
 
-    // Auth: accept CRON_API_KEY, service-role Bearer, or user JWT with operator/manager/admin role
-    const cronApiKey = Deno.env.get('CRON_API_KEY');
-    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
-    const xApiKey = req.headers.get('x-api-key');
-    const bearerToken = req.headers.get('authorization')?.match(/^bearer\s+(.+)$/i)?.[1];
-
-    const isCronKey = cronApiKey && (xApiKey === cronApiKey || bearerToken === cronApiKey);
-    const isServiceRole = supabaseServiceKey && bearerToken === supabaseServiceKey;
-    let authorized = !!(isCronKey || isServiceRole);
-
-    if (!authorized && bearerToken && anonKey) {
-      const anonClient = createClient(supabaseUrl, anonKey);
-      const { data: { user } } = await anonClient.auth.getUser(bearerToken);
-      if (user) {
-        // Filter by eligible roles first so users with multiple role rows are handled correctly.
-        const { data: roleRows } = await supabaseClient
-          .from('user_roles').select('role')
-          .eq('user_id', user.id)
-          .in('role', ['admin', 'manager', 'coordinator'])
-          .limit(1);
-        authorized = !!(roleRows && roleRows.length > 0);
+    // Allow either a verified cron invocation (x-cron-secret) OR an
+    // authenticated coordinator/manager/admin call. A missing Authorization header no
+    // longer implies "trusted cron" — that was bypassable by simply omitting
+    // the header, running job-state mutations unauthenticated.
+    const authHeader = req.headers.get('Authorization')
+    if (authHeader) {
+      const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data: { user } } = await userClient.auth.getUser()
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'Não autorizado' }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        })
       }
-    }
-
-    if (!authorized) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
+      const { data: roleRows } = await supabaseClient
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+      const roles = (roleRows ?? []).map((r: { role: string }) => r.role)
+      if (!roles.some((role) => ['coordinator', 'manager', 'admin'].includes(role))) {
+        return new Response(JSON.stringify({ error: 'Sem permissão' }), {
+          status: 403,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        })
+      }
+    } else {
+      // failClosed: this function mutates job statuses across the board;
+      // must not run unauthenticated on an unconfigured deployment.
+      const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) })
+      if (unauthorized) return unauthorized
     }
 
     console.log('Starting auto-promotion check...')
@@ -71,7 +62,7 @@ serve(async (req) => {
 
     const results = []
 
-    for (const technique of techniques) {
+    for (const technique of techniques || []) {
       // 2. Count current 'ready' jobs for this technique
       const { count: readyCount, error: countError } = await supabaseClient
         .from('jobs')
@@ -120,11 +111,15 @@ serve(async (req) => {
           if (jobIds.length > 0) {
             const { error: updateError } = await supabaseClient
               .from('jobs')
-              .update({ 
+              .update({
                 status: 'ready',
                 updated_at: new Date().toISOString()
               })
               .in('id', jobIds)
+              // Guard: only promote jobs still in 'queue' — without this, a job
+              // that moved to 'production' between the fetch and this update would
+              // be silently regressed back to 'ready'.
+              .eq('status', 'queue')
 
             if (updateError) {
               console.error(`Error promoting jobs for ${technique.name}:`, updateError)
@@ -168,9 +163,8 @@ serve(async (req) => {
     })
 
   } catch (error: unknown) {
-    console.error('Unexpected error:', error)
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    console.error('Unexpected error:', error instanceof Error ? error.message : String(error))
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       status: 500,
     })

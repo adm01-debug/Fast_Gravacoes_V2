@@ -1,21 +1,8 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronSecret } from "../_shared/cronAuth.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 interface RankingResult {
   operator_id: string;
@@ -82,8 +69,48 @@ serve(async (req: Request): Promise<Response> => {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Não autorizado" }), {
+          status: 401,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      const { data: roleRows } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("is_active", true);
+      const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
+      if (!roles.some((role) => ["coordinator", "admin"].includes(role))) {
+        return new Response(JSON.stringify({ error: "Sem permissão" }), {
+          status: 403,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+    } else {
+      // A missing Authorization header no longer implies "trusted cron" —
+      // require the shared cron secret. failClosed=true because this function
+      // does a destructive delete+rewrite of operator_rankings/achievements,
+      // so an unconfigured deployment must never run it unauthenticated.
+      const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) });
+      if (unauthorized) return unauthorized;
+    }
+
     const body = await req.json().catch(() => ({}));
-    const rankingType = body.ranking_type || "weekly";
+    const rankingType: string = body.ranking_type || "weekly";
+    const ALLOWED_RANKING_TYPES = ["daily", "weekly", "monthly"];
+    if (!ALLOWED_RANKING_TYPES.includes(rankingType)) {
+      return new Response(JSON.stringify({ error: "ranking_type inválido. Use: daily, weekly ou monthly" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
 
     console.log(`Calculating ${rankingType} rankings...`);
 
@@ -212,25 +239,36 @@ serve(async (req: Request): Promise<Response> => {
 
     console.log(`Calculated ${rankings.length} rankings`);
 
-    // Delete old rankings for this period and type
-    await supabase
+    // Upsert new rankings first so the table is never left empty.
+    // The UNIQUE constraint on (operator_id, ranking_type, period_start) makes
+    // this safe for concurrent runs — the second upsert simply overwrites.
+    if (rankings.length > 0) {
+      const { error: upsertError } = await supabase
+        .from("operator_rankings")
+        .upsert(rankings, { onConflict: "operator_id,ranking_type,period_start" });
+
+      if (upsertError) {
+        console.error("Error upserting rankings:", upsertError);
+        throw upsertError;
+      }
+    }
+
+    // Remove stale entries from previous runs: period rows whose operator_id is
+    // no longer in the newly calculated set (operator had no qualifying jobs).
+    // Using a post-upsert delete means the window with no data never occurs.
+    let staleDelete = supabase
       .from("operator_rankings")
       .delete()
       .eq("ranking_type", rankingType)
       .gte("period_start", periodStart.toISOString())
       .lt("period_end", periodEnd.toISOString());
-
-    // Insert new rankings
     if (rankings.length > 0) {
-      const { error: insertError } = await supabase
-        .from("operator_rankings")
-        .insert(rankings);
-
-      if (insertError) {
-        console.error("Error inserting rankings:", insertError);
-        throw insertError;
-      }
+      staleDelete = staleDelete.not(
+        "operator_id", "in",
+        `(${rankings.map((r) => r.operator_id).join(",")})`,
+      );
     }
+    await staleDelete;
 
     // Award achievements for top performers
     const achievements = [];
@@ -246,7 +284,7 @@ serve(async (req: Request): Promise<Response> => {
         .eq("achievement_type", `top_${rankingType}`)
         .gte("period_start", periodStart.toISOString())
         .lt("period_end", periodEnd.toISOString())
-        .single();
+        .maybeSingle();
 
       if (!existing) {
         const achievementNames: Record<string, string> = {
@@ -277,7 +315,7 @@ serve(async (req: Request): Promise<Response> => {
             .eq("operator_id", ranking.operator_id)
             .eq("achievement_type", "quality_master")
             .gte("achieved_at", periodStart.toISOString())
-            .single();
+            .maybeSingle();
 
           if (!qualityExists) {
             achievements.push({
@@ -326,10 +364,9 @@ serve(async (req: Request): Promise<Response> => {
       }
     );
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("Error calculating rankings:", error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

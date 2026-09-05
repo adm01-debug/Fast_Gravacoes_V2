@@ -232,8 +232,8 @@ export function PermissionManager() {
               </div>
 
               {!isCoordinator && (
-                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+                  <p className="text-sm text-warning dark:text-warning">
                     <Lock className="h-4 w-4 inline mr-2" />
                     Apenas coordenadores podem modificar permissões.
                   </p>

@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.get_system_status_summary() FROM anon;

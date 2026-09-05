@@ -98,8 +98,12 @@ export function DocumentsList({ technicalSheetId, compact = false }: DocumentsLi
             {filteredDocuments.slice(0, 5).map((doc) => (
               <div
                 key={doc.id}
-                className="flex items-center gap-2 p-2 rounded-lg border hover:bg-muted/20 cursor-pointer transition-colors"
+                role="button"
+                tabIndex={0}
+                aria-label={`Abrir documento ${doc.title}`}
+                className="flex items-center gap-2 p-2 rounded-lg border hover:bg-muted/20 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => setSelectedDocument(doc)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDocument(doc); } }}
               >
                 {getFileIcon(doc.file_type)}
                 <div className="flex-1 min-w-0">

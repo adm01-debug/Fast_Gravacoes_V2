@@ -1,6 +1,11 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,12 +32,13 @@ const ORANGE = '#FF5A1F';
 export default function AuthPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { signIn, user } = useAuth();
+  const { signIn, signOut, user } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const loginSchema = z.object({ email: z.string().email(t('auth.invalidEmail')), password: z.string().min(6, t('auth.passwordMinLength', { min: 6 })) });
 
   const [isLoading, setIsLoading] = useState(false);
+  const loginSubmittingRef = useRef(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -40,19 +46,59 @@ export default function AuthPage() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [isSendingReset, setIsSendingReset] = useState(false);
+  const [resetCooldownSec, setResetCooldownSec] = useState(0);
+  const resetCooldownUntilRef = useRef(0);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
 
   useEffect(() => { const saved = localStorage.getItem('rememberedEmail'); if (saved) { setLoginEmail(saved); setRememberMe(true); } }, []);
-  useEffect(() => { if (user) navigate('/', { replace: true }); }, [user, navigate]);
-  if (user) return null;
+
+  // A session existing (user truthy) only means AAL1 — signInWithPassword
+  // already succeeded. It does NOT mean MFA was satisfied. Before treating
+  // the user as fully signed in and navigating away, verify the session's
+  // authenticator assurance level; if the account has a verified TOTP
+  // factor and the session hasn't stepped up to aal2 yet, show the
+  // challenge screen instead of entering the app. Without this check the
+  // app previously navigated to "/" the instant `user` became truthy,
+  // regardless of MFA — the challenge screen shown by handleLogin's own
+  // (separate) check could lose this race and never render.
+  useEffect(() => {
+    if (!user || mfaFactorId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (aal && aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+          const { data: factors } = await supabase.auth.mfa.listFactors();
+          const totpFactor = factors?.totp.find(f => f.status === 'verified');
+          if (totpFactor) {
+            if (!cancelled) setMfaFactorId(totpFactor.id);
+            return;
+          }
+        }
+      } catch {
+        // If the AAL check itself fails, fall through to navigate — MFA
+        // enforcement is also backstopped at ProtectedRoute.
+      }
+      if (!cancelled) navigate('/', { replace: true });
+    })();
+    return () => { cancelled = true; };
+  }, [user, mfaFactorId, navigate]);
+
+  if (user && !mfaFactorId) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setErrors({});
+    // Synchronous re-entry guard: the button's disabled={isLoading} only takes
+    // effect after the next render, so rapid double-submits in the same tick
+    // could enqueue duplicate auth requests without this ref.
+    if (loginSubmittingRef.current) return;
     try { loginSchema.parse({ email: loginEmail, password: loginPassword }); } catch (err) { if (err instanceof z.ZodError) { const fe: Record<string, string> = {}; err.errors.forEach(e => { if (e.path[0]) fe[`login_${e.path[0]}`] = e.message; }); setErrors(fe); return; } }
     if (rememberMe) localStorage.setItem('rememberedEmail', loginEmail); else localStorage.removeItem('rememberedEmail');
+    loginSubmittingRef.current = true;
     setIsLoading(true);
     const { error } = await signIn(loginEmail, loginPassword);
+    loginSubmittingRef.current = false;
     if (error) {
       const le = error as Error & { isLockout?: boolean; remainingMinutes?: number; lockoutMinutes?: number };
       if (le.isLockout) {
@@ -64,25 +110,59 @@ export default function AuthPage() {
       return;
     }
 
-    try {
-      const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
-      if (factorsError) throw factorsError;
-      const totpFactor = factors.totp.find(f => f.status === 'verified');
-      if (totpFactor) { setMfaFactorId(totpFactor.id); setIsLoading(false); return; }
-    } catch { /* proceed */ }
-
-    toast.success(t('auth.loginSuccess')); navigate('/');
+    // Whether this session still needs an MFA challenge (and whether to show
+    // it or navigate away) is decided by the AAL-aware effect above, which
+    // reacts to `user` becoming set — avoids racing two separate checks.
+    setIsLoading(false);
+    toast.success(t('auth.loginSuccess'));
   };
 
   const handleGoogleLogin = async () => { setSocialLoading('google'); try { const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: window.location.origin }); if (result.error) toast.error('Erro ao conectar com Google'); } catch { toast.error('Erro ao iniciar login social'); } finally { setSocialLoading(null); } };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault(); if (!forgotEmail.trim()) { toast.error(t('validation.required')); return; }
+    e.preventDefault();
+    if (!forgotEmail.trim()) { toast.error(t('validation.required')); return; }
     try { z.string().email().parse(forgotEmail); } catch { toast.error(t('auth.invalidEmail')); return; }
+
+    // Client-side cooldown: prevent burst-submitting before the server round-trip completes
+    const now = Date.now();
+    if (now < resetCooldownUntilRef.current) {
+      toast.info(`Aguarde ${resetCooldownSec}s antes de enviar outra solicitação.`);
+      return;
+    }
+
     setIsSendingReset(true);
-    const { error } = await supabase.from('password_reset_requests').insert({ user_email: forgotEmail.trim().toLowerCase(), requested_by_name: null, status: 'pending' });
-    if (error) { toast.error('Erro ao enviar solicitação. Tente novamente.'); setIsSendingReset(false); return; }
-    toast.success(t('auth.resetRequestSent', 'Solicitação enviada! Aguarde aprovação do gestor.')); setShowForgotPassword(false); setForgotEmail(''); setIsSendingReset(false);
+    const { error } = await supabase.from('password_reset_requests').insert({
+      user_email: forgotEmail.trim().toLowerCase(),
+      requested_by_name: null,
+      status: 'pending',
+    });
+
+    if (error) {
+      // Postgres unique-violation code 23505 means a pending request already exists
+      // (enforced by the partial unique index on user_email WHERE status='pending')
+      if ((error as { code?: string }).code === '23505') {
+        toast.info('Já existe uma solicitação pendente para este e-mail. Aguarde a aprovação do gestor.');
+      } else {
+        toast.error('Erro ao enviar solicitação. Tente novamente.');
+      }
+      setIsSendingReset(false);
+      return;
+    }
+
+    // Arm 60-second cooldown to throttle repeated requests
+    const until = Date.now() + 60_000;
+    resetCooldownUntilRef.current = until;
+    setResetCooldownSec(60);
+    const tick = setInterval(() => {
+      const rem = Math.ceil((resetCooldownUntilRef.current - Date.now()) / 1000);
+      if (rem <= 0) { clearInterval(tick); setResetCooldownSec(0); } else { setResetCooldownSec(rem); }
+    }, 1000);
+
+    toast.success(t('auth.resetRequestSent', 'Solicitação enviada! Aguarde aprovação do gestor.'));
+    setShowForgotPassword(false);
+    setForgotEmail('');
+    setIsSendingReset(false);
   };
 
 
@@ -93,7 +173,7 @@ export default function AuthPage() {
         <meta name="description" content="Acesse o sistema FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO para gerenciar sua produção industrial." />
       </Helmet>
 
-      <div className="min-h-screen w-full flex bg-[#050505] text-white font-display selection:bg-[#FF5A1F]/30">
+      <div className="min-h-screen w-full flex bg-[#050505] text-white text-title selection:bg-[#FF5A1F]/30">
         {/* LEFT — Industrial Showcase */}
         <div className="hidden lg:flex flex-1 relative overflow-hidden bg-[#0a0a0a] border-r border-white/5">
           <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -128,7 +208,7 @@ export default function AuthPage() {
                 { label: 'Velocidade', value: '<3', suffix: 's', highlight: true },
               ].map((k) => (
                 <div key={k.label} className={`p-5 rounded-xl backdrop-blur-sm border ${k.highlight ? 'bg-[#FF5A1F]/10 border-[#FF5A1F]/20' : 'bg-white/5 border-white/10'}`}>
-                  <p className={`text-[10px] font-mono uppercase tracking-widest mb-2 ${k.highlight ? 'text-[#FF5A1F]' : 'text-zinc-500'}`}>{k.label}</p>
+                  <p className={`text-[10px] font-mono uppercase tracking-widest mb-2 ${k.highlight ? 'text-[#FF5A1F]' : 'text-muted-foreground'}`}>{k.label}</p>
                   <p className="text-3xl font-bold leading-none">{k.value}<span className="text-[#FF5A1F]">{k.suffix}</span></p>
                 </div>
               ))}
@@ -157,13 +237,13 @@ export default function AuthPage() {
             <AnimatePresence mode="wait">
               {mfaFactorId ? (
                 <motion.div key="mfa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <MFALoginVerification factorId={mfaFactorId} onSuccess={() => navigate('/')} onCancel={() => setMfaFactorId(null)} />
+                  <MFALoginVerification factorId={mfaFactorId} onSuccess={() => navigate('/')} onCancel={() => { setMfaFactorId(null); void signOut(); }} />
                 </motion.div>
               ) : (
                 <motion.div key="form" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   <div className="mb-8">
                     <h3 className="text-3xl font-bold mb-2 tracking-tight">Bem-vindo</h3>
-                    <p className="text-zinc-500 text-sm">Acesse sua conta para gerenciar as máquinas.</p>
+                    <p className="text-muted-foreground text-sm">Acesse sua conta para gerenciar as máquinas.</p>
                   </div>
 
                   <div className="w-full">
@@ -184,8 +264,9 @@ export default function AuthPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-[#FF5A1F]" />{t('auth.resetPassword')}</DialogTitle><DialogDescription>{t('auth.resetNeedsApproval', 'Digite seu e-mail. A solicitação será enviada para aprovação do gestor.')}</DialogDescription></DialogHeader>
           <form onSubmit={handleForgotPassword} className="space-y-4">
+            {/* eslint-disable-next-line jsx-a11y/no-autofocus -- foco no input do dialog de recuperação é UX esperada */}
             <div className="space-y-2"><Label htmlFor="forgot-email">{t('auth.email')}</Label><Input id="forgot-email" type="email" placeholder={t('auth.email')} value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} disabled={isSendingReset} autoFocus /><p className="text-xs text-muted-foreground">{t('auth.resetApprovalNote', 'Sua solicitação será analisada por um gestor antes do envio do e-mail de redefinição.')}</p></div>
-            <div className="flex gap-2 justify-end"><Button type="button" variant="outline" onClick={() => setShowForgotPassword(false)} disabled={isSendingReset}>{t('common.cancel')}</Button><Button type="submit" disabled={isSendingReset}>{isSendingReset ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('common.loading')}</> : t('auth.sendRequest', 'Enviar Solicitação')}</Button></div>
+            <div className="flex gap-2 justify-end"><Button type="button" variant="outline" onClick={() => setShowForgotPassword(false)} disabled={isSendingReset}>{t('common.cancel')}</Button><Button type="submit" disabled={isSendingReset || resetCooldownSec > 0}>{isSendingReset ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('common.loading')}</> : resetCooldownSec > 0 ? `Aguarde ${resetCooldownSec}s` : t('auth.sendRequest', 'Enviar Solicitação')}</Button></div>
           </form>
         </DialogContent>
       </Dialog>

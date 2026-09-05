@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface DbShippingProvider {
   id: string;
@@ -28,7 +29,7 @@ export interface DbShipment {
   created_at: string;
   updated_at: string;
   provider?: DbShippingProvider;
-  job?: any;
+  job?: { id: string; order_number: string; client: string; product?: string } | null;
 }
 
 export function useLogistics() {
@@ -94,7 +95,7 @@ export function useLogistics() {
       toast.success('Envio criado com sucesso');
     },
     onError: (error) => {
-      toast.error('Erro ao criar envio: ' + error.message);
+      showErrorToast(error, 'Erro ao criar envio');
     }
   });
 
@@ -128,7 +129,7 @@ export function useLogistics() {
       toast.success('Envio atualizado com sucesso');
     },
     onError: (error) => {
-      toast.error('Erro ao atualizar envio: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar envio');
     }
   });
 

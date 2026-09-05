@@ -13,41 +13,47 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Audit dependencies
-        run: npm audit --audit-level=critical
+        run: npm audit --audit-level=high
 
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@main
+        # Pinned to v3 tag for supply-chain safety.
+        uses: trufflesecurity/trufflehog@v3.82.13
         with:
           path: ./
-          base: ${{ github.event.before }}
+          # Fallback to HEAD~1 for workflow_dispatch (github.event.before is empty)
+          base: ${{ github.event.before || 'HEAD~1' }}
           head: HEAD
-          extra_args: --only-verified
+          # Removed --only-verified: unverifiable secrets would be silently missed
 
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Run tests
         run: npm run test -- --run
@@ -55,22 +61,25 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [security-scan, test]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps --no-fund
+        run: npm ci --legacy-peer-deps --no-fund
 
       - name: Build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # client.ts reads VITE_SUPABASE_PUBLISHABLE_KEY, not _ANON_KEY.
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_ALERT_WEBHOOK_URL: ${{ secrets.VITE_ALERT_WEBHOOK_URL }}
         run: npm run build
 
@@ -81,33 +90,18 @@ jobs:
           path: dist/
           retention-days: 7
 
-  deploy-edge-functions:
-    name: Deploy Edge Functions
-    runs-on: ubuntu-latest
-    needs: [security-scan, test]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Deploy all Edge Functions
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        run: |
-          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
-
+  # Migrations apply before functions deploy — a function expecting a new
+  # column/table that hasn't landed yet would error on live traffic during
+  # the window between the two deploys. Previously these ran in parallel
+  # with no ordering between them.
   apply-migrations:
     name: Apply DB Migrations
     runs-on: ubuntu-latest
-    needs: [build]
+    timeout-minutes: 10
+    needs: [security-scan, test]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -121,3 +115,24 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           supabase db push --project-ref $SUPABASE_PROJECT_ID
+
+  deploy-edge-functions:
+    name: Deploy Edge Functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [security-scan, test, apply-migrations]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy all Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Download, Printer } from 'lucide-react';
 import { ProductionLot } from '@/features/inventory';
+import { escapeHtml } from '@/lib/sanitize';
 
 interface LotQRCodeProps {
   lot: ProductionLot;
@@ -21,9 +22,6 @@ export function LotQRCode({ lot, open, onClose }: LotQRCodeProps) {
     date: lot.production_date,
   });
 
-  const escHtml = (s: string) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
@@ -31,15 +29,21 @@ export function LotQRCode({ lot, open, onClose }: LotQRCodeProps) {
     const svgEl = document.getElementById('lot-qr-svg');
     if (!svgEl) return;
 
+    const safeLotNumber = escapeHtml(lot.lot_number);
+    const safeProductName = escapeHtml(lot.product_name);
+    const safeQuantity = escapeHtml(String(lot.quantity));
+    const safeStatus = escapeHtml(lot.status);
+    const safeDate = escapeHtml(lot.production_date);
+
     printWindow.document.write(`
       <html>
-        <head><title>Etiqueta - ${escHtml(lot.lot_number)}</title></head>
+        <head><title>Etiqueta - ${safeLotNumber}</title></head>
         <body style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:monospace;">
-          <h2>${escHtml(lot.lot_number)}</h2>
-          <p>${escHtml(lot.product_name)}</p>
+          <h2>${safeLotNumber}</h2>
+          <p>${safeProductName}</p>
           ${svgEl.outerHTML}
-          <p style="margin-top:8px;">Qtd: ${lot.quantity} | Status: ${escHtml(lot.status)}</p>
-          <p>${escHtml(lot.production_date)}</p>
+          <p style="margin-top:8px;">Qtd: ${safeQuantity} | Status: ${safeStatus}</p>
+          <p>${safeDate}</p>
         </body>
       </html>
     `);

@@ -3,8 +3,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Camera, Zap, Info } from 'lucide-react';
 
+export interface RiskAlert {
+  description: string;
+  expected_range?: string;
+  evidence_urls: string[];
+  is_critical_risk?: boolean;
+}
+
 interface AlertRiskPanelProps {
-  alerts: any[];
+  alerts: RiskAlert[];
   onEvidenceUpload: (index: number, file: File) => void;
   isUploading: boolean;
 }

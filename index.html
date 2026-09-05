@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
+    <!-- Security Headers (meta fallback — production hosting sets these via HTTP headers in public/_headers) -->
+    <!-- script-src 'unsafe-inline': Vite injects an inline modulepreload polyfill in production bundles -->
+    <!-- script-src 'unsafe-eval': Mermaid uses new Function() internally (sandboxed via securityLevel:strict) -->
+    <!-- style-src 'unsafe-inline': Tailwind utility classes and Framer-Motion inject inline styles at runtime -->
+    <!-- Note: type="application/ld+json" scripts are JSON data, NOT executable JS; they don't need 'unsafe-inline' -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
     <!-- Primary Meta Tags -->
     <title>FAST GRAVAÇÕES | Qualidade + Velocidade</title>
     <meta name="title" content="FAST GRAVAÇÕES | Qualidade + Velocidade" />
@@ -52,7 +60,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://whnnzdreuwxczxelvqjh.supabase.co" />
     <link rel="dns-prefetch" href="https://whnnzdreuwxczxelvqjh.supabase.co" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -73,7 +81,7 @@
   <meta name="twitter:description" content="Sistema completo de agendamento e gestão de produção FAST GRAVAÇÕES. Qualidade + Velocidade.">
 </head>
 
-  <body>
+  <body data-migrate-deploy="Faça deploy da edge function migrate-helper com verify_jwt = false no supabase/config.toml">
     <noscript>
       <div style="padding:2rem;text-align:center;font-family:system-ui">
         <h1>JavaScript Necessário</h1>

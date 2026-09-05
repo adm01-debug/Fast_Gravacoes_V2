@@ -68,7 +68,7 @@ const jobEditSchema = z.object({
   quantity: z.number().min(1, 'Quantidade é obrigatória'),
   gravure_color: z.string().optional(),
   notes: z.string().optional(),
-  priority: z.string(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']),
 });
 
 type JobEditValues = z.infer<typeof jobEditSchema>;
@@ -129,7 +129,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   const handleSave = async (data: JobEditValues) => {
     try {
-      await updateJobMutation.mutateAsync({ jobId: job.id, data: data as any });
+      await updateJobMutation.mutateAsync({ jobId: job.id, data });
       toast.success(t('jobs.jobUpdated'));
       setIsEditing(false);
     } catch (error) {
@@ -472,7 +472,7 @@ function JobHistoryTab({ jobId }: { jobId: string }) {
     fromDate: period.fromDate,
     toDate: period.toDate,
   });
-  const { exportAuditTrail } = useDataExport('jobs' as any);
+  const { exportAuditTrail } = useDataExport('jobs');
 
   const handleExport = useCallback((format: 'csv' | 'pdf') => {
     exportAuditTrail({

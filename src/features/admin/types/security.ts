@@ -3,7 +3,7 @@ export interface SecurityEvent {
   event_type: string;
   severity: 'info' | 'warning' | 'error' | 'critical';
   description: string;
-  metadata?: any;
+  metadata?: Record<string, unknown> | null;
   created_at: string;
 }
 

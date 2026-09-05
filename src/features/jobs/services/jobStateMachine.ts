@@ -14,8 +14,9 @@ const TRANSITIONS: Record<JobStatus, JobStatus[]> = {
   delayed: ['production', 'cancelled'],
   rework: ['production', 'finished', 'cancelled'],
   buffer: ['ready', 'scheduled', 'cancelled'],
-  finished: [], // terminal
-  cancelled: ['queue'], // allow re-queue
+  packaging: ['finished', 'rework', 'cancelled'],
+  finished: ['packaging'], // finished can be sent (auto) to packaging
+  cancelled: ['queue'],
 };
 
 export function canTransition(from: JobStatus, to: JobStatus): boolean {

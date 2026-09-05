@@ -12,12 +12,12 @@ export function CapacityHealthPanel() {
   if (!capacities.length) return null;
 
   return (
-    <Card className="glass-card border-amber-500/20">
+    <Card className="glass-card border-warning/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm font-display flex items-center justify-between">
+        <CardTitle className="text-sm text-title flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-amber-500/20">
-              <Zap className="h-4 w-4 text-amber-500" />
+            <div className="p-1.5 rounded-lg bg-warning/20">
+              <Zap className="h-4 w-4 text-warning" />
             </div>
             <span className="font-bold uppercase tracking-wider text-[11px]">Saúde de Capacidade por Técnica</span>
           </div>
@@ -41,7 +41,7 @@ export function CapacityHealthPanel() {
                   className={cn(
                     "h-5 text-[9px] uppercase tracking-tighter px-1",
                     cap.status === 'critical' ? "text-destructive border-destructive/40 bg-destructive/10" :
-                    cap.status === 'warning' ? "text-amber-500 border-amber-500/40 bg-amber-500/10" :
+                    cap.status === 'warning' ? "text-warning border-warning/40 bg-warning/10" :
                     "text-success border-success/40 bg-success/10"
                   )}
                 >
@@ -54,7 +54,7 @@ export function CapacityHealthPanel() {
                    <div className="flex items-baseline gap-1">
                       <span className={cn(
                         "text-lg font-bold font-mono leading-none",
-                        cap.status === 'critical' ? "text-destructive" : cap.status === 'warning' ? "text-amber-500" : "text-foreground"
+                        cap.status === 'critical' ? "text-destructive" : cap.status === 'warning' ? "text-warning" : "text-foreground"
                       )}>
                         {cap.occupancyPercent}
                       </span>
@@ -69,7 +69,7 @@ export function CapacityHealthPanel() {
                   value={cap.occupancyPercent}
                   className={cn(
                     "h-1.5",
-                    cap.status === 'critical' ? "bg-destructive/20" : cap.status === 'warning' ? "bg-amber-500/20" : "bg-success/20"
+                    cap.status === 'critical' ? "bg-destructive/20" : cap.status === 'warning' ? "bg-warning/20" : "bg-success/20"
                   )}
                 />
               </div>

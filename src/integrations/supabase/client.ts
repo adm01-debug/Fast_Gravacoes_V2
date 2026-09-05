@@ -16,6 +16,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   },
   global: {
     fetch: async (url, options) => {
+      const urlString = url.toString();
       const start = performance.now();
       try {
         const response = await fetch(url, options);
@@ -34,11 +35,18 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 
           import('@/lib/logger').then(({ logger }) => {
             if (!response.ok) {
-              logger.error(`Falha na API Supabase (${response.status}): ${urlString}`, {
+              const errorData = {
                 status: response.status,
                 url: urlString,
-                route
-              });
+                route,
+                timestamp: new Date().toISOString()
+              };
+
+              if (response.status === 401 || response.status === 403) {
+                logger.warn(`Acesso negado (${response.status}): ${urlString}`, errorData);
+              } else {
+                logger.error(`Falha na API Supabase (${response.status}): ${urlString}`, errorData);
+              }
             } else if (duration > 1500) {
               logger.warn(`Query lenta detectada em ${route}: ${duration.toFixed(2)}ms`, {
                 url: urlString,
@@ -55,7 +63,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
         // Skip telemetry endpoints to avoid the logging-of-logging cascade.
         if (!url.toString().includes('error_logs')) {
           import('@/lib/logger').then(({ logger }) => {
-            logger.critical(`Erro de rede/conectividade com Supabase: ${url.toString()}`, error);
+            logger.critical(`Erro crítico de infraestrutura (Rede/Supabase): ${url.toString()}`, {
+              error: error instanceof Error ? error.message : String(error),
+              url: urlString
+            });
           });
         }
         throw error;

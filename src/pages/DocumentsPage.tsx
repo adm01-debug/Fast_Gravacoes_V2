@@ -10,7 +10,7 @@ export default function DocumentsPage() {
         <Breadcrumbs />
 
         <div>
-          <h1 className="text-2xl font-display font-bold gradient-text flex items-center gap-3">
+          <h1 className="text-2xl text-title font-bold gradient-text flex items-center gap-3">
             <FileText className="h-7 w-7 text-primary" />
             Documentos e Instruções
           </h1>

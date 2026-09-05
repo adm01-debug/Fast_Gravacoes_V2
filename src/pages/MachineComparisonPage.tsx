@@ -22,7 +22,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
+} from '@/lib/recharts';
 import { Cpu, ArrowLeftRight, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -129,7 +129,7 @@ export default function MachineComparisonPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-black tracking-tighter">
+              <h1 className="text-3xl text-title font-black tracking-tighter">
                 <span className="gradient-text animate-pulse-glow">Benchmarking Industrial 10/10</span>
               </h1>
             </div>

@@ -107,6 +107,7 @@ export function FloatingAIAssistant() {
             <Button
               size="lg"
               onClick={() => setIsOpen(true)}
+              aria-label="Abrir assistente IA"
               className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-primary to-primary/80"
             >
               <Sparkles className="h-6 w-6" />
@@ -140,6 +141,7 @@ export function FloatingAIAssistant() {
                     size="icon"
                     className="h-7 w-7 text-primary-foreground hover:bg-primary-foreground/20"
                     onClick={() => setIsMinimized(!isMinimized)}
+                    aria-label={isMinimized ? 'Expandir chat' : 'Minimizar chat'}
                   >
                     {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
                   </Button>
@@ -148,6 +150,7 @@ export function FloatingAIAssistant() {
                     size="icon"
                     className="h-7 w-7 text-primary-foreground hover:bg-primary-foreground/20"
                     onClick={() => setIsOpen(false)}
+                    aria-label="Fechar assistente"
                   >
                     <X className="h-4 w-4" />
                   </Button>

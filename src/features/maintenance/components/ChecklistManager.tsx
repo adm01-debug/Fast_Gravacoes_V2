@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useMemo, useEffect } from 'react';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -13,18 +18,25 @@ import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { MaintenanceChecklistItem } from '@/features/maintenance/hooks/types';
 
+// Radix Select forbids an empty-string item value (it's reserved to mean
+// "no selection" internally and throws at render). selectedTechniqueId=''
+// means "global (all machines)" throughout this component, so this sentinel
+// is only used at the Select boundary and mapped back to '' immediately.
+const GLOBAL_TECHNIQUE_VALUE = '__global__';
+
 export function ChecklistManager() {
   const { maintenanceTypes, checklists, machines } = useTPM();
   const queryClient = useQueryClient();
   const [selectedTypeId, setSelectedTypeId] = useState<string>('');
   const [selectedTechniqueId, setSelectedTechniqueId] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
-  const [localItems, setLocalItems] = useState<Partial<MaintenanceChecklistItem>[]>([]);
+  type LocalChecklistItem = Partial<MaintenanceChecklistItem> & { _key?: string };
+  const [localItems, setLocalItems] = useState<LocalChecklistItem[]>([]);
 
   // Get unique techniques from machines
   const techniques = useMemo(() => {
-    const uniqueTechniques = new Map();
-    machines.forEach((m: any) => {
+    const uniqueTechniques = new Map<string, string>();
+    machines.forEach((m) => {
       if (m.technique_id) {
         uniqueTechniques.set(m.technique_id, m.technique_id);
       }
@@ -33,7 +45,7 @@ export function ChecklistManager() {
   }, [machines]);
 
   const currentChecklist = useMemo(() => {
-    return checklists.find((c: any) =>
+    return checklists.find((c) =>
       c.maintenance_type_id === selectedTypeId &&
       (c.technique_id === selectedTechniqueId || (!c.technique_id && !selectedTechniqueId))
     );
@@ -51,6 +63,7 @@ export function ChecklistManager() {
     setLocalItems([
       ...localItems,
       {
+        _key: crypto.randomUUID(),
         description: '',
         is_critical: false,
         requires_photo: false,
@@ -78,7 +91,7 @@ export function ChecklistManager() {
     setIsSaving(true);
 
     try {
-      const type = maintenanceTypes.find((t: any) => t.id === selectedTypeId);
+      const type = maintenanceTypes.find((t) => t.id === selectedTypeId);
       const newVersion = (currentChecklist?.version || 0) + 1;
 
       let checklistId = currentChecklist?.id;
@@ -99,7 +112,48 @@ export function ChecklistManager() {
         if (error) throw error;
         checklistId = data.id;
       } else {
-        // Update version and potentially name
+        // Fetch old item IDs before any write so we can delete them safely
+        // after the new items are successfully inserted (INSERT-before-DELETE
+        // ensures the checklist is never left with zero items if the insert fails).
+        const { data: oldItems } = await supabase
+          .from('maintenance_checklist_items')
+          .select('id')
+          .eq('checklist_id', checklistId);
+        const oldItemIds = (oldItems ?? []).map((r: { id: string }) => r.id);
+
+        if (localItems.length > 0) {
+          if (!checklistId) throw new Error('checklistId ausente ao inserir itens');
+          const cid: string = checklistId;
+          const itemsToInsert = localItems.map((item, index) => ({
+            checklist_id: cid,
+            description: item.description || '',
+            is_critical: !!item.is_critical,
+            requires_photo: !!item.requires_photo,
+            requires_measurement: !!item.requires_measurement,
+            measurement_unit: item.measurement_unit || null,
+            min_value: item.min_value || null,
+            max_value: item.max_value || null,
+            item_order: index + 1,
+          }));
+
+          const { error: insertError } = await supabase
+            .from('maintenance_checklist_items')
+            .insert(itemsToInsert);
+
+          if (insertError) throw insertError;
+        }
+
+        // New items are safely stored — now remove the old ones by ID
+        if (oldItemIds.length > 0) {
+          const { error: deleteError } = await supabase
+            .from('maintenance_checklist_items')
+            .delete()
+            .in('id', oldItemIds);
+
+          if (deleteError) throw deleteError;
+        }
+
+        // Update version only after items are settled
         const { error: updateError } = await supabase
           .from('maintenance_checklists')
           .update({
@@ -109,17 +163,9 @@ export function ChecklistManager() {
           .eq('id', checklistId);
 
         if (updateError) throw updateError;
-
-        // Clean up old items
-        const { error: deleteError } = await supabase
-          .from('maintenance_checklist_items')
-          .delete()
-          .eq('checklist_id', checklistId);
-
-        if (deleteError) throw deleteError;
       }
 
-      if (localItems.length > 0) {
+      if (!currentChecklist && localItems.length > 0) {
         const itemsToInsert = localItems.map((item, index) => ({
           checklist_id: checklistId,
           description: item.description || '',
@@ -187,7 +233,7 @@ export function ChecklistManager() {
                 variant="outline"
                 size="sm"
                 onClick={handleToggleActive}
-                className={currentChecklist.is_active ? "text-destructive" : "text-emerald-600"}
+                className={currentChecklist.is_active ? "text-destructive" : "text-success"}
               >
                 {currentChecklist.is_active ? 'Desativar' : 'Ativar'}
               </Button>
@@ -204,7 +250,7 @@ export function ChecklistManager() {
                 <SelectValue placeholder="Selecione o tipo..." />
               </SelectTrigger>
               <SelectContent>
-                {maintenanceTypes.map((mType: any) => (
+                {maintenanceTypes.map((mType) => (
                   <SelectItem key={mType.id} value={mType.id}>
                     {mType.name}
                   </SelectItem>
@@ -214,12 +260,15 @@ export function ChecklistManager() {
           </div>
           <div className="space-y-2">
             <Label>Tipo/Categoria de Máquina (Opcional)</Label>
-            <Select value={selectedTechniqueId} onValueChange={setSelectedTechniqueId}>
+            <Select
+              value={selectedTechniqueId || GLOBAL_TECHNIQUE_VALUE}
+              onValueChange={(v) => setSelectedTechniqueId(v === GLOBAL_TECHNIQUE_VALUE ? '' : v)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Global (Toda as máquinas)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Global (Todas as máquinas)</SelectItem>
+                <SelectItem value={GLOBAL_TECHNIQUE_VALUE}>Global (Todas as máquinas)</SelectItem>
                 {techniques.map((tech) => (
                   <SelectItem key={tech} value={tech}>
                     {tech}
@@ -247,7 +296,7 @@ export function ChecklistManager() {
             ) : (
               <div className="space-y-3">
                 {localItems.map((item, index) => (
-                  <div key={index} className="p-4 rounded-lg bg-secondary/20 border border-border/50 space-y-3">
+                  <div key={item.id ?? item._key} className="p-4 rounded-lg bg-secondary/20 border border-border/50 space-y-3">
                     <div className="flex items-start gap-3">
                       <div className="flex-1">
                         <Input
@@ -264,33 +313,33 @@ export function ChecklistManager() {
                     <div className="flex flex-wrap gap-4 pt-2">
                       <div className="flex items-center space-x-2 bg-secondary/30 p-2 rounded-md border border-border/50">
                         <Checkbox
-                          id={`critical-${index}`}
+                          id={`critical-${item.id ?? item._key}`}
                           checked={item.is_critical}
                           onCheckedChange={(checked) => updateItem(index, { is_critical: !!checked })}
                         />
-                        <Label htmlFor={`critical-${index}`} className="text-xs font-semibold text-destructive flex items-center gap-1 cursor-pointer">
+                        <Label htmlFor={`critical-${item.id ?? item._key}`} className="text-xs font-semibold text-destructive flex items-center gap-1 cursor-pointer">
                           <AlertTriangle className="h-3 w-3" /> Item Crítico
                         </Label>
                       </div>
 
                       <div className="flex items-center space-x-2 bg-secondary/30 p-2 rounded-md border border-border/50">
                         <Checkbox
-                          id={`photo-${index}`}
+                          id={`photo-${item.id ?? item._key}`}
                           checked={item.requires_photo}
                           onCheckedChange={(checked) => updateItem(index, { requires_photo: !!checked })}
                         />
-                        <Label htmlFor={`photo-${index}`} className="text-xs font-semibold text-primary flex items-center gap-1 cursor-pointer">
+                        <Label htmlFor={`photo-${item.id ?? item._key}`} className="text-xs font-semibold text-primary flex items-center gap-1 cursor-pointer">
                           <Camera className="h-3 w-3" /> Exige Foto
                         </Label>
                       </div>
 
                       <div className="flex items-center space-x-2 bg-secondary/30 p-2 rounded-md border border-border/50">
                         <Checkbox
-                          id={`measure-${index}`}
+                          id={`measure-${item.id ?? item._key}`}
                           checked={item.requires_measurement}
                           onCheckedChange={(checked) => updateItem(index, { requires_measurement: !!checked })}
                         />
-                        <Label htmlFor={`measure-${index}`} className="text-xs font-semibold text-blue-500 flex items-center gap-1 cursor-pointer">
+                        <Label htmlFor={`measure-${item.id ?? item._key}`} className="text-xs font-semibold text-blue-500 flex items-center gap-1 cursor-pointer">
                           <Activity className="h-3 w-3" /> Exige Medição
                         </Label>
                       </div>

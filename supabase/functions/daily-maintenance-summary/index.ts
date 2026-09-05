@@ -1,20 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { requireUserOrCronSecret } from '../_shared/cronAuth.ts';
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 interface ScheduleItem {
   id: string;
@@ -38,35 +25,16 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const unauthorized = await requireUserOrCronSecret(req, {
+    supabaseUrl,
+    supabaseAnonKey: Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    corsHeaders: getCorsHeaders(req),
+  });
+  if (unauthorized) return unauthorized;
 
-    // Accept either a valid user JWT (frontend) or the cron API key (scheduled jobs)
-    const cronApiKey = Deno.env.get('CRON_API_KEY');
-    const authHeader = req.headers.get('authorization');
-    const providedKey = req.headers.get('x-api-key') || authHeader?.replace('Bearer ', '');
-    const isCronKey = cronApiKey && providedKey === cronApiKey;
-    const hasBearer = authHeader?.startsWith('Bearer ');
-    if (!isCronKey && !hasBearer) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
-    if (!isCronKey && hasBearer) {
-      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const userClient = createClient(supabaseUrl, anonKey);
-      const { data: { user }, error: authError } = await userClient.auth.getUser(
-        authHeader!.replace('Bearer ', '')
-      );
-      if (authError || !user) {
-        return new Response(JSON.stringify({ error: 'Token inválido' }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        });
-      }
-    }
+  try {
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -251,12 +219,11 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Error generating daily summary:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { 
+      JSON.stringify({ error: 'Internal server error' }),
+      {
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        status: 500 
+        status: 500
       }
     );
   }

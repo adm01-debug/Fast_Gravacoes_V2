@@ -79,10 +79,10 @@ export const useSchedulingConflicts = () => {
           const job2 = groupJobs[j];
 
           try {
-            const start1 = parse(job1.start_time!, 'HH:mm', date);
-            const end1 = parse(job1.end_time!, 'HH:mm', date);
-            const start2 = parse(job2.start_time!, 'HH:mm', date);
-            const end2 = parse(job2.end_time!, 'HH:mm', date);
+            const start1 = parse(job1.start_time ?? "00:00", 'HH:mm', date);
+            const end1 = parse(job1.end_time ?? "00:00", 'HH:mm', date);
+            const start2 = parse(job2.start_time ?? "00:00", 'HH:mm', date);
+            const end2 = parse(job2.end_time ?? "00:00", 'HH:mm', date);
 
             if (!isValid(start1) || !isValid(end1) || !isValid(start2) || !isValid(end2)) continue;
 
@@ -99,8 +99,8 @@ export const useSchedulingConflicts = () => {
                   orderNumber: job1.order_number,
                   client: job1.client,
                   product: job1.product,
-                  startTime: job1.start_time!,
-                  endTime: job1.end_time!,
+                  startTime: job1.start_time ?? "00:00",
+                  endTime: job1.end_time ?? "00:00",
                   status: job1.status
                 });
               }
@@ -110,8 +110,8 @@ export const useSchedulingConflicts = () => {
                   orderNumber: job2.order_number,
                   client: job2.client,
                   product: job2.product,
-                  startTime: job2.start_time!,
-                  endTime: job2.end_time!,
+                  startTime: job2.start_time ?? "00:00",
+                  endTime: job2.end_time ?? "00:00",
                   status: job2.status
                 });
               }

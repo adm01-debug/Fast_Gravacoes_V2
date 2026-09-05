@@ -1,35 +1,46 @@
 // Sound feedback utility for operator interactions
 // Uses Web Audio API for lightweight, no-file-needed sounds
 
-const AudioContextClass = typeof window !== 'undefined' ? (window.AudioContext || (window as any).webkitAudioContext) : null;
-const audioContext = AudioContextClass ? new AudioContextClass() : null;
+type BrowserAudioWindow = Window & {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+};
+
+let audioContext: AudioContext | null = null;
+
+function getAudioContext(): AudioContext | null {
+  if (audioContext) return audioContext;
+  const audioWindow = window as BrowserAudioWindow;
+  const AudioContextClass = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  try {
+    const ctx = new AudioContextClass();
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    audioContext = ctx;
+    return ctx;
+  } catch {
+    return null;
+  }
+}
 
 function playTone(frequency: number, duration: number, type: OscillatorType = 'sine', volume = 0.15) {
-  if (!audioContext) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
 
-  try {
-    // Resume context if suspended (browser autoplay policy)
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
 
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
 
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+  gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
-    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + duration);
-  } catch {
-    // Silently fail if audio is not available
-  }
+  oscillator.start(ctx.currentTime);
+  oscillator.stop(ctx.currentTime + duration);
 }
 
 export const SoundFeedback = {

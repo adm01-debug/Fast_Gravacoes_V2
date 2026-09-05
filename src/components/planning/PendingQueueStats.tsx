@@ -34,8 +34,8 @@ export function PendingQueueStats({ stats }: PendingQueueStatsProps) {
     {
       label: "Estagnados",
       value: stats.stuck,
-      icon: <History className={`h-4 w-4 sm:h-5 sm:w-5 ${stats.stuck > 0 ? 'text-amber-400' : 'text-muted-foreground'}`} />,
-      bgColor: stats.stuck > 0 ? "bg-amber-500/20" : "bg-muted",
+      icon: <History className={`h-4 w-4 sm:h-5 sm:w-5 ${stats.stuck > 0 ? 'text-warning' : 'text-muted-foreground'}`} />,
+      bgColor: stats.stuck > 0 ? "bg-warning/20" : "bg-muted",
       className: stats.stuck > 0 ? 'ring-1 ring-amber-500/50' : '',
     },
     {

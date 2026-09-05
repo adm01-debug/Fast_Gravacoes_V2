@@ -100,6 +100,13 @@ const statusConfig: Record<JobStatus, {
     textClass: 'text-indigo-600 dark:text-indigo-400',
     glowClass: 'dark:shadow-[0_0_12px_hsl(240_80%_60%/0.3)]',
   },
+  packaging: {
+    label: 'Embalagem',
+    icon: Archive,
+    bgClass: 'bg-cyan-500/20 dark:bg-cyan-500/10',
+    textClass: 'text-cyan-600 dark:text-cyan-400',
+    glowClass: 'dark:shadow-[0_0_12px_hsl(190_80%_60%/0.35)]',
+  },
 };
 
 export function StatusBadge({ status, size = 'md', showIcon = true, animated = false, className }: StatusBadgeProps) {

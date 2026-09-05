@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DbJob } from '@/features/jobs';
+import { DbJob, type JobUpdate } from '@/features/jobs';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { findNextAvailableSlot } from '@/features/jobs';
@@ -50,7 +50,7 @@ export function useDailyDragDrop({ onUpdate, allJobs, startHour, totalMinutes }:
       // Find next available slot on the target machine
       const nextSlot = findNextAvailableSlot(existingJobsOnDest, duration);
 
-      const updateData: any = {
+      const updateData: JobUpdate = {
         machine_id: machineId,
         updated_at: new Date().toISOString(),
       };

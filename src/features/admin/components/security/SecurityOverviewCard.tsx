@@ -91,7 +91,7 @@ export function SecurityOverviewCard() {
 
     if (score >= 90) return { score, level: 'excellent', color: 'text-green-500', label: 'Excelente' };
     if (score >= 70) return { score, level: 'high', color: 'text-blue-500', label: 'Bom' };
-    if (score >= 50) return { score, level: 'medium', color: 'text-amber-500', label: 'Médio' };
+    if (score >= 50) return { score, level: 'medium', color: 'text-warning', label: 'Médio' };
     if (score >= 30) return { score, level: 'low', color: 'text-orange-500', label: 'Baixo' };
     return { score, level: 'critical', color: 'text-red-500', label: 'Crítico' };
   }, [securityChecks]);
@@ -101,7 +101,7 @@ export function SecurityOverviewCard() {
       case 'pass':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case 'warn':
-        return <AlertTriangle className="h-4 w-4 text-amber-500" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case 'fail':
         return <XCircle className="h-4 w-4 text-red-500" />;
     }
@@ -112,7 +112,7 @@ export function SecurityOverviewCard() {
       return <ShieldCheck className="h-16 w-16 text-green-500" />;
     }
     if (securityScore.level === 'medium') {
-      return <Shield className="h-16 w-16 text-amber-500" />;
+      return <Shield className="h-16 w-16 text-warning" />;
     }
     if (securityScore.level === 'low') {
       return <ShieldAlert className="h-16 w-16 text-orange-500" />;

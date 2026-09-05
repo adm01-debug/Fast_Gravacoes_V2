@@ -11,6 +11,7 @@ export const statusColors: Record<JobStatus, string> = {
   delayed: 'bg-status-delayed/20 border-status-delayed text-status-delayed',
   rework: 'bg-status-rework/20 border-status-rework text-status-rework',
   buffer: 'bg-indigo-500/20 border-indigo-500 text-indigo-500',
+  packaging: 'bg-cyan-500/20 border-cyan-500 text-cyan-500',
 };
 
 export const statusColorsSolid: Record<JobStatus, string> = {
@@ -24,6 +25,7 @@ export const statusColorsSolid: Record<JobStatus, string> = {
   delayed: 'bg-status-delayed/80 border-status-delayed',
   rework: 'bg-status-rework/80 border-status-rework',
   buffer: 'bg-indigo-500/80 border-indigo-500',
+  packaging: 'bg-cyan-500/80 border-cyan-500',
 };
 
 export const statusLabels: Record<JobStatus, string> = {
@@ -37,6 +39,7 @@ export const statusLabels: Record<JobStatus, string> = {
   delayed: 'Atrasado',
   rework: 'Retrabalho',
   buffer: 'Buffer',
+  packaging: 'Embalagem',
 };
 
 export const PRIORITY_LABELS: Record<string, string> = {

@@ -1,6 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
+import { showErrorToast } from '@/lib/errorHandling';
 import { type AppRole } from '../index';
 import { ROLE_PERMISSIONS } from './useRBAC';
 
@@ -21,7 +28,7 @@ export function useRolePermissions(role: AppRole | null) {
       if (error) throw error;
       setPermissions((data || []).map(p => p.permission));
     } catch (error: unknown) {
-      console.error('Error fetching permissions:', error);
+      logger.error('Error fetching permissions', error, 'useRolePermissions');
       // Fallback to static permissions from useRBAC
       if (selectedRole && ROLE_PERMISSIONS[selectedRole]) {
         setPermissions(ROLE_PERMISSIONS[selectedRole]);
@@ -51,20 +58,21 @@ export function useRolePermissions(role: AppRole | null) {
         if (error) throw error;
         setPermissions(prev => prev.filter(p => p !== permissionStr));
       } else {
+        const [resource, action = 'read'] = permissionStr.split(':');
         const { error } = await supabase
           .from('role_permissions')
-          .insert({ 
-            role: targetRole, 
+          .insert({
+            role: targetRole,
             permission: permissionStr,
-            resource: permissionStr.split(':')[0]
-          } as any);
+            resource,
+            action,
+          });
         if (error) throw error;
         setPermissions(prev => [...prev, permissionStr]);
       }
       toast.success('Permissão atualizada');
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Erro ao atualizar permissão', { description: message });
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao atualizar permissão');
     } finally {
       setIsSaving(false);
     }

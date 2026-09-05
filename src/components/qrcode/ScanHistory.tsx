@@ -1,4 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +23,8 @@ import { ScanHistoryPagination } from "./ScanHistoryPagination";
 import { ScanHistoryItem } from "./ScanHistoryItem";
 import { ScanHistoryOperatorCounters } from "./ScanHistoryOperatorCounters";
 import { Eye, Play, Pause, RotateCcw, CheckCircle2 } from "lucide-react";
+import { useRealtimeChannel } from "@/lib/realtimeChannel";
+import { toast as sonnerToast } from "sonner";
 
 interface ScanHistoryProps {
   jobId?: string;
@@ -42,7 +49,6 @@ export const ScanHistory = ({ jobId, limit = 200 }: ScanHistoryProps) => {
   const [newScanIds, setNewScanIds] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15);
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: scans, isLoading } = useQuery({
@@ -59,21 +65,44 @@ export const ScanHistory = ({ jobId, limit = 200 }: ScanHistoryProps) => {
     }
   });
 
-  // Real-time subscription
+  const soundEnabledRef = useRef(soundEnabled);
+  const setNewScanIdsRef = useRef(setNewScanIds);
+  const highlightTimeoutRef = useRef<number | null>(null);
+  // Keep the refs mirroring the latest props without mutating them during
+  // render (React refs must only be read/written in effects or handlers).
   useEffect(() => {
-    const channel = supabase.channel('scan-history-realtime').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'qr_scan_history' }, async (payload: { new: Record<string, unknown> }) => {
-      const newScan = payload.new as { id: string; job_id: string; operator_id: string; action: string };
-      if (jobId && newScan.job_id !== jobId) return;
-      if (soundEnabled) playNotificationSound(newScan.action);
-      const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", newScan.operator_id).maybeSingle();
-      const actionLabel = actionConfig[newScan.action]?.label || newScan.action;
-      toast({ title: "Novo scan registrado", description: `${profile?.full_name || "Operador"} ${actionLabel.toLowerCase()} uma produção`, duration: 4000 });
-      setNewScanIds(prev => new Set(prev).add(newScan.id));
-      setTimeout(() => { setNewScanIds(prev => { const u = new Set(prev); u.delete(newScan.id); return u; }); }, 3000);
-      queryClient.invalidateQueries({ queryKey: ['scan-history'] });
-    }).subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [jobId, toast, queryClient, soundEnabled]);
+    soundEnabledRef.current = soundEnabled;
+    setNewScanIdsRef.current = setNewScanIds;
+  }, [soundEnabled, setNewScanIds]);
+
+  // Ref-based callback for the realtime listener — avoids stale closures and
+  // ensures the channel uses the shared singleton from realtimeChannel.ts.
+  const handleNewScan = useCallback(async (payload: { new: Record<string, unknown> }) => {
+    const newScan = payload.new as { id: string; job_id: string; operator_id: string; action: string };
+    if (jobId && newScan.job_id !== jobId) return;
+    if (soundEnabledRef.current) playNotificationSound(newScan.action);
+    const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", newScan.operator_id).maybeSingle();
+    const actionLabel = actionConfig[newScan.action]?.label || newScan.action;
+    sonnerToast("Novo scan registrado", { description: `${profile?.full_name || "Operador"} ${actionLabel.toLowerCase()} uma produção`, duration: 4000 });
+    setNewScanIdsRef.current(prev => new Set(prev).add(newScan.id));
+    if (highlightTimeoutRef.current) window.clearTimeout(highlightTimeoutRef.current);
+    highlightTimeoutRef.current = window.setTimeout(() => {
+      setNewScanIdsRef.current(prev => { const u = new Set(prev); u.delete(newScan.id); return u; });
+    }, 3000);
+    queryClient.invalidateQueries({ queryKey: ['scan-history'] });
+  }, [jobId, queryClient]);
+
+  useRealtimeChannel(
+    () => `scan-history-realtime-${jobId ?? 'all'}`,
+    [{ event: 'INSERT', schema: 'public', table: 'qr_scan_history' }],
+    handleNewScan,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current) window.clearTimeout(highlightTimeoutRef.current);
+    };
+  }, []);
 
   const operators = useMemo(() => {
     if (!scans) return [];

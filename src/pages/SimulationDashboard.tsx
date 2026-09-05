@@ -11,7 +11,7 @@ const SCENARIOS = generateScenarios();
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell 
-} from 'recharts';
+} from '@/lib/recharts';
 
 export default function SimulationDashboard() {
   const [isRunning, setIsLoading] = useState(false);
@@ -58,7 +58,7 @@ export default function SimulationDashboard() {
       <div className="p-8 space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-display font-bold">Simulador de Stress & Webhooks</h1>
+            <h1 className="text-3xl text-title font-bold">Simulador de Stress & Webhooks</h1>
             <p className="text-muted-foreground">Validação massiva de cenários de Edge Functions e Webhooks</p>
           </div>
           <div className="flex items-center gap-4">
@@ -133,7 +133,7 @@ export default function SimulationDashboard() {
                   {stats.p95Latency.toFixed(0)}ms
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <Zap className="h-4 w-4 text-amber-400" />
+                  <Zap className="h-4 w-4 text-warning" />
                   <span className="text-xs">Velocidade de resposta</span>
                 </div>
               </CardContent>

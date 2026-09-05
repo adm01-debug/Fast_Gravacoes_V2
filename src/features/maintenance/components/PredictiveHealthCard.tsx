@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Brain, AlertTriangle, ShieldCheck, TrendingUp, Info } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -37,17 +37,39 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
     );
   }
 
-  // Fallback to simulated data if no prediction exists in DB
-  const displayData = prediction || {
-    risk_score: 15,
-    confidence: 0.92,
-    predicted_failure_date: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-    factors: { vibration: 'low', temperature: 'normal', runtime: '850h' },
-    recommendations: ['Manter plano de lubrificação atual', 'Verificar alinhamento no próximo setup']
-  };
+  // No fabricated fallback: a machine without a real prediction row shows an
+  // explicit "no data" state instead of invented risk/confidence numbers
+  // presented as if they were AI output.
+  if (!prediction) {
+    return (
+      <Card className="glass-card overflow-hidden">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Brain className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base text-title">Saúde Preditiva IA</CardTitle>
+              <CardDescription className="text-xs">Motor de inferência TPM 4.0</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground text-center py-6">
+            Sem predição disponível para esta máquina ainda.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const riskColor = displayData.risk_score > 70 ? 'text-destructive' : displayData.risk_score > 40 ? 'text-amber-500' : 'text-emerald-500';
-  const riskBg = displayData.risk_score > 70 ? 'bg-destructive/10' : displayData.risk_score > 40 ? 'bg-amber-500/10' : 'bg-emerald-500/10';
+  const displayData = prediction;
+  const recommendation = Array.isArray(displayData.recommendations) && displayData.recommendations.length > 0
+    ? String(displayData.recommendations[0])
+    : 'Sem recomendação disponível';
+
+  const riskColor = displayData.risk_score > 70 ? 'text-destructive' : displayData.risk_score > 40 ? 'text-warning' : 'text-success';
+  const riskBg = displayData.risk_score > 70 ? 'bg-destructive/10' : displayData.risk_score > 40 ? 'bg-warning/10' : 'bg-success/10';
 
   return (
     <Card className="glass-card overflow-hidden hover:shadow-glow-primary transition-all duration-500">
@@ -58,7 +80,7 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
               <Brain className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-base font-display">Saúde Preditiva IA</CardTitle>
+              <CardTitle className="text-base text-title">Saúde Preditiva IA</CardTitle>
               <CardDescription className="text-xs">Motor de inferência TPM 4.0</CardDescription>
             </div>
           </div>
@@ -70,11 +92,11 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
       <CardContent className="space-y-4">
         <div className="flex flex-col items-center justify-center py-2">
           <div className={`relative w-24 h-24 flex items-center justify-center rounded-full ${riskBg} border-2 border-dashed border-primary/20 mb-2`}>
-            <span className={`text-3xl font-bold font-display ${riskColor}`}>
+            <span className={`text-3xl font-bold text-title ${riskColor}`}>
               {100 - displayData.risk_score}%
             </span>
             <div className="absolute -bottom-1 -right-1 bg-background p-1 rounded-full shadow-sm border border-border">
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <TrendingUp className="h-4 w-4 text-success" />
             </div>
           </div>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Índice de Saúde</span>
@@ -100,8 +122,8 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
           <div className="p-2 rounded-lg bg-secondary/30 border border-border/50">
             <p className="text-[10px] text-muted-foreground uppercase">Recomendação</p>
             <div className="flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3 text-amber-500" />
-              <p className="text-[10px] font-medium truncate">Monitorar Vibração</p>
+              <AlertTriangle className="h-3 w-3 text-warning" />
+              <p className="text-[10px] font-medium truncate" title={recommendation}>{recommendation}</p>
             </div>
           </div>
         </div>
@@ -109,7 +131,7 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
         <div className="pt-2 border-t border-border/50">
           <TooltipProvider>
             <div className="flex items-center gap-2 flex-wrap">
-              {displayData.factors && typeof displayData.factors === 'object' && Object.entries(displayData.factors as Record<string, any>).map(([key, value]) => (
+              {displayData.factors && typeof displayData.factors === 'object' && Object.entries(displayData.factors as Record<string, unknown>).map(([key, value]) => (
                 <Tooltip key={key}>
                   <TooltipTrigger asChild>
                     <Badge variant="secondary" className="text-[10px] bg-secondary/50 capitalize">

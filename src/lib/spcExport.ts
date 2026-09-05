@@ -4,8 +4,21 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { SPCParameter, SPCMeasurement } from '@/features/analytics/hooks/useSPC';
 
-export const exportSPCReport = async (parameter: SPCParameter, measurements: SPCMeasurement[], capability: any) => {
-  const doc = new jsPDF();
+interface SPCCapability {
+  cp: number;
+  cpk: number;
+  mean: number;
+  stdDev: number;
+  performance: string;
+}
+
+type JsPDFWithAutoTable = jsPDF & {
+  lastAutoTable?: { finalY: number };
+  internal: jsPDF['internal'] & { getNumberOfPages: () => number };
+};
+
+export const exportSPCReport = async (parameter: SPCParameter, measurements: SPCMeasurement[], capability: SPCCapability | null) => {
+  const doc = new jsPDF() as JsPDFWithAutoTable;
   const now = new Date();
 
   // Header
@@ -43,7 +56,7 @@ export const exportSPCReport = async (parameter: SPCParameter, measurements: SPC
 
   // Capability Indices
   if (capability) {
-    const finalY = (doc as any).lastAutoTable.finalY || 100;
+    const finalY = doc.lastAutoTable?.finalY ?? 100;
     doc.text('2. Índices de Capabilidade (Cp/Cpk)', 14, finalY + 15);
 
     autoTable(doc, {
@@ -87,7 +100,7 @@ export const exportSPCReport = async (parameter: SPCParameter, measurements: SPC
   });
 
   // Footer
-  const pageCount = (doc as any).internal.getNumberOfPages();
+  const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(8);

@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/use-memo -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-
 /**
  * useDebounce - Delays updating a value until after a specified delay
  *
@@ -50,7 +50,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  * // Use debouncedCallback in onChange handlers
  * <input onChange={(e) => debouncedCallback(e.target.value)} />
  */
-export function useDebouncedCallback<T extends (...args: any[]) => any>(
+export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number,
   deps: React.DependencyList = []

@@ -1,3 +1,4 @@
+import { clickableProps } from '@/lib/a11y';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,8 +62,8 @@ export function AlertCard({
             return (
               <div
                 key={job.id}
-                onClick={() => onJobClick(job)}
-                className="p-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors cursor-pointer group"
+                {...clickableProps(() => onJobClick(job), { label: `Abrir job ${job.order_number}` })}
+                className="p-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -76,7 +77,7 @@ export function AlertCard({
                     <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {job.scheduled_date ? parseDateOnly(job.scheduled_date)!.toLocaleDateString('pt-BR') : '-'}
+                        {job.scheduled_date ? (parseDateOnly(job.scheduled_date)?.toLocaleDateString('pt-BR') ?? '-') : '-'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />

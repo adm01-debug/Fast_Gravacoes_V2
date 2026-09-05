@@ -1,6 +1,6 @@
 import { Brain, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from '@/lib/recharts';
 import { MachinePrediction } from '@/features/analytics/hooks/useMLPredictions';
 
 interface MLRiskDistributionChartProps {
@@ -33,14 +33,14 @@ export function MLRiskDistributionChart({ predictions }: MLRiskDistributionChart
 
   const getTrendIcon = () => {
     if (highRiskPercentage > 30) return <TrendingUp className="h-4 w-4 text-primary" />;
-    if (highRiskPercentage > 15) return <Minus className="h-4 w-4 text-amber-500" />;
-    return <TrendingDown className="h-4 w-4 text-emerald-500" />;
+    if (highRiskPercentage > 15) return <Minus className="h-4 w-4 text-warning" />;
+    return <TrendingDown className="h-4 w-4 text-success" />;
   };
 
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center justify-between text-lg font-display">
+        <CardTitle className="flex items-center justify-between text-lg text-title">
           <span className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
             Distribuição de Risco

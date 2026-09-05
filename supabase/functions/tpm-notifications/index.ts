@@ -1,43 +1,19 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { requireCronSecret } from '../_shared/cronAuth.ts'
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: getCorsHeaders(req) })
   }
 
-  try {
-    const apiKey = Deno.env.get('CRON_API_KEY');
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
-    const provided = req.headers.get('x-api-key') || req.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (provided !== apiKey) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
+  // Internal/cron-only — no frontend caller. Fail closed.
+  const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) })
+  if (unauthorized) return unauthorized
 
+  try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -58,7 +34,7 @@ serve(async (req) => {
     if (scheduleError) throw scheduleError
 
     // 2. Processar cada agendamento e verificar regras de severidade
-    for (const schedule of schedules) {
+    for (const schedule of schedules || []) {
       // Verificar se existe execução em andamento ou aguardando aprovação
       const { data: ongoingRecords } = await supabase
         .from('maintenance_records')
@@ -68,12 +44,12 @@ serve(async (req) => {
         .limit(1)
 
       if (ongoingRecords && ongoingRecords.length > 0) {
-        console.log(`Pulando notificações para ${schedule.machine.code}: Manutenção em execução ou aguardando revisão.`)
+        console.log(`Pulando notificações para ${schedule.machine?.code ?? schedule.machine_id}: Manutenção em execução ou aguardando revisão.`)
         continue
       }
 
       // Lógica de severidade e throttling aqui...
-      console.log(`Verificando máquina: ${schedule.machine.code}`)
+      console.log(`Verificando máquina: ${schedule.machine?.code ?? schedule.machine_id}`)
     }
 
     // 3. Processar Fila (Retentativas)
@@ -87,7 +63,7 @@ serve(async (req) => {
 
     if (queueError) throw queueError
 
-    for (const item of queueItems) {
+    for (const item of queueItems || []) {
       console.log(`Processando item da fila: ${item.id} (${item.channel})`)
       
       // Simular envio
@@ -111,6 +87,7 @@ serve(async (req) => {
           sent_at: new Date().toISOString()
         })
       } catch (e: unknown) {
+        console.error('Error processing TPM notification item:', item.id, e)
         const nextRetry = new Date()
         nextRetry.setMinutes(nextRetry.getMinutes() + Math.pow(2, item.retry_count + 1))
 
@@ -120,7 +97,7 @@ serve(async (req) => {
             status: 'failed',
             retry_count: item.retry_count + 1,
             next_retry_at: nextRetry.toISOString(),
-            error_log: e instanceof Error ? e.message : 'Unknown error'
+            error_log: e instanceof Error ? e.message : String(e)
           })
           .eq('id', item.id)
       }
@@ -131,10 +108,9 @@ serve(async (req) => {
       { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
   } catch (error: unknown) {
-    console.error('Erro no processamento TPM:', error)
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Erro no processamento TPM:', error instanceof Error ? error.message : String(error))
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }

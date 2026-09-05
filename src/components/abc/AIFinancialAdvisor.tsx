@@ -19,7 +19,7 @@ export function AIFinancialAdvisor() {
         type: 'profit',
         title: `Carga Financeira: ${bestTech.technique_name}`,
         description: `A técnica ${bestTech.technique_name} representa o maior volume de custos alocados (${((bestTech.total_cost / totalAllocatedCost) * 100).toFixed(1)}%). Sugerimos análise de margem de contribuição.`,
-        icon: <TrendingUp className="h-4 w-4 text-emerald-500" />
+        icon: <TrendingUp className="h-4 w-4 text-success" />
       });
     }
 
@@ -31,7 +31,7 @@ export function AIFinancialAdvisor() {
           type: 'cost',
           title: 'Gestão de Utilidades',
           description: `O pool de ${energyPool.name} está em ${((energyPool.monthly_budget / totalBudget) * 100).toFixed(1)}% do orçamento total. IA sugere monitoramento de pico de demanda.`,
-          icon: <Wallet className="h-4 w-4 text-amber-500" />
+          icon: <Wallet className="h-4 w-4 text-warning" />
         });
       }
     }

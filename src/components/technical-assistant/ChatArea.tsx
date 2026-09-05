@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useRef, useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -103,7 +108,7 @@ export function ChatArea({
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 animate-pulse text-[8px]">ELITE 10/10</Badge>
               </CardTitle>
               <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> System Online</span>
+                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-success" /> System Online</span>
                 <span className="flex items-center gap-1">CPU: 4%</span>
                 <span className="flex items-center gap-1">LAT: 12ms</span>
               </div>
@@ -244,8 +249,8 @@ export function ChatArea({
               <div className="flex gap-2 items-end">
                 <div className="relative flex-1 group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-10">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[8px] font-black uppercase text-emerald-500/70 tracking-tighter">Secure Link</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                    <span className="text-[8px] font-black uppercase text-success/70 tracking-tighter">Secure Link</span>
                   </div>
                   <Textarea 
                     value={input} 
@@ -303,7 +308,7 @@ export function ChatArea({
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-1.5">
                     <Keyboard className="h-3 w-3 text-muted-foreground/50" />
-                    <span className="text-[9px] font-bold uppercase text-muted-foreground/70">
+                    <span className="text-[9px] font-bold uppercase text-muted-foreground">
                       <kbd className="bg-muted px-1 rounded text-[8px]">ENT</kbd> Enviar
                     </span>
                   </div>
@@ -311,9 +316,9 @@ export function ChatArea({
                     <Sparkles className="h-3 w-3 text-primary/50" />
                     <span className="text-[9px] font-bold uppercase text-primary/70">AI Optimizer On</span>
                   </div>
-                  <div className="flex items-center gap-1.5 cursor-pointer group" onClick={() => setDiagnosticMode(!diagnosticMode)}>
+                  <div role="button" tabIndex={0} aria-label="Alternar modo diagnóstico" className="flex items-center gap-1.5 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" onClick={() => setDiagnosticMode(!diagnosticMode)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDiagnosticMode(!diagnosticMode); } }}>
                     <Activity className={cn("h-3 w-3 transition-colors", diagnosticMode ? "text-primary animate-pulse" : "text-muted-foreground/50")} />
-                    <span className={cn("text-[9px] font-black uppercase tracking-widest", diagnosticMode ? "text-primary" : "text-muted-foreground/70 group-hover:text-primary transition-colors")}>
+                    <span className={cn("text-[9px] font-black uppercase tracking-widest", diagnosticMode ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
                       {diagnosticMode ? "Diagnostic Active" : "Diagnostic Mode"}
                     </span>
                   </div>

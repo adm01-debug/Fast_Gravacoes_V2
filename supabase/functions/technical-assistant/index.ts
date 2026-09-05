@@ -1,20 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-webhook-signature, x-api-key',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 // Conhecimento técnico por técnica
 const techniqueKnowledge: Record<string, string> = {
@@ -416,42 +403,81 @@ function detectTechnique(message: string): string[] {
   return techniques;
 }
 
+const MAX_MESSAGES = 40;
+const MAX_MESSAGE_CHARS = 8000;
+const MAX_CUSTOM_KNOWLEDGE_CHARS = 20000;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
-    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
-    const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    // Every call fans out to a paid AI gateway request — require a real,
+    // signed-in user so this can't be hit anonymously for unbounded cost.
+    const authHeader = req.headers.get("Authorization");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!authHeader || !supabaseUrl || !supabaseAnonKey) {
+      return new Response(
+        JSON.stringify({ error: "Não autorizado" }),
+        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
     }
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { user }, error: authError } = await userClient.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Token inválido" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user } } = await userClient.auth.getUser();
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: "Não autorizado" }),
+        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
     }
 
-    const { messages, customKnowledge } = await req.json();
+    const body = await req.json().catch(() => null);
+    const { messages, customKnowledge } = body ?? {};
+
+    // Validate the request body up front so malformed input returns 400, not 500.
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "'messages' must be a non-empty array" }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(
+        JSON.stringify({ error: `'messages' must contain at most ${MAX_MESSAGES} entries` }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+    const oversizedMessage = messages.some(
+      (m: any) => typeof m?.content === "string" && m.content.length > MAX_MESSAGE_CHARS
+    );
+    if (oversizedMessage) {
+      return new Response(
+        JSON.stringify({ error: `Each message must be at most ${MAX_MESSAGE_CHARS} characters` }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+    if (typeof customKnowledge === "string" && customKnowledge.length > MAX_CUSTOM_KNOWLEDGE_CHARS) {
+      return new Response(
+        JSON.stringify({ error: `'customKnowledge' must be at most ${MAX_CUSTOM_KNOWLEDGE_CHARS} characters` }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     // Detectar técnica na última mensagem do usuário
-    const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop();
-    const detectedTechniques = lastUserMessage ? detectTechnique(lastUserMessage.content) : [];
+    const lastUserMessage = messages.filter((m: any) => m && m.role === 'user').pop();
+    const detectedTechniques = lastUserMessage && typeof lastUserMessage.content === 'string'
+      ? detectTechnique(lastUserMessage.content)
+      : [];
 
     // Montar conhecimento contextual
     let contextualKnowledge = "";
@@ -471,6 +497,7 @@ serve(async (req) => {
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
+      signal: AbortSignal.timeout(25_000),
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
@@ -478,9 +505,9 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { 
-            role: "system", 
-            content: systemPrompt + contextualKnowledge 
+          {
+            role: "system",
+            content: systemPrompt + contextualKnowledge
           },
           ...messages,
         ],
@@ -513,8 +540,8 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("technical-assistant error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
+    console.error("technical-assistant error:", e instanceof Error ? e.message : String(e));
+    return new Response(JSON.stringify({ error: "Erro interno do servidor" }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

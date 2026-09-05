@@ -28,6 +28,7 @@ export * from './types/sequencing';
 export type DbJob = import('./services/jobsService').Job;
 export type DbTechnique = import('./services/techniquesService').Technique;
 export type DbMachine = import('../production/services/machinesService').Machine;
+export type { JobStatus, JobPriority } from './types/job.schema';
 export type SchedulingConflict = import('./hooks/useSchedulingConflicts').SchedulingConflict;
 export type StuckJob = import('./hooks/useStuckJobsDetection').StuckJob;
 export type { SequencingSuggestion, ColorGroup } from './types/sequencing';

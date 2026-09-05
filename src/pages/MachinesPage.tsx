@@ -1,5 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
-import { DbMachine } from '@/features/jobs';
+import { DbMachine, DbTechnique } from '@/features/jobs';
+import type { MaintenanceSchedule } from '@/features/maintenance/hooks/types';
+
+
 import { MainLayout } from '@/components/layout/MainLayout';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -59,7 +62,7 @@ export default function MachinesPage() {
   const [machineForQR, setMachineForQR] = useState<DbMachine | null>(null);
   const [executionModalOpen, setExecutionModalOpen] = useState(false);
   const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
-  const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<MaintenanceSchedule | null>(null);
   const [currentRecordId, setCurrentRecordId] = useState<string | null>(null);
 
   const [selectedMachines, setSelectedMachines] = useState<Set<string>>(new Set());
@@ -72,19 +75,20 @@ export default function MachinesPage() {
       return;
     }
 
-    const schedule = schedules.find((s: any) => s.id === scheduleId);
-    setSelectedSchedule(schedule);
+    const schedule = schedules.find((s: MaintenanceSchedule) => s.id === scheduleId);
+    setSelectedSchedule(schedule ?? null);
 
     startMaintenance.mutate({
       schedule_id: scheduleId,
       performed_by: user.id,
       performed_by_name: profile.full_name || 'Usuário',
     }, {
-      onSuccess: (record: any) => {
+      onSuccess: (record: { id: string }) => {
         setCurrentRecordId(record.id);
         setExecutionModalOpen(true);
       }
     });
+
   };
 
   const handleCompleteMaintenance = (data: Parameters<NonNullable<React.ComponentProps<typeof MaintenanceExecutionModal>['onComplete']>>[0]) => {
@@ -123,7 +127,7 @@ export default function MachinesPage() {
   };
 
   const filteredMachines = useMemo(() => {
-    return machines.filter((m: any) => {
+    return machines.filter((m: DbMachine) => {
       const matchesSearch = m.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            m.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' ||
@@ -134,15 +138,16 @@ export default function MachinesPage() {
   }, [machines, searchTerm, statusFilter]);
 
   const machinesByTechnique = useMemo(() => {
-    return filteredMachines.reduce((acc: any, machine: any) => {
+    return filteredMachines.reduce<Record<string, DbMachine[]>>((acc, machine) => {
       const techniqueId = machine.technique_id;
       if (!acc[techniqueId]) {
         acc[techniqueId] = [];
       }
       acc[techniqueId].push(machine);
       return acc;
-    }, {} as Record<string, typeof machines>);
+    }, {});
   }, [filteredMachines]);
+
 
   if (isLoadingMachines) {
     return (
@@ -172,7 +177,7 @@ export default function MachinesPage() {
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-display font-bold gradient-text">Máquinas</h1>
+            <h1 className="text-2xl text-title font-bold gradient-text">Máquinas</h1>
             <p className="text-muted-foreground">Orquestração e monitoramento de equipamentos industriais</p>
           </div>
           <div className="flex items-center gap-3">
@@ -221,9 +226,9 @@ export default function MachinesPage() {
                   <Activity className="h-5 w-5 text-blue-500" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {isLoadingReliability ? <Skeleton className="h-6 w-12" /> : `${Math.round(reliabilitySummary.averageAvailability)}%`}
-                  </p>
+                  </div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider truncate">Disponibilidade</p>
                 </div>
               </div>
@@ -237,9 +242,9 @@ export default function MachinesPage() {
                   <AlertTriangle className="h-5 w-5 text-destructive" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {isLoadingReliability ? <Skeleton className="h-6 w-12" /> : reliabilitySummary.criticalMachines.length}
-                  </p>
+                  </div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider truncate">Críticas</p>
                 </div>
               </div>
@@ -312,7 +317,7 @@ export default function MachinesPage() {
                               />
                               <span>{technique?.name || 'Técnica Desconhecida'}</span>
                               <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-widest">
-                                {(techMachines as any[]).length}
+                                {(techMachines as DbMachine[]).length}
                               </Badge>
                             </CardTitle>
                             <Button
@@ -320,10 +325,10 @@ export default function MachinesPage() {
                               size="sm"
                               className="text-[10px] uppercase font-bold tracking-tighter"
                               onClick={() => {
-                                const allSelected = (techMachines as any[]).every((m: any) => selectedMachines.has(m.id));
+                                const allSelected = (techMachines as DbMachine[]).every((m) => selectedMachines.has(m.id));
                                 setSelectedMachines(prev => {
                                   const next = new Set(prev);
-                                  (techMachines as any[]).forEach((m: any) => {
+                                  (techMachines as DbMachine[]).forEach((m) => {
                                     if (allSelected) next.delete(m.id);
                                     else next.add(m.id);
                                   });
@@ -331,13 +336,14 @@ export default function MachinesPage() {
                                 });
                               }}
                             >
-                              {(techMachines as any[]).every((m: any) => selectedMachines.has(m.id)) ? 'Deselecionar' : 'Selecionar Grupo'}
+                              {(techMachines as DbMachine[]).every((m) => selectedMachines.has(m.id)) ? 'Deselecionar' : 'Selecionar Grupo'}
                             </Button>
                           </div>
                         </CardHeader>
                         <CardContent className="pt-6">
                           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {(techMachines as any[]).map((machine: any, idx: number) => {
+                            {(techMachines as DbMachine[]).map((machine, idx: number) => {
+
                               const machineMetrics = oeeData?.byMachine.find(m => m.machineId === machine.id);
                               return (
                                 <div key={machine.id} className="relative group">
@@ -482,6 +488,7 @@ export default function MachinesPage() {
           schedule={selectedSchedule}
           recordId={currentRecordId}
           onComplete={handleCompleteMaintenance}
+          isSubmitting={completeMaintenance.isPending}
         />
 
         {/* Create Schedule Modal */}
@@ -507,7 +514,7 @@ function MachineHistoryTab({ machineId }: { machineId: string }) {
     fromDate: period.fromDate,
     toDate: period.toDate,
   });
-  const { exportAuditTrail } = useDataExport('machines' as any);
+  const { exportAuditTrail } = useDataExport('machines');
 
   const handleExport = useCallback((format: 'csv' | 'pdf') => {
     exportAuditTrail({
@@ -553,10 +560,10 @@ function MachineHistoryTab({ machineId }: { machineId: string }) {
   );
 }
 
-function FactoryHeatmap({ machines, techniques }: { machines: any[]; techniques: any[] }) {
+function FactoryHeatmap({ machines, techniques }: { machines: DbMachine[]; techniques: DbTechnique[] }) {
   const { jobs } = useSchedulingData();
 
-  const getHeatColor = (machine: any) => {
+  const getHeatColor = (machine: DbMachine) => {
     if (!machine.is_active) return 'bg-slate-200 dark:bg-slate-800 opacity-40';
 
     // Count jobs in production for this machine
@@ -568,12 +575,13 @@ function FactoryHeatmap({ machines, techniques }: { machines: any[]; techniques:
     const today = new Date().toISOString().split('T')[0];
     const scheduledToday = jobs.filter(j => j.machine_id === machine.id && j.scheduled_date === today).length;
 
-    if (scheduledToday > 0) return 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.3)]';
+    if (scheduledToday > 0) return 'bg-warning shadow-[0_0_10px_rgba(251,191,36,0.3)]';
 
-    return 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]';
+    return 'bg-success shadow-[0_0_10px_rgba(16,185,129,0.2)]';
   };
 
-  const getMachineStats = (machine: any) => {
+  const getMachineStats = (machine: DbMachine) => {
+
     const machineJobs = jobs.filter(j => j.machine_id === machine.id);
     const productionCount = machineJobs.filter(j => j.status === 'production').length;
     const today = new Date().toISOString().split('T')[0];
@@ -595,14 +603,14 @@ function FactoryHeatmap({ machines, techniques }: { machines: any[]; techniques:
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg flex items-center gap-2">
-                <MapIcon className="h-5 w-5 text-amber-600" />
+                <MapIcon className="h-5 w-5 text-warning" />
                 Layout Térmico da Fábrica
               </CardTitle>
               <CardDescription>Visualização em tempo real de pontos de calor e ociosidade</CardDescription>
             </div>
             <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-tighter shrink-0">
               <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-orange-500" /> Carga Alta</div>
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500" /> Normal</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-success" /> Normal</div>
               <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-slate-400" /> Inativo</div>
             </div>
           </div>
@@ -643,7 +651,7 @@ function FactoryHeatmap({ machines, techniques }: { machines: any[]; techniques:
                             </p>
                             <p className="text-[10px] uppercase font-bold flex justify-between gap-4">
                                <span>Ocupação:</span>
-                               <span className="text-amber-500">{Math.round(getMachineStats(machine).occupancy)}%</span>
+                               <span className="text-warning">{Math.round(getMachineStats(machine).occupancy)}%</span>
                             </p>
                          </div>
                       </TooltipContent>

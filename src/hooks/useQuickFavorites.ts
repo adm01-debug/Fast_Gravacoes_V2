@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
@@ -207,6 +212,9 @@ export function useQuickFavorites() {
     },
     onSuccess: (newFavorites) => {
       queryClient.setQueryData(['user-favorites', user?.id], newFavorites);
+    },
+    onError: () => {
+      toast({ title: 'Erro ao salvar favoritos', description: 'Não foi possível salvar seus atalhos.', variant: 'destructive' });
     },
   });
 

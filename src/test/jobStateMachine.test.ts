@@ -4,6 +4,7 @@ import {
   getValidTransitions,
   assertTransition,
 } from '@/features/jobs/services/jobStateMachine';
+import type { JobStatus } from '@/features/jobs/services/jobsService';
 
 // ── canTransition ─────────────────────────────────────────────
 
@@ -72,7 +73,8 @@ describe('canTransition', () => {
     it('blocks buffer → finished', () => expect(canTransition('buffer', 'finished')).toBe(false));
   });
 
-  describe('finished (terminal)', () => {
+  describe('finished (post-production: only auto-packaging follows)', () => {
+    it('allows finished → packaging (auto)', () => expect(canTransition('finished', 'packaging')).toBe(true));
     it('blocks finished → queue', () => expect(canTransition('finished', 'queue')).toBe(false));
     it('blocks finished → production', () => expect(canTransition('finished', 'production')).toBe(false));
     it('blocks finished → cancelled', () => expect(canTransition('finished', 'cancelled')).toBe(false));
@@ -98,8 +100,8 @@ describe('getValidTransitions', () => {
     expect(targets).not.toContain('finished');
   });
 
-  it('returns empty array for finished (terminal)', () => {
-    expect(getValidTransitions('finished')).toHaveLength(0);
+  it('returns only packaging for finished (post-production step)', () => {
+    expect(getValidTransitions('finished')).toEqual(['packaging']);
   });
 
   it('returns only queue for cancelled', () => {
@@ -129,8 +131,17 @@ describe('assertTransition', () => {
     expect(() => assertTransition('finished', 'queue')).toThrow('"finished" → "queue"');
   });
 
-  it('throws for terminal state and mentions no valid transitions', () => {
+  it('throws for finished → production and lists packaging as the only valid target', () => {
     expect(() => assertTransition('finished', 'production')).toThrow(
+      'Transições válidas: packaging'
+    );
+  });
+
+  it('falls back to "estado terminal" wording for a status with no mapped transitions', () => {
+    // No JobStatus in the current schema is fully terminal anymore (`finished`
+    // now transitions to `packaging`), so this exercises the defensive
+    // fallback in assertTransition's message for a status absent from the map.
+    expect(() => assertTransition('unknown' as JobStatus, 'production')).toThrow(
       'nenhuma (estado terminal)'
     );
   });

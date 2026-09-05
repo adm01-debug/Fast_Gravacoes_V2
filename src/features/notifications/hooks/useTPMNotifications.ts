@@ -1,7 +1,8 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { usePushNotifications } from '@/features/notifications';
 import { useNotificationSounds } from '@/features/notifications';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { MaintenanceAlert } from '@/features/maintenance/hooks/types';
 import { toast } from 'sonner';
 
@@ -35,7 +36,7 @@ const getPreferences = (): TPMNotificationPreferences => {
 export const saveTPMNotificationPreferences = (prefs: Partial<TPMNotificationPreferences>) => {
   const current = getPreferences();
   const updated = { ...current, ...prefs };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch { /* quota exceeded or private browsing */ }
   return updated;
 };
 
@@ -162,7 +163,7 @@ export const useTPMNotifications = () => {
   }, [sendNotification]);
 
   // Send test notification
-  const sendTestNotification = useCallback(async (machineId: string, channel: 'email' | 'whatsapp' | 'push', forceSend = false): Promise<any> => {
+  const sendTestNotification = useCallback(async (machineId: string, channel: 'email' | 'whatsapp' | 'push', forceSend = false): Promise<{ success: boolean; needsValidation?: boolean; recipients: unknown[]; machine?: { name: string; code: string } }> => {
     try {
       const { data: settings } = await supabase
         .from('user_notification_settings')
@@ -223,7 +224,7 @@ export const useTPMNotifications = () => {
 
       toast.success(`Notificação de teste enviada via ${channel} para ${recipients.length} usuários.`);
       return { success: true, recipients };
-    } catch (error: unknown) {
+    } catch {
 
       toast.error('Erro ao processar notificação de teste');
       return { success: false, recipients: [] };
@@ -231,41 +232,23 @@ export const useTPMNotifications = () => {
   }, [sendNotification]);
 
   // Listen to realtime maintenance alerts
-  useEffect(() => {
+  useRealtimeChannel('tpm-alerts-notifications', [{ table: 'maintenance_alerts' }], async (payload) => {
     if (permission !== 'granted') return;
+    const newAlert = payload.new as MaintenanceAlert;
 
-    const channel = supabase
-      .channel('tpm-alerts-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'maintenance_alerts'
-        },
-        async (payload) => {
-          const newAlert = payload.new as MaintenanceAlert;
+    const { data: machine } = await supabase
+      .from('machines')
+      .select('id, name, code')
+      .eq('id', newAlert.machine_id)
+      .single();
 
-          const { data: machine } = await supabase
-            .from('machines')
-            .select('id, name, code')
-            .eq('id', newAlert.machine_id)
-            .single();
-
-          const alertWithMachine = {
-            ...newAlert,
-            machine: machine || undefined
-          };
-
-          sendMaintenanceNotification(alertWithMachine);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
+    const alertWithMachine = {
+      ...newAlert,
+      machine: machine || undefined
     };
-  }, [permission, sendMaintenanceNotification]);
+
+    sendMaintenanceNotification(alertWithMachine);
+  });
 
   // Cleanup old notified alerts periodically
   useEffect(() => {

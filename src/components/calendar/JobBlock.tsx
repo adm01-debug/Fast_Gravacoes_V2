@@ -52,7 +52,7 @@ export function JobBlock({ job, position, hasConflict, ghost, onClick, draggable
             'shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40',
             statusColors[job.status as JobStatus],
             ghost ? 'bottom-5 opacity-70 border-dashed' : 'bottom-2',
-            hasConflict && 'ring-2 ring-destructive/70 animate-pulse',
+            hasConflict && 'ring-2 ring-destructive/70 motion-safe:animate-pulse',
             isDragging && 'opacity-50 grayscale scale-95'
           )}
           style={style}

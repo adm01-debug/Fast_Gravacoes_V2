@@ -15,7 +15,7 @@ export function QuickActions() {
   return (
     <Card className="glass-card card-interactive animate-fade-in-up opacity-0 [animation-fill-mode:forwards] [animation-delay:0.2s]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-display gradient-text">Ações Rápidas</CardTitle>
+        <CardTitle className="text-title gradient-text">Ações Rápidas</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-3">
         {actions.map((action, index) => {

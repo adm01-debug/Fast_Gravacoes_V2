@@ -17,7 +17,7 @@ export function BIHeader({ comparisonMode, setComparisonMode, onNavigate }: BIHe
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="animate-slide-up">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold font-display flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-title flex items-center gap-3">
             <div className="p-2 rounded-xl bg-primary/10 shadow-glow-primary">
               <BarChart3 className="h-8 w-8 text-primary" />
             </div>

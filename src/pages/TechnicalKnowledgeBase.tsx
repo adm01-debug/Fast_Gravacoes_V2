@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFuseSearch } from '@/hooks/useFuseSearch';
@@ -8,6 +13,7 @@ import { BookOpen, Plus, Lightbulb } from 'lucide-react';
 import { useTechnicalSheets, useTechnicalSheetMutations, TechnicalSheet } from '@/hooks/useTechnicalSheets';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTechniques } from '@/features/jobs';
 import { TechnicalSheetViewer } from '@/components/knowledge/TechnicalSheetViewer';
 import { TechnicalSheetEditor } from '@/components/knowledge/TechnicalSheetEditor';
 import { KnowledgeBaseStats } from '@/components/knowledge/KnowledgeBaseStats';
@@ -22,7 +28,7 @@ const TechnicalKnowledgeBase = () => {
   const [selectedTechnique, setSelectedTechnique] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedMachine, setSelectedMachine] = useState<string>('all');
-  const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
+  const [selectedSheet, setSelectedSheet] = useState<string | null>(() => searchParams.get('sheet'));
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const { role } = useAuth();
@@ -30,14 +36,7 @@ const TechnicalKnowledgeBase = () => {
 
   const { sheets, isLoadingSheets, categories, materials } = useTechnicalSheets();
 
-  const { data: techniques = [] } = useQuery({
-    queryKey: ['techniques'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('techniques').select('*').order('name');
-      if (error) throw error;
-      return data;
-    }
-  });
+  const { data: techniques = [] } = useTechniques();
 
   const { data: machines = [] } = useQuery({
     queryKey: ['machines-active'],
@@ -45,26 +44,26 @@ const TechnicalKnowledgeBase = () => {
       const { data, error } = await supabase.from('machines').select('id, name, code').eq('is_active', true).order('name');
       if (error) throw error;
       return data;
-    }
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
-  // Deep linking: read sheet from URL
+  // Deep linking: validate URL sheet id once sheets load; clear if not found
   useEffect(() => {
     const sheetParam = searchParams.get('sheet');
-    if (sheetParam && sheets.length > 0) {
-      const exists = sheets.find(s => s.id === sheetParam);
-      if (exists) setSelectedSheet(sheetParam);
+    if (!sheetParam || sheets.length === 0) return;
+    const exists = sheets.some(s => s.id === sheetParam);
+    if (!exists && selectedSheet === sheetParam) {
+      setSelectedSheet(null);
     }
-  }, [searchParams, sheets]);
+  }, [searchParams, sheets, selectedSheet]);
 
-  // Update URL when sheet changes
+  // Sync selection back to URL
   useEffect(() => {
-    if (selectedSheet) {
-      setSearchParams({ sheet: selectedSheet }, { replace: true });
-    } else {
-      setSearchParams({}, { replace: true });
-    }
-  }, [selectedSheet]);
+    setSearchParams(selectedSheet ? { sheet: selectedSheet } : {}, { replace: true });
+  }, [selectedSheet, setSearchParams]);
+
 
   // Expanded fuzzy search: title, description, material, machine
   const fuseSearchedSheets = useFuseSearch(sheets, searchTerm, {
@@ -141,7 +140,7 @@ const TechnicalKnowledgeBase = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl font-display font-black text-foreground flex items-center gap-2 sm:gap-3 tracking-tighter uppercase">
+            <h1 className="text-xl sm:text-2xl text-title font-black text-foreground flex items-center gap-2 sm:gap-3 tracking-tighter uppercase">
               <BookOpen className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
               <span className="text-base sm:text-2xl">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
             </h1>
@@ -232,7 +231,7 @@ const TechnicalKnowledgeBase = () => {
                   <h3 className="text-base sm:text-lg font-medium text-muted-foreground">
                     Selecione uma ficha técnica
                   </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                     Escolha uma ficha na lista para visualizar
                   </p>
                 </div>

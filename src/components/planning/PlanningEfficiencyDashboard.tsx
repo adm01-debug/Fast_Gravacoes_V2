@@ -1,3 +1,4 @@
+ 
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { endOfDay } from 'date-fns';
@@ -99,8 +100,8 @@ export function PlanningEfficiencyDashboard() {
           </div>
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Score de Planejamento</p>
           <div className="flex items-end gap-2 mb-3">
-            <h3 className="text-3xl font-black font-display tracking-tighter">{stats.efficiencyScore}%</h3>
-            <div className="text-[10px] text-emerald-400 font-bold flex items-center mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+            <h3 className="text-3xl font-black text-title tracking-tighter">{stats.efficiencyScore}%</h3>
+            <div className="text-[10px] text-success font-bold flex items-center mb-1 bg-success/10 px-1.5 py-0.5 rounded-full border border-success/20">
               <ArrowUpRight className="h-2.5 w-2.5 mr-0.5" />
               +2.4%
             </div>
@@ -124,7 +125,7 @@ export function PlanningEfficiencyDashboard() {
             {stats.hasHighBottleneck ? "⚠️ RISCO DE GARGALO" : "Saúde dos Prazos"}
           </p>
           <div className="flex items-end gap-2 mb-3">
-            <h3 className="text-3xl font-black font-display tracking-tighter">{stats.deadlineHealth}%</h3>
+            <h3 className="text-3xl font-black text-title tracking-tighter">{stats.deadlineHealth}%</h3>
             {stats.delayedCount > 0 && (
               <div className="text-[10px] text-red-400 font-bold flex items-center mb-1">
                 <AlertTriangle className="h-3 w-3 mr-0.5" />
@@ -137,17 +138,17 @@ export function PlanningEfficiencyDashboard() {
       </Card>
 
       {/* Setup Savings */}
-      <Card className="glass-card overflow-hidden group border-amber-500/20">
+      <Card className="glass-card overflow-hidden group border-warning/20">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 bg-amber-500/10 rounded-lg group-hover:bg-amber-500/20 transition-colors">
-              <Zap className="h-5 w-5 text-amber-400" />
+            <div className="p-2 bg-warning/10 rounded-lg group-hover:bg-warning/20 transition-colors">
+              <Zap className="h-5 w-5 text-warning" />
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Recuperação de Setup</p>
           <div className="flex items-end gap-2 mb-3">
-            <h3 className="text-3xl font-black font-display tracking-tighter">-{totalSavings}m</h3>
-            <div className="text-[10px] text-amber-400 font-bold flex items-center mb-1 uppercase">
+            <h3 className="text-3xl font-black text-title tracking-tighter">-{totalSavings}m</h3>
+            <div className="text-[10px] text-warning font-bold flex items-center mb-1 uppercase">
               Economia de IA
             </div>
           </div>
@@ -155,7 +156,7 @@ export function PlanningEfficiencyDashboard() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className={cn(
                 "flex-1 rounded-full bg-muted",
-                i <= 3 && "bg-amber-400/50"
+                i <= 3 && "bg-warning/50"
               )} />
             ))}
           </div>
@@ -178,7 +179,7 @@ export function PlanningEfficiencyDashboard() {
           </div>
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Confiabilidade de Ativos</p>
           <div className="flex items-end gap-2 mb-3">
-            <h3 className="text-3xl font-black font-display tracking-tighter">{Math.round(reliabilitySummary.averageAvailability)}<span className="text-lg opacity-50">%</span></h3>
+            <h3 className="text-3xl font-black text-title tracking-tighter">{Math.round(reliabilitySummary.averageAvailability)}<span className="text-lg opacity-50">%</span></h3>
             <div className="text-[10px] text-muted-foreground font-bold flex items-center mb-1 uppercase">
               Disponibilidade
             </div>
@@ -224,10 +225,10 @@ export function PlanningEfficiencyDashboard() {
           </div>
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">OEE Real (Fluxo Fabril)</p>
           <div className="flex items-end gap-2 mb-3">
-            <h3 className="text-3xl font-black font-display tracking-tighter">{Math.round(stats.estimatedOEE)}<span className="text-lg opacity-50">%</span></h3>
+            <h3 className="text-3xl font-black text-title tracking-tighter">{Math.round(stats.estimatedOEE)}<span className="text-lg opacity-50">%</span></h3>
             <div className={cn(
               "text-[10px] font-bold flex items-center mb-1 uppercase",
-              stats.estimatedOEE >= 85 ? "text-green-400" : stats.estimatedOEE >= 70 ? "text-amber-400" : "text-red-400"
+              stats.estimatedOEE >= 85 ? "text-green-400" : stats.estimatedOEE >= 70 ? "text-warning" : "text-red-400"
             )}>
               {stats.estimatedOEE >= 85 ? "World Class" : stats.estimatedOEE >= 70 ? "Bom" : "Crítico"}
             </div>
@@ -284,7 +285,7 @@ export function PlanningEfficiencyDashboard() {
                         <span className="font-semibold truncate max-w-[150px]">{tech.technique.name}</span>
                         <span className={cn(
                           "font-bold",
-                          tech.averageOccupancy > 90 ? "text-red-400" : tech.averageOccupancy > 75 ? "text-amber-400" : "text-green-400"
+                          tech.averageOccupancy > 90 ? "text-red-400" : tech.averageOccupancy > 75 ? "text-warning" : "text-green-400"
                         )}>
                           {Math.round(tech.averageOccupancy)}%
                         </span>
@@ -298,7 +299,7 @@ export function PlanningEfficiencyDashboard() {
                                   className={cn(
                                     "flex-1 rounded-sm transition-all cursor-help",
                                     machine.occupancyRate > 95 ? "bg-red-500" :
-                                    machine.occupancyRate > 80 ? "bg-amber-500" :
+                                    machine.occupancyRate > 80 ? "bg-warning" :
                                     machine.occupancyRate < 20 ? "bg-blue-400/50" : "bg-primary/40"
                                   )}
                                 />
@@ -312,7 +313,7 @@ export function PlanningEfficiencyDashboard() {
                         ))}
                       </div>
                       {tech.isUnbalanced && (
-                        <p className="text-[8px] text-amber-400 flex items-center gap-1 mt-1">
+                        <p className="text-[8px] text-warning flex items-center gap-1 mt-1">
                           <AlertTriangle className="h-2 w-2" /> Desbalanceado (∆ {Math.round(tech.maxOccupancy - tech.minOccupancy)}%)
                         </p>
                       )}

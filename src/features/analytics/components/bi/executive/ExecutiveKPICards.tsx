@@ -33,7 +33,7 @@ export function ExecutiveKPICard({
           </div>
           <div className={cn(
             "flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full",
-            trend === 'up' ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
+            trend === 'up' ? "bg-success/10 text-success" : "bg-rose-500/10 text-rose-500"
           )}>
             {trend === 'up' ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
             {Math.abs(trendValue).toFixed(1)}%

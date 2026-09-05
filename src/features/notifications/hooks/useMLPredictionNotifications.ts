@@ -1,7 +1,8 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { usePushNotifications } from '@/features/notifications';
 import { useNotificationSounds } from '@/features/notifications';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { MachinePrediction, PredictionFactor } from '@/features/analytics/hooks/useMLPredictions';
 import { Json } from '@/integrations/supabase/types';
 
@@ -54,7 +55,7 @@ const getPreferences = (): MLNotificationPreferences => {
 export const saveMLNotificationPreferences = (prefs: Partial<MLNotificationPreferences>) => {
   const current = getPreferences();
   const updated = { ...current, ...prefs };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(updated)); } catch { /* quota exceeded or private browsing */ }
   return updated;
 };
 
@@ -190,53 +191,32 @@ export const useMLPredictionNotifications = () => {
   }, [sendNotification]);
 
   // Listen to realtime ML predictions
-  useEffect(() => {
+  useRealtimeChannel('ml-predictions-notifications', [{ table: 'machine_predictions' }], async (payload) => {
     if (permission !== 'granted') return;
+    const newPrediction = payload.new as PredictionPayload;
 
-    const channel = supabase
-      .channel('ml-predictions-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'machine_predictions'
-        },
-        async (payload) => {
-          const newPrediction = payload.new as PredictionPayload;
+    if (!newPrediction.is_active || newPrediction.risk_score < 40) return;
 
-          // Only notify for active predictions with significant risk
-          if (!newPrediction.is_active || newPrediction.risk_score < 40) return;
+    const { data: machine } = await supabase
+      .from('machines')
+      .select('id, name, code')
+      .eq('id', newPrediction.machine_id)
+      .single();
 
-          // Fetch machine info
-          const { data: machine } = await supabase
-            .from('machines')
-            .select('id, name, code')
-            .eq('id', newPrediction.machine_id)
-            .single();
+    const parsedFactors: PredictionFactor[] = Array.isArray(newPrediction.factors)
+      ? (newPrediction.factors as unknown as PredictionFactor[])
+      : [];
 
-          // Parse factors from JSON
-          const parsedFactors: PredictionFactor[] = Array.isArray(newPrediction.factors)
-            ? (newPrediction.factors as unknown as PredictionFactor[])
-            : [];
-
-          const predictionWithMachine: MachinePrediction = {
-            ...newPrediction,
-            prediction_type: newPrediction.prediction_type as MachinePrediction['prediction_type'],
-            machine: machine || undefined,
-            factors: parsedFactors,
-            recommendations: Array.isArray(newPrediction.recommendations) ? newPrediction.recommendations : [],
-          };
-
-          sendPredictionNotification(predictionWithMachine);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
+    const predictionWithMachine: MachinePrediction = {
+      ...newPrediction,
+      prediction_type: newPrediction.prediction_type as MachinePrediction['prediction_type'],
+      machine: machine || undefined,
+      factors: parsedFactors,
+      recommendations: Array.isArray(newPrediction.recommendations) ? newPrediction.recommendations : [],
     };
-  }, [permission, sendPredictionNotification]);
+
+    sendPredictionNotification(predictionWithMachine);
+  });
 
   // Cleanup old notified predictions periodically
   useEffect(() => {

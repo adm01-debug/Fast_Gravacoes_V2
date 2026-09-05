@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 interface PerformanceMetrics {
   renderTime: number;
@@ -57,7 +59,7 @@ export function usePerformanceMetrics(componentName: string) {
     }
 
     if (duration > 100) {
-      console.warn(`[PERF] Slow render detected in ${componentName}: ${duration.toFixed(2)}ms`);
+      logger.warn(`Slow render detected in ${componentName}: ${duration.toFixed(2)}ms`, { duration }, 'usePerformanceMetrics');
     }
   }, []); // Only on mount for page-level components
 

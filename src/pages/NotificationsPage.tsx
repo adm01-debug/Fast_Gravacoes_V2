@@ -67,7 +67,7 @@ const NotificationsPage = () => {
   }, [queryClient, playSound, isSoundEnabled]);
 
   useEffect(() => {
-    const channel = supabase.channel('notifications-realtime')
+    const channel = supabase.channel('notifications-page-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'maintenance_alerts' }, () => handleNewNotification('maintenance'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'machine_predictions' }, () => handleNewNotification('prediction'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_summaries' }, () => handleNewNotification('summary'))
@@ -119,7 +119,7 @@ const NotificationsPage = () => {
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold"><span className="gradient-text">Central de Notificações</span></h1>
+            <h1 className="text-3xl text-title font-bold"><span className="gradient-text">Central de Notificações</span></h1>
             <div className="flex items-center gap-2">
               <p className="text-muted-foreground">Histórico unificado de alertas, predições e resumos</p>
               <Badge variant={isRealtimeConnected ? "secondary" : "outline"} className={cn("gap-1 text-xs", isRealtimeConnected ? "bg-green-500/20 text-green-600 border-green-500/30" : "text-muted-foreground")}>

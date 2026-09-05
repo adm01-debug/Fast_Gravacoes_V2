@@ -8,7 +8,7 @@ const OCCURRENCE_TYPES: Record<string, { label: string; icon: typeof AlertTriang
   incident: { label: 'Incidente', icon: AlertTriangle, color: 'text-red-500' },
   maintenance: { label: 'Manutenção', icon: Wrench, color: 'text-blue-500' },
   quality: { label: 'Qualidade', icon: CheckCircle2, color: 'text-green-500' },
-  safety: { label: 'Segurança', icon: Shield, color: 'text-amber-500' },
+  safety: { label: 'Segurança', icon: Shield, color: 'text-warning' },
   production: { label: 'Produção', icon: Package, color: 'text-purple-500' },
   other: { label: 'Outro', icon: FileText, color: 'text-slate-500' }
 };

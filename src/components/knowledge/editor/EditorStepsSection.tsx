@@ -13,7 +13,7 @@ import { TechnicalSheetStep } from '@/hooks/useTechnicalSheets';
 interface EditorStepsSectionProps {
   steps: TechnicalSheetStep[];
   sheetId: string;
-  onAddStep: (step: { technical_sheet_id: string; step_number: number; title: string; description: string; tips?: string; warnings?: string }) => Promise<any>;
+  onAddStep: (step: { technical_sheet_id: string; step_number: number; title: string; description: string; tips?: string; warnings?: string }) => Promise<unknown>;
   onDeleteStep: (id: string) => void;
   isAdding: boolean;
 }

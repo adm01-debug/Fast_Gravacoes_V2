@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -102,7 +107,7 @@ export default function OperatorView() {
 
         <div className="flex flex-col gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold"><span className="gradient-text">Visão do Operador</span></h1>
+            <h1 className="text-display"><span className="gradient-text">Visão do Operador</span></h1>
             <p className="text-muted-foreground text-sm">Gerencie suas produções {!isOnline && '(Modo Offline)'}</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -113,8 +118,8 @@ export default function OperatorView() {
             <Tooltip><TooltipTrigger asChild><Button variant={focusMode ? 'default' : 'outline'} size="icon" onClick={() => setFocusMode(!focusMode)} className="shrink-0 transition-all active:scale-95">{focusMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button></TooltipTrigger><TooltipContent>{focusMode ? 'Sair do modo foco' : 'Modo foco'}</TooltipContent></Tooltip>
             <VoiceButton onCommand={(cmd) => { if (cmd.startsWith('navigate:') && cmd.includes('kiosk')) navigate('/kiosk'); }} />
             <Button variant="outline" size="sm" onClick={() => navigate('/kiosk')} className="gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 border-primary/30"><Maximize className="h-4 w-4" /><span className="hidden sm:inline">Modo Kiosk</span></Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/shift-handover')} className="gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 border-amber-500/30"><ArrowRightLeft className="h-4 w-4 text-amber-500" /><span className="hidden sm:inline">Passagem de Turno</span></Button>
-            <Button variant="outline" size="sm" onClick={() => navigate('/oee')} className="gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 border-emerald-500/30"><Gauge className="h-4 w-4 text-emerald-500" /><span className="hidden sm:inline">Meu OEE</span></Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/shift-handover')} className="gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 border-warning/30"><ArrowRightLeft className="h-4 w-4 text-warning" /><span className="hidden sm:inline">Passagem de Turno</span></Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/oee')} className="gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 border-success/30"><Gauge className="h-4 w-4 text-success" /><span className="hidden sm:inline">Meu OEE</span></Button>
           </div>
         </div>
 

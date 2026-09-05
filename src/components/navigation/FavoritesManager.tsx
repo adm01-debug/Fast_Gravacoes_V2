@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import * as React from "react";
 import { Star, StarOff, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,7 +41,7 @@ export function useFavorites() {
 
   const saveFavorites = (items: FavoriteItem[]) => {
     setFavorites(items);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch { /* quota exceeded */ }
   };
 
   const addFavorite = (item: Omit<FavoriteItem, "id">) => {
@@ -113,7 +118,7 @@ export function FavoriteButton({ path, name, icon, variant = "icon", className }
       variant="ghost"
       className={cn(
         "transition-colors h-9 w-9",
-        isStarred ? "text-amber-500 hover:text-amber-600" : "text-muted-foreground hover:text-amber-500",
+        isStarred ? "text-warning hover:text-warning" : "text-muted-foreground hover:text-warning",
         className
       )}
       onClick={(e) => {

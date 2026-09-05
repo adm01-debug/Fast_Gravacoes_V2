@@ -1,0 +1,5 @@
+{
+  "baseline": 0,
+  "updatedAt": "2026-07-12T22:45:00.000Z",
+  "milestone": "10/10 — zero `any` residual em src (excluindo tests e supabase/types.ts autogen)"
+}

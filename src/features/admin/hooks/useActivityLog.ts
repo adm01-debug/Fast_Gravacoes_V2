@@ -22,7 +22,7 @@ export interface ActivityLogEntry {
     avatar?: string;
   };
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   changes?: {
     field: string;
     from?: string;

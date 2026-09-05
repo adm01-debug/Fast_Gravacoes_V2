@@ -4,10 +4,30 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Camera, CheckCircle2 } from 'lucide-react';
 
+export interface ChecklistItemData {
+  id: string;
+  description: string;
+  is_critical?: boolean;
+  requires_measurement?: boolean;
+  measurement_unit?: string | null;
+  min_value?: number | null;
+  max_value?: number | null;
+  requires_photo?: boolean;
+}
+
+export interface ChecklistItemResponse {
+  is_checked?: boolean;
+  measurement_value?: number;
+  notes?: string;
+  photo_url?: string;
+}
+
+export type ChecklistItemUpdate = Partial<ChecklistItemResponse>;
+
 interface ChecklistItemProps {
-  item: any;
-  response: any;
-  onUpdate: (updates: any) => void;
+  item: ChecklistItemData;
+  response: ChecklistItemResponse | null | undefined;
+  onUpdate: (updates: ChecklistItemUpdate) => void;
   onFileUpload: (file: File) => void;
   isUploading: boolean;
 }
@@ -55,7 +75,7 @@ export function ChecklistItem({ item, response, onUpdate, onFileUpload, isUpload
         {item.requires_photo && (
           <div className="flex items-center gap-2">
             {response?.photo_url ? (
-              <Badge variant="outline" className="text-emerald-500 gap-1 h-8">
+              <Badge variant="outline" className="text-success gap-1 h-8">
                 <CheckCircle2 className="h-3 w-3" /> Foto OK
               </Badge>
             ) : (

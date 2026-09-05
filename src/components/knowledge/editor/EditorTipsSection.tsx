@@ -13,7 +13,7 @@ import { TechnicalSheetTip } from '@/hooks/useTechnicalSheets';
 interface EditorTipsSectionProps {
   tips: TechnicalSheetTip[];
   sheetId: string;
-  onAdd: (tip: { technical_sheet_id: string; tip_type: 'tip' | 'warning' | 'important'; content: string }) => Promise<any>;
+  onAdd: (tip: { technical_sheet_id: string; tip_type: 'tip' | 'warning' | 'important'; content: string }) => Promise<unknown>;
   onDelete: (id: string) => void;
   isAdding: boolean;
 }
@@ -64,7 +64,7 @@ export function EditorTipsSection({ tips, sheetId, onAdd, onDelete, isAdding }: 
 
       <div className="p-4 rounded-lg border border-dashed border-border/50 space-y-3">
         <p className="text-xs text-muted-foreground">Adicionar dica/observação:</p>
-        <Select value={newTip.tip_type} onValueChange={(v) => setNewTip({...newTip, tip_type: v as any})}>
+        <Select value={newTip.tip_type} onValueChange={(v) => setNewTip({...newTip, tip_type: v as 'tip' | 'warning' | 'important'})}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tip">💡 Dica</SelectItem>

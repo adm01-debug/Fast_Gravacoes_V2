@@ -1,58 +1,35 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
 import { KeyRound } from 'lucide-react';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 
 export function useRealtimeResetRequests() {
   const { isCoordinator, isManager, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Only subscribe for coordinators and managers
+  useRealtimeChannel('password-reset-notifications', [{ table: 'password_reset_requests' }], (payload) => {
     if (!isCoordinator && !isManager) return;
     if (!user) return;
-
-
-    const channel = supabase
-      .channel('password-reset-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'password_reset_requests',
-        },
-        (payload) => {
-
-          const newRequest = payload.new as {
-            user_email: string;
-            requested_by_name: string | null;
-            status: string;
-          };
-
-          // Show toast notification
-          toast.info(
-            `Nova solicitação de reset de senha`,
-            {
-              description: `${newRequest.user_email} solicitou reset de senha`,
-              duration: 10000,
-              icon: <KeyRound className="h-4 w-4" />,
-              action: {
-                label: 'Ver',
-                onClick: () => {
-                  navigate('/settings?tab=users');
-                },
-              },
-            }
-          );
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
+    const newRequest = payload.new as {
+      user_email: string;
+      requested_by_name: string | null;
+      status: string;
     };
-  }, [isCoordinator, isManager, user, navigate]);
+
+    toast.info(
+      `Nova solicitação de reset de senha`,
+      {
+        description: `${newRequest.user_email} solicitou reset de senha`,
+        duration: 10000,
+        icon: <KeyRound className="h-4 w-4" />,
+        action: {
+          label: 'Ver',
+          onClick: () => {
+            navigate('/settings?tab=users');
+          },
+        },
+      }
+    );
+  });
 }

@@ -15,7 +15,7 @@ export function OperatorQuickHistory({ jobs, getTechniqueName }: OperatorQuickHi
   const recentFinished = useMemo(() => {
     return jobs
       .filter(j => j.status === 'finished' && j.actual_end_time)
-      .sort((a, b) => new Date(b.actual_end_time!).getTime() - new Date(a.actual_end_time!).getTime())
+      .sort((a, b) => new Date((b.actual_end_time ?? "")).getTime() - new Date((a.actual_end_time ?? "")).getTime())
       .slice(0, 5);
   }, [jobs]);
 

@@ -1,14 +1,24 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, Thermometer, Zap, Gauge } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from '@/lib/recharts';
 
 interface VirtualSensorPanelProps {
   machineId: string;
 }
 
-export function VirtualSensorPanel({ machineId }: VirtualSensorPanelProps) {
-  const [data, setData] = useState<any[]>([]);
+// There is no real IIoT sensor feed wired into this system — all values here
+// are randomly generated (not derived from `machineId`, so every machine
+// would show identical "live" numbers). Labeled explicitly as a simulation
+// so it can't be mistaken for real machine telemetry; do not present these
+// numbers as live data without wiring a real sensor/MQTT source first.
+export function VirtualSensorPanel({ machineId: _machineId }: VirtualSensorPanelProps) {
+  const [data, setData] = useState<Array<{ time: number; vibration: number; temperature: number }>>([]);
   const [currentValues, setCurrentValues] = useState({
     vibration: 2.4,
     temperature: 42,
@@ -55,13 +65,13 @@ export function VirtualSensorPanel({ machineId }: VirtualSensorPanelProps) {
     <Card className="glass-card overflow-hidden hover:shadow-glow-primary transition-all duration-500">
       <CardHeader className="pb-2 border-b border-border/50 bg-secondary/10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary animate-pulse" />
-            Telemetria em Tempo Real (IIoT)
+          <CardTitle className="text-sm text-title flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            Telemetria (Simulação)
           </CardTitle>
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-medium text-emerald-500 uppercase">Live</span>
+            <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+            <span className="text-[10px] font-medium text-muted-foreground uppercase">Demo — sem sensor real</span>
           </div>
         </div>
       </CardHeader>
@@ -70,22 +80,22 @@ export function VirtualSensorPanel({ machineId }: VirtualSensorPanelProps) {
           <div className="p-4 border-r border-border/50 flex flex-col items-center">
             <Activity className="h-4 w-4 text-blue-500 mb-1" />
             <span className="text-[10px] text-muted-foreground uppercase">Vibração</span>
-            <span className="text-xl font-bold font-display">{currentValues.vibration} mm/s</span>
+            <span className="text-xl font-bold text-title">{currentValues.vibration} mm/s</span>
           </div>
           <div className="p-4 border-r border-border/50 flex flex-col items-center">
-            <Thermometer className="h-4 w-4 text-amber-500 mb-1" />
+            <Thermometer className="h-4 w-4 text-warning mb-1" />
             <span className="text-[10px] text-muted-foreground uppercase">Temp</span>
-            <span className="text-xl font-bold font-display">{currentValues.temperature}°C</span>
+            <span className="text-xl font-bold text-title">{currentValues.temperature}°C</span>
           </div>
           <div className="p-4 border-r border-border/50 flex flex-col items-center">
             <Zap className="h-4 w-4 text-yellow-500 mb-1" />
             <span className="text-[10px] text-muted-foreground uppercase">Potência</span>
-            <span className="text-xl font-bold font-display">{currentValues.power} W</span>
+            <span className="text-xl font-bold text-title">{currentValues.power} W</span>
           </div>
           <div className="p-4 flex flex-col items-center">
             <Gauge className="h-4 w-4 text-primary mb-1" />
             <span className="text-[10px] text-muted-foreground uppercase">Velocidade</span>
-            <span className="text-xl font-bold font-display">{currentValues.speed}%</span>
+            <span className="text-xl font-bold text-title">{currentValues.speed}%</span>
           </div>
         </div>
 

@@ -28,6 +28,7 @@ import { CalendarLegend } from '@/components/calendar/CalendarLegend';
 import { CalendarEmptyState } from '@/components/calendar/CalendarEmptyState';
 import { MobileFAB } from '@/components/calendar/MobileFAB';
 import { useSchedulingData } from '@/features/jobs';
+import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { useCalendarFilters } from '@/hooks/useCalendarFilters';
 import { useCalendarHotkeys } from '@/hooks/useCalendarHotkeys';
 import { cn } from '@/lib/utils';
@@ -70,7 +71,7 @@ export default function MonthlyCalendar() {
   const filteredJobs = useMemo(() => applyFilters(jobs), [jobs, applyFilters]);
 
   const jobsByDay = useMemo(() => {
-    const acc: Record<string, any[]> = {};
+    const acc: Record<string, typeof filteredJobs> = {};
     filteredJobs.forEach((job) => {
       const d = parseDateOnly(job.scheduled_date);
       if (!d) return;
@@ -104,7 +105,7 @@ export default function MonthlyCalendar() {
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 animate-fade-in-up calendar-print-area">
         <Breadcrumbs />
 
-        <Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
+        <SectionErrorBoundary compact><Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
           <CalendarHeader
             title="Calendário Mensal"
             subtitle="Visão panorâmica do mês com mapa de carga"
@@ -130,12 +131,12 @@ export default function MonthlyCalendar() {
               />
             }
           />
-        </Suspense>
+        </Suspense></SectionErrorBoundary>
 
         <Card className="bg-card border border-border/40 rounded-xl overflow-hidden">
           <CardHeader className="border-b border-border/40 pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm sm:text-lg font-display gradient-text flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-lg text-title gradient-text flex items-center gap-2">
                 <CalendarRange className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 {format(selectedDate, "MMMM 'de' yyyy", { locale: ptBR })}
               </CardTitle>
@@ -202,7 +203,7 @@ export default function MonthlyCalendar() {
                             </div>
                             {dayJobs.length > 0 && (
                               <div className="flex items-baseline gap-1">
-                                <span className="text-lg sm:text-2xl font-display font-bold text-primary leading-none">
+                                <span className="text-lg sm:text-2xl text-title font-bold text-primary leading-none">
                                   {dayJobs.length}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground hidden sm:inline">

@@ -1,5 +1,5 @@
 import { Suspense, lazy, useMemo, ComponentType, useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
@@ -15,6 +15,7 @@ import { StatsCardSkeleton, ContentTransition } from '@/components/loading';
 import { DraggableWidget } from '@/components/dashboard/DraggableWidget';
 import { DashboardEditControls } from '@/components/dashboard/DashboardEditControls';
 import { SortableWidgetSection } from '@/components/dashboard/SortableWidgetSection';
+import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 // ... DailySummaryCard lazy loaded below
 import { Badge } from '@/components/ui/badge';
 import { FavoritesDropdown, FavoriteButton } from '@/components/navigation/FavoritesManager';
@@ -58,7 +59,8 @@ import {
   FileText,
   Brain,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  KeyRound
 } from 'lucide-react';
 
 
@@ -120,7 +122,7 @@ const Index = () => {
     from: startOfDay(new Date()),
     to: endOfDay(new Date()),
   });
-  const { stats, machines, isLoading, isOperator } = useOperatorDashboardData(dateRange);
+  const { stats, machines, isLoading, isOperator, isCoordinator } = useOperatorDashboardData(dateRange);
   const { profile } = useAuth();
   useSmartDelayAlerts(); // Run background delay monitoring
   const {
@@ -175,9 +177,9 @@ const Index = () => {
         isEditMode={isEditMode}
         onToggleVisibility={() => handleToggleWidgetVisibility(widgetId)}
       >
-        <Suspense fallback={<WidgetSkeleton className={config.skeletonHeight} />}>
+        <SectionErrorBoundary compact><Suspense fallback={<WidgetSkeleton className={config.skeletonHeight} />}>
           <Component />
-        </Suspense>
+        </Suspense></SectionErrorBoundary>
       </DraggableWidget>
     );
   }, [isEditMode, handleToggleWidgetVisibility]);
@@ -209,8 +211,8 @@ const Index = () => {
         {/* Compact Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 px-1 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-1.5 h-8 rounded-full gradient-primary animate-pulse-glow" />
-            <h1 className="text-3xl font-display font-black tracking-tighter">
+            <div className="w-1.5 h-8 rounded-full gradient-primary motion-safe:animate-pulse-glow" />
+            <h1 className="text-display-lg tracking-tighter">
               <span className="gradient-text">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
             </h1>
             <Badge variant="outline" className="hidden sm:flex gap-1.5 px-2.5 border-primary/30 bg-primary/5 text-primary text-[10px] font-black uppercase shadow-[0_0_15px_rgba(255,90,31,0.1)]">
@@ -228,6 +230,17 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <DateRangePicker date={dateRange} setDate={setDateRange} className="mr-1" />
             <DashboardExport />
+            {/* Added visual indicator for password reset requests to ensure visibility even if Realtime fails */}
+            {isCoordinator && stats.delayed > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="cursor-pointer animate-pulse"
+                onClick={() => navigate('/settings?tab=users')}
+              >
+                <KeyRound className="h-3.5 w-3.5 mr-1" />
+                Resets Pendentes
+              </Badge>
+            )}
             <ConnectionStatus />
             <VoiceButton className="no-export" />
             <FavoritesDropdown onNavigate={(path) => navigate(path)} className="no-export" />
@@ -251,9 +264,9 @@ const Index = () => {
         </div>
 
         <GamificationBanner />
-        <Suspense fallback={<div className="h-10 bg-muted animate-pulse rounded-lg mb-4" />}>
+        <SectionErrorBoundary compact><Suspense fallback={<div className="h-10 bg-muted animate-pulse rounded-lg mb-4" />}>
           <BufferPromotionStatus />
-        </Suspense>
+        </Suspense></SectionErrorBoundary>
 
         {/* Edit Mode Indicator */}
         {isEditMode && (
@@ -310,7 +323,7 @@ const Index = () => {
         </ContentTransition>
 
         {/* Tabbed Dashboard Content - Takes remaining space */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
           <TabsList className="w-full justify-start glass p-1 h-auto shrink-0 rounded-xl gap-1">
             <TabsTrigger value="overview" className="gap-2 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200">
               <LayoutDashboard className="h-4 w-4" />
@@ -369,10 +382,10 @@ const Index = () => {
 
                   {/* Right Column: Alerts & Side Widgets */}
                   <div className="lg:col-span-4 space-y-6">
-                    <Suspense fallback={<WidgetSkeleton className="h-40" />}>
+                    <SectionErrorBoundary compact><Suspense fallback={<WidgetSkeleton className="h-40" />}>
                       <AutoShiftSummary />
                       <InventoryAlertsWidget />
-                    </Suspense>
+                    </Suspense></SectionErrorBoundary>
 
                     <SortableWidgetSection
                       section="sidebar"
@@ -383,9 +396,9 @@ const Index = () => {
                       {sidebarWidgets.map(w => renderWidget(w.id))}
                     </SortableWidgetSection>
 
-                    <Suspense fallback={<WidgetSkeleton className="h-40" />}>
+                    <SectionErrorBoundary compact><Suspense fallback={<WidgetSkeleton className="h-40" />}>
                       <ActivityFeedWidget />
-                    </Suspense>
+                    </Suspense></SectionErrorBoundary>
                   </div>
                 </div>
 
@@ -421,6 +434,15 @@ const Index = () => {
               </div>
             </ScrollArea>
           </TabsContent>
+          
+          {/* Jobs Tab */}
+          <TabsContent value="jobs" className="flex-1 mt-4 min-h-0">
+            <ScrollArea className="h-full">
+              <div className="pr-2">
+                <RecentJobsTable />
+              </div>
+            </ScrollArea>
+          </TabsContent>
 
           {/* Efficiency Tab - For Coordinators/Managers */}
           {!isOperator && (
@@ -453,9 +475,9 @@ const Index = () => {
           <TabsContent value="timeline" className="flex-1 mt-4 min-h-0">
             <ScrollArea className="h-full">
               <div className="pr-2">
-                <Suspense fallback={<WidgetSkeleton className="h-[600px]" />}>
+                <SectionErrorBoundary compact><Suspense fallback={<WidgetSkeleton className="h-[600px]" />}>
                   <CompactTimeline />
-                </Suspense>
+                </Suspense></SectionErrorBoundary>
               </div>
             </ScrollArea>
           </TabsContent>
@@ -495,9 +517,9 @@ const Index = () => {
           {/* Chat Tab */}
           <TabsContent value="chat" className="flex-1 mt-4 min-h-0">
             <div className="h-full">
-              <Suspense fallback={<div className="h-full bg-muted animate-pulse rounded-lg" />}>
+              <SectionErrorBoundary compact><Suspense fallback={<div className="h-full bg-muted animate-pulse rounded-lg" />}>
                 <QuickChat />
-              </Suspense>
+              </Suspense></SectionErrorBoundary>
             </div>
           </TabsContent>
 

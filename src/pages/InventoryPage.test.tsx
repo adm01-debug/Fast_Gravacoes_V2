@@ -3,6 +3,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import InventoryPage from './InventoryPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import React from 'react';
 import { useInventory } from '@/features/inventory';
 
@@ -72,11 +73,13 @@ describe('InventoryPage - Skeletons e Estabilidade', () => {
     } as any);
 
     render(
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <InventoryPage />
-        </QueryClientProvider>
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <InventoryPage />
+          </QueryClientProvider>
+        </MemoryRouter>
+      </HelmetProvider>
     );
 
     const skeletons = document.querySelectorAll('.animate-pulse');
@@ -115,11 +118,13 @@ describe('InventoryPage - Skeletons e Estabilidade', () => {
     } as any);
 
     render(
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <InventoryPage />
-        </QueryClientProvider>
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <InventoryPage />
+          </QueryClientProvider>
+        </MemoryRouter>
+      </HelmetProvider>
     );
 
     await waitFor(() => {
@@ -143,11 +148,13 @@ describe('InventoryPage - Skeletons e Estabilidade', () => {
     } as any);
 
     render(
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <InventoryPage />
-        </QueryClientProvider>
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <InventoryPage />
+          </QueryClientProvider>
+        </MemoryRouter>
+      </HelmetProvider>
     );
 
     const searchInput = screen.getByPlaceholderText(/Buscar material/i);

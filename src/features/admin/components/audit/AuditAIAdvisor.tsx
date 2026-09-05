@@ -9,13 +9,13 @@ export function AuditAIAdvisor() {
       type: 'security',
       title: 'Padrão de Edição Atípico',
       description: 'IA detectou múltiplas edições em Fichas Técnicas pelo usuário "Coordenador_01" em menos de 5 minutos. Verificando conformidade.',
-      icon: <Search className="h-4 w-4 text-amber-500" />
+      icon: <Search className="h-4 w-4 text-warning" />
     },
     {
       type: 'integrity',
       title: 'Selos de Integridade OK',
       description: 'Cadeia de custódia digital validada. Nenhum salto de sequência detectado nos últimos 5.000 logs.',
-      icon: <ShieldCheck className="h-4 w-4 text-emerald-500" />
+      icon: <ShieldCheck className="h-4 w-4 text-success" />
     },
     {
       type: 'compliance',

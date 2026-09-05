@@ -1,3 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +21,9 @@ import { Bitrix24SyncPanel } from '@/components/integrations/Bitrix24SyncPanel';
 import { Bitrix24SyncHistory } from '@/components/integrations/Bitrix24SyncHistory';
 import { Bitrix24MappingDialog } from '@/features/analytics/components/bitrix24/Bitrix24MappingDialog';
 import { useToast } from '@/hooks/use-toast';
+import { createAppError } from '@/lib/errorHandling';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 interface FieldInfo {
   type: string; isRequired: boolean; isReadOnly: boolean; isImmutable: boolean; isMultiple: boolean; title: string; formLabel?: string; listLabel?: string;
@@ -44,9 +55,10 @@ const Bitrix24ConfigPage = () => {
   const { toast } = useToast();
 
   const callBitrixSync = async (action: string, body?: Record<string, unknown>): Promise<Record<string, unknown> & { customFields?: Record<string, FieldInfo>; totalCustomFields?: number; mappings?: MappingRecord[] }> => {
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    const url = `https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=${action}`;
-    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY }, body: body ? JSON.stringify(body) : undefined });
+    const response = await edgeFunctionFetch(`bitrix24-sync?action=${action}`, {
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    });
     if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Request failed'); }
     return response.json();
   };
@@ -54,14 +66,14 @@ const Bitrix24ConfigPage = () => {
   const fetchBitrixFields = async () => {
     setIsLoading(true);
     try { const result = await callBitrixSync('fields'); setBitrixFields(result.customFields || {}); toast({ title: 'Campos carregados', description: `${result.totalCustomFields || 0} campos personalizados encontrados.` }); }
-    catch (error) { toast({ title: 'Erro ao carregar campos', description: error instanceof Error ? error.message : 'Erro desconhecido', variant: 'destructive' }); }
+    catch (error) { toast({ title: 'Erro ao carregar campos', description: createAppError(error instanceof Error ? error : new Error(String(error))).message, variant: 'destructive' }); }
     finally { setIsLoading(false); }
   };
 
   const fetchMappings = async () => {
     setIsLoading(true);
     try { const result = await callBitrixSync('list-mappings'); setAllMappings(result.mappings || []); }
-    catch (error) { /* Error handled silently in UI */ }
+    catch (error) { toast({ title: 'Erro ao carregar mapeamentos', description: createAppError(error instanceof Error ? error : new Error(String(error))).message, variant: 'destructive' }); }
     finally { setIsLoading(false); }
   };
 
@@ -69,7 +81,7 @@ const Bitrix24ConfigPage = () => {
     if (!newMapping.source_key || !newMapping.target_key) { toast({ title: 'Campos obrigatórios', description: 'Preencha todos os campos', variant: 'destructive' }); return; }
     setIsLoading(true);
     try { await callBitrixSync('save-mapping', newMapping); toast({ title: 'Mapeamento salvo' }); setAddDialogOpen(false); setNewMapping({ mapping_type: 'field', source_key: '', target_key: '', priority: 0 }); await fetchMappings(); }
-    catch (error) { toast({ title: 'Erro ao salvar', description: error instanceof Error ? error.message : 'Erro desconhecido', variant: 'destructive' }); }
+    catch (error) { toast({ title: 'Erro ao salvar', description: createAppError(error instanceof Error ? error : new Error(String(error))).message, variant: 'destructive' }); }
     finally { setIsLoading(false); }
   };
 
@@ -77,7 +89,7 @@ const Bitrix24ConfigPage = () => {
     if (!deleteMappingConfirm) return;
     setIsLoading(true);
     try { await callBitrixSync('delete-mapping', { id: deleteMappingConfirm.id }); toast({ title: 'Mapeamento removido' }); await fetchMappings(); }
-    catch (error) { toast({ title: 'Erro ao remover', description: error instanceof Error ? error.message : 'Erro desconhecido', variant: 'destructive' }); }
+    catch (error) { toast({ title: 'Erro ao remover', description: createAppError(error instanceof Error ? error : new Error(String(error))).message, variant: 'destructive' }); }
     finally { setIsLoading(false); setDeleteMappingConfirm(null); }
   };
 
@@ -112,7 +124,7 @@ const Bitrix24ConfigPage = () => {
         <Breadcrumbs />
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-display font-bold text-foreground flex items-center gap-3"><Settings2 className="h-7 w-7 text-primary" />Configuração Bitrix24</h1>
+            <h1 className="text-2xl text-title font-bold text-foreground flex items-center gap-3"><Settings2 className="h-7 w-7 text-primary" />Configuração Bitrix24</h1>
             <p className="text-muted-foreground mt-1">Configure a integração, mapeamento de campos e categorias de deals</p>
           </div>
           <Bitrix24MappingDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} newMapping={newMapping} setNewMapping={setNewMapping} onSave={saveMapping} isLoading={isLoading} bitrixFields={bitrixFields} />

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export interface RateLimitLog {
   id: string;
@@ -49,7 +50,7 @@ export interface SecurityEvent {
   user_email: string | null;
   ip_address: string | null;
   user_agent: string | null;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   created_at: string;
 }
 
@@ -166,7 +167,7 @@ export function useBlockIP() {
       toast.success('IP bloqueado com sucesso');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Erro ao bloquear IP');
+      showErrorToast(error, 'Erro ao bloquear IP');
     },
   });
 }
@@ -193,7 +194,7 @@ export function useUnblockIP() {
       toast.success('IP desbloqueado com sucesso');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Erro ao desbloquear IP');
+      showErrorToast(error, 'Erro ao desbloquear IP');
     },
   });
 }
@@ -221,7 +222,7 @@ export function useUpdateRateLimitSetting() {
       toast.success('Configuração atualizada');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Erro ao atualizar configuração');
+      showErrorToast(error, 'Erro ao atualizar configuração');
     },
   });
 }
@@ -250,7 +251,7 @@ export function useCreateRateLimitSetting() {
       toast.success('Configuração criada');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Erro ao criar configuração');
+      showErrorToast(error, 'Erro ao criar configuração');
     },
   });
 }
@@ -272,7 +273,7 @@ export function useDeleteRateLimitSetting() {
       toast.success('Configuração removida');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Erro ao remover configuração');
+      showErrorToast(error, 'Erro ao remover configuração');
     },
   });
 }

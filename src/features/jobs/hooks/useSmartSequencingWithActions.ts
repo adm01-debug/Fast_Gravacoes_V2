@@ -91,41 +91,31 @@ export function useSmartSequencingWithActions() {
   const { data: techniques } = useTechniques();
   const queryClient = useQueryClient();
 
-  // Mutation to apply sequencing for a machine (parallel execution)
+  // Mutation to apply sequencing for a machine — single upsert instead of N individual updates
   const applySequencingMutation = useMutation({
     mutationFn: async (suggestion: SequencingSuggestion): Promise<ApplySequencingResult> => {
-      try {
-        const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence); // Start at 07:00
+      const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence); // Start at 07:00
 
-        // Execute all updates in parallel
-        const results = await Promise.all(
-          timeSlots.map(async (slot) => {
-            const { error } = await supabase
-              .from('jobs')
-              .update({
-                start_time: slot.startTime,
-                end_time: slot.endTime
-              })
-              .eq('id', slot.jobId);
-
-            if (error) throw error;
-            return slot;
-          })
+      // Single upsert: one round-trip for all slots
+      const { error } = await supabase
+        .from('jobs')
+        .upsert(
+          timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
+          { onConflict: 'id' }
         );
 
-        return {
-          machineId: suggestion.machineId,
-          machineName: suggestion.machineName,
-          appliedJobs: results.length,
-          estimatedSavings: suggestion.estimatedSavings,
-        };
-      } catch (error) {
-        const appError = createAppError(error, SEQUENCING_ERROR_CONTEXT.applySequencing);
-        throw error;
-      }
+      if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applySequencing);
+
+      return {
+        machineId: suggestion.machineId,
+        machineName: suggestion.machineName,
+        appliedJobs: timeSlots.length,
+        estimatedSavings: suggestion.estimatedSavings,
+      };
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
       toast.success(`Sequência otimizada aplicada`, {
         description: `${result.machineName}: ${result.appliedJobs} jobs reordenados, ~${result.estimatedSavings}min economizados`,
       });
@@ -135,29 +125,27 @@ export function useSmartSequencingWithActions() {
     },
   });
 
-  // Mutation to apply all sequencing suggestions (parallel execution)
+  // Mutation to apply all sequencing suggestions — surfaces partial failures to the user
   const applyAllSequencingMutation = useMutation({
-    mutationFn: async (suggestions: SequencingSuggestion[]): Promise<ApplySequencingResult[]> => {
-      // Process all suggestions in parallel
-      const results = await Promise.all(
+    mutationFn: async (suggestions: SequencingSuggestion[]): Promise<{ succeeded: ApplySequencingResult[]; failedCount: number }> => {
+      const succeeded: ApplySequencingResult[] = [];
+      let failedCount = 0;
+
+      // Process suggestions in parallel; collect individual outcomes instead of short-circuiting
+      const outcomes = await Promise.all(
         suggestions.map(async (suggestion): Promise<ApplySequencingResult | null> => {
           try {
             const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence);
 
-            // Execute all slot updates in parallel for this suggestion
-            await Promise.all(
-              timeSlots.map(async (slot) => {
-                const { error } = await supabase
-                  .from('jobs')
-                  .update({
-                    start_time: slot.startTime,
-                    end_time: slot.endTime
-                  })
-                  .eq('id', slot.jobId);
+            // Single upsert per suggestion: one round-trip per machine
+            const { error } = await supabase
+              .from('jobs')
+              .upsert(
+                timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
+                { onConflict: 'id' }
+              );
 
-                if (error) throw error;
-              })
-            );
+            if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applyAllSequencing);
 
             return {
               machineId: suggestion.machineId,
@@ -165,28 +153,33 @@ export function useSmartSequencingWithActions() {
               appliedJobs: timeSlots.length,
               estimatedSavings: suggestion.estimatedSavings,
             };
-          } catch (error) {
-            const appError = createAppError(error, SEQUENCING_ERROR_CONTEXT.applyAllSequencing);
+          } catch {
             return null;
           }
         })
       );
 
-      // Filter out failed results
-      return results.filter((r): r is ApplySequencingResult => r !== null);
-    },
-    onSuccess: (results) => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      outcomes.forEach(r => {
+        if (r !== null) succeeded.push(r);
+        else failedCount++;
+      });
 
-      if (results.length > 0) {
-        const totalJobs = results.reduce((sum, r) => sum + r.appliedJobs, 0);
-        const totalSavings = results.reduce((sum, r) => sum + r.estimatedSavings, 0);
-        toast.success(`${results.length} máquina(s) otimizada(s)`, {
-          description: `${totalJobs} jobs reordenados, ~${totalSavings}min economizados`,
-        });
-      } else {
-        toast.error('Nenhuma máquina foi otimizada');
+      // Propagate failure so onError fires when everything failed
+      if (succeeded.length === 0 && failedCount > 0) {
+        throw new Error(`Falha ao otimizar todas as ${failedCount} máquina(s)`);
       }
+
+      return { succeeded, failedCount };
+    },
+    onSuccess: ({ succeeded, failedCount }) => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
+
+      const totalJobs = succeeded.reduce((sum, r) => sum + r.appliedJobs, 0);
+      const totalSavings = succeeded.reduce((sum, r) => sum + r.estimatedSavings, 0);
+      toast.success(`${succeeded.length} máquina(s) otimizada(s)`, {
+        description: `${totalJobs} jobs reordenados, ~${totalSavings}min economizados${failedCount > 0 ? ` (${failedCount} falha(s))` : ''}`,
+      });
     },
     onError: (error) => {
       showErrorToast(error, 'Erro ao otimizar sequências');

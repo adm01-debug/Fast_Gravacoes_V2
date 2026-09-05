@@ -1,21 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 // Only allow export from these tables
 const ALLOWED_TABLES = [
@@ -62,20 +48,37 @@ serve(async (req) => {
 
     // Check user role - only coordinators and managers can export
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: roleData } = await adminClient
+    const { data: roleRows, error: roleError } = await adminClient
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
-      .single();
+      .eq('is_active', true);
 
-    if (!roleData || !['coordinator', 'manager'].includes(roleData.role)) {
+    if (roleError) {
+      // Surface backend failures as 500, not a misleading "permission denied".
+      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
+        status: 500,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    const allowedRoles = ['coordinator', 'manager', 'admin'];
+    const hasExportRole = (roleRows ?? []).some((r: { role: string }) => allowedRoles.includes(r.role));
+    if (!hasExportRole) {
       return new Response(JSON.stringify({ error: "Permissão insuficiente" }), {
         status: 403,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    const { table, filters, columns } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return new Response(JSON.stringify({ error: "Corpo da requisição inválido" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { table, filters, columns } = body as Record<string, unknown>;
 
     // Validate table name against allowlist
     if (!table || !ALLOWED_TABLES.includes(table)) {
@@ -85,11 +88,36 @@ serve(async (req) => {
       });
     }
 
-    // Build query using service role for data access
-    let query = adminClient.from(table).select(columns?.join(",") || "*");
+    // Validate caller-supplied columns: only plain identifiers are allowed.
+    // This blocks embedded-relation selects (e.g. "*, user_roles(role)") that
+    // would exfiltrate joined data through the service-role client.
+    const COLUMN_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    if (columns !== undefined && columns !== null) {
+      if (!Array.isArray(columns) || !columns.every((c: unknown) => typeof c === "string" && COLUMN_RE.test(c))) {
+        return new Response(JSON.stringify({ error: "Parâmetro 'columns' inválido" }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Build query using service role for data access. Capped — an
+    // unbounded select on a large table (e.g. jobs, spc_measurements) risks
+    // function timeout/OOM; exports beyond this size should be paginated by
+    // the caller instead of one giant response.
+    const EXPORT_ROW_LIMIT = 20000;
+    let query = adminClient.from(table).select(columns?.join(",") || "*").limit(EXPORT_ROW_LIMIT);
 
     if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
+      const filterEntries = Object.entries(filters);
+      const invalidKey = filterEntries.find(([key]) => !COLUMN_RE.test(key));
+      if (invalidKey) {
+        return new Response(JSON.stringify({ error: "Chave de filtro inválida" }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
+      }
+      filterEntries.forEach(([key, value]) => {
         query = query.eq(key, value);
       });
     }
@@ -107,12 +135,18 @@ serve(async (req) => {
       });
     }
 
-    // Convert to CSV
+    // Convert to CSV. Cells starting with = + - @ are formula-injection
+    // vectors in Excel/Sheets (e.g. =HYPERLINK(...)) — prefix with a quote
+    // so they render as literal text instead of executing on open.
     const headers = columns || Object.keys(data[0] || {});
     const csvContent = [
       headers.join(","),
-      ...data.map((row: Record<string, unknown>) => 
-        headers.map((h: string) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(",")
+      ...data.map((row: Record<string, unknown>) =>
+        headers.map((h: string) => {
+          const raw = String(row[h] ?? "");
+          const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+          return `"${safe.replace(/"/g, '""')}"`;
+        }).join(",")
       ),
     ].join("\n");
 
@@ -124,8 +158,8 @@ serve(async (req) => {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    console.error('Excel export error:', error instanceof Error ? error.message : String(error));
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

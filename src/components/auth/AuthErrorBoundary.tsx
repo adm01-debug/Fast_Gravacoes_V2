@@ -69,7 +69,7 @@ export class AuthErrorBoundary extends Component<Props, State> {
 
             <div className="bg-card border rounded-lg p-6 shadow-sm space-y-4 text-center">
               <p className="text-sm text-muted-foreground italic">
-                "{this.state.error?.message || "Erro de renderização desconhecido"}"
+                Ocorreu um erro inesperado na autenticação. Os detalhes foram registrados.
               </p>
 
               <Button

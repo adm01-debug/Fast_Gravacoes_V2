@@ -140,7 +140,7 @@ export function ColorsSection() {
                       </div>
                       <p className="text-sm font-medium">Gradient Primary Subtle</p>
                       <p className="text-xs text-muted-foreground">.gradient-primary-subtle</p>
-                      <p className="text-xs text-muted-foreground/70">Uso: backgrounds suaves, cards secundários</p>
+                      <p className="text-xs text-muted-foreground">Uso: backgrounds suaves, cards secundários</p>
                     </div>
                     <div className="space-y-2">
                       <div className="h-24 rounded-lg gradient-primary flex items-center justify-center">
@@ -148,7 +148,7 @@ export function ColorsSection() {
                       </div>
                       <p className="text-sm font-medium">Gradient Primary</p>
                       <p className="text-xs text-muted-foreground">.gradient-primary</p>
-                      <p className="text-xs text-muted-foreground/70">Uso: CTAs principais, destaques</p>
+                      <p className="text-xs text-muted-foreground">Uso: CTAs principais, destaques</p>
                     </div>
                     <div className="space-y-2">
                       <div className="h-24 rounded-lg gradient-primary-intense flex items-center justify-center">
@@ -156,7 +156,7 @@ export function ColorsSection() {
                       </div>
                       <p className="text-sm font-medium">Gradient Primary Intense</p>
                       <p className="text-xs text-muted-foreground">.gradient-primary-intense</p>
-                      <p className="text-xs text-muted-foreground/70">Uso: botões premium, destaques fortes</p>
+                      <p className="text-xs text-muted-foreground">Uso: botões premium, destaques fortes</p>
                     </div>
                     <div className="space-y-2">
                       <div className="h-24 rounded-lg gradient-primary-vivid flex items-center justify-center">
@@ -164,7 +164,7 @@ export function ColorsSection() {
                       </div>
                       <p className="text-sm font-medium">Gradient Primary Vivid</p>
                       <p className="text-xs text-muted-foreground">.gradient-primary-vivid</p>
-                      <p className="text-xs text-muted-foreground/70">Uso: badges especiais, animações</p>
+                      <p className="text-xs text-muted-foreground">Uso: badges especiais, animações</p>
                     </div>
                   </div>
                 </div>

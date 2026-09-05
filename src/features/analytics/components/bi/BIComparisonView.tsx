@@ -7,7 +7,7 @@ import {
 import {
   BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
+} from '@/lib/recharts';
 import { cn } from '@/lib/utils';
 import { BIMetrics } from '@/features/analytics/types';
 

@@ -48,6 +48,22 @@ import {
 import { useQuickFavorites, QuickFavorite } from '@/hooks/useQuickFavorites';
 import { useAlertCount } from '@/hooks/useAlertCount';
 
+type BrowserAudioWindow = Window & {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+};
+
+const createBrowserAudioContext = (): AudioContext => {
+  const audioWindow = window as BrowserAudioWindow;
+  const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+
+  if (!AudioContextConstructor) {
+    throw new Error('AudioContext não suportado neste navegador.');
+  }
+
+  return new AudioContextConstructor();
+};
+
 const iconMap: Record<string, React.ElementType> = {
   Home, Calendar, CalendarDays, LayoutGrid, List, Zap, BarChart3,
   AlertTriangle, BookOpen, UserCircle, QrCode, Bot, Printer, Users, Plus, Star
@@ -192,9 +208,18 @@ export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
 
     try {
       if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioWindow = window as Window & {
+          AudioContext?: typeof AudioContext;
+          webkitAudioContext?: typeof AudioContext;
+        };
+        const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+        if (!AudioContextConstructor) return;
+        const ctx = new AudioContextConstructor();
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        audioContextRef.current = ctx;
       }
       const ctx = audioContextRef.current;
+      if (!ctx) return;
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 

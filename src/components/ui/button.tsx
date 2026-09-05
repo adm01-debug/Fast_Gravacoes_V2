@@ -148,15 +148,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { triggerRipple, RippleContainer } = useRipple({
       color: variant === 'default' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)'
     });
-    const Comp = asChild ? Slot : "button";
 
     const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
       triggerRipple(e);
       props.onMouseDown?.(e);
     };
 
+    // When asChild, Slot must receive exactly ONE React element child.
+    // Skip ripple + shimmer so the consumer controls the DOM.
+    if (asChild) {
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </Slot>
+      );
+    }
+
     return (
-      <Comp
+      <button
         className={cn(buttonVariants({ variant, size, shimmer, className }), "relative overflow-hidden")}
         ref={ref}
         onMouseDown={handleMouseDown}
@@ -172,7 +185,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             aria-hidden="true"
           />
         )}
-      </Comp>
+      </button>
     );
   },
 );

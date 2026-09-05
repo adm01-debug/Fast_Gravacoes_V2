@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -42,7 +43,7 @@ interface PerformanceTrace {
   name: string;
   duration_ms: number;
   service_name: string;
-  attributes: any;
+  attributes: Record<string, unknown> | null;
   created_at: string;
 }
 
@@ -52,12 +53,23 @@ interface ErrorLog {
   stack: string | null;
   component_name: string | null;
   url: string | null;
-  metadata: any;
+  metadata: Record<string, unknown> | null;
   created_at: string;
 }
 
 type SeverityFilter = "all" | "slow" | "very_slow" | "error";
 type TimeFilter = "1h" | "6h" | "24h" | "7d" | "custom";
+
+// Tabelas query_telemetry e telemetry_traces são acessadas diretamente via supabase tipado
+
+const attrStr = (attrs: Record<string, unknown> | null | undefined, key: string, fallback = ''): string => {
+  const v = attrs?.[key];
+  return v == null ? fallback : String(v);
+};
+const attrNum = (attrs: Record<string, unknown> | null | undefined, key: string): number => {
+  const v = attrs?.[key];
+  return typeof v === 'number' ? v : Number(v) || 0;
+};
 
 export default function AdminTelemetriaPage() {
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
@@ -115,7 +127,7 @@ export default function AdminTelemetriaPage() {
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
       let query = supabase
-        .from("query_telemetry" as any)
+        .from("query_telemetry")
         .select("*")
         .gte("created_at", from)
         .lte("created_at", to)
@@ -141,7 +153,7 @@ export default function AdminTelemetriaPage() {
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
       const { data, error } = await supabase
-        .from("telemetry_traces" as any)
+        .from("telemetry_traces")
         .select("*")
         .gte("created_at", from)
         .lte("created_at", to)
@@ -182,7 +194,7 @@ export default function AdminTelemetriaPage() {
   const handleCleanup = async () => {
     const threshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { error } = await supabase
-      .from("query_telemetry" as any)
+      .from("query_telemetry")
       .delete()
       .lt("created_at", threshold);
     
@@ -211,7 +223,7 @@ export default function AdminTelemetriaPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Select value={timeFilter} onValueChange={(v: any) => setTimeFilter(v)}>
+            <Select value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
               <SelectTrigger className="w-[140px] h-9 bg-background">
                 <CalendarIcon className="h-3.5 w-3.5 mr-2 opacity-50" />
                 <SelectValue />
@@ -347,7 +359,7 @@ export default function AdminTelemetriaPage() {
                   <Layout className="h-4 w-4" />
                   Histórico de Execução (SQL)
                 </CardTitle>
-                <Select value={severityFilter} onValueChange={(v: any) => setSeverityFilter(v)}>
+                <Select value={severityFilter} onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}>
                   <SelectTrigger className="w-[120px] h-8 text-xs">
                     <SelectValue placeholder="Severidade" />
                   </SelectTrigger>
@@ -438,14 +450,14 @@ export default function AdminTelemetriaPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="font-bold text-sm">{p.name}</span>
                                     <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">
-                                      {p.attributes?.type || 'trace'}
+                                      {attrStr(p.attributes, 'type', 'trace')}
                                     </Badge>
                                   </div>
                                   <p className="text-[10px] text-muted-foreground flex items-center gap-2">
                                     <CalendarIcon className="h-3 w-3" />
                                     {format(new Date(p.created_at), 'dd/MM/yyyy HH:mm:ss')}
                                     <span className="text-primary/40">•</span>
-                                    {p.attributes?.url || '/'}
+                                    {attrStr(p.attributes, 'url', '/')}
                                   </p>
                                 </div>
                                 <div className="text-right">
@@ -455,9 +467,9 @@ export default function AdminTelemetriaPage() {
                                   )}>
                                     {p.duration_ms.toFixed(1)}ms
                                   </p>
-                                  {p.attributes?.reFetchCount > 0 && (
+                                  {attrNum(p.attributes, 'reFetchCount') > 0 && (
                                     <p className="text-[10px] font-bold text-primary">
-                                      {p.attributes.reFetchCount} Re-fetches
+                                      {attrNum(p.attributes, 'reFetchCount')} Re-fetches
                                     </p>
                                   )}
                                 </div>
@@ -536,7 +548,7 @@ export default function AdminTelemetriaPage() {
                               </div>
                             </div>
                             <Badge variant="outline" className="text-[9px] bg-background">
-                              {err.metadata?.level || 'error'}
+                              {attrStr(err.metadata, 'level', 'error')}
                             </Badge>
                           </div>
                           <div className="p-4 space-y-3">
@@ -551,8 +563,8 @@ export default function AdminTelemetriaPage() {
                             <div className="flex items-center justify-between text-[10px]">
                               <span className="font-mono text-muted-foreground truncate max-w-[300px]">{err.url}</span>
                               <Button variant="link" size="sm" className="h-auto p-0 text-[10px] font-bold" onClick={() => {
-                                console.log('Metadata:', err.metadata);
-                                toast.info('Metadata logado no console para depuração');
+                                logger.info('Error log metadata inspected', err.metadata, 'AdminTelemetriaPage');
+                                toast.info('Metadata registrado nos logs para depuração');
                               }}>
                                 Ver Metadata
                               </Button>

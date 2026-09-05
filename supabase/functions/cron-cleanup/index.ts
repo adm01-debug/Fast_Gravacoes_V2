@@ -1,78 +1,76 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronSecret } from "../_shared/cronAuth.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+
+interface PurgeResult { table_name: string; deleted_count: number }
 
 serve(async (req) => {
-  try {
-    // Guard with a shared secret so only cron infrastructure can trigger this
-    const apiKey = Deno.env.get("CRON_API_KEY");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    const provided = req.headers.get("x-api-key") || req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (provided !== apiKey) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
 
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "cron-cleanup", requestId });
+  const jsonHeaders = withRequestId({ ...getCorsHeaders(req), "Content-Type": "application/json" }, requestId);
+
+  const unauthorized = requireCronSecret(req, { failClosed: true });
+  if (unauthorized) return unauthorized;
+
+  try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    const results = {
-      deletedLogs: 0,
-      deletedNotifications: 0,
-      deletedSessions: 0,
-      archivedJobs: 0,
-    };
+    // 1) Purge de logs conforme política de retenção centralizada em SQL.
+    const { data: purgeRows, error: purgeError } = await supabase.rpc("purge_old_logs");
+    if (purgeError) {
+      log.error("purge_old_logs.failed", purgeError);
+    }
 
-    // Delete old audit logs (> 90 days)
-    const { count: logsCount } = await supabase
-      .from("audit_logs")
-      .delete()
-      .lt("created_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
-    results.deletedLogs = logsCount || 0;
+    const purge = (purgeRows ?? []) as PurgeResult[];
+    const purgeSummary: Record<string, number> = {};
+    for (const row of purge) purgeSummary[row.table_name] = Number(row.deleted_count);
 
-    // Delete old notifications (> 30 days)
-    const { count: notifsCount } = await supabase
-      .from("notifications")
-      .delete()
-      .eq("read", true)
-      .lt("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-    results.deletedNotifications = notifsCount || 0;
-
-    // Delete expired sessions
-    const { count: sessionsCount } = await supabase
-      .from("sessions")
-      .delete()
-      .lt("expires_at", new Date().toISOString());
-    results.deletedSessions = sessionsCount || 0;
-
-    // Archive finished jobs older than 6 months
+    // 2) Arquivamento de jobs finalizados (> 180 dias).
+    let archivedJobs = 0;
     const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: oldJobs } = await supabase
+    const { data: oldJobs, error: oldJobsError } = await supabase
       .from("jobs")
       .select("*")
       .eq("status", "finished")
       .lt("actual_end_time", sixMonthsAgo);
 
-    if (oldJobs?.length) {
-      await supabase.from("archived_jobs").insert(oldJobs);
-      await supabase.from("jobs").delete().in("id", oldJobs.map((j: any) => j.id));
-      results.archivedJobs = oldJobs.length;
+    if (oldJobsError) {
+      log.error("jobs.archive_query_failed", oldJobsError);
+    } else if (oldJobs && oldJobs.length > 0) {
+      const { error: archiveError } = await supabase.from("archived_jobs").insert(oldJobs);
+      if (archiveError) {
+        log.error("jobs.archive_insert_failed", archiveError);
+      } else {
+        const ids = (oldJobs as Array<{ id: string }>).map((j) => j.id);
+        const { error: deleteError } = await supabase.from("jobs").delete().in("id", ids);
+        if (deleteError) {
+          log.error("jobs.archive_delete_failed", deleteError);
+        } else {
+          archivedJobs = oldJobs.length;
+        }
+      }
     }
 
-    console.log("Cleanup completed:", results);
-    return new Response(JSON.stringify({ success: true, results }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    const totalPurged = purge.reduce((acc, r) => acc + Number(r.deleted_count), 0);
+    log.info("cleanup.completed", { totalPurged, archivedJobs, byTable: purgeSummary });
+
+    return new Response(
+      JSON.stringify({ success: true, requestId, purged: purgeSummary, archivedJobs, totalPurged }),
+      { headers: jsonHeaders },
+    );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), { status: 500 });
+    log.error("unhandled_error", error);
+    return new Response(JSON.stringify({ error: "Internal server error", requestId }), {
+      status: 500,
+      headers: jsonHeaders,
+    });
   }
 });

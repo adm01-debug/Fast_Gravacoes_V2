@@ -5,11 +5,18 @@ import { TargetArrowIcon } from '@/components/icons/TargetArrowIcon';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
-interface MachineCardProps {
-  machine: any;
+export interface MachineCardData {
+  id: string;
+  code: string;
+  name: string;
+  is_active: boolean;
+}
+
+interface MachineCardProps<M extends MachineCardData = MachineCardData> {
+  machine: M;
   isSelected: boolean;
   onSelect: (id: string) => void;
-  onOpenSettings: (machine: any) => void;
+  onOpenSettings: (machine: M) => void;
   index: number;
   metrics?: {
     oee: number;
@@ -19,7 +26,7 @@ interface MachineCardProps {
   };
 }
 
-export function MachineCard({ machine, isSelected, onSelect, onOpenSettings, index, metrics }: MachineCardProps) {
+export function MachineCard<M extends MachineCardData>({ machine, isSelected, onSelect, onOpenSettings, index, metrics }: MachineCardProps<M>) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -65,7 +72,7 @@ export function MachineCard({ machine, isSelected, onSelect, onOpenSettings, ind
               <span>OEE {metrics?.oee ? `${metrics.oee}%` : '--'}</span>
             </div>
             <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-              <Zap className={cn("h-3 w-3", (metrics?.availability || 0) < 80 ? "text-amber-500" : "text-success")} />
+              <Zap className={cn("h-3 w-3", (metrics?.availability || 0) < 80 ? "text-warning" : "text-success")} />
               <span>{metrics?.availability ? `${metrics.availability}%` : '--'} Disponib.</span>
             </div>
           </div>

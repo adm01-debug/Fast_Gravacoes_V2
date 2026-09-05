@@ -1,20 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
 
 interface RateLimitConfig {
   maxRequests: number;
@@ -29,44 +16,101 @@ const DEFAULT_CONFIG: RateLimitConfig = {
 };
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: getCorsHeaders(req) });
-  }
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  try {
-    const body = await req.json();
-    const { endpoint, user_id, user_email } = body;
+  // Derive caller identity from a verified JWT, not from the request body.
+  // Callers without a valid JWT can still be rate-limited by IP, but they
+  // cannot supply or forge user_id / user_email in the log entries.
+  const authHeader = req.headers.get('Authorization');
+  let verifiedUserId: string | undefined;
+  let verifiedUserEmail: string | undefined;
+  if (authHeader) {
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user } } = await userClient.auth.getUser();
+    if (user) {
+      verifiedUserId = user.id;
+      verifiedUserEmail = user.email ?? undefined;
+    }
+  }
 
-    // Get client IP from headers
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
-      || req.headers.get('x-real-ip') 
+  // Guarda de abuso do próprio endpoint de rate limit (público): anônimos são
+  // limitados por IP para não conseguirem inflar `rate_limit_logs`.
+  if (!verifiedUserId) {
+    const selfLimited = await checkRateLimit(supabase, {
+      endpoint: 'rate-limit-check:self',
+      identity: { ip: req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') },
+      max: 60,
+      windowSeconds: 60,
+      corsHeaders: getCorsHeaders(req),
+    });
+    if (selfLimited) return selfLimited;
+  }
+
+  try {
+
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    // Accept `endpoint` from the body; ignore any client-supplied user_id/user_email.
+    const { endpoint } = body;
+
+    if (!endpoint || typeof endpoint !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'endpoint is required' }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    // Validate endpoint format before storing in DB: max 255 printable ASCII chars,
+    // no control characters. Rejects attempts to inject nulls or long blobs.
+    if (endpoint.length > 255 || /[^\x20-\x7e]/u.test(endpoint)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid endpoint format' }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    // Get client IP from headers (server-derived, not client-supplied)
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('x-real-ip')
       || '0.0.0.0';
 
     console.log(`Rate limit check for IP: ${ip}, endpoint: ${endpoint}`);
 
-    // Check if IP is blocked
+    // Check if IP is blocked. Order so that a permanent / longest-lived block
+    // wins when duplicate rows exist for the same IP.
     const { data: blockedIP } = await supabase
       .from('blocked_ips')
       .select('id, expires_at, is_permanent')
       .eq('ip_address', ip)
       .is('unblocked_at', null)
-      .single();
+      .order('is_permanent', { ascending: false })
+      .order('expires_at', { ascending: false, nullsFirst: false })
+      .limit(1)
+      .maybeSingle();
 
     if (blockedIP) {
-      // Check if block has expired
       if (!blockedIP.is_permanent && blockedIP.expires_at) {
         const expiresAt = new Date(blockedIP.expires_at);
         if (expiresAt > new Date()) {
           console.log(`IP ${ip} is blocked until ${blockedIP.expires_at}`);
           return new Response(
-            JSON.stringify({ 
-              allowed: false, 
+            JSON.stringify({
+              allowed: false,
               reason: 'ip_blocked',
-              expires_at: blockedIP.expires_at 
+              expires_at: blockedIP.expires_at,
             }),
             { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 429 }
           );
@@ -89,12 +133,13 @@ Deno.serve(async (req) => {
       .order('endpoint_pattern');
 
     if (settings) {
-      // Find matching config (most specific first)
       for (const setting of settings) {
         const pattern = setting.endpoint_pattern;
-        if (pattern === endpoint || 
-            (pattern.endsWith('*') && endpoint.startsWith(pattern.slice(0, -1))) ||
-            pattern === '*') {
+        if (
+          pattern === endpoint ||
+          (pattern.endsWith('*') && endpoint.startsWith(pattern.slice(0, -1))) ||
+          pattern === '*'
+        ) {
           config = {
             maxRequests: setting.max_requests,
             windowSeconds: setting.window_seconds,
@@ -108,7 +153,6 @@ Deno.serve(async (req) => {
     const now = new Date();
     const windowStart = new Date(now.getTime() - config.windowSeconds * 1000);
 
-    // Count requests in current window
     const { count, error: countError } = await supabase
       .from('rate_limit_logs')
       .select('*', { count: 'exact', head: true })
@@ -122,25 +166,23 @@ Deno.serve(async (req) => {
 
     const requestCount = (count || 0) + 1;
 
-    // Log this request
+    // Log this request using only server-verified identity fields
     await supabase.from('rate_limit_logs').insert({
       ip_address: ip,
       endpoint: endpoint,
-      user_id: user_id,
-      user_email: user_email,
+      user_id: verifiedUserId ?? null,
+      user_email: verifiedUserEmail ?? null,
       request_count: requestCount,
       window_start: windowStart.toISOString(),
       window_end: now.toISOString(),
       is_blocked: requestCount > config.maxRequests,
     });
 
-    // Check if rate limit exceeded
     if (requestCount > config.maxRequests) {
       console.log(`Rate limit exceeded for IP ${ip}: ${requestCount}/${config.maxRequests}`);
 
-      // Auto-block the IP
       const expiresAt = new Date(now.getTime() + config.blockDurationMinutes * 60 * 1000);
-      
+
       await supabase.from('blocked_ips').insert({
         ip_address: ip,
         reason: `Rate limit exceeded: ${requestCount} requests in ${config.windowSeconds}s on ${endpoint}`,
@@ -149,12 +191,11 @@ Deno.serve(async (req) => {
         request_count_at_block: requestCount,
       });
 
-      // Log security event
       await supabase.from('security_events').insert({
         event_type: 'rate_limit_exceeded',
         severity: 'warning',
-        user_id: user_id,
-        user_email: user_email,
+        user_id: verifiedUserId ?? null,
+        user_email: verifiedUserEmail ?? null,
         ip_address: ip,
         details: {
           endpoint,
@@ -166,8 +207,8 @@ Deno.serve(async (req) => {
       });
 
       return new Response(
-        JSON.stringify({ 
-          allowed: false, 
+        JSON.stringify({
+          allowed: false,
           reason: 'rate_limit_exceeded',
           retry_after: config.blockDurationMinutes * 60,
         }),
@@ -176,8 +217,8 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        allowed: true, 
+      JSON.stringify({
+        allowed: true,
         remaining: config.maxRequests - requestCount,
         reset_at: new Date(now.getTime() + config.windowSeconds * 1000).toISOString(),
       }),
@@ -186,11 +227,12 @@ Deno.serve(async (req) => {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('Rate limit check error:', message);
-    
-    // On error, allow the request (fail open)
+
+    // Fail closed: on internal errors deny the request rather than silently
+    // allowing unlimited traffic. Callers should handle 503 with retry logic.
     return new Response(
-      JSON.stringify({ allowed: true, error: message }),
-      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 200 }
+      JSON.stringify({ allowed: false, error: 'Rate limit check unavailable', retry_after: 5 }),
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 503 }
     );
   }
 });

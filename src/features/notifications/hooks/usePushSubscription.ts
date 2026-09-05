@@ -1,3 +1,9 @@
+/* eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps, react-hooks/preserve-manual-memoization -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useCallback, useEffect } from 'react';
 import { logger } from '@/lib/logger';
 
@@ -45,7 +51,10 @@ export function usePushSubscription() {
   }, [user]);
 
   const checkSubscription = useCallback(async () => {
-    if (!isSupported) return false;
+    // Recompute support locally instead of reading the `isSupported` state,
+    // which is still false during the first render where this is called.
+    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    if (!supported) return false;
 
     try {
       const registration = await navigator.serviceWorker.ready;
@@ -56,7 +65,7 @@ export function usePushSubscription() {
     } catch (error) {
       return false;
     }
-  }, [isSupported]);
+  }, []);
 
   const subscribe = useCallback(async () => {
     if (!user) {

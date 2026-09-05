@@ -45,7 +45,7 @@ export function TPMCalendar({ schedules, onSelectSchedule }: TPMCalendarProps) {
     <Card className="card-glass">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg font-display">
+          <CardTitle className="flex items-center gap-2 text-lg text-title">
             <Calendar className="h-5 w-5 text-primary" />
             Calendário de Manutenções
           </CardTitle>

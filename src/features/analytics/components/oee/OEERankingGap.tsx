@@ -56,7 +56,7 @@ export const OEERankingGap = memo(function OEERankingGap({
     };
   }, [machines, techniques, targetOEE]);
 
-  const renderRankingItem = (item: any, index: number, mode: 'ranking' | 'gap' | 'impact') => {
+  const renderRankingItem = (item: { id: string; name: string; color: string; value: number; gap: number; losses?: number }, index: number, mode: 'ranking' | 'gap' | 'impact') => {
     const isAboveTarget = item.gap >= 0;
     const isImpactMode = mode === 'impact';
     
@@ -86,7 +86,7 @@ export const OEERankingGap = memo(function OEERankingGap({
           {isImpactMode ? (
             <>
               <div className="text-xs font-black text-destructive">
-                {item.losses.toLocaleString()}
+                {(item.losses ?? 0).toLocaleString()}
               </div>
               <p className="text-[9px] font-bold text-muted-foreground uppercase">Peças Perdidas</p>
             </>

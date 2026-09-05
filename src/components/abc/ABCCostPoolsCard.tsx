@@ -22,8 +22,8 @@ const poolTypeLabels: Record<string, string> = {
 
 const poolTypeColors: Record<string, string> = {
   direct_labor: 'bg-blue-500',
-  machine: 'bg-emerald-500',
-  overhead: 'bg-amber-500',
+  machine: 'bg-success',
+  overhead: 'bg-warning',
   material: 'bg-purple-500',
   setup: 'bg-rose-500',
 };
@@ -47,7 +47,7 @@ export function ABCCostPoolsCard({ costPools, totalAllocated, onUpdateBudget }: 
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-title">
           <DollarSign className="h-5 w-5 text-primary" />
           Pools de Custo
         </CardTitle>
@@ -56,13 +56,13 @@ export function ABCCostPoolsCard({ costPools, totalAllocated, onUpdateBudget }: 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="p-4 rounded-lg bg-muted/50">
             <p className="text-sm text-muted-foreground">Orçamento Total</p>
-            <p className="text-2xl font-bold font-display">
+            <p className="text-display">
               {totalBudget.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-muted/50">
             <p className="text-sm text-muted-foreground">Alocado</p>
-            <p className="text-2xl font-bold font-display text-primary">
+            <p className="text-display text-primary">
               {totalAllocated.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </p>
           </div>

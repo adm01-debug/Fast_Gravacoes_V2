@@ -88,7 +88,7 @@ export default function OperatorProductivityPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-black tracking-tighter">
+              <h1 className="text-3xl text-title font-black tracking-tighter">
                 <span className="gradient-text animate-pulse-glow">Workforce Performance 10/10</span>
               </h1>
             </div>
@@ -198,7 +198,7 @@ export default function OperatorProductivityPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredOperators.map((operator, index) => (
-              <div key={operator.operatorId} className="animate-fade-in cursor-pointer" style={{ animationDelay: `${index * 50}ms` }} onClick={() => setSelectedOperator(operator)}>
+              <div key={operator.operatorId} role="button" tabIndex={0} aria-label={`Ver detalhes de ${operator.operatorName || operator.operatorId}`} className="animate-fade-in cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl" style={{ animationDelay: `${index * 50}ms` }} onClick={() => setSelectedOperator(operator)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedOperator(operator); } }}>
                 <OperatorProductivityCard
                   operator={operator}
                   goals={getGoalsByOperator(operator.operatorId)}

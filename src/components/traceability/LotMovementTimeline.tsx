@@ -8,7 +8,7 @@ interface LotMovementTimelineProps {
 }
 
 const MOVEMENT_CONFIG: Record<string, { label: string; icon: typeof ArrowRight; color: string }> = {
-  production: { label: 'Produção', icon: Package, color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30' },
+  production: { label: 'Produção', icon: Package, color: 'text-success bg-success/10 border-success/30' },
   transfer: { label: 'Transferência', icon: Truck, color: 'text-blue-500 bg-blue-500/10 border-blue-500/30' },
   consumption: { label: 'Consumo', icon: ArrowRight, color: 'text-orange-500 bg-orange-500/10 border-orange-500/30' },
   adjustment: { label: 'Ajuste', icon: Layers, color: 'text-purple-500 bg-purple-500/10 border-purple-500/30' },

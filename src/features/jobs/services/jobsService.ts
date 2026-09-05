@@ -2,6 +2,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { logger } from '@/lib/logger';
 import { jobSchema, JobStatus, JobPriority } from '../types/job.schema';
+import { assertTransition } from './jobStateMachine';
+import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 export type { JobStatus, JobPriority };
 
@@ -67,10 +69,17 @@ export const jobsService = {
   },
 
   async updateStatus(id: string, status: JobStatus): Promise<Job> {
-    const { data: { user } } = await supabase.auth.getUser();
-    const updateData: JobUpdate = { 
-      status, 
-      updated_at: new Date().toISOString() 
+    const [{ data: { user } }, { data: current, error: fetchErr }] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.from('jobs').select('status').eq('id', id).single(),
+    ]);
+    if (fetchErr) throw fetchErr;
+
+    assertTransition(current.status as JobStatus, status);
+
+    const updateData: JobUpdate = {
+      status,
+      updated_at: new Date().toISOString()
     };
 
     if (status === 'production') {
@@ -89,25 +98,12 @@ export const jobsService = {
   },
 
   async syncToBitrix24(jobId: string, status: JobStatus) {
-    try {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      if (projectId) {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        if (!token) return;
-        fetch(`https://${projectId}.supabase.co/functions/v1/bitrix24-sync?action=push`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ jobId, status })
-        }).catch(() => { /* fire and forget */ });
-      }
-    } catch (e) {
-      // Ignore errors in fire-and-forget sync
-    }
+    edgeFunctionFetch('bitrix24-sync?action=push', {
+      method: 'POST',
+      body: JSON.stringify({ jobId, status }),
+    }).catch((err: unknown) => {
+      logger.warn('Bitrix24 sync failed (non-critical)', { jobId, status, error: String(err) }, 'jobsService');
+    });
   },
 
   async delete(id: string): Promise<void> {

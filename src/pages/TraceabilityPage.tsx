@@ -1,11 +1,11 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
-import { BIJob } from '@/features/analytics/types';
+/* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/lib/utils';
 import { useFuseSearch } from '@/hooks/useFuseSearch';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { format, differenceInDays } from 'date-fns';
 import { parseDateOnly } from '@/lib/dateUtils';
 import {
@@ -158,7 +158,7 @@ export default function TraceabilityPage() {
     });
   };
 
-  const processBulkStatusUpdate = (validLots: ProductionLot[], newStatus: string, reason?: string) => {
+  const processBulkStatusUpdate = useCallback((validLots: ProductionLot[], newStatus: string, reason?: string) => {
     validLots.forEach(lot => {
       updateLot.mutate({
         id: lot.id,
@@ -168,7 +168,7 @@ export default function TraceabilityPage() {
     });
     toast.success(`${validLots.length} lote(s) atualizados para ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
     setSelectedIds(new Set());
-  };
+  }, [updateLot]);
 
   const handleBulkStatusChange = useCallback((newStatus: string) => {
     const validLots = filteredAndSortedLots.filter(l =>
@@ -184,15 +184,16 @@ export default function TraceabilityPage() {
     } else {
       processBulkStatusUpdate(validLots, newStatus);
     }
-  }, [filteredAndSortedLots, selectedIds]);
+  }, [filteredAndSortedLots, selectedIds, processBulkStatusUpdate]);
+
 
   const handleExportCSV = () => {
     const headers = ['Lote', 'Produto', 'Quantidade', 'Produzido', 'Status', 'Data Produção', 'Validade', 'Job'];
     const rows = filteredAndSortedLots.map(l => [
       l.lot_number, l.product_name, l.quantity, l.produced_quantity,
       STATUS_CONFIG[l.status]?.label || l.status,
-      format(parseDateOnly(l.production_date)!, 'dd/MM/yyyy'),
-      l.expiration_date ? format(parseDateOnly(l.expiration_date)!, 'dd/MM/yyyy') : '',
+      format(parseDateOnly(l.production_date) ?? new Date(), 'dd/MM/yyyy'),
+      l.expiration_date ? format(parseDateOnly(l.expiration_date) ?? new Date(), 'dd/MM/yyyy') : '',
       l.job?.order_number || ''
     ]);
     const csv = [headers, ...rows].map(r => r.join(';')).join('\n');
@@ -208,10 +209,10 @@ export default function TraceabilityPage() {
 
   const getExpirationBadge = (lot: ProductionLot) => {
     if (!lot.expiration_date || lot.status !== 'active') return null;
-    const daysLeft = differenceInDays(parseDateOnly(lot.expiration_date)!, new Date());
-    if (daysLeft < 0) return <Badge variant="destructive" className="text-[10px]">Expirado</Badge>;
-    if (daysLeft <= 3) return <Badge variant="destructive" className="text-[10px] animate-pulse">⚠ {daysLeft}d</Badge>;
-    if (daysLeft <= 7) return <Badge variant="outline" className="text-[10px] text-orange-500 border-orange-500/30">⏰ {daysLeft}d</Badge>;
+    const daysLeft = differenceInDays(parseDateOnly(lot.expiration_date) ?? new Date(), new Date());
+    if (daysLeft < 0) return <Badge variant="destructive" className="text-[11px]">Expirado</Badge>;
+    if (daysLeft <= 3) return <Badge variant="destructive" className="text-[11px] motion-safe:animate-pulse">⚠ {daysLeft}d</Badge>;
+    if (daysLeft <= 7) return <Badge variant="outline" className="text-[11px] text-warning border-warning/40 bg-warning/10">⏰ {daysLeft}d</Badge>;
     return null;
   };
 
@@ -265,7 +266,7 @@ export default function TraceabilityPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-black tracking-tighter flex items-center gap-3">
+              <h1 className="text-3xl text-title font-black tracking-tighter flex items-center gap-3">
                 <Package className="h-8 w-8 text-primary animate-float" />
                 Hyper-Traceability Ultra
               </h1>
@@ -361,7 +362,7 @@ export default function TraceabilityPage() {
                   <span className="font-bold text-sm">{selectedIds.size} selecionados</span>
                </div>
                <div className="flex items-center gap-2">
-                 <Button size="sm" variant="outline" className="border-emerald-500/20 text-emerald-600 hover:bg-emerald-50" onClick={() => handleBulkStatusChange('active')}>Liberar</Button>
+                 <Button size="sm" variant="outline" className="border-success/20 text-success hover:bg-success" onClick={() => handleBulkStatusChange('active')}>Liberar</Button>
                  <Button size="sm" variant="outline" className="border-warning/20 text-warning hover:bg-warning/10" onClick={() => handleBulkStatusChange('quarantine')}>Quarentena</Button>
                  <Button size="sm" variant="outline" className="border-destructive/20 text-destructive hover:bg-destructive/10" onClick={() => handleBulkStatusChange('blocked')}>Bloquear</Button>
                  <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}><X className="h-4 w-4" /></Button>

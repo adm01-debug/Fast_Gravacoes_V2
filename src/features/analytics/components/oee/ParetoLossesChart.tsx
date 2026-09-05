@@ -10,11 +10,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell
-} from 'recharts';
+} from '@/lib/recharts';
 import { Badge } from '@/components/ui/badge';
 
 interface ParetoLossesChartProps {
-  losses: any[];
+  losses: Array<{ notes?: string | null; quantity?: number | null }>;
 }
 
 export const ParetoLossesChart = memo(function ParetoLossesChart({ losses }: ParetoLossesChartProps) {

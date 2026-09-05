@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { BIJob } from '@/features/analytics/types';
+import { BIJob as BIJobLegacy } from '@/features/analytics/types';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +56,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { DrillDownDialog } from '@/features/analytics/components/bi/drilldown/DrillDownDialog';
+import { BIJob } from '@/features/analytics/components/bi/types';
 import { useSchedulingData } from '@/features/jobs';
 import { KPIOverviewTab } from '@/features/analytics/components/bi/executive/KPIOverviewTab';
 import { KPIMachinesTab } from '@/features/analytics/components/bi/executive/KPIMachinesTab';
@@ -65,7 +66,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   ResponsiveContainer, Legend
-} from 'recharts';
+} from '@/lib/recharts';
 
 export default function KPIDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -169,7 +170,7 @@ export default function KPIDashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold">
+            <h1 className="text-display">
               <span className="gradient-text">Dashboard de KPIs</span>
             </h1>
             <p className="text-muted-foreground text-sm sm:text-base">
@@ -268,8 +269,9 @@ export default function KPIDashboard() {
                     {isEditingTargets ? (
                       <div className="space-y-3 pt-2">
                         <div className="space-y-1">
-                          <label className="text-[10px]">Meta de Conclusão (%)</label>
+                          <label htmlFor="kpi-target-completion" className="text-[10px]">Meta de Conclusão (%)</label>
                           <Input
+                            id="kpi-target-completion"
                             type="number"
                             className="h-7 text-xs"
                             defaultValue={kpis.targets.completionRate}
@@ -277,8 +279,9 @@ export default function KPIDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px]">Meta de Ocupação (%)</label>
+                          <label htmlFor="kpi-target-occupancy" className="text-[10px]">Meta de Ocupação (%)</label>
                           <Input
+                            id="kpi-target-occupancy"
                             type="number"
                             className="h-7 text-xs"
                             defaultValue={kpis.targets.occupancyRate}
@@ -286,8 +289,9 @@ export default function KPIDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px]">Meta de Perda Máx (%)</label>
+                          <label htmlFor="kpi-target-loss" className="text-[10px]">Meta de Perda Máx (%)</label>
                           <Input
+                            id="kpi-target-loss"
                             type="number"
                             className="h-7 text-xs"
                             defaultValue={kpis.targets.lossRate}
@@ -421,7 +425,7 @@ export default function KPIDashboard() {
       open={drillDownOpen}
       onOpenChange={setDrillDownOpen}
       title={drillDownTitle}
-      jobs={drillDownJobs}
+      jobs={drillDownJobs as unknown as Parameters<typeof DrillDownDialog>[0]['jobs']}
       onExport={(format) => handleExport(format, drillDownTitle.replace(/\s+/g, '_'), kpis)}
     />
     </MainLayout>

@@ -1,3 +1,4 @@
+import { clickableProps } from '@/lib/a11y';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,11 +41,11 @@ export function StuckJobsCard({ stuckJobs, stuckCritical, onJobClick, onViewAll,
               return (
                 <div
                   key={stuck.job.id}
-                  onClick={() => onJobClick(stuck.job)}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  {...clickableProps(() => onJobClick(stuck.job), { label: `Abrir job travado ${stuck.job.order_number}` })}
+                  className={`p-3 rounded-lg border cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     stuck.severity === 'critical'
                       ? 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20'
-                      : 'bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20'
+                      : 'bg-warning/10 border-warning/30 hover:bg-warning/20'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -95,12 +96,12 @@ export function DataIntegrityCard({ dataIssues, orphanedTechniques }: DataIntegr
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`p-2 rounded-lg ${dataIssues.length > 0 ? 'bg-amber-500/20' : 'bg-slate-500/20'}`}>
-              <Database className={`h-5 w-5 ${dataIssues.length > 0 ? 'text-amber-400' : 'text-slate-400'}`} />
+            <div className={`p-2 rounded-lg ${dataIssues.length > 0 ? 'bg-warning/20' : 'bg-slate-500/20'}`}>
+              <Database className={`h-5 w-5 ${dataIssues.length > 0 ? 'text-warning' : 'text-slate-400'}`} />
             </div>
             Integridade de Dados
           </div>
-          <Badge variant="outline" className={`${dataIssues.length > 0 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-muted/50 text-foreground border-border'}`}>
+          <Badge variant="outline" className={`${dataIssues.length > 0 ? 'bg-warning/20 text-warning border-warning/30' : 'bg-muted/50 text-foreground border-border'}`}>
             {dataIssues.length + orphanedTechniques.length}
           </Badge>
         </CardTitle>
@@ -111,18 +112,18 @@ export function DataIntegrityCard({ dataIssues, orphanedTechniques }: DataIntegr
         ) : (
           <>
             {orphanedTechniques.map((item) => (
-              <div key={item.technique.id} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+              <div key={item.technique.id} className="p-3 rounded-lg bg-warning/10 border border-warning/30">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.technique.color }} />
-                  <span className="font-medium text-amber-400">{item.technique.name}</span>
+                  <span className="font-medium text-warning">{item.technique.name}</span>
                 </div>
                 <p className="text-sm text-muted-foreground">{item.issue}</p>
-                <p className="text-xs text-amber-400 mt-1">Cadastre máquinas para esta técnica para resolver.</p>
+                <p className="text-xs text-warning mt-1">Cadastre máquinas para esta técnica para resolver.</p>
               </div>
             ))}
             {dataIssues.map((issue, index) => (
-              <div key={index} className={`p-3 rounded-lg border ${issue.severity === 'error' ? 'bg-red-500/10 border-red-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
-                <p className={`text-sm ${issue.severity === 'error' ? 'text-red-400' : 'text-amber-400'}`}>{issue.message}</p>
+              <div key={index} className={`p-3 rounded-lg border ${issue.severity === 'error' ? 'bg-red-500/10 border-red-500/30' : 'bg-warning/10 border-warning/30'}`}>
+                <p className={`text-sm ${issue.severity === 'error' ? 'text-red-400' : 'text-warning'}`}>{issue.message}</p>
               </div>
             ))}
           </>

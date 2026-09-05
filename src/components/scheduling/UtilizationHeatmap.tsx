@@ -7,9 +7,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { DbJob } from '@/features/jobs';
 
+interface MachineForHeatmap {
+  id: string;
+  code: string;
+  name: string;
+  technique_id?: string | null;
+}
+
 interface UtilizationHeatmapProps {
   jobs: DbJob[];
-  machines: any[];
+  machines: MachineForHeatmap[];
 }
 
 export function UtilizationHeatmap({ jobs, machines }: UtilizationHeatmapProps) {
@@ -21,7 +28,7 @@ export function UtilizationHeatmap({ jobs, machines }: UtilizationHeatmapProps) 
   const getHeatColor = (value: number) => {
     if (value === 0) return 'bg-secondary/20';
     if (value < 0.3) return 'bg-success/40';
-    if (value < 0.6) return 'bg-amber-500/40';
+    if (value < 0.6) return 'bg-warning/40';
     if (value < 0.9) return 'bg-orange-500/60';
     return 'bg-destructive/70';
   };
@@ -40,7 +47,7 @@ export function UtilizationHeatmap({ jobs, machines }: UtilizationHeatmapProps) 
         <span className="text-[10px] uppercase font-bold text-muted-foreground mr-2 tracking-widest">Carga:</span>
         {machines.map((machine) => {
           const value = utilization[machine.id] || 0;
-          const technique = getTechniqueById(machine.technique_id);
+          const technique = machine.technique_id ? getTechniqueById(machine.technique_id) : null;
 
           return (
             <Tooltip key={machine.id}>
@@ -64,7 +71,7 @@ export function UtilizationHeatmap({ jobs, machines }: UtilizationHeatmapProps) 
                   </div>
                   <p className={cn(
                     "text-[10px] font-bold uppercase",
-                    value > 0.8 ? "text-destructive" : value > 0.5 ? "text-amber-500" : "text-success"
+                    value > 0.8 ? "text-destructive" : value > 0.5 ? "text-warning" : "text-success"
                   )}>
                     Carga {getHeatLabel(value)}
                   </p>

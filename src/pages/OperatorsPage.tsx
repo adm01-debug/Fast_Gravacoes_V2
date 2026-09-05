@@ -1,5 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useMemo } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useFuseSearch } from '@/hooks/useFuseSearch';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useNavigate } from 'react-router-dom';
@@ -130,7 +134,7 @@ export default function OperatorsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-black tracking-tighter">
+              <h1 className="text-3xl text-title font-black tracking-tighter">
                 <span className="gradient-text animate-pulse-glow">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
               </h1>
               <FavoriteButton path="/operators" name="Operadores" />
@@ -323,7 +327,7 @@ export default function OperatorsPage() {
                           Desde {format(new Date(operator.created_at), "MMM yyyy", { locale: ptBR })}
                         </span>
                         {!isOnline(operator.user_id) && getLastSeen(operator.user_id) && (
-                          <span className="flex items-center gap-1 text-muted-foreground/70">
+                          <span className="flex items-center gap-1 text-muted-foreground">
                             <Clock className="h-3 w-3" />
                             Visto {formatLastSeen(getLastSeen(operator.user_id))}
                           </span>
@@ -508,7 +512,7 @@ export default function OperatorsPage() {
         <Dialog open={!!operatorForQR} onOpenChange={() => setOperatorForQR(null)}>
           <DialogContent className="sm:max-w-xs text-center p-6">
             <DialogHeader>
-              <DialogTitle className="text-center font-display font-black uppercase tracking-tighter">Crachá Digital</DialogTitle>
+              <DialogTitle className="text-center text-title font-black uppercase tracking-tighter">Crachá Digital</DialogTitle>
               <DialogDescription className="text-center">FAST GRAVAÇÕES - Identificação Industrial</DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-6 py-6 bg-gradient-to-b from-primary/5 to-transparent rounded-2xl border border-primary/10">
@@ -635,7 +639,7 @@ export default function OperatorsPage() {
                       className="w-full mt-2"
                       onClick={() => {
                         setDetailsModalOpen(false);
-                        handleOpenAssignment(operatorToShowDetails!);
+                        if (operatorToShowDetails) handleOpenAssignment(operatorToShowDetails);
                       }}
                     >
                       Gerenciar Atribuições

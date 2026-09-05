@@ -26,7 +26,7 @@ export function MachineSuggestionPanel({ techniqueId, onSelectMachine }: Machine
   return (
     <Card className="glass-card border-violet-500/20 bg-violet-500/5">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm font-display flex items-center gap-2">
+        <CardTitle className="text-sm text-title flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-violet-500/20">
             <Sparkles className="h-4 w-4 text-violet-400" />
           </div>
@@ -77,7 +77,7 @@ export function MachineSuggestionPanel({ techniqueId, onSelectMachine }: Machine
                         <span>OEE Histórico</span>
                         <span>{machineOEE(bestMachine.machineId)}%</span>
                       </div>
-                      <Progress value={machineOEE(bestMachine.machineId)} className="h-1 bg-emerald-500/20" />
+                      <Progress value={machineOEE(bestMachine.machineId)} className="h-1 bg-success/20" />
                     </div>
                   </div>
 
@@ -108,8 +108,12 @@ export function MachineSuggestionPanel({ techniqueId, onSelectMachine }: Machine
                   {suggestions.slice(1, 3).map((s) => (
                     <div
                       key={s.machineId}
-                      className="p-2 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors cursor-pointer group"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Selecionar máquina ${s.machineCode}`}
+                      className="p-2 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={() => onSelectMachine?.(s.machineId)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectMachine?.(s.machineId); } }}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium group-hover:text-primary transition-colors">{s.machineCode}</span>

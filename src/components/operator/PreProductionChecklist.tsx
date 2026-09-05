@@ -114,6 +114,7 @@ export function PreProductionChecklist({ jobId, onComplete, onSkip }: PreProduct
         {checklistItems.map(item => (
           <label
             key={item.key}
+            htmlFor={`checklist-${item.key}`}
             className={cn(
               'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all',
               state[item.key]
@@ -122,9 +123,11 @@ export function PreProductionChecklist({ jobId, onComplete, onSkip }: PreProduct
             )}
           >
             <Checkbox
+              id={`checklist-${item.key}`}
               checked={state[item.key]}
               onCheckedChange={(checked) => setState(prev => ({ ...prev, [item.key]: !!checked }))}
               className="mt-0.5"
+              aria-label={item.label}
             />
             <div>
               <p className={cn('text-sm font-medium', state[item.key] && 'text-success')}>

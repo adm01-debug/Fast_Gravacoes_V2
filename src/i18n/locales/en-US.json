@@ -53,6 +53,7 @@
     "noResults": "No results found",
     "required": "Required",
     "language": "Language",
+    "changeLanguage": "Change language",
     "optional": "Optional",
     "today": "Today",
     "yesterday": "Yesterday",
@@ -72,7 +73,8 @@
     "piecesShort": "PCS",
     "close": "Close",
     "finish": "Finish",
-    "skip": "Skip"
+    "skip": "Skip",
+    "average": "average"
   },
   "intelligence": {
     "title": "Intelligence"
@@ -106,7 +108,10 @@
     "loginSuccess": "Login successful!",
     "loginError": "Login error",
     "logoutSuccess": "Logout successful!",
-    "resetRequestSent": "Request sent! Awaiting manager approval."
+    "resetRequestSent": "Request sent! Awaiting manager approval.",
+    "resetNeedsApproval": "Enter your email. The request will be sent for manager approval.",
+    "resetApprovalNote": "Your request will be reviewed by a manager before the reset email is sent.",
+    "sendRequest": "Send Request"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -124,6 +129,9 @@
     "recentJobs": "Recent Jobs",
     "topOperators": "Top Operators",
     "machineStatus": "Machine Status",
+    "machineOccupancy": "Machine Occupancy",
+    "noOccupancyData": "No machines with occupancy data",
+    "smartLogistics": "Smart Logistics",
     "overview": "Overview",
     "timeline": "Timeline"
   },
@@ -172,7 +180,8 @@
     "deleteJob": "Delete Job",
     "deleteConfirmation": "Are you sure you want to delete job {{order}}? This action cannot be undone.",
     "detailsFor": "Details for job {{order}}",
-    "instructions": "Instructions"
+    "instructions": "Instructions",
+    "noJobsFound": "No jobs found"
   },
   "operators": {
     "title": "Operators",
@@ -427,5 +436,27 @@
     "noRedemptions": "No redemptions made yet",
     "redemptionSuccess": "Redemption requested successfully! Awaiting approval.",
     "recentAchievements": "Recent Achievements"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to FAST GRAVAÇÕES!",
+      "content": "Let's take a quick tour to show you the main features of your new Autonomous Factory."
+    },
+    "navigation": {
+      "title": "Main Menu",
+      "content": "Here you access all system modules: Production, Inventory, OEE and much more."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "content": "In this area you can see the main performance indicators in real time."
+    },
+    "toolbar": {
+      "title": "Quick Actions",
+      "content": "Shortcuts for favorites, network status, notifications and theme switching."
+    },
+    "newJob": {
+      "title": "Scheduling",
+      "content": "Create new jobs and schedule productions directly from here."
+    }
   }
 }

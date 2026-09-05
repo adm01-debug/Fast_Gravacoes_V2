@@ -81,6 +81,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
+      queryClient.invalidateQueries({ queryKey: ['maintenance-schedules'] });
       toast.success('Manutenção iniciada');
     },
     onError: (error) => {
@@ -207,7 +208,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
           // NOTE: `quality_checklist_results` and `failure_risk_detected` are columns
           // on `tpm_executions`, not `maintenance_records`. Writing them here made the
           // whole update fail at runtime ("column does not exist"), so they are omitted.
-        } as any)
+        } as never)
         .eq('id', data.record_id));
 
       if (recordError) throw recordError;
@@ -274,7 +275,8 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
         }
 
         if (alertsToInsert.length > 0) {
-          await supabase.from('tpm_parameter_alerts').insert(alertsToInsert);
+          const { error: alertInsertError } = await supabase.from('tpm_parameter_alerts').insert(alertsToInsert);
+          if (alertInsertError) throw alertInsertError;
         }
       }
 
@@ -328,30 +330,35 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
       record_id: string;
       approver_id: string;
     }) => {
-      // Validação de requisitos mínimos (fotos e assinaturas)
+      // Single fetch for both validation data (responses/photos) and schedule
+      // data — two separate fetches previously created a TOCTOU window where
+      // a concurrent delete or double-approve could slip through after the first
+      // validation check passed.
       const { data: record, error: fetchErr } = await supabase
         .from('maintenance_records')
-        .select('*, responses:maintenance_item_responses(*)')
+        .select('*, responses:maintenance_item_responses(*, checklist_item:maintenance_checklist_items(requires_photo)), schedule:maintenance_schedules(*)')
         .eq('id', data.record_id)
         .single();
 
       if (fetchErr || !record) throw new Error('Registro não encontrado');
 
-      // Requisito: Pelo menos uma foto se houver itens que exigem foto
-      const needsPhoto = (record.responses || []).some((r: any) => r.photo_url);
       if (!record.signature_url) throw new Error('Assinatura obrigatória ausente');
 
-      const { data: recordData, error: recordFetchError } = await (supabase
-        .from('maintenance_records')
-        .select('*, schedule:maintenance_schedules(*)') as any)
-        .eq('id', data.record_id)
-        .maybeSingle();
-
-      if (recordFetchError || !recordData) {
-        throw new Error('Registro não encontrado');
+      // Requisito: pelo menos uma foto se algum item de checklist exigir foto.
+      // requires_photo lives on maintenance_checklist_items, not on the
+      // response row itself — must join through checklist_item_id to read it
+      // (a bare cast to a shape with requires_photo on the response silently
+      // always evaluated to false, so this check never actually fired).
+      type ResponseRow = { checklist_item?: { requires_photo?: boolean | null } | null; photo_url?: string | null };
+      const responses = (record.responses || []) as ResponseRow[];
+      const hasPhotoRequired = responses.some((r) => r.checklist_item?.requires_photo);
+      const hasPhoto = responses.some((r) => r.photo_url);
+      if (hasPhotoRequired && !hasPhoto) {
+        throw new Error('Pelo menos uma foto de evidência é obrigatória para itens que exigem foto.');
       }
 
-      const scheduleData = recordData.schedule as any;
+      const recordData = record;
+      const scheduleData = (recordData as { schedule?: { id: string; interval_days?: number } | null }).schedule ?? null;
       const nextDue = addDays(new Date(), scheduleData?.interval_days || 30).toISOString();
 
 
@@ -364,7 +371,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
           approver_id: data.approver_id,
           approved_at: new Date().toISOString(),
           next_scheduled_date_after_approval: nextDue,
-        } as any)
+        } as never)
         .eq('id', data.record_id);
 
       if (recordError) throw recordError;
@@ -382,12 +389,18 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
         if (scheduleError) throw scheduleError;
       }
 
-      // Resolve alerts
-      await supabase
-        .from('maintenance_alerts')
-        .update({ is_resolved: true, resolved_at: new Date().toISOString() })
-        .eq('schedule_id', recordData.schedule_id)
-        .eq('is_resolved', false);
+      // Resolve alerts — non-fatal: the record is already approved; log but
+      // do not throw so a missing schedule_id does not roll back the approval.
+      if (recordData.schedule_id) {
+        const { error: resolveError } = await supabase
+          .from('maintenance_alerts')
+          .update({ is_resolved: true, resolved_at: new Date().toISOString() })
+          .eq('schedule_id', recordData.schedule_id)
+          .eq('is_resolved', false);
+        if (resolveError) {
+          logger.error('Falha ao resolver alertas de manutenção após aprovação', resolveError, 'useTPMMutations');
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
@@ -395,7 +408,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
       queryClient.invalidateQueries({ queryKey: ['maintenance-alerts'] });
       toast.success('Manutenção aprovada e próximo agendamento atualizado', {
         description: `Próxima revisão agendada.`,
-        icon: React.createElement(CheckCircle2, { className: "h-4 w-4 text-success" } as any)
+        icon: React.createElement(CheckCircle2, { className: "h-4 w-4 text-success" })
       });
     },
     onError: (error) => {
@@ -416,7 +429,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
           status: 'correction_requested',
           correction_notes: data.notes,
           correction_deadline: data.deadline,
-        } as any)
+        } as never)
         .eq('id', data.record_id));
 
       if (error) throw error;
@@ -491,7 +504,7 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
         });
 
         if (!mlError && mlResult?.predictions) {
-          mlResult.predictions.forEach((p: { machine: { id: string }, prediction: { risk_score: number, recommendations?: any[] } }) => {
+          mlResult.predictions.forEach((p: { machine: { id: string }, prediction: { risk_score: number, recommendations?: string[] } }) => {
             if (p.prediction?.risk_score > 75) {
               // High risk detected by AI, find the primary schedule for this machine
               const machineSchedule = schedules.find(s => s.machine_id === p.machine.id && s.is_active);
@@ -532,6 +545,9 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
         toast.success('Diagnóstico concluído: Nenhum novo risco detectado.');
       }
     },
+    onError: (error) => {
+      showErrorToast(error, 'Erro ao gerar alertas de manutenção', TPM_ERROR_CONTEXT.alerts);
+    },
   });
 
   // Resolve alert
@@ -549,53 +565,106 @@ export function useTPMMutations({ schedules, alerts }: UseTPMMutationsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-alerts'] });
     },
+    onError: (error) => {
+      showErrorToast(error, 'Erro ao resolver alerta', TPM_ERROR_CONTEXT.alerts);
+    },
   });
 
-  // Approve batch mutation
+  // Approve batch mutation. Must enforce the same minimum-evidence
+  // requirements as single approveMaintenance (signature + photo when
+  // required) — the batch path previously skipped that validation entirely,
+  // letting records without required evidence get approved when done via
+  // the batch UI but not the single-record UI. Every write's error is also
+  // checked; a mid-batch RLS/constraint failure previously went unnoticed
+  // and was still reported to the user as a full success.
   const approveBatch = useMutation({
     mutationFn: async (data: {
       record_ids: string[];
       approver_id: string;
     }) => {
-      const results = [];
+      const approved: string[] = [];
+      const failed: Array<{ id: string; reason: string }> = [];
+
       for (const id of data.record_ids) {
-        const { data: record } = await (supabase
+        const { data: recordRaw, error: fetchErr } = await supabase
           .from('maintenance_records')
-          .select('*, schedule:maintenance_schedules(*)') as any)
+          .select('*, schedule:maintenance_schedules(*), responses:maintenance_item_responses(*, checklist_item:maintenance_checklist_items(requires_photo))')
           .eq('id', id)
           .single();
 
-        if (!record) continue;
+        const record = recordRaw as (typeof recordRaw & {
+          schedule?: { id: string; interval_days?: number } | null;
+          responses?: Array<{ checklist_item?: { requires_photo?: boolean | null } | null; photo_url?: string | null }> | null;
+        }) | null;
+
+        if (fetchErr || !record) {
+          failed.push({ id, reason: 'Registro não encontrado' });
+          continue;
+        }
+
+        if (!record.signature_url) {
+          failed.push({ id, reason: 'Assinatura obrigatória ausente' });
+          continue;
+        }
+
+        const responses = record.responses || [];
+        const hasPhotoRequired = responses.some((r) => r.checklist_item?.requires_photo);
+        const hasPhoto = responses.some((r) => r.photo_url);
+        if (hasPhotoRequired && !hasPhoto) {
+          failed.push({ id, reason: 'Foto de evidência obrigatória ausente' });
+          continue;
+        }
 
         const nextDue = addDays(new Date(), record.schedule?.interval_days || 30).toISOString();
 
-        await (supabase
+        const { error: recordError } = await supabase
           .from('maintenance_records')
           .update({
             status: 'approved',
             approver_id: data.approver_id,
             approved_at: new Date().toISOString(),
             next_scheduled_date_after_approval: nextDue,
-          } as any)
-          .eq('id', id));
+          } as never)
+          .eq('id', id);
+
+        if (recordError) {
+          failed.push({ id, reason: recordError.message });
+          continue;
+        }
 
         if (record.schedule) {
-          await supabase
+          const { error: scheduleError } = await supabase
             .from('maintenance_schedules')
             .update({
               last_completed_at: new Date().toISOString(),
               next_due_at: nextDue,
             })
             .eq('id', record.schedule.id);
+
+          if (scheduleError) {
+            failed.push({ id, reason: scheduleError.message });
+            continue;
+          }
         }
-        results.push(id);
+        approved.push(id);
       }
-      return results;
+      return { approved, failed };
     },
-    onSuccess: (ids) => {
+    onSuccess: ({ approved, failed }) => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
       queryClient.invalidateQueries({ queryKey: ['maintenance-schedules'] });
-      toast.success(`${ids.length} manutenções aprovadas em lote`);
+      queryClient.invalidateQueries({ queryKey: ['maintenance-alerts'] });
+      if (approved.length > 0) {
+        toast.success(`${approved.length} manutenções aprovadas em lote`);
+      }
+      if (failed.length > 0) {
+        toast.error(`${failed.length} manutenções não puderam ser aprovadas`, {
+          description: failed.map(f => f.reason).slice(0, 3).join('; '),
+        });
+      }
+    },
+    onError: (error) => {
+      showErrorToast(error, 'Erro ao aprovar manutenções em lote', TPM_ERROR_CONTEXT.records);
     },
   });
 

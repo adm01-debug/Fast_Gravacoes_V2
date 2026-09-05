@@ -59,7 +59,7 @@ export default function EnergyDashboard() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-black tracking-tighter">
+              <h1 className="text-3xl text-title font-black tracking-tighter">
                 <span className="gradient-text animate-pulse-glow">Sustainable Intelligence 10/10</span>
               </h1>
               <FavoriteButton path="/energy" name="Energia" />
@@ -101,7 +101,7 @@ export default function EnergyDashboard() {
           <Card className="glass-card"><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Custo Total</p><p className="text-2xl font-bold">R$ {stats.totalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p><div className="flex items-center gap-1 mt-1">{stats.costTrend >= 0 ? <TrendingUp className="h-3 w-3 text-destructive" /> : <TrendingDown className="h-3 w-3 text-success" />}<span className={`text-xs ${stats.costTrend >= 0 ? 'text-destructive' : 'text-success'}`}>{Math.abs(stats.costTrend).toFixed(1)}% vs mês anterior</span></div></div><div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center"><DollarSign className="h-6 w-6 text-green-500" /></div></div></CardContent></Card>
           <Card className="glass-card"><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Demanda de Pico</p><p className="text-2xl font-bold">{stats.peakDemand.toFixed(1)} kW</p><p className="text-xs text-muted-foreground">Maior demanda registrada</p></div><div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center"><BatteryCharging className="h-6 w-6 text-orange-500" /></div></div></CardContent></Card>
           <Card className="glass-card"><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Fator de Potência</p><p className="text-2xl font-bold">{stats.avgPowerFactor.toFixed(2)}</p><Badge variant={stats.avgPowerFactor >= 0.92 ? 'default' : 'destructive'} className="mt-1">{stats.avgPowerFactor >= 0.92 ? 'Adequado' : 'Baixo'}</Badge></div><div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center"><Gauge className="h-6 w-6 text-cyan-500" /></div></div></CardContent></Card>
-          <Card className="glass-card border-emerald-500/20 bg-emerald-500/5"><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-emerald-600 font-bold uppercase tracking-widest text-[10px]">Pegada de Carbono</p><p className="text-2xl font-bold text-emerald-700">{stats.carbonFootprintKg.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} kg CO₂</p><div className="flex items-center gap-1 mt-1 text-[10px] text-emerald-600 font-medium"><Leaf className="h-3 w-3" /> Equivalente a {Math.round(stats.carbonFootprintKg / 15)} árvores/mês</div></div><div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center"><Leaf className="h-6 w-6 text-emerald-600" /></div></div></CardContent></Card>
+          <Card className="glass-card border-success/20 bg-success/5"><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-success font-bold uppercase tracking-widest text-[10px]">Pegada de Carbono</p><p className="text-2xl font-bold text-success">{stats.carbonFootprintKg.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} kg CO₂</p><div className="flex items-center gap-1 mt-1 text-[10px] text-success font-medium"><Leaf className="h-3 w-3" /> Equivalente a {Math.round(stats.carbonFootprintKg / 15)} árvores/mês</div></div><div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center"><Leaf className="h-6 w-6 text-success" /></div></div></CardContent></Card>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -117,10 +117,10 @@ export default function EnergyDashboard() {
                   <div className="relative w-32 h-32 flex items-center justify-center">
                     <svg className="w-full h-full transform -rotate-90">
                       <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-muted/20" />
-                      <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={364} strokeDashoffset={364 - (364 * stats.energyScore) / 100} className="text-emerald-500 transition-all duration-1000 ease-out" />
+                      <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={364} strokeDashoffset={364 - (364 * stats.energyScore) / 100} className="text-success transition-all duration-1000 ease-out" />
                     </svg>
                     <div className="absolute flex flex-col items-center">
-                      <span className="text-3xl font-black text-emerald-600">{stats.energyScore}</span>
+                      <span className="text-3xl font-black text-success">{stats.energyScore}</span>
                       <span className="text-[8px] font-bold uppercase text-muted-foreground">SCORE ESG</span>
                     </div>
                   </div>
@@ -131,7 +131,7 @@ export default function EnergyDashboard() {
                     </div>
                     <div className="text-center">
                       <p className="text-[10px] text-muted-foreground font-bold uppercase">Status Atual</p>
-                      <p className={`text-sm font-black ${stats.costTrend <= 0 ? 'text-emerald-500' : 'text-destructive'}`}>
+                      <p className={`text-sm font-black ${stats.costTrend <= 0 ? 'text-success' : 'text-destructive'}`}>
                         {stats.costTrend > 0 ? '+' : ''}{stats.costTrend.toFixed(1)}%
                       </p>
                     </div>

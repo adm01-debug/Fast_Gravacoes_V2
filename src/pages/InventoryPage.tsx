@@ -1,5 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useMemo, useRef } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useRBAC, PermissionGate } from '@/features/auth';
 import { subDays, isAfter, parseISO, addDays } from 'date-fns';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -50,6 +54,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { escapeHtml } from '@/lib/sanitize';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -95,7 +100,7 @@ export default function InventoryPage() {
         </Helmet>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl text-title font-bold flex items-center gap-3">
               <Package className="h-8 w-8 text-primary" />
               Gestão de Materiais
             </h1>
@@ -211,7 +216,7 @@ export default function InventoryPage() {
                <div className="space-y-6">
                   <Card className="glass-card">
                     <CardHeader>
-                      <CardTitle className="text-sm font-display flex items-center gap-2">
+                      <CardTitle className="text-sm text-title flex items-center gap-2">
                         <Boxes className="h-4 w-4 text-primary" />
                         Sugestões de Re-alocação
                       </CardTitle>
@@ -267,7 +272,7 @@ function InventoryCard({
   onSelect
 }: {
   item: InventoryItem,
-  onMovement: (data: Omit<InventoryMovement, 'id' | 'created_at' | 'user_id'>) => Promise<any>,
+  onMovement: (data: Omit<InventoryMovement, 'id' | 'created_at' | 'user_id'>) => Promise<unknown>,
   isSelected: boolean,
   onSelect: (id: string, checked: boolean) => void
 }) {
@@ -307,7 +312,7 @@ function InventoryCard({
       isLowStock && "border-red-500/30"
     )}>
       <CardHeader className="pb-3 border-b border-border/50 bg-muted/20 relative">
-        <div className="absolute top-3 left-3 z-10" onClick={(e) => e.stopPropagation()}>
+        <div className="absolute top-3 left-3 z-10" role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
           <Checkbox
             checked={isSelected}
             onCheckedChange={(checked) => onSelect(item.id, !!checked)}
@@ -354,7 +359,7 @@ function InventoryCard({
                   <TooltipTrigger asChild>
                     <div className={cn(
                       "flex items-center gap-1 text-xs font-bold",
-                      item.days_of_supply < 7 ? "text-primary" : "text-emerald-500"
+                      item.days_of_supply < 7 ? "text-primary" : "text-success"
                     )}>
                       <Timer className="h-3 w-3" />
                       {item.days_of_supply} dias
@@ -385,7 +390,7 @@ function InventoryCard({
         <div className="flex gap-2">
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="flex-1 text-xs gap-1.5 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/50" onClick={() => setMovementType('IN')}>
+              <Button variant="outline" size="sm" className="flex-1 text-xs gap-1.5 hover:bg-success/10 hover:text-success hover:border-success/50" onClick={() => setMovementType('IN')}>
                 <ArrowUpRight className="h-3 w-3" /> Entrada
               </Button>
             </DialogTrigger>
@@ -485,7 +490,7 @@ function InventoryHistoryTable() {
       <div className="p-4 border-b border-border/50 flex flex-col sm:flex-row gap-4 items-end bg-muted/20">
         <div className="space-y-1 flex-1">
           <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Período</Label>
-          <Select value={dateFilter} onValueChange={(v: any) => setDateFilter(v)}>
+          <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as typeof dateFilter)}>
             <SelectTrigger className="bg-background">
               <SelectValue />
             </SelectTrigger>
@@ -512,7 +517,7 @@ function InventoryHistoryTable() {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" size="sm" className="gap-2 h-10 px-4 font-bold border-emerald-500/20 text-emerald-600 hover:bg-emerald-50" onClick={handleExportCSV}>
+        <Button variant="outline" size="sm" className="gap-2 h-10 px-4 font-bold border-success/20 text-success hover:bg-success" onClick={handleExportCSV}>
           <FileDown className="h-4 w-4" /> Exportar CSV
         </Button>
       </div>
@@ -531,10 +536,10 @@ function InventoryHistoryTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border/30">
-            {filteredMovements.map((m: any) => (
+            {filteredMovements.map((m) => (
               <tr key={m.id} className="hover:bg-muted/10 transition-colors group">
                 <td className="p-4 font-mono text-muted-foreground">
-                  {format(parseISO(m.created_at), 'dd/MM/yy HH:mm')}
+                  {m.created_at ? format(parseISO(m.created_at), 'dd/MM/yy HH:mm') : '-'}
                 </td>
                 <td className="p-4 font-bold text-foreground">
                   {m.inventory_items?.name}
@@ -542,10 +547,10 @@ function InventoryHistoryTable() {
                 <td className="p-4">
                   <Badge variant="outline" className={cn(
                     "text-[9px] font-black uppercase tracking-tighter",
-                    m.type === 'IN' ? "text-emerald-500 border-emerald-500/20 bg-emerald-500/5" :
+                    m.type === 'IN' ? "text-success border-success/20 bg-success/5" :
                     m.type === 'OUT' ? "text-red-500 border-red-500/20 bg-red-500/5" :
                     m.type === 'TRANSFER' ? "text-blue-500 border-blue-500/20 bg-blue-500/5" :
-                    "text-amber-500 border-amber-500/20 bg-amber-500/5"
+                    "text-warning border-warning/20 bg-warning/5"
                   )}>
                     {m.type}
                   </Badge>
@@ -557,7 +562,7 @@ function InventoryHistoryTable() {
                   {m.type === 'TRANSFER' ? `${m.from_location} → ${m.to_location}` : (m.reason || '-')}
                 </td>
                 <td className="p-4 font-medium italic">
-                  {m.profiles?.display_name || 'Sistema'}
+                  {m.profiles?.full_name || 'Sistema'}
                 </td>
                 <td className="p-4 text-right">
                   <Button
@@ -606,8 +611,22 @@ function BatchQRLabelModal({ open, onOpenChange, items }: { open: boolean, onOpe
     if (!content) return;
     const win = window.open('', '_blank');
     if (!win) return;
+    // Build the print markup from data with explicit escaping instead of
+    // serializing the live DOM (innerHTML) — a dangerouslySetInnerHTML
+    // descendant added to the preview later would otherwise flow into the
+    // popup unescaped. Only the library-generated QR <svg> is lifted from
+    // the DOM; all text comes from escapeHtml().
+    const qrSvgs = Array.from(content.querySelectorAll('svg'));
+    const labels = items.map((item, i) => {
+      const svg = qrSvgs[i]?.outerHTML ?? '';
+      const text = showText
+        ? `<p style="font-size:10px;font-weight:900;text-transform:uppercase;color:#000;line-height:1.1;margin:8px 0 0">${escapeHtml(item.name)}</p>
+           <p style="font-size:8px;font-family:monospace;color:rgba(0,0,0,.6);margin:0">ID: ${escapeHtml(item.id.substring(0, 8).toUpperCase())}</p>`
+        : '';
+      return `<div class="label-item">${svg}${text}</div>`;
+    }).join('');
     win.document.write('<html><head><title>Imprimir Lote</title><style>body { font-family: sans-serif; padding: 20px; } .label-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; } .label-item { border: 1px solid #ccc; padding: 10px; text-align: center; page-break-inside: avoid; }</style></head><body><div class="label-grid">');
-    win.document.write(content.innerHTML);
+    win.document.write(labels);
     win.document.write('</div></body></html>');
     win.document.close();
     win.focus();
@@ -678,7 +697,9 @@ function BatchQRLabelModal({ open, onOpenChange, items }: { open: boolean, onOpe
   );
 }
 
-function AIPredictionValidationModal({ open, onOpenChange, items, movements }: { open: boolean, onOpenChange: (o: boolean) => void, items: InventoryItem[], movements: any[] }) {
+type InventoryMovementRow = NonNullable<ReturnType<typeof useInventoryMovements>['data']>[number];
+
+function AIPredictionValidationModal({ open, onOpenChange, items, movements }: { open: boolean, onOpenChange: (o: boolean) => void, items: InventoryItem[], movements: InventoryMovementRow[] }) {
   const { calculateAI, isCalculatingAI } = useInventory();
   const [calibratedAccuracy, setCalibratedAccuracy] = useState<number | null>(null);
 
@@ -709,7 +730,7 @@ function AIPredictionValidationModal({ open, onOpenChange, items, movements }: {
               <CardContent className="pt-4">
                 <p className="text-[10px] uppercase font-bold text-muted-foreground">Acurácia Recente</p>
                 <p className="text-3xl font-black text-primary">{accuracy}%</p>
-                <div className="flex items-center gap-1 text-[10px] text-emerald-500 mt-1">
+                <div className="flex items-center gap-1 text-[10px] text-success mt-1">
                   <TrendingUp className="h-3 w-3" /> +1.2% vs mês anterior
                 </div>
               </CardContent>
@@ -757,12 +778,12 @@ function AIPredictionValidationModal({ open, onOpenChange, items, movements }: {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                  <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase">Validação de Consumo</p>
+                  <div className="p-3 rounded-lg bg-success/5 border border-success/20">
+                    <p className="text-[10px] font-bold text-success uppercase">Validação de Consumo</p>
                     <p className="text-[11px] text-muted-foreground mt-1">O desvio padrão entre consumo real e previsto é de 2.4% para Tintas.</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                    <p className="text-[10px] font-bold text-amber-600 uppercase">Risco de Ruptura</p>
+                  <div className="p-3 rounded-lg bg-warning/5 border border-warning/20">
+                    <p className="text-[10px] font-bold text-warning uppercase">Risco de Ruptura</p>
                     <p className="text-[11px] text-muted-foreground mt-1">Nenhum item com risco de ruptura não sinalizado detectado.</p>
                   </div>
                </div>

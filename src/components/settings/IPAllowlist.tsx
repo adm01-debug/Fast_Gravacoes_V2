@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { Globe, Plus, Trash2, Loader2, Shield, User, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -88,7 +89,7 @@ export function IPAllowlist() {
       setSelectedUserId('');
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      showErrorToast(error, 'Erro ao adicionar IP');
     },
   });
 

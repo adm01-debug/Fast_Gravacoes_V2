@@ -8,14 +8,16 @@ import {
 import { BrainCircuit, Filter, Package, Zap, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import type { SequencingSuggestion } from '@/features/jobs';
+import type { LoadBalancingSuggestion } from '@/features/analytics/types';
 
 interface AISuggestionDetailsProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  suggestion: {
-    type: 'setup' | 'balancing';
-    data: any;
-  } | null;
+  suggestion:
+    | { type: 'setup'; data: SequencingSuggestion }
+    | { type: 'balancing'; data: LoadBalancingSuggestion }
+    | null;
 }
 
 export function AISuggestionDetails({ isOpen, onOpenChange, suggestion }: AISuggestionDetailsProps) {
@@ -85,15 +87,23 @@ export function AISuggestionDetails({ isOpen, onOpenChange, suggestion }: AISugg
             <div className="grid grid-cols-2 gap-3">
               <div className="p-2 rounded bg-card border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase">Técnica</p>
-                <p className="text-xs font-bold">{suggestion.data.techniqueName || 'Digital'}</p>
+                <p className="text-xs font-bold">{suggestion.type === 'setup' ? suggestion.data.techniqueName : (suggestion.data.suggestedMachineName || 'Digital')}</p>
               </div>
               <div className="p-2 rounded bg-card border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase">Carga Total</p>
-                <p className="text-xs font-bold">{suggestion.data.totalMinutes || suggestion.data.estimatedDuration}m</p>
+                <p className="text-xs font-bold">
+                  {suggestion.type === 'setup'
+                    ? suggestion.data.totalMinutes
+                    : suggestion.data.estimatedDuration ?? 0}m
+                </p>
               </div>
               <div className="p-2 rounded bg-card border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase">Trocas (Setup)</p>
-                <p className="text-xs font-bold">{suggestion.data.currentChanges || 0} → {suggestion.data.optimizedChanges || 0}</p>
+                <p className="text-xs font-bold">
+                  {suggestion.type === 'setup'
+                    ? `${suggestion.data.currentChanges} → ${suggestion.data.optimizedChanges}`
+                    : '—'}
+                </p>
               </div>
               <div className="p-2 rounded bg-card border border-border text-center">
                 <p className="text-[10px] text-muted-foreground uppercase">Capacidade</p>
@@ -115,14 +125,14 @@ export function AISuggestionDetails({ isOpen, onOpenChange, suggestion }: AISugg
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
                   <span className="text-muted-foreground">Redução de Ociosidade / Setup</span>
-                  <span className="font-bold text-primary">-{suggestion.data.estimatedSavings || 45} min</span>
+                  <span className="font-bold text-primary">-{suggestion.type === 'setup' ? suggestion.data.estimatedSavings : 45} min</span>
                 </div>
                 <Progress value={75} className="h-1.5" />
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold">Impacto no OEE</p>
-                  <p className="text-lg font-bold text-emerald-500">+{suggestion.type === 'setup' ? '8.5' : '12'}%</p>
+                  <p className="text-lg font-bold text-success">+{suggestion.type === 'setup' ? '8.5' : '12'}%</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold">ROI Estimado</p>

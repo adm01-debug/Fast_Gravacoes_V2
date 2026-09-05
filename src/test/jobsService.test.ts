@@ -174,9 +174,14 @@ describe('jobsService.updateStatus', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('sets actual_start_time when transitioning to production', async () => {
+    // updateStatus fetches the job's current status before validating the
+    // transition (jobStateMachine), then issues a separate update call — mock
+    // the two `.from('jobs')` calls distinctly so the transition is legal
+    // ('ready' -> 'production'), rather than a same-status self-transition.
+    const currentChain = makeChain(async () => ({ data: { status: 'ready' }, error: null }));
     const updated = { id: 'job-1', status: 'production', actual_start_time: new Date().toISOString() };
-    const chain = makeChain(async () => ({ data: updated, error: null }));
-    mockFrom.mockReturnValue(chain);
+    const updateChain = makeChain(async () => ({ data: updated, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
 
     const result = await jobsService.updateStatus('job-1', 'production');
@@ -184,9 +189,10 @@ describe('jobsService.updateStatus', () => {
   });
 
   it('sets actual_end_time when transitioning to finished', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'production' }, error: null }));
     const updated = { id: 'job-1', status: 'finished', actual_end_time: new Date().toISOString() };
-    const chain = makeChain(async () => ({ data: updated, error: null }));
-    mockFrom.mockReturnValue(chain);
+    const updateChain = makeChain(async () => ({ data: updated, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
 
     const result = await jobsService.updateStatus('job-1', 'finished');

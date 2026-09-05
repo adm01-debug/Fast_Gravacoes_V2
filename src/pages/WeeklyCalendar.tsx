@@ -28,13 +28,22 @@ import { useSchedulingConflicts } from '@/features/jobs';
 import { DbJob, DbMachine, DbTechnique } from '@/features/jobs';
 import { JobStatus } from '@/types/scheduling';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { DndContext, useDraggable, useDroppable, DragOverlay, closestCenter } from '@dnd-kit/core';
 import { useWeeklyDragDrop } from '@/features/jobs';
 import { Fragment } from 'react';
 import '@/components/calendar/calendar-print.css';
 
 // Helper components for DnD
-function DraggableJob({ job, isConflict, onClick, statusColorsSolid, statusLabels, updateStatus }: any) {
+interface DraggableJobProps {
+  job: DbJob;
+  isConflict: boolean;
+  onClick: () => void;
+  statusColorsSolid: Record<JobStatus, string>;
+  statusLabels: Record<JobStatus, string>;
+  updateStatus: (args: { jobId: string; status: JobStatus }) => void;
+}
+function DraggableJob({ job, isConflict, onClick, statusColorsSolid, statusLabels, updateStatus }: DraggableJobProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: job.id,
   });
@@ -55,7 +64,7 @@ function DraggableJob({ job, isConflict, onClick, statusColorsSolid, statusLabel
               'border transition-all duration-200 hover:scale-[1.02]',
               'focus:outline-none focus:ring-2 focus:ring-primary/40',
               statusColorsSolid[job.status as JobStatus],
-              isConflict && 'ring-2 ring-destructive/70 animate-pulse'
+              isConflict && 'ring-2 ring-destructive/70 motion-safe:animate-pulse'
             )}
           >
             <span className="text-white/90 inline-flex items-center gap-1">
@@ -105,7 +114,12 @@ function DraggableJob({ job, isConflict, onClick, statusColorsSolid, statusLabel
   );
 }
 
-function DroppableCell({ children, id, isToday }: any) {
+interface DroppableCellProps {
+  children: React.ReactNode;
+  id: string;
+  isToday: boolean;
+}
+function DroppableCell({ children, id, isToday }: DroppableCellProps) {
   const { isOver, setNodeRef } = useDroppable({
     id,
   });
@@ -179,7 +193,7 @@ export default function WeeklyCalendar() {
       const tech = techniques.find((t) => t.id === m.technique_id);
       if (!tech) return;
       if (!map.has(tech.id)) map.set(tech.id, { technique: tech, machines: [] });
-      map.get(tech.id)!.machines.push(m);
+      map.get(tech.id)?.machines.push(m);
     });
     return Array.from(map.values()).sort((a, b) => a.technique.name.localeCompare(b.technique.name));
   }, [filteredMachines, techniques, prefs.groupBy]);
@@ -294,7 +308,7 @@ export default function WeeklyCalendar() {
         <Breadcrumbs />
 
         <div className="space-y-4">
-          <Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
+          <SectionErrorBoundary compact><Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
             <CalendarHeader
               title="Calendário Semanal"
               subtitle="Visualização panorâmica da semana por máquina"
@@ -320,9 +334,9 @@ export default function WeeklyCalendar() {
                 />
               }
             />
-          </Suspense>
+          </Suspense></SectionErrorBoundary>
 
-          <Suspense fallback={<div className="h-10 bg-muted animate-pulse rounded-lg" />}>
+          <SectionErrorBoundary compact><Suspense fallback={<div className="h-10 bg-muted animate-pulse rounded-lg" />}>
             <CalendarToolbar
               zoom={prefs.zoom}
               onZoomChange={setZoom}
@@ -334,13 +348,13 @@ export default function WeeklyCalendar() {
               onExportICal={() => {}}
               onShowOnboarding={() => {}}
             />
-          </Suspense>
+          </Suspense></SectionErrorBoundary>
 
-          <Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
+          <SectionErrorBoundary compact><Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded-lg" />}>
             <Card className="p-3 bg-card/50 border-border/40">
                <UtilizationHeatmap jobs={weekJobs} machines={filteredMachines} />
             </Card>
-          </Suspense>
+          </Suspense></SectionErrorBoundary>
         </div>
 
         <DndContext
@@ -351,7 +365,7 @@ export default function WeeklyCalendar() {
           <Card className="bg-card border border-border/40 rounded-xl overflow-hidden">
           <CardHeader className="border-b border-border/40 pb-3 px-3 sm:px-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <CardTitle className="text-sm sm:text-lg font-display gradient-text flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-lg text-title gradient-text flex items-center gap-2">
                 <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 <span className="hidden sm:inline">
                   Semana {format(weekStart, 'ww', { locale: ptBR })} de {format(weekStart, 'yyyy')}

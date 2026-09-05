@@ -39,6 +39,7 @@ export function TemplateCard({ template, onEdit, onDuplicate, onDelete, isDuplic
               onClick={() => onDuplicate(template)}
               disabled={isDuplicating}
               title="Duplicar template"
+              aria-label="Duplicar template"
             >
               <Copy className="h-4 w-4" />
             </Button>
@@ -46,6 +47,7 @@ export function TemplateCard({ template, onEdit, onDuplicate, onDelete, isDuplic
               variant="ghost" size="icon" className="h-8 w-8"
               onClick={() => onEdit(template)}
               title="Editar template"
+              aria-label="Editar template"
             >
               <Edit2 className="h-4 w-4" />
             </Button>
@@ -53,6 +55,7 @@ export function TemplateCard({ template, onEdit, onDuplicate, onDelete, isDuplic
               variant="ghost" size="icon" className="h-8 w-8 text-destructive"
               onClick={() => onDelete(template.id)}
               title="Excluir template"
+              aria-label="Excluir template"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

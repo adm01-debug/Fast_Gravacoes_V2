@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 
 export type SkillLevel = 'basic' | 'advanced' | 'expert';
 
@@ -54,7 +55,7 @@ export function useOperatorSkills(operatorId?: string) {
       toast.success('Competência atualizada com sucesso');
     },
     onError: (error: Error) => {
-      toast.error('Erro ao atualizar competência: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar competência');
     },
   });
 
@@ -70,6 +71,9 @@ export function useOperatorSkills(operatorId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['operator-skills'] });
       toast.success('Competência removida');
+    },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao remover competência');
     },
   });
 

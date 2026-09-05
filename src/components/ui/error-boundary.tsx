@@ -79,7 +79,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl font-display font-bold text-foreground">
+              <h1 className="text-2xl text-title font-bold text-foreground">
                 Algo deu errado
               </h1>
               <p className="text-muted-foreground">
@@ -88,19 +88,14 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {this.state.error && (
-              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 text-left space-y-2 max-h-64 overflow-auto">
-                <p className="text-sm font-mono text-destructive break-all font-semibold">
-                  {this.state.error.message}
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 text-left space-y-2">
+                <p className="text-sm text-destructive font-semibold">
+                  Ocorreu um erro interno. Os detalhes foram registrados para análise.
                 </p>
-                {this.state.error.stack && (
-                  <pre className="text-[10px] font-mono text-muted-foreground whitespace-pre-wrap break-all">
-                    {this.state.error.stack.split('\n').slice(0, 6).join('\n')}
-                  </pre>
-                )}
-                {this.state.errorInfo?.componentStack && (
-                  <pre className="text-[10px] font-mono text-muted-foreground/70 whitespace-pre-wrap break-all">
-                    {this.state.errorInfo.componentStack.split('\n').slice(0, 6).join('\n')}
-                  </pre>
+                {this.props.componentName && (
+                  <p className="text-[11px] text-muted-foreground font-mono">
+                    Módulo: {this.props.componentName}
+                  </p>
                 )}
               </div>
             )}

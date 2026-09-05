@@ -49,7 +49,7 @@ export default function EfficiencyDashboard() {
         <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Eficiência Operacional</h1>
+              <h1 className="text-xl sm:text-2xl text-title font-bold text-foreground">Eficiência Operacional</h1>
               <FavoriteButton path="/efficiency" name="Eficiência Operacional" />
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">Análises e otimizações para maximizar produtividade</p>
@@ -116,7 +116,7 @@ export default function EfficiencyDashboard() {
               <div className="lg:col-span-2">
                 <Card className="glass-card border-border/50">
                   <CardHeader>
-                    <CardTitle className="text-sm font-display flex items-center gap-2">
+                    <CardTitle className="text-sm text-title flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-primary" />
                       Tendência de Alertas
                     </CardTitle>

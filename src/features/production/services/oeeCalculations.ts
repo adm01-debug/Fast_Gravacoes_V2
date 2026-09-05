@@ -29,15 +29,17 @@ export function calculateRealOEE(jobs: DbJob[]) {
   for (const job of finishedJobs) {
     if (isValidDate(job.actual_start_time) && isValidDate(job.actual_end_time)) {
       try {
-        const start = parseISO(job.actual_start_time!);
-        const end = parseISO(job.actual_end_time!);
+        const start = parseISO((job.actual_start_time ?? ""));
+        const end = parseISO((job.actual_end_time ?? ""));
         totalActualMinutes += sanitizeNumber(differenceInMinutes(end, start));
       } catch {
         // Datas já validadas acima; ignora qualquer falha residual de parse.
       }
     }
     totalEstimatedMinutes += sanitizeNumber(job.estimated_duration || 60);
-    const producedQty = sanitizeNumber(job.produced_quantity ?? job.quantity);
+    // Null produced_quantity means "not recorded" — must not be treated as
+    // "fully produced as ordered" (fabricates 100% output / zero loss).
+    const producedQty = sanitizeNumber(job.produced_quantity ?? 0);
     totalProducedPieces += producedQty;
     totalLostPieces += sanitizeNumber(job.lost_pieces);
   }

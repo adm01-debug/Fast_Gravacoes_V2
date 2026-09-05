@@ -3,6 +3,28 @@ import { ptBR } from 'date-fns/locale';
 import { parseDateOnly } from '@/lib/dateUtils';
 import type { ExecutiveKPIs, DateRange } from '@/features/analytics/hooks/useExecutiveDashboard';
 
+
+interface jsPDFWithAutoTable {
+  lastAutoTable: { finalY: number };
+}
+
+export interface LossJobRow {
+  id: string;
+  order_number?: string | null;
+  product_name?: string | null;
+  lost_pieces: number;
+  loss_reason?: string | null;
+}
+
+export interface DelayJobRow {
+  id: string;
+  order_number?: string | null;
+  product_name?: string | null;
+  delay_time?: string | null;
+  responsible_name?: string | null;
+  status?: string | null;
+}
+
 export interface PDFExportOptions {
   title: string;
   subtitle?: string;
@@ -74,7 +96,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as any).lastAutoTable.finalY + 10;
+  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
 
   // Section: Machine KPIs
   yPosition = addSection(doc, 'Indicadores de Máquinas', yPosition, margin);
@@ -95,7 +117,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as any).lastAutoTable.finalY + 10;
+  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
 
   // Section: Quality KPIs
   yPosition = addSection(doc, 'Indicadores de Qualidade', yPosition, margin);
@@ -115,7 +137,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as any).lastAutoTable.finalY + 10;
+  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
 
   // Check if we need a new page
   if (yPosition > pageHeight - 80) {
@@ -142,7 +164,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as any).lastAutoTable.finalY + 10;
+  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
 
   // Section: Top Operators
   if (kpis.topOperators.length > 0) {
@@ -170,7 +192,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
       styles: { fontSize: 10 },
     });
 
-    yPosition = (doc as any).lastAutoTable.finalY + 10;
+    yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
   }
 
   // Section: Technique Distribution
@@ -197,7 +219,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
       styles: { fontSize: 10 },
     });
 
-    yPosition = (doc as any).lastAutoTable.finalY + 10;
+    yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
   }
 
   // Section: Machine Performance
@@ -298,7 +320,7 @@ export async function exportProductionReport(
     (job.produced_quantity || 0).toLocaleString('pt-BR'),
     (job.lost_pieces || 0).toLocaleString('pt-BR'),
     job.status,
-    job.scheduled_date ? format(parseDateOnly(job.scheduled_date)!, 'dd/MM/yyyy') : '-',
+    job.scheduled_date ? format(parseDateOnly(job.scheduled_date) ?? new Date(), 'dd/MM/yyyy') : '-',
   ]);
 
   autoTable(doc, {
@@ -326,7 +348,7 @@ export async function exportProductionReport(
 }
 
 export async function exportLossesReport(
-  jobs: any[],
+  jobs: LossJobRow[],
   dateRange: { start: Date; end: Date },
   title = 'Relatório de Perdas e Qualidade'
 ): Promise<void> {
@@ -381,7 +403,7 @@ export async function exportLossesReport(
 }
 
 export async function exportDelaysReport(
-  jobs: any[],
+  jobs: DelayJobRow[],
   dateRange: { start: Date; end: Date },
   title = 'Relatório de Atrasos e Produtividade'
 ): Promise<void> {

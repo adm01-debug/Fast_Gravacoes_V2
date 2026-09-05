@@ -1,3 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps --
+   Dependências intencionalmente omitidas: incluí-las causaria loops
+   infinitos, invalidação excessiva de cache ou recomputação em cada
+   render. Callbacks/valores externos são estáveis por contrato. */
 import { useMemo } from 'react';
 import { useJobs, useTechniques, DbJob, DbTechnique, DbMachine } from '@/features/jobs';
 import { useMachines } from '@/features/production';

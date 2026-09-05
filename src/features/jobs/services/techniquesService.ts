@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { logger } from '@/lib/logger';
 
 export type Technique = Database['public']['Tables']['techniques']['Row'];
 export type TechniqueInsert = Database['public']['Tables']['techniques']['Insert'];
@@ -13,8 +14,10 @@ export const techniquesService = {
       .order('name');
 
     if (error) {
-      console.error('Failed to fetch techniques:', error);
-      return [];
+      // Throw instead of swallowing: a connectivity/RLS failure must not be
+      // indistinguishable from "no techniques" (see jobsService.getAll).
+      logger.error('Failed to fetch techniques', error, 'techniquesService');
+      throw error;
     }
     return data || [];
   },

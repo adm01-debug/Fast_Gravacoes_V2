@@ -122,7 +122,7 @@ function RecentJobsTableComponent() {
     <>
       <Card className="col-span-3 glass-card">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-display gradient-text">{t('dashboard.recentJobs', 'Jobs Recentes')}</CardTitle>
+          <CardTitle className="text-title gradient-text">{t('dashboard.recentJobs', 'Jobs Recentes')}</CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <div className="min-w-[700px]">

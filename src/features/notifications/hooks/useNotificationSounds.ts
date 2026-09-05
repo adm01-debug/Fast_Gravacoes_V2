@@ -1,5 +1,21 @@
 import { useCallback, useRef } from 'react';
 
+type BrowserAudioWindow = Window & {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+};
+
+const createBrowserAudioContext = (): AudioContext => {
+  const audioWindow = window as BrowserAudioWindow;
+  const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+
+  if (!AudioContextConstructor) {
+    throw new Error('AudioContext não suportado neste navegador.');
+  }
+
+  return new AudioContextConstructor();
+};
+
 type SoundType = 'delayed' | 'buffer' | 'bottleneck' | 'statusChange' | 'complete' | 'scan' | 'alert';
 
 interface SoundConfig {
@@ -66,14 +82,29 @@ export const useNotificationSounds = () => {
   const isEnabledRef = useRef<boolean>(true);
 
   const getAudioContext = useCallback(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    if (audioContextRef.current) return audioContextRef.current;
+
+    const audioWindow = window as BrowserAudioWindow;
+    const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
+    if (!AudioContextConstructor) return null;
+
+    try {
+      const ctx = new AudioContextConstructor();
+      // Chrome suspends AudioContexts created without a user gesture.
+      // Try to resume it (silently no-ops if it can't).
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      audioContextRef.current = ctx;
+      return ctx;
+    } catch {
+      return null;
     }
-    return audioContextRef.current;
   }, []);
 
   const playTone = useCallback((frequency: number, duration: number, type: OscillatorType, volume: number = 0.2) => {
     const ctx = getAudioContext();
+    if (!ctx) return;
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
 

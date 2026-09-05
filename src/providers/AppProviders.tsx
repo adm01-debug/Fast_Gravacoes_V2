@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, type ComponentType } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { ProviderComposer } from "./ProviderComposer";
 import { ThemeProvider } from "next-themes";
 import { BrowserRouter } from "react-router-dom";
@@ -13,7 +14,7 @@ import { ProductDesignProvider } from "@/components/design-system/ProductDesignP
 import { CelebrationProvider } from "@/components/ui/celebration";
 import { FeedbackProvider } from "@/components/feedback/FeedbackProvider";
 import { NetworkStatusProvider } from "@/hooks/useNetworkStatus";
-import { OfflineProvider } from "@/hooks/useLocalStorage";
+// OfflineProvider removed (redundant)
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { NavigationListener } from "@/components/navigation/NavigationListener";
 import { InAppNotificationWatcher } from "@/features/notifications/components/InAppNotificationWatcher";
@@ -30,49 +31,57 @@ import { SidebarProvider } from "@/contexts/SidebarContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { WebSocketProvider } from "@/contexts/WebSocketContext";
+import { TransitionConfigProvider } from "@/contexts/TransitionConfigContext";
+import { useAuth } from "@/features/auth";
 
 import { createQueryClient } from "@/lib/queryConfig";
 
 const queryClient = createQueryClient();
 
+function ProductDesignFeatureProvider({ children }: { children: ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const isAuthenticated = Boolean(user?.id) && !isLoading;
+
+  return (
+    <ProductDesignProvider
+      enableOnboarding
+      enableCommandPalette={isAuthenticated}
+      enableKeyboardShortcuts
+      enableToastWithUndo
+    >
+      {children}
+    </ProductDesignProvider>
+  );
+}
+
+const APP_PROVIDERS: ComponentType<{ children: ReactNode }>[] = [
+  ThemeContextProvider,
+  TransitionConfigProvider,
+  TooltipProvider,
+  UserPreferencesProvider,
+  FeatureFlagsProvider,
+  BreadcrumbProvider,
+  SearchProvider,
+  SidebarProvider,
+  ConfirmationProvider,
+  NotificationsProvider,
+  AuthProvider,
+  ReauthProvider,
+  PermissionsProvider,
+  OfflineSyncProvider,
+  NetworkStatusProvider,
+  WebSocketProvider,
+  EfficiencyNotificationProvider,
+  RealtimeNotificationsProvider,
+  ProductDesignFeatureProvider,
+  CelebrationProvider,
+  FeedbackProvider,
+];
+
 function ComposedProviders({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-      <ProviderComposer
-        providers={[
-          ThemeContextProvider,
-          TooltipProvider,
-          UserPreferencesProvider,
-          FeatureFlagsProvider,
-          BreadcrumbProvider,
-          SearchProvider,
-          SidebarProvider,
-          ConfirmationProvider,
-          NotificationsProvider,
-          AuthProvider,
-          ReauthProvider,
-          PermissionsProvider,
-          OfflineSyncProvider,
-          NetworkStatusProvider,
-          OfflineProvider,
-          WebSocketProvider,
-          EfficiencyNotificationProvider,
-          RealtimeNotificationsProvider,
-          // Special case for ProductDesignProvider as it has props
-          ({ children }) => (
-            <ProductDesignProvider
-              enableOnboarding
-              enableCommandPalette
-              enableKeyboardShortcuts
-              enableToastWithUndo
-            >
-              {children}
-            </ProductDesignProvider>
-          ),
-          CelebrationProvider,
-          FeedbackProvider,
-        ]}
-      >
+      <ProviderComposer providers={APP_PROVIDERS}>
         {children}
       </ProviderComposer>
     </ThemeProvider>
@@ -80,27 +89,36 @@ function ComposedProviders({ children }: { children: ReactNode }) {
 }
 
 function Observers() {
+  const { user, isLoading } = useAuth();
+  const isAuthenticated = Boolean(user?.id) && !isLoading;
+
   return (
     <>
       <NavigationListener />
-      <InAppNotificationWatcher />
-      <SmartAlertsWatcher />
-      <BIAlertsWatcher />
+      {isAuthenticated && (
+        <>
+          <InAppNotificationWatcher />
+          <SmartAlertsWatcher />
+          <BIAlertsWatcher />
+        </>
+      )}
     </>
   );
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <ComposedProviders>
-            <Observers />
-            {children}
-          </ComposedProviders>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <HelmetProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <ComposedProviders>
+              <Observers />
+              {children}
+            </ComposedProviders>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </HelmetProvider>
   );
 }

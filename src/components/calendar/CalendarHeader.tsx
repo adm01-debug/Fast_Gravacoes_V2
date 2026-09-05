@@ -48,7 +48,7 @@ export function CalendarHeader({
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-xl sm:text-2xl font-display font-bold gradient-text">{title}</h1>
+          <h1 className="text-title gradient-text">{title}</h1>
           <p className="text-muted-foreground text-sm mt-1">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">

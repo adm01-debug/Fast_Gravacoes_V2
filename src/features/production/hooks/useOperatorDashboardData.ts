@@ -149,6 +149,7 @@ export function useOperatorDashboardData(dateRange?: DateRange) {
 
     // Role info
     isOperator,
+    isCoordinator: !isOperator, // Or more specific logic if needed
     assignedMachineIds,
 
     // Refetch functions

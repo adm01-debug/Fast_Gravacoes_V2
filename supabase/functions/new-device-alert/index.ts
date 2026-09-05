@@ -1,21 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
-
-const ALLOWED_ORIGINS = [
-  Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br',
-  'https://xxroejpvloldkmqdydar.lovableproject.com',
-].filter(Boolean);
-
-function getCorsHeaders(req: Request): Record<string, string> {
-  const origin = req.headers.get('origin') || '';
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key, x-webhook-signature, x-forwarded-for, x-real-ip',
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Vary': 'Origin',
-  };
-}
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
+import { escapeHtml } from '../_shared/htmlEscape.ts';
 
 interface DeviceInfo {
   user_id: string;
@@ -30,9 +16,8 @@ interface DeviceInfo {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: getCorsHeaders(req) });
-  }
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -61,15 +46,23 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const deviceInfo: DeviceInfo = await req.json();
-
-    // Reject if body claims a different user than the authenticated principal
-    if (deviceInfo.user_id !== user.id) {
-      return new Response(JSON.stringify({ error: 'Forbidden' }), {
-        status: 403,
+    const rawBody = await req.json().catch(() => null);
+    if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+      return new Response(JSON.stringify({ error: 'Corpo da requisição inválido' }), {
+        status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
+    const deviceInfo: DeviceInfo = rawBody as DeviceInfo;
+    // Trust the already-verified JWT principal, not the body, for identity
+    // fields — a caller must not be able to forge device records or trigger
+    // alert emails for arbitrary users/addresses.
+    deviceInfo.user_id = user.id;
+    deviceInfo.user_email = user.email ?? '';
+    // Derive IP from the request, not the caller-supplied body, to prevent
+    // a malicious caller from injecting a forged IP into DB rows and alert emails.
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    deviceInfo.ip_address = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
 
     console.log('Checking device for user:', user.id);
     console.log('Device fingerprint:', deviceInfo.device_fingerprint);
@@ -158,6 +151,11 @@ Deno.serve(async (req) => {
           const browserInfo = deviceInfo.browser_name || 'Navegador desconhecido';
           const osInfo = deviceInfo.os_name || 'Sistema operacional desconhecido';
           const deviceTypeInfo = deviceInfo.device_type || 'desktop';
+          // Escape caller-supplied fields before interpolating into HTML email body.
+          const safeName = escapeHtml(deviceInfo.user_name || '');
+          const safeBrowser = escapeHtml(browserInfo);
+          const safeOs = escapeHtml(osInfo);
+          const safeIp = escapeHtml(deviceInfo.ip_address || 'Não disponível');
           const loginTime = new Date().toLocaleString('pt-BR', {
             timeZone: 'America/Sao_Paulo',
             dateStyle: 'full',
@@ -187,7 +185,7 @@ Deno.serve(async (req) => {
                   <!-- Content -->
                   <div style="padding: 30px;">
                     <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-top: 0;">
-                      Olá${deviceInfo.user_name ? ` ${deviceInfo.user_name}` : ''},
+                      Olá${safeName ? ` ${safeName}` : ''},
                     </p>
                     
                     <p style="color: #374151; font-size: 16px; line-height: 1.6;">
@@ -206,11 +204,11 @@ Deno.serve(async (req) => {
                         </tr>
                         <tr>
                           <td style="padding: 8px 0; color: #78716c; font-size: 14px;">Navegador:</td>
-                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${browserInfo}</td>
+                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${safeBrowser}</td>
                         </tr>
                         <tr>
                           <td style="padding: 8px 0; color: #78716c; font-size: 14px;">Sistema:</td>
-                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${osInfo}</td>
+                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${safeOs}</td>
                         </tr>
                         <tr>
                           <td style="padding: 8px 0; color: #78716c; font-size: 14px;">Tipo:</td>
@@ -218,7 +216,7 @@ Deno.serve(async (req) => {
                         </tr>
                         <tr>
                           <td style="padding: 8px 0; color: #78716c; font-size: 14px;">Endereço IP:</td>
-                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${deviceInfo.ip_address || 'Não disponível'}</td>
+                          <td style="padding: 8px 0; color: #1f2937; font-size: 14px; font-weight: 500;">${safeIp}</td>
                         </tr>
                       </table>
                     </div>
@@ -277,14 +275,16 @@ Deno.serve(async (req) => {
           }
         };
 
-        // Chamar a edge function de push notification
+        // Chamar a edge function de push notification usando o JWT do usuário
+        // (não o service role key, que não é aceito pelo endpoint que valida JWT).
         const pushResponse = await fetch(`${supabaseUrl}/functions/v1/send-push-notification`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabaseKey}`
+            'Authorization': authHeader,
           },
-          body: JSON.stringify(pushPayload)
+          body: JSON.stringify(pushPayload),
+          signal: AbortSignal.timeout(10_000),
         });
 
         if (pushResponse.ok) {
@@ -310,13 +310,12 @@ Deno.serve(async (req) => {
     );
 
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Error in new-device-alert:', message);
+    console.error('Error in new-device-alert:', err instanceof Error ? err.message : String(err));
     return new Response(
-      JSON.stringify({ error: message }),
-      { 
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, 
-        status: 500 
+      JSON.stringify({ error: 'Internal server error' }),
+      {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        status: 500
       }
     );
   }

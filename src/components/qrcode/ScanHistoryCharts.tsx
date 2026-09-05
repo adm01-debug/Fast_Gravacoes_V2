@@ -1,5 +1,5 @@
 import { PieChart as PieChartIcon, BarChart3 } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis } from "@/lib/recharts";
 import { Eye, Play, Pause, CheckCircle2, RotateCcw } from "lucide-react";
 
 const actionConfig: Record<string, { label: string; icon: typeof Play }> = {

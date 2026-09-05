@@ -12,7 +12,7 @@ import { TechnicalSheetMaterial } from '@/hooks/useTechnicalSheets';
 interface EditorMaterialsSectionProps {
   materials: TechnicalSheetMaterial[];
   sheetId: string;
-  onAdd: (m: { technical_sheet_id: string; name: string; specification?: string; quantity?: string; notes?: string }) => Promise<any>;
+  onAdd: (m: { technical_sheet_id: string; name: string; specification?: string; quantity?: string; notes?: string }) => Promise<unknown>;
   onDelete: (id: string) => void;
   isAdding: boolean;
 }

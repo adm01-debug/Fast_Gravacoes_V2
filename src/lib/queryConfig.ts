@@ -15,11 +15,25 @@ export const STALE_TIMES = {
 // Shared Query Keys to avoid duplication
 export const QUERY_KEYS = {
   JOBS: ['jobs'],
+  // Distinct from JOBS: jobsService.getAll({ recentOnly: true }) returns a
+  // different result set (unfinished + last 30 days only) than the plain
+  // JOBS key's full history. They must never share a cache entry — whichever
+  // hook resolved/invalidated last would silently overwrite the other's data
+  // for every consumer of that key (see useJobs vs useSchedulingData).
+  JOBS_RECENT: ['jobs', 'recent'],
   MACHINES: ['machines'],
   TECHNIQUES: ['techniques'],
   PROFILES: ['profiles'],
   OPERATOR_PROFILES: ['operator-profiles'],
   PAGINATED_JOBS: ['paginated-jobs'],
+  OPERATORS: ['operators'],
+  SCHEDULING_DATA: ['scheduling-data'],
+  USERS_MANAGEMENT: ['users-management'],
+  USER_ROLES_MANAGEMENT: ['user-roles-management'],
+  TECHNIQUES_ADMIN: ['techniques-admin'],
+  AUDIT_TRAIL: ['audit-trail'],
+  LOGIN_AUDIT: ['login-audit'],
+  SECURITY_ALERTS: ['security-alerts'],
 } as const;
 
 // Retry configuration
@@ -44,14 +58,30 @@ export function calculateRetryDelay(attemptIndex: number): number {
   return Math.round(delay + jitter);
 }
 
+// PostgREST error codes that must not be retried (auth/permission/client errors).
+// PGRST301 = JWT expired, PGRST302 = JWT invalid claim, PGRST303 = role claim missing,
+// PGRST304 = JWT secret empty, 42501 = RLS/privilege denied, 28000 = invalid auth spec.
+const NO_RETRY_POSTGREST_CODES = new Set([
+  'PGRST301', 'PGRST302', 'PGRST303', 'PGRST304',
+  '42501', '28000', '28P01',
+]);
+
 /**
  * Determines if an error should trigger a retry
  * @param error - The error to check
  * @returns true if the error is retryable
  */
-export function shouldRetry(error: any): boolean {
+export function shouldRetry(error: unknown): boolean {
   // Don't retry on 4xx errors (client errors) except 408 (timeout) and 429 (rate limit)
   if (error instanceof Error) {
+    // PostgrestError (extends Error) carries a `code` property with a PostgreSQL/PostgREST
+    // error code. Check it before falling through to message-based detection so that
+    // RLS violations and JWT errors are never retried (they would always fail identically).
+    const code = (error as Error & { code?: string }).code;
+    if (code && NO_RETRY_POSTGREST_CODES.has(code)) {
+      return false;
+    }
+
     const message = error.message.toLowerCase();
 
     // Network errors - always retry
@@ -74,8 +104,12 @@ export function shouldRetry(error: any): boolean {
       return true;
     }
 
-    // Auth errors - don't retry
-    if (message.includes('401') || message.includes('403') || message.includes('unauthorized') || message.includes('forbidden')) {
+    // Auth/permission errors - don't retry
+    if (
+      message.includes('401') || message.includes('403') ||
+      message.includes('unauthorized') || message.includes('forbidden') ||
+      message.includes('permission denied') || message.includes('jwt')
+    ) {
       return false;
     }
 
@@ -98,7 +132,7 @@ export function shouldRetry(error: any): boolean {
  * Default query options with retry configuration
  */
 export const defaultQueryOptions = {
-  retry: (failureCount: number, error: any) => {
+  retry: (failureCount: number, error: unknown) => {
     if (failureCount >= RETRY_CONFIG.maxRetries) return false;
     return shouldRetry(error);
   },

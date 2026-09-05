@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryConfig';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,18 +9,30 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { Edit2, Plus, Trash2, Hammer, Clock, Zap, Printer, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useSchedulingData } from '@/features/jobs';
 
+interface TechniqueRow {
+  id: string;
+  name: string;
+  short_name: string;
+  color: string;
+  setup_time: number;
+  low_threshold?: number | null;
+  medium_threshold?: number | null;
+  high_threshold?: number | null;
+}
+
 export function TechniqueManagement() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingTechnique, setEditingTechnique] = useState<any>(null);
+  const [editingTechnique, setEditingTechnique] = useState<TechniqueRow | null>(null);
   const { getMachinesByTechnique, getJobsByTechnique, isLoading: isLoadingData } = useSchedulingData();
 
   const { data: techniques, isLoading: isLoadingTech } = useQuery({
-    queryKey: ['techniques-admin'],
+    queryKey: QUERY_KEYS.TECHNIQUES_ADMIN,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('techniques')
@@ -33,7 +46,7 @@ export function TechniqueManagement() {
   const isLoading = isLoadingTech || isLoadingData;
 
   const saveMutation = useMutation({
-    mutationFn: async (technique: any) => {
+    mutationFn: async (technique: TechniqueRow) => {
       const { data, error } = await supabase
         .from('techniques')
         .upsert(technique)
@@ -42,13 +55,13 @@ export function TechniqueManagement() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['techniques-admin'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TECHNIQUES_ADMIN });
       setIsDialogOpen(false);
       setEditingTechnique(null);
       toast.success('Técnica salva com sucesso');
     },
-    onError: (error: Error) => {
-      toast.error(`Erro ao salvar técnica: ${error.message}`);
+    onError: (error: unknown) => {
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao salvar técnica');
     }
   });
 
@@ -58,11 +71,11 @@ export function TechniqueManagement() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['techniques-admin'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TECHNIQUES_ADMIN });
       toast.success('Técnica excluída');
     },
-    onError: (error: Error) => {
-      toast.error(`Erro ao excluir técnica: ${error.message}`);
+    onError: (error: unknown) => {
+      showErrorToast(error instanceof Error ? error : new Error(String(error)), 'Erro ao excluir técnica');
     }
   });
 
@@ -70,11 +83,11 @@ export function TechniqueManagement() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const nameValue = formData.get('name') as string;
-    const techniqueData = {
+    const techniqueData: TechniqueRow = {
       id: editingTechnique?.id || (nameValue ? nameValue.toLowerCase().replace(/\s+/g, '-') : crypto.randomUUID()),
-      name: formData.get('name'),
-      short_name: formData.get('short_name'),
-      color: formData.get('color'),
+      name: String(formData.get('name') ?? ''),
+      short_name: String(formData.get('short_name') ?? ''),
+      color: String(formData.get('color') ?? ''),
       setup_time: parseInt(formData.get('setup_time') as string, 10),
       low_threshold: parseInt(formData.get('low_threshold') as string, 10) || 30,
       medium_threshold: parseInt(formData.get('medium_threshold') as string, 10) || 70,

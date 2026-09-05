@@ -95,7 +95,7 @@ export function useDashboardLayout() {
           }
         }
       } catch (err) {
-        // Silent fail for non-critical layout loading
+        logger.warn('Falha ao carregar layout do dashboard', err, 'useDashboardLayout');
       }
     };
 
@@ -110,7 +110,7 @@ export function useDashboardLayout() {
 
     setIsSaving(true);
     const storageKey = `${STORAGE_KEY}-${user.id}`;
-    localStorage.setItem(storageKey, JSON.stringify(newWidgets));
+    try { localStorage.setItem(storageKey, JSON.stringify(newWidgets)); } catch { /* quota exceeded */ }
 
     try {
       const { error } = await supabase

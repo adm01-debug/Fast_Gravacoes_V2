@@ -1,9 +1,9 @@
 import { useState, lazy, Suspense, useMemo, memo, useCallback, useEffect } from 'react';
-import { startOfDay, endOfDay, subDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { jsPDF } from 'jspdf';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -55,9 +55,10 @@ import {
   Trash2,
   Info
 } from 'lucide-react';
-import { useOEE, WORLD_CLASS_OEE, getOEEColor } from '@/features/production';
-import { useOEEAlerts } from '@/features/production';
-import { useProductionLosses } from '@/features/production';
+import { useOEE, WORLD_CLASS_OEE, getOEEColor, useOEEAlerts, useProductionLosses } from '@/features/production';
+import { useOEEDashboardFilters } from '@/features/analytics/hooks/useOEEDashboardFilters';
+import { STUDIOS, INDUSTRY_BENCHMARKS } from '@/features/analytics/constants/oee';
+import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
@@ -113,62 +114,28 @@ interface jsPDFWithAutoTable extends jsPDF {
 
 const OEEDashboard = memo(function OEEDashboard() {
   const { t } = useTranslation();
-  const [period, setPeriod] = useState<string>('30');
-  const [machineId, setMachineId] = useState<string>('all');
-  const [techniqueId, setTechniqueId] = useState<string>('all');
-  const [studioId, setStudioId] = useState<string>('all');
-  const [shift, setShift] = useState<string>('all');
+  const {
+    period, setPeriod,
+    machineId, setMachineId,
+    techniqueId, setTechniqueId,
+    studioId, setStudioId,
+    shift, setShift,
+    activeTab, setActiveTab,
+    oeeFilters,
+    lossFilters,
+    handleShare,
+  } = useOEEDashboardFilters();
+
   const [showSimulator, setShowSimulator] = useState(false);
   const [simValues, setSimValues] = useState({ availability: 85, performance: 90, quality: 98 });
   const [presetName, setPresetName] = useState('');
   const { presets, savePreset, deletePreset } = useDashboardPresets('oee');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [showConfig, setShowSimulatorLocal] = useState(false); // Used for a future settings modal if needed
+  const [showConfig, setShowSimulatorLocal] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
   const [industryBenchmark, setIndustryBenchmark] = useState('world_class');
   const { trigger: haptic } = useHapticFeedback();
-  
-  const STUDIOS = [
-    { id: 'all', label: 'Todos os Studios' },
-    { id: 'serigrafia_textil', label: 'Studio Serigrafia Têxtil', techniques: ['serigrafia'] },
-    { id: 'serigrafia_cilindrica', label: 'Studio Serigrafia Cilíndrica', techniques: ['serigrafia'] },
-    { id: 'serigrafia_vinilica', label: 'Studio Serigrafia Vinílica', techniques: ['serigrafia'] },
-    { id: 'personalizacao_uv', label: 'Studio UV Premium', techniques: ['digital_uv', 'uv'] },
-    { id: 'laser', label: 'Studio Laser Precision', techniques: ['laser'] }
-  ];
-
-  const INDUSTRY_BENCHMARKS: Record<string, { label: string, target: number, desc: string }> = {
-    'world_class': { label: 'World Class (Geral)', target: 85, desc: 'Padrão ouro de excelência industrial global.' },
-    'corporate_gifts': { label: 'Brindes Corporativos (FAST)', target: 82, desc: 'Foco em setup rápido e alta variabilidade de produtos.' },
-    'automotive': { label: 'Automotivo', target: 80, desc: 'Alta automação e processos rígidos de qualidade.' },
-    'food_bev': { label: 'Alimentos & Bebidas', target: 75, desc: 'Foco em disponibilidade e conformidade sanitária.' },
-    'textile': { label: 'Têxtil', target: 65, desc: 'Alta variabilidade de setup e troca de lotes.' },
-    'general': { label: 'Manufatura Geral', target: 60, desc: 'Processos manuais ou semi-automáticos.' }
-  };
 
   const currentBenchmark = INDUSTRY_BENCHMARKS[industryBenchmark];
-  
-  const dateRange = useMemo(() => {
-    const now = new Date();
-    return {
-      start: startOfDay(subDays(now, parseInt(period, 10))),
-      end: endOfDay(now)
-    };
-  }, [period]);
-
-  const oeeFilters = useMemo(() => ({
-    machineId: machineId === 'all' ? undefined : machineId,
-    techniqueId: techniqueId === 'all' ? undefined : techniqueId,
-    shift: shift === 'all' ? undefined : shift,
-    startDate: dateRange.start,
-    endDate: dateRange.end
-  }), [machineId, techniqueId, shift, dateRange]);
-
-  const lossFilters = useMemo(() => ({
-    ...oeeFilters,
-    startDate: dateRange.start.toISOString(),
-    endDate: dateRange.end.toISOString()
-  }), [oeeFilters, dateRange]);
 
   const { data, isLoading, downloadReport } = useOEE(parseInt(period, 10), 30, oeeFilters);
   const { losses, isLoading: lossesLoading } = useProductionLosses(undefined, lossFilters);
@@ -184,43 +151,10 @@ const OEEDashboard = memo(function OEEDashboard() {
 
   const handleSavePreset = () => {
     if (!presetName) return;
-    savePreset({
-      name: presetName,
-      filters: { period, machineId, techniqueId, shift }
-    });
+    savePreset({ name: presetName, filters: { period, machineId, techniqueId, shift } });
     setPresetName('');
     toast.success('Preset salvo com sucesso');
   };
-
-  const handleShare = () => {
-    const params = new URLSearchParams({
-      period,
-      machineId,
-      techniqueId,
-      shift,
-      tab: activeTab
-    });
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    navigator.clipboard.writeText(url);
-    toast.success('Link de compartilhamento copiado!', {
-      description: 'Todos os filtros atuais foram incluídos no link.'
-    });
-  };
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const p = params.get('period');
-    const m = params.get('machineId');
-    const t = params.get('techniqueId');
-    const s = params.get('shift');
-    const tab = params.get('tab');
-
-    if (p) setPeriod(p);
-    if (m) setMachineId(m);
-    if (t) setTechniqueId(t);
-    if (s) setShift(s);
-    if (tab) setActiveTab(tab);
-  }, []);
 
   const handleDownloadReport = useCallback(async (reportFormat: 'excel' | 'pdf' | 'csv') => {
     if (!data) return;
@@ -410,7 +344,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                <Badge className="bg-primary text-primary-foreground border-none text-[8px] font-black uppercase tracking-tighter px-1.5 py-0 h-4">Industrial Intelligence</Badge>
                <div className="h-px w-12 bg-primary/20" />
             </div>
-            <h1 className="text-2xl md:text-4xl font-black font-display flex items-center gap-3 tracking-tighter">
+            <h1 className="text-display-lg flex items-center gap-3 tracking-tighter">
               <span className="text-primary italic">FAST</span> GRAVAÇÕES - GESTÃO DE GRAVAÇÃO
             </h1>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-70">
@@ -459,7 +393,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                     ) : (
                       presets?.map((preset) => (
                         <div key={preset.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
-                          <span className="text-xs font-medium truncate flex-1 cursor-pointer" onClick={() => applyPreset(preset)}>{preset.name}</span>
+                          <span role="button" tabIndex={0} aria-label={`Aplicar preset ${preset.name}`} className="text-xs font-medium truncate flex-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" onClick={() => applyPreset(preset)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyPreset(preset); } }}>{preset.name}</span>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => deletePreset(preset.id)}>
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -601,12 +535,12 @@ const OEEDashboard = memo(function OEEDashboard() {
         
         {/* Predictive Maintenance & Health Insights */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Suspense fallback={<div className="h-24 animate-pulse bg-muted rounded-xl" />}>
+          <SectionErrorBoundary compact><Suspense fallback={<div className="h-24 animate-pulse bg-muted rounded-xl" />}>
             <PredictiveAlerts alerts={data.maintenanceAlerts} />
-          </Suspense>
-          <Suspense fallback={<div className="h-24 animate-pulse bg-muted rounded-xl" />}>
+          </Suspense></SectionErrorBoundary>
+          <SectionErrorBoundary compact><Suspense fallback={<div className="h-24 animate-pulse bg-muted rounded-xl" />}>
             <OEERecommendations data={data} />
-          </Suspense>
+          </Suspense></SectionErrorBoundary>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
@@ -853,10 +787,10 @@ const OEEDashboard = memo(function OEEDashboard() {
 
               <div className="mt-8 space-y-6">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-center text-primary/60">Detalhamento por Unidade</p>
-                <Suspense fallback={<div className="h-48 animate-pulse bg-muted rounded-xl" />}>
+                <SectionErrorBoundary compact><Suspense fallback={<div className="h-48 animate-pulse bg-muted rounded-xl" />}>
                   {machineId !== 'all' ? (
                     <OEECalculationAudit 
-                      machine={data.byMachine.find(m => m.machineId === machineId)!} 
+                      machine={data.byMachine.find(m => m.machineId === machineId) as (typeof data.byMachine)[number]} 
                     />
                   ) : (
                     <OEECalculationAudit 
@@ -884,7 +818,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                       }} 
                     />
                   )}
-                </Suspense>
+                </Suspense></SectionErrorBoundary>
               </div>
 
               <div className="mt-4 p-4 rounded-lg bg-muted/30 border border-border/50">
@@ -942,9 +876,9 @@ const OEEDashboard = memo(function OEEDashboard() {
           </Card>
         )}
 
-        <Suspense fallback={<ChartSkeleton />}>
+        <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
           <HyperInsights />
-        </Suspense>
+        </Suspense></SectionErrorBoundary>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-background/50 border border-primary/20 p-1 flex-wrap h-auto">
@@ -969,14 +903,14 @@ const OEEDashboard = memo(function OEEDashboard() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6 focus-visible:outline-none outline-none">
-            <Suspense fallback={<ChartSkeleton />}>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
               <StudioHealthMonitor studios={data.byStudio.filter(s => s.maintenanceStatus !== 'optimal') || []} />
-            </Suspense>
+            </Suspense></SectionErrorBoundary>
 
 
-            <Suspense fallback={<div className="h-48 animate-pulse bg-muted rounded-xl" />}>
+            <SectionErrorBoundary compact><Suspense fallback={<div className="h-48 animate-pulse bg-muted rounded-xl" />}>
               <StudioEfficiencyGrid studios={data.byStudio || []} />
-            </Suspense>
+            </Suspense></SectionErrorBoundary>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <OEEGaugeCard 
@@ -1019,17 +953,17 @@ const OEEDashboard = memo(function OEEDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                <div className="lg:col-span-2 space-y-6">
-                 <Suspense fallback={<ChartSkeleton />}>
+                 <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
                     <OEETrendChart data={data.trendData} worldClassBenchmark={data.worldClassBenchmark} />
-                 </Suspense>
+                 </Suspense></SectionErrorBoundary>
                  
-                 <Suspense fallback={<ChartSkeleton />}>
+                 <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
                     <OEEHeatmap data={data.heatmapData.length > 0 ? data.heatmapData : data.byMachine.map(m => ({
                       machineId: m.machineId,
                       machineName: m.machineName,
                       data: data.trendData
                     }))} />
-                 </Suspense>
+                 </Suspense></SectionErrorBoundary>
                </div>
                
                <div className="space-y-6">
@@ -1102,20 +1036,20 @@ const OEEDashboard = memo(function OEEDashboard() {
                </div>
             </div>
 
-            <Suspense fallback={<ChartSkeleton />}>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
                <OEERecommendations data={data} />
-            </Suspense>
+            </Suspense></SectionErrorBoundary>
 
 
           </TabsContent>
 
           <TabsContent value="studios" className="space-y-6 focus-visible:outline-none outline-none">
-            <Suspense fallback={<ChartSkeleton />}>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
               <StudioHealthMonitor studios={data.byStudio || []} />
-            </Suspense>
-            <Suspense fallback={<ChartSkeleton />}>
+            </Suspense></SectionErrorBoundary>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
               <StudioEfficiencyGrid studios={data.byStudio || []} />
-            </Suspense>
+            </Suspense></SectionErrorBoundary>
 
 
 
@@ -1196,9 +1130,9 @@ const OEEDashboard = memo(function OEEDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                 <Suspense fallback={<ChartSkeleton />}>
+                 <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
                     <MaterialEfficiencyChart materials={data.byMaterial || []} />
-                 </Suspense>
+                 </Suspense></SectionErrorBoundary>
               </div>
               <div className="space-y-6">
                  <Card className="bg-primary/5 border-primary/20 h-full flex flex-col justify-center items-center p-8 text-center relative overflow-hidden">
@@ -1208,7 +1142,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                     <p className="text-sm text-muted-foreground max-w-[200px]">
                        A excelência operacional da FAST GRAVAÇÕES é monitorada em tempo real com inteligência Studio.
                     </p>
-                    <div className="mt-6 font-display font-black text-6xl opacity-10 select-none">FAST</div>
+                    <div className="mt-6 text-title font-black text-6xl opacity-10 select-none">FAST</div>
                  </Card>
               </div>
             </div>
@@ -1277,26 +1211,26 @@ const OEEDashboard = memo(function OEEDashboard() {
           <TabsContent value="losses" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
-                <Suspense fallback={<ChartSkeleton />}><OEELossDrilldown filters={lossFilters} /></Suspense>
-                <Suspense fallback={<ChartSkeleton />}><OEELossesChart availabilityLosses={data.availabilityLosses} performanceLosses={data.performanceLosses} qualityLosses={data.qualityLosses} overallOEE={data.overallOEE} /></Suspense>
+                <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><OEELossDrilldown filters={lossFilters} /></Suspense></SectionErrorBoundary>
+                <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><OEELossesChart availabilityLosses={data.availabilityLosses} performanceLosses={data.performanceLosses} qualityLosses={data.qualityLosses} overallOEE={data.overallOEE} /></Suspense></SectionErrorBoundary>
               </div>
               <div className="space-y-6">
-                <Suspense fallback={<ChartSkeleton />}><ParetoLossesChart losses={losses || []} /></Suspense>
+                <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><ParetoLossesChart losses={losses || []} /></Suspense></SectionErrorBoundary>
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="machines" className="space-y-6">
-            <Suspense fallback={<ChartSkeleton />}>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
               <OEERankingGap machines={data.byMachine} techniques={data.byTechnique} targetOEE={currentBenchmark.target} />
-            </Suspense>
-            <Suspense fallback={<TableSkeleton />}><OEEMachineTable machines={data.byMachine} /></Suspense>
-            <Suspense fallback={<ChartSkeleton />}><OEETechniqueComparison techniques={data.byTechnique} worldClassBenchmark={data.worldClassBenchmark} /></Suspense>
+            </Suspense></SectionErrorBoundary>
+            <SectionErrorBoundary compact><Suspense fallback={<TableSkeleton />}><OEEMachineTable machines={data.byMachine} /></Suspense></SectionErrorBoundary>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><OEETechniqueComparison techniques={data.byTechnique} worldClassBenchmark={data.worldClassBenchmark} /></Suspense></SectionErrorBoundary>
           </TabsContent>
 
           <TabsContent value="heatmap" className="space-y-6">
-            <Suspense fallback={<ChartSkeleton />}><OEETrendChart data={data.trendData} worldClassBenchmark={data.worldClassBenchmark} comparison={data.comparison} /></Suspense>
-            <Suspense fallback={<ChartSkeleton />}><OEEHeatmap data={data.heatmapData} /></Suspense>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><OEETrendChart data={data.trendData} worldClassBenchmark={data.worldClassBenchmark} comparison={data.comparison} /></Suspense></SectionErrorBoundary>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}><OEEHeatmap data={data.heatmapData} /></Suspense></SectionErrorBoundary>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="bg-success/5 border-success/20"><CardContent className="pt-6"><h3 className="font-bold">Resíduos Evitados</h3><p className="text-3xl font-black text-success">{(data.overallQuality * 100).toFixed(0)} kg</p></CardContent></Card>
               <Card className="bg-indicator-info/5 border-indicator-info/20"><CardContent className="pt-6"><h3 className="font-bold">Otimização</h3><p className="text-3xl font-black text-indicator-info">{(data.overallPerformance * 1.2).toFixed(1)}%</p></CardContent></Card>
@@ -1305,9 +1239,9 @@ const OEEDashboard = memo(function OEEDashboard() {
           </TabsContent>
           
           <TabsContent value="shifts" className="space-y-6">
-            <Suspense fallback={<ChartSkeleton />}>
+            <SectionErrorBoundary compact><Suspense fallback={<ChartSkeleton />}>
               <OEEShiftComparison shifts={data.byShift || []} />
-            </Suspense>
+            </Suspense></SectionErrorBoundary>
           </TabsContent>
         </Tabs>
 

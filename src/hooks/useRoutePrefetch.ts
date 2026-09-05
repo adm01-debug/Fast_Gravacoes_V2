@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 // Rotas críticas que devem ser prefetch
 const CRITICAL_ROUTES = [
@@ -48,7 +49,7 @@ export function useRoutePrefetch() {
     if ("requestIdleCallback" in window) {
       const idleCallback = window.requestIdleCallback(() => {
         CRITICAL_ROUTES.forEach(({ module }) => {
-          module().catch(() => {});
+          module().catch((e) => logger.debug('Falha no prefetch de rota', e, 'useRoutePrefetch'));
         });
       }, { timeout: 3000 });
 
@@ -57,7 +58,7 @@ export function useRoutePrefetch() {
       // Fallback para navegadores sem requestIdleCallback
       const timeout = setTimeout(() => {
         CRITICAL_ROUTES.forEach(({ module }) => {
-          module().catch(() => {});
+          module().catch((e) => logger.debug('Falha no prefetch de rota', e, 'useRoutePrefetch'));
         });
       }, 2000);
 
@@ -74,7 +75,7 @@ export function useRoutePrefetch() {
     if ("requestIdleCallback" in window) {
       const idleCallback = window.requestIdleCallback(() => {
         relatedModules.forEach((module) => {
-          module().catch(() => {});
+          module().catch((e) => logger.debug('Falha no prefetch de rota', e, 'useRoutePrefetch'));
         });
       }, { timeout: 2000 });
 
@@ -82,7 +83,7 @@ export function useRoutePrefetch() {
     } else {
       const timeout = setTimeout(() => {
         relatedModules.forEach((module) => {
-          module().catch(() => {});
+          module().catch((e) => logger.debug('Falha no prefetch de rota', e, 'useRoutePrefetch'));
         });
       }, 1000);
 
@@ -100,7 +101,7 @@ export function usePrefetchRoute() {
     // Tenta encontrar em CRITICAL_ROUTES ou RELATED_ROUTES ou apenas tenta importar se for um padrão conhecido
     const route = CRITICAL_ROUTES.find(r => r.path === routePath);
     if (route) {
-      route.module().catch(() => {});
+      route.module().catch((e) => logger.debug('Falha no prefetch de rota', e, 'useRoutePrefetch'));
       return;
     }
 

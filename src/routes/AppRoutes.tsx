@@ -4,6 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { type AppRole } from "@/features/auth";
 import { PageTransition } from "@/components/layout/PageTransition";
+import type { TransitionPreset } from "@/lib/transitions";
 import { useRoutePrefetch } from "@/hooks/useRoutePrefetch";
 import {
   DashboardPageSkeleton,
@@ -22,6 +23,8 @@ const DailyCalendar = lazy(() => import("@/pages/DailyCalendar"));
 const WeeklyCalendar = lazy(() => import("@/pages/WeeklyCalendar"));
 const MonthlyCalendar = lazy(() => import("@/pages/MonthlyCalendar"));
 const PendingQueue = lazy(() => import("@/pages/PendingQueue"));
+const PackagingDashboard = lazy(() => import("@/pages/PackagingDashboard"));
+const PackagingKioskPage = lazy(() => import("@/pages/PackagingKioskPage"));
 const AlertsDashboard = lazy(() => import("@/pages/AlertsDashboard"));
 const KanbanBoard = lazy(() => import("@/pages/KanbanBoard"));
 const KPIDashboard = lazy(() => import("@/pages/KPIDashboard"));
@@ -62,6 +65,8 @@ const KioskPage = lazy(() => import("@/pages/KioskPage"));
 const MachineComparisonPage = lazy(() => import("@/pages/MachineComparisonPage"));
 const OperatorHistoryPage = lazy(() => import("@/pages/OperatorHistoryPage"));
 const AdminTelemetriaPage = lazy(() => import("@/pages/AdminTelemetriaPage"));
+const SystemMonitoringPage = lazy(() => import("@/pages/SystemMonitoringPage"));
+const SystemStatusPage = lazy(() => import("@/pages/SystemStatusPage"));
 const AuditTrailPage = lazy(() => import("@/pages/AuditTrailPage"));
 const DigitalTwin = lazy(() => import("@/pages/DigitalTwin"));
 const LogisticsPage = lazy(() => import("@/pages/LogisticsPage"));
@@ -83,38 +88,58 @@ function getNavigationDirection(prevPath: string, currentPath: string): 'forward
   return currentPath.length >= prevPath.length ? 'forward' : 'backward';
 }
 
+// Route-specific transition overrides (path → preset)
+const ROUTE_TRANSITIONS: Record<string, TransitionPreset> = {
+  '/kiosk': 'fade',
+  '/track': 'fade',
+  '/auth': 'fade',
+  '/reset-password': 'fade',
+};
+
+function resolveRoutePreset(pathname: string): TransitionPreset | undefined {
+  return ROUTE_TRANSITIONS[pathname];
+}
+
 // Helper para rotas protegidas com Suspense
 function ProtectedPage({
   children,
   fallback,
   allowedRoles,
   direction = 'forward',
+  transitionPreset,
 }: {
   children: React.ReactNode;
   fallback: React.ReactNode;
   allowedRoles?: AppRole[];
   direction?: 'forward' | 'backward';
+  transitionPreset?: TransitionPreset;
 }) {
+  const { pathname } = useLocation();
+  const preset = transitionPreset ?? resolveRoutePreset(pathname);
   return (
     <ProtectedRoute allowedRoles={allowedRoles}>
-      <PageTransition direction={direction}>
+      <PageTransition direction={direction} preset={preset}>
         <Suspense fallback={fallback}>{children}</Suspense>
       </PageTransition>
     </ProtectedRoute>
   );
 }
 
-function PublicPage({ 
-  children, 
-  fallback, 
-  direction = 'forward' 
-}: { 
-  children: React.ReactNode; 
+function PublicPage({
+  children,
+  fallback,
+  direction = 'forward',
+  transitionPreset,
+}: {
+  children: React.ReactNode;
   fallback: React.ReactNode;
   direction?: 'forward' | 'backward';
+  transitionPreset?: TransitionPreset;
 }) {
+  const { pathname } = useLocation();
+  const preset = transitionPreset ?? resolveRoutePreset(pathname);
   return (
-    <PageTransition direction={direction}>
+    <PageTransition direction={direction} preset={preset}>
       <Suspense fallback={fallback}>{children}</Suspense>
     </PageTransition>
   );
@@ -124,17 +149,18 @@ export function AnimatedRoutes() {
   const location = useLocation();
   const [prevPath, setPrevPath] = useState(location.pathname);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
-  
+
   useRoutePrefetch();
 
-  // Optimized navigation direction update
-  useEffect(() => {
-    if (location.pathname !== prevPath) {
-      const newDirection = getNavigationDirection(prevPath, location.pathname);
-      setDirection(newDirection);
-      setPrevPath(location.pathname);
-    }
-  }, [location.pathname, prevPath]);
+  // Derived state pattern: compute during render when input changes (React docs recommended)
+  if (location.pathname !== prevPath) {
+    setDirection(getNavigationDirection(prevPath, location.pathname));
+    setPrevPath(location.pathname);
+  }
+
+
+
+
 
 
   return (
@@ -160,6 +186,8 @@ export function AnimatedRoutes() {
         <Route path="/alerts" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />}><AlertsDashboard /></ProtectedPage>} />
         <Route path="/kanban" element={<ProtectedPage direction={direction} fallback={<KanbanPageSkeleton />} allowedRoles={['coordinator', 'manager', 'operator']}><KanbanBoard /></ProtectedPage>} />
         <Route path="/new-job" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />} allowedRoles={['coordinator', 'manager']}><NewJobPage /></ProtectedPage>} />
+        <Route path="/packaging" element={<ProtectedPage direction={direction} fallback={<ListPageSkeleton />} allowedRoles={['coordinator', 'manager', 'operator']}><PackagingDashboard /></ProtectedPage>} />
+        <Route path="/packaging/kiosk" element={<ProtectedPage direction={direction} fallback={<ListPageSkeleton />} allowedRoles={['coordinator', 'manager', 'operator']}><PackagingKioskPage /></ProtectedPage>} />
 
         {/* KPIs & Analytics */}
         <Route path="/kpis" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><KPIDashboard /></ProtectedPage>} />
@@ -215,6 +243,8 @@ export function AnimatedRoutes() {
         <Route path="/master-api" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><MasterAPIPage /></ProtectedPage>} />
         <Route path="/code-quality" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><CodeQualityDashboard /></ProtectedPage>} />
         <Route path="/admin/telemetria" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><AdminTelemetriaPage /></ProtectedPage>} />
+        <Route path="/admin/monitoring" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><SystemMonitoringPage /></ProtectedPage>} />
+        <Route path="/status" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />}><SystemStatusPage /></ProtectedPage>} />
         <Route path="/simulation" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><SimulationDashboard /></ProtectedPage>} />
 
         {/* Kiosk */}

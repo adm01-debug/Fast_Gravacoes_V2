@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Calculator, DollarSign, TrendingUp, Package } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -67,7 +67,7 @@ export default function ABCCostingDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-display font-black tracking-tighter uppercase">
+                <h1 className="text-3xl text-title font-black tracking-tighter uppercase">
                   <span className="gradient-text animate-pulse-glow">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
                 </h1>
             </div>
@@ -87,7 +87,7 @@ export default function ABCCostingDashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Orçamento Mensal</p>
-                  <p className="text-2xl font-bold font-display">
+                  <p className="text-2xl font-bold text-title">
                     {totalBudget.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
@@ -98,12 +98,12 @@ export default function ABCCostingDashboard() {
           <Card className="card-glass hover-lift">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-emerald-500/10">
-                  <Calculator className="h-6 w-6 text-emerald-500" />
+                <div className="p-3 rounded-xl bg-success/10">
+                  <Calculator className="h-6 w-6 text-success" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Custo Alocado</p>
-                  <p className="text-2xl font-bold font-display text-emerald-500">
+                  <p className="text-2xl font-bold text-title text-success">
                     {totalAllocatedCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
@@ -114,12 +114,12 @@ export default function ABCCostingDashboard() {
           <Card className="card-glass hover-lift">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-amber-500/10">
-                  <TrendingUp className="h-6 w-6 text-amber-500" />
+                <div className="p-3 rounded-xl bg-warning/10">
+                  <TrendingUp className="h-6 w-6 text-warning" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Custo Unitário Médio</p>
-                  <p className="text-2xl font-bold font-display text-amber-500">
+                  <p className="text-2xl font-bold text-title text-warning">
                     {averageUnitCost.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
@@ -139,7 +139,7 @@ export default function ABCCostingDashboard() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Jobs Custeados</p>
-                  <p className="text-2xl font-bold font-display text-purple-500">
+                  <p className="text-2xl font-bold text-title text-purple-500">
                     {jobSummaries.length}
                   </p>
                 </div>

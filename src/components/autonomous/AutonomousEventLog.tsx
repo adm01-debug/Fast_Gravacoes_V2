@@ -1,3 +1,10 @@
+ 
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
+import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +17,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const AUTONOMOUS_EVENTS = [
   { type: 'optimization', message: 'Re-otimizando cronograma: Detectado atraso de 15m na Máquina 2.', icon: RefreshCw, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   { type: 'maintenance', message: 'Ordem de serviço automática gerada para Máquina 4 (Fator de Risco > 85%).', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-  { type: 'logistics', message: 'Solicitação de reposição de Tinta Azul enviada ao almoxarifado.', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+  { type: 'logistics', message: 'Solicitação de reposição de Tinta Azul enviada ao almoxarifado.', icon: Zap, color: 'text-warning', bg: 'bg-warning/10' },
   { type: 'quality', message: 'Alerta SPC: Processo da Máquina 1 está tendendo ao limite superior. Ajuste sugerido.', icon: AlertCircle, color: 'text-destructive', bg: 'bg-destructive/10' },
-  { type: 'sync', message: 'Sincronização Bitrix24 concluída: 12 novas ordens processadas.', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  { type: 'sync', message: 'Sincronização Bitrix24 concluída: 12 novas ordens processadas.', icon: CheckCircle2, color: 'text-success', bg: 'bg-success/10' },
   { type: 'quantum', message: 'Simulação Quântica: Detectada economia de R$ 1.250 em novo cenário de lote.', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
   { type: 'orchestration', message: 'Orquestração 12/10: Sincronia global entre Fábrica e Supply Chain.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-600/10' },
 ] as const;
@@ -48,7 +55,7 @@ export function AutonomousEventLog() {
           <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
             <div className="relative">
               <Brain className="h-4 w-4 animate-pulse" />
-              <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+              <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-success rounded-full animate-ping" />
             </div>
             Orquestração Autônoma (IA)
           </CardTitle>

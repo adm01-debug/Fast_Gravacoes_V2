@@ -24,7 +24,7 @@ export function useNotificationSettings() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ['user-notification-settings', user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user?.id) return null;
 
       const { data, error } = await supabase
         .from('user_notification_settings')
@@ -48,12 +48,12 @@ export function useNotificationSettings() {
 
       return data as UserNotificationSettings;
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   const updateSettings = useMutation({
     mutationFn: async (updates: Partial<UserNotificationSettings>) => {
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('user_notification_settings')

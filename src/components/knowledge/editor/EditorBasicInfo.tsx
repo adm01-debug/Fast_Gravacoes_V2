@@ -7,41 +7,43 @@ import { Info, Plus, Trash2, CheckSquare, AlertTriangle, Package, Maximize2 } fr
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
+export interface EditorFormData {
+  technique_id: string;
+  product_category_id: string;
+  material_id: string;
+  title: string;
+  description: string;
+  estimated_time_minutes: string;
+  recommended_machine_id: string;
+  ink_specifications: string;
+  tooling_specifications: string;
+  squeegee_passes: string;
+  pressure: string;
+  speed: string;
+  temperature: string;
+  squeegee_passes_min: string;
+  squeegee_passes_max: string;
+  pressure_min: string;
+  pressure_max: string;
+  speed_min: string;
+  speed_max: string;
+  temperature_min: string;
+  temperature_max: string;
+  gap_specifications: string;
+  challenges_notes: string;
+  failure_scenarios: string;
+  quality_requirements: string;
+  setup_instructions: string;
+  quality_checklist: Array<{ id: string; description: string; required: boolean }>;
+  consumables: Array<{ id: string; name: string; quantity: string; alternative?: string }>;
+  gold_standard_image_url: string;
+  failure_standard_image_url: string;
+  version: string;
+}
+
 interface EditorBasicInfoProps {
-  formData: {
-    technique_id: string;
-    product_category_id: string;
-    material_id: string;
-    title: string;
-    description: string;
-    estimated_time_minutes: string;
-    recommended_machine_id: string;
-    ink_specifications: string;
-    tooling_specifications: string;
-    squeegee_passes: string;
-    pressure: string;
-    speed: string;
-    temperature: string;
-    squeegee_passes_min: string;
-    squeegee_passes_max: string;
-    pressure_min: string;
-    pressure_max: string;
-    speed_min: string;
-    speed_max: string;
-    temperature_min: string;
-    temperature_max: string;
-    gap_specifications: string;
-    challenges_notes: string;
-    failure_scenarios: string;
-    quality_requirements: string;
-    setup_instructions: string;
-    quality_checklist: Array<{ id: string; description: string; required: boolean }>;
-    consumables: Array<{ id: string; name: string; quantity: string; alternative?: string }>;
-    gold_standard_image_url: string;
-    failure_standard_image_url: string;
-    version: string;
-  };
-  setFormData: (data: any) => void;
+  formData: EditorFormData;
+  setFormData: (data: EditorFormData | ((prev: EditorFormData) => EditorFormData)) => void;
   techniques: Array<{ id: string; name: string; color: string; short_name: string }>;
   categories: ProductCategory[];
   materials: Material[];
@@ -279,7 +281,7 @@ export function EditorBasicInfo({ formData, setFormData, techniques, categories,
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold flex items-center gap-2">
-              <CheckSquare className="h-4 w-4 text-emerald-500" />
+              <CheckSquare className="h-4 w-4 text-success" />
               Checklist de Qualidade
             </h3>
             <Button
@@ -437,7 +439,7 @@ export function EditorBasicInfo({ formData, setFormData, techniques, categories,
 
         <div className="space-y-4">
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <Maximize2 className="h-4 w-4 text-emerald-500" />
+            <Maximize2 className="h-4 w-4 text-success" />
             Padrões Visuais de Qualidade
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -466,7 +468,7 @@ export function EditorBasicInfo({ formData, setFormData, techniques, categories,
 
         <div className="space-y-4">
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTriangle className="h-4 w-4 text-warning" />
             Orientações de Produção e Qualidade
           </h3>
 

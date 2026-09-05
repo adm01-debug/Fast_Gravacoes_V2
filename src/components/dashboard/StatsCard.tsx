@@ -113,7 +113,7 @@ function StatsCardComponent({
               {title}
             </h3>
             <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold tracking-tight text-foreground font-display group-hover:scale-105 transition-transform duration-500 origin-left">
+              <p className="text-display text-foreground group-hover:scale-105 transition-transform duration-500 origin-left">
                 {value}
               </p>
               {subtitle && (
@@ -146,7 +146,7 @@ function StatsCardComponent({
           <h3 className="text-xs font-bold text-muted-foreground truncate uppercase tracking-widest opacity-80">
             {title}
           </h3>
-          <p className="text-4xl font-bold tracking-tight text-foreground font-display group-hover:scale-105 transition-transform duration-500 origin-left">
+          <p className="text-display-lg text-foreground group-hover:scale-105 transition-transform duration-500 origin-left">
             {value}
           </p>
           {subtitle && (

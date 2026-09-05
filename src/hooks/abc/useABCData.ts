@@ -4,6 +4,7 @@ import { categorizeError } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 import { ABCActivity, ABCCostPool, ABCActivityRate, ABCJobCost, ABC_ERROR_CONTEXT } from './types';
+import { useTechniques } from '@/features/jobs';
 
 export function useABCData() {
   // Fetch activities
@@ -115,25 +116,8 @@ export function useABCData() {
     ...defaultQueryOptions,
   });
 
-  // Fetch techniques
-  const { data: techniques = [] } = useQuery({
-    queryKey: ['techniques-for-abc'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('techniques')
-        .select('*');
-
-      if (error) {
-        if (import.meta.env.DEV) {
-          logger.error('[useABCCosts] techniques fetch failed: ' + categorizeError(error), error, 'ABC');
-        }
-        throw error;
-      }
-      return data;
-    },
-    staleTime: STALE_TIMES.STATIC,
-    ...defaultQueryOptions,
-  });
+  // Fetch techniques (shared cache)
+  const { data: techniques = [] } = useTechniques();
 
   return {
     activities,

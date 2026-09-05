@@ -16,14 +16,18 @@ vi.mock('@/features/admin', async (importOriginal) => {
 
 describe('useOEE', () => {
   it('should calculate OEE components correctly', () => {
-    const today = new Date().toISOString();
+    const now = new Date();
+    const start = new Date(now);
+    start.setHours(8, 0, 0, 0);
+    const end = new Date(now);
+    end.setHours(9, 0, 0, 0);
     const mockJobs = [
       { 
         id: '1', 
         machine_id: 'm1', 
         status: 'finished', 
-        actual_start_time: '2026-05-16T08:00:00Z', 
-        actual_end_time: '2026-05-16T09:00:00Z', // 60 mins
+        actual_start_time: start.toISOString(), 
+        actual_end_time: end.toISOString(), // 60 mins
         estimated_duration: 50, 
         quantity: 100, 
         produced_quantity: 95, 

@@ -69,16 +69,29 @@ export function buildICalFeed(jobs: DbJob[], machines: DbMachine[], calendarName
 
   const events = jobs
     .filter((j) => j.scheduled_date && j.start_time && j.end_time)
-    .map((job) => {
-      const date = parseDateOnly(job.scheduled_date as string)!;
-      const start = toICalDateTime(date, job.start_time as string);
-      const end = toICalDateTime(date, job.end_time as string);
+    .flatMap((job) => {
+      const scheduledDate = job.scheduled_date;
+      const startTime = job.start_time;
+      const endTime = job.end_time;
+
+      if (!scheduledDate || !startTime || !endTime) {
+        return [];
+      }
+
+      const date = parseDateOnly(scheduledDate);
+
+      if (!date) {
+        return [];
+      }
+
+      const start = toICalDateTime(date, startTime);
+      const end = toICalDateTime(date, endTime);
       const machine = job.machine_id ? machineMap.get(job.machine_id) : null;
       const summary = escapeICal(`${job.order_number} — ${job.client}`);
       const description = escapeICal(
         `${job.product}\nQtd: ${job.quantity}\nStatus: ${job.status}\nMáquina: ${machine?.code ?? '—'}`
       );
-      return [
+      return [[
         'BEGIN:VEVENT',
         `UID:${job.id}@fastgravacoes`,
         `DTSTAMP:${now}`,
@@ -88,9 +101,10 @@ export function buildICalFeed(jobs: DbJob[], machines: DbMachine[], calendarName
         `DESCRIPTION:${description}`,
         `LOCATION:${escapeICal(machine?.name ?? 'FAST GRAVAÇÕES')}`,
         'END:VEVENT',
-      ].join('\r\n');
+      ].join('\r\n')];
     })
     .join('\r\n');
+
 
   return [
     'BEGIN:VCALENDAR',

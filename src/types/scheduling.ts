@@ -10,7 +10,8 @@ export type JobStatus =
   | 'cancelled'
   | 'delayed'
   | 'rework'
-  | 'buffer';
+  | 'buffer'
+  | 'packaging';
 
 export type UserRole = 'coordinator' | 'operator' | 'manager';
 

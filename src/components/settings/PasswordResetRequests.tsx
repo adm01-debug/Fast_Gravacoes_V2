@@ -25,6 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { showErrorToast } from '@/lib/errorHandling';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR, enUS, es } from 'date-fns/locale';
 import { Check, X, Clock, Loader2, KeyRound, Mail, AlertCircle } from 'lucide-react';
@@ -85,7 +86,7 @@ export function PasswordResetRequests() {
       queryClient.invalidateQueries({ queryKey: ['password-reset-requests'] });
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      showErrorToast(error, t('settings.resetApproveError', 'Erro ao aprovar solicitação'));
     },
   });
 
@@ -111,7 +112,7 @@ export function PasswordResetRequests() {
       setSelectedRequest(null);
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('errors.generic'));
+      showErrorToast(error, t('settings.resetRejectError', 'Erro ao rejeitar solicitação'));
     },
   });
 

@@ -62,7 +62,7 @@ export function PushNotificationSettings() {
         );
       default:
         return (
-          <Badge variant="outline" className="text-amber-600 border-amber-600">
+          <Badge variant="outline" className="text-warning border-warning">
             <AlertTriangle className="h-3 w-3 mr-1" />
             Não solicitado
           </Badge>
@@ -87,8 +87,8 @@ export function PushNotificationSettings() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-            <p className="text-sm text-amber-700 dark:text-amber-400">
+          <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
+            <p className="text-sm text-warning dark:text-warning">
               Para receber notificações push, use um navegador moderno como Chrome, Firefox, Edge ou Safari.
             </p>
           </div>

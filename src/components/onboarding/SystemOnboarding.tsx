@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Joyride as JoyrideBase, Step, STATUS } from 'react-joyride';
-const Joyride = JoyrideBase as any;
+import { useState, useEffect, useCallback, type ComponentType } from 'react';
+import { Joyride as JoyrideBase, Step, STATUS, type Styles } from 'react-joyride';
+const Joyride = JoyrideBase as unknown as ComponentType<Record<string, unknown>>;
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/features/auth';
 import { useTheme } from 'next-themes';
@@ -97,7 +97,7 @@ export const SystemOnboarding = () => {
     },
   ];
 
-  const handleJoyrideCallback = useCallback((data: any) => {
+  const handleJoyrideCallback = useCallback((data: { status: string }) => {
     const { status } = data;
     const finished: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
     if (finished.includes(status)) {
@@ -196,7 +196,7 @@ export const SystemOnboarding = () => {
         spotlight: {
           borderRadius: 12,
         },
-      } as any}
+      } as Partial<Styles>}
       locale={{
         back: t('common.back', { defaultValue: '← Voltar' }),
         close: t('common.close', { defaultValue: 'Fechar' }),

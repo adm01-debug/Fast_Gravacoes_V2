@@ -122,20 +122,25 @@ export function useMLPredictions() {
       queryClient.invalidateQueries({ queryKey: ['ml-predictions'] });
       toast.success(`${data.predictions_generated} previsões geradas com sucesso`);
     },
-    onError: (error: Error) => {
-      // Registro detalhado de erro de ML para auditoria (Tipagem corrigida)
-      supabase.from('error_logs').insert({
-        component_name: 'useMLPredictions:generatePredictions',
-        message: error.message,
-        metadata: { machine_id: generatePredictions.variables, severity: 'high' }
-      }).then();
+    onError: (error: Error, variables: string | undefined) => {
+      void (async () => {
+        try {
+          await supabase.from('error_logs').insert({
+            component_name: 'useMLPredictions:generatePredictions',
+            message: error.message,
+            metadata: { machine_id: variables, severity: 'high' }
+          });
+        } catch (logErr: unknown) {
+          console.error('Failed to write error_log', logErr);
+        }
+      })();
 
       if (error.message.includes('Rate limit')) {
         toast.error('Limite de requisições excedido. Tente novamente em alguns minutos.');
       } else if (error.message.includes('Payment required')) {
         toast.error('Créditos insuficientes. Adicione créditos ao workspace.');
       } else {
-        toast.error('Erro ao gerar previsões: ' + error.message);
+        toast.error('Erro ao gerar previsões. Tente novamente.');
       }
     },
   });
@@ -143,10 +148,12 @@ export function useMLPredictions() {
   // Acknowledge prediction mutation
   const acknowledgePrediction = useMutation({
     mutationFn: async (predictionId: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase
         .from('machine_predictions')
         .update({
           acknowledged_at: new Date().toISOString(),
+          acknowledged_by: user?.id ?? null,
         })
         .eq('id', predictionId);
 
@@ -155,6 +162,9 @@ export function useMLPredictions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ml-predictions'] });
       toast.success('Previsão reconhecida');
+    },
+    onError: (error: Error) => {
+      showErrorToast(error, undefined, ML_ERROR_CONTEXT.generate);
     },
   });
 

@@ -4,7 +4,7 @@ import { EfficiencyAlertHistory } from "@/features/analytics/hooks/useEfficiency
 import { format, subDays, startOfDay, endOfDay, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { AreaChart, Area, XAxis, YAxis } from "@/lib/recharts";
 
 const chartConfig = {
   bottleneck: { label: "Gargalo", color: "hsl(var(--chart-1))" },

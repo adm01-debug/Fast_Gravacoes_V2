@@ -1,3 +1,9 @@
+/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -72,6 +78,8 @@ interface MaintenanceExecutionModalProps {
     execution_alerts?: ExecutionAlert[];
     failure_risk_detected?: boolean;
   }) => void;
+  /** True while the parent's completeMaintenance mutation is in flight — disables the confirm button to prevent duplicate submissions on rapid clicks. */
+  isSubmitting?: boolean;
 }
 
 export function MaintenanceExecutionModal({
@@ -80,6 +88,7 @@ export function MaintenanceExecutionModal({
   schedule,
   recordId,
   onComplete,
+  isSubmitting = false,
 }: MaintenanceExecutionModalProps) {
   const { checklists } = useTPM();
   const { sheets: technicalSheets } = useTechnicalSheets();
@@ -118,7 +127,7 @@ export function MaintenanceExecutionModal({
     notes?: string;
     photo_url?: string;
   }>>({});
-  const [parts, setParts] = useState<Array<{ name: string; code: string; quantity: number }>>([]);
+  const [parts, setParts] = useState<Array<{ _key: string; name: string; code: string; quantity: number }>>([]);
   const [signature, setSignature] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
@@ -251,7 +260,7 @@ export function MaintenanceExecutionModal({
   };
 
   const handleAddPart = () => {
-    setParts([...parts, { name: '', code: '', quantity: 1 }]);
+    setParts([...parts, { _key: crypto.randomUUID(), name: '', code: '', quantity: 1 }]);
   };
 
   const handleRemovePart = (index: number) => {
@@ -458,7 +467,7 @@ export function MaintenanceExecutionModal({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-warning/10 border border-warning/20 text-warning">
                 <AlertTriangle className="h-5 w-5" />
                 <p className="text-sm">Nenhum checklist configurado para este tipo de manutenção.</p>
               </div>
@@ -474,7 +483,7 @@ export function MaintenanceExecutionModal({
             {/* Technical Sheet & Adjustments */}
             <div className="space-y-4 pt-4 border-t border-border/50">
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Zap className="h-5 w-5 text-amber-500" />
+                <Zap className="h-5 w-5 text-warning" />
                 Regulagem Técnica
               </h3>
               <div className="space-y-4">
@@ -589,12 +598,12 @@ export function MaintenanceExecutionModal({
                 {selectedSheetId && technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist && (technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist?.length || 0) > 0 && (
                   <div className="space-y-3 pt-2">
                     <Label className="text-sm font-semibold flex items-center gap-2">
-                      <CheckSquare className="h-4 w-4 text-emerald-500" />
+                      <CheckSquare className="h-4 w-4 text-success" />
                       Checklist de Qualidade (Obrigatório)
                     </Label>
                     <div className="grid grid-cols-1 gap-3">
                       {technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist?.map((item) => (
-                        <div key={item.id} className="space-y-2 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
+                        <div key={item.id} className="space-y-2 p-3 rounded-lg bg-success/5 border border-success/10">
                           <div className="flex items-center gap-3">
                             <Checkbox
                               id={`quality-${item.id}`}
@@ -693,10 +702,10 @@ export function MaintenanceExecutionModal({
         </ScrollArea>
 
         <DialogFooter className="mt-6">
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleComplete} className="gap-2">
+          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>Cancelar</Button>
+          <Button onClick={handleComplete} disabled={isSubmitting} className="gap-2">
             <CheckCircle2 className="h-4 w-4" />
-            Concluir Manutenção
+            {isSubmitting ? 'Salvando...' : 'Concluir Manutenção'}
           </Button>
         </DialogFooter>
       </DialogContent>

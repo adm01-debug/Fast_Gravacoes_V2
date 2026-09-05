@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth";
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { showErrorToast, createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
@@ -60,24 +60,9 @@ export const useTechnicalConversations = () => {
   });
 
   // Realtime subscription for conversations
-  useEffect(() => {
-    if (!user?.id) return;
-
-    const channel = supabase
-      .channel('technical-conversations-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'technical_conversations' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['technical-conversations'] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id, queryClient]);
+  useRealtimeChannel('technical-conversations-changes', [{ table: 'technical_conversations' }], () => {
+    queryClient.invalidateQueries({ queryKey: ['technical-conversations'] });
+  });
 
   const createConversation = useMutation({
     mutationFn: async (title?: string) => {

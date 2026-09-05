@@ -12,9 +12,13 @@ import {
 const CONTEXT = 'useAuditTrail';
 
 async function fetchAuditEntries(filters: AuditFilters): Promise<AuditLogEntry[]> {
-  let query = supabase
-    .from('audit_log' as any)
-    .select('*, profiles:actor_id(full_name)')
+  // audit_log table isn't in generated Database types; cast client narrowly.
+  const client = supabase as unknown as {
+    from: (t: string) => ReturnType<typeof supabase.from>;
+  };
+  let query = client
+    .from('audit_log')
+    .select('*, actor_email')
     .order('created_at', { ascending: false });
 
   if (filters.limit) query = query.limit(filters.limit);
@@ -39,7 +43,9 @@ async function fetchAuditEntries(filters: AuditFilters): Promise<AuditLogEntry[]
     logger.error('Failed to load audit entries', error, CONTEXT);
     throw error;
   }
-  const parsed = (data ?? []).map((row: any) => {
+  type AuditRow = Record<string, unknown> & { actor_email?: string | null; actor_name?: string };
+  const rows = (data ?? []) as AuditRow[];
+  const parsed = rows.map((row) => {
     const result = auditLogEntrySchema.safeParse(row);
     if (!result.success) {
       logger.warn('Audit row failed validation', result.error.flatten(), CONTEXT);
@@ -47,7 +53,7 @@ async function fetchAuditEntries(filters: AuditFilters): Promise<AuditLogEntry[]
     }
     return {
       ...result.data,
-      actor_name: (row as any).profiles?.full_name || (row as any).actor_name // Injecting actor_name for UI
+      actor_name: row.actor_email || row.actor_name, // Surface actor_email as actor_name for UI
     } as AuditLogEntry & { actor_name?: string };
   });
   return parsed.filter((x): x is AuditLogEntry & { actor_name?: string } => x !== null);

@@ -23,7 +23,7 @@ const QuickFavoritesBar = lazy(() => import('./QuickFavoritesBar').then(m => ({ 
 const OfflineReadyIndicator = lazy(() => import('../offline/OfflineReadyIndicator').then(m => ({ default: m.OfflineReadyIndicator })));
 const MobileNavigation = lazy(() => import('../navigation/MobileNavigation').then(m => ({ default: m.MobileNavigation })));
 const MobileQuickActions = lazy(() => import('../navigation/MobileQuickActions').then(m => ({ default: m.MobileQuickActions })));
-const CommandPaletteAdvanced = lazy(() => import('../navigation/CommandPaletteAdvanced').then(m => ({ default: m.CommandPaletteAdvanced })));
+
 const SystemOnboarding = lazy(() => import('../onboarding/SystemOnboarding').then(m => ({ default: m.SystemOnboarding })));
 const Breadcrumbs = lazy(() => import('../navigation/Breadcrumbs').then(m => ({ default: m.Breadcrumbs })));
 const BackButton = lazy(() => import('../navigation/BackButton').then(m => ({ default: m.BackButton })));
@@ -77,7 +77,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <SessionProvider>
-      <div className="flex h-screen w-full bg-background overflow-hidden">
+      <div className="flex h-dvh w-full bg-background overflow-hidden">
         {/* Skip Links for Accessibility */}
         <SkipLinks />
         <Suspense fallback={null}>
@@ -121,11 +121,11 @@ export function MainLayout({ children }: MainLayoutProps) {
             </Suspense>
             <ThemeToggle />
 
-            <Link to="/notifications">
-              <Button variant="ghost" size="icon" className="relative h-9 w-9">
+            <Link to="/notifications" aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}>
+              <Button variant="ghost" size="icon" className="relative h-11 w-11" aria-label="Abrir notificações">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                  <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-background">
+                  <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 rounded-full flex items-center justify-center text-[11px] font-bold border-2 border-background">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </Badge>
                 )}
@@ -149,11 +149,11 @@ export function MainLayout({ children }: MainLayoutProps) {
             </Suspense>
             <ThemeToggle />
 
-            <Link to="/notifications">
-              <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                <Bell className="h-4.5 w-4.5" />
+            <Link to="/notifications" aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}>
+              <Button variant="ghost" size="icon" className="relative min-h-11 min-w-11" aria-label="Abrir notificações">
+                <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                  <Badge variant="destructive" className="absolute -top-0.5 -right-0.5 h-3.5 min-w-[14px] px-0.5 rounded-full flex items-center justify-center text-[8px] font-black border border-background">
+                  <Badge variant="destructive" className="absolute -top-0.5 -right-0.5 h-5 min-w-[20px] px-1 rounded-full flex items-center justify-center text-[11px] font-bold border-2 border-background">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
                 )}
@@ -187,9 +187,9 @@ export function MainLayout({ children }: MainLayoutProps) {
               
               <div className="hidden sm:flex items-center gap-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full border border-border/40 shadow-inner">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  <span className="relative flex h-2 w-2" aria-hidden="true">
+                    <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
                   </span>
                   Sistema Online
                 </div>
@@ -234,9 +234,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Suspense fallback={EmptyFallback}>
           <NotificationIntegrator />
         </Suspense>
-        <Suspense fallback={EmptyFallback}>
-          <CommandPaletteAdvanced />
-        </Suspense>
+        {/* CommandPaletteAdvanced é montado globalmente em ProductDesignProvider (gated por auth) */}
         <Suspense fallback={EmptyFallback}>
           <SystemOnboarding />
         </Suspense>

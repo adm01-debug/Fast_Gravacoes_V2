@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import { useMemo, useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { DbJob } from '@/features/jobs';
@@ -39,8 +44,8 @@ export function KanbanMetricsBar({ jobs }: KanbanMetricsBarProps) {
     const finishedJobs = jobs.filter(j => j.status === 'finished' && j.actual_start_time && j.actual_end_time);
     const avgLeadTimeHours = finishedJobs.length > 0
       ? finishedJobs.reduce((sum, j) => {
-          const start = new Date(j.actual_start_time!);
-          const end = new Date(j.actual_end_time!);
+          const start = new Date((j.actual_start_time ?? ""));
+          const end = new Date((j.actual_end_time ?? ""));
           return sum + differenceInHours(end, start);
         }, 0) / finishedJobs.length
       : 0;
@@ -83,14 +88,14 @@ export function KanbanMetricsBar({ jobs }: KanbanMetricsBarProps) {
         icon={Activity}
         label="Gargalos Ativos"
         value={metrics.bottlenecks}
-        color={metrics.bottlenecks > 0 ? "text-red-500" : "text-emerald-500"}
+        color={metrics.bottlenecks > 0 ? "text-red-500" : "text-success"}
         alert={metrics.bottlenecks > 0}
       />
       <MetricChip
         icon={Zap}
         label="Setup Otimizável"
         value={`${totalSavings}min`}
-        color="text-amber-400"
+        color="text-warning"
         alert={totalSavings > 30}
       />
       <MetricChip

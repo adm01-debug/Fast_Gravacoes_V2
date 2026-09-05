@@ -34,9 +34,9 @@ export default function AuditTrailPage() {
               <ShieldCheckIcon className="h-7 w-7 text-primary" aria-hidden />
             </div>
             <div>
-              <h1 className="text-3xl font-display font-black tracking-tighter flex items-center gap-2 uppercase">
+              <h1 className="text-3xl text-title font-black tracking-tighter flex items-center gap-2 uppercase">
                 <span className="gradient-text animate-pulse-glow">FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO</span>
-                <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+                <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-success/10 text-success border-success/20">
                   <Lock className="h-2 w-2 mr-1" /> Imutável
                 </Badge>
               </h1>
@@ -109,10 +109,10 @@ export default function AuditTrailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
-                    <p className="text-2xl font-black text-amber-600">
+                    <p className="text-2xl font-black text-warning">
                       {data?.filter(e => e.action === 'UPDATE').length || 0}
                     </p>
-                    <AlertTriangle className="h-5 w-5 text-amber-500 opacity-50" />
+                    <AlertTriangle className="h-5 w-5 text-warning opacity-50" />
                   </div>
                 </CardContent>
               </Card>
@@ -122,10 +122,10 @@ export default function AuditTrailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
-                    <p className="text-2xl font-black text-emerald-600">
+                    <p className="text-2xl font-black text-success">
                       {new Set(data?.map(e => e.actor_id)).size}
                     </p>
-                    <UserCheck className="h-5 w-5 text-emerald-500 opacity-50" />
+                    <UserCheck className="h-5 w-5 text-success opacity-50" />
                   </div>
                 </CardContent>
               </Card>

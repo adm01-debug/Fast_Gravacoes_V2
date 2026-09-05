@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useMemo } from 'react';
 import { createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
 import { QUERY_KEYS, STALE_TIMES } from '@/lib/queryConfig';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { jobsService } from '../services/jobsService';
 import type { Job, JobStatus } from '../services/jobsService';
 import { useTechniques } from '../index';
@@ -36,18 +36,15 @@ export function useJobs() {
     staleTime: JOBS_STALE_TIME,
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('jobs-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  // Shared realtime channel — see src/lib/realtimeChannel.ts. Multiple
+  // `useJobs` consumers (14+ call sites in this codebase, plus StrictMode
+  // double-mount) reuse one channel, avoiding the "cannot add
+  // `postgres_changes` callbacks ... after `subscribe()`" crash.
+  useRealtimeChannel('jobs-changes', [{ table: 'jobs' }], () => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
+  });
 
   return query;
 }
@@ -65,6 +62,8 @@ export function useUpdateJobStatus() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
     },
     onError: createMutationErrorHandler('Erro ao atualizar status do job'),
   });
@@ -83,7 +82,8 @@ export function useUpdateJob() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
-      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
     },
     onError: createMutationErrorHandler('Erro ao atualizar job'),
   });
@@ -102,7 +102,8 @@ export function useDeleteJob() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
-      queryClient.invalidateQueries({ queryKey: ['paginated-jobs'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
     },
     onError: createMutationErrorHandler('Erro ao excluir job'),
   });

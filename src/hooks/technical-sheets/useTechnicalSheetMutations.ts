@@ -44,8 +44,7 @@ export const useTechnicalSheetMutations = () => {
       toast({ title: 'Ficha técnica criada com sucesso!' });
     },
     onError: (error: Error) => {
-      const appError = createAppError(error, { entity: 'technical_sheets', operation: 'create' });
-      toast({ title: 'Erro ao criar ficha', description: error.message, variant: 'destructive' });
+      toast({ title: 'Erro ao criar ficha', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -67,8 +66,7 @@ export const useTechnicalSheetMutations = () => {
       toast({ title: 'Ficha técnica atualizada!' });
     },
     onError: (error: Error) => {
-      const appError = createAppError(error, { entity: 'technical_sheets', operation: 'update' });
-      toast({ title: 'Erro ao atualizar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Erro ao atualizar', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -86,8 +84,7 @@ export const useTechnicalSheetMutations = () => {
       toast({ title: 'Ficha técnica removida!' });
     },
     onError: (error: Error) => {
-      const appError = createAppError(error, { entity: 'technical_sheets', operation: 'delete' });
-      toast({ title: 'Erro ao remover', description: error.message, variant: 'destructive' });
+      toast({ title: 'Erro ao remover', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -111,6 +108,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-steps', variables.technical_sheet_id] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao adicionar etapa', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -127,6 +127,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-steps'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao atualizar etapa', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -141,6 +144,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-steps'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao remover etapa', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -163,6 +169,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-materials', variables.technical_sheet_id] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao adicionar material', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -177,6 +186,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-materials'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao remover material', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -197,6 +209,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-tips', variables.technical_sheet_id] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao adicionar dica', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -211,6 +226,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-tips'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao remover dica', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 
@@ -235,6 +253,9 @@ export const useTechnicalSheetMutations = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['technical-sheet-favorites'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Erro ao atualizar favorito', description: createAppError(error).message, variant: 'destructive' });
     }
   });
 

@@ -114,12 +114,12 @@ export function TPMNotificationLogs() {
                     <div className="flex flex-col">
                       <span className="capitalize">{log.channel}</span>
                       {log.severity === 'correction' && (
-                        <Badge variant="outline" className="text-[9px] h-4 px-1 w-fit bg-amber-500/10 text-amber-600 border-amber-200 uppercase">
+                        <Badge variant="outline" className="text-[9px] h-4 px-1 w-fit bg-warning/10 text-warning border-warning uppercase">
                           Correção
                         </Badge>
                       )}
                       {log.severity === 'critical_approved' && (
-                        <Badge variant="outline" className="text-[9px] h-4 px-1 w-fit bg-emerald-500/10 text-emerald-600 border-emerald-200 uppercase">
+                        <Badge variant="outline" className="text-[9px] h-4 px-1 w-fit bg-success/10 text-success border-success uppercase">
                           Crítico Aprovado
                         </Badge>
                       )}
@@ -136,7 +136,7 @@ export function TPMNotificationLogs() {
                   </TableCell>
                   <TableCell>
                     {log.status === 'success' ? (
-                      <div className="flex items-center text-emerald-500 gap-1">
+                      <div className="flex items-center text-success gap-1">
                         <CheckCircle2 className="h-4 w-4" />
                         <span>Sucesso</span>
                       </div>

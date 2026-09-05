@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface ReplacementPartsProps {
-  parts: Array<{ name: string; code: string; quantity: number }>;
+  parts: Array<{ _key: string; name: string; code: string; quantity: number }>;
   onAdd: () => void;
   onRemove: (index: number) => void;
   onUpdate: (index: number, field: keyof { name: string; code: string; quantity: number }, value: string | number) => void;
@@ -29,7 +29,7 @@ export function ReplacementParts({
       </div>
       <div className="space-y-3">
         {parts.map((part, index) => (
-          <div key={index} className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 border rounded-lg bg-secondary/10">
+          <div key={part._key} className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 border rounded-lg bg-secondary/10">
             <Input
               placeholder="Nome da Peça"
               value={part.name}

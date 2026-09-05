@@ -1,5 +1,6 @@
-import { useState, useMemo, useRef, useEffect } from "react";
-import type { TablesUpdate } from "@/integrations/supabase/types";
+/* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+import { TablesUpdate } from '@/integrations/supabase/types';
+import { useState, useMemo, useRef } from 'react';
 import { parseDateOnly } from "@/lib/dateUtils";
 import { useFuseSearch } from "@/hooks/useFuseSearch";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -44,6 +45,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DbJob, DbTechnique, DbMachine } from "@/features/jobs";
 import { JobStatus } from "@/types/scheduling";
+import { canTransition } from "@/features/jobs/services/jobStateMachine";
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { SmartSequencingPanel } from "@/components/planning/SmartSequencingPanel";
 import { LoadBalancingPanel } from "@/components/planning/LoadBalancingPanel";
@@ -55,7 +57,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { motion, AnimatePresence } from "framer-motion";
 import { useDataExport } from "@/features/admin";
 import { useSmartSequencingWithActions } from "@/features/jobs";
+import type { SequencingSuggestion } from "@/features/jobs";
 import { useLoadBalancingWithActions } from "@/features/analytics/hooks/useLoadBalancingWithActions";
+import type { LoadBalancingSuggestion } from "@/features/analytics";
 import { useAutoBufferPromotion } from "@/features/jobs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatDistanceToNow, isAfter, subHours } from "date-fns";
@@ -97,10 +101,11 @@ export default function PendingQueue() {
   const [viewMode, setViewMode] = useState<'table' | 'grid'>(() => {
     return window.innerWidth < 1024 ? 'grid' : 'table';
   });
-  const [selectedAISuggestion, setSelectedAISuggestion] = useState<{
-    type: 'setup' | 'balancing';
-    data: any;
-  } | null>(null);
+  const [selectedAISuggestion, setSelectedAISuggestion] = useState<
+    | { type: 'setup'; data: SequencingSuggestion }
+    | { type: 'balancing'; data: LoadBalancingSuggestion }
+    | null
+  >(null);
   const [selectedJobs, setSelectedJobs] = useState<Set<string>>(new Set());
 
   const queryClient = useQueryClient();
@@ -277,6 +282,14 @@ export default function PendingQueue() {
         if (error) throw error;
         toast.success(`${selectedJobs.size} jobs excluídos`);
       } else {
+        const targetStatus = action as JobStatus;
+        const selectedJobsList = filteredJobs.filter(j => selectedJobs.has(j.id));
+        const invalid = selectedJobsList.filter(j => !canTransition(j.status as JobStatus, targetStatus));
+        if (invalid.length > 0) {
+          toast.error(`${invalid.length} job(s) não podem ser movidos para "${targetStatus}" a partir do estado atual`);
+          return;
+        }
+
         const updateData: TablesUpdate<'jobs'> = {
           status: action,
           updated_at: new Date().toISOString()
@@ -285,15 +298,15 @@ export default function PendingQueue() {
           updateData.actual_start_time = new Date().toISOString();
         }
 
-        const { error } = await supabase.from('jobs').update(updateData).in('id', Array.from(selectedJobs));
-        if (error) throw error;
+        await Promise.all(
+          selectedJobsList.map(j => supabase.from('jobs').update(updateData).eq('id', j.id))
+        );
         toast.success(`${selectedJobs.size} jobs movidos para "${action === 'production' ? 'Em Produção' : 'No Jeito'}"`);
       }
 
       setSelectedJobs(new Set());
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
     } catch (error) {
-
       toast.error('Erro ao processar ação em massa');
     }
   };
@@ -518,13 +531,13 @@ export default function PendingQueue() {
           <CollapsibleContent className="animate-accordion-down">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
               <SmartSequencingPanel
-                onExplain={(suggestion: any) => {
+                onExplain={(suggestion) => {
                   setSelectedAISuggestion({ type: 'setup', data: suggestion });
                   setIsAISidePanelOpen(true);
                 }}
               />
               <LoadBalancingPanel
-                onExplain={(suggestion: any) => {
+                onExplain={(suggestion) => {
                   setSelectedAISuggestion({ type: 'balancing', data: suggestion });
                   setIsAISidePanelOpen(true);
                 }}
@@ -555,7 +568,7 @@ export default function PendingQueue() {
             <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10" onClick={() => handleBulkAction('production')}>
               <Play className="h-3 w-3" /> Iniciar Produção
             </Button>
-            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-amber-500/30 text-amber-400 hover:bg-amber-500/10" onClick={() => handleBulkAction('ready')}>
+            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-warning/30 text-warning hover:bg-warning/10" onClick={() => handleBulkAction('ready')}>
               <Package className="h-3 w-3" /> Marcar No Jeito
             </Button>
             <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => {
@@ -639,7 +652,7 @@ export default function PendingQueue() {
                                 key={job.id}
                                 data-index={virtualRow.index}
                                 ref={rowVirtualizer.measureElement}
-                                className={`border-border/50 hover:bg-muted/30 transition-colors cursor-pointer ${isStuck ? 'bg-amber-500/5' : ''}`}
+                                className={`border-border/50 hover:bg-muted/30 transition-colors cursor-pointer ${isStuck ? 'bg-warning/5' : ''}`}
                                 onClick={() => handleJobClick(job)}
                                 style={{ position: "absolute", top: 0, left: 0, width: "100%", height: `${virtualRow.size}px`, transform: `translateY(${virtualRow.start}px)` }}
                               >
@@ -648,7 +661,7 @@ export default function PendingQueue() {
                                 </TableCell>
                                 <TableCell className="font-medium text-foreground text-xs sm:text-sm w-[100px] flex items-center gap-1.5">
                                   {job.order_number}
-                                  {isStuck && <AlertTriangle className="h-3 w-3 text-amber-500 animate-pulse" />}
+                                  {isStuck && <AlertTriangle className="h-3 w-3 text-warning animate-pulse" />}
                                 </TableCell>
                                 <TableCell className="text-foreground text-xs sm:text-sm max-w-[120px] truncate">{job.client}</TableCell>
                                 <TableCell className="text-muted-foreground max-w-[150px] truncate hidden md:table-cell text-xs sm:text-sm">{job.product}</TableCell>
@@ -661,7 +674,7 @@ export default function PendingQueue() {
                                   {formatDistanceToNow(new Date(job.created_at), { addSuffix: true, locale: ptBR })}
                                 </TableCell>
                                 <TableCell className="text-foreground hidden sm:table-cell text-xs sm:text-sm">
-                                  <div className="flex items-center gap-1"><Calendar className="h-3 w-3 text-muted-foreground" /> {job.scheduled_date ? parseDateOnly(job.scheduled_date)!.toLocaleDateString('pt-BR') : '-'}</div>
+                                  <div className="flex items-center gap-1"><Calendar className="h-3 w-3 text-muted-foreground" /> {job.scheduled_date ? (parseDateOnly(job.scheduled_date)?.toLocaleDateString('pt-BR') ?? '-') : '-'}</div>
                                 </TableCell>
                                 <TableCell>
                                   <Badge className={`${priorityColors[job.priority]} border text-[10px] px-1.5 h-5`}>
@@ -672,7 +685,7 @@ export default function PendingQueue() {
                                 <TableCell><StatusBadge status={job.status} /></TableCell>
                                 <TableCell className="hidden lg:table-cell">
                                   <div className="flex flex-wrap gap-1">
-                                    {jobsInOptimizedSequence.has(job.id) && <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[10px] gap-1 px-1.5 h-5"><Zap className="h-2.5 w-2.5" /> Setup</Badge>}
+                                    {jobsInOptimizedSequence.has(job.id) && <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20 text-[10px] gap-1 px-1.5 h-5"><Zap className="h-2.5 w-2.5" /> Setup</Badge>}
                                     {jobsWithBalancingSuggestion.has(job.id) && <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-[10px] gap-1 px-1.5 h-5"><BrainCircuit className="h-2.5 w-2.5" /> Equilíbrio</Badge>}
                                   </div>
                                 </TableCell>
@@ -700,8 +713,8 @@ export default function PendingQueue() {
                       const isSelected = selectedJobs.has(job.id);
                       return (
                         <motion.div key={job.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2, delay: index * 0.02 }}>
-                          <Card className={`group relative overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer ${isSelected ? 'ring-2 ring-primary border-primary' : 'bg-card/40 border-border/50 hover:border-primary/50'} ${isStuck ? 'border-amber-500/50 shadow-amber-500/5' : ''}`} onClick={() => handleJobClick(job)}>
-                            {isStuck && <div className="absolute top-0 right-0 p-1 bg-amber-500 text-white rounded-bl-lg shadow-sm z-10"><AlertTriangle className="h-3 w-3 animate-pulse" /></div>}
+                          <Card className={`group relative overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer ${isSelected ? 'ring-2 ring-primary border-primary' : 'bg-card/40 border-border/50 hover:border-primary/50'} ${isStuck ? 'border-warning/50 shadow-amber-500/5' : ''}`} onClick={() => handleJobClick(job)}>
+                            {isStuck && <div className="absolute top-0 right-0 p-1 bg-warning text-white rounded-bl-lg shadow-sm z-10"><AlertTriangle className="h-3 w-3 animate-pulse" /></div>}
                             <CardHeader className="p-4 pb-2">
                               <div className="flex justify-between items-start gap-2">
                                 <div className="flex flex-col"><span className="text-xs text-muted-foreground font-mono">OS {job.order_number}</span><CardTitle className="text-sm font-bold line-clamp-1 mt-0.5">{job.client}</CardTitle></div>
@@ -716,12 +729,12 @@ export default function PendingQueue() {
                               </div>
                               <div className="grid grid-cols-2 gap-2 pt-1 border-t border-border/30">
                                 <div className="flex flex-col gap-0.5"><span className="text-[10px] text-muted-foreground uppercase">Quantidade</span><span className="text-xs font-medium">{job.quantity.toLocaleString()} un</span></div>
-                                <div className="flex flex-col gap-0.5"><span className="text-[10px] text-muted-foreground uppercase">Entrega</span><span className="text-xs font-medium flex items-center gap-1"><Calendar className="h-2.5 w-2.5 text-muted-foreground" /> {job.scheduled_date ? parseDateOnly(job.scheduled_date)!.toLocaleDateString('pt-BR') : '-'}</span></div>
+                                <div className="flex flex-col gap-0.5"><span className="text-[10px] text-muted-foreground uppercase">Entrega</span><span className="text-xs font-medium flex items-center gap-1"><Calendar className="h-2.5 w-2.5 text-muted-foreground" /> {job.scheduled_date ? (parseDateOnly(job.scheduled_date)?.toLocaleDateString('pt-BR') ?? '-') : '-'}</span></div>
                               </div>
                             </CardContent>
                             <CardFooter className="p-4 pt-0 flex justify-between items-center gap-2">
                               <StatusBadge status={job.status} />
-                              {isStuck && <span className="text-[10px] text-amber-500 font-medium">Estagnado</span>}
+                              {isStuck && <span className="text-[10px] text-warning font-medium">Estagnado</span>}
                             </CardFooter>
                           </Card>
                         </motion.div>

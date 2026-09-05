@@ -46,7 +46,7 @@ export function useOEEAlerts() {
         // App notification
         const title = severity === 'CRITICAL' ? `🚨 CRÍTICO: ${name} em Queda` : `⚠️ ALERTA: ${name} Baixo`;
         const body = `${machine.machineName}: ${value.toFixed(1)}% (Limite: ${threshold}%)`;
-        
+
         toast[severity === 'CRITICAL' ? 'error' : 'warning'](title, {
           description: body,
           duration: 10000,
@@ -74,7 +74,7 @@ export function useOEEAlerts() {
           p_threshold: threshold,
           p_severity: severity
         });
-        
+
         lastAlertsRef.current[alertKey] = now;
         logger.info(`Alert triggered for ${machine.machineName}: ${name} is ${value}%`, { machine: machine.machineName, metric: name, value }, CONTEXT);
       } catch (err) {
@@ -86,6 +86,13 @@ export function useOEEAlerts() {
 
   useEffect(() => {
     if (!oeeData || !oeeData.byMachine) return;
+
+    // Skip alerts for the entire effect when there is no real production data —
+    // zero OEE because of missing jobs is not an operational alert.
+    const hasAnyProduction = oeeData.byMachine.some(
+      m => m.totalJobs > 0 && m.plannedProductionMinutes > 0
+    );
+    if (!hasAnyProduction) return;
 
     const thresholds = {
       oee: {
@@ -107,6 +114,9 @@ export function useOEEAlerts() {
     };
 
     oeeData.byMachine.forEach(machine => {
+      // Don't alert on 0% if the machine had no jobs at all in this period
+      if (machine.totalJobs === 0 || machine.plannedProductionMinutes === 0) return;
+
       // Check main metrics
       checkMetric(machine, 'OEE', machine.oee, thresholds.oee.warning, thresholds.oee.critical);
       checkMetric(machine, 'Disponibilidade', machine.availability, thresholds.availability.warning);

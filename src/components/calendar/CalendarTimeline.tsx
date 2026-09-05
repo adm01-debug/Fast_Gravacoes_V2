@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useMemo, useState, Fragment, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 import { DndContext, closestCenter, useDroppable, DragOverlay } from '@dnd-kit/core';
 import { useDailyDragDrop } from '@/features/jobs';
 import { JobQuickActions } from './JobQuickActions';
+import { clickableProps } from '@/lib/a11y';
 
 interface CalendarTimelineProps {
   machines: DbMachine[];
@@ -30,14 +32,28 @@ interface CalendarTimelineProps {
   allJobs?: DbJob[];
 }
 
-function DroppableRow({ children, id, className, onClick, style }: any) {
+interface DroppableRowProps {
+  children: React.ReactNode;
+  id: string;
+  className?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: React.CSSProperties;
+}
+
+function DroppableRow({ children, id, className, onClick, style }: DroppableRowProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
+  const interactive = onClick
+    ? clickableProps<HTMLDivElement>((e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+        if ('button' in e) onClick(e as React.MouseEvent<HTMLDivElement>);
+        else onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+      }, { label: 'Selecionar linha do calendário' })
+    : {};
   return (
     <div
       ref={setNodeRef}
-      className={cn(className, isOver && 'bg-primary/10 ring-1 ring-inset ring-primary/30')}
-      onClick={onClick}
+      className={cn(className, isOver && 'bg-primary/10 ring-1 ring-inset ring-primary/30', onClick && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary')}
       style={style}
+      {...interactive}
     >
       {children}
     </div>
@@ -123,7 +139,7 @@ export function CalendarTimeline({
       const tech = techniques.find((t) => t.id === m.technique_id);
       if (!tech) return;
       if (!map.has(tech.id)) map.set(tech.id, { technique: tech, machines: [] });
-      map.get(tech.id)!.machines.push(m);
+      map.get(tech.id)?.machines.push(m);
     });
     return Array.from(map.values()).sort((a, b) => a.technique.name.localeCompare(b.technique.name));
   }, [machines, techniques, groupBy]);

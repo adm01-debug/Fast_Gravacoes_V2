@@ -57,7 +57,8 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
             driverQuantity = 1;
             break;
           case 'quantity':
-            driverQuantity = job.produced_quantity ?? job.quantity ?? 0;
+            // Null produced_quantity means "not recorded" — not "fully produced".
+            driverQuantity = job.produced_quantity ?? 0;
             break;
           case 'labor_hours':
             driverQuantity = durationHours * 1.2;
@@ -123,7 +124,7 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
       toast.success(`Custos calculados para ${count} jobs`);
     },
     onError: (error) => {
-      toast.error('Erro ao calcular custos em lote: ' + (error as Error).message);
+      showErrorToast(error, 'Erro ao calcular custos em lote');
     },
   });
 
@@ -149,7 +150,7 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
       toast.success('Taxa atualizada com sucesso');
     },
     onError: (error) => {
-      toast.error('Erro ao atualizar taxa: ' + error.message);
+      showErrorToast(error, 'Erro ao atualizar taxa');
     },
   });
 
@@ -165,6 +166,9 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['abc-cost-pools'] });
       toast.success('Orçamento atualizado');
+    },
+    onError: (error: Error) => {
+      showErrorToast(error, 'Erro ao atualizar orçamento');
     },
   });
 

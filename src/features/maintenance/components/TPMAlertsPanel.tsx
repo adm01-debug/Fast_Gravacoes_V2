@@ -14,9 +14,9 @@ interface TPMAlertsPanelProps {
 
 const alertTypeConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
   critical: { icon: AlertTriangle, color: 'text-primary bg-primary/10', label: 'Crítico' },
-  overdue: { icon: Clock, color: 'text-amber-500 bg-amber-500/10', label: 'Atrasado' },
+  overdue: { icon: Clock, color: 'text-warning bg-warning/10', label: 'Atrasado' },
   due: { icon: Wrench, color: 'text-blue-500 bg-blue-500/10', label: 'Vence Hoje' },
-  upcoming: { icon: Clock, color: 'text-emerald-500 bg-emerald-500/10', label: 'Próximo' },
+  upcoming: { icon: Clock, color: 'text-success bg-success/10', label: 'Próximo' },
   predictive: { icon: BrainCircuit, color: 'text-accent-purple bg-accent-purple/10', label: 'IA Preditiva' },
 };
 
@@ -25,14 +25,14 @@ export function TPMAlertsPanel({ alerts, onResolve, onStartMaintenance }: TPMAle
     return (
       <Card className="card-glass">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-lg font-display">
+          <CardTitle className="flex items-center gap-2 text-lg text-title">
             <AlertTriangle className="h-5 w-5 text-primary" />
             Alertas de Manutenção
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <CheckCircle className="h-12 w-12 mb-3 text-emerald-500" />
+            <CheckCircle className="h-12 w-12 mb-3 text-success" />
             <p className="font-medium">Nenhum alerta pendente</p>
             <p className="text-sm">Todas as manutenções estão em dia</p>
           </div>
@@ -44,7 +44,7 @@ export function TPMAlertsPanel({ alerts, onResolve, onStartMaintenance }: TPMAle
   return (
     <Card className="card-glass">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg font-display">
+        <CardTitle className="flex items-center gap-2 text-lg text-title">
           <AlertTriangle className="h-5 w-5 text-primary" />
           Alertas de Manutenção
           <Badge variant="destructive" className="ml-2">{alerts.length}</Badge>

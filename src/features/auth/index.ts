@@ -1,4 +1,5 @@
 export * from './hooks/useAuth';
+export * from './hooks/useAuthenticatorAssuranceLevel';
 export * from './hooks/useRBAC';
 export * from './hooks/useMFA';
 export * from './hooks/useRolePermissions';

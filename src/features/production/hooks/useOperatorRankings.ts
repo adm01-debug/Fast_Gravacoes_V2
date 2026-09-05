@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
+import { useAuth } from '@/features/auth';
 
 export interface OperatorRanking {
   operatorId: string;
@@ -16,6 +17,9 @@ export interface OperatorRanking {
 }
 
 export function useOperatorRankings(rankingType: string = 'weekly') {
+  const { user } = useAuth();
+  const isAuthenticated = Boolean(user?.id);
+
   const { data: rankings, isLoading } = useQuery({
     queryKey: ['operator-rankings', rankingType],
     queryFn: async () => {
@@ -28,6 +32,7 @@ export function useOperatorRankings(rankingType: string = 'weekly') {
       if (error) throw error;
       return data ?? [];
     },
+    enabled: isAuthenticated,
   });
 
   const { data: profiles } = useQuery({
@@ -40,6 +45,7 @@ export function useOperatorRankings(rankingType: string = 'weekly') {
       if (error) throw error;
       return data ?? [];
     },
+    enabled: isAuthenticated,
   });
 
   const enrichedRankings = useMemo((): OperatorRanking[] => {

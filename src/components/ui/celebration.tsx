@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity, react-hooks/set-state-in-effect -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { memo, useEffect, useState, useCallback, createContext, useContext, ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';

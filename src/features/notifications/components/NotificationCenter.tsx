@@ -8,6 +8,7 @@ import { useNotifications } from '@/features/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 const typeColors: Record<string, string> = {
   info: 'bg-blue-500', success: 'bg-green-500', warning: 'bg-yellow-500', error: 'bg-red-500', urgent: 'bg-red-600',
@@ -15,6 +16,15 @@ const typeColors: Record<string, string> = {
 
 export function NotificationCenter() {
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const navigate = useNavigate();
+
+  const handleNotificationClick = (actionUrl: string | null | undefined) => {
+    if (!actionUrl) return;
+    // Only allow same-origin relative paths to prevent open redirect
+    if (actionUrl.startsWith('/') && !actionUrl.startsWith('//')) {
+      navigate(actionUrl);
+    }
+  };
 
   return (
     <Popover>
@@ -42,7 +52,7 @@ export function NotificationCenter() {
                 value="insights"
                 className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-8 px-0 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
               >
-                <Sparkles className="h-3 w-3 text-amber-500" />
+                <Sparkles className="h-3 w-3 text-warning" />
                 Insights IA
               </TabsTrigger>
             </TabsList>
@@ -67,11 +77,15 @@ export function NotificationCenter() {
                   {notifications.map((n) => (
                     <div
                       key={n.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Notificação: ${n.title || n.type}`}
                       className={cn(
-                        "p-4 hover:bg-accent/40 cursor-pointer transition-colors relative group",
+                        "p-4 hover:bg-accent/40 cursor-pointer transition-colors relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         !n.is_read && "bg-primary/[0.03]"
                       )}
-                      onClick={() => { markAsRead(n.id); if (n.action_url) window.location.href = n.action_url; }}
+                      onClick={() => { markAsRead(n.id); handleNotificationClick(n.action_url); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); markAsRead(n.id); handleNotificationClick(n.action_url); } }}
                     >
                       {!n.is_read && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
                       <div className="flex items-start gap-3">
@@ -107,34 +121,34 @@ export function NotificationCenter() {
           <TabsContent value="insights" className="m-0">
             <ScrollArea className="h-[450px]">
               <div className="p-4 space-y-4">
-                <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+                <div className="p-4 rounded-xl bg-warning/5 border border-warning/20 relative overflow-hidden group hover:border-warning/40 transition-all">
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                    <BrainCircuit className="h-12 w-12 text-amber-500" />
+                    <BrainCircuit className="h-12 w-12 text-warning" />
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[9px] font-black uppercase tracking-tighter">
+                    <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-[9px] font-black uppercase tracking-tighter">
                       Otimização de Setup
                     </Badge>
                   </div>
-                  <h4 className="font-bold text-sm text-amber-700">Recomendação de Fluxo</h4>
+                  <h4 className="font-bold text-sm text-warning">Recomendação de Fluxo</h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                     Mover <span className="text-foreground font-bold">Job #4521</span> para a <span className="text-foreground font-bold">Máquina 08</span> reduzirá o tempo de setup em 22 minutos devido à similaridade de cor da tinta atual.
                   </p>
-                  <Button variant="link" className="text-amber-600 p-0 h-auto text-[10px] font-bold mt-3 uppercase tracking-wider">
+                  <Button variant="link" className="text-warning p-0 h-auto text-[10px] font-bold mt-3 uppercase tracking-wider">
                     Aplicar recomendação →
                   </Button>
                 </div>
 
-                <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+                <div className="p-4 rounded-xl bg-success/5 border border-success/20 relative overflow-hidden group hover:border-success/40 transition-all">
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="h-12 w-12 text-emerald-500" />
+                    <TrendingUp className="h-12 w-12 text-success" />
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-[9px] font-black uppercase tracking-tighter">
+                    <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-[9px] font-black uppercase tracking-tighter">
                       High Performance
                     </Badge>
                   </div>
-                  <h4 className="font-bold text-sm text-emerald-700">Recorde de Eficiência</h4>
+                  <h4 className="font-bold text-sm text-success">Recorde de Eficiência</h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                     Operador <span className="text-foreground font-bold">Marcos Silva</span> está operando com <span className="text-foreground font-bold">98.2% de OEE</span> na última hora. Considerar envio de badge de "Mestre da Eficiência".
                   </p>

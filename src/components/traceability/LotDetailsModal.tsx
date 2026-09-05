@@ -65,8 +65,8 @@ export default function LotDetailsModal({ lot, open, onClose }: LotDetailsModalP
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Status</p><div className="flex items-center gap-2 mt-1"><Badge>{STATUS_OPTIONS[lot.status]?.label || lot.status}</Badge>{canTransition && (<Select onValueChange={handleStatusChange}><SelectTrigger className="h-6 w-6 p-0 border-0"><ArrowRightLeft className="h-3.5 w-3.5 text-muted-foreground" /></SelectTrigger><SelectContent>{statusConfig.targets.map(s => (<SelectItem key={s} value={s}>{STATUS_OPTIONS[s]?.label || s}</SelectItem>))}</SelectContent></Select>)}</div></CardContent></Card>
           <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Progresso</p><div className="mt-1"><span className="text-sm font-medium">{progressPct.toFixed(0)}%</span><Progress value={progressPct} className="h-1.5 mt-1" /></div></CardContent></Card>
-          <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Data Produção</p><p className="font-medium text-sm mt-1">{format(parseDateOnly(lot.production_date)!, 'dd/MM/yyyy')}</p></CardContent></Card>
-          <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Validade</p><p className="font-medium text-sm mt-1">{lot.expiration_date ? format(parseDateOnly(lot.expiration_date)!, 'dd/MM/yyyy') : 'N/A'}</p></CardContent></Card>
+          <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Data Produção</p><p className="font-medium text-sm mt-1">{format(parseDateOnly(lot.production_date) ?? new Date(), 'dd/MM/yyyy')}</p></CardContent></Card>
+          <Card><CardContent className="pt-3 pb-3"><p className="text-xs text-muted-foreground">Validade</p><p className="font-medium text-sm mt-1">{lot.expiration_date ? format(parseDateOnly(lot.expiration_date) ?? new Date(), 'dd/MM/yyyy') : 'N/A'}</p></CardContent></Card>
         </div>
 
         {inspections && inspections.length > 0 && <QualityDashboardCards inspections={inspections} />}

@@ -5,9 +5,36 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Users, TrendingUp, Clock, Package, Target } from 'lucide-react';
 
+interface OperatorRanking {
+  operatorId: string;
+  operatorName: string;
+  avatarUrl?: string | null;
+  totalJobsCompleted: number;
+  efficiencyScore: number;
+}
+
+interface TechniqueProductivity {
+  techniqueId: string;
+  techniqueName: string;
+  jobCount: number;
+  avgDuration: number;
+}
+
+interface ProductProductivity {
+  productName: string;
+  totalPieces: number;
+  lossRate: number;
+}
+
+interface KPIData {
+  productivityByTechnique: TechniqueProductivity[];
+  productivityByProduct: ProductProductivity[];
+  lossRate: number;
+}
+
 interface KPIOperatorsTabProps {
-  operators: any[];
-  kpis: any;
+  operators: OperatorRanking[];
+  kpis: KPIData;
   formatDuration: (mins: number) => string;
 }
 
@@ -21,7 +48,7 @@ const KPIOperatorsTabComponent = ({
           <Card className="glass-card h-full">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5 text-amber-400" />
+                <Users className="h-5 w-5 text-warning" />
                 Ranking de Produtividade (Operadores)
               </CardTitle>
               <CardDescription>Top performers por score de eficiência e qualidade</CardDescription>
@@ -31,7 +58,7 @@ const KPIOperatorsTabComponent = ({
                 {operators.slice(0, 5).map((op, idx) => (
                   <div key={op.operatorId} className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-all group">
                     <div className="flex items-center gap-4">
-                      <div className="font-display font-bold text-muted-foreground w-4 text-center">
+                      <div className="text-title font-bold text-muted-foreground w-4 text-center">
                         {idx + 1}
                       </div>
                       <Avatar className="h-10 w-10 border-2 border-primary/20">
@@ -68,7 +95,7 @@ const KPIOperatorsTabComponent = ({
               <CardTitle className="text-base">Tempo Médio de Produção</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {kpis.productivityByTechnique.slice(0, 4).map((tech: any) => (
+              {kpis.productivityByTechnique.slice(0, 4).map((tech) => (
                 <div key={tech.techniqueId} className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">{tech.techniqueName}</span>
@@ -91,7 +118,7 @@ const KPIOperatorsTabComponent = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {kpis.productivityByProduct.slice(0, 3).map((prod: any) => (
+              {kpis.productivityByProduct.slice(0, 3).map((prod) => (
                 <div key={prod.productName} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium truncate max-w-[120px]">{prod.productName}</span>

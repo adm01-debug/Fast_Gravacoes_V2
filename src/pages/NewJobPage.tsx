@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -116,7 +117,7 @@ export default function NewJobPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-display font-bold gradient-text">Novo Agendamento</h1>
+            <h1 className="text-2xl text-title font-bold gradient-text">Novo Agendamento</h1>
             <p className="text-muted-foreground">Cadastre um novo job de produção</p>
           </div>
         </div>

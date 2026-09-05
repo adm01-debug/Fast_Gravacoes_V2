@@ -1,9 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 import { createAppError } from '@/lib/errorHandling';
 import { QUERY_KEYS, STALE_TIMES } from '@/lib/queryConfig';
 import { techniquesService } from '@/features/jobs';
+import { useRealtimeChannel } from '@/lib/realtimeChannel';
 
 const TECHNIQUES_ERROR_CONTEXT = { entity: 'techniques', operation: 'fetch' };
 
@@ -22,18 +22,9 @@ export function useTechniques() {
     staleTime: STALE_TIMES.STATIC,
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('techniques-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'techniques' }, () => {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TECHNIQUES });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  useRealtimeChannel('techniques-changes', [{ table: 'techniques' }], () => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TECHNIQUES });
+  });
 
   return query;
 }

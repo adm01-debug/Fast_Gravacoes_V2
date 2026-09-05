@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob } from '@/features/jobs';
-import { JobStatus, assertTransition } from '@/features/jobs';
+import { JobStatus, assertTransition, canTransition } from '@/features/jobs';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -66,19 +66,24 @@ export default function KanbanBoard() {
 
   // Filters (initialized from localStorage)
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTechnique, setSelectedTechnique] = useState(() => localStorage.getItem('kanban-filter-technique') || 'all');
-  const [selectedPriority, setSelectedPriority] = useState(() => localStorage.getItem('kanban-filter-priority') || 'all');
-  const [selectedMachine, setSelectedMachine] = useState(() => localStorage.getItem('kanban-filter-machine') || 'all');
-  const [viewMode, setViewMode] = useState<ViewMode>(() => (localStorage.getItem('kanban-view-mode') as ViewMode) || 'expanded');
-  const [swimlanesMode, setSwimlanesMode] = useState<SwimlanesMode>(() => (localStorage.getItem('kanban-swimlanes-mode') as SwimlanesMode) || 'none');
+  const safeGetItem = (key: string, fallback: string): string => {
+    try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
+  };
+  const [selectedTechnique, setSelectedTechnique] = useState(() => safeGetItem('kanban-filter-technique', 'all'));
+  const [selectedPriority, setSelectedPriority] = useState(() => safeGetItem('kanban-filter-priority', 'all'));
+  const [selectedMachine, setSelectedMachine] = useState(() => safeGetItem('kanban-filter-machine', 'all'));
+  const [viewMode, setViewMode] = useState<ViewMode>(() => safeGetItem('kanban-view-mode', 'expanded') as ViewMode);
+  const [swimlanesMode, setSwimlanesMode] = useState<SwimlanesMode>(() => safeGetItem('kanban-swimlanes-mode', 'none') as SwimlanesMode);
 
   // Persist filters on change
   useEffect(() => {
-    localStorage.setItem('kanban-filter-technique', selectedTechnique);
-    localStorage.setItem('kanban-filter-priority', selectedPriority);
-    localStorage.setItem('kanban-filter-machine', selectedMachine);
-    localStorage.setItem('kanban-view-mode', viewMode);
-    localStorage.setItem('kanban-swimlanes-mode', swimlanesMode);
+    try {
+      localStorage.setItem('kanban-filter-technique', selectedTechnique);
+      localStorage.setItem('kanban-filter-priority', selectedPriority);
+      localStorage.setItem('kanban-filter-machine', selectedMachine);
+      localStorage.setItem('kanban-view-mode', viewMode);
+      localStorage.setItem('kanban-swimlanes-mode', swimlanesMode);
+    } catch { /* quota exceeded or private browsing */ }
   }, [selectedTechnique, selectedPriority, selectedMachine, viewMode, swimlanesMode]);
 
   // Selection
@@ -205,25 +210,32 @@ export default function KanbanBoard() {
   const handleBulkAction = useCallback(async (action: 'delete' | 'move' | 'rework' | 'pause', targetStatus?: JobStatus) => {
     if (selectedJobs.size === 0) return;
 
+    const selectedJobsList = jobs.filter(j => selectedJobs.has(j.id));
+
     if (action === 'move' && targetStatus) {
+      // Validate all transitions before updating any
+      const invalid = selectedJobsList.filter(j => !canTransition(j.status as JobStatus, targetStatus as JobStatus));
+      if (invalid.length > 0) {
+        toast.error(`${invalid.length} job(s) não podem ser movidos para "${targetStatus}" a partir do estado atual`);
+        return;
+      }
+
       const updateData: TablesUpdate<'jobs'> = {
         status: targetStatus,
         updated_at: new Date().toISOString()
       };
-
-      // Add timestamps if needed
       if (targetStatus === 'production') updateData.actual_start_time = new Date().toISOString();
       if (targetStatus === 'finished') updateData.actual_end_time = new Date().toISOString();
 
-      const updates = Array.from(selectedJobs).map(id =>
-        supabase.from('jobs').update(updateData).eq('id', id)
+      const updates = selectedJobsList.map(j =>
+        supabase.from('jobs').update(updateData).eq('id', j.id)
       );
       const settled = await Promise.allSettled(updates);
       const errors = settled.flatMap(r =>
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
       );
       if (errors.length > 0) {
-        toast.error(`Erro ao mover jobs: ${errors.map((e: any) => e?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao mover jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
       const allColumns = [...statusColumns, ...exceptionStatuses];
@@ -232,15 +244,20 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'rework') {
-      const updates = Array.from(selectedJobs).map(id =>
-        supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', id)
+      const invalid = selectedJobsList.filter(j => !canTransition(j.status as JobStatus, 'rework' as JobStatus));
+      if (invalid.length > 0) {
+        toast.error(`${invalid.length} job(s) não podem ser enviados para Retrabalho a partir do estado atual`);
+        return;
+      }
+      const updates = selectedJobsList.map(j =>
+        supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', j.id)
       );
       const settled = await Promise.allSettled(updates);
       const errors = settled.flatMap(r =>
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
       );
       if (errors.length > 0) {
-        toast.error(`Erro ao marcar retrabalho: ${errors.map((e: any) => e?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao marcar retrabalho: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
       toast.success(`${selectedJobs.size} jobs marcados como Retrabalho`);
@@ -255,14 +272,14 @@ export default function KanbanBoard() {
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
       );
       if (errors.length > 0) {
-        toast.error(`Erro ao excluir jobs: ${errors.map((e: any) => e?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao excluir jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
         return;
       }
       toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     }
-  }, [selectedJobs, handleJobsUpdate]);
+  }, [selectedJobs, jobs, handleJobsUpdate]);
 
   // Swimlane grouping
   const swimlaneGroups = useMemo(() => {
@@ -274,7 +291,7 @@ export default function KanbanBoard() {
       groups.set('unknown', { label: 'Sem técnica', color: '#888', jobs: [] });
 
       filteredJobs.forEach(job => {
-        const group = groups.get(job.technique_id) || groups.get('unknown')!;
+        const group = groups.get(job.technique_id) || (groups.get('unknown') ?? { label: '', color: '', jobs: [] });
         group.jobs.push(job);
       });
 
@@ -290,7 +307,7 @@ export default function KanbanBoard() {
 
       filteredJobs.forEach(job => {
         const key = job.machine_id || 'unassigned';
-        const group = groups.get(key) || groups.get('unassigned')!;
+        const group = groups.get(key) || (groups.get('unassigned') ?? { label: '', color: '', jobs: [] });
         group.jobs.push(job);
       });
 
@@ -356,7 +373,7 @@ export default function KanbanBoard() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl text-title font-bold">
                   <span className="gradient-text">Kanban</span>
                 </h1>
                 <FavoriteButton path="/kanban" name="Kanban" />

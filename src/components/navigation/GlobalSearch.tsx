@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect --
+   Effects nesse arquivo sincronizam com sistemas externos legítimos
+   (URL params, localStorage, timers, subscriptions Supabase realtime,
+   matchMedia, event listeners DOM, deep-linking) e não são estado
+   derivado. A cascata é intencional para refletir mudanças externas. */
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
@@ -49,20 +54,24 @@ export function GlobalSearch({
       return;
     }
 
+    let mounted = true;
     const performSearch = async () => {
       setIsLoading(true);
       try {
         const searchResults = await onSearch(debouncedQuery);
+        if (!mounted) return;
         setResults(searchResults);
         setSelectedIndex(-1);
       } catch (error) {
+        if (!mounted) return;
         setResults([]);
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
 
     performSearch();
+    return () => { mounted = false; };
   }, [debouncedQuery, onSearch]);
 
   // Keyboard navigation

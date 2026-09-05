@@ -17,9 +17,9 @@ interface RetryOptions {
   /** Whether to add random jitter (default: true) */
   jitter?: boolean;
   /** Predicate to decide if the error is retryable (default: all errors) */
-  isRetryable?: (error: any) => boolean;
+  isRetryable?: (error: unknown) => boolean;
   /** Called before each retry with the attempt number and delay */
-  onRetry?: (attempt: number, delay: number, error: any) => void;
+  onRetry?: (attempt: number, delay: number, error: unknown) => void;
 }
 
 const DEFAULT_OPTIONS: Required<RetryOptions> = {
@@ -59,7 +59,7 @@ export async function retryWithBackoff<T>(
 ): Promise<T> {
   const opts: Required<RetryOptions> = { ...DEFAULT_OPTIONS, ...options };
 
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
     try {
@@ -90,7 +90,7 @@ export async function retryWithBackoff<T>(
 /**
  * Default retryable check: retries on network errors, timeouts, and 5xx/429.
  */
-export function isNetworkRetryable(error: any): boolean {
+export function isNetworkRetryable(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const msg = error.message.toLowerCase();
   return (

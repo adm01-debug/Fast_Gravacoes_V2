@@ -123,7 +123,7 @@ export const OEEGaugeCard = memo(function OEEGaugeCard({
 
           {/* Value text */}
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-3">
-            <span className={cn("font-black font-display leading-none tracking-tighter", config.text)} style={{ color: gaugeData.color }}>
+            <span className={cn("font-black text-title leading-none tracking-tighter", config.text)} style={{ color: gaugeData.color }}>
               {value.toFixed(1)}<span className="text-[0.4em] opacity-70 ml-0.5">%</span>
             </span>
           </div>
