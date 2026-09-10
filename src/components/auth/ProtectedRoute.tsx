@@ -37,6 +37,25 @@ function AccessDeniedRedirect({
   return <Navigate to={to} replace />;
 }
 
+function MfaEnrollmentRedirect({ role, path }: { role: AppRole; path: string }) {
+  const notified = useRef(false);
+  useEffect(() => {
+    if (notified.current) return;
+    notified.current = true;
+    toast.warning('Configuração de MFA obrigatória', {
+      description:
+        `Por segurança, o perfil ${ROLE_LABEL[role] ?? role} exige verificação em duas etapas. ` +
+        'Configure o MFA agora em Configurações → Segurança para continuar usando o sistema.',
+      duration: 10000,
+    });
+    logger.warn('Elevated role without verified MFA factor — redirecting to enrollment', {
+      role,
+      path,
+    }, 'ProtectedRoute');
+  }, [role, path]);
+  return <Navigate to="/settings" state={{ from: path, mfaEnrollmentRequired: true }} replace />;
+}
+
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles?: AppRole[];
@@ -44,7 +63,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, role, isLoading } = useAuth();
-  const { checked: aalChecked, needsMfaChallenge } = useAuthenticatorAssuranceLevel();
+  const { checked: aalChecked, needsMfaChallenge, hasNoVerifiedFactor } = useAuthenticatorAssuranceLevel();
   const location = useLocation();
 
   // Log rendering path in development
@@ -84,6 +103,23 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   if (needsMfaChallenge) {
     logger.info('Session has not completed MFA (aal1), redirecting to /auth', { path: location.pathname }, 'ProtectedRoute');
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // Etapa 7 do plano-mestre: papéis elevados (admin/manager/coordinator)
+  // precisam de um fator MFA VERIFICADO — não apenas do desafio de login.
+  // Sem fator não há desafio possível: encaminhar ao enrollment guiado.
+  // Aplica-se ANTES do bypass de admin: o bypass cobre autorização de rotas,
+  // não requisitos de autenticação forte.
+  const isElevatedRole = role === 'admin' || role === 'manager' || role === 'coordinator';
+  // Excluir /settings do redirect evita loop: a página de enrollment já é
+  // a destino — o usuário deve conseguir configurar o MFA nela.
+  if (
+    isElevatedRole &&
+    aalChecked &&
+    hasNoVerifiedFactor &&
+    location.pathname !== '/settings'
+  ) {
+    return <MfaEnrollmentRedirect role={role} path={location.pathname} />;
   }
 
   // Role-based access control

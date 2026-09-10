@@ -10,6 +10,13 @@ interface AALState {
   checked: boolean;
   /** true when the account has a verified MFA factor that the current session has not stepped up to (aal2) */
   needsMfaChallenge: boolean;
+  /**
+   * Etapa 7 do plano-mestre: true quando a conta NÃO possui nenhum fator MFA
+   * verificado. Papéis elevados (admin/manager/coordinator) nessa situação
+   * precisam concluir o enrollment (Configurações → Segurança) — o desafio de
+   * login não basta porque não existe fator para desafiar.
+   */
+  hasNoVerifiedFactor: boolean;
 }
 
 /**
@@ -22,11 +29,15 @@ interface AALState {
  */
 export function useAuthenticatorAssuranceLevel(): AALState {
   const { user } = useAuth();
-  const [state, setState] = useState<AALState>({ checked: false, needsMfaChallenge: false });
+  const [state, setState] = useState<AALState>({
+    checked: false,
+    needsMfaChallenge: false,
+    hasNoVerifiedFactor: false,
+  });
 
   useEffect(() => {
     if (!user) {
-      setState({ checked: true, needsMfaChallenge: false });
+      setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
       return;
     }
 
@@ -34,15 +45,29 @@ export function useAuthenticatorAssuranceLevel(): AALState {
 
     const evaluate = async () => {
       try {
-        const { data } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        const needsMfaChallenge = !!data && data.nextLevel === 'aal2' && data.currentLevel !== 'aal2';
-        if (!cancelled) setState({ checked: true, needsMfaChallenge });
+        const [aalRes, factorsRes] = await Promise.all([
+          supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+          supabase.auth.mfa.listFactors(),
+        ]);
+        const needsMfaChallenge = !!aalRes.data &&
+          aalRes.data.nextLevel === 'aal2' &&
+          aalRes.data.currentLevel !== 'aal2';
+        // Sem fatores verificados = nenhum desafio possível; quem precisa de
+        // MFA (papéis elevados) deve ser encaminhado ao enrollment.
+        const hasVerifiedFactor = (factorsRes.data?.all ?? []).some(
+          (f) => f.status === 'verified'
+        );
+        if (!cancelled) {
+          setState({ checked: true, needsMfaChallenge, hasNoVerifiedFactor: !hasVerifiedFactor });
+        }
       } catch {
         // If the check itself fails, do not block access on it — this is a
         // defense-in-depth layer on top of the AuthPage-level challenge, not
         // the only gate, so fail open here rather than locking everyone out
         // on a transient Supabase error.
-        if (!cancelled) setState({ checked: true, needsMfaChallenge: false });
+        if (!cancelled) {
+          setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
+        }
       }
     };
 
