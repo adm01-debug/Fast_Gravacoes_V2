@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -46,20 +46,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-fund
 
-      - name: Dependency vulnerability audit
-        # HIGH includes secrets in env var names, path traversal in dev tools etc.
-        # CRITICAL alone misses known HIGH vulnerabilities (e.g. vite path traversal).
-        run: npm audit --audit-level=high
+      - name: Dependency vulnerability audit (allowlist documentada)
+        # Gate forte + exceções explícitas: advisories não-aplicáveis ao contexto
+        # (ex.: SSR-only em SPA Vite) vivem no ALLOWED_PACKAGES com justificativa
+        # e plano de remoção — ver scripts/audit-gate.mjs.
+        run: node scripts/audit-gate.mjs
 
       - name: Secret scanning (TruffleHog)
         # Pinned to v3 tag for supply-chain safety. Update periodically.
@@ -80,11 +81,11 @@ jobs:
     timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -125,11 +126,11 @@ jobs:
     timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -165,11 +166,11 @@ jobs:
     timeout-minutes: 20
     needs: [security, unit-tests, simulation-tests]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -220,7 +221,7 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download current PR bundle report
         uses: actions/download-artifact@v4
@@ -264,11 +265,11 @@ jobs:
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
