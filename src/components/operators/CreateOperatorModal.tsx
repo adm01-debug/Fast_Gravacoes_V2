@@ -87,8 +87,10 @@ export function CreateOperatorModal({ open, onOpenChange }: CreateOperatorModalP
         throw new Error(response.error.message);
       }
 
-      if (response.data?.error) {
-        throw new Error(response.data.error);
+      const apiError = response.data?.error;
+      if (apiError) {
+        // Erros novos (middleware comum) trazem {code,message}; antigos, string.
+        throw new Error(typeof apiError === 'string' ? apiError : apiError.message);
       }
 
       toast.success('Operador criado com sucesso!');
