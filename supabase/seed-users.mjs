@@ -1,10 +1,21 @@
 // Cria 5 usuários operador + 1 admin no Supabase Auth via Management API.
 // Cada um com profile e user_role (role=operator|coordinator) associados.
-// Uso: node supabase/seed-users.mjs
-const PROJECT_REF = 'uoujzvpecohinketylud';
+// Uso: SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=<ref> node supabase/seed-users.mjs
+//
+// Etapa 5 do plano-mestre: project ref NUNCA hardcoded — sempre via ambiente,
+// para que o mesmo script sirva dev/staging/produção sem edição (ver
+// supabase/ENVIRONMENTS.md).
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
 const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 if (!ACCESS_TOKEN) {
   console.error('Defina SUPABASE_ACCESS_TOKEN no ambiente.');
+  process.exit(1);
+}
+if (!PROJECT_REF) {
+  console.error(
+    'Defina SUPABASE_PROJECT_REF no ambiente (ex.: xxroejpvloldkmqdydar). ' +
+      'Ref hardcoded foi removido por política — ver supabase/ENVIRONMENTS.md.'
+  );
   process.exit(1);
 }
 
