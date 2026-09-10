@@ -15,19 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-fund
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+      - name: Audit dependencies (allowlist documentada)
+        # Gate forte + exceções explícitas: advisories não-aplicáveis ao contexto
+        # (ex.: SSR-only em SPA Vite) vivem no ALLOWED_PACKAGES com justificativa
+        # e plano de remoção — ver scripts/audit-gate.mjs.
+        run: node scripts/audit-gate.mjs
 
       - name: Check for secrets in code
         # Pinned to v3 tag for supply-chain safety.
@@ -44,12 +47,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -64,12 +67,12 @@ jobs:
     timeout-minutes: 20
     needs: [security-scan, test]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -101,7 +104,7 @@ jobs:
     needs: [security-scan, test]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -123,12 +126,23 @@ jobs:
     needs: [security-scan, test, apply-migrations]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
+
+      - name: Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)
+        # Função "temporária" de migração que expunha SUPABASE_SERVICE_ROLE_KEY e
+        # SUPABASE_DB_URL a quem apresentasse a ACCESS_KEY hardcoded no git.
+        # Tolerante à ausência: o objetivo é garantir a remoção remota idempotente.
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase functions delete migrate-helper --project-ref "$SUPABASE_PROJECT_ID" --yes \
+            || echo "::warning::migrate-helper já não existe no projeto (ok)"
 
       - name: Deploy all Edge Functions
         env:
