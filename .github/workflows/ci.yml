@@ -132,9 +132,20 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # The shared Deno modules use npm type declarations (notably @types/node).
+      # Install the lockfile-resolved workspace before running with --frozen so
+      # the runner has the same type-resolution graph as local validation.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install workspace dependencies for Deno type resolution
+        run: npm ci --legacy-peer-deps --no-fund
+
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.9.5
 
       - name: Check Edge Function types with frozen imports
         run: deno check --frozen supabase/functions/_shared/auth.ts supabase/functions/create-operator/index.ts
