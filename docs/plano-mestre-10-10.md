@@ -13,11 +13,11 @@
 | 3 — Encerrar superfície `exec_sql` | 🟨 Migration corrigida | `20260905120000…` agora condicional (segura em banco limpo); verificação no banco real **pendente** (MCP local aponta para outro projeto — ver `supabase/ENVIRONMENTS.md`) |
 | 4 — Rotacionar e classificar segredos | 🟨 Parcial | Templates `.env.*` limpos de segredos server-side; rotação de tokens **pendente** (painel) |
 | 5 — Unificar ambientes Supabase | 🟨 Parcial | `seed-users.mjs` parametrizado; matriz documentada em `supabase/ENVIRONMENTS.md`; decisão do ref canônico **pendente** (owner) |
-| 6 — Middleware comum Edge | ⬜ Sprint 1 | — |
-| 7 — MFA AAL2 server-side | ⬜ Sprint 1 | — |
-| 8 — Endurecer CORS/headers | ⬜ Sprint 1 | — |
-| 9 — Supply chain | 🟨 Parcial (pré-existente) | `scripts/audit-gate.mjs` + CI endurecido (node 24, checkout v5) já no working tree |
-| 10 — Certificar contenção P0 | 🟨 Gates locais verdes | `tsc --noEmit` ✅ 0 erros · `eslint` ✅ 0 erros/16 warnings (baseline) · vitest ver abaixo · secret-scan/endpoint checks **pendentes** (runtime) |
+| 6 — Middleware comum Edge | 🟨 Parcial | `_shared/auth.ts` entrega AuthContext, JWT+papéis+AAL, guardas, envelopes e HMAC; 40 testes Deno congelados passam. Apenas `create-operator` o adota: migração gradual das demais Edge Functions ainda é necessária. |
+| 7 — MFA AAL2 server-side | 🟨 Parcial | `create-operator` exige AAL2; a migration usa policies **RESTRICTIVE** para combinar AAL2 com os limites legados de papel; UI envia elevados sem fator à rota isolada `/mfa-enrollment`. A migration ainda não foi aplicada/validada no banco canônico. ⚠️ BREAKING planejado: AAL1 não escreve `user_roles`. |
+| 8 — Endurecer CORS/headers | 🟨 Parcial | CORS compartilhado não usa wildcard; Vercel tem fallback SPA e CSP Report-Only. Eventos `securitypolicyviolation` são enviados ao Sentry quando configurado. Falta scanner automatizado de origens e promoção segura da CSP de observação para bloqueio. |
+| 9 — Supply chain | 🟨 Parcial | Audit gate agora falha fechado se npm audit não produzir resultado válido; CI usa histórico completo para TruffleHog, inclui Deno congelado e falha se E2E não puder rodar. Ainda falta pin por SHA e tratamento das vulnerabilidades moderadas. |
+| 10 — Certificar contenção P0 | 🟨 Gates locais verdes | `tsc --noEmit`, lint sem erros, Vitest, build, Deno 40/40, actionlint e simulação de audit indisponível passaram. Secret scan remoto, E2E real e banco canônico continuam pendentes. |
 
 
 

@@ -43,3 +43,11 @@ lint.txt
 # Playwright artifacts
 playwright-report/
 test-results/
+
+# Local architecture graphs and Python tooling (never ship in Vite/public).
+graphify-out/
+.graphify-cache/
+.graphify_cache/
+.venv-graphify/
+__pycache__/
+*.pyc

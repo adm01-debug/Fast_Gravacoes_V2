@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -82,7 +84,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           # client.ts reads VITE_SUPABASE_PUBLISHABLE_KEY, not _ANON_KEY.
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_ALERT_WEBHOOK_URL: ${{ secrets.VITE_ALERT_WEBHOOK_URL }}
         run: npm run build
 
@@ -117,7 +119,10 @@ jobs:
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          supabase db push --project-ref $SUPABASE_PROJECT_ID
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+          supabase db push --project-ref "$SUPABASE_PROJECT_ID"
 
   deploy-edge-functions:
     name: Deploy Edge Functions
@@ -133,7 +138,7 @@ jobs:
         with:
           version: latest
 
-      - name: Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)
+      - name: "Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)"
         # Função "temporária" de migração que expunha SUPABASE_SERVICE_ROLE_KEY e
         # SUPABASE_DB_URL a quem apresentasse a ACCESS_KEY hardcoded no git.
         # Tolerante à ausência: o objetivo é garantir a remoção remota idempotente.
@@ -141,12 +146,26 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase functions delete migrate-helper --project-ref "$SUPABASE_PROJECT_ID" --yes \
-            || echo "::warning::migrate-helper já não existe no projeto (ok)"
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          functions="$(supabase functions list --project-ref "$SUPABASE_PROJECT_ID" --output json)"
+          if jq -e --arg name 'migrate-helper' '
+            if type == "array" then any(.[]; (.slug? // .name? // "") == $name)
+            else any(.functions[]?; (.slug? // .name? // "") == $name)
+            end
+          ' <<<"$functions" >/dev/null; then
+            supabase functions delete migrate-helper --project-ref "$SUPABASE_PROJECT_ID" --yes
+          else
+            echo "migrate-helper não está implantada (estado já conforme)."
+          fi
 
       - name: Deploy all Edge Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"

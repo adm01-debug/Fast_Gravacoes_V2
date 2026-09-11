@@ -63,20 +63,34 @@ CREATE POLICY "Coordinators can manage mappings" ON public.bitrix24_field_mappin
   WITH CHECK (has_role(auth.uid(), 'coordinator'::app_role));
 
 -- ================================================
--- 7. FIX: geo_blocking_settings - restrict SELECT to coordinators/managers
+-- 7. FIX: geo_blocking_settings - restrict SELECT to coordinators/managers.
+-- A tabela só existe em alguns ambientes legados; uma migration precisa poder
+-- construir um banco limpo sem assumir objetos criados fora deste histórico.
 -- ================================================
-DROP POLICY IF EXISTS "Anyone can view geo settings" ON public.geo_blocking_settings;
-CREATE POLICY "Coordinators and managers can view geo settings" ON public.geo_blocking_settings
-  FOR SELECT TO authenticated
-  USING (has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role));
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_settings') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS "Anyone can view geo settings" ON public.geo_blocking_settings';
+    EXECUTE 'CREATE POLICY "Coordinators and managers can view geo settings" ON public.geo_blocking_settings
+      FOR SELECT TO authenticated
+      USING (has_role(auth.uid(), ''coordinator''::app_role) OR has_role(auth.uid(), ''manager''::app_role))';
+  END IF;
+END
+$$;
 
 -- ================================================
 -- 8. FIX: geo_blocking_rules - restrict SELECT to coordinators/managers
 -- ================================================
-DROP POLICY IF EXISTS "Anyone can view geo blocking rules" ON public.geo_blocking_rules;
-CREATE POLICY "Coordinators and managers can view geo blocking rules" ON public.geo_blocking_rules
-  FOR SELECT TO authenticated
-  USING (has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role));
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_rules') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS "Anyone can view geo blocking rules" ON public.geo_blocking_rules';
+    EXECUTE 'CREATE POLICY "Coordinators and managers can view geo blocking rules" ON public.geo_blocking_rules
+      FOR SELECT TO authenticated
+      USING (has_role(auth.uid(), ''coordinator''::app_role) OR has_role(auth.uid(), ''manager''::app_role))';
+  END IF;
+END
+$$;
 
 -- ================================================
 -- 9. FIX: role_permissions - restrict SELECT to authenticated
@@ -200,10 +214,16 @@ CREATE POLICY "Authenticated can insert security events" ON public.security_even
   WITH CHECK (auth.uid() IS NOT NULL);
 
 -- geo_blocking_logs
-DROP POLICY IF EXISTS "System can insert geo logs" ON public.geo_blocking_logs;
-CREATE POLICY "Authenticated can insert geo logs" ON public.geo_blocking_logs
-  FOR INSERT TO authenticated
-  WITH CHECK (auth.uid() IS NOT NULL);
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_logs') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS "System can insert geo logs" ON public.geo_blocking_logs';
+    EXECUTE 'CREATE POLICY "Authenticated can insert geo logs" ON public.geo_blocking_logs
+      FOR INSERT TO authenticated
+      WITH CHECK (auth.uid() IS NOT NULL)';
+  END IF;
+END
+$$;
 
 -- rate_limit_logs
 DROP POLICY IF EXISTS "System can insert rate limit logs" ON public.rate_limit_logs;

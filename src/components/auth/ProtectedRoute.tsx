@@ -53,7 +53,7 @@ function MfaEnrollmentRedirect({ role, path }: { role: AppRole; path: string }) 
       path,
     }, 'ProtectedRoute');
   }, [role, path]);
-  return <Navigate to="/settings" state={{ from: path, mfaEnrollmentRequired: true }} replace />;
+  return <Navigate to="/mfa-enrollment" state={{ from: path, mfaEnrollmentRequired: true }} replace />;
 }
 
 interface ProtectedRouteProps {
@@ -111,13 +111,13 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   // Aplica-se ANTES do bypass de admin: o bypass cobre autorização de rotas,
   // não requisitos de autenticação forte.
   const isElevatedRole = role === 'admin' || role === 'manager' || role === 'coordinator';
-  // Excluir /settings do redirect evita loop: a página de enrollment já é
-  // a destino — o usuário deve conseguir configurar o MFA nela.
+  // Excluir a rota dedicada evita loop sem liberar toda a superfície de
+  // configurações administrativas antes do enrollment.
   if (
     isElevatedRole &&
     aalChecked &&
     hasNoVerifiedFactor &&
-    location.pathname !== '/settings'
+    location.pathname !== '/mfa-enrollment'
   ) {
     return <MfaEnrollmentRedirect role={role} path={location.pathname} />;
   }

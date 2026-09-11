@@ -57,6 +57,7 @@ const GamificationPage = lazy(() => import("@/pages/GamificationPage"));
 const EnergyDashboard = lazy(() => import("@/pages/EnergyDashboard"));
 const DocumentsPage = lazy(() => import("@/pages/DocumentsPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const MfaEnrollmentPage = lazy(() => import("@/pages/MfaEnrollmentPage"));
 const SecurityDashboard = lazy(() => import("@/pages/SecurityDashboard"));
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
@@ -236,6 +237,7 @@ export function AnimatedRoutes() {
         <Route path="/notifications" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />}><NotificationsPage /></ProtectedPage>} />
 
         {/* Admin */}
+        <Route path="/mfa-enrollment" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />}><MfaEnrollmentPage /></ProtectedPage>} />
         <Route path="/integrations/bitrix24" element={<ProtectedPage direction={direction} fallback={<TablePageSkeleton />} allowedRoles={['coordinator']}><Bitrix24ConfigPage /></ProtectedPage>} />
         <Route path="/settings" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />} allowedRoles={['coordinator', 'manager']}><SettingsPage /></ProtectedPage>} />
         <Route path="/security" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />} allowedRoles={['coordinator', 'manager']}><SecurityDashboard /></ProtectedPage>} />

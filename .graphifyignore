@@ -1,0 +1,34 @@
+# Never index credentials, generated outputs, caches or dependency trees.
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*
+secrets*
+node_modules/
+.git/
+.venv-graphify/
+__pycache__/
+graphify-out/
+.graphify-cache/
+.graphify_cache/
+dist/
+coverage/
+playwright-report/
+test-results/
+src/integrations/supabase/types.ts
+# Structural baseline only. Semantic documents/media require a separate reviewed corpus.
+*.md
+*.txt
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.mp4
+*.mp3
+package-lock.json
+bun.lock
+bun.lockb
+deno.lock

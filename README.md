@@ -26,7 +26,26 @@ Para validar se a Edge Function `external-db-bridge` está operando conforme doc
 deno run --allow-net --allow-env supabase/functions/external-db-bridge/validate_contract.ts
 ```
 
-## 🛠️ Tecnologias
+## Grafo de arquitetura (Graphify)
+
+O Graphify mapeia código frontend, Edge Functions, migrations e testes por extração
+local. O grafo ajuda a localizar dependências e avaliar impacto; não comprova
+permissões, comportamento em produção ou conclusão dos checkpoints da auditoria.
+
+```bash
+npm run graph:install
+npm run graph:build
+npm run graph:query -- "authenticate requireRole requireAal2" --budget 1500
+npm run graph:html
+```
+
+Abra `graphify-out/graph.html`. Há perfis `all`, `security`, `frontend` e `backend`:
+use o mesmo `--profile` na geração e na consulta. Veja o
+[guia operacional](docs/graphify/README.md) e o
+[plano detalhado de 50 etapas](docs/plano-graphify-50-etapas.md).
+
+## 🛠️ Tecnologias utilizadas
+
 - **Frontend:** React, Vite, Tailwind CSS, Shadcn UI.
 - **Backend:** Supabase, Edge Functions (Deno).
 - **Banco de Dados:** PostgreSQL.

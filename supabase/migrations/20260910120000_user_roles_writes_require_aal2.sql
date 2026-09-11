@@ -2,9 +2,9 @@
 --
 -- Endurece `public.user_roles` (a tabela mais sensível do RBAC: quem a escreve
 -- controla papéis de qualquer usuário):
---   * Leitura: mantida para coordinator/admin (UI de gestão) e para o próprio
---     usuário (policy "Users can view their own roles", inalterada).
---   * Escrita (INSERT/UPDATE/DELETE): exige papel elevado + sessão AAL2
+--   * Leitura: as policies existentes continuam sendo a fonte de verdade.
+--   * Escrita (INSERT/UPDATE/DELETE): exige sessão AAL2 além das policies de
+--     papel já existentes
 --     (MFA verificado) — sessões AAL1 recebem 403 no banco, nas edge functions
 --     (guard requireAal2 em _shared/auth.ts) e na UI (ProtectedRoute).
 --
@@ -15,46 +15,37 @@
 -- Nota: `auth.jwt() ->> 'aal'` reflete o nível de garantia da SESSÃO atual
 -- ('aal1' só-senha | 'aal2' MFA verificado). É nulo em tokens legados —
 -- coalesce para 'aal1' mantém a postura fechada.
-DROP POLICY IF EXISTS "Coordinators can manage roles" ON public.user_roles;
-
--- Leitura por papéis elevados (substitui o FOR ALL anterior no eixo SELECT)
-CREATE POLICY "Elevated roles can view all roles"
+-- Policies permissivas são combinadas com OR no PostgreSQL. Por isso estas
+-- policies são RESTRICTIVE: elas são combinadas com AND com as policies
+-- permissivas legadas que já delimitam o papel e o papel-alvo. Assim AAL1 não
+-- consegue aproveitar uma policy antiga, e coordinator/manager continuam sem
+-- poder elevar privilégios além das permissões previamente definidas.
+CREATE POLICY "AAL2 required for user_roles inserts"
   ON public.user_roles
-  FOR SELECT
-  TO authenticated
-  USING (
-    public.has_role(auth.uid(), 'coordinator')
-    OR public.has_role(auth.uid(), 'admin')
-  );
-
--- Escrita exige papel elevado + AAL2
-CREATE POLICY "Role inserts require elevated AAL2"
-  ON public.user_roles
+  AS RESTRICTIVE
   FOR INSERT
   TO authenticated
   WITH CHECK (
-    (public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'admin'))
-    AND coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
+    coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
   );
 
-CREATE POLICY "Role updates require elevated AAL2"
+CREATE POLICY "AAL2 required for user_roles updates"
   ON public.user_roles
+  AS RESTRICTIVE
   FOR UPDATE
   TO authenticated
   USING (
-    (public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'admin'))
-    AND coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
+    coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
   )
   WITH CHECK (
-    (public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'admin'))
-    AND coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
+    coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
   );
 
-CREATE POLICY "Role deletes require elevated AAL2"
+CREATE POLICY "AAL2 required for user_roles deletes"
   ON public.user_roles
+  AS RESTRICTIVE
   FOR DELETE
   TO authenticated
   USING (
-    (public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'admin'))
-    AND coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
+    coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'
   );

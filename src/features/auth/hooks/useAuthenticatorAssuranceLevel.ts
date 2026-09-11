@@ -29,6 +29,7 @@ interface AALState {
  */
 export function useAuthenticatorAssuranceLevel(): AALState {
   const { user } = useAuth();
+  const userId = user?.id;
   const [state, setState] = useState<AALState>({
     checked: false,
     needsMfaChallenge: false,
@@ -36,12 +37,13 @@ export function useAuthenticatorAssuranceLevel(): AALState {
   });
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
       return;
     }
 
     let cancelled = false;
+    setState({ checked: false, needsMfaChallenge: false, hasNoVerifiedFactor: false });
 
     const evaluate = async () => {
       try {
@@ -49,16 +51,28 @@ export function useAuthenticatorAssuranceLevel(): AALState {
           supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
           supabase.auth.mfa.listFactors(),
         ]);
+        if (aalRes.error) {
+          throw aalRes.error;
+        }
         const needsMfaChallenge = !!aalRes.data &&
           aalRes.data.nextLevel === 'aal2' &&
           aalRes.data.currentLevel !== 'aal2';
-        // Sem fatores verificados = nenhum desafio possível; quem precisa de
-        // MFA (papéis elevados) deve ser encaminhado ao enrollment.
-        const hasVerifiedFactor = (factorsRes.data?.all ?? []).some(
-          (f) => f.status === 'verified'
+        // Só concluímos que não há fator quando a consulta foi bem-sucedida.
+        // `listFactors` devolve { data, error } em vez de rejeitar a promise.
+        // Tratar um erro como lista vazia causava um redirecionamento falso ao
+        // enrollment para uma conta que já possuía MFA configurado.
+        if (factorsRes.error) {
+          logger.warn('Não foi possível listar fatores MFA; enrollment não será inferido', factorsRes.error, 'useAuthenticatorAssuranceLevel');
+        }
+        const hasVerifiedFactor = !factorsRes.error && (factorsRes.data?.all ?? []).some(
+          (f) => f.status === 'verified',
         );
         if (!cancelled) {
-          setState({ checked: true, needsMfaChallenge, hasNoVerifiedFactor: !hasVerifiedFactor });
+          setState({
+            checked: true,
+            needsMfaChallenge,
+            hasNoVerifiedFactor: !factorsRes.error && !hasVerifiedFactor,
+          });
         }
       } catch {
         // If the check itself fails, do not block access on it — this is a
@@ -83,7 +97,7 @@ export function useAuthenticatorAssuranceLevel(): AALState {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, [user]);
+  }, [userId]);
 
   return state;
 }

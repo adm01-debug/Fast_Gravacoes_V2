@@ -28,8 +28,36 @@ const res = spawnSync('npm', ['audit', '--json'], {
   encoding: 'utf8',
   maxBuffer: 64 * 1024 * 1024,
 });
-const audit = JSON.parse(res.stdout?.trim() || '{}');
-const vulns = audit.vulnerabilities ?? {};
+
+// Um registry indisponível, uma saída truncada ou JSON inválido não é
+// equivalente a "zero vulnerabilidades". O gate falha fechado para impedir CI
+// verde quando a auditoria nem chegou a executar.
+if (res.error) {
+  console.error(`\n# Audit gate: não foi possível executar npm audit: ${res.error.message}`);
+  process.exit(1);
+}
+if (res.signal) {
+  console.error(`\n# Audit gate: npm audit terminou por sinal ${res.signal}.`);
+  process.exit(1);
+}
+const rawAudit = res.stdout?.trim();
+if (!rawAudit) {
+  console.error('\n# Audit gate: npm audit não retornou JSON; bloqueando por segurança.');
+  process.exit(1);
+}
+
+let audit;
+try {
+  audit = JSON.parse(rawAudit);
+} catch (error) {
+  console.error(`\n# Audit gate: JSON inválido retornado por npm audit: ${error instanceof Error ? error.message : String(error)}`);
+  process.exit(1);
+}
+if (audit.error || !audit.vulnerabilities || typeof audit.vulnerabilities !== 'object') {
+  console.error(`\n# Audit gate: resultado incompleto do npm audit: ${JSON.stringify(audit.error ?? audit)}`);
+  process.exit(1);
+}
+const vulns = audit.vulnerabilities;
 
 const failures = [];
 const skipped = [];
