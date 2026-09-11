@@ -51,3 +51,7 @@ graphify-out/
 .venv-graphify/
 __pycache__/
 *.pyc
+
+# Supabase CLI update marker is generated locally; linked project metadata is
+# tracked separately for the existing development workflow.
+supabase/.temp/cli-latest
