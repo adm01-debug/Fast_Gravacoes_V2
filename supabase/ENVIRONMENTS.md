@@ -3,13 +3,13 @@
 > Etapa 5 do plano-mestre 10/10. Objetivo: **um único ref por ambiente, vindo de
 > secrets/config — nunca embutido em código, script ou migration**.
 
-## Estado atual (auditoria de 10/09/2026) — DIVERGENTE, requer decisão do owner
+## Estado atual (confirmado pelo owner em 11/09/2026)
 
 | Ref | Onde aparece hoje | Papel presumido | Ação |
 |---|---|---|---|
-| `xxroejpvloldkmqdydar` | `supabase/config.toml` (deploy alvo do CI); migration `20260512110942…` (cron `auto-promote-jobs-fallback`); `ANALISE_TECNICA_SISTEMA.md` (histórico) | **Provável produção** (é para onde o `deploy.yml` publica) | Canonicalizar; derivar os demais artefatos dele |
+| `uoujzvpecohinketylud` | `supabase/config.toml`; `.temp/linked-project.json` (nome: *Fast Gravações - V2*) | **Produção canônica** | Configuração local alinhada; definir o mesmo ref no secret `SUPABASE_PROJECT_ID` do GitHub |
+| `xxroejpvloldkmqdydar` | Migration histórica `20260512110942…`; documentação de auditorias anteriores | **Legado — não é o banco do projeto** | Nunca usar como alvo de deploy. Antes de aplicar migrations, inspecionar e substituir com segurança eventual cron histórico que ainda chame essa URL |
 | `whnnzdreuwxczxelvqjh` | migration `20260508115941…` (função `trigger_send_tpm_email` — **trigger nunca criado**, função não existe no banco auditado pelo Codex) | Desconhecido (possível projeto antigo/Lovable) | Confirmar e eliminar do schema versionado na Etapa 11 |
-| `uoujzvpecohinketylud` | `supabase/seed-users.mjs` (hardcode **removido** — agora exige `SUPABASE_PROJECT_REF`) | Desconhecido (possível dev/seed) | Confirmar; seed agora é parametrizado |
 | `fsisdfdwlbfeadwfqpir` | **Nenhum arquivo deste repo** — é o projeto ao qual o MCP "Supabase Visão V2" desta estação está conectado (sistema de câmeras/PPE, tabelas `vehicles`/`ppe_zones`) | **Outro sistema (Visão)** — NÃO usar para operações do Fast Gravações | Isolar credenciais MCP por projeto |
 
 ## Regras daqui em diante
@@ -26,6 +26,10 @@
 
 ## Pendências de decisão (owner: Joaquim)
 
-- [ ] Confirmar qual dos refs é produção no painel Supabase.
+- [x] Produção confirmada: `uoujzvpecohinketylud` (owner, 11/09/2026).
+- [ ] Configurar `SUPABASE_PROJECT_ID=uoujzvpecohinketylud`, `SUPABASE_ACCESS_TOKEN` e
+  `SUPABASE_DB_PASSWORD` nos repository secrets e validar o acesso do CI.
+- [ ] Inspecionar o cron `auto-promote-jobs-fallback` no banco canônico antes de alterá-lo:
+  a migration histórica contém URL legada e o agendamento seguro exige `CRON_SECRET` configurado.
 - [ ] Extrair DDL das tabelas fantasma e reconciliar schema versionado (Etapa 11).
 - [ ] Rotacionar `SUPABASE_SERVICE_ROLE_KEY` e senha do banco (post-mortem migrate-helper).
