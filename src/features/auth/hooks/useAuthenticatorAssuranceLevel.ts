@@ -10,6 +10,13 @@ interface AALState {
   checked: boolean;
   /** true when the account has a verified MFA factor that the current session has not stepped up to (aal2) */
   needsMfaChallenge: boolean;
+  /**
+   * Etapa 7 do plano-mestre: true quando a conta NÃO possui nenhum fator MFA
+   * verificado. Papéis elevados (admin/manager/coordinator) nessa situação
+   * precisam concluir o enrollment (Configurações → Segurança) — o desafio de
+   * login não basta porque não existe fator para desafiar.
+   */
+  hasNoVerifiedFactor: boolean;
 }
 
 /**
@@ -22,27 +29,59 @@ interface AALState {
  */
 export function useAuthenticatorAssuranceLevel(): AALState {
   const { user } = useAuth();
-  const [state, setState] = useState<AALState>({ checked: false, needsMfaChallenge: false });
+  const userId = user?.id;
+  const [state, setState] = useState<AALState>({
+    checked: false,
+    needsMfaChallenge: false,
+    hasNoVerifiedFactor: false,
+  });
 
   useEffect(() => {
-    if (!user) {
-      setState({ checked: true, needsMfaChallenge: false });
+    if (!userId) {
+      setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
       return;
     }
 
     let cancelled = false;
+    setState({ checked: false, needsMfaChallenge: false, hasNoVerifiedFactor: false });
 
     const evaluate = async () => {
       try {
-        const { data } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        const needsMfaChallenge = !!data && data.nextLevel === 'aal2' && data.currentLevel !== 'aal2';
-        if (!cancelled) setState({ checked: true, needsMfaChallenge });
+        const [aalRes, factorsRes] = await Promise.all([
+          supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+          supabase.auth.mfa.listFactors(),
+        ]);
+        if (aalRes.error) {
+          throw aalRes.error;
+        }
+        const needsMfaChallenge = !!aalRes.data &&
+          aalRes.data.nextLevel === 'aal2' &&
+          aalRes.data.currentLevel !== 'aal2';
+        // Só concluímos que não há fator quando a consulta foi bem-sucedida.
+        // `listFactors` devolve { data, error } em vez de rejeitar a promise.
+        // Tratar um erro como lista vazia causava um redirecionamento falso ao
+        // enrollment para uma conta que já possuía MFA configurado.
+        if (factorsRes.error) {
+          logger.warn('Não foi possível listar fatores MFA; enrollment não será inferido', factorsRes.error, 'useAuthenticatorAssuranceLevel');
+        }
+        const hasVerifiedFactor = !factorsRes.error && (factorsRes.data?.all ?? []).some(
+          (f) => f.status === 'verified',
+        );
+        if (!cancelled) {
+          setState({
+            checked: true,
+            needsMfaChallenge,
+            hasNoVerifiedFactor: !factorsRes.error && !hasVerifiedFactor,
+          });
+        }
       } catch {
         // If the check itself fails, do not block access on it — this is a
         // defense-in-depth layer on top of the AuthPage-level challenge, not
         // the only gate, so fail open here rather than locking everyone out
         // on a transient Supabase error.
-        if (!cancelled) setState({ checked: true, needsMfaChallenge: false });
+        if (!cancelled) {
+          setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
+        }
       }
     };
 
@@ -58,7 +97,7 @@ export function useAuthenticatorAssuranceLevel(): AALState {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, [user]);
+  }, [userId]);
 
   return state;
 }

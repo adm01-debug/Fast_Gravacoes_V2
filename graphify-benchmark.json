@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "purpose": "Perguntas de regressão do mapa estático; não mede produtividade, custo de API ou cobertura de runtime.",
+  "questions": [
+    {"id": "auth-guards", "profile": "security", "question": "Onde ficam os guards de autenticação?", "expected_terms": ["auth.ts"]},
+    {"id": "aal", "profile": "security", "question": "Onde AAL2 é tratado?", "expected_terms": ["aal2"]},
+    {"id": "protected-route", "profile": "frontend", "question": "Qual é a fronteira de rota protegida?", "expected_terms": ["ProtectedRoute"]},
+    {"id": "routes", "profile": "frontend", "question": "Onde as rotas são declaradas?", "expected_terms": ["AppRoutes"]},
+    {"id": "providers", "profile": "frontend", "question": "Onde está a árvore de providers?", "expected_terms": ["AppProviders"]},
+    {"id": "jobs", "profile": "all", "question": "Que parte do sistema trata jobs?", "expected_terms": ["jobs"]},
+    {"id": "inventory", "profile": "all", "question": "Que parte trata estoque?", "expected_terms": ["inventory"]},
+    {"id": "production", "profile": "all", "question": "Que parte trata produção?", "expected_terms": ["production"]},
+    {"id": "maintenance", "profile": "all", "question": "Que parte trata manutenção?", "expected_terms": ["maintenance"]},
+    {"id": "analytics", "profile": "all", "question": "Que parte trata analytics?", "expected_terms": ["analytics"]},
+    {"id": "notifications", "profile": "all", "question": "Onde há notificações?", "expected_terms": ["notification"]},
+    {"id": "edge-functions", "profile": "backend", "question": "Onde estão Edge Functions?", "expected_terms": ["supabase/functions"]},
+    {"id": "migrations", "profile": "backend", "question": "Onde está o histórico SQL?", "expected_terms": ["migrations"]},
+    {"id": "create-operator", "profile": "security", "question": "Como operador é criado?", "expected_terms": ["create-operator"]},
+    {"id": "webhooks", "profile": "backend", "question": "Onde webhooks são usados?", "expected_terms": ["webhook"]},
+    {"id": "offline", "profile": "frontend", "question": "Onde está suporte offline?", "expected_terms": ["offline"]},
+    {"id": "sentry", "profile": "frontend", "question": "Onde está monitoramento?", "expected_terms": ["sentry"]},
+    {"id": "pdf", "profile": "all", "question": "Onde exportação PDF aparece?", "expected_terms": ["pdf"]},
+    {"id": "excel", "profile": "all", "question": "Onde exportação Excel aparece?", "expected_terms": ["excel"]},
+    {"id": "rls", "profile": "backend", "question": "Onde RLS é mencionado?", "expected_terms": ["rls"]}
+  ]
+}

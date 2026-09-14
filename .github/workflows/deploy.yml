@@ -15,19 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-fund
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+      - name: Audit dependencies (allowlist documentada)
+        # Gate forte + exceções explícitas: advisories não-aplicáveis ao contexto
+        # (ex.: SSR-only em SPA Vite) vivem no ALLOWED_PACKAGES com justificativa
+        # e plano de remoção — ver scripts/audit-gate.mjs.
+        run: node scripts/audit-gate.mjs
 
       - name: Check for secrets in code
         # Pinned to v3 tag for supply-chain safety.
@@ -44,12 +49,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -64,12 +69,12 @@ jobs:
     timeout-minutes: 20
     needs: [security-scan, test]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -79,7 +84,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           # client.ts reads VITE_SUPABASE_PUBLISHABLE_KEY, not _ANON_KEY.
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_ALERT_WEBHOOK_URL: ${{ secrets.VITE_ALERT_WEBHOOK_URL }}
         run: npm run build
 
@@ -90,6 +95,48 @@ jobs:
           path: dist/
           retention-days: 7
 
+  # Safe production preflight. On manual runs from a feature branch this job
+  # validates credentials and migration connectivity without changing the DB.
+  # On main it also gates the real migration job below.
+  validate-supabase:
+    name: Validate Supabase Target (dry-run)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [security-scan, test]
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate canonical target and pending migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+
+          configured_ref="$(sed -n 's/^project_id = "\([^"]*\)"/\1/p' supabase/config.toml)"
+          if [ -z "$configured_ref" ] || [ "$SUPABASE_PROJECT_ID" != "$configured_ref" ]; then
+            echo "::error title=Supabase target mismatch::SUPABASE_PROJECT_ID não corresponde ao project_id versionado."
+            exit 1
+          fi
+
+          projects="$(supabase projects list --output json)"
+          if ! jq -e --arg ref "$SUPABASE_PROJECT_ID" \
+            'any(.[]; (.id? // .ref? // "") == $ref)' <<<"$projects" >/dev/null; then
+            echo "::error title=Supabase access denied::O token não possui acesso ao projeto canônico configurado."
+            exit 1
+          fi
+
+          supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
+
   # Migrations apply before functions deploy — a function expecting a new
   # column/table that hasn't landed yet would error on live traffic during
   # the window between the two deploys. Previously these ran in parallel
@@ -98,10 +145,10 @@ jobs:
     name: Apply DB Migrations
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [security-scan, test]
+    needs: [security-scan, test, validate-supabase]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -114,7 +161,10 @@ jobs:
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          supabase db push --project-ref $SUPABASE_PROJECT_ID
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+          supabase db push --project-ref "$SUPABASE_PROJECT_ID"
 
   deploy-edge-functions:
     name: Deploy Edge Functions
@@ -123,16 +173,41 @@ jobs:
     needs: [security-scan, test, apply-migrations]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
+      - name: "Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)"
+        # Função "temporária" de migração que expunha SUPABASE_SERVICE_ROLE_KEY e
+        # SUPABASE_DB_URL a quem apresentasse a ACCESS_KEY hardcoded no git.
+        # Tolerante à ausência: o objetivo é garantir a remoção remota idempotente.
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          functions="$(supabase functions list --project-ref "$SUPABASE_PROJECT_ID" --output json)"
+          if jq -e --arg name 'migrate-helper' '
+            if type == "array" then any(.[]; (.slug? // .name? // "") == $name)
+            else any(.functions[]?; (.slug? // .name? // "") == $name)
+            end
+          ' <<<"$functions" >/dev/null; then
+            supabase functions delete migrate-helper --project-ref "$SUPABASE_PROJECT_ID" --yes
+          else
+            echo "migrate-helper não está implantada (estado já conforme)."
+          fi
+
       - name: Deploy all Edge Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"

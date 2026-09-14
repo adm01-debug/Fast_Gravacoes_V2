@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-09-11",
+  "metrics": {
+    "unresolved_relations": 3289,
+    "parallel_relation_groups": 458
+  },
+  "exceptions": [],
+  "notes": "Baseline do snapshot all revisado localmente em 2026-09-11: 1.202 arquivos, 21.295 relações brutas, 3.289 endpoints não resolvidos e 458 grupos paralelos. O modo report é deliberadamente não bloqueante até haver validação no CI remoto. Para exceção, documente métrica, motivo, responsável e expires_on ISO-8601."
+}

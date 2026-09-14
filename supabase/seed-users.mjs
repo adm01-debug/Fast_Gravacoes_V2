@@ -1,10 +1,43 @@
 // Cria 5 usuários operador + 1 admin no Supabase Auth via Management API.
 // Cada um com profile e user_role (role=operator|coordinator) associados.
-// Uso: node supabase/seed-users.mjs
-const PROJECT_REF = 'uoujzvpecohinketylud';
+// Uso: SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=<ref>
+//      SUPABASE_SEED_ALLOWED_REFS=<ref-dev>,<ref-staging> node supabase/seed-users.mjs
+//
+// Etapa 5 do plano-mestre: project ref NUNCA hardcoded — sempre via ambiente,
+// para que o mesmo script sirva dev/staging/produção sem edição (ver
+// supabase/ENVIRONMENTS.md).
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
 const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 if (!ACCESS_TOKEN) {
   console.error('Defina SUPABASE_ACCESS_TOKEN no ambiente.');
+  process.exit(1);
+}
+if (!PROJECT_REF) {
+  console.error(
+    'Defina SUPABASE_PROJECT_REF no ambiente (ex.: xxroejpvloldkmqdydar). ' +
+      'Ref hardcoded foi removido por política — ver supabase/ENVIRONMENTS.md.'
+  );
+  process.exit(1);
+}
+
+const allowedRefs = (process.env.SUPABASE_SEED_ALLOWED_REFS ?? '')
+  .split(',')
+  .map((ref) => ref.trim())
+  .filter(Boolean);
+if (!allowedRefs.includes(PROJECT_REF)) {
+  console.error(
+    'Seed bloqueado: SUPABASE_PROJECT_REF precisa constar em SUPABASE_SEED_ALLOWED_REFS. ' +
+      'Use somente refs de dev/staging confirmados; o script falha fechado por padrão.',
+  );
+  process.exit(1);
+}
+if (
+  process.env.SUPABASE_PRODUCTION_PROJECT_REF === PROJECT_REF &&
+  process.env.ALLOW_PRODUCTION_SEED !== 'true'
+) {
+  console.error(
+    'Seed bloqueado para o projeto de produção. Ação excepcional exige ALLOW_PRODUCTION_SEED=true.',
+  );
   process.exit(1);
 }
 

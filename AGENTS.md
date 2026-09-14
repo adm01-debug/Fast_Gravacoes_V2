@@ -87,7 +87,25 @@ Reusable resilience/IO utilities tested in `src/test/`: `circuitBreaker.ts`, `ra
 - **TypeScript:** strict-ish (`noImplicitAny`, `strictNullChecks`, `noUnusedLocals/Parameters` on). Note ESLint downgrades many rules to warnings for this large pre-existing codebase, but keeps `react-hooks/rules-of-hooks` and `no-debugger` as errors.
 - **Monitoring:** Sentry is initialized in `main.tsx`; Web Vitals are forwarded to Sentry.
 
-## Git hooks
+## Graphify — architecture evidence
+
+Use `npm run graph:doctor` to validate tooling, `npm run graph:build` to generate
+the structural graph, and `npm run graph:check` to check freshness and integrity.
+Before cross-file architecture changes, query with `npm run graph:query --
+"actualSymbol actualModule" --budget 1500`; verify cited source lines before editing.
+Use `graph:affected`, `graph:path` or `graph:explain` for focused investigation.
+After source changes run `graph:build` again (cached AST, full reconstruction).
+For smaller scopes append `--profile security|frontend|backend` to both build and query.
+
+Read `graphify-out/health.json` and `GRAPH_REPORT.md` before interpreting missing
+edges as dead code. The current upstream projection collapses some parallel edges;
+`extraction.json` retains raw evidence. SQL extraction describes versioned history,
+not the deployed schema or effective RLS. No graph metric certifies runtime security.
+Graph artifacts and the Python environment are local/ignored, never Vite assets.
+Do not install native hooks over Husky automatically. See `docs/graphify/README.md`
+and `docs/plano-graphify-50-etapas.md` for limits and the rollout plan.
+
+## Git hooks (Husky)
 
 Husky is configured: `pre-commit` runs `lint-staged`; `commit-msg` runs `commitlint`. Follow Conventional Commits or the commit-msg hook will reject the message.
 

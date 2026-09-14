@@ -20,6 +20,21 @@
     "test:e2e": "playwright test",
     "bundle:report": "node scripts/bundle-report.mjs",
     "bundle:diff": "node scripts/bundle-diff.mjs",
+    "graph:install": "node scripts/graphify.mjs install",
+    "graph:doctor": "node scripts/graphify.mjs doctor",
+    "graph:detect": "node scripts/graphify.mjs detect",
+    "graph:build": "node scripts/graphify.mjs build",
+    "graph:check": "node scripts/graphify.mjs check",
+    "graph:query": "node scripts/graphify.mjs query",
+    "graph:path": "node scripts/graphify.mjs path",
+    "graph:explain": "node scripts/graphify.mjs explain",
+    "graph:affected": "node scripts/graphify.mjs affected",
+    "graph:html": "node scripts/graphify.mjs html",
+    "graph:audit": "node scripts/graphify.mjs audit",
+    "graph:ratchet": "node scripts/graphify.mjs ratchet",
+    "graph:diff": "node scripts/graphify.mjs diff",
+    "graph:benchmark": "node scripts/graphify.mjs benchmark",
+    "graph:test": "node scripts/graphify.mjs test",
     "ci": "npm run quality:any && npm run build && npm run test:e2e"
   },
   "dependencies": {
@@ -94,7 +109,7 @@
     "react-joyride": "^3.1.0",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.1.9",
-    "react-router-dom": "^6.30.1",
+    "react-router-dom": "6.30.6",
     "recharts": "^2.15.4",
     "remark-gfm": "^4.0.1",
     "sonner": "^1.7.4",
@@ -152,6 +167,9 @@
   "overrides": {
     "vitest": {
       "vite": "8.1.5"
+    },
+    "exceljs": {
+      "uuid": "^11.1.1"
     }
   }
 }

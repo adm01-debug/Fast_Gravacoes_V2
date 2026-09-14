@@ -2,6 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkRateLimit } from '../_shared/rateLimit.ts'
 import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'
+import { authenticate, requireElevatedAal2 } from '../_shared/auth.ts'
 
 Deno.serve(async (req) => {
   const preflight = handleCorsPreflight(req);
@@ -13,72 +14,52 @@ Deno.serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+
+    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
       },
     })
 
-    // Verify the requesting user is a coordinator
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      })
+    // Etapa 6 (plano-mestre): middleware comum — valida o JWT do chamador,
+    // carrega papéis ativos e o AAL da sessão em um único lugar.
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: Deno.env.get('SUPABASE_ANON_KEY')!,
+      requestId,
+      corsHeaders: cors,
+    })
+    if (!auth.ok) {
+      log.warn('auth.rejected')
+      return auth.response
     }
 
-    const supabaseClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
-      global: { headers: { Authorization: authHeader } },
-    })
-
-    const { data: { user: requestingUser } } = await supabaseClient.auth.getUser()
-    if (!requestingUser) {
-      return new Response(JSON.stringify({ error: 'Não autorizado', requestId }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      })
+    // Etapa 7 (plano-mestre): criação de operadores é operação administrativa —
+    // exige papel elevado (coordinator/admin) E sessão AAL2 (MFA verificado).
+    // Sessões AAL1 recebem 403 MFA_REQUIRED.
+    const guard = requireElevatedAal2(
+      auth.ctx,
+      { requestId, corsHeaders: cors },
+      ['coordinator', 'admin'],
+    )
+    if (guard) {
+      log.warn('guard.rejected', { roles: auth.ctx.roles, aal: auth.ctx.aal })
+      return guard
     }
 
     // Rate limit: 10 operator-creations per hour per requesting user.
     const rateLimited = await checkRateLimit(supabaseAdmin, {
       endpoint: 'create-operator',
-      identity: { userId: requestingUser.id, email: requestingUser.email ?? null },
+      identity: { userId: auth.ctx.userId, email: auth.ctx.email },
       max: 10,
       windowSeconds: 3600,
       corsHeaders: cors,
       requestId,
     })
     if (rateLimited) {
-      log.warn('rate_limited', { userId: requestingUser.id })
+      log.warn('rate_limited', { userId: auth.ctx.userId })
       return rateLimited
-    }
-
-    // Check if requesting user is coordinator/admin. Fetch all role rows: a
-    // user may have more than one, and .single() would error in that case.
-    const { data: roleRows, error: roleError } = await supabaseAdmin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', requestingUser.id)
-      .eq('is_active', true)
-
-    if (roleError) {
-      // Backend failure must not be reported as an authorization denial.
-      return new Response(JSON.stringify({ error: 'Falha ao verificar permissão' }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      })
-    }
-
-    const requesterRoles = (roleRows ?? []).map((r: { role: string }) => r.role)
-    if (!requesterRoles.some((role) => ['coordinator', 'admin'].includes(role))) {
-      return new Response(JSON.stringify({ error: 'Apenas coordenadores e administradores podem criar operadores' }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      })
     }
 
     const rawBody = await req.json().catch(() => null)

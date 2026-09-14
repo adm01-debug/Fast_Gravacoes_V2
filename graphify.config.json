@@ -1,0 +1,13 @@
+{
+  "version": "0.9.48",
+  "maxWorkers": 4,
+  "warnFiles": 500,
+  "htmlNodeLimit": 5000,
+  "extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".py", ".sql"],
+  "profiles": {
+    "all": ["src", "supabase/functions", "supabase/migrations", "tests", "scripts"],
+    "security": ["src/features/auth", "src/components/auth", "supabase/functions/_shared", "supabase/functions/create-operator", "supabase/functions/update-operator"],
+    "frontend": ["src"],
+    "backend": ["supabase/functions", "supabase/migrations"]
+  }
+}

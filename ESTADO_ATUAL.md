@@ -137,10 +137,12 @@ Se o banco for recriado do zero a partir deste repositório, o código que as co
 Elas presumivelmente existem no banco vivo, criadas fora do versionamento (painel Supabase ou
 plataforma Lovable) — mas isso é `NAO_VERIFICADO`.
 
-Agrava: **três refs de projeto Supabase distintos** circulam no repositório e na sessão —
-`xxroejpvloldkmqdydar` (em `supabase/config.toml:1` e hardcoded dentro de SQL de cron),
-`whnnzdreuwxczxelvqjh` (em migration) e `uoujzvpecohinketylud` (o MCP configurado). Não é
-possível afirmar, a partir do repo, qual banco é a produção.
+Há referências históricas a três projetos Supabase no repositório —
+`xxroejpvloldkmqdydar` (cron histórico), `whnnzdreuwxczxelvqjh` (migration histórica) e
+`uoujzvpecohinketylud`. O owner confirmou em 11/09/2026 que
+`uoujzvpecohinketylud` é a produção canônica; `supabase/config.toml` foi alinhado a ele.
+As URLs históricas não devem ser reutilizadas em deploys novos e o cron legado precisa ser
+inspecionado no banco antes de qualquer reconfiguração.
 
 **Este é o achado mais grave da auditoria.** É o que impede recuperação de desastre, ambiente
 de staging fiel e onboarding de qualquer desenvolvedor novo.

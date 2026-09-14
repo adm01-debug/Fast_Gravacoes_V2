@@ -6,7 +6,7 @@ const mockSignInWithPassword = vi.fn();
 const mockSignOut = vi.fn();
 const mockGetSession = vi.fn();
 const mockGetUser = vi.fn();
-const mockOnAuthStateChange = vi.fn(() => ({
+const mockOnAuthStateChange = vi.fn((..._args: unknown[]) => ({
   data: { subscription: { unsubscribe: vi.fn() } },
 }));
 const mockRefreshSession = vi.fn();

@@ -45,6 +45,25 @@ onLCP(sendToSentry);
 onTTFB(sendToSentry);
 onINP(sendToSentry);
 
+// A política CSP em modo Report-Only é acompanhada no cliente até existir um
+// endpoint de reports dedicado. Assim, uma violação não fica restrita ao
+// console do navegador: ela é correlacionada à release no Sentry.
+if (SENTRY_ENABLED) {
+  window.addEventListener('securitypolicyviolation', (event) => {
+    Sentry.captureMessage('CSP violation', {
+      level: 'warning',
+      tags: { directive: event.violatedDirective, disposition: event.disposition },
+      extra: {
+        blockedUri: event.blockedURI,
+        effectiveDirective: event.effectiveDirective,
+        originalPolicy: event.originalPolicy,
+        sourceFile: event.sourceFile,
+        lineNumber: event.lineNumber,
+      },
+    });
+  });
+}
+
 // Register Service Worker for PWA / push notifications.
 // The hooks in features/notifications/* aguardam `navigator.serviceWorker.ready`,
 // portanto sem registro elas ficariam esperando indefinidamente.
