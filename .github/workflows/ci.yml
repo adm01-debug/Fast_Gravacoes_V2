@@ -393,7 +393,7 @@ jobs:
       - name: Run E2E tests
         if: steps.e2e-prereq.outputs.enabled == 'true'
         env:
-          PLAYWRIGHT_BASE_URL: http://localhost:8080
+          PLAYWRIGHT_BASE_URL: http://localhost:8090
           # Credentials for the seeded live-instance test user — required;
           # the credentials helper fails fast when they are absent.
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}

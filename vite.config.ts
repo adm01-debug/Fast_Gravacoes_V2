@@ -7,7 +7,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 8090,
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
   },
   preview: {
     host: "127.0.0.1",
-    port: 8080,
+    port: 8090,
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
