@@ -1,10 +1,22 @@
 name: CI — Quality Gates
 
+# `push` é restrito a `main`: com `branches: ['**']`, todo push numa branch com PR
+# aberto disparava DUAS execuções para o mesmo commit (push + pull_request), cada
+# uma com um grafo de jobs diferente — o E2E só roda condicionado a
+# `github.ref == main || event_name == pull_request` (ver job `e2e` abaixo), então
+# a run de `push` sempre pulava E2E e fechava "Quality Gate ✅", enquanto a run de
+# `pull_request` rodava E2E de verdade e podia fechar "❌" — os dois resultados
+# ficavam lado a lado na aba Checks para o mesmo SHA, parecendo não-determinismo.
+# `pull_request` já cobre toda validação pré-merge; `push` em `main` cobre o
+# pós-merge. Nenhuma cobertura é perdida, e o custo de CI cai pela metade.
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -19,9 +31,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v4
+      - name: Guard against stray build artifacts under Edge Functions
+        # Deno deploys ship the whole supabase/functions/ tree. A graph-tool
+        # output directory has previously leaked into _shared/ from a direct
+        # (non-npm-wrapped) invocation of the Python tooling — .gitignore hides
+        # it locally but does not stop it from bloating a deploy if it exists
+        # on the runner. Fail loudly instead of deploying it silently.
+        run: |
+          set -euo pipefail
+          matches="$(find supabase/functions -type d \( -name 'graphify-out' -o -name '.graphify-cache' -o -name '.graphify_cache' -o -name '.venv-graphify' \))"
+          if [ -n "$matches" ]; then
+            echo "::error::Build/tooling artifacts found under supabase/functions/ (would be deployed as Edge Function code):"
+            echo "$matches"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -46,13 +73,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           # TruffleHog compara base/head; clone raso conclui sem commits
           # comparáveis e pode mascarar achados.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -68,13 +95,29 @@ jobs:
 
       - name: Secret scanning (TruffleHog)
         # Pinned to v3 tag for supply-chain safety. Update periodically.
-        uses: trufflesecurity/trufflehog@v3.82.13
+        uses: trufflesecurity/trufflehog@1aa1871f9ae24a8c8a3a48a9345514acf42beb39 # v3.82.13
         with:
           path: ./
           base: ${{ github.event.before || 'HEAD~1' }}
           head: HEAD
           # Removed --only-verified: unverifiable secrets (expired keys, private
           # endpoints like Bitrix24) would otherwise be silently ignored.
+
+      - name: CORS wildcard regression guard
+        # Certificação (não correção): CORS de produção já é centralizado em
+        # supabase/functions/_shared/cors.ts com allowlist (pickAllowedOrigin),
+        # nunca "*". Este guard falha se um wildcard aparecer fora de *.test.ts
+        # — o único lugar onde "*" deve aparecer é em uma asserção que prova
+        # que o header NUNCA é "*" (ver cors.test.ts).
+        run: |
+          set -euo pipefail
+          matches="$(grep -rlE "Access-Control-Allow-Origin[\"'\`]?[[:space:]]*[:=,(][[:space:]]*[\"'\`]\*" \
+            supabase/functions/ src/ 2>/dev/null | grep -v '\.test\.ts$' || true)"
+          if [ -n "$matches" ]; then
+            echo "::error::Access-Control-Allow-Origin: '*' encontrado fora de *.test.ts — CORS de produção deve usar _shared/cors.ts (pickAllowedOrigin):"
+            echo "$matches"
+            exit 1
+          fi
 
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 3: Unit tests + coverage (blocks deploy if < thresholds)
@@ -85,9 +128,9 @@ jobs:
     timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -105,7 +148,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: unit-test-results
           path: |
@@ -130,12 +173,12 @@ jobs:
     timeout-minutes: 15
     needs: [lint]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       # The shared Deno modules use npm type declarations (notably @types/node).
       # Install the lockfile-resolved workspace before running with --frozen so
       # the runner has the same type-resolution graph as local validation.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -143,7 +186,7 @@ jobs:
       - name: Install workspace dependencies for Deno type resolution
         run: npm ci --legacy-peer-deps --no-fund
 
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
         with:
           deno-version: v2.9.5
 
@@ -151,7 +194,11 @@ jobs:
         run: deno check --frozen supabase/functions/_shared/auth.ts supabase/functions/create-operator/index.ts
 
       - name: Run shared Edge Function tests with frozen imports
-        run: deno test --frozen --allow-env supabase/functions/_shared/*.test.ts
+        # --allow-read scoped to _shared/: cors.test.ts dynamically re-imports
+        # cors.ts per env-var combination (module-level consts read env once),
+        # which needs read access to that one file even though it's a local
+        # relative import.
+        run: deno test --frozen --allow-env --allow-read=supabase/functions/_shared supabase/functions/_shared/*.test.ts
 
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 4: Simulation tests (webhook/ERP/fuzz/load — most comprehensive)
@@ -162,9 +209,9 @@ jobs:
     timeout-minutes: 20
     needs: [lint]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -202,9 +249,9 @@ jobs:
     timeout-minutes: 20
     needs: [security, unit-tests, deno-tests, simulation-tests]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -227,7 +274,7 @@ jobs:
 
       - name: Upload bundle report (HTML + JSON + MD)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: bundle-report-${{ github.sha }}
           path: |
@@ -237,7 +284,7 @@ jobs:
           retention-days: 30
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dist-${{ github.sha }}
           path: dist/
@@ -257,16 +304,16 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Download current PR bundle report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: bundle-report-${{ github.sha }}
           path: bundle-head
 
       - name: Download latest main bundle report (baseline)
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@bf251b5aa9c2f7eeb574a96ee720e24f801b7c11 # v6
         continue-on-error: true
         with:
           workflow: ci.yml
@@ -285,7 +332,7 @@ jobs:
           cat dist/bundle-diff.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment bundle diff on PR
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2
         with:
           header: bundle-diff
           path: dist/bundle-diff.md
@@ -301,9 +348,9 @@ jobs:
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 24
           cache: 'npm'
@@ -315,7 +362,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: dist-${{ github.sha }}
           path: dist/
@@ -359,7 +406,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always() && steps.e2e-prereq.outputs.enabled == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: playwright-report-${{ github.sha }}
           path: playwright-report/
