@@ -1,1 +1,122 @@
 project_id = "uoujzvpecohinketylud"
+
+# ─────────────────────────────────────────────────────────────────────────
+# Edge Functions — verify_jwt explícito
+#
+# O default do Supabase (verify_jwt = true) já era o comportamento efetivo de
+# todas as 33 functions antes desta seção existir — nenhuma sobrescrita existia
+# aqui. Declarar `true` explicitamente para cada uma não muda nada em produção;
+# apenas remove a dependência de um default implícito, documentado só no código-
+# fonte do CLI, por um valor lido diretamente deste arquivo.
+#
+# Por que `true` para todas, inclusive as cron/webhook: o gateway aceita
+# qualquer JWT válido, não apenas sessão de usuário — cron jobs e webhooks
+# aqui chamam com a service-role key ou a anon key (ambas JWTs assinados),
+# e têm um segundo fator de aplicação por cima (requireCronSecret, HMAC de
+# webhook, ou checagem de papel/AAL2). `verify_jwt = true` é a camada 1
+# (rejeita requisição sem JWT algum antes do código da function rodar);
+# o segundo fator é a camada 2. Isso é defesa em profundidade, não
+# redundância — trocar para `false` REMOVERIA a camada 1 e aumentaria a
+# superfície exposta a tráfego não autenticado. Ver classificação completa
+# por function em supabase/functions/README.md. Qualquer mudança futura
+# para `false` é alteração real de gateway e exige validação contra o
+# projeto canônico antes de aplicar — nunca só por leitura de código.
+# ─────────────────────────────────────────────────────────────────────────
+[functions.approve-password-reset]
+verify_jwt = true
+
+[functions.auto-promote-jobs]
+verify_jwt = true
+
+[functions.backup-scheduler]
+verify_jwt = true
+
+[functions.bitrix24-sync]
+verify_jwt = true
+
+[functions.calculate-inventory-intelligence]
+verify_jwt = true
+
+[functions.calculate-rankings]
+verify_jwt = true
+
+[functions.check-login-lockout]
+verify_jwt = true
+
+[functions.cleanup-security-logs]
+verify_jwt = true
+
+[functions.create-operator]
+verify_jwt = true
+
+[functions.cron-alert-email]
+verify_jwt = true
+
+[functions.cron-cleanup]
+verify_jwt = true
+
+[functions.daily-maintenance-summary]
+verify_jwt = true
+
+[functions.erp-api]
+verify_jwt = true
+
+[functions.excel-export]
+verify_jwt = true
+
+[functions.external-db-bridge]
+verify_jwt = true
+
+[functions.health-check]
+verify_jwt = true
+
+[functions.health-monitor]
+verify_jwt = true
+
+[functions.image-optimizer]
+verify_jwt = true
+
+[functions.metrics-collector]
+verify_jwt = true
+
+[functions.ml-predictions]
+verify_jwt = true
+
+[functions.new-device-alert]
+verify_jwt = true
+
+[functions.pdf-generator]
+verify_jwt = true
+
+[functions.rate-limit-check]
+verify_jwt = true
+
+[functions.security-alert]
+verify_jwt = true
+
+[functions.send-email-report]
+verify_jwt = true
+
+[functions.send-loss-risk-alert]
+verify_jwt = true
+
+[functions.send-push-notification]
+verify_jwt = true
+
+[functions.send-tpm-email]
+verify_jwt = true
+
+[functions.technical-assistant]
+verify_jwt = true
+
+[functions.tpm-notifications]
+verify_jwt = true
+
+[functions.update-operator]
+verify_jwt = true
+
+[functions.validate-login-ip]
+verify_jwt = true
+
+[functions.webhook-handler]
+verify_jwt = true
