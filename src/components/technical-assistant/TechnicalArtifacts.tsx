@@ -1,18 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mermaid from 'mermaid';
 import { Card } from "@/components/ui/card";
 import { Copy, Check, BarChart3, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { logger } from "@/lib/logger";
 
-// Configure mermaid
-mermaid.initialize({
-  startOnLoad: true,
-  theme: 'dark',
-  securityLevel: 'strict',
-  fontFamily: 'Inter, sans-serif'
-});
+// Etapa 40 do plano de consolidação: mermaid pesa ~2,9 MB e só é
+// necessário quando um diagrama é de fato renderizado. O import
+// dinâmico faz o rollup emitir o chunk `lib-mermaid` como assíncrono,
+// fora do caminho crítico do bundle inicial. A promessa é memoizada
+// para inicializar apenas uma vez por sessão.
+let mermaidPromise: Promise<typeof import('mermaid').default> | null = null;
+const loadMermaid = (): Promise<typeof import('mermaid').default> => {
+  if (!mermaidPromise) {
+    mermaidPromise = import('mermaid').then((mod) => {
+      const mermaid = mod.default;
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+        securityLevel: 'strict',
+        fontFamily: 'Inter, sans-serif'
+      });
+      return mermaid;
+    });
+  }
+  return mermaidPromise;
+};
 
 interface MermaidDiagramProps {
   chart: string;
@@ -28,6 +41,7 @@ export const MermaidDiagram = ({ chart }: MermaidDiagramProps) => {
     const renderDiagram = async () => {
       if (!chart) return;
       try {
+        const mermaid = await loadMermaid();
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
         const { svg } = await mermaid.render(id, chart);
         if (!mounted) return;
