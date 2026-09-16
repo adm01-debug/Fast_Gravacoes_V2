@@ -11,10 +11,10 @@ The app is large: 50+ lazy-loaded pages, a deeply nested provider tree, ~30 Supa
 ## Commands
 
 ```bash
-npm run dev            # Vite dev server on http://localhost:8080
+npm run dev            # Vite dev server on http://localhost:8090
 npm run build          # Production build
 npm run build:dev      # Build in development mode
-npm run preview        # Serve the production build (port 8080; used by e2e)
+npm run preview        # Serve the production build (port 8090; used by e2e)
 npm run lint           # ESLint over the repo
 
 npm run test           # Vitest unit tests (single run)
@@ -41,7 +41,7 @@ Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committ
 ## Test layout
 
 - **Unit/integration (Vitest, jsdom):** colocated `*.test.ts(x)` next to source, plus `src/test/*.test.ts`. Setup is `src/test/setup.ts`. Vitest excludes `tests/e2e/**` and `supabase/functions/**`. Coverage thresholds are intentionally low (lines/statements 15%, functions/branches 10%).
-- **E2E (Playwright):** `tests/e2e/*.spec.ts`, baseURL `http://localhost:8080`, projects `chromium` and `mobile-chrome`, includes accessibility (`@axe-core/playwright`) and visual-regression specs.
+- **E2E (Playwright):** `tests/e2e/*.spec.ts`, baseURL `http://localhost:8090`, projects `chromium` and `mobile-chrome`, includes accessibility (`@axe-core/playwright`) and visual-regression specs.
 
 ## Architecture
 
