@@ -4,6 +4,7 @@ import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkRateLimit } from '../_shared/rateLimit.ts'
 import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'
 import { parseOrError } from '../_shared/validate.ts'
+import { authenticate, requireRole } from '../_shared/auth.ts'
 
 const APP_URL = Deno.env.get('APP_URL') || 'https://fastgravacoes.com.br';
 
@@ -20,24 +21,26 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Não autorizado', requestId }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      })
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
+    // duplicada (header -> getUser -> role lookup -> gate).
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: anonKey,
+      requestId,
+      corsHeaders: cors,
+    })
+    if (!auth.ok) {
+      log.warn('auth.rejected')
+      return auth.response
     }
 
-    const supabaseClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    })
-
-    const { data: { user: requestingUser } } = await supabaseClient.auth.getUser()
-    if (!requestingUser) {
-      return new Response(JSON.stringify({ error: 'Não autorizado', requestId }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      })
+    // Comportamento preservado (coordinator/manager). Elevação para AAL2 é
+    // evolução futura do plano-mestre — não introduzida aqui para não quebrar
+    // o contrato atual do aprovador.
+    const forbidden = requireRole(auth.ctx, ['coordinator', 'manager'], { requestId, corsHeaders: cors })
+    if (forbidden) {
+      log.warn('guard.rejected', { roles: auth.ctx.roles })
+      return forbidden
     }
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
@@ -47,39 +50,17 @@ Deno.serve(async (req) => {
       },
     })
 
-    // Check if requesting user is coordinator or manager. Use list (no .single())
-    // because a user may have multiple active roles.
-    const { data: roleRows, error: roleCheckError } = await supabaseAdmin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', requestingUser.id)
-      .eq('is_active', true)
-
-    if (roleCheckError) {
-      return new Response(JSON.stringify({ error: 'Falha ao verificar permissão' }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      })
-    }
-
-    if (!(roleRows ?? []).some((r: { role: string }) => ['coordinator', 'manager'].includes(r.role))) {
-      return new Response(JSON.stringify({ error: 'Apenas coordenadores e gerentes podem aprovar solicitações', requestId }), {
-        status: 403,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      })
-    }
-
     // Rate limit: 30 approvals per hour per reviewer.
     const rateLimited = await checkRateLimit(supabaseAdmin, {
       endpoint: 'approve-password-reset',
-      identity: { userId: requestingUser.id, email: requestingUser.email ?? null },
+      identity: { userId: auth.ctx.userId, email: auth.ctx.email },
       max: 30,
       windowSeconds: 3600,
       corsHeaders: cors,
       requestId,
     })
     if (rateLimited) {
-      log.warn('rate_limited', { userId: requestingUser.id })
+      log.warn('rate_limited', { userId: auth.ctx.userId })
       return rateLimited
     }
 
@@ -87,7 +68,7 @@ Deno.serve(async (req) => {
     const { data: reviewerProfile } = await supabaseAdmin
       .from('profiles')
       .select('full_name')
-      .eq('id', requestingUser.id)
+      .eq('id', auth.ctx.userId)
       .single()
 
     const parsed = await parseOrError(approvePasswordResetSchema, req, { corsHeaders: cors, requestId });
@@ -131,8 +112,8 @@ Deno.serve(async (req) => {
       .from('password_reset_requests')
       .update({
         status: action === 'approve' ? 'approved' : 'rejected',
-        reviewed_by: requestingUser.id,
-        reviewed_by_name: reviewerProfile?.full_name || requestingUser.email,
+        reviewed_by: auth.ctx.userId,
+        reviewed_by_name: reviewerProfile?.full_name || auth.ctx.email,
         reviewed_at: new Date().toISOString(),
         rejection_reason: action === 'reject' ? rejectionReason : null,
       })
