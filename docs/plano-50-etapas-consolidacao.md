@@ -490,6 +490,13 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 
 ### Etapa 26 — Migrar as funções P0 para `_shared/auth.ts`
 
+> ✅ **P0 concluídas (17/09)** — create-operator, update-operator, approve-password-reset,
+> external-db-bridge (a mais privilegiada), pdf-generator, excel-export, send-email-report —
+> todas em `authenticate()`+`requireRole()` com requestId/log. Bônus: dois bugs graves de
+> `const` redeclarada (ml-predictions, send-push-notification = SyntaxError, indeployáveis)
+> curados; 33 erros TS pré-existentes corrigidos; CI agora type-checka as 33 functions.
+
+
 **Ações:** migrar as que tocam papéis, PII ou dinheiro; usar os envelopes de erro `{code,message}` já padronizados (o front já os trata — ver commit `17d13ec1`); escrever teste Deno por função; validar 401/403/200.
 
 **Checkpoint:** funções P0 sobre o middleware; testes Deno verdes; envelopes consistentes.
@@ -498,6 +505,14 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 ---
 
 ### Etapa 27 — Migrar as funções restantes
+
+> ⚠️ **Parcial (17/09)** — também migradas: technical-assistant (authenticate-only) e
+> ml-predictions. Exceções legitimadas por design (auth dupla/centralizada própria):
+> erp-api (JWT OU api-key hasheada p/ ERP), validate-login-ip (x-api-key OU JWT),
+> send-push-notification (service-role OU JWT), rate-limit-check (auth opcional p/ anon
+> limitado por IP), image-optimizer/health-* (públicas), check-login-lockout (pré-sessão).
+> Pendente de leitura dedicada: new-device-alert (repassa o token original a serviço externo).
+
 
 **Ações:** mesma abordagem, em lotes; remover código de auth duplicado; unificar CORS via helper compartilhado.
 

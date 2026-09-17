@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts"
+import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'
+import { authenticate, requireRole } from '../_shared/auth.ts';
 import { escapeHtml } from "../_shared/htmlEscape.ts";
 
 interface ReportRequest {
@@ -17,6 +19,10 @@ Deno.serve(async (req) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: 'send-email-report', requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -24,47 +30,31 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
+    // duplicada. Contrato preservado: coordinator/admin (sem AAL2).
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      requestId,
+      corsHeaders: cors,
     });
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
+
     // Restrict to coordinator/admin role — report emails expose production data.
-    const { data: roleRows, error: roleCheckError } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("is_active", true);
-    if (roleCheckError) {
-      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    if (!(roleRows ?? []).some((r: { role: string }) => ["coordinator", "admin"].includes(r.role))) {
-      return new Response(JSON.stringify({ error: "Sem permissão" }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    const forbidden = requireRole(auth.ctx, ["coordinator", "admin"], { requestId, corsHeaders: cors });
+    if (forbidden) {
+      log.warn("guard.rejected", { roles: auth.ctx.roles });
+      return forbidden;
     }
 
     const rawBody = await req.json().catch(() => null);
     if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
       return new Response(JSON.stringify({ error: 'Invalid request body' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -78,43 +68,43 @@ Deno.serve(async (req) => {
     if (!VALID_REPORT_TYPES.includes(report_type as typeof VALID_REPORT_TYPES[number])) {
       return new Response(JSON.stringify({ error: 'Invalid report_type' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (!Array.isArray(recipients) || recipients.length === 0 || !recipients.every(r => typeof r === 'string' && EMAIL_RE.test(r))) {
       return new Response(JSON.stringify({ error: 'recipients must be a non-empty array of valid email addresses' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (typeof start_date !== 'string' || !ISO_DATE_RE.test(start_date)) {
       return new Response(JSON.stringify({ error: 'start_date must be a valid ISO date string' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (typeof end_date !== 'string' || !ISO_DATE_RE.test(end_date)) {
       return new Response(JSON.stringify({ error: 'end_date must be a valid ISO date string' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (new Date(start_date) > new Date(end_date)) {
       return new Response(JSON.stringify({ error: 'start_date must not be after end_date' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (technique_ids !== undefined && !(Array.isArray(technique_ids) && technique_ids.every(id => typeof id === 'string' && UUID_RE.test(id)))) {
       return new Response(JSON.stringify({ error: 'technique_ids must be an array of UUIDs' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (machine_ids !== undefined && !(Array.isArray(machine_ids) && machine_ids.every(id => typeof id === 'string' && UUID_RE.test(id)))) {
       return new Response(JSON.stringify({ error: 'machine_ids must be an array of UUIDs' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -386,7 +376,7 @@ Deno.serve(async (req) => {
           failed: failedCount,
           stats,
         }),
-        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...cors, 'Content-Type': 'application/json' } }
       );
     } else {
       // No Resend API key - return report data for preview
@@ -400,14 +390,14 @@ Deno.serve(async (req) => {
           html: htmlContent,
           stats,
         }),
-        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...cors, 'Content-Type': 'application/json' } }
       );
     }
   } catch (error: unknown) {
     console.error('[send-email-report] Error:', error instanceof Error ? error.message : String(error));
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
     );
   }
 });
