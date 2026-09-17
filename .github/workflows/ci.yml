@@ -192,16 +192,13 @@ jobs:
           deno-version: v2.9.5
 
       - name: Check Edge Function types with frozen imports
-        # Raio-X 17/09: 28/33 functions type-clean. As 5 abaixo carregam erros
-        # de tipo pre-existentes (nunca checados antes) e ficam de fora ate o
-        # Lote 3 do plano-50 (Etapas 26-27) cura-las — cada cura entra aqui.
+        # 17/09 (Lote 3): as 33 functions + _shared/auth.ts sao type-checkadas.
+        # Historico: ja houve SyntaxError (const duplicada) e 29 erros TS
+        # escondidos porque este passo cobria apenas 2 arquivos.
         run: |
-          PENDING="backup-scheduler erp-api health-check send-push-notification send-tpm-email"
           FILES="supabase/functions/_shared/auth.ts"
           for d in supabase/functions/*/; do
-            n=$(basename "$d")
             [ -f "${d}index.ts" ] || continue
-            case " $PENDING " in *" $n "*) continue;; esac
             FILES="$FILES ${d}index.ts"
           done
           deno check --frozen $FILES
