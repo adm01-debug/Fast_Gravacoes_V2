@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { authenticate, requireRole } from "../_shared/auth.ts";
 
 // NOTE — esta função NÃO gera PDFs binários hoje: ela monta um relatório em
 // texto plano. Para não induzir clientes ao erro (Content-Type application/pdf
@@ -22,58 +24,38 @@ Deno.serve(async (req) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
-  try {
-    // Auth check — endpoint retorna dados de produção (jobs/máquinas), não pode
-    // ser público.
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "pdf-generator", requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
 
+  try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
+    // duplicada. Contrato preservado: coordinator/manager/admin (sem AAL2).
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      requestId,
+      corsHeaders: cors,
     });
-    const { data: { user }, error: authErr } = await userClient.auth.getUser();
-    if (authErr || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
 
-    // Role check — only coordinators, managers, and admins may generate reports.
-    const serviceClient = createClient(supabaseUrl, serviceRoleKey);
-    const { data: roleRows, error: roleError } = await serviceClient
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("is_active", true);
-    if (roleError) {
-      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    const allowedRoles = ["coordinator", "manager", "admin"];
-    const hasRole = (roleRows ?? []).some((r: { role: string }) => allowedRoles.includes(r.role));
-    if (!hasRole) {
-      return new Response(JSON.stringify({ error: "Permissão insuficiente" }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    const forbidden = requireRole(auth.ctx, ["coordinator", "manager", "admin"], { requestId, corsHeaders: cors });
+    if (forbidden) {
+      log.warn("guard.rejected", { roles: auth.ctx.roles });
+      return forbidden;
     }
 
     const body = await req.json().catch(() => null);
     if (!body) {
       return new Response(JSON.stringify({ error: "Invalid request body" }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
     const { type, data, options } = body;
@@ -83,7 +65,7 @@ Deno.serve(async (req) => {
     if (!ALLOWED_TYPES.includes(type)) {
       return new Response(JSON.stringify({ error: "Tipo de relatório inválido" }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
@@ -103,7 +85,7 @@ Deno.serve(async (req) => {
 
     return new Response(textContent!.buffer as ArrayBuffer, {
       headers: {
-        ...getCorsHeaders(req),
+        ...cors,
         // Honesto: o corpo é texto UTF-8, não um PDF binário.
         "Content-Type": "text/plain; charset=utf-8",
         "X-Report-Format": "text",
@@ -114,7 +96,7 @@ Deno.serve(async (req) => {
     console.error("Error in pdf-generator:", error instanceof Error ? error.message : error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });

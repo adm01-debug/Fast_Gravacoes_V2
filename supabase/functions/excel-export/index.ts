@@ -1,7 +1,9 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { authenticate, requireRole } from "../_shared/auth.ts";
 
 // Only allow export from these tables
 const ALLOWED_TABLES = [
@@ -20,71 +22,50 @@ const ALLOWED_TABLES = [
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "excel-export", requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-    // Verify the requesting user is authenticated
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
+    // duplicada. Contrato preservado: coordinator/manager/admin (sem AAL2).
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey,
+      requestId,
+      corsHeaders: cors,
     });
-
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
 
-    // Check user role - only coordinators and managers can export
+    const forbidden = requireRole(auth.ctx, ['coordinator', 'manager', 'admin'], { requestId, corsHeaders: cors });
+    if (forbidden) {
+      log.warn("guard.rejected", { roles: auth.ctx.roles });
+      return forbidden;
+    }
+
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: roleRows, error: roleError } = await adminClient
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('is_active', true);
-
-    if (roleError) {
-      // Surface backend failures as 500, not a misleading "permission denied".
-      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    const allowedRoles = ['coordinator', 'manager', 'admin'];
-    const hasExportRole = (roleRows ?? []).some((r: { role: string }) => allowedRoles.includes(r.role));
-    if (!hasExportRole) {
-      return new Response(JSON.stringify({ error: "Permissão insuficiente" }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
 
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return new Response(JSON.stringify({ error: "Corpo da requisição inválido" }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
     const { table, filters, columns } = body as Record<string, unknown>;
 
-    // Validate table name against allowlist
-    if (!table || !ALLOWED_TABLES.includes(table)) {
+    // Validate table name against allowlist (narrow unknown -> string)
+    if (typeof table !== "string" || !ALLOWED_TABLES.includes(table)) {
       return new Response(JSON.stringify({ error: "Tabela não permitida para exportação" }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
@@ -96,7 +77,7 @@ serve(async (req) => {
       if (!Array.isArray(columns) || !columns.every((c: unknown) => typeof c === "string" && COLUMN_RE.test(c))) {
         return new Response(JSON.stringify({ error: "Parâmetro 'columns' inválido" }), {
           status: 400,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
     }
@@ -106,7 +87,10 @@ serve(async (req) => {
     // function timeout/OOM; exports beyond this size should be paginated by
     // the caller instead of one giant response.
     const EXPORT_ROW_LIMIT = 20000;
-    let query = adminClient.from(table).select(columns?.join(",") || "*").limit(EXPORT_ROW_LIMIT);
+    // `table` foi validado contra a allowlist acima — o nome é literalmente um
+    // dos valores permitidos; o alias tipado evita propagar `unknown` ao builder.
+    const tableName: string = table;
+    let query = adminClient.from(tableName).select(columns?.join(",") || "*").limit(EXPORT_ROW_LIMIT);
 
     if (filters) {
       const filterEntries = Object.entries(filters);
@@ -114,7 +98,7 @@ serve(async (req) => {
       if (invalidKey) {
         return new Response(JSON.stringify({ error: "Chave de filtro inválida" }), {
           status: 400,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
       filterEntries.forEach(([key, value]) => {
@@ -128,9 +112,9 @@ serve(async (req) => {
     if (!data || data.length === 0) {
       return new Response("", {
         headers: {
-          ...getCorsHeaders(req),
+          ...cors,
           "Content-Type": "text/csv",
-          "Content-Disposition": `attachment; filename="${table}-export-${Date.now()}.csv"`,
+          "Content-Disposition": `attachment; filename="${tableName}-export-${Date.now()}.csv"`,
         },
       });
     }
@@ -141,7 +125,10 @@ serve(async (req) => {
     const headers = columns || Object.keys(data[0] || {});
     const csvContent = [
       headers.join(","),
-      ...data.map((row: Record<string, unknown>) =>
+      // `data` chega tipado como GenericStringError[] (peculiaridade do
+      // supabase-js com from()/select() dinamicos) — o cast explicita a
+      // forma real das linhas retornadas.
+      ...(data as unknown as Record<string, unknown>[]).map((row) =>
         headers.map((h: string) => {
           const raw = String(row[h] ?? "");
           const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
@@ -152,7 +139,7 @@ serve(async (req) => {
 
     return new Response(csvContent, {
       headers: {
-        ...getCorsHeaders(req),
+        ...cors,
         "Content-Type": "text/csv",
         "Content-Disposition": `attachment; filename="${table}-export-${Date.now()}.csv"`,
       },
@@ -161,7 +148,7 @@ serve(async (req) => {
     console.error('Excel export error:', error instanceof Error ? error.message : String(error));
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });
