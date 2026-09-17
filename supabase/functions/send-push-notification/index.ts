@@ -182,26 +182,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Require authenticated caller
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Não autorizado" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
-    }
-
-    const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user: callerUser } } = await supabaseAuth.auth.getUser();
-    if (!callerUser) {
-      return new Response(
-        JSON.stringify({ error: "Não autorizado" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
-    }
-
     const rawBody = await req.json().catch(() => null);
     if (!rawBody || typeof rawBody !== "object") {
       return new Response(
@@ -212,11 +192,11 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const { user_id, title, body, icon, data, broadcast }: PushNotificationRequest = rawBody;
 
     // Only coordinators/admins can broadcast; operators can only notify themselves
-    if (broadcast || (user_id && user_id !== callerUser.id)) {
+    if (!isServiceRole && (broadcast || (user_id && user_id !== callerUserId))) {
       const { data: roleRows, error: roleCheckError } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", callerUser.id)
+        .eq("user_id", callerUserId!)
         .eq("is_active", true);
       if (roleCheckError) {
         return new Response(
