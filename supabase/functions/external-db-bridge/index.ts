@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { authenticate, requireRole } from "../_shared/auth.ts";
 
 interface TelemetryPayload {
   operation: string;
@@ -176,57 +178,34 @@ Deno.serve(async (req: Request) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
-  try {
-    // Auth check
-    const authHeader = req.headers.get("authorization");
-    const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "external-db-bridge", requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
 
+  try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify JWT
-    const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
-
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificacao manual
+    // duplicada (Bearer -> getUser -> role lookup -> gate).
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      requestId,
+      corsHeaders: cors,
+    });
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
 
-    // This bridge runs with the service-role key (bypassing RLS), so it must be
-    // restricted to administrators/managers. Without this, any authenticated user
-    // could run arbitrary CRUD against any table (privilege escalation / data loss).
-    // Filter by eligible + active roles directly in the query so a query failure
-    // can't be mistaken for "no matching role" below.
-    const serviceClient = createClient(supabaseUrl, serviceRoleKey);
-    const { data: roleRows, error: roleError } = await serviceClient
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("is_active", true)
-      .in("role", ["admin", "manager"])
-      .limit(1);
-    if (roleError) {
-      // A backend failure must not masquerade as an authorization denial.
-      console.error("[external-db-bridge] Role query error:", roleError.message);
-      return new Response(JSON.stringify({ error: "Failed to verify user role" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    if (!roleRows || roleRows.length === 0) {
-      return new Response(JSON.stringify({ error: "Forbidden: admin or manager role required" }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    // Este bridge roda com service-role (bypass de RLS) — restrito a
+    // admin/manager. Contrato preservado; elevacao para AAL2 fica como
+    // evolucao futura do plano-mestre.
+    const forbidden = requireRole(auth.ctx, ["admin", "manager"], { requestId, corsHeaders: cors });
+    if (forbidden) {
+      log.warn("guard.rejected", { roles: auth.ctx.roles });
+      return forbidden;
     }
 
     const body = await req.json();
@@ -235,7 +214,7 @@ Deno.serve(async (req: Request) => {
     if (!validation.valid) {
       return new Response(JSON.stringify({ error: validation.error }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
@@ -249,7 +228,7 @@ Deno.serve(async (req: Request) => {
       if (!hasScope) {
         return new Response(
           JSON.stringify({ error: `Action '${action}' requires a non-empty 'match' filter` }),
-          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+          { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
         );
       }
     }
@@ -274,7 +253,7 @@ Deno.serve(async (req: Request) => {
             if (cols === null) {
               return new Response(
                 JSON.stringify({ error: "Invalid 'columns' parameter: only simple comma-separated identifiers are allowed" }),
-                { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+                { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
               );
             }
             const q = query.select(cols);
@@ -332,7 +311,7 @@ Deno.serve(async (req: Request) => {
         queryOffset: (params?.offset as number) || null,
         countMode: (params?.count as string) || null,
         errorMessage,
-        userId: user.id,
+        userId: auth.ctx.userId,
       }
     );
 
@@ -347,7 +326,7 @@ Deno.serve(async (req: Request) => {
       console.error("[external-db-bridge] Operation error:", errorMessage);
       return new Response(
         JSON.stringify({ error: "Operation failed", telemetry: { severity: telemetry.severity, duration_ms: telemetry.duration_ms } }),
-        { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 500, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -360,13 +339,13 @@ Deno.serve(async (req: Request) => {
           severity: telemetry.severity,
         },
       }),
-      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      { status: 200, headers: { ...cors, "Content-Type": "application/json" } }
     );
   } catch (err) {
     console.error("[external-db-bridge] Unhandled exception:", err instanceof Error ? err.message : String(err));
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });
