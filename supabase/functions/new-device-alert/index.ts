@@ -2,6 +2,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 import { escapeHtml } from '../_shared/htmlEscape.ts';
+import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts';
+import { authenticate } from '../_shared/auth.ts';
 
 interface DeviceInfo {
   user_id: string;
@@ -19,28 +21,31 @@ Deno.serve(async (req) => {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: 'new-device-alert', requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
+    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual.
+    // Contrato preservado: qualquer usuário autenticado (a identidade do device
+    // é FORÇADA a partir do JWT — ver abaixo); sem role gate.
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: anonKey,
+      requestId,
+      corsHeaders: cors,
+    });
+    if (!auth.ok) {
+      log.warn('auth.rejected');
+      return auth.response;
+    }
+    // Header ORIGINAL preservado para repassar ao send-push-notification
+    // (que revalida o JWT do usuário — service role não é aceito lá).
     const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
-    const userClient = createClient(supabaseUrl, anonKey);
-    const { data: { user }, error: authError } = await userClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Token inválido' }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
 
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
@@ -50,28 +55,28 @@ Deno.serve(async (req) => {
     if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
       return new Response(JSON.stringify({ error: 'Corpo da requisição inválido' }), {
         status: 400,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     const deviceInfo: DeviceInfo = rawBody as DeviceInfo;
     // Trust the already-verified JWT principal, not the body, for identity
     // fields — a caller must not be able to forge device records or trigger
     // alert emails for arbitrary users/addresses.
-    deviceInfo.user_id = user.id;
-    deviceInfo.user_email = user.email ?? '';
+    deviceInfo.user_id = auth.ctx.userId;
+    deviceInfo.user_email = auth.ctx.email ?? '';
     // Derive IP from the request, not the caller-supplied body, to prevent
     // a malicious caller from injecting a forged IP into DB rows and alert emails.
     const forwardedFor = req.headers.get('x-forwarded-for');
     deviceInfo.ip_address = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
 
-    console.log('Checking device for user:', user.id);
+    console.log('Checking device for user:', auth.ctx.userId);
     console.log('Device fingerprint:', deviceInfo.device_fingerprint);
 
     // Verificar se o dispositivo já existe
     const { data: existingDevice, error: deviceError } = await supabase
       .from('user_devices')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', auth.ctx.userId)
       .eq('device_fingerprint', deviceInfo.device_fingerprint)
       .maybeSingle();
 
@@ -110,7 +115,7 @@ Deno.serve(async (req) => {
       const { data: newDevice, error: insertError } = await supabase
         .from('user_devices')
         .insert({
-          user_id: user.id,
+          user_id: auth.ctx.userId,
           device_fingerprint: deviceInfo.device_fingerprint,
           ip_address: deviceInfo.ip_address,
           user_agent: deviceInfo.user_agent,
@@ -133,7 +138,7 @@ Deno.serve(async (req) => {
       const { error: alertError } = await supabase
         .from('new_device_alerts')
         .insert({
-          user_id: user.id,
+          user_id: auth.ctx.userId,
           device_id: deviceId,
           ip_address: deviceInfo.ip_address,
           user_agent: deviceInfo.user_agent
@@ -144,7 +149,7 @@ Deno.serve(async (req) => {
       }
 
       // Enviar email de alerta
-      if (resendApiKey && user.email) {
+      if (resendApiKey && auth.ctx.email) {
         try {
           const resend = new Resend(resendApiKey);
 
@@ -164,7 +169,7 @@ Deno.serve(async (req) => {
 
           const emailResponse = await resend.emails.send({
             from: 'Segurança <onboarding@resend.dev>',
-            to: [user.email],
+            to: [auth.ctx.email],
             subject: '⚠️ Novo dispositivo detectado na sua conta',
             html: `
               <!DOCTYPE html>
@@ -252,7 +257,7 @@ Deno.serve(async (req) => {
               email_sent_at: now
             })
             .eq('device_id', deviceId)
-            .eq('user_id', user.id);
+            .eq('user_id', auth.ctx.userId);
 
         } catch (emailError) {
           console.error('Error sending alert email:', emailError);
@@ -265,7 +270,7 @@ Deno.serve(async (req) => {
         const osInfo = deviceInfo.os_name || 'Sistema desconhecido';
         
         const pushPayload = {
-          user_id: user.id,
+          user_id: auth.ctx.userId,
           title: '🔐 Novo Dispositivo Detectado',
           body: `Login detectado de ${browserInfo} em ${osInfo}. IP: ${deviceInfo.ip_address || 'desconhecido'}`,
           data: { 
@@ -281,7 +286,7 @@ Deno.serve(async (req) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': authHeader,
+            'Authorization': authHeader!,  // garantido pelo authenticate() acima
           },
           body: JSON.stringify(pushPayload),
           signal: AbortSignal.timeout(10_000),
@@ -304,7 +309,7 @@ Deno.serve(async (req) => {
         device_id: deviceId
       }),
       { 
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, 
+        headers: { ...cors, 'Content-Type': 'application/json' }, 
         status: 200 
       }
     );
@@ -314,7 +319,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       {
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
         status: 500
       }
     );

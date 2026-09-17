@@ -506,12 +506,14 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 
 ### Etapa 27 — Migrar as funções restantes
 
-> ⚠️ **Parcial (17/09)** — também migradas: technical-assistant (authenticate-only) e
-> ml-predictions. Exceções legitimadas por design (auth dupla/centralizada própria):
-> erp-api (JWT OU api-key hasheada p/ ERP), validate-login-ip (x-api-key OU JWT),
-> send-push-notification (service-role OU JWT), rate-limit-check (auth opcional p/ anon
-> limitado por IP), image-optimizer/health-* (públicas), check-login-lockout (pré-sessão).
-> Pendente de leitura dedicada: new-device-alert (repassa o token original a serviço externo).
+> ✅ **CONCLUÍDA (17/09)** — também migradas: technical-assistant (authenticate-only),
+> ml-predictions e new-device-alert (authenticate; header original preservado para o
+> repasse ao send-push-notification, que revalida o JWT). Exceções legitimadas por
+> design (auth dupla/centralizada própria): erp-api (JWT OU api-key hasheada p/ ERP),
+> validate-login-ip (x-api-key OU JWT), send-push-notification (service-role OU JWT),
+> rate-limit-check (auth opcional p/ anon limitado por IP), image-optimizer/health-*
+> (públicas), check-login-lockout (pré-sessão), 13 crons (cronAuth).
+> Todas as 33 functions type-checkadas no CI (zero exclusões).
 
 
 **Ações:** mesma abordagem, em lotes; remover código de auth duplicado; unificar CORS via helper compartilhado.
