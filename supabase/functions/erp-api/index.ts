@@ -18,7 +18,7 @@ function jsonResponse(req: Request, data: unknown, status = 200): Response {
   });
 }
 
-async function validateApiKey(req: Request, supabase: ReturnType<typeof createClient>): Promise<boolean> {
+async function validateApiKey(req: Request, supabase: any): Promise<boolean> {
   const authHeader = req.headers.get('authorization');
   const apiKey = req.headers.get('x-api-key');
 
@@ -144,7 +144,7 @@ serve(async (req: Request) => {
   return new Response(JSON.stringify({ error: 'Not Found', requestId }), { status: 404, headers: jsonHeaders });
 });
 
-async function handleJobs(req: Request, supabase: ReturnType<typeof createClient>, jobId: string | undefined, url: URL): Promise<Response> {
+async function handleJobs(req: Request, supabase: any, jobId: string | undefined, url: URL): Promise<Response> {
   const method = req.method;
 
   if (method === 'GET') {
@@ -189,7 +189,7 @@ async function handleJobs(req: Request, supabase: ReturnType<typeof createClient
 
     const { data, error } = await supabase
       .from('jobs')
-      .insert({ ...validation.data, status: 'queue' })
+      .insert({ ...validation.data, status: 'queue' } as any)
       .select()
       .single();
 
@@ -218,21 +218,21 @@ async function handleJobs(req: Request, supabase: ReturnType<typeof createClient
   return jsonResponse(req, { error: 'Method not allowed' }, 405);
 }
 
-async function handleMachines(req: Request, supabase: ReturnType<typeof createClient>): Promise<Response> {
+async function handleMachines(req: Request, supabase: any): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse(req, { error: 'Method not allowed' }, 405);
   const { data, error } = await supabase.from('machines').select('*, technique:techniques(name)').eq('is_active', true).order('name');
   if (error) throw error;
   return jsonResponse(req, data);
 }
 
-async function handleOperators(req: Request, supabase: ReturnType<typeof createClient>): Promise<Response> {
+async function handleOperators(req: Request, supabase: any): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse(req, { error: 'Method not allowed' }, 405);
   const { data, error } = await supabase.from('profiles').select('id, full_name, created_at').order('full_name');
   if (error) throw error;
   return jsonResponse(req, data);
 }
 
-async function handleLots(req: Request, supabase: ReturnType<typeof createClient>, lotId: string | undefined, url: URL): Promise<Response> {
+async function handleLots(req: Request, supabase: any, lotId: string | undefined, url: URL): Promise<Response> {
   if (req.method === 'GET') {
     if (lotId) {
       const { data, error } = await supabase.from('production_lots').select('*').eq('id', lotId).single();
@@ -260,7 +260,7 @@ async function handleLots(req: Request, supabase: ReturnType<typeof createClient
   return jsonResponse(req, { error: 'Method not allowed' }, 405);
 }
 
-async function handleProductionSummary(req: Request, supabase: ReturnType<typeof createClient>, url: URL): Promise<Response> {
+async function handleProductionSummary(req: Request, supabase: any, url: URL): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse(req, { error: 'Method not allowed' }, 405);
   const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
   const { data: jobs, error } = await supabase.from('jobs').select('status, quantity, produced_quantity, lost_pieces').eq('scheduled_date', date).limit(1000);
@@ -281,7 +281,7 @@ async function handleProductionSummary(req: Request, supabase: ReturnType<typeof
   return jsonResponse(req, summary);
 }
 
-async function handleKPIs(req: Request, supabase: ReturnType<typeof createClient>, url: URL): Promise<Response> {
+async function handleKPIs(req: Request, supabase: any, url: URL): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse(req, { error: 'Method not allowed' }, 405);
   const today = new Date().toISOString().split('T')[0];
   const [jobsResult, machinesResult, alertsResult] = await Promise.all([

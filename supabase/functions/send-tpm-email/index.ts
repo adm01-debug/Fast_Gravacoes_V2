@@ -98,8 +98,8 @@ serve(async (req) => {
 
     // 4. Send email via Resend
     if (resendApiKey) {
-      const iconMap = { upcoming: '📅', due: '⚠️', overdue: '🔴', critical: '🚨' };
-      const titleMap = { upcoming: 'Manutenção Próxima', due: 'Manutenção Vencendo', overdue: 'Manutenção Atrasada', critical: 'ALERTA CRÍTICO' };
+      const iconMap: Record<string, string> = { upcoming: '📅', due: '⚠️', overdue: '🔴', critical: '🚨' };
+      const titleMap: Record<string, string> = { upcoming: 'Manutenção Próxima', due: 'Manutenção Vencendo', overdue: 'Manutenção Atrasada', critical: 'ALERTA CRÍTICO' };
 
       const htmlContent = `
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">

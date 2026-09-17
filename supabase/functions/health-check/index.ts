@@ -30,7 +30,7 @@ async function timed<T>(fn: () => Promise<T>): Promise<{ result: T | null; ms: n
   }
 }
 
-async function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+async function withTimeout<T>(p: PromiseLike<T>, ms: number, label: string): Promise<T> {
   return await Promise.race([
     p,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`${label} timeout`)), ms)),

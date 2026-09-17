@@ -6,7 +6,7 @@ const PAGE_SIZE = 5000;
 const MAX_PAGES = 20; // hard cap: 100k rows per table
 
 async function fetchAllRows(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,  // ReturnType<typeof createClient> gera generics incompativeis com o client instanciado via env
   table: string,
 ): Promise<{ rows: Record<string, unknown>[]; truncated: boolean }> {
   const rows: Record<string, unknown>[] = [];
