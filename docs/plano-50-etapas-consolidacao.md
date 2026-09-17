@@ -442,6 +442,9 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 
 ### Etapa 22 — Corrigir `start_time`/`end_time` TEXT → tipo temporal
 
+> ✅ **SUPERADA (2026-09-16)** — verificado no banco canônico (`information_schema`): `jobs.start_time/end_time` = `time without time zone`; `machine_downtime.start_time/end_time` = `timestamptz`. O achado vinha da leitura histórica da migration `20260511192402`; o schema vivo já usa tipos temporais.
+
+
 **Por quê:** a migration `20260511192402` contém o comentário `-- Assuming start_time and end_time are in 'HH:mm' format (text comparison works)`. Comparação textual de horário funciona **até** aparecer `9:00` em vez de `09:00`, ou cruzar meia-noite. É um bug latente em dado de produção.
 
 **Ações:** auditar os valores reais existentes; identificar os fora do formato; decidir o tipo-alvo (`time`, `timestamptz` ou `interval`); escrever migration com backfill validado; ajustar queries e o front; ensaiar rollback; aplicar em staging antes de produção.
@@ -452,6 +455,9 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 ---
 
 ### Etapa 23 — Índices em colunas de alta cardinalidade
+
+> ⚠️ **Reavaliada (2026-09-16)** — `pg_indexes` mostra 33 índices nas tabelas-chave (ex.: `idx_jobs_created_at_desc`). Falta conferir contra a lista exata do checkpoint antes de declarar concluída.
+
 
 **Ações:** coletar queries lentas (`pg_stat_statements`); identificar *seq scans* em tabelas grandes; criar índices `CONCURRENTLY`; medir antes/depois; remover índices não utilizados; documentar.
 
@@ -502,6 +508,9 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 
 ### Etapa 28 — Eliminar a duplicação `erp-api/index.ts` × `erp-api/handler.ts`
 
+> ✅ **SUPERADA (2026-09-16)** — `erp-api/handler.ts` não existe mais no repo (histórico: removido após o PR #17); hoje apenas `index.ts` (316 linhas). Duplicação eliminada.
+
+
 **Por quê:** achado 3.3 da análise técnica — lógica duplicada entre os dois arquivos, com autenticação insuficiente e código morto.
 
 **Ações:** diferenciar os dois; escolher o autoritativo; extrair a lógica comum; remover o morto; adicionar testes; validar que nenhum consumidor externo quebrou.
@@ -512,6 +521,9 @@ P3 Supply chain/Ops → etapas 45–50  (sustentação)
 ---
 
 ### Etapa 29 — Resolver o TODO do webhook Bitrix24
+
+> ✅ **SUPERADA (2026-09-16)** — zero TODOs em `bitrix24-sync`; verificação HMAC de webhooks padronizada em `_shared/auth.ts` (`verifyWebhook` com `timingSafeEqual`).
+
 
 **Por quê:** achado 6.1 — webhook com TODO não implementado. Integração que aceita chamada e não processa é pior que integração ausente: falha em silêncio.
 
