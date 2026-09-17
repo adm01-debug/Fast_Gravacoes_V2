@@ -3,6 +3,7 @@ import { mlPredictionPayloadSchema } from "../_shared/validation.ts";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
 import { parseOrError } from "../_shared/validate.ts";
+import { authenticate, requireRole } from "../_shared/auth.ts";
 
 Deno.serve(async (req) => {
   const preflight = handleCorsPreflight(req);
@@ -10,6 +11,7 @@ Deno.serve(async (req) => {
 
   const requestId = getOrCreateRequestId(req);
   const log = createLogger({ fn: "ml-predictions", requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -20,64 +22,34 @@ Deno.serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) throw new Error("Supabase not configured");
 
-    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
-    const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
-    if (!token) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { user }, error: authError } = await userClient.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Token inválido" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
+    // Etapas 26-27 do plano-50: middleware comum substitui DOIS blocos de
+    // verificação manual duplicados (o segundo redeclarava const no mesmo
+    // escopo — SyntaxError que tornava a function indeployável; nunca pegado
+    // porque o deno check do CI cobria apenas 2 arquivos).
+    // Contrato preservado: coordinator/manager/admin (sem AAL2).
+    const auth = await authenticate(req, {
+      supabaseUrl: SUPABASE_URL!,
+      supabaseAnonKey: SUPABASE_ANON_KEY!,
+      requestId,
+      corsHeaders: cors,
     });
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
 
     // Only coordinators, managers, and admins can trigger AI-powered predictions
     // (prevents operators from draining the API credit budget).
-    const { data: roleRows, error: roleError } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("is_active", true);
-    if (roleError) {
-      return new Response(JSON.stringify({ error: "Falha ao verificar permissão" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    if (!(roleRows ?? []).some((r: { role: string }) => ["coordinator", "manager", "admin"].includes(r.role))) {
-      return new Response(JSON.stringify({ error: "Sem permissão para gerar previsões" }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+    const forbidden = requireRole(auth.ctx, ["coordinator", "manager", "admin"], { requestId, corsHeaders: cors });
+    if (forbidden) {
+      log.warn("guard.rejected", { roles: auth.ctx.roles });
+      return forbidden;
     }
 
-    const cors = withRequestId(getCorsHeaders(req), requestId);
+    // Client service-role para as consultas de dados abaixo (era criado entre
+    // os dois blocos de auth duplicados; restaurado apos os guards).
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
     const parsed = await parseOrError(mlPredictionPayloadSchema, req, { corsHeaders: cors, requestId });
     if (parsed.response) return parsed.response;
 
@@ -107,7 +79,7 @@ Deno.serve(async (req) => {
     // paginate by passing machine_id for large deployments.
     const MAX_BATCH_SIZE = 10;
     const filteredMachines = machine_id
-      ? machines.filter(m => m.id === machine_id)
+      ? machines.filter((m: any) => m.id === machine_id)
       : machines;
     const targetMachines = filteredMachines.slice(0, MAX_BATCH_SIZE);
     const batchTruncated = filteredMachines.length > MAX_BATCH_SIZE;
@@ -116,14 +88,14 @@ Deno.serve(async (req) => {
 
     for (const machine of targetMachines) {
       // Gather machine-specific data
-      const machineJobs = jobs.filter(j => j.machine_id === machine.id);
-      const machineSchedules = maintenanceSchedules.filter(s => s.machine_id === machine.id);
-      const machineRecords = maintenanceRecords.filter(r => r.machine_id === machine.id);
+      const machineJobs = jobs.filter((j: any) => j.machine_id === machine.id);
+      const machineSchedules = maintenanceSchedules.filter((s: any) => s.machine_id === machine.id);
+      const machineRecords = maintenanceRecords.filter((r: any) => r.machine_id === machine.id);
 
       // Calculate metrics
       const totalJobs = machineJobs.length;
-      const totalProduced = machineJobs.reduce((sum, j) => sum + (j.produced_quantity || 0), 0);
-      const totalLosses = machineJobs.reduce((sum, j) => sum + (j.lost_pieces || 0), 0);
+      const totalProduced = machineJobs.reduce((sum: any, j: any) => sum + (j.produced_quantity || 0), 0);
+      const totalLosses = machineJobs.reduce((sum: any, j: any) => sum + (j.lost_pieces || 0), 0);
       const lossRate = totalProduced > 0 ? (totalLosses / totalProduced) * 100 : 0;
       
       const completedRecords = machineRecords.filter(r => r.status === 'completed');
@@ -131,7 +103,7 @@ Deno.serve(async (req) => {
       
       const overdueSchedules = machineSchedules.filter(s => new Date(s.next_due_at) < new Date());
       const daysOverdue = overdueSchedules.length > 0 
-        ? Math.max(...overdueSchedules.map(s => Math.floor((Date.now() - new Date(s.next_due_at).getTime()) / (1000 * 60 * 60 * 24))))
+        ? Math.max(...overdueSchedules.map((s: any) => Math.floor((Date.now() - new Date(s.next_due_at).getTime()) / (1000 * 60 * 60 * 24))))
         : 0;
 
       // Build context for AI analysis
@@ -200,13 +172,13 @@ Responda APENAS com JSON no formato:
         if (aiResponse.status === 429) {
           return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
             status: 429,
-            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+            headers: { ...cors, "Content-Type": "application/json" },
           });
         }
         if (aiResponse.status === 402) {
           return new Response(JSON.stringify({ error: "Payment required. Please add credits." }), {
             status: 402,
-            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+            headers: { ...cors, "Content-Type": "application/json" },
           });
         }
         continue;
@@ -299,14 +271,14 @@ Responda APENAS com JSON no formato:
         total_machines: filteredMachines.length,
       }),
     }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
 
   } catch (error: unknown) {
     console.error("ML Predictions error:", error instanceof Error ? error.message : String(error));
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });

@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { createLogger, getOrCreateRequestId, withRequestId } from "../_shared/logger.ts";
+import { authenticate } from "../_shared/auth.ts";
 
 // Conhecimento técnico por técnica
 const techniqueKnowledge: Record<string, string> = {
@@ -412,27 +414,24 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  const requestId = getOrCreateRequestId(req);
+  const log = createLogger({ fn: "technical-assistant", requestId });
+  const cors = withRequestId(getCorsHeaders(req), requestId);
+
   try {
     // Every call fans out to a paid AI gateway request — require a real,
     // signed-in user so this can't be hit anonymously for unbounded cost.
-    const authHeader = req.headers.get("Authorization");
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    if (!authHeader || !supabaseUrl || !supabaseAnonKey) {
-      return new Response(
-        JSON.stringify({ error: "Não autorizado" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
-    }
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
+    // Etapas 26-27 do plano-50: authenticate() substitui a verificação manual.
+    // Contrato preservado: qualquer usuário autenticado (sem role gate).
+    const auth = await authenticate(req, {
+      supabaseUrl: Deno.env.get("SUPABASE_URL")!,
+      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      requestId,
+      corsHeaders: cors,
     });
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Não autorizado" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+    if (!auth.ok) {
+      log.warn("auth.rejected");
+      return auth.response;
     }
 
     const body = await req.json().catch(() => null);
@@ -442,13 +441,13 @@ serve(async (req) => {
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(
         JSON.stringify({ error: "'messages' must be a non-empty array" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
     if (messages.length > MAX_MESSAGES) {
       return new Response(
         JSON.stringify({ error: `'messages' must contain at most ${MAX_MESSAGES} entries` }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
     const oversizedMessage = messages.some(
@@ -457,13 +456,13 @@ serve(async (req) => {
     if (oversizedMessage) {
       return new Response(
         JSON.stringify({ error: `Each message must be at most ${MAX_MESSAGE_CHARS} characters` }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
     if (typeof customKnowledge === "string" && customKnowledge.length > MAX_CUSTOM_KNOWLEDGE_CHARS) {
       return new Response(
         JSON.stringify({ error: `'customKnowledge' must be at most ${MAX_CUSTOM_KNOWLEDGE_CHARS} characters` }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
@@ -519,31 +518,31 @@ serve(async (req) => {
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Limite de requisições excedido. Tente novamente em alguns segundos." }), {
           status: 429,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos esgotados. Adicione créditos ao workspace." }), {
           status: 402,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...cors, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
       return new Response(JSON.stringify({ error: "Erro no gateway de IA" }), {
         status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
       });
     }
 
     return new Response(response.body, {
-      headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream" },
+      headers: { ...cors, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
     console.error("technical-assistant error:", e instanceof Error ? e.message : String(e));
     return new Response(JSON.stringify({ error: "Erro interno do servidor" }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });
