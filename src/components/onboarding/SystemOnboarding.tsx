@@ -40,6 +40,8 @@ export const SystemOnboarding = () => {
   // Primeiro acesso: só roda se a flag não estiver setada
   useEffect(() => {
     if (!user) return;
+    // Navegador automatizado (Playwright/e2e): joyride nunca inicia.
+    if (typeof navigator !== 'undefined' && navigator.webdriver) return;
     const completed = typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === 'true';
     if (completed) return;
     const timer = setTimeout(() => setRun(true), 2000);

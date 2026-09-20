@@ -224,6 +224,10 @@ export function useOnboarding() {
   const [showTour, setShowTour] = React.useState(false);
 
   React.useEffect(() => {
+    // Navegador automatizado (Playwright/e2e): tour NUNCA abre — o overlay
+    // z-[100] intercepta cliques e quebra sistematicamente os testes de UI.
+    if (typeof navigator !== "undefined" && navigator.webdriver) return;
+
     const completed = localStorage.getItem("onboarding_completed");
     const skipped = localStorage.getItem("onboarding_skipped");
 
