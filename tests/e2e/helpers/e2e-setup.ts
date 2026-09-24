@@ -41,11 +41,23 @@ export async function login(page: Page): Promise<void> {
     if (!E2E_TOTP_SECRET) {
       throw new Error('Conta E2E exige MFA mas E2E_TOTP_SECRET não está definido.');
     }
-    await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
-    await page.click('button[type="submit"]');
-    // challenge() + verify() são 2 round-trips sequenciais ao Supabase Auth —
-    // em CI sob carga (--workers=2) 15s por vezes não é margem suficiente.
-    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 20_000 });
+    // MFALoginVerification.tsx engole erro de verify() num toast e não navega —
+    // se challenge()+verify() (2 round-trips sequenciais) atravessar a virada da
+    // janela de 30s do TOTP (mais provável sob --workers=2 com latência de CI), o
+    // código gerado fica inválido e a navegação nunca ocorre. Retry com código
+    // recém-gerado em vez de só esperar mais é a correção da causa raiz.
+    let mfaOk = false;
+    for (let attempt = 1; attempt <= 3 && !mfaOk; attempt++) {
+      await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
+      await page.click('button[type="submit"]');
+      mfaOk = await page
+        .waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 10_000 })
+        .then(() => true)
+        .catch(() => false);
+    }
+    if (!mfaOk) {
+      throw new Error('Falha ao completar desafio MFA após 3 tentativas de código TOTP.');
+    }
   } else if (!navigated) {
     await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
   }
