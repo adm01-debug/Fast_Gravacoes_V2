@@ -422,7 +422,7 @@ jobs:
         # no rate limit do GoTrue e o MFA falhava mesmo com código fresco
         # (3/3 tentativas). 1 worker cabe tranquilo no timeout-minutes: 60 acima.
         # mobile-chrome e paralelismo maior são cobertos por runs locais.
-        run: npm run test:e2e -- --project=chromium --workers=1 --reporter=html --reporter=list
+        run: npm run test:e2e -- --project=chromium --workers=1 --reporter=html,list
         # Removed continue-on-error: true to fail the build if E2E tests fail
 
 
