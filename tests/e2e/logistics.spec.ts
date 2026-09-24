@@ -36,7 +36,7 @@ test.describe('Logistics Flow', () => {
     await page.goto('/public-tracking');
     await expect(
       page.getByText(/Rastreamento|Tracking/i).first()
-        .or(page.locator('input').first()
+        .or(page.locator('input').first())
     ).toBeVisible({ timeout: 10_000 });
   });
 });
