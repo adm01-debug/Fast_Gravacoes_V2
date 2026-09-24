@@ -43,11 +43,11 @@ export function TechnicalTelemetryPanel() {
       <CardHeader className="py-4 border-b border-border/50 shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary animate-pulse" />
-            Telemetria Industrial
+            <Activity className="h-4 w-4 text-primary" />
+            Telemetria Industrial (Demonstração)
           </CardTitle>
-          <Badge variant="outline" className="text-[8px] bg-success/10 text-success border-success/20 animate-pulse">
-            SISTEMA NOMINAL
+          <Badge variant="outline" className="text-[8px] bg-muted/30 text-muted-foreground border-muted-foreground/20">
+            DADOS SIMULADOS
           </Badge>
         </div>
       </CardHeader>
