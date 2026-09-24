@@ -26,6 +26,20 @@ financeiro ou trilha de auditoria. O trabalho pesado de correção que os planos
 (Etapas 19-20 de `docs/plano-50-etapas-consolidacao.md`) já estava, na prática, feito no banco canônico antes
 desta sessão começar.
 
+## Nota de completude — `packaging_defects` tem 5 policies no total, não 2
+
+A tabela acima lista só a policy `qual=true` ("Anyone can see defects") e a "Operators view defects of
+accessible tasks" (mencionada na coluna Ação). Reauditoria adversarial em 24/09 (mesmo dia, sessão de
+validação) confirmou que `packaging_defects` tem **5 policies** ao todo — as 3 que faltavam não são P2/P0,
+têm condição real (papel/atribuição de tarefa), então não mudam a classificação acima, mas ficam registradas
+aqui para não dar a impressão de que a tabela só tem policies de SELECT:
+
+| Policy | Comando | Condição |
+|---|---|---|
+| `Authorized defect management` | ALL (INSERT/UPDATE/DELETE/SELECT) | operador dono da task OU coordinator |
+| `Staff manage all defects` | ALL | role coordinator/manager/admin |
+| `Operators insert defects on their tasks` | INSERT | role operator + `reported_by = auth.uid()` + task acessível |
+
 ## Risco residual real (não é mais "policy aberta")
 
 1. **Sem suíte de teste de regressão** (Etapa 15 de `docs/plano-50-etapas-260924.md`) — já existe a função
