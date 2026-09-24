@@ -1,17 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
-import { expectContentOrDenied } from './helpers/e2e-setup';
+import { expectContentOrDenied, login } from './helpers/e2e-setup';
 
 test.describe('Production and Jobs Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Login — todas as rotas deste spec (/kanban, /new-job, /oee,
     // /operator-productivity) são protegidas; sem isso, toda navegação
     // cai em /auth antes de qualquer asserção rodar.
-    await page.goto('/auth');
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/', { timeout: 15000 });
+    await login(page);
   });
 
   test('should navigate to Kanban and verify jobs', async ({ page }) => {

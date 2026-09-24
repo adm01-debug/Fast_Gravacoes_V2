@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
-// /inventory é restrita a coordinator/manager — a conta E2E hoje só tem
-// operator ativo (coordinator foi desativado por falta de MFA cadastrada).
-// Retorna true se o conteúdo real carregou; false se caiu no "Acesso
-// restrito" (nesse caso os testes abaixo encerram cedo, sem falhar).
+// /inventory é restrita a coordinator/manager — a conta E2E tem coordinator
+// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). Mantido o
+// fallback de negação como defesa: se o papel algum dia mudar, os testes
+// abaixo encerram cedo em vez de dar timeout confuso.
 async function inventoryLoadedOrDenied(page: import('@playwright/test').Page): Promise<boolean> {
   let hasContent = false;
   let isDenied = false;
@@ -18,12 +18,7 @@ async function inventoryLoadedOrDenied(page: import('@playwright/test').Page): P
 
 test.describe('Fluxos de Inventário e Inteligência', () => {
   test.beforeEach(async ({ page }) => {
-    // Login
-    await page.goto('/auth');
-    await page.fill('input[type="email"]', E2E_EMAIL);
-    await page.fill('input[type="password"]', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/');
+    await login(page);
   });
 
   test('deve permitir visualizar e filtrar o inventário', async ({ page }) => {

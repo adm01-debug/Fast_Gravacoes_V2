@@ -1,29 +1,15 @@
-import { test, expect, Page } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { test, expect } from '@playwright/test';
+import { login } from './helpers/e2e-setup';
 
 /**
  * E2E — Manuseio e Embalagem (/packaging)
  *
  * Cobre:
  *  1. Bloqueio de acesso anônimo (redirect para /auth)
- *  2. Abertura via sidebar com usuário autenticado (operator+coordinator)
+ *  2. Abertura via sidebar com usuário autenticado (coordinator)
  *  3. Destaque visual do item de sidebar quando em /packaging
  *  4. Deep link autenticado direto para /packaging
- *
- * NOTA: o usuário E2E possui operator E coordinator. Os emails hardcoded
- * anteriores (coordenador@/gerente@/operador@fastgravacoes.com.br) não
- * existiam no auth do projeto canônico — todos os testes falhavam.
  */
-
-const PASSWORD = E2E_PASSWORD;
-
-async function login(page: Page, email?: string) {
-  await page.goto('/auth');
-  await page.fill('#login-email', email ?? E2E_EMAIL);
-  await page.fill('#login-password', PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL((url) => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
-}
 
 test.describe('Packaging — Acesso anônimo', () => {
   test('redireciona para /auth ao acessar /packaging sem sessão', async ({ page }) => {
@@ -49,8 +35,7 @@ test.describe('Packaging — Acesso anônimo', () => {
 });
 
 test.describe('Packaging — Abertura via sidebar', () => {
-  // O usuário E2E tem operator+coordinator; o link /packaging deve estar
-  // visível na sidebar para ambos os papéis.
+  // O link /packaging deve estar visível na sidebar para coordinator.
   test('usuário autenticado abre /packaging clicando no item da sidebar', async ({ page }) => {
     await login(page);
 

@@ -1,15 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
-import { expectContentOrDenied } from './helpers/e2e-setup';
+import { expectContentOrDenied, login } from './helpers/e2e-setup';
 
 test.describe('Logistics Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Login — /logistics é rota protegida
-    await page.goto('/auth');
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+    await login(page);
   });
 
   test('should verify Logistics page structure', async ({ page }) => {

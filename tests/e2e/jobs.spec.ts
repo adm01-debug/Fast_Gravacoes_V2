@@ -1,14 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
-import { expectContentOrDenied } from './helpers/e2e-setup';
-
-async function login(page: Page) {
-  await page.goto('/auth');
-  await page.fill('input[type="email"]', E2E_EMAIL);
-  await page.fill('input[type="password"]', E2E_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL('/');
-}
+import { test, expect } from '@playwright/test';
+import { expectContentOrDenied, login } from './helpers/e2e-setup';
 
 test.describe('Jobs — CRUD and state transitions', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,9 +8,8 @@ test.describe('Jobs — CRUD and state transitions', () => {
 
   test('calendar page loads with job blocks', async ({ page }) => {
     // /calendar não é uma rota registrada — só /calendar/daily|weekly|monthly.
-    // /calendar/daily é restrita a coordinator/manager — a conta E2E hoje só
-    // tem operator ativo (coordinator foi desativado por falta de MFA), então
-    // o resultado válido aqui é "Acesso restrito", não o calendário real.
+    // /calendar/daily é restrita a coordinator/manager — a conta E2E tem
+    // coordinator ativo (com MFA), então o conteúdo real deve carregar.
     await page.goto('/calendar/daily');
     await expectContentOrDenied(page, /calend|agenda|cronograma/i);
   });

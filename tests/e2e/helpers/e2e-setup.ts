@@ -7,6 +7,33 @@
  */
 
 import { expect, type Page } from '@playwright/test';
+import { E2E_EMAIL, E2E_PASSWORD, E2E_TOTP_SECRET } from './credentials';
+import { generateTotpCode } from './totp';
+
+/**
+ * Login padrão da suíte E2E — preenche e-mail/senha e, se a conta tiver MFA
+ * ativo (coordinator exige — ver MFALoginVerification.tsx), responde o
+ * desafio TOTP automaticamente a partir de E2E_TOTP_SECRET antes de
+ * considerar o login concluído.
+ */
+export async function login(page: Page): Promise<void> {
+  await page.goto('/auth');
+  await page.fill('#login-email', E2E_EMAIL);
+  await page.fill('#login-password', E2E_PASSWORD);
+  await page.click('button[type="submit"]');
+
+  const mfaInput = page.locator('#mfa-code');
+  const isMfaChallenge = await mfaInput.isVisible({ timeout: 5_000 }).catch(() => false);
+  if (isMfaChallenge) {
+    if (!E2E_TOTP_SECRET) {
+      throw new Error('Conta E2E exige MFA mas E2E_TOTP_SECRET não está definido.');
+    }
+    await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
+    await page.click('button[type="submit"]');
+  }
+
+  await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+}
 
 /**
  * Fecha qualquer overlay/modal que possa interceptar cliques.

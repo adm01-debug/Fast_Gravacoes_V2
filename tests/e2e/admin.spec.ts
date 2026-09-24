@@ -1,15 +1,10 @@
-import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
-import { expectContentOrDenied } from './helpers/e2e-setup';
+import { test } from '@playwright/test';
+import { expectContentOrDenied, login } from './helpers/e2e-setup';
 
 test.describe('Admin and Settings Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Login primeiro — /settings e páginas admin são rotas protegidas
-    await page.goto('/auth');
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/', { timeout: 15000 });
+    await login(page);
   });
 
   test('should verify settings page structure', async ({ page }) => {

@@ -1,16 +1,8 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
 const ROUTES = ['/', '/operator', '/kpi', '/oee'];
-
-async function login(page: import('@playwright/test').Page) {
-  await page.goto('/auth');
-  await page.fill('input[type="email"]', E2E_EMAIL);
-  await page.fill('input[type="password"]', E2E_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
-}
 
 test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
   for (const route of ROUTES) {

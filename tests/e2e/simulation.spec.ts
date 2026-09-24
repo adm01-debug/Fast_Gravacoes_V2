@@ -1,22 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
 test.describe('Simulation and Stress Testing', () => {
   test.beforeEach(async ({ page }) => {
-    // /simulation é rota protegida (allowedRoles coordinator/manager) — sem
-    // login ela redireciona para /auth antes de qualquer asserção rodar.
-    // A conta E2E hoje só tem 'operator' ativo — o papel 'coordinator' foi
-    // desativado no banco (tinha zero fatores MFA cadastrados, e AuthProvider
-    // agora resolve o papel de forma determinística por prioridade, então
-    // sempre bateria no redirect de /mfa-enrollment em vez de negar acesso
-    // de forma clara). Resultado esperado aqui é "Acesso restrito", não a
-    // simulação real — ver Próximos passos: reativar coordinator quando a
-    // conta tiver MFA de verdade.
-    await page.goto('/auth');
-    await page.fill('input[type="email"]', E2E_EMAIL);
-    await page.fill('input[type="password"]', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+    // /simulation é rota protegida (allowedRoles coordinator/manager) — a
+    // conta E2E tem coordinator ativo, com MFA verificado (ver
+    // helpers/e2e-setup.ts login()).
+    await login(page);
   });
 
   test('should run mass simulation and display results', async ({ page }) => {
