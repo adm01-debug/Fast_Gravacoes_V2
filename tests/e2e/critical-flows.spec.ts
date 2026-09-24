@@ -28,7 +28,8 @@ test.describe('Authentication and Authorization Flow', () => {
 
     // 4. Verify sidebar presence and layout
     await expect(page.locator('aside')).toBeVisible();
-    await expect(page.locator('nav')).toBeVisible();
+    // #main-navigation é o nav do sidebar — evita ambiguidade com o skip-link "Links de atalho"
+    await expect(page.locator('#main-navigation')).toBeVisible();
   });
 
   test('Protected Route Enforcement', async ({ page }) => {
@@ -90,8 +91,8 @@ test.describe('Main Application Navigation', () => {
   test('Mobile Responsive Navigation', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
 
-    // Menu button should appear on mobile
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    // Menu button should appear on mobile — nome acessível evita ambiguidade com o botão "Mais" da bottom nav
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     await expect(menuBtn).toBeVisible({ timeout: 5000 });
     await menuBtn.click();
 
