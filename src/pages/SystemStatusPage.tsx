@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity as ActivityIcon } from "lucide-react";
+import { MainLayout } from "@/components/layout/MainLayout";
 import { cn } from "@/lib/utils";
 import {
   deriveCronStatus,
@@ -65,7 +66,8 @@ export default function SystemStatusPage() {
   const edgeStatus = deriveEdgeStatus(summary);
 
   return (
-    <main className="container mx-auto max-w-3xl space-y-4 p-4 md:p-6">
+    <MainLayout>
+    <div className="container mx-auto max-w-3xl space-y-4 p-4 md:p-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold flex items-center gap-2">
           <ActivityIcon className="h-5 w-5" /> Status do sistema
@@ -119,6 +121,7 @@ export default function SystemStatusPage() {
           </CardContent>
         </Card>
       )}
-    </main>
+    </div>
+    </MainLayout>
   );
 }

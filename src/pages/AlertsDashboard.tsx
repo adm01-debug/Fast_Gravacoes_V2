@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { parseDateOnly } from "@/lib/dateUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MainLayout } from "@/components/layout/MainLayout";
 import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertTriangle, Clock, AlertCircle, RotateCcw, Zap, Bell, RefreshCw } from "lucide-react";
@@ -77,6 +78,7 @@ export default function AlertsDashboard() {
   ];
 
   return (
+    <MainLayout>
     <div className="min-h-screen bg-background p-4 sm:p-6 space-y-4 sm:space-y-6">
       <Breadcrumbs />
       <JobDetailsModal job={selectedJob} open={isModalOpen} onOpenChange={setIsModalOpen} />
@@ -151,5 +153,6 @@ export default function AlertsDashboard() {
         <CriticalSummaryCard totalAlerts={totalAlerts} criticalJobs={alertData.delayed.length + alertData.overdue.length} criticalBottlenecks={criticalCount ?? 0} stuckCriticalCount={stuckCritical} />
       </div>
     </div>
+    </MainLayout>
   );
 }

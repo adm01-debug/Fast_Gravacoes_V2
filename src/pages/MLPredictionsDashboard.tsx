@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useMLPredictions } from '@/features/analytics/hooks/useMLPredictions';
@@ -29,13 +30,15 @@ export default function MLPredictionsDashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 p-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="grid grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+      <MainLayout>
+        <div className="space-y-6 p-6">
+          <Skeleton className="h-10 w-64" />
+          <div className="grid grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+          </div>
+          <Skeleton className="h-[400px]" />
         </div>
-        <Skeleton className="h-[400px]" />
-      </div>
+      </MainLayout>
     );
   }
 
@@ -44,7 +47,7 @@ export default function MLPredictionsDashboard() {
   const lowRiskPredictions = predictions.filter(p => Number(p.risk_score) < 40);
 
   return (
-    <>
+    <MainLayout>
       <Helmet>
         <title>FAST GRAVAÇÕES | ML Preditivo</title>
       </Helmet>
@@ -285,6 +288,6 @@ export default function MLPredictionsDashboard() {
           </div>
         </Tabs>
       </div>
-    </>
+    </MainLayout>
   );
 }

@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { useAuth } from '@/features/auth';
 import {
   useShiftHandovers,
@@ -133,6 +134,7 @@ export default function ShiftHandoverPage() {
   const currentShift = getCurrentShiftType();
 
   return (
+    <MainLayout>
     <div className="container mx-auto p-4 md:p-6 lg:p-8 space-y-6 animate-fade-in-up">
       <Breadcrumbs />
 
@@ -493,5 +495,6 @@ export default function ShiftHandoverPage() {
         onClose={() => setSelectedHandover(null)}
       />
     </div>
+    </MainLayout>
   );
 }
