@@ -99,8 +99,12 @@ function ComposedProviders({ children }: { children: ReactNode }) {
 }
 
 function Observers() {
-  const { user, isLoading } = useAuth();
-  const isAuthenticated = Boolean(user?.id) && !isLoading;
+  const { user } = useAuth();
+  // Só depende de `user`, não de `isLoading` (mesmo raciocínio de
+  // ProductDesignFeatureProvider acima): nenhum dos 3 watchers consome
+  // role/profile, só `user?.id` — gatear em isLoading atrasaria a
+  // montagem deles em segundos após um hard refresh sem necessidade.
+  const isAuthenticated = Boolean(user?.id);
 
   return (
     <>
