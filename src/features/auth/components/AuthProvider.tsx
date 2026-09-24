@@ -22,6 +22,13 @@ function isAppRole(value: unknown): value is AppRole {
   return value === 'coordinator' || value === 'operator' || value === 'manager' || value === 'admin';
 }
 
+// Prioridade do papel efetivo quando a conta tem mais de uma linha ativa em
+// user_roles (ex.: usuário de teste com operator + coordinator). Sem isso, a
+// query sem ORDER BY + .limit(1) devolve uma linha em ordem não garantida
+// pelo Postgres — o papel "atual" do usuário podia mudar de forma
+// não-determinística entre logins.
+const ROLE_PRIORITY: Record<AppRole, number> = { admin: 4, manager: 3, coordinator: 2, operator: 1 };
+
 class LockoutError extends Error {
   isLockout = true as const;
   remainingMinutes?: number;
@@ -75,15 +82,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .from('user_roles')
             .select('role')
             .eq('user_id', userId)
-            .eq('is_active', true)
-            .limit(1),
+            .eq('is_active', true),
         ]),
         USER_DATA_TIMEOUT_MS,
         'Carregamento dos dados do usuário'
       );
 
       const profileData = profileResult.status === 'fulfilled' ? profileResult.value?.data : null;
-      const roleData = roleResult.status === 'fulfilled' ? roleResult.value?.data?.[0]?.role : null;
+      const roleRows = roleResult.status === 'fulfilled' ? roleResult.value?.data : null;
+      const roleData = Array.isArray(roleRows)
+        ? roleRows
+            .map((r) => r.role)
+            .filter(isAppRole)
+            .sort((a, b) => ROLE_PRIORITY[b] - ROLE_PRIORITY[a])[0] ?? null
+        : null;
 
       if (authRequestSeqRef.current !== requestSeq) return;
 

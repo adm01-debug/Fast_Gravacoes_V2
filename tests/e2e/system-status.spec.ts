@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
 /**
  * Cobre a página consolidada de status interno (`/status`) e o painel
@@ -9,11 +9,7 @@ import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
 test.describe('Status do sistema', () => {
   test.beforeEach(async ({ page }) => {
     // Login para /admin/monitoring (rota protegida)
-    await page.goto('/auth');
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+    await login(page);
   });
 
   test('renderiza o painel consolidado com os agregados', async ({ page }) => {
