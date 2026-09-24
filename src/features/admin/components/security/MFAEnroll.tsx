@@ -56,7 +56,7 @@ export function MFAEnroll() {
 
           <div className="space-y-2">
             <Label className="text-xs text-muted-foreground">
-              Ou insira manualmente: <code className="text-xs bg-muted px-1 rounded">{enrollmentData.totp.secret}</code>
+              Ou insira manualmente: <code className="text-xs text-foreground bg-muted px-1 rounded">{enrollmentData.totp.secret}</code>
             </Label>
           </div>
 

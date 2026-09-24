@@ -1,13 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
-
-async function login(page: Page) {
-  await page.goto('/auth');
-  await page.fill('input[type="email"]', E2E_EMAIL);
-  await page.fill('input[type="password"]', E2E_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL('/');
-}
+import { test, expect } from '@playwright/test';
+import { expectContentOrDenied, login } from './helpers/e2e-setup';
 
 test.describe('Jobs — CRUD and state transitions', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,8 +7,11 @@ test.describe('Jobs — CRUD and state transitions', () => {
   });
 
   test('calendar page loads with job blocks', async ({ page }) => {
-    await page.goto('/calendar');
-    await expect(page.locator('h1, h2').filter({ hasText: /calend|agenda|cronograma/i }).first()).toBeVisible({ timeout: 10_000 });
+    // /calendar não é uma rota registrada — só /calendar/daily|weekly|monthly.
+    // /calendar/daily é restrita a coordinator/manager — a conta E2E tem
+    // coordinator ativo (com MFA), então o conteúdo real deve carregar.
+    await page.goto('/calendar/daily');
+    await expectContentOrDenied(page, /calend|agenda|cronograma/i);
   });
 
   test('quick job drawer opens and closes', async ({ page }) => {

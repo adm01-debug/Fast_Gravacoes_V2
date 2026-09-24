@@ -22,6 +22,7 @@ import { BulkReassignDialog } from '@/features/packaging/components/BulkReassign
 import { useAuth } from '@/features/auth';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 export default function PackagingDashboard() {
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
@@ -75,7 +76,7 @@ export default function PackagingDashboard() {
   }, [filteredTasks]);
 
   return (
-    <>
+    <MainLayout>
       <Helmet>
         <title>Manuseio e Embalagem — Fast Gravações</title>
         <meta name="description" content="Fila do setor de manuseio e embalagem: triagem de defeitos, registro de embalagem e liberação para expedição." />
@@ -308,6 +309,6 @@ export default function PackagingDashboard() {
           title="Reatribuir tarefas com SLA vencido"
         />
       </div>
-    </>
+    </MainLayout>
   );
 }
