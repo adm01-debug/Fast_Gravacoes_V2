@@ -34,9 +34,11 @@ test.describe('Logistics Flow', () => {
   test('should verify public tracking page', async ({ page }) => {
     // /public-tracking é público — não precisa de login
     await page.goto('/public-tracking');
-    await expect(
-      page.getByText(/Rastreamento|Tracking/i).first()
-        .or(page.locator('input').first())
-    ).toBeVisible({ timeout: 10_000 });
+    // .or() une os dois conjuntos de elementos — como a página normalmente
+    // tem heading E input ao mesmo tempo, isso violava o strict mode.
+    // Checagem OU real: cada lado avaliado isoladamente.
+    const hasHeading = await page.getByText(/Rastreamento|Tracking/i).first().isVisible({ timeout: 10_000 }).catch(() => false);
+    const hasInput = await page.locator('input').first().isVisible({ timeout: 10_000 }).catch(() => false);
+    expect(hasHeading || hasInput).toBe(true);
   });
 });

@@ -105,7 +105,7 @@ test.describe('Navigation', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     
     // On mobile, the sidebar might be hidden behind a menu button
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     await expect(menuBtn).toBeVisible();
     await menuBtn.click();
     

@@ -44,7 +44,7 @@ test.describe('Packaging — Abertura via sidebar', () => {
     await login(page);
 
     // Em mobile, abre o menu antes
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     if (await menuBtn.isVisible().catch(() => false)) {
       await menuBtn.click();
     }
@@ -75,7 +75,7 @@ test.describe('Packaging — Destaque visual da sidebar', () => {
     await page.goto('/packaging');
     await expect(page).toHaveURL(/\/packaging/);
 
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     if (await menuBtn.isVisible().catch(() => false)) await menuBtn.click();
 
     const link = page.locator('a[href="/packaging"]').first();
