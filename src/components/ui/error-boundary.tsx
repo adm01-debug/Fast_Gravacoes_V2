@@ -28,9 +28,15 @@ export class ErrorBoundary extends Component<Props, State> {
   async componentDidCatch(error: Error, errorInfo: ErrorInfo): Promise<void> {
     this.setState({ errorInfo });
 
-    // Always log so we can diagnose production issues
-
-
+    // Log síncrono primeiro: o insert em error_logs abaixo é best-effort e
+    // falha silenciosamente offline, então sem isso o erro real nunca chega
+    // a lugar nenhum (nem console, nem trace do Playwright, nem o DOM do
+    // fallback, que só mostra uma mensagem genérica).
+    console.error(
+      `[ErrorBoundary${this.props.componentName ? `:${this.props.componentName}` : ''}]`,
+      error,
+      errorInfo.componentStack
+    );
 
     // Automatically log error to database
     try {
