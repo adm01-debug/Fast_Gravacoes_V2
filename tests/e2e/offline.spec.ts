@@ -7,8 +7,19 @@ test.describe('Offline Syncing and Persistence', () => {
     // timeout padrão de 30s por teste somado aos passos anteriores.
     test.setTimeout(50_000);
 
+    // Diagnóstico: a árvore React crasha pro fallback do ErrorBoundary logo
+    // após ir offline (achado confirmado via error-context.md de CI real),
+    // impedindo o OfflineSyncProvider de registrar o hook abaixo. O
+    // ErrorBoundary só loga via insert best-effort no Supabase, que falha
+    // em silêncio offline — sem isto, o erro real nunca aparece no log da
+    // CI, só no console do browser dentro do trace.zip.
+    page.on('console', msg => {
+      if (msg.type() === 'error') console.log(`[browser console.error] ${msg.text()}`);
+    });
+    page.on('pageerror', err => console.log(`[browser pageerror] ${err.message}\n${err.stack}`));
+
     await page.goto('/');
-    
+
     // 1. Go offline
     await context.setOffline(true);
     
