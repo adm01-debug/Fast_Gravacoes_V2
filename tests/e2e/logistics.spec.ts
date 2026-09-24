@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { expectContentOrDenied } from './helpers/e2e-setup';
 
 test.describe('Logistics Flow', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,11 +14,7 @@ test.describe('Logistics Flow', () => {
 
   test('should verify Logistics page structure', async ({ page }) => {
     await page.goto('/logistics');
-    // Assert page renders (heading OU conteúdo OU acesso negado)
-    await expect(
-      page.getByText(/Log[íi]stica|Expedi[çc][ãa]o/i).first()
-        .or(page.getByText(/acesso negado/i)).first()
-    ).toBeVisible({ timeout: 15_000 });
+    await expectContentOrDenied(page, /Log[íi]stica|Expedi[çc][ãa]o/i);
   });
 
   test('should verify Fleet Management tab', async ({ page }) => {
