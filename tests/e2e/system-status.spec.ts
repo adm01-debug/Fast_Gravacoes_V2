@@ -44,7 +44,11 @@ test.describe('Status do sistema', () => {
 
     const periodButtons = page.getByRole('button').filter({ hasText: /\d+d/ });
     if (await periodButtons.first().isVisible({ timeout: 3000 }).catch(() => false)) {
-      const btn30 = periodButtons.filter({ hasText: '30d' });
+      // /admin/monitoring tem 2 seletores de período independentes
+      // (CronHealthHistoryCard e CronP95TrendCard), cada um com seu botão
+      // "30d" — sem .first() o locator resolve a 2 elementos e
+      // isVisible()/click() estouram "strict mode violation".
+      const btn30 = periodButtons.filter({ hasText: '30d' }).first();
       if (await btn30.isVisible()) await btn30.click();
       await expect(periodButtons.first()).toBeVisible();
     }
