@@ -21,3 +21,13 @@ export const E2E_PASSWORD = e2ePassword;
  * tela de verificação (ver helpers/e2e-setup.ts login()).
  */
 export const E2E_TOTP_SECRET = process.env.E2E_TOTP_SECRET?.trim();
+
+/**
+ * Conta E2E dedicada, somente com o papel operator (sem MFA) — usada só
+ * pelo teste de negação de acesso em auth.spec.ts. Opcional: a conta
+ * principal (E2E_EMAIL) tem coordinator ativo e não serve para testar
+ * "papel insuficiente é barrado", já que coordinator tem acesso a toda
+ * rota protegida desta app.
+ */
+export const E2E_OPERATOR_EMAIL = process.env.E2E_OPERATOR_EMAIL?.trim();
+export const E2E_OPERATOR_PASSWORD = process.env.E2E_OPERATOR_PASSWORD;

@@ -2,9 +2,11 @@ import { test, expect } from '@playwright/test';
 import { login } from './helpers/e2e-setup';
 
 // /inventory é restrita a coordinator/manager — a conta E2E tem coordinator
-// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). Mantido o
-// fallback de negação como defesa: se o papel algum dia mudar, os testes
-// abaixo encerram cedo em vez de dar timeout confuso.
+// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). O poll abaixo
+// ainda aceita "Acesso restrito" como resultado observável (evita timeout
+// confuso se o papel não carregar a tempo), mas o assert em cada teste
+// EXIGE hasContent=true — uma negação real agora falha o teste em vez de
+// mascarar uma regressão de RBAC como "passou".
 async function inventoryLoadedOrDenied(page: import('@playwright/test').Page): Promise<boolean> {
   let hasContent = false;
   let isDenied = false;
@@ -25,7 +27,7 @@ test.describe('Estabilidade Visual do Inventário', () => {
     // Navega para a página de inventário
     await page.goto('/inventory');
 
-    if (!(await inventoryLoadedOrDenied(page))) return;
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
 
     // Localiza o campo de busca
     const searchInput = page.locator('input[placeholder*="Buscar material"]');
@@ -66,7 +68,7 @@ test.describe('Estabilidade Visual do Inventário', () => {
   test('layout deve permanecer estável entre estados de carregamento', async ({ page }) => {
     await page.goto('/inventory');
 
-    if (!(await inventoryLoadedOrDenied(page))) return;
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
 
     // Captura o container da grid
     const gridContainer = page.locator('.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');

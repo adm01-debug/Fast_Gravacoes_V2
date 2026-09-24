@@ -2,9 +2,11 @@ import { test, expect } from '@playwright/test';
 import { login } from './helpers/e2e-setup';
 
 // /inventory é restrita a coordinator/manager — a conta E2E tem coordinator
-// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). Mantido o
-// fallback de negação como defesa: se o papel algum dia mudar, os testes
-// abaixo encerram cedo em vez de dar timeout confuso.
+// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). O poll abaixo
+// ainda aceita "Acesso restrito" como resultado observável (evita timeout
+// confuso se o papel não carregar a tempo), mas o assert em cada teste
+// EXIGE hasContent=true — uma negação real agora falha o teste em vez de
+// mascarar uma regressão de RBAC como "passou".
 async function inventoryLoadedOrDenied(page: import('@playwright/test').Page): Promise<boolean> {
   let hasContent = false;
   let isDenied = false;
@@ -24,7 +26,7 @@ test.describe('Fluxos de Inventário e Inteligência', () => {
   test('deve permitir visualizar e filtrar o inventário', async ({ page }) => {
     await page.goto('/inventory');
 
-    if (!(await inventoryLoadedOrDenied(page))) return;
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
 
     // Busca um material
     const searchInput = page.locator('input[placeholder*="Buscar material"]');
@@ -42,7 +44,7 @@ test.describe('Fluxos de Inventário e Inteligência', () => {
   test('deve abrir o modal de registro de movimentação', async ({ page }) => {
     await page.goto('/inventory');
 
-    if (!(await inventoryLoadedOrDenied(page))) return;
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
 
     // Clica no botão de Entrada do primeiro item — há 2+ itens seedados
     // (Tinta Branca Vinílica, Solvente Retardador), cada um com seu próprio
@@ -65,7 +67,7 @@ test.describe('Fluxos de Inventário e Inteligência', () => {
   test('deve validar o Mapa WMS e sugestões de IA', async ({ page }) => {
     await page.goto('/inventory');
 
-    if (!(await inventoryLoadedOrDenied(page))) return;
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
 
     // Troca para a aba de Mapa WMS
     await page.click('button[role="tab"]:has-text("Mapa WMS")');

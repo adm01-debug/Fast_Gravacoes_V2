@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { login } from './helpers/e2e-setup';
+import { E2E_OPERATOR_EMAIL, E2E_OPERATOR_PASSWORD } from './helpers/credentials';
 
 test.describe('Auth Flow - Login/Logout', () => {
   test.beforeEach(async ({ page }) => {
@@ -61,6 +62,26 @@ test.describe('Protected Routes', () => {
 
     await page.goto('/settings');
     await expect(page).toHaveURL('/settings', { timeout: 10000 });
+  });
+
+  test('should deny an authenticated operator-only account from coordinator-only routes', async ({ page }) => {
+    // Conta dedicada só com operator ativo, sem MFA — a conta principal
+    // (E2E_EMAIL) tem coordinator ativo e não serve para testar negação de
+    // acesso por papel insuficiente. Ver helpers/credentials.ts.
+    test.skip(!E2E_OPERATOR_EMAIL || !E2E_OPERATOR_PASSWORD, 'E2E_OPERATOR_EMAIL/E2E_OPERATOR_PASSWORD não configurados');
+
+    await page.goto('/auth');
+    await page.fill('#login-email', E2E_OPERATOR_EMAIL!);
+    await page.fill('#login-password', E2E_OPERATOR_PASSWORD!);
+    await page.click('button[type="submit"]');
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+
+    await page.goto('/settings');
+
+    // ProtectedRoute redireciona e mostra o toast "Acesso restrito" quando
+    // o papel não está em allowedRoles (['coordinator', 'manager']).
+    await expect(page).not.toHaveURL('/settings', { timeout: 10_000 });
+    await expect(page.getByText(/acesso restrito|acesso negado|sem permiss[ãa]o/i).first()).toBeVisible({ timeout: 10_000 });
   });
 });
 
