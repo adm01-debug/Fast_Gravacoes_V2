@@ -1,14 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
 test.describe('Regressão Visual', () => {
   test.beforeEach(async ({ page }) => {
     // Login automático para testes visuais
-    await page.goto('/auth');
-    await page.fill('input[type="email"]', E2E_EMAIL);
-    await page.fill('input[type="password"]', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/');
+    await login(page);
   });
 
   test('snapshot da dashboard principal', async ({ page }) => {
