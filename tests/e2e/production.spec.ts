@@ -38,9 +38,11 @@ test.describe('Production and Jobs Flow', () => {
     await page.click('button[role="combobox"]:has-text("Selecione a técnica")');
     await page.click('role=option >> nth=0');
 
-    await page.click('button[type="submit"]');
-
-    await expect(page.getByText(/Trabalho criado com sucesso|criado com sucesso/i)).toBeVisible({ timeout: 10_000 });
+    // Não submete de verdade: o CI roda contra a mesma instância Supabase usada
+    // em produção (VITE_SUPABASE_URL), e um submit real insere um job de teste
+    // sem teardown a cada run/retry. Confirma que o form aceitou os dados e
+    // liberou o envio, sem executar o insert.
+    await expect(page.locator('button[type="submit"]')).toBeEnabled();
   });
 
   test('should verify OEE Dashboard', async ({ page }) => {
