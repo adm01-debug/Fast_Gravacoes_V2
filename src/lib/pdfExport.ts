@@ -350,7 +350,8 @@ export async function exportProductionReport(
 export async function exportLossesReport(
   jobs: LossJobRow[],
   dateRange: { start: Date; end: Date },
-  title = 'Relatório de Perdas e Qualidade'
+  title = 'Relatório de Perdas e Qualidade',
+  avgUnitCost = 0
 ): Promise<void> {
   const { default: jsPDF } = await import('jspdf');
   const { default: autoTable } = await import('jspdf-autotable');
@@ -385,7 +386,7 @@ export async function exportLossesReport(
     job.product_name || 'Produto',
     job.lost_pieces.toString(),
     job.loss_reason || 'Não informado',
-    `R$ ${(job.lost_pieces * 15.5).toFixed(2)}`,
+    `R$ ${(job.lost_pieces * avgUnitCost).toFixed(2)}`,
   ]);
 
   autoTable(doc, {
