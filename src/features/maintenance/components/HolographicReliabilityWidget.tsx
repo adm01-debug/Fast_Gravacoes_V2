@@ -10,11 +10,16 @@ export function HolographicReliabilityWidget() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none animate-pulse" />
 
       <CardHeader className="relative z-10">
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-          Holographic Reliability 13/10
-        </CardTitle>
-        <CardDescription>Monitoramento de integridade molecular das máquinas</CardDescription>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+            Holographic Reliability 13/10
+          </CardTitle>
+          <Badge variant="outline" className="text-[9px] bg-muted/30 text-muted-foreground border-muted-foreground/20">
+            Demonstração
+          </Badge>
+        </div>
+        <CardDescription>Dados ilustrativos — painel conceitual, sem sensor de integridade real conectado</CardDescription>
       </CardHeader>
 
       <CardContent className="relative z-10 space-y-6">
