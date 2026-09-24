@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
 
 /**
  * End-to-end tests for the authentication flow, protected routes, and core navigation.
@@ -17,9 +17,7 @@ test.describe('Authentication and Authorization Flow', () => {
     await expect(page.locator('button[type="submit"]')).toContainText(/Entrar|Login/i);
 
     // 2. Perform login
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
+    await login(page);
 
     // 3. Verify successful navigation to dashboard
     await expect(page).toHaveURL('/', { timeout: 15000 });
@@ -28,7 +26,10 @@ test.describe('Authentication and Authorization Flow', () => {
 
     // 4. Verify sidebar presence and layout
     await expect(page.locator('aside')).toBeVisible();
-    await expect(page.locator('nav')).toBeVisible();
+    // #main-navigation está no próprio <aside> (skip-link target), não no
+    // <nav> interno — checar só #main-navigation duplica o assert acima e
+    // não garante que a lista de links realmente renderizou dentro dele.
+    await expect(page.locator('#main-navigation nav')).toBeVisible();
   });
 
   test('Protected Route Enforcement', async ({ page }) => {
@@ -38,10 +39,8 @@ test.describe('Authentication and Authorization Flow', () => {
     // 2. Should be redirected to /auth
     await expect(page).toHaveURL(/\/auth/);
 
-    // 3. Login with E2E credentials (o usuário E2E tem operator+coordinator)
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
+    // 3. Login with E2E credentials (a conta E2E tem coordinator ativo)
+    await login(page);
 
     // 4. Should reach dashboard or operator view
     await expect(page).toHaveURL(url => url.pathname === '/' || url.pathname === '/operator', { timeout: 15000 });
@@ -49,9 +48,7 @@ test.describe('Authentication and Authorization Flow', () => {
 
   test('User Logout Flow', async ({ page }) => {
     // Login first
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
+    await login(page);
     await expect(page).toHaveURL('/', { timeout: 15000 });
 
     // Logout
@@ -66,10 +63,7 @@ test.describe('Authentication and Authorization Flow', () => {
 
 test.describe('Main Application Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/auth');
-    await page.fill('#login-email', E2E_EMAIL);
-    await page.fill('#login-password', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
+    await login(page);
     await expect(page).toHaveURL('/', { timeout: 15000 });
   });
 
@@ -90,8 +84,8 @@ test.describe('Main Application Navigation', () => {
   test('Mobile Responsive Navigation', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
 
-    // Menu button should appear on mobile
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    // Menu button should appear on mobile — nome acessível evita ambiguidade com o botão "Mais" da bottom nav
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     await expect(menuBtn).toBeVisible({ timeout: 5000 });
     await menuBtn.click();
 
