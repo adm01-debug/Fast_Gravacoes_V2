@@ -39,8 +39,18 @@ import { createQueryClient } from "@/lib/queryConfig";
 const queryClient = createQueryClient();
 
 function ProductDesignFeatureProvider({ children }: { children: ReactNode }) {
-  const { user, isLoading } = useAuth();
-  const isAuthenticated = Boolean(user?.id) && !isLoading;
+  const { user } = useAuth();
+  // Só depende de `user`, não de `isLoading`: `isLoading` também cobre o
+  // fetch (rede) de profile/role em AuthProvider.fetchUserData, que o
+  // CommandPaletteAdvanced não usa (nem ele nem CommandPaletteCommands
+  // consultam `role`/`profile` — só `signOut`). Gatear nele atrasava a
+  // montagem da paleta em vários segundos após um hard refresh (Cmd+K
+  // silenciosamente não fazia nada nesse intervalo), e era a causa raiz de
+  // accessibility.spec.ts:44/77 falharem: page.goto('/') remonta o
+  // AuthProvider do zero, e a suíte só aguarda 1s antes do Cmd+K — tempo
+  // insuficiente para a viagem de rede de profile+role, mas suficiente para
+  // a sessão ser restaurada (o que já habilita `user`).
+  const isAuthenticated = Boolean(user?.id);
 
   return (
     <ProductDesignProvider
