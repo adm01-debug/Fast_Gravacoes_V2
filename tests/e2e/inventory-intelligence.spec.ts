@@ -72,8 +72,9 @@ test.describe('Fluxos de Inventário e Inteligência', () => {
     // Troca para a aba de Mapa WMS
     await page.click('button[role="tab"]:has-text("Mapa WMS")');
     
-    // Verifica presença do mapa
-    await expect(page.locator('.warehouse-grid, text=B4')).toBeVisible();
+    // Verifica presença do mapa — vírgula em locator() não é OR, é seletor CSS
+    // inválido ("Unexpected token '='"); .or() é o jeito certo de combinar.
+    await expect(page.locator('.warehouse-grid').or(page.getByText('B4')).first()).toBeVisible();
     
     // Verifica card de sugestões de IA
     await expect(page.locator('text=Sugestões de Re-alocação')).toBeVisible();

@@ -43,7 +43,9 @@ export async function login(page: Page): Promise<void> {
     }
     await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
     await page.click('button[type="submit"]');
-    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+    // challenge() + verify() são 2 round-trips sequenciais ao Supabase Auth —
+    // em CI sob carga (--workers=2) 15s por vezes não é margem suficiente.
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 20_000 });
   } else if (!navigated) {
     await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
   }

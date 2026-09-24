@@ -45,18 +45,21 @@ test.describe('Packaging — Abertura via sidebar', () => {
       await menuBtn.click();
     }
 
-    // Garante que o grupo está expandido se o item ainda não estiver visível
+    // groupToggle.isVisible() sem timeout não faz polling de verdade — corria
+    // risco de checar antes da sidebar terminar de renderizar os itens do
+    // papel logo após o login. expect.poll refaz a checagem (link OU toggle
+    // do grupo) até um dos dois aparecer, só então decide se precisa expandir.
     const groupToggle = page.getByRole('button', { name: /Operações/i }).first();
-    if (await groupToggle.isVisible().catch(() => false)) {
-      const linkVisible = await page
-        .locator('a[href="/packaging"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      if (!linkVisible) await groupToggle.click();
-    }
-
     const link = page.locator('a[href="/packaging"]').first();
+    let linkVisible = false;
+    await expect.poll(async () => {
+      linkVisible = await link.isVisible();
+      return linkVisible || (await groupToggle.isVisible().catch(() => false));
+    }, { timeout: 10_000 }).toBe(true);
+
+    if (!linkVisible) {
+      await groupToggle.click();
+    }
     await expect(link).toBeVisible({ timeout: 5_000 });
     await link.click();
 

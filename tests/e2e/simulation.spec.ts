@@ -43,8 +43,9 @@ test.describe('Simulation and Stress Testing', () => {
     await expect(page.locator('text=Taxa de Sucesso')).toBeVisible();
     await expect(page.locator('text=Latência P95')).toBeVisible();
     
-    // Verify chart is rendered
-    await expect(page.locator('.recharts-responsive-container')).toBeVisible();
+    // Verify chart is rendered — 2 gráficos recharts na página, .first() evita
+    // strict-mode violation (locator resolvendo a 2 elementos).
+    await expect(page.locator('.recharts-responsive-container').first()).toBeVisible();
     
     // Verify log is populated
     await expect(page.locator('text=Log Detalhado')).toBeVisible();
