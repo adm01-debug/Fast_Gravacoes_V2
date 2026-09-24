@@ -17,7 +17,10 @@ test.describe('Jobs — CRUD and state transitions', () => {
   test('calendar page loads with job blocks', async ({ page }) => {
     // /calendar não é uma rota registrada — só /calendar/daily|weekly|monthly
     await page.goto('/calendar/daily');
-    await expect(page.locator('h1, h2').filter({ hasText: /calend|agenda|cronograma/i }).first()).toBeVisible({ timeout: 10_000 });
+    // O h1 do Daily é o título genérico do app ("FAST GRAVAÇÕES..."), não
+    // "Calendário" (diferente de Weekly/Monthly) — o subtítulo é que contém
+    // "agenda". Checa qualquer texto na página, não só h1/h2.
+    await expect(page.getByText(/calend|agenda|cronograma/i).first()).toBeVisible({ timeout: 10_000 });
   });
 
   test('quick job drawer opens and closes', async ({ page }) => {
