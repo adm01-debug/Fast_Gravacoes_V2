@@ -114,7 +114,7 @@ const NotFound = () => {
               Página não encontrada
             </h1>
             <p className="text-muted-foreground">
-              A página <span className="font-mono text-sm bg-muted px-1.5 py-0.5 rounded">{location.pathname}</span> não existe.
+              A página <span className="font-mono text-sm text-foreground bg-muted px-1.5 py-0.5 rounded">{location.pathname}</span> não existe.
             </p>
           </div>
 

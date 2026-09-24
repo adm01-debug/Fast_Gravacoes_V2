@@ -1,29 +1,15 @@
-import { test, expect, Page } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { test, expect } from '@playwright/test';
+import { login } from './helpers/e2e-setup';
 
 /**
  * E2E — Manuseio e Embalagem (/packaging)
  *
  * Cobre:
  *  1. Bloqueio de acesso anônimo (redirect para /auth)
- *  2. Abertura via sidebar com usuário autenticado (operator+coordinator)
+ *  2. Abertura via sidebar com usuário autenticado (coordinator)
  *  3. Destaque visual do item de sidebar quando em /packaging
  *  4. Deep link autenticado direto para /packaging
- *
- * NOTA: o usuário E2E possui operator E coordinator. Os emails hardcoded
- * anteriores (coordenador@/gerente@/operador@fastgravacoes.com.br) não
- * existiam no auth do projeto canônico — todos os testes falhavam.
  */
-
-const PASSWORD = E2E_PASSWORD;
-
-async function login(page: Page, email?: string) {
-  await page.goto('/auth');
-  await page.fill('#login-email', email ?? E2E_EMAIL);
-  await page.fill('#login-password', PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL((url) => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
-}
 
 test.describe('Packaging — Acesso anônimo', () => {
   test('redireciona para /auth ao acessar /packaging sem sessão', async ({ page }) => {
@@ -31,36 +17,49 @@ test.describe('Packaging — Acesso anônimo', () => {
     await expect(page).toHaveURL(/\/auth/, { timeout: 10_000 });
   });
 
-  test('redireciona para /auth ao acessar sub-rota /packaging/xyz sem sessão', async ({ page }) => {
+  test('sub-rota inexistente de /packaging sem sessão não expõe conteúdo protegido', async ({ page }) => {
+    // /packaging/task-123 não é uma rota registrada (só /packaging e
+    // /packaging/kiosk existem) — cai no catch-all público (NotFound),
+    // que não renderiza nenhum dado de embalagem. Aceita 404 OU redirect
+    // para /auth (caso essa sub-rota passe a existir e vire protegida).
     await page.goto('/packaging/task-123');
-    await expect(page).toHaveURL(/\/auth/, { timeout: 10_000 });
+    // isVisible({timeout}) não faz polling de verdade — a rota catch-all é
+    // lazy (Suspense), então a checagem podia rodar antes do NotFound sair
+    // do fallback. expect.poll refaz a checagem até o timeout.
+    await expect.poll(async () => {
+      const is404 = await page.getByText(/p[áa]gina n[ãa]o encontrada|not found|404/i).first().isVisible();
+      const isAuth = page.url().includes('/auth');
+      return is404 || isAuth;
+    }, { timeout: 10_000 }).toBe(true);
   });
 });
 
 test.describe('Packaging — Abertura via sidebar', () => {
-  // O usuário E2E tem operator+coordinator; o link /packaging deve estar
-  // visível na sidebar para ambos os papéis.
+  // O link /packaging deve estar visível na sidebar para coordinator.
   test('usuário autenticado abre /packaging clicando no item da sidebar', async ({ page }) => {
     await login(page);
 
     // Em mobile, abre o menu antes
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     if (await menuBtn.isVisible().catch(() => false)) {
       await menuBtn.click();
     }
 
-    // Garante que o grupo está expandido se o item ainda não estiver visível
+    // groupToggle.isVisible() sem timeout não faz polling de verdade — corria
+    // risco de checar antes da sidebar terminar de renderizar os itens do
+    // papel logo após o login. expect.poll refaz a checagem (link OU toggle
+    // do grupo) até um dos dois aparecer, só então decide se precisa expandir.
     const groupToggle = page.getByRole('button', { name: /Operações/i }).first();
-    if (await groupToggle.isVisible().catch(() => false)) {
-      const linkVisible = await page
-        .locator('a[href="/packaging"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      if (!linkVisible) await groupToggle.click();
-    }
-
     const link = page.locator('a[href="/packaging"]').first();
+    let linkVisible = false;
+    await expect.poll(async () => {
+      linkVisible = await link.isVisible();
+      return linkVisible || (await groupToggle.isVisible().catch(() => false));
+    }, { timeout: 10_000 }).toBe(true);
+
+    if (!linkVisible) {
+      await groupToggle.click();
+    }
     await expect(link).toBeVisible({ timeout: 5_000 });
     await link.click();
 
@@ -75,7 +74,7 @@ test.describe('Packaging — Destaque visual da sidebar', () => {
     await page.goto('/packaging');
     await expect(page).toHaveURL(/\/packaging/);
 
-    const menuBtn = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const menuBtn = page.getByRole('button', { name: 'Abrir menu de navegação' });
     if (await menuBtn.isVisible().catch(() => false)) await menuBtn.click();
 
     const link = page.locator('a[href="/packaging"]').first();
