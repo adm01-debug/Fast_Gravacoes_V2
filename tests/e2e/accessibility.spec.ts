@@ -1,11 +1,16 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { login } from './helpers/e2e-setup';
 
 const ROUTES = ['/', '/operator', '/kpi', '/oee'];
 
 test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
   for (const route of ROUTES) {
     test(`rota ${route} não deve apresentar violações críticas`, async ({ page }) => {
+      // Todas as 4 rotas são protegidas (ProtectedRoute) — sem login elas
+      // redirecionam para /auth e o axe varre a tela de login, não a rota
+      // real (e o CommandPaletteAdvanced abaixo também é gated por auth).
+      await login(page);
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       // Aguarda hidratação/estado inicial
       await page.waitForTimeout(1500);
@@ -37,6 +42,10 @@ test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
 
 test.describe('CommandPaletteAdvanced - teclado e foco', () => {
   test('abre com Cmd+K, navega com setas e fecha com Escape', async ({ page }, testInfo) => {
+    // CommandPaletteAdvanced só é montado quando autenticado
+    // (enableCommandPalette={isAuthenticated} em AppProviders) — sem login
+    // Cmd+K nunca abre nada e o teste trava esperando o dialog.
+    await login(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
@@ -66,6 +75,7 @@ test.describe('CommandPaletteAdvanced - teclado e foco', () => {
   });
 
   test('reabre corretamente e não duplica listeners (Cmd+K duas vezes)', async ({ page }) => {
+    await login(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
