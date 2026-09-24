@@ -1,23 +1,34 @@
 import { test, expect } from '@playwright/test';
-import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
+import { login } from './helpers/e2e-setup';
+
+// /inventory é restrita a coordinator/manager — a conta E2E tem coordinator
+// ativo (com MFA verificado, ver helpers/e2e-setup.ts login()). O poll abaixo
+// ainda aceita "Acesso restrito" como resultado observável (evita timeout
+// confuso se o papel não carregar a tempo), mas o assert em cada teste
+// EXIGE hasContent=true — uma negação real agora falha o teste em vez de
+// mascarar uma regressão de RBAC como "passou".
+async function inventoryLoadedOrDenied(page: import('@playwright/test').Page): Promise<boolean> {
+  let hasContent = false;
+  let isDenied = false;
+  await expect.poll(async () => {
+    hasContent = await page.getByText('Gestão de Materiais').isVisible();
+    isDenied = await page.getByText(/acesso negado|sem permiss[ãa]o|acesso restrito/i).first().isVisible();
+    return hasContent || isDenied;
+  }, { timeout: 15_000 }).toBe(true);
+  return hasContent;
+}
 
 test.describe('Estabilidade Visual do Inventário', () => {
   test.beforeEach(async ({ page }) => {
-    // Login automático
-    await page.goto('/auth');
-    await page.fill('input[type="email"]', E2E_EMAIL);
-    await page.fill('input[type="password"]', E2E_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/');
+    await login(page);
   });
 
   test('deve exibir skeletons durante a busca no inventário', async ({ page }) => {
     // Navega para a página de inventário
     await page.goto('/inventory');
-    
-    // Espera a página carregar
-    await page.waitForSelector('h1:has-text("Gestão de Materiais")');
-    
+
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
+
     // Localiza o campo de busca
     const searchInput = page.locator('input[placeholder*="Buscar material"]');
     await expect(searchInput).toBeVisible();
@@ -56,7 +67,9 @@ test.describe('Estabilidade Visual do Inventário', () => {
 
   test('layout deve permanecer estável entre estados de carregamento', async ({ page }) => {
     await page.goto('/inventory');
-    
+
+    expect(await inventoryLoadedOrDenied(page), 'papel deveria ter acesso a /inventory (coordinator ativo)').toBe(true);
+
     // Captura o container da grid
     const gridContainer = page.locator('.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
     
