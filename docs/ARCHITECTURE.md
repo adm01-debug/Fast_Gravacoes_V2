@@ -218,3 +218,26 @@ mesma tabela ampliam acesso em vez de restringir (ver a nota sobre policy morta 
 Edge Functions que precisam ignorar RLS (ex.: `external-db-bridge`, crons) usam a `service_role key` — ela
 não passa pelas policies acima. Nunca expor essa chave ao client; todo uso fica atrás de Edge Function com
 autenticação própria (ver `supabase/functions/_shared/auth.ts` e `supabase/functions/README.md`).
+
+---
+
+## 7. Gate de autenticação no frontend: `user?.id`, não `isLoading`
+
+`useAuth()` (`src/features/auth`) expõe `user` e `isLoading` como sinais **diferentes**:
+`isLoading` só vira `false` depois do round-trip assíncrono de `fetchUserData()` em `AuthProvider`
+(busca `profile` + `user_roles`, até `USER_DATA_TIMEOUT_MS` = 6000ms) — `user` já fica disponível
+bem antes disso, assim que `onAuthStateChange(INITIAL_SESSION)` restaura a sessão.
+
+Um componente/provider que só precisa saber **se existe um usuário logado** (ex.: decidir se monta um
+listener, habilita uma feature, chama um hook) deve gatear em `Boolean(user?.id)`. Gatear em
+`!isLoading` também (`Boolean(user?.id) && !isLoading`) só é necessário quando o componente **consome
+`role`/`profile`** — caso contrário, atrasa a montagem em segundos após um hard refresh sem necessidade,
+e pode causar falha de teste E2E (timeout esperando algo que só apareceria depois do fetch de perfil).
+
+Corrigido duas vezes nesta base (mesmo padrão, achado em auditorias separadas):
+- `ProductDesignFeatureProvider` (`src/providers/AppProviders.tsx`) — gate do `CommandPaletteAdvanced`.
+- `Observers()` (`src/providers/AppProviders.tsx`) — gate dos watchers `InAppNotificationWatcher`,
+  `SmartAlertsWatcher`, `BIAlertsWatcher`.
+
+Antes de adicionar um novo provider/observer gateado em auth, perguntar: "isso lê `role` ou `profile`?"
+Se não, `Boolean(user?.id)` basta.
