@@ -8,10 +8,17 @@ test.describe('Offline Syncing and Persistence', () => {
     await context.setOffline(true);
     
     // 2. Verify offline banner/toast appears
-    const offlineToast = page.locator('text=Sem conexão');
-    // Note: Toasts might disappear, so we check the persistent banner if it exists
-    const offlineBanner = page.locator('text=Você está offline');
-    await expect(offlineBanner.or(offlineToast)).toBeVisible();
+    // Toast ("Sem conexão") e banner persistente ("Você está offline") podem
+    // estar visíveis ao mesmo tempo — .or() une os dois conjuntos de elementos
+    // e violava o strict mode do Playwright (2 elementos visíveis == falha).
+    // Checagem OU real: cada lado avaliado isoladamente via expect.poll.
+    let hasToast = false;
+    let hasBanner = false;
+    await expect.poll(async () => {
+      hasToast = await page.locator('text=Sem conexão').isVisible();
+      hasBanner = await page.locator('text=Você está offline').isVisible();
+      return hasToast || hasBanner;
+    }, { timeout: 10_000 }).toBe(true);
     
     // 3. Mock a generic action that adds to pendingActions
     // Since we're in a real browser context, we can check localStorage

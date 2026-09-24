@@ -56,7 +56,7 @@ export function HyperInsights() {
             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Inteligência FAST 10/10</p>
           </div>
         </div>
-        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 animate-pulse">Real-time Analysis</Badge>
+        <Badge variant="outline" className="bg-muted/30 text-muted-foreground border-muted-foreground/20">Demonstração — dados ilustrativos</Badge>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

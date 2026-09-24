@@ -63,20 +63,46 @@ serve(async (req) => {
 
     if (queueError) throw queueError
 
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+
     for (const item of queueItems || []) {
       console.log(`Processando item da fila: ${item.id} (${item.channel})`)
-      
-      // Simular envio
+
       try {
-        // Aqui chamaria o provedor de Email ou WhatsApp
+        if (item.channel === 'email' && resendApiKey) {
+          // Envio real via Resend — mesmo padrão já usado e validado em send-tpm-email.
+          const subject = item.payload?.subject ?? `Alerta TPM (${item.severity})`
+          const html = item.payload?.html ?? item.payload?.message ?? 'Notificação de manutenção TPM.'
+          const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            signal: AbortSignal.timeout(10_000),
+            headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: '52 STÚDIOS DE GRAVAÇÃO TPM <notifications@resend.dev>',
+              to: [item.recipient],
+              subject,
+              html,
+            }),
+          })
+          if (!response.ok) throw new Error(`Falha ao enviar e-mail: ${await response.text()}`)
+        } else {
+          // Sem provedor real de envio para este canal (ex.: whatsapp/push sem
+          // integração implementada, ou email sem RESEND_API_KEY configurada) —
+          // nunca marcar como enviado sem ter tentado enviar de verdade.
+          throw new Error(`Canal '${item.channel}' sem provedor de envio configurado`)
+        }
+
         await supabase
           .from('tpm_notification_queue')
-          .update({ 
-            status: 'sent', 
-            processed_at: new Date().toISOString() 
+          .update({
+            status: 'sent',
+            processed_at: new Date().toISOString()
           })
           .eq('id', item.id)
-          
+
         // Registrar no log
         await supabase.from('tpm_notification_logs').insert({
           machine_id: item.machine_id,
