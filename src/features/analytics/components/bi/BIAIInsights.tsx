@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
 import { useOEEAlerts } from '@/features/production';
+import { useABCCosts } from '@/hooks/useABCCosts';
 
 interface BIAIInsightsProps {
   biMetrics: {
@@ -32,6 +33,7 @@ interface BIAIInsightsProps {
 
 export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
   useOEEAlerts(); // Activate real-time OEE threshold monitoring while viewing BI
+  const { averageUnitCost } = useABCCosts();
   const [expandedInsight, setExpandedInsight] = useState<number | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResult, setSimulationResult] = useState<{ oee: number; revenue: number; risk: string } | null>(null);
@@ -82,7 +84,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
     }
 
     if (biMetrics.periodLossRate > 4) {
-      const financialImpact = biMetrics.periodLostPieces * 18.5;
+      const financialImpact = biMetrics.periodLostPieces * averageUnitCost;
       list.push({
         title: "Vulnerabilidade de Qualidade",
         description: `Impacto direto de R$ ${financialImpact.toLocaleString()} em perdas de material este mês.`,
@@ -109,7 +111,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
     }
 
     return list;
-  }, [biMetrics, oeeData]);
+  }, [biMetrics, oeeData, averageUnitCost]);
 
   return (
     <Card className="bg-black/60 border-primary/20 backdrop-blur-2xl overflow-hidden relative group h-full shadow-2xl">
