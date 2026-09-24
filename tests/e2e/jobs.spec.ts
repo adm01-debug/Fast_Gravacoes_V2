@@ -19,8 +19,10 @@ test.describe('Jobs — CRUD and state transitions', () => {
     await page.goto('/calendar/daily');
     // O h1 do Daily é o título genérico do app ("FAST GRAVAÇÕES..."), não
     // "Calendário" (diferente de Weekly/Monthly) — o subtítulo é que contém
-    // "agenda". Checa qualquer texto na página, não só h1/h2.
-    await expect(page.getByText(/calend|agenda|cronograma/i).first()).toBeVisible({ timeout: 10_000 });
+    // "agenda". Escopado a <main>: a sidebar sempre visível tem o link
+    // "Calendário Diário", que faria o match passar mesmo sem a página real
+    // renderizar (DailyCalendar também usa MainLayout).
+    await expect(page.locator('main').getByText(/calend|agenda|cronograma/i).first()).toBeVisible({ timeout: 10_000 });
   });
 
   test('quick job drawer opens and closes', async ({ page }) => {

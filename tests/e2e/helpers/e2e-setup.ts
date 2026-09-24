@@ -26,8 +26,14 @@ export async function expectContentOrDenied(
   page: Page,
   contentPattern: RegExp,
 ): Promise<boolean> {
-  const content = page.getByText(contentPattern).first();
-  const denied = page.getByText(/acesso negado|sem permiss[ãa]o|forbidden/i).first();
+  // Escopado a <main> (id="main-content-scroll" em MainLayout.tsx) — a
+  // sidebar sempre visível traz os mesmos rótulos das rotas (ex.: "Kanban",
+  // "Operadores") e faria o match passar mesmo com a página real quebrada.
+  const content = page.locator('main').getByText(contentPattern).first();
+  // "Acesso restrito" é o toast real de ProtectedRoute quando o papel não
+  // tem allowedRoles — ele redireciona (não mostra "acesso negado" na
+  // própria rota), então o toast é o único sinal de negação nesse caso.
+  const denied = page.getByText(/acesso negado|sem permiss[ãa]o|forbidden|acesso restrito/i).first();
   await expect(content.or(denied).first()).toBeVisible({ timeout: 15000 });
   return await content.isVisible();
 }

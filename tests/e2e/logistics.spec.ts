@@ -36,9 +36,14 @@ test.describe('Logistics Flow', () => {
     await page.goto('/public-tracking');
     // .or() une os dois conjuntos de elementos — como a página normalmente
     // tem heading E input ao mesmo tempo, isso violava o strict mode.
-    // Checagem OU real: cada lado avaliado isoladamente.
-    const hasHeading = await page.getByText(/Rastreamento|Tracking/i).first().isVisible({ timeout: 10_000 }).catch(() => false);
-    const hasInput = await page.locator('input').first().isVisible({ timeout: 10_000 }).catch(() => false);
-    expect(hasHeading || hasInput).toBe(true);
+    // Checagem OU real, cada lado avaliado isoladamente — mas isVisible()
+    // não espera de verdade (o parâmetro timeout não faz polling), então a
+    // rota lazy (PublicPage/Suspense) podia não ter montado ainda no
+    // instante da checagem. expect.poll refaz a checagem até o timeout.
+    await expect.poll(async () => {
+      const hasHeading = await page.getByText(/Rastreamento|Tracking/i).first().isVisible();
+      const hasInput = await page.locator('input').first().isVisible();
+      return hasHeading || hasInput;
+    }, { timeout: 10_000 }).toBe(true);
   });
 });

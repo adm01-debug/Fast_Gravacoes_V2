@@ -26,7 +26,9 @@ test.describe('Production and Jobs Flow', () => {
     const hasForm = await page.locator('input[name="order_number"]').isVisible({ timeout: 10_000 }).catch(() => false);
     if (!hasForm) {
       // Papel sem permissão para criar job — comportamento válido, não é falha.
-      await expect(page.getByText(/acesso negado|sem permiss[ãa]o/i).first()).toBeVisible();
+      // ProtectedRoute redireciona e mostra o toast "Acesso restrito" (não
+      // "acesso negado" na própria rota) quando o papel não está em allowedRoles.
+      await expect(page.getByText(/acesso negado|sem permiss[ãa]o|acesso restrito/i).first()).toBeVisible();
       return;
     }
 
