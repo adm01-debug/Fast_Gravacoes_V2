@@ -7,6 +7,61 @@
  */
 
 import { expect, type Page } from '@playwright/test';
+import { E2E_EMAIL, E2E_PASSWORD, E2E_TOTP_SECRET } from './credentials';
+import { generateTotpCode } from './totp';
+
+/**
+ * Login padrão da suíte E2E — preenche e-mail/senha e, se a conta tiver MFA
+ * ativo (coordinator exige — ver MFALoginVerification.tsx), responde o
+ * desafio TOTP automaticamente a partir de E2E_TOTP_SECRET antes de
+ * considerar o login concluído.
+ */
+export async function login(page: Page): Promise<void> {
+  await page.goto('/auth');
+  await page.fill('#login-email', E2E_EMAIL);
+  await page.fill('#login-password', E2E_PASSWORD);
+  await page.click('button[type="submit"]');
+
+  // AuthPage.tsx só decide entre navegar direto ou mostrar a tela de MFA
+  // depois de um efeito assíncrono (getAuthenticatorAssuranceLevel +
+  // listFactors) que roda após o signInWithPassword resolver — um
+  // isVisible({timeout}) de janela fixa corre risco de checar antes desse
+  // efeito terminar em CI mais lento. expect.poll refaz a checagem dos dois
+  // sinais (MFA apareceu OU já navegou) até um dos dois acontecer.
+  const mfaInput = page.locator('#mfa-code');
+  let isMfaChallenge = false;
+  let navigated = false;
+  await expect.poll(async () => {
+    isMfaChallenge = await mfaInput.isVisible();
+    navigated = !page.url().includes('/auth');
+    return isMfaChallenge || navigated;
+  }, { timeout: 15_000 }).toBe(true);
+
+  if (isMfaChallenge) {
+    if (!E2E_TOTP_SECRET) {
+      throw new Error('Conta E2E exige MFA mas E2E_TOTP_SECRET não está definido.');
+    }
+    // MFALoginVerification.tsx engole erro de verify() num toast e não navega —
+    // se challenge()+verify() (2 round-trips sequenciais) atravessar a virada da
+    // janela de 30s do TOTP (mais provável sob --workers=2 com latência de CI), o
+    // código gerado fica inválido e a navegação nunca ocorre. Retry com código
+    // recém-gerado em vez de só esperar mais é a correção da causa raiz.
+    let mfaOk = false;
+    for (let attempt = 1; attempt <= 3 && !mfaOk; attempt++) {
+      await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
+      await page.click('button[type="submit"]');
+      mfaOk = await page
+        .waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 10_000 })
+        .then(() => true)
+        .catch(() => false);
+    }
+    if (!mfaOk) {
+      throw new Error('Falha ao completar desafio MFA após 3 tentativas de código TOTP.');
+    }
+  } else if (!navigated) {
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+  }
+}
 
 /**
  * Fecha qualquer overlay/modal que possa interceptar cliques.
@@ -26,8 +81,14 @@ export async function expectContentOrDenied(
   page: Page,
   contentPattern: RegExp,
 ): Promise<boolean> {
-  const content = page.getByText(contentPattern).first();
-  const denied = page.getByText(/acesso negado|sem permiss[ãa]o|forbidden/i).first();
+  // Escopado a <main> (id="main-content-scroll" em MainLayout.tsx) — a
+  // sidebar sempre visível traz os mesmos rótulos das rotas (ex.: "Kanban",
+  // "Operadores") e faria o match passar mesmo com a página real quebrada.
+  const content = page.locator('main').getByText(contentPattern).first();
+  // "Acesso restrito" é o toast real de ProtectedRoute quando o papel não
+  // tem allowedRoles — ele redireciona (não mostra "acesso negado" na
+  // própria rota), então o toast é o único sinal de negação nesse caso.
+  const denied = page.getByText(/acesso negado|sem permiss[ãa]o|forbidden|acesso restrito/i).first();
   await expect(content.or(denied).first()).toBeVisible({ timeout: 15000 });
   return await content.isVisible();
 }

@@ -232,8 +232,8 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
           <div className="mt-4 pt-4 border-t">
             <p className="text-xs text-muted-foreground text-center">
-              Pressione <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded border mx-1">Cmd</kbd>
-              <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded border">K</kbd> para abrir a busca rápida
+              Pressione <kbd className="px-1.5 py-0.5 text-xs text-foreground bg-muted rounded border mx-1">Cmd</kbd>
+              <kbd className="px-1.5 py-0.5 text-xs text-foreground bg-muted rounded border">K</kbd> para abrir a busca rápida
             </p>
           </div>
         </DialogContent>
