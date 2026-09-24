@@ -1,6 +1,17 @@
 import { test, expect } from '@playwright/test';
+import { E2E_EMAIL, E2E_PASSWORD } from './helpers/credentials';
 
 test.describe('Simulation and Stress Testing', () => {
+  test.beforeEach(async ({ page }) => {
+    // /simulation é rota protegida (allowedRoles coordinator/manager) — sem
+    // login ela redireciona para /auth antes de qualquer asserção rodar.
+    await page.goto('/auth');
+    await page.fill('input[type="email"]', E2E_EMAIL);
+    await page.fill('input[type="password"]', E2E_PASSWORD);
+    await page.click('button[type="submit"]');
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+  });
+
   test('should run mass simulation and display results', async ({ page }) => {
     await page.goto('/simulation');
     

@@ -33,8 +33,10 @@ test.describe('Fluxos de Inventário e Inteligência', () => {
   test('deve abrir o modal de registro de movimentação', async ({ page }) => {
     await page.goto('/inventory');
     
-    // Clica no botão de Entrada de um item
-    await page.click('button:has-text("Entrada")');
+    // Clica no botão de Entrada do primeiro item — há 2+ itens seedados
+    // (Tinta Branca Vinílica, Solvente Retardador), cada um com seu próprio
+    // botão "Entrada"; sem .first() o seletor é ambíguo (strict mode).
+    await page.locator('button:has-text("Entrada")').first().click();
     
     // Verifica se o modal abriu
     await expect(page.locator('h2:has-text("Registrar Movimentação")')).toBeVisible();
