@@ -23,12 +23,23 @@ test.describe('Production and Jobs Flow', () => {
   test('should create a new job', async ({ page }) => {
     await page.goto('/new-job');
 
-    const hasForm = await page.locator('input[name="order_number"]').isVisible({ timeout: 10_000 }).catch(() => false);
+    // isVisible({timeout}) não faz polling de verdade — /new-job é lazy
+    // (Suspense), então checar hasForm no instante errado dava falso negativo
+    // mesmo para papel autorizado. expect.poll refaz os dois lados até um
+    // aparecer (form pronto OU negação de acesso).
+    let hasForm = false;
+    let isDenied = false;
+    await expect.poll(async () => {
+      hasForm = await page.locator('input[name="order_number"]').isVisible();
+      isDenied = await page.getByText(/acesso negado|sem permiss[ãa]o|acesso restrito/i).first().isVisible();
+      return hasForm || isDenied;
+    }, { timeout: 10_000 }).toBe(true);
+
     if (!hasForm) {
       // Papel sem permissão para criar job — comportamento válido, não é falha.
       // ProtectedRoute redireciona e mostra o toast "Acesso restrito" (não
       // "acesso negado" na própria rota) quando o papel não está em allowedRoles.
-      await expect(page.getByText(/acesso negado|sem permiss[ãa]o|acesso restrito/i).first()).toBeVisible();
+      expect(isDenied).toBe(true);
       return;
     }
 
