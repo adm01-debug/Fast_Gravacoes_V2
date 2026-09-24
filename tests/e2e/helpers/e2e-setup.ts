@@ -22,17 +22,31 @@ export async function login(page: Page): Promise<void> {
   await page.fill('#login-password', E2E_PASSWORD);
   await page.click('button[type="submit"]');
 
+  // AuthPage.tsx só decide entre navegar direto ou mostrar a tela de MFA
+  // depois de um efeito assíncrono (getAuthenticatorAssuranceLevel +
+  // listFactors) que roda após o signInWithPassword resolver — um
+  // isVisible({timeout}) de janela fixa corre risco de checar antes desse
+  // efeito terminar em CI mais lento. expect.poll refaz a checagem dos dois
+  // sinais (MFA apareceu OU já navegou) até um dos dois acontecer.
   const mfaInput = page.locator('#mfa-code');
-  const isMfaChallenge = await mfaInput.isVisible({ timeout: 5_000 }).catch(() => false);
+  let isMfaChallenge = false;
+  let navigated = false;
+  await expect.poll(async () => {
+    isMfaChallenge = await mfaInput.isVisible();
+    navigated = !page.url().includes('/auth');
+    return isMfaChallenge || navigated;
+  }, { timeout: 15_000 }).toBe(true);
+
   if (isMfaChallenge) {
     if (!E2E_TOTP_SECRET) {
       throw new Error('Conta E2E exige MFA mas E2E_TOTP_SECRET não está definido.');
     }
     await mfaInput.fill(generateTotpCode(E2E_TOTP_SECRET));
     await page.click('button[type="submit"]');
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
+  } else if (!navigated) {
+    await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
   }
-
-  await page.waitForURL(url => !url.pathname.startsWith('/auth'), { timeout: 15_000 });
 }
 
 /**
