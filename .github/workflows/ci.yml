@@ -277,6 +277,12 @@ jobs:
           # silently shipping createClient(url, undefined) without this.
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_ALERT_WEBHOOK_URL: ${{ secrets.VITE_ALERT_WEBHOOK_URL }}
+          # This dist/ artifact is CI-only (consumed by the E2E job below,
+          # never deployed — Vercel's GitHub-first flow builds separately).
+          # Safe to turn on the test-only window.__E2E_ADD_PENDING_ACTION__
+          # hook (OfflineSyncContext.tsx) only here; real prod builds never
+          # set this var, so the hook is compiled out of what ships.
+          VITE_E2E_TEST_HOOKS: 'true'
         run: npm run build
 
       - name: Generate bundle report & enforce budgets

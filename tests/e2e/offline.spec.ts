@@ -20,14 +20,19 @@ test.describe('Offline Syncing and Persistence', () => {
       return hasToast || hasBanner;
     }, { timeout: 10_000 }).toBe(true);
     
-    // 3. Mock a generic action that adds to pendingActions
-    // Since we're in a real browser context, we can check localStorage
+    // 3. Queue a pending action through the real addPendingAction path
+    // (localStorage + React state), via the test-only hook OfflineSyncContext
+    // exposes when built with VITE_E2E_TEST_HOOKS=true. A previous version of
+    // this test dispatched a CustomEvent nothing in the app listened for —
+    // dead code, the queue never actually gained an entry.
     await page.evaluate(() => {
-      // Manual trigger for testing if UI buttons are not reachable
-      const event = new CustomEvent('offline-action-test', { 
-        detail: { type: 'create', entity: 'jobs', data: { title: 'Test' } } 
-      });
-      window.dispatchEvent(event);
+      const addPendingAction = (window as unknown as {
+        __E2E_ADD_PENDING_ACTION__?: (type: string, payload: Record<string, unknown>) => string;
+      }).__E2E_ADD_PENDING_ACTION__;
+      if (!addPendingAction) {
+        throw new Error('__E2E_ADD_PENDING_ACTION__ ausente — build sem VITE_E2E_TEST_HOOKS=true?');
+      }
+      addPendingAction('update_job', { jobId: 'e2e-offline-test', updates: { status: 'production' } });
     });
 
     // 4. Go back online
