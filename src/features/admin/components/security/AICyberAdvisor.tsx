@@ -39,9 +39,9 @@ export function AICyberAdvisor() {
             <BrainCircuit className="h-5 w-5 text-blue-500 animate-pulse" />
             AI Cyber Advisor
           </CardTitle>
-          <Badge variant="outline" className="text-[10px] uppercase font-bold border-blue-500/30 text-blue-500">Active Defense</Badge>
+          <Badge variant="outline" className="text-[10px] uppercase font-bold border-muted-foreground/30 text-muted-foreground">Demonstração</Badge>
         </div>
-        <CardDescription>Monitoramento proativo e inteligência de ameaças</CardDescription>
+        <CardDescription>Dados ilustrativos — exemplo de como a inteligência de ameaças apareceria aqui</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 pt-4">
         {insights.map((insight, idx) => (
@@ -67,7 +67,7 @@ export function AICyberAdvisor() {
           <div className="p-3 rounded-xl bg-gradient-to-r from-blue-500/20 via-blue-500/10 to-transparent flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-500" />
-              <span className="text-xs font-bold uppercase tracking-tighter">Status: Defesa Total Ativa</span>
+              <span className="text-xs font-bold uppercase tracking-tighter">Status: Demonstração (dados simulados)</span>
             </div>
           </div>
         </div>

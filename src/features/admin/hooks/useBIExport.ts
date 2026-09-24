@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { subDays, format } from 'date-fns';
 import { exportProductionReport, exportLossesReport, exportDelaysReport } from '@/lib/pdfExport';
+import { useABCCosts } from '@/hooks/useABCCosts';
 
 /**
  * Estrutura mínima assumida para linhas de job em exportações.
@@ -27,6 +28,7 @@ const asExtra = (v: unknown): ExtraExportData => (v && typeof v === 'object' ? (
 
 export function useBIExport(biMetrics: ExportData) {
   const [isExporting, setIsExporting] = useState(false);
+  const { averageUnitCost } = useABCCosts();
 
   const handleExport = async (formatType: 'csv' | 'pdf', type: string, extraDataRaw?: unknown) => {
     const extraData = asExtra(extraDataRaw);
@@ -95,7 +97,7 @@ export function useBIExport(biMetrics: ExportData) {
 
         if (type.includes('Taxa_Perda') || type.includes('Perdas')) {
           const losses = (extraData?.jobsWithLosses as ExportRow[] | undefined) || listAll.filter((j) => asNumber(j.lost_pieces) > 0);
-          await exportLossesReport(losses as never, dateRange);
+          await exportLossesReport(losses as never, dateRange, undefined, averageUnitCost);
         } else if (type.includes('Atrasos')) {
           await exportDelaysReport((extraData?.delayedJobsList || []) as never, dateRange);
         } else {
