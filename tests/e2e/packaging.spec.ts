@@ -37,9 +37,14 @@ test.describe('Packaging — Acesso anônimo', () => {
     // que não renderiza nenhum dado de embalagem. Aceita 404 OU redirect
     // para /auth (caso essa sub-rota passe a existir e vire protegida).
     await page.goto('/packaging/task-123');
-    const is404 = await page.getByText(/p[áa]gina n[ãa]o encontrada|not found|404/i).first().isVisible({ timeout: 10_000 }).catch(() => false);
-    const isAuth = page.url().includes('/auth');
-    expect(is404 || isAuth).toBe(true);
+    // isVisible({timeout}) não faz polling de verdade — a rota catch-all é
+    // lazy (Suspense), então a checagem podia rodar antes do NotFound sair
+    // do fallback. expect.poll refaz a checagem até o timeout.
+    await expect.poll(async () => {
+      const is404 = await page.getByText(/p[áa]gina n[ãa]o encontrada|not found|404/i).first().isVisible();
+      const isAuth = page.url().includes('/auth');
+      return is404 || isAuth;
+    }, { timeout: 10_000 }).toBe(true);
   });
 });
 

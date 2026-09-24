@@ -28,8 +28,10 @@ test.describe('Authentication and Authorization Flow', () => {
 
     // 4. Verify sidebar presence and layout
     await expect(page.locator('aside')).toBeVisible();
-    // #main-navigation é o nav do sidebar — evita ambiguidade com o skip-link "Links de atalho"
-    await expect(page.locator('#main-navigation')).toBeVisible();
+    // #main-navigation está no próprio <aside> (skip-link target), não no
+    // <nav> interno — checar só #main-navigation duplica o assert acima e
+    // não garante que a lista de links realmente renderizou dentro dele.
+    await expect(page.locator('#main-navigation nav')).toBeVisible();
   });
 
   test('Protected Route Enforcement', async ({ page }) => {

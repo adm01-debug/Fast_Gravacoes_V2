@@ -5,6 +5,12 @@ test.describe('Simulation and Stress Testing', () => {
   test.beforeEach(async ({ page }) => {
     // /simulation é rota protegida (allowedRoles coordinator/manager) — sem
     // login ela redireciona para /auth antes de qualquer asserção rodar.
+    // A conta E2E tem as duas roles (operator + coordinator) — antes,
+    // AuthProvider.tsx escolhia uma linha de user_roles com .limit(1) sem
+    // ORDER BY (ordem não garantida pelo Postgres), então o papel efetivo
+    // podia sair 'operator' e negar acesso de forma não-determinística.
+    // Corrigido em AuthProvider.tsx para sempre escolher o papel de maior
+    // prioridade (admin > manager > coordinator > operator).
     await page.goto('/auth');
     await page.fill('input[type="email"]', E2E_EMAIL);
     await page.fill('input[type="password"]', E2E_PASSWORD);
