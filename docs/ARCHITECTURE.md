@@ -184,3 +184,37 @@ const { data, error } = await supabase.functions.invoke('external-db-bridge', {
   }
 });
 ```
+
+## 6. Modelo de Autorização (RLS)
+
+Etapa 14 do plano de 24/09 (`docs/plano-50-etapas-260924.md`) — padrão já em uso em praticamente todas as
+326 policies do banco canônico (auditado via `pg_policies` em 2026-09-24), só não estava documentado.
+
+### Helpers `SECURITY DEFINER` canônicos
+
+Toda policy nova deve reutilizar um destes em vez de reescrever a lógica de papel inline:
+
+| Função | Assinatura | Retorno | Uso típico |
+|---|---|---|---|
+| `has_role` | `has_role(_user_id uuid, _role app_role)` | `boolean` | `has_role(auth.uid(), 'coordinator')` — checa um papel específico |
+| `is_staff` | `is_staff()` | `boolean` | atalho para "tem algum papel administrativo" (coordinator/manager/admin) |
+| `has_any_active_role` | `has_any_active_role()` | `boolean` | "é um usuário autenticado com pelo menos um papel ativo" — usado como piso mínimo antes de checar dono/papel específico |
+| `get_user_role` | `get_user_role(_user_id uuid)` | `app_role` | quando a policy precisa do papel em si, não só um booleano |
+
+Padrão de composição visto no banco (ex.: `packaging_defects`, `packaging_waste` — ver
+`docs/estado/rls-inventario.md`): `has_any_active_role() AND (<dono> = auth.uid())` para "qualquer
+usuário com papel pode agir sobre o que é seu"; `has_role(auth.uid(), 'coordinator') OR has_role(..., 'manager') OR has_role(..., 'admin')` para "só staff administrativo, qualquer registro".
+
+### `RESTRICTIVE` vs. `PERMISSIVE`
+
+O padrão adotado (Etapa 7 do Bloco A, `docs/plano-mestre-10-10.md`) é `RESTRICTIVE` quando duas condições
+precisam ser satisfeitas **simultaneamente** (ex.: AAL2 *e* papel elevado em `user_roles`) — policies
+`PERMISSIVE` (o default) são combinadas por `OR`, então múltiplas policies `PERMISSIVE` de `SELECT` na
+mesma tabela ampliam acesso em vez de restringir (ver a nota sobre policy morta em
+`packaging_defects` em `docs/estado/rls-inventario.md` — um caso real desse efeito).
+
+### Service role (bypass de RLS)
+
+Edge Functions que precisam ignorar RLS (ex.: `external-db-bridge`, crons) usam a `service_role key` — ela
+não passa pelas policies acima. Nunca expor essa chave ao client; todo uso fica atrás de Edge Function com
+autenticação própria (ver `supabase/functions/_shared/auth.ts` e `supabase/functions/README.md`).
