@@ -435,12 +435,64 @@ jobs:
           retention-days: 14
 
 # ──────────────────────────────────────────────────────────────────────────
-# Gate 7: Quality gate summary — fails the PR if critical gates failed
+# Gate 7: RLS regression — pega policy de INSERT/UPDATE regredindo em
+# produção sem depender de test_rls_policies() (que só checa GRANT de
+# tabela, não a policy — ver scripts/rls-regression.mjs). Não depende do
+# build (só faz uma chamada de rede ao Supabase), roda em paralelo com e2e.
+# ──────────────────────────────────────────────────────────────────────────
+  rls-regression:
+    name: RLS Regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps --no-fund
+
+      # Mesmo raciocínio de "Check E2E prerequisites" acima: sem os secrets
+      # o script nem consegue logar, então o gate falha fechado com uma
+      # mensagem clara em vez de ficar permanentemente vermelho sem dizer
+      # por quê.
+      - name: Check RLS regression prerequisites
+        id: rls-prereq
+        env:
+          SUPABASE_URL_SECRET: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY_SECRET: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_OPERATOR_EMAIL_SECRET: ${{ secrets.E2E_OPERATOR_EMAIL }}
+          E2E_OPERATOR_PASSWORD_SECRET: ${{ secrets.E2E_OPERATOR_PASSWORD }}
+        run: |
+          if [ -n "$SUPABASE_URL_SECRET" ] && [ -n "$SUPABASE_KEY_SECRET" ] && [ -n "$E2E_OPERATOR_EMAIL_SECRET" ] && [ -n "$E2E_OPERATOR_PASSWORD_SECRET" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "## ❌ RLS Regression indisponível — secrets obrigatórios ausentes" >> "$GITHUB_STEP_SUMMARY"
+            echo "Requer \`VITE_SUPABASE_URL\`, \`VITE_SUPABASE_PUBLISHABLE_KEY\`, \`E2E_OPERATOR_EMAIL\` e \`E2E_OPERATOR_PASSWORD\`. O gate falha fechado para não sinalizar cobertura de RLS inexistente." >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=RLS regression prerequisites missing::Configure VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, E2E_OPERATOR_EMAIL and E2E_OPERATOR_PASSWORD."
+            exit 1
+          fi
+
+      - name: Run RLS regression check
+        if: steps.rls-prereq.outputs.enabled == 'true'
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_OPERATOR_EMAIL: ${{ secrets.E2E_OPERATOR_EMAIL }}
+          E2E_OPERATOR_PASSWORD: ${{ secrets.E2E_OPERATOR_PASSWORD }}
+        run: node scripts/rls-regression.mjs
+
+# ──────────────────────────────────────────────────────────────────────────
+# Gate 8: Quality gate summary — fails the PR if critical gates failed
 # ──────────────────────────────────────────────────────────────────────────
   quality-gate:
     name: Quality Gate ✅
     runs-on: ubuntu-latest
-    needs: [lint, security, unit-tests, deno-tests, simulation-tests, build, e2e]
+    needs: [lint, security, unit-tests, deno-tests, simulation-tests, build, e2e, rls-regression]
     if: always()
     steps:
       - name: Check all gates
@@ -455,6 +507,7 @@ jobs:
             ["simulation-tests"]="${{ needs.simulation-tests.result }}"
             ["build"]="${{ needs.build.result }}"
             ["e2e"]="${{ needs.e2e.result }}"
+            ["rls-regression"]="${{ needs.rls-regression.result }}"
 
           )
 
