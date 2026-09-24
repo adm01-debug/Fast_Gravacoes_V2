@@ -3,6 +3,7 @@
    incluindo a reação a onAuthStateChange — não é estado derivado de props. */
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import { useAuth } from './useAuth';
 
 interface AALState {

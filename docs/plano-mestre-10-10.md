@@ -19,7 +19,32 @@
 | 9 — Supply chain | 🟨 Parcial | Audit gate agora falha fechado se npm audit não produzir resultado válido; CI usa histórico completo para TruffleHog, inclui Deno congelado e falha se E2E não puder rodar. Ainda falta pin por SHA e tratamento das vulnerabilidades moderadas. |
 | 10 — Certificar contenção P0 | 🟨 Gates locais verdes | `tsc --noEmit`, lint sem erros, Vitest, build, Deno 40/40, actionlint e simulação de audit indisponível passaram. Secret scan remoto, E2E real e banco canônico continuam pendentes. |
 
+### Recertificação 2026-09-24
 
+Sessão executou os gates locais do zero (`npm install` — `npm ci` **continua quebrado**, mesmo
+sintoma de lockfile fora de sincronia da Etapa 9/31/32) e encontrou 2 regressões reais, ambas
+corrigidas nesta sessão (não estavam listadas no plano; entraram depois da última baseline):
+
+- `tsc --noEmit -p tsconfig.app.json` **falhava** — `src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts:65` chamava `logger.warn(...)` sem importar `logger` de `@/lib/logger`. Import adicionado.
+- `eslint .` **falhava** (parsing error) — `tests/e2e/logistics.spec.ts:40` tinha parêntese não fechado em `.or(page.locator('input').first()`. Corrigido.
+
+Gates após a correção:
+
+| Gate | Comando | Resultado |
+|---|---|---|
+| TypeScript | `tsc --noEmit -p tsconfig.app.json` | ✅ 0 erros (era 1) |
+| ESLint | `eslint . --max-warnings 9999` | ✅ 0 erros, 16 warnings (era 1 erro) |
+| Testes unitários | `vitest run` | ✅ 734/734 (50 arquivos) |
+| Build | `vite build` | ✅ sucesso (~1m15s); maior chunk ainda `lib-mermaid` 3,01 MB (Etapa 72 não executada) |
+| NPM audit | `npm audit --audit-level=high` | 🟨 2 moderadas (`react-router`/`react-router-dom`, CVE-2025-68470 bypass + injeção via `deserializeErrors`) — era 5 moderadas na baseline; fix exige `--force` (breaking, para `react-router-dom@7.18.4`), não aplicado às cegas |
+| `npm ci` | — | ❌ continua quebrado (`Missing: @esbuild/*@0.28.2 from lock file`) — Etapa 9/31/32 ainda pendente |
+| Deno check | `deno check` | `NAO_VERIFICADO` — sem binário `deno` neste ambiente; commits `4a4b449`/`f5faa22`/`ba144dd`/`4c79064`/`c503336` (10–11/09) alegam 33/33 sem erro, não reconfirmado aqui |
+
+Sem acesso ao banco canônico nem a runtime nesta sessão — Blocos B–J (schema/RLS, TPM
+transacional, Edge Functions conectadas, i18n, performance de bundle, PWA, cobertura de testes,
+CI/CD/observabilidade) **não foram reauditados**; permanecem no estado do último registro de
+cada etapa. `npm audit fix --force` (react-router v7.18.4) é candidato a próxima sessão dedicada,
+com suíte E2E validada antes do merge (breaking change documentado pelo próprio `npm audit`).
 
 ## Documento original (íntegra)
 
