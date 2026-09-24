@@ -202,7 +202,12 @@ describe('pdfExport', () => {
     };
 
     it('estimates cost at R$15.50/piece and falls back to id prefix / defaults', async () => {
-      await exportLossesReport([lossJob, { id: 'no-metadata-999', lost_pieces: 3 }], { start: new Date(), end: new Date() });
+      await exportLossesReport(
+        [lossJob, { id: 'no-metadata-999', lost_pieces: 3 }],
+        { start: new Date(), end: new Date() },
+        undefined,
+        15.5,
+      );
 
       const [, opts] = autoTableMock.mock.calls[0] as [unknown, { body: string[][] }];
       expect(opts.body[0]).toEqual(['OS-2002', 'Squeeze 500ml', '10', 'Risco na superfície', 'R$ 155.00']);
