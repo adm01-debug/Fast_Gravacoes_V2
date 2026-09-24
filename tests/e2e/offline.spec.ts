@@ -30,6 +30,21 @@ test.describe('Offline Syncing and Persistence', () => {
     // exposes when built with VITE_E2E_TEST_HOOKS=true. A previous version of
     // this test dispatched a CustomEvent nothing in the app listened for —
     // dead code, the queue never actually gained an entry.
+    //
+    // The banner check above is NOT proof this hook already exists: it's
+    // satisfied by NetworkStatusToaster.tsx, a much shallower component than
+    // OfflineSyncProvider (nested under ~20 other providers in
+    // AppProviders.tsx). React runs passive `useEffect`s bottom-up, so
+    // NetworkStatusToaster's effect fires before OfflineSyncProvider's own —
+    // this assertion was intermittently reaching page.evaluate() before that
+    // deeper effect had committed, throwing "hook ausente" even on a build
+    // that has it. Wait on the actual precondition instead of an unrelated
+    // one.
+    await page.waitForFunction(
+      () => typeof (window as unknown as { __E2E_ADD_PENDING_ACTION__?: unknown }).__E2E_ADD_PENDING_ACTION__ === 'function',
+      { timeout: 10_000 },
+    );
+
     const getPendingCount = () => page.evaluate(() => {
       const get = (window as unknown as {
         __E2E_GET_PENDING_COUNT__?: () => number;
