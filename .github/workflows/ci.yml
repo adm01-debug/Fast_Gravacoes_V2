@@ -408,9 +408,21 @@ jobs:
           # the credentials helper fails fast when they are absent.
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-        # CI: chromium only + 2 workers to fit within the time budget.
-        # mobile-chrome and full parallelism are covered by local dev runs.
-        run: npm run test:e2e -- --project=chromium --workers=2 --reporter=html --reporter=list
+          # A conta E2E tem MFA (TOTP) ativo — login() em helpers/e2e-setup.ts
+          # usa este secret pra responder o desafio quando ele aparecer.
+          E2E_TOTP_SECRET: ${{ secrets.E2E_TOTP_SECRET }}
+          # Conta dedicada só com operator (sem MFA) — usada pelo teste de
+          # negação de acesso em auth.spec.ts. Opcional: sem ela, o teste
+          # correspondente é pulado (test.skip).
+          E2E_OPERATOR_EMAIL: ${{ secrets.E2E_OPERATOR_EMAIL }}
+          E2E_OPERATOR_PASSWORD: ${{ secrets.E2E_OPERATOR_PASSWORD }}
+        # CI: chromium only, 1 worker. A conta E2E agora faz login com MFA real
+        # (password + TOTP challenge + verify = 3 round-trips ao Supabase Auth
+        # por teste) — com --workers=2 o volume de chamadas concorrentes batia
+        # no rate limit do GoTrue e o MFA falhava mesmo com código fresco
+        # (3/3 tentativas). 1 worker cabe tranquilo no timeout-minutes: 60 acima.
+        # mobile-chrome e paralelismo maior são cobertos por runs locais.
+        run: npm run test:e2e -- --project=chromium --workers=1 --reporter=html --reporter=list
         # Removed continue-on-error: true to fail the build if E2E tests fail
 
 

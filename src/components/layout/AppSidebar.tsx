@@ -94,10 +94,11 @@ export function AppSidebar() {
       {/* Mobile Top Bar */}
       {isMobile && !mobileOpen && (
         <div className="fixed top-0 left-0 right-0 h-14 z-[45] bg-sidebar/80 backdrop-blur-md border-b border-sidebar-border flex items-center px-4 justify-between md:hidden">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMobileOpen(true)}
+            aria-label="Abrir menu de navegação"
             className="text-sidebar-foreground"
           >
             <Menu className="h-5 w-5" />
@@ -196,7 +197,7 @@ export function AppSidebar() {
           </div>
         )}
 
-        <nav className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1 relative focus:outline-none" id="main-navigation">
+        <nav className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1 relative focus:outline-none">
           <StaggeredList staggerDelay={0.03}>
             {filteredNavGroups.map((group) => {
               const isGroupActive = activeGroup?.id === group.id;
