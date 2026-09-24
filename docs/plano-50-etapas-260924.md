@@ -61,21 +61,31 @@ P0 Certificação final          → etapas 49–50
 > **Objetivo:** fechar vulnerabilidades que estão abertas **agora**, em produção, hoje. Nenhuma outra etapa
 > deste plano tem prioridade sobre este bloco.
 
-### Etapa 1 — Confirmar e revogar os grants de `exec_sql` no banco canônico
+### Etapa 1 — ✅ RECLASSIFICADA (2026-09-24, mesma sessão) — `exec_sql` não tem grant público
 
-**Por quê:** `pg_proc` no banco canônico (`uoujzvpecohinketylud`) mostra `exec_sql(query text) RETURNS jsonb`,
-`SECURITY DEFINER = true`, owner `postgres`, **ainda presente** — apesar do Bloco A do plano anterior alegar
-revogação. Se `anon` ou `authenticated` tiverem `EXECUTE`, é execução arbitrária de SQL exposta via PostgREST/RPC.
+> **Correção de achado, feita antes de qualquer ação destrutiva.** A consulta inicial via `pg_proc` só
+> confirmava que a função existe — não checava o ACL. `SELECT proacl FROM pg_proc WHERE proname='exec_sql'`
+> retorna `{postgres=X/postgres,service_role=X/postgres}`: **nenhum grant a `anon` nem `authenticated`**.
+> `has_function_privilege('anon'|'authenticated', 'public.exec_sql(text)', 'EXECUTE')` = `false` para os dois.
+> **Não é alcançável via PostgREST/RPC.** Não é a vulnerabilidade crítica ativa que a primeira leitura sugeria.
+> Evidência completa em `docs/estado/exec-sql-acl.md`. Se eu tivesse seguido a Ação 3 original (`DROP FUNCTION`
+> caso "não fosse mais necessária") sem essa checagem, teria quebrado o gateway MCP do Supabase usado nesta
+> organização, que depende de `exec_sql` via `service_role` para executar SQL arbitrário — infraestrutura em
+> uso, não resíduo do incidente.
 
-**Ações:**
-1. Consultar `has_function_privilege('anon', 'public.exec_sql(text)', 'EXECUTE')` e o mesmo para `authenticated`.
-2. Se qualquer um retornar `true`: `REVOKE EXECUTE ON FUNCTION public.exec_sql(text) FROM anon, authenticated;` imediatamente.
-3. Avaliar se a função ainda é necessária por algum consumidor legítimo (ex.: MCP de administração via service-role). Se não for, `DROP FUNCTION`.
-4. Repetir a checagem em staging.
-5. Adicionar teste de regressão no CI que falha se a função reaparecer com grant público.
+**Por quê (revisado):** a função é infraestrutura intencional, restrita a `postgres`/`service_role` por
+desenho do Supabase. O risco real não é exposição pública hoje — é regressão futura (um `GRANT` por engano,
+ou vazamento da `service_role key`, que é exatamente o cenário da Etapa 2).
 
-**Checkpoint:** `has_function_privilege` para `anon`/`authenticated` retorna `false` em prod e staging (ou a função não existe mais); teste de regressão ativo.
-**Risco:** 🔴 CRÍTICO — pode já estar explorável. **Esforço:** 2 h.
+**Ações (revisadas):**
+1. ~~Revogar grants de `anon`/`authenticated`~~ — nada a revogar, nunca tiveram acesso.
+2. ~~Avaliar `DROP FUNCTION`~~ — **não dropar**: é dependência do gateway MCP em uso ativo.
+3. Repetir a checagem em staging (pendente — ref de staging precisa ser confirmado em `supabase/ENVIRONMENTS.md`).
+4. Adicionar teste de regressão que falha se `anon`/`authenticated` ganharem `EXECUTE` no futuro — **bloqueado**: exige credencial de conexão direta ao Postgres em CI, que não existe hoje (depende da Etapa 6 — GitHub Environments — como pré-requisito não mapeado no desenho original desta etapa).
+
+**Checkpoint:** ✅ evidência publicada em `docs/estado/exec-sql-acl.md`. Regressão automatizada em CI fica
+como item aberto, dependente da Etapa 6.
+**Risco:** 🟢 baixo (era 🔴 na primeira leitura, corrigido após verificação). **Esforço real:** 1 h (a checagem), não 2 h.
 
 ---
 
