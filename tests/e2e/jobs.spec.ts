@@ -15,7 +15,8 @@ test.describe('Jobs — CRUD and state transitions', () => {
   });
 
   test('calendar page loads with job blocks', async ({ page }) => {
-    await page.goto('/calendar');
+    // /calendar não é uma rota registrada — só /calendar/daily|weekly|monthly
+    await page.goto('/calendar/daily');
     await expect(page.locator('h1, h2').filter({ hasText: /calend|agenda|cronograma/i }).first()).toBeVisible({ timeout: 10_000 });
   });
 

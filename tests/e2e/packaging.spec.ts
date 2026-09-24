@@ -31,9 +31,15 @@ test.describe('Packaging — Acesso anônimo', () => {
     await expect(page).toHaveURL(/\/auth/, { timeout: 10_000 });
   });
 
-  test('redireciona para /auth ao acessar sub-rota /packaging/xyz sem sessão', async ({ page }) => {
+  test('sub-rota inexistente de /packaging sem sessão não expõe conteúdo protegido', async ({ page }) => {
+    // /packaging/task-123 não é uma rota registrada (só /packaging e
+    // /packaging/kiosk existem) — cai no catch-all público (NotFound),
+    // que não renderiza nenhum dado de embalagem. Aceita 404 OU redirect
+    // para /auth (caso essa sub-rota passe a existir e vire protegida).
     await page.goto('/packaging/task-123');
-    await expect(page).toHaveURL(/\/auth/, { timeout: 10_000 });
+    const is404 = await page.getByText(/p[áa]gina n[ãa]o encontrada|not found|404/i).first().isVisible({ timeout: 10_000 }).catch(() => false);
+    const isAuth = page.url().includes('/auth');
+    expect(is404 || isAuth).toBe(true);
   });
 });
 
