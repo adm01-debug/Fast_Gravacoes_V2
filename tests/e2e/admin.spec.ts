@@ -18,12 +18,16 @@ test.describe('Admin and Settings Flow', () => {
   });
 
   test('should navigate to Admin Telemetry', async ({ page }) => {
-    await page.goto('/admin-telemetria');
+    // Rota real é /admin/telemetria (AppRoutes.tsx) — /admin-telemetria não
+    // existe e cai no NotFound, que não é envolvido por <main> nem mostra
+    // toast de negação, então nem content nem denied nunca ficavam visíveis.
+    await page.goto('/admin/telemetria');
     await expectContentOrDenied(page, /Telemetria/i);
   });
 
   test('should navigate to Audit Trail', async ({ page }) => {
-    await page.goto('/audit-trail');
+    // Rota real é /audit (AppRoutes.tsx) — /audit-trail não existe.
+    await page.goto('/audit');
     await expectContentOrDenied(page, /Auditoria|Audit/i);
   });
 
