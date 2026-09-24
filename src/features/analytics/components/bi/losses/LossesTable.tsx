@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { Job } from "@/types/job";
+import { useABCCosts } from "@/hooks/useABCCosts";
 
 interface LossesTableProps {
   jobs: Job[];
@@ -20,6 +21,7 @@ interface LossesTableProps {
 export function LossesTable({ jobs, onExport, onShowDetails }: LossesTableProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { averageUnitCost } = useABCCosts();
 
   return (
     <Card className="bg-black/40 border-primary/20 backdrop-blur-xl group hover:border-primary/40 transition-all duration-500">
@@ -169,7 +171,7 @@ export function LossesTable({ jobs, onExport, onShowDetails }: LossesTableProps)
                             "font-mono text-sm font-bold",
                             isCritical ? "text-rose-400" : "text-white"
                           )}>
-                            R$ {((job.lost_pieces || 0) * 15.5).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            R$ {((job.lost_pieces || 0) * averageUnitCost).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </span>
                           {isCritical && (
                             <div className="flex items-center gap-1 text-[9px] text-rose-500 font-bold uppercase">

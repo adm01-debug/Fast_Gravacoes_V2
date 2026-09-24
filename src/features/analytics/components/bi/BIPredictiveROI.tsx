@@ -4,16 +4,18 @@ import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Sparkles, DollarSign, Target, ArrowRight, BrainCircuit } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BIMetrics } from '@/features/analytics/types';
+import { useABCCosts } from '@/hooks/useABCCosts';
 
 interface BIPredictiveROIProps {
   biMetrics: BIMetrics;
 }
 
 export function BIPredictiveROI({ biMetrics }: BIPredictiveROIProps) {
+  const { averageUnitCost } = useABCCosts();
+
   const calculations = useMemo(() => {
     const totalLost = biMetrics.periodLostPieces || 0;
-    const avgPieceValue = 15.5; // Custom business logic value
-    const currentLossCost = totalLost * avgPieceValue;
+    const currentLossCost = totalLost * averageUnitCost;
 
     // Target reduction: 50% reduction in losses
     const potentialSaving = currentLossCost * 0.5;
@@ -29,7 +31,7 @@ export function BIPredictiveROI({ biMetrics }: BIPredictiveROIProps) {
       targetOEE,
       gainPercentage: ((potentialSaving / (currentLossCost || 1)) * 100).toFixed(0)
     };
-  }, [biMetrics]);
+  }, [biMetrics, averageUnitCost]);
 
   return (
     <Card className="bg-black/40 border-primary/20 backdrop-blur-xl group hover:border-primary/40 transition-all duration-500 overflow-hidden relative h-full">
