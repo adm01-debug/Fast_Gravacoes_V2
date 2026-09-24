@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { parseDateOnly } from '@/lib/dateUtils';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob, DbMachine, DbTechnique } from '@/features/jobs';
+import { useABCCosts } from '@/hooks/useABCCosts';
 
 // Data validation helpers
 function isValidJob(job: DbJob): boolean {
@@ -160,6 +161,7 @@ const DEFAULT_TARGETS: KPITargets = {
 
 export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITargets>): { data: KPIData | null; isLoading: boolean } {
   const { jobs, techniques, machines, isLoading } = useSchedulingData();
+  const { averageUnitCost } = useABCCosts();
 
   const data = useMemo(() => {
     if (!jobs || !techniques || !machines) return null;
@@ -387,9 +389,9 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       // currentStats.lossRate already uses produced_quantity + lost_pieces as the denominator
       lossRate, averageOccupancy,
       productivityByMachine, productivityByTechnique, productivityByProduct, todayStats, performanceHistory, comparison, predictions, anomalies, targets,
-      estimatedRevenue: completedPieces * 2.5, costOfLosses: lostPieces * 1.8,
+      estimatedRevenue: completedPieces * 2.5, costOfLosses: lostPieces * averageUnitCost,
     };
-  }, [jobs, techniques, machines, period, customTargets]);
+  }, [jobs, techniques, machines, period, customTargets, averageUnitCost]);
 
   return { data, isLoading };
 }

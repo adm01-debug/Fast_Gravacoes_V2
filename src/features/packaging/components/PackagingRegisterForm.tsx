@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { Monitor } from 'lucide-react';
-import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,26 +71,20 @@ export function PackagingRegisterForm({ received, defaultPackageTypes = DEFAULT_
           <Label htmlFor="total_weight_kg">Peso total (kg)</Label>
           <div className="flex gap-2">
             <Input id="total_weight_kg" type="number" step="0.01" min={0} {...form.register('total_weight_kg')} className="flex-1" />
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="icon"
-              title="Ler balança"
-              onClick={async () => {
-                if (onScaleWeight) {
+            {onScaleWeight && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                title="Ler balança"
+                onClick={async () => {
                   const weight = await onScaleWeight();
                   form.setValue('total_weight_kg', weight);
-                } else {
-                  // Mock para demonstração se não houver handler real
-                  const mockWeight = Number((Math.random() * 50).toFixed(2));
-                  form.setValue('total_weight_kg', mockWeight);
-                  toast.success(`Peso capturado: ${mockWeight}kg (Simulação)`);
-                }
-              }}
-            >
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin-slow hidden group-data-[loading=true]:block" />
-              <Monitor className="h-4 w-4" />
-            </Button>
+                }}
+              >
+                <Monitor className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
         <div>

@@ -120,9 +120,8 @@ export function FactoryFloorMap() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="gap-2 bg-success/10 text-success border-success/20 text-[9px] font-bold">
-            <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-            MOTOR DE SINCRO V2.4 ATIVO
+          <Badge variant="outline" className="gap-2 bg-muted/30 text-muted-foreground border-muted-foreground/20 text-[9px] font-bold">
+            CARGA/TEMP/EFICIÊNCIA: DEMONSTRAÇÃO
           </Badge>
         </div>
       </div>

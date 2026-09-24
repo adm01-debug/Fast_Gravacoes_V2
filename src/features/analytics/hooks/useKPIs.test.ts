@@ -1,5 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { useKPIs } from './useKPIs';
 import * as useSchedulingDataHook from '@/features/jobs';
 
@@ -7,6 +9,38 @@ vi.mock('@/features/jobs', async (importOriginal) => {
   const actual = await importOriginal() as Record<string, unknown>;
   return { ...actual, useSchedulingData: vi.fn() };
 });
+
+// useKPIs pulls in useABCCosts (custeio real de perdas) — precisa de QueryClientProvider
+// e de um supabase mock encadeável genérico (não importa qual método fecha a chain).
+function createQueryBuilder(): Record<string, unknown> {
+  const builder: Record<string, unknown> = {
+    select: vi.fn(() => builder),
+    eq: vi.fn(() => builder),
+    in: vi.fn(() => builder),
+    order: vi.fn(() => builder),
+    limit: vi.fn(() => builder),
+    then: (resolve: (v: { data: unknown[]; error: null }) => void) => resolve({ data: [], error: null }),
+  };
+  return builder;
+}
+
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    from: vi.fn(() => createQueryBuilder()),
+    // useTechniques (chamado por useABCCosts) também assina realtime.
+    channel: vi.fn(() => {
+      const ch = { on: vi.fn(() => ch), subscribe: vi.fn(() => ch) };
+      return ch;
+    }),
+    removeChannel: vi.fn(),
+  },
+}));
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: 0 } } });
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
+}
 
 describe('useKPIs', () => {
   it('should return null when data is loading', () => {
@@ -17,7 +51,7 @@ describe('useKPIs', () => {
       isLoading: true,
     });
 
-    const { result } = renderHook(() => useKPIs());
+    const { result } = renderHook(() => useKPIs(), { wrapper: createWrapper() });
     expect(result.current.data).toBeNull();
     expect(result.current.isLoading).toBe(true);
   });
@@ -64,7 +98,7 @@ describe('useKPIs', () => {
       isLoading: false,
     });
 
-    const { result } = renderHook(() => useKPIs('all'));
+    const { result } = renderHook(() => useKPIs('all'), { wrapper: createWrapper() });
     
     expect(result.current.data).not.toBeNull();
     if (result.current.data) {

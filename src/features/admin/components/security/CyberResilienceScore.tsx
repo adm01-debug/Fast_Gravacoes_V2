@@ -10,11 +10,16 @@ export function CyberResilienceScore() {
         <ShieldCheck className="h-32 w-32 text-primary" />
       </div>
       <CardHeader>
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-          <Lock className="h-4 w-4 text-primary" />
-          Cyber-Resilience Index (Evo 11/10)
-        </CardTitle>
-        <CardDescription>Métrica consolidada de integridade e defesa industrial</CardDescription>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+            <Lock className="h-4 w-4 text-primary" />
+            Cyber-Resilience Index (Evo 11/10)
+          </CardTitle>
+          <Badge variant="outline" className="text-[9px] bg-muted/30 text-muted-foreground border-muted-foreground/20">
+            Demonstração
+          </Badge>
+        </div>
+        <CardDescription>Dados ilustrativos — métrica ainda não conectada a uma fonte real de integridade/defesa</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center py-6">
         <div className="relative w-40 h-40">
