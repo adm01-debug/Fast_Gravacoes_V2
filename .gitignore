@@ -55,3 +55,6 @@ __pycache__/
 # Supabase CLI update marker is generated locally; linked project metadata is
 # tracked separately for the existing development workflow.
 supabase/.temp/cli-latest
+
+# Claude Code agent worktree checkouts (local scratch, never part of the repo).
+.claude/worktrees/
