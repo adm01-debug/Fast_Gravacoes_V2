@@ -5,6 +5,7 @@ import { jsPDF } from 'jspdf';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { cn } from '@/lib/utils';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -313,23 +314,30 @@ const OEEDashboard = memo(function OEEDashboard() {
   const activeMachinesCount = useMemo(() => data?.byMachine.filter(m => m.totalJobs > 0).length ?? 0, [data?.byMachine]);
 
   if (isLoading) {
-    return <KPIPageSkeleton />;
+    return (
+      <MainLayout>
+        <KPIPageSkeleton />
+      </MainLayout>
+    );
   }
 
   if (!data) {
     return (
-      <div className="p-6">
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <p>{t('oee.loadingError', 'Não foi possível carregar os dados de OEE.')}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <MainLayout>
+        <div className="p-6">
+          <Card>
+            <CardContent className="py-12 text-center text-muted-foreground">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+              <p>{t('oee.loadingError', 'Não foi possível carregar os dados de OEE.')}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
+    <MainLayout>
       <div className="p-6 space-y-6">
         <Helmet>
           <title>OEE Dashboard | FAST GRAVAÇÕES</title>
@@ -1263,6 +1271,7 @@ const OEEDashboard = memo(function OEEDashboard() {
           </CardContent>
         </Card>
       </div>
+    </MainLayout>
   );
 });
 
