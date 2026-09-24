@@ -22,6 +22,18 @@ test.describe('Regressão Visual', () => {
   });
 
   test('snapshot da dashboard principal', async ({ page }) => {
+    // Causa raiz real do diff de 0,01% que travava merge nesta suíte,
+    // confirmada comparando actual vs expected via playwright-report: não é
+    // regressão de UI — MFALoginVerification.tsx dispara um
+    // toast.success('Autenticação confirmada!') sem duration explícita
+    // (padrão do sonner) assim que o login (beforeEach acima) termina. Sem
+    // esperar ele sumir, o snapshot captura o toast num frame arbitrário do
+    // fade-out, cobrindo os mini-cards de estatística — mesmo commit,
+    // resultado diferente a cada run. .catch() é tolerante a esse toast não
+    // aparecer (login sem MFA, cópia mudar) — nesse caso o locator já
+    // resolve "hidden" de imediato.
+    await page.getByText('Autenticação confirmada!').waitFor({ state: 'hidden', timeout: 6_000 }).catch(() => {});
+
     // Esperar carregamento de dados assíncronos (React Query) antes do
     // snapshot — isso é sobre dados chegando da rede, não sobre animação;
     // `animations: 'disabled'` abaixo cobre a parte de animação/transição.
