@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { login } from './helpers/e2e-setup';
 
 test.describe('Offline Syncing and Persistence', () => {
   test('should queue actions offline and show sync indicators', async ({ page, context }) => {
@@ -7,15 +8,9 @@ test.describe('Offline Syncing and Persistence', () => {
     // timeout padrão de 30s por teste somado aos passos anteriores.
     test.setTimeout(50_000);
 
-    // Diagnóstico: a árvore React crasha pro fallback do ErrorBoundary logo
-    // após ir offline (achado confirmado via error-context.md de CI real),
-    // impedindo o OfflineSyncProvider de registrar o hook abaixo. O
-    // ErrorBoundary loga via console.error e insert best-effort no Supabase
-    // (falha em silêncio offline), mas nenhum dos dois aparece de forma
-    // confiável no log de texto da CI — só o corpo de um erro lançado pelo
-    // teste aparece. Por isso o crash (se houver) é gravado em localStorage
-    // (síncrono, funciona offline) e relido aqui pra virar parte da mensagem
-    // de erro real caso algo falhe abaixo.
+    // Diagnóstico (mantido como rede de segurança): se algo abaixo falhar,
+    // qualquer crash do ErrorBoundary gravado em localStorage (síncrono,
+    // funciona offline) entra no corpo do erro real lançado pelo teste.
     const readCrashDump = () => page.evaluate(() =>
       localStorage.getItem('__last_error_boundary_crash__')
     );
@@ -31,6 +26,13 @@ test.describe('Offline Syncing and Persistence', () => {
       }
     };
 
+    // Causa raiz real do crash (confirmada via o dump acima em CI real): o
+    // teste rodava sem login, então '/' redirecionava pra '/auth' — cujo
+    // chunk lazy-loaded corria contra o setOffline(true) logo abaixo. Uma
+    // ação de update_job enfileirada também só faz sentido pra um usuário
+    // autenticado. Login primeiro (como o resto da suíte) elimina o redirect
+    // e a corrida por completo.
+    await login(page);
     await page.goto('/');
 
     // 1. Go offline
