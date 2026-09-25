@@ -4,12 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Security Headers (meta fallback — production hosting sets these via HTTP headers in public/_headers) -->
+    <!-- Security Headers (meta fallback — production hosting (Vercel) sets the
+         real, stricter CSP via the HTTP header in vercel.json, which drops
+         script-src 'unsafe-inline'. Multiple active CSPs combine by
+         intersection, so real production pages already enforce the
+         stricter policy regardless of what this tag allows. This meta tag
+         only matters where vercel.json's header isn't applied — local
+         `vite preview` (used by the E2E suite), `vite dev`, or a fork
+         deployed elsewhere — so it stays deliberately more permissive than
+         vercel.json rather than a copy of it. Keep connect-src in sync with
+         vercel.json's manually, though: unlike script/style-src, a missing
+         origin here isn't loosened away by the stricter header — it's a
+         hard failure in any context where only this tag applies. -->
     <!-- script-src 'unsafe-inline': Vite injects an inline modulepreload polyfill in production bundles -->
     <!-- script-src 'unsafe-eval': Mermaid uses new Function() internally (sandboxed via securityLevel:strict) -->
     <!-- style-src 'unsafe-inline': Tailwind utility classes and Framer-Motion inject inline styles at runtime -->
     <!-- Note: type="application/ld+json" scripts are JSON data, NOT executable JS; they don't need 'unsafe-inline' -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://supabase.atomicabr.com.br wss://supabase.atomicabr.com.br; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Primary Meta Tags -->
