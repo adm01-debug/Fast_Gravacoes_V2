@@ -17,8 +17,8 @@ export interface BusinessConfig {
 
 export function useBusinessConfig() {
   const queryClient = useQueryClient();
-  const { user, isLoading: authLoading } = useAuth();
-  const isAuthenticated = Boolean(user?.id) && !authLoading;
+  const { user } = useAuth();
+  const isAuthenticated = Boolean(user?.id);
 
   const configQuery = useQuery({
     queryKey: ['business-config'],
