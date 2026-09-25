@@ -38,6 +38,22 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo.componentStack
     );
 
+    // Segundo canal, síncrono e que funciona offline (ao contrário do insert
+    // abaixo): grava em localStorage pra diagnóstico via E2E/DevTools quando
+    // nem console nem o insert no Supabase estão disponíveis no momento do
+    // crash.
+    try {
+      localStorage.setItem('__last_error_boundary_crash__', JSON.stringify({
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+        componentName: this.props.componentName ?? null,
+        timestamp: new Date().toISOString(),
+      }));
+    } catch {
+      // best-effort; nunca deve mascarar o erro original.
+    }
+
     // Automatically log error to database
     try {
       const { data: { user } } = await supabase.auth.getUser();
