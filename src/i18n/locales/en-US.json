@@ -366,6 +366,7 @@
     "integer": "Must be an integer",
     "date": "Invalid date",
     "url": "Invalid URL",
+    "passwordLowercase": "Must contain at least one lowercase letter",
     "passwordUppercase": "Must contain at least one uppercase letter",
     "passwordNumber": "Must contain at least one number"
   },

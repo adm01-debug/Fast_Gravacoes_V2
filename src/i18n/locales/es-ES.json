@@ -366,6 +366,7 @@
     "integer": "Debe ser un número entero",
     "date": "Fecha inválida",
     "url": "URL inválida",
+    "passwordLowercase": "Debe contener al menos una letra minúscula",
     "passwordUppercase": "Debe contener al menos una letra mayúscula",
     "passwordNumber": "Debe contener al menos un número"
   },
