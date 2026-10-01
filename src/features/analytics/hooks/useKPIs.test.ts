@@ -24,6 +24,22 @@ function createQueryBuilder(): Record<string, unknown> {
   return builder;
 }
 
+// useKPIs lê price_per_piece via useBusinessConfig (que depende de AuthProvider) —
+// mock retorna sempre o default passado.
+vi.mock('@/features/admin', async (importOriginal) => {
+  const actual = await importOriginal() as Record<string, unknown>;
+  return {
+    ...actual,
+    useBusinessConfig: vi.fn(() => ({
+      getConfig: (_key: string, defaultValue: unknown) => defaultValue,
+      configs: [],
+      isLoading: false,
+      updateConfig: vi.fn(),
+      isUpdating: false,
+    })),
+  };
+});
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => createQueryBuilder()),

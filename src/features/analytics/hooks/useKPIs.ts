@@ -3,6 +3,7 @@ import { parseDateOnly } from '@/lib/dateUtils';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob, DbMachine, DbTechnique } from '@/features/jobs';
 import { useABCCosts } from '@/hooks/useABCCosts';
+import { useBusinessConfig } from '@/features/admin';
 
 // Data validation helpers
 function isValidJob(job: DbJob): boolean {
@@ -162,6 +163,8 @@ const DEFAULT_TARGETS: KPITargets = {
 export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITargets>): { data: KPIData | null; isLoading: boolean } {
   const { jobs, techniques, machines, isLoading } = useSchedulingData();
   const { averageUnitCost } = useABCCosts();
+  const { getConfig } = useBusinessConfig();
+  const pricePerPiece = getConfig<number>('price_per_piece', 2.5);
 
   const data = useMemo(() => {
     if (!jobs || !techniques || !machines) return null;
@@ -389,9 +392,9 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       // currentStats.lossRate already uses produced_quantity + lost_pieces as the denominator
       lossRate, averageOccupancy,
       productivityByMachine, productivityByTechnique, productivityByProduct, todayStats, performanceHistory, comparison, predictions, anomalies, targets,
-      estimatedRevenue: completedPieces * 2.5, costOfLosses: lostPieces * averageUnitCost,
+      estimatedRevenue: completedPieces * pricePerPiece, costOfLosses: lostPieces * averageUnitCost,
     };
-  }, [jobs, techniques, machines, period, customTargets, averageUnitCost]);
+  }, [jobs, techniques, machines, period, customTargets, averageUnitCost, pricePerPiece]);
 
   return { data, isLoading };
 }
