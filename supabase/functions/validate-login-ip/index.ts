@@ -3,14 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
-
-interface ValidateIPRequest {
-  user_id?: string;
-  user_email: string;
-  user_agent?: string;
-  action: 'login_attempt' | 'login_success' | 'login_failed' | 'mfa_required' | 'mfa_failed' | 'mfa_success';
-  failure_reason?: string;
-}
+import { parseOrError } from "../_shared/validate.ts";
+import { validateIPRequestSchema } from "../_shared/validation.ts";
 
 // IPv4-only general-prefix CIDR match (any /0-/32, not just /8, /16, /24).
 function ipv4ToInt(ip: string): number | null {
@@ -68,7 +62,9 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { user_id, user_email, user_agent, action, failure_reason }: ValidateIPRequest = await req.json();
+    const parsed = await parseOrError(validateIPRequestSchema, req, { corsHeaders: getCorsHeaders(req) });
+    if (parsed.response) return parsed.response;
+    const { user_id, user_email, user_agent, action, failure_reason } = parsed.data;
     // Server-derived — never trust a client-supplied IP for an allowlist decision.
     const ip_address = getClientIp(req);
 

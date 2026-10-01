@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 import { escapeHtml } from "../_shared/htmlEscape.ts";
+import { parseOrError } from "../_shared/validate.ts";
+import { tpmAlertWebhookSchema } from "../_shared/validation.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 
@@ -33,11 +35,11 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const payload = await req.json();
-    
-    console.log('[send-tpm-email] Payload received:', payload?.event_type, 'machine_id:', payload?.record?.machine_id);
-    
-    const { record, event_type } = payload;
+    const parsed = await parseOrError(tpmAlertWebhookSchema, req, { corsHeaders: getCorsHeaders(req) });
+    if (parsed.response) return parsed.response;
+    const { record, event_type } = parsed.data;
+
+    console.log('[send-tpm-email] Payload received:', event_type, 'machine_id:', record?.machine_id);
     
     if (event_type !== 'INSERT' || !record) {
       return new Response(JSON.stringify({ message: 'Ignore non-insert events' }), { status: 200 });
@@ -49,7 +51,7 @@ serve(async (req) => {
     const { data: machine } = await supabase
       .from('machines')
       .select('name, code')
-      .eq('id', alert.machine_id)
+      .eq('id', alert.machine_id ?? '')
       .single();
 
     // 2. Find users who should receive this notification
@@ -66,8 +68,8 @@ serve(async (req) => {
       // notification_types / machine_filters can be NULL in the DB — guard against it.
       const types = s.notification_types ?? [];
       const machineFilters = s.machine_filters ?? [];
-      const typeMatch = types.includes(alert.alert_type);
-      const machineMatch = machineFilters.length === 0 || machineFilters.includes(alert.machine_id);
+      const typeMatch = alert.alert_type ? types.includes(alert.alert_type) : false;
+      const machineMatch = machineFilters.length === 0 || alert.machine_id ? machineFilters.includes(alert.machine_id) : false;
       return typeMatch && machineMatch;
     });
 
@@ -103,13 +105,13 @@ serve(async (req) => {
 
       const htmlContent = `
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-          <h2 style="color: #f97316;">${iconMap[alert.alert_type]} ${escapeHtml(titleMap[alert.alert_type])}</h2>
+          <h2 style="color: #f97316;">${iconMap[alert.alert_type ?? ''] ?? '⚠️'} ${escapeHtml(titleMap[alert.alert_type ?? ''] ?? 'Alerta de manutenção')}</h2>
           <p>Olá,</p>
           <p>Uma nova notificação de manutenção foi gerada para o sistema TPM:</p>
           <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <p><strong>Máquina:</strong> ${escapeHtml(machine?.name)} (${escapeHtml(machine?.code)})</p>
-            <p><strong>Mensagem:</strong> ${escapeHtml(alert.message)}</p>
-            <p><strong>Data/Hora:</strong> ${escapeHtml(new Date(alert.created_at).toLocaleString('pt-BR'))}</p>
+            <p><strong>Mensagem:</strong> ${escapeHtml(alert.message ?? '')}</p>
+            <p><strong>Data/Hora:</strong> ${escapeHtml(new Date(alert.created_at ?? '').toLocaleString('pt-BR'))}</p>
           </div>
           <p>Para mais detalhes e execução da manutenção, acesse o painel TPM:</p>
           <a href="${Deno.env.get('PUBLIC_URL') || '#'}/tpm" style="display: inline-block; padding: 10px 20px; background: #f97316; color: white; text-decoration: none; border-radius: 6px;">Ver Painel TPM</a>
@@ -127,7 +129,7 @@ serve(async (req) => {
         body: JSON.stringify({
           from: '52 STÚDIOS DE GRAVAÇÃO TPM <notifications@resend.dev>',
           to: subscriberEmails,
-          subject: `${iconMap[alert.alert_type]} Alerta TPM: ${machine?.code}`,
+          subject: `${iconMap[alert.alert_type ?? ''] ?? '⚠️'} Alerta TPM: ${machine?.code}`,
           html: htmlContent,
         }),
       });
