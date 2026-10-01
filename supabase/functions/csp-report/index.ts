@@ -85,16 +85,43 @@ Deno.serve(async (req) => {
   });
   if (globalLimited) return globalLimited;
 
+  const tooLarge = () =>
+    new Response(JSON.stringify({ error: "Payload too large" }), {
+      status: 413,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
+  // Rejeição precoce quando o cliente declara o tamanho — evita bufferizar
+  // um body gigante só para descartá-lo.
+  const declaredLength = Number(req.headers.get("content-length") ?? 0);
+  if (declaredLength > MAX_BODY_BYTES) return tooLarge();
+
+  // Leitura streamada com teto: cobre chunked/sem Content-Length sem
+  // materializar o body inteiro na memória da function.
   let body: unknown;
   try {
-    const text = await req.text();
-    if (text.length > MAX_BODY_BYTES) {
-      return new Response(JSON.stringify({ error: "Payload too large" }), {
-        status: 413,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const reader = req.body?.getReader();
+    const chunks: Uint8Array[] = [];
+    let received = 0;
+    if (reader) {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        received += value.byteLength;
+        if (received > MAX_BODY_BYTES) {
+          await reader.cancel();
+          return tooLarge();
+        }
+        chunks.push(value);
+      }
     }
-    body = JSON.parse(text);
+    const merged = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+      merged.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    body = JSON.parse(new TextDecoder().decode(merged));
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,
