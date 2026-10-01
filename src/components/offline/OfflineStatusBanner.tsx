@@ -1,4 +1,4 @@
-import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { useOfflineSyncContext } from '@/contexts/OfflineSyncContext';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -34,7 +34,7 @@ export function OfflineStatusBanner({
     forceSync,
     cacheData,
     hasCachedData
-  } = useOfflineSync();
+  } = useOfflineSyncContext();
 
   const [storageInfo, setStorageInfo] = useState<{ usage: number; quota: number; percentUsed: number } | null>(null);
   const [isCaching, setIsCaching] = useState(false);

@@ -1,4 +1,4 @@
-import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { useOfflineSyncContext } from '@/contexts/OfflineSyncContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +35,7 @@ export function OfflineSyncIndicator({
     lastSyncedAt,
     forceSync,
     hasCachedData
-  } = useOfflineSync();
+  } = useOfflineSyncContext();
 
   if (variant === 'minimal') {
     return (

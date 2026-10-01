@@ -12,7 +12,6 @@ import "./i18n";
 
 // Import global providers
 import { AccessibilityProvider } from "./components/accessibility/AccessibilityProvider";
-import { OfflineProvider } from "./hooks/useLocalStorage";
 
 // Sentry: initialize only when DSN is configured. Without init(),
 // captureMessage/captureException são no-ops silenciosos.
@@ -79,8 +78,6 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <AccessibilityProvider>
-    <OfflineProvider>
-      <App />
-    </OfflineProvider>
+    <App />
   </AccessibilityProvider>
 );

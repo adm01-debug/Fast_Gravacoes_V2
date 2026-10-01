@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useOperatorDashboardData } from '@/features/production';
 import { useUpdateJobStatus, DbJob } from '@/features/jobs';
 import { notifyStatusChange } from '@/features/notifications';
-import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { useOfflineSyncContext } from '@/contexts/OfflineSyncContext';
 import { useAuth } from '@/features/auth';
 import { JobDetailsModal } from '@/components/jobs/JobDetailsModal';
 import { ProductionRegistrationModal } from '@/components/operator/ProductionRegistrationModal';
@@ -48,7 +48,7 @@ export default function OperatorView() {
 
   const { jobs, techniques, machines, isLoading, getTechniqueById, getMachineById, refetchAll, assignedMachineIds } = useOperatorDashboardData();
   const updateStatus = useUpdateJobStatus();
-  const { isOnline, cacheData } = useOfflineSync();
+  const { isOnline, cacheData } = useOfflineSyncContext();
 
   useEffect(() => {
     if (selectedMachine === '_default' && assignedMachineIds && assignedMachineIds.length > 0) {

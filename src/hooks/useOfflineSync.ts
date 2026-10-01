@@ -4,74 +4,21 @@ import type { TablesUpdate } from '@/integrations/supabase/types';
 import { logger } from '@/lib/logger';
 import { registerBackgroundSync } from '@/lib/offlineStorage';
 import { toast } from 'sonner';
-
-interface PendingAction {
-  id: string;
-  type: 'update_job' | 'register_production' | 'qr_scan';
-  payload: Record<string, unknown>;
-  createdAt: string;
-  retryCount: number;
-}
-
-/** Outcome of replaying one queued action against the server. */
-type ReplayResult = 'success' | 'retry' | 'conflict';
-
-interface FailedAction extends PendingAction {
-  failedAt: string;
-  reason: 'conflict' | 'exhausted';
-}
-
-type CachedJob = Record<string, unknown> & { id: string };
-type CachedMachine = Record<string, unknown> & { id: string };
-type CachedTechnique = Record<string, unknown> & { id: string };
-
-interface CachedData {
-  jobs: CachedJob[];
-  machines: CachedMachine[];
-  techniques: CachedTechnique[];
-  lastSyncedAt: string | null;
-}
-
-const STORAGE_KEYS = {
-  PENDING_ACTIONS: 'fastgravacoes_pending_actions',
-  CACHED_DATA: 'fastgravacoes_cached_data',
-  FAILED_ACTIONS: 'fastgravacoes_failed_actions',
-};
-
-const MAX_RETRIES = 3;
-// Base delay for the exponential backoff between sync passes when actions
-// are re-queued (retryable failures) — without this, a partial-failure pass
-// re-triggers instantly via the pendingActions.length effect dependency,
-// hammering a flaky/down backend in a tight loop.
-const RETRY_BACKOFF_BASE_MS = 3000;
-
-/** The pending queue in localStorage is the source of truth: several
- * components mount independent useOfflineSync instances (provider, status
- * banner, ready indicator), each with its own React state. Reading fresh at
- * every mutation/sync prevents a stale instance from resurrecting actions
- * another instance already processed. */
-function readQueueFromStorage(): PendingAction[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS);
-    return stored ? (JSON.parse(stored) as PendingAction[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-/** try/catch around localStorage.setItem — quota-exceeded and private-mode
- * errors must not throw into the caller; the caller already has the data in
- * memory (React state), so a failed persist only risks losing it on reload,
- * not losing it right now. */
-function safeLocalStorageSet(key: string, value: string): boolean {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  } catch (error) {
-    logger.error(`Falha ao persistir "${key}" no localStorage (quota excedida?)`, error, 'useOfflineSync');
-    return false;
-  }
-}
+import { processPendingAction } from '@/lib/offline/replayPendingAction';
+import {
+  MAX_RETRIES,
+  RETRY_BACKOFF_BASE_MS,
+  STORAGE_KEYS,
+  mergeJobIntoCache,
+  readQueueFromStorage,
+  safeLocalStorageSet,
+} from '@/lib/offline/offlineQueue';
+import type {
+  CachedData,
+  FailedAction,
+  PendingAction,
+  ReplayResult,
+} from '@/lib/offline/offlineQueue';
 
 export function useOfflineSync() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -251,92 +198,6 @@ export function useOfflineSync() {
   // silently overwrites whatever changed on the server while the device was
   // offline (status, machine, quantity — even a cancelled job resurrected to
   // 'finished' by register_production's unconditional status write).
-  const processPendingAction = async (action: PendingAction): Promise<ReplayResult> => {
-    try {
-      switch (action.type) {
-        case 'update_job': {
-          const { jobId, updates, baseUpdatedAt } = action.payload as {
-            jobId: string;
-            updates: TablesUpdate<'jobs'>;
-            baseUpdatedAt?: string;
-          };
-          let query = supabase.from('jobs').update(updates).eq('id', jobId);
-          if (baseUpdatedAt) query = query.eq('updated_at', baseUpdatedAt);
-          const { data, error } = await query.select('id');
-          if (error) throw error;
-          if (baseUpdatedAt && (!data || data.length === 0)) {
-            // The job changed on the server since this action was queued —
-            // applying the stale payload would silently clobber that change.
-            return 'conflict';
-          }
-          break;
-        }
-
-        case 'register_production': {
-          const { jobId, producedQuantity, lostPieces, notes, photos, baseUpdatedAt } = action.payload as {
-            jobId: string;
-            producedQuantity: number;
-            lostPieces: number;
-            notes?: string;
-            photos?: string[];
-            baseUpdatedAt?: string;
-          };
-          let query = supabase
-            .from('jobs')
-            .update({
-              produced_quantity: producedQuantity,
-              lost_pieces: lostPieces,
-              notes,
-              production_photos: photos,
-              status: 'finished',
-              actual_end_time: new Date().toISOString(),
-            })
-            .eq('id', jobId);
-          if (baseUpdatedAt) query = query.eq('updated_at', baseUpdatedAt);
-          const { data, error } = await query.select('id');
-          if (error) throw error;
-          if (baseUpdatedAt && (!data || data.length === 0)) {
-            return 'conflict';
-          }
-          break;
-        }
-
-        case 'qr_scan': {
-          const { jobId, operatorId, action: scanAction, deviceInfo, notes } = action.payload as {
-            jobId: string;
-            operatorId: string;
-            action: string;
-            deviceInfo?: string;
-            notes?: string;
-          };
-          // Upsert on the client-generated action.id: if this exact action
-          // was already applied in a previous pass (server committed but the
-          // response was lost, so the queue entry survived), replaying it is
-          // a no-op instead of inserting a duplicate scan-history row.
-          const { error } = await supabase
-            .from('qr_scan_history')
-            .upsert({
-              id: action.id,
-              job_id: jobId,
-              operator_id: operatorId,
-              action: scanAction,
-              device_info: deviceInfo,
-              notes,
-            }, { onConflict: 'id' });
-          if (error) throw error;
-          break;
-        }
-
-        default:
-          return 'retry';
-      }
-
-      return 'success';
-    } catch (error) {
-      logger.warn(`Pending action ${action.type} failed (retry ${action.retryCount})`, error, 'useOfflineSync');
-      return 'retry';
-    }
-  };
 
   // Sync all pending actions. The tab-local ref guard stops concurrent
   // passes within this tab; the Web Locks request below extends that
@@ -463,17 +324,8 @@ export function useOfflineSync() {
       const baseUpdatedAt = (cachedData?.jobs.find((j) => j.id === jobId) as { updated_at?: string } | undefined)?.updated_at;
       addPendingAction('update_job', { jobId, updates, baseUpdatedAt });
 
-      // Update local cache
-      if (cachedData) {
-        const updatedJobs = cachedData.jobs.map((job) => {
-          const jobObj = job as { id: string };
-          if (jobObj.id === jobId) {
-            return { ...jobObj, ...updates };
-          }
-          return job;
-        });
-
-        const newCachedData = { ...cachedData, jobs: updatedJobs };
+      const newCachedData = mergeJobIntoCache(cachedData, jobId, updates);
+      if (newCachedData) {
         setCachedData(newCachedData);
         safeLocalStorageSet(STORAGE_KEYS.CACHED_DATA, JSON.stringify(newCachedData));
       }
@@ -513,24 +365,14 @@ export function useOfflineSync() {
         baseUpdatedAt,
       });
 
-      // Update local cache
-      if (cachedData) {
-        const updatedJobs = cachedData.jobs.map((job) => {
-          const jobObj = job as { id: string };
-          if (jobObj.id === jobId) {
-            return {
-              ...jobObj,
-              produced_quantity: producedQuantity,
-              lost_pieces: lostPieces,
-              notes,
-              production_photos: photos,
-              status: 'finished',
-            };
-          }
-          return job;
-        });
-
-        const newCachedData = { ...cachedData, jobs: updatedJobs };
+      const newCachedData = mergeJobIntoCache(cachedData, jobId, {
+        produced_quantity: producedQuantity,
+        lost_pieces: lostPieces,
+        notes,
+        production_photos: photos,
+        status: 'finished',
+      });
+      if (newCachedData) {
         setCachedData(newCachedData);
         safeLocalStorageSet(STORAGE_KEYS.CACHED_DATA, JSON.stringify(newCachedData));
       }
@@ -630,6 +472,7 @@ export function useOfflineSync() {
     cacheData,
     syncPendingActions,
     forceSync,
+    addPendingAction,
     clearPendingActions,
     clearFailedActions,
 
