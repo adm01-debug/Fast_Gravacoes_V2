@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: FAST GRAVAÇÕES v2 — Edge Functions
+  version: "1.0.0"
+  description: >-
+    Contrato das 34 Deno Edge Functions do Supabase self-hosted.
+    Detalhe de gatilhos (quem chama o quê): supabase/functions/REGISTRY.md.
+    Todas respondem JSON e exigem POST, salvo indicado.
+servers:
+  - url: https://supabase.atomicabr.com.br
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        JWT de usuário Supabase (verify_jwt=true em todas, exceto csp-report).
+        Várias functions rejeitam antes de chegar no handler quando o JWT falta.
+    cronSecret:
+      type: apiKey
+      in: header
+      name: x-cron-secret
+      description: Segredo interno para crons/functions internas (requireCronSecret).
+    webhookSignature:
+      type: apiKey
+      in: header
+      name: x-webhook-signature
+      description: HMAC-SHA256 do body com o segredo do webhook (ERP/Bitrix).
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+      required: [error]
+  responses:
+    BadRequest:
+      description: Payload inválido (schema zod)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: JWT/segredo ausente ou inválido
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    RateLimited:
+      description: Rate limit excedido (rate_limits)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+paths:
+  # ============ Auth / operadores ============
+  /functions/v1/create-operator:
+    post:
+      summary: Cria operador + profile (admin)
+      security: [{ bearerAuth: [] }]
+      responses: { '200': { description: Operador criado }, '400': { $ref: '#/components/responses/BadRequest' }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/update-operator:
+    post:
+      summary: Atualiza dados/role de operador (admin)
+      responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/approve-password-reset:
+    post:
+      summary: Aprova solicitação de reset de senha (coordenador+)
+      responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/check-login-lockout:
+    post:
+      summary: Verifica lockout do login (fail-open se indisponível)
+      responses: { '200': { description: '{ locked, retryAfter? }' }, '429': { $ref: '#/components/responses/RateLimited' } }
+  /functions/v1/validate-login-ip:
+    post:
+      summary: Valida IP do login contra allowlist/geo (fail-open)
+      responses: { '200': { description: '{ allowed, reason? }' } }
+  /functions/v1/new-device-alert:
+    post:
+      summary: Notifica login em dispositivo novo (hook de login)
+      responses: { '200': { description: OK } }
+  /functions/v1/rate-limit-check:
+    post:
+      summary: Consulta/incrementa bucket de rate limit genérico
+      responses: { '200': { description: '{ allowed, remaining }' } }
+
+  # ============ Produção ============
+  /functions/v1/auto-promote-jobs:
+    post:
+      summary: Promove jobs planejados para produção (cron versionado + fallback)
+      security: [{ bearerAuth: [] }, { cronSecret: [] }]
+      responses: { '200': { description: Resumo de promoções } }
+  /functions/v1/calculate-rankings:
+    post:
+      summary: Recalcula rankings de gamificação do período
+      responses: { '200': { description: OK } }
+  /functions/v1/ml-predictions:
+    post:
+      summary: Predições ML (atraso, quebra) para jobs/máquinas
+      responses: { '200': { description: Predições } }
+  /functions/v1/technical-assistant:
+    post:
+      summary: Assistente técnico (RAG sobre knowledge base)
+      responses: { '200': { description: Resposta }, '429': { $ref: '#/components/responses/RateLimited' } }
+
+  # ============ Integrações ============
+  /functions/v1/erp-api:
+    post:
+      summary: API pública do ERP (chamada pelo Bitrix24)
+      security: [{ webhookSignature: [] }]
+      responses: { '200': { description: JobResponse (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/webhook-handler:
+    post:
+      summary: Webhooks ERP (cria/atualiza jobs via HMAC)
+      security: [{ webhookSignature: [] }]
+      responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/bitrix24-sync:
+    post:
+      summary: Sincronização Bitrix24 (cron no painel)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/external-db-bridge:
+    post:
+      summary: Ponte para banco externo (órfã — ver REGISTRY.md)
+      responses: { '200': { description: OK } }
+
+  # ============ Manutenção / TPM ============
+  /functions/v1/daily-maintenance-summary:
+    post:
+      summary: Resumo diário de manutenção (cron)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/tpm-notifications:
+    post:
+      summary: Notificações de manutenção TPM
+      responses: { '200': { description: OK } }
+  /functions/v1/send-tpm-email:
+    post:
+      summary: E-mail de alerta TPM (db webhook em maintenance_alerts)
+      responses: { '200': { description: OK } }
+  /functions/v1/send-loss-risk-alert:
+    post:
+      summary: Alerta de risco de perda (db webhook em tpm_execution_alerts)
+      responses: { '200': { description: OK } }
+
+  # ============ Notificações ============
+  /functions/v1/send-push-notification:
+    post:
+      summary: Push web (VAPID) para subscriptions
+      responses: { '200': { description: '{ sent, failed }' } }
+  /functions/v1/cron-alert-email:
+    post:
+      summary: E-mails agendados de alertas (cron no painel)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/send-email-report:
+    post:
+      summary: Relatório por e-mail
+      responses: { '200': { description: OK } }
+  /functions/v1/security-alert:
+    post:
+      summary: Alerta de evento de segurança
+      responses: { '200': { description: OK } }
+
+  # ============ Relatórios / export ============
+  /functions/v1/pdf-generator:
+    post:
+      summary: Gera PDF server-side (relatórios, etiquetas)
+      responses: { '200': { description: application/pdf } }
+  /functions/v1/excel-export:
+    post:
+      summary: Export Excel (órfã — export no front é via lib)
+      responses: { '200': { description: Arquivo } }
+  /functions/v1/image-optimizer:
+    post:
+      summary: Otimização de imagem server-side (órfã)
+      responses: { '200': { description: Imagem } }
+  /functions/v1/calculate-inventory-intelligence:
+    post:
+      summary: Métricas inteligentes de estoque (consumo, dias de suprimento)
+      responses: { '200': { description: Métricas } }
+
+  # ============ Infra / housekeeping ============
+  /functions/v1/health-check:
+    get:
+      summary: Health check da function layer
+      responses: { '200': { description: '{ status: ok }' } }
+  /functions/v1/health-monitor:
+    post:
+      summary: Monitor agendado de saúde (pg_cron)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/metrics-collector:
+    post:
+      summary: Coleta métricas operacionais (cron)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/cron-cleanup:
+    post:
+      summary: Purge/arquivação de jobs antigos
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: '{ purged }' } }
+  /functions/v1/cleanup-security-logs:
+    post:
+      summary: Retenção de logs de segurança (7d/30d)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/backup-scheduler:
+    post:
+      summary: Orquestra backup agendado (ver RUNBOOK — sem evidência de agendamento ativo)
+      security: [{ cronSecret: [] }]
+      responses: { '200': { description: OK } }
+  /functions/v1/csp-report:
+    post:
+      summary: Recebe relatórios CSP report-uri (única function pública — verify_jwt=false)
+      security: []
+      responses: { '204': { description: Persistido em csp_violation_reports }, '413': { description: '>16KB' }, '429': { $ref: '#/components/responses/RateLimited' } }
