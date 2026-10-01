@@ -61,7 +61,11 @@ jobs:
         run: npm run lint -- --max-warnings 9999
 
       - name: TypeScript type check
-        run: npx tsc --noEmit
+        # tsconfig.json raiz é solution file ("files": []) — rodar -p em cada
+        # projeto referenciado ou o gate não checa nenhum arquivo.
+        run: |
+          npx tsc --noEmit -p tsconfig.app.json
+          npx tsc --noEmit -p tsconfig.node.json
 
       - name: Any Ratchet — impedir regressão de 'any'
         run: npm run quality:any
