@@ -120,3 +120,10 @@ verify_jwt = true
 
 [functions.webhook-handler]
 verify_jwt = true
+
+# CSP reports chegam do browser sem Authorization — a camada de defesa fica no
+# código: schema zod + rate limit por IP + insert service-role em tabela sem
+# policy de INSERT. Única function sem JWT; qualquer outra adição precisa de
+# justificativa equivalente documentada aqui.
+[functions.csp-report]
+verify_jwt = false

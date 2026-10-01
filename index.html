@@ -16,11 +16,13 @@
          vercel.json's manually, though: unlike script/style-src, a missing
          origin here isn't loosened away by the stricter header — it's a
          hard failure in any context where only this tag applies. -->
-    <!-- script-src 'unsafe-inline': Vite injects an inline modulepreload polyfill in production bundles -->
-    <!-- script-src 'unsafe-eval': Mermaid uses new Function() internally (sandboxed via securityLevel:strict) -->
+    <!-- script-src sem 'unsafe-inline': o build do Vite 7 emite zero <script> inline (verificado em dist/index.html) -->
+    <!-- script-src 'unsafe-eval': Mermaid usa new Function() internamente (lazy-loaded, securityLevel:strict) -->
+    <!-- script-src cdn.jsdelivr.net: LotLabelPrint injeta qrcode.min.js na janela de impressão (herda o CSP do opener) -->
+    <!-- connect-src api.ipify.org + api.pwnedpasswords.com: fetch de detecção de IP/dispositivo e checagem k-anonymity de senha -->
     <!-- style-src 'unsafe-inline': Tailwind utility classes and Framer-Motion inject inline styles at runtime -->
     <!-- Note: type="application/ld+json" scripts are JSON data, NOT executable JS; they don't need 'unsafe-inline' -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://supabase.atomicabr.com.br wss://supabase.atomicabr.com.br; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://supabase.atomicabr.com.br wss://supabase.atomicabr.com.br https://api.ipify.org https://api.pwnedpasswords.com; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; report-uri https://supabase.atomicabr.com.br/functions/v1/csp-report" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Primary Meta Tags -->

@@ -1,11 +1,12 @@
 # Edge Functions — inventário de autenticação
 
-33 functions em `supabase/functions/`. Todas rodam com `verify_jwt = true`
+34 functions em `supabase/functions/`. Todas rodam com `verify_jwt = true`
 (declarado explicitamente em `supabase/config.toml`, ver o comentário lá para
-o porquê). Esta tabela documenta a **camada 2** — a checagem feita pelo
-próprio código da function, por cima do gate de JWT do gateway — para que
-qualquer decisão futura sobre uma function específica não dependa de reler
-o código do zero.
+o porquê) — exceto `csp-report` (`verify_jwt = false`, justificativa no
+config.toml e na linha dela abaixo). Esta tabela documenta a **camada 2** — a
+checagem feita pelo próprio código da function, por cima do gate de JWT do
+gateway — para que qualquer decisão futura sobre uma function específica não
+dependa de reler o código do zero.
 
 Classificação:
 - **user** — exige `auth.getUser()` retornando um usuário válido (sessão real).
@@ -23,6 +24,10 @@ Classificação:
   de login antes de existir sessão.
 - **public-stub** — sem checagem; endpoint stub/observável por design
   (health check, função não implementada).
+- **public-report** — sem JWT por necessidade de protocolo (o caller não é
+  um usuário: browser enviando relatório de violação). Defesa no código:
+  validação de schema + rate limit + writes só via service role em tabela
+  sem policy de INSERT.
 
 | Function | Camada 2 | Notas |
 |---|---|---|
@@ -37,6 +42,7 @@ Classificação:
 | create-operator | user+role (AAL2) | `_shared/auth.ts`: `authenticate` + `requireElevatedAal2`, papel `coordinator`/`admin` — operação administrativa (Etapa 7 do plano-mestre) |
 | cron-alert-email | cron | `requireCronSecret` |
 | cron-cleanup | cron | `requireCronSecret` |
+| csp-report | public-report | `verify_jwt = false` (browsers não enviam Authorization em report-uri); defesa = schema zod + rate limit por IP + insert service-role em tabela sem policy de INSERT |
 | daily-maintenance-summary | user-or-cron | `requireUserOrCronSecret` |
 | erp-api | user | `auth.getUser(token)` |
 | excel-export | user | `auth.getUser()` |
