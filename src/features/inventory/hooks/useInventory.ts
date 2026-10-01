@@ -4,6 +4,7 @@
    render. Callbacks/valores externos são estáveis por contrato. */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 import { Database } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
@@ -53,12 +54,11 @@ export function useInventory() {
   const itemsQuery = useQuery({
     queryKey: ['inventory-items'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('inventory_items')
-        .select('*')
-        .order('name');
-      if (error) throw error;
-      return data as InventoryItem[];
+      // Paginado: inventory_items passando de 1000 truncaria silenciosamente
+      // (cap do PostgREST) e o estoque sumiria da tela.
+      const query = supabase.from('inventory_items').select('*').order('name');
+      const rows = await fetchAllRows((o, l) => query.range(o, o + l - 1));
+      return rows as InventoryItem[];
     },
     enabled: isAuthenticated,
   });

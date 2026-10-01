@@ -52,7 +52,8 @@ interface FromOptions {
  */
 function mockSupabaseFrom(opts: FromOptions = {}) {
   // inventory_items
-  const listOrder = vi.fn().mockResolvedValue({ data: opts.items ?? [], error: null });
+  const listRange = vi.fn().mockResolvedValue({ data: opts.items ?? [], error: null });
+  const listOrder = vi.fn(() => ({ range: listRange }));
   const stockSingle = vi.fn().mockResolvedValue({
     data: opts.stockCheck ?? null,
     error: opts.stockCheckError ?? null,

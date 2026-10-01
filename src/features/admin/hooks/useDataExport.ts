@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { format } from 'date-fns';
@@ -157,15 +158,19 @@ export function useDataExport(tableName: TableName) {
   const exportAuditTrail = useCallback(async (filters: AuditExportFilters, fileName?: string, formatType: 'csv' | 'pdf' = 'csv') => {
     setIsExporting(true);
     try {
-      let query = supabase.from('audit_log').select('*').order('created_at', { ascending: false }).limit(10000);
+      // limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes —
+      // paginamos até 10 mil de verdade.
+      let query = supabase.from('audit_log').select('*').order('created_at', { ascending: false });
 
       if (filters.entityType) query = query.eq('entity_type', filters.entityType);
       if (filters.entityId) query = query.eq('entity_id', filters.entityId);
       if (filters.fromDate) query = query.gte('created_at', filters.fromDate);
       if (filters.toDate) query = query.lte('created_at', filters.toDate);
 
-      const { data, error } = await query;
-      if (error) throw error;
+      const data = await fetchAllRows(
+        (o, l) => query.range(o, o + l - 1),
+        { maxRows: 10000 },
+      );
       if (!data || data.length === 0) {
         toast.info('Nenhum dado para exportar');
         return;
