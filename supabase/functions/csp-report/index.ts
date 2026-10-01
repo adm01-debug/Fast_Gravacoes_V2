@@ -29,11 +29,20 @@ const cspReportSchema = z.object({
   }).passthrough(),
 }).passthrough();
 
+// Último IP do XFF é o que o ingress anexou — o primeiro pode ser forjado
+// pelo cliente e driblaria o rate limit por IP.
 function getClientIp(req: Request): string | null {
   const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
+  if (fwd) {
+    const last = fwd.split(",").pop()?.trim();
+    if (last) return last;
+  }
   return req.headers.get("x-real-ip")?.trim() ?? null;
 }
+
+// Relatórios CSP reais têm < 4 KB; bodies maiores só servem para estourar
+// memória/storage via campos extras do .passthrough().
+const MAX_BODY_BYTES = 16 * 1024;
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -64,9 +73,28 @@ Deno.serve(async (req) => {
   });
   if (limited) return limited;
 
+  // Bucket global: mesmo quem rotaciona IPs forjados no XFF fica limitado
+  // pelo teto agregado do endpoint.
+  const globalLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-global",
+    identity: { ip: "global" },
+    max: 600,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (globalLimited) return globalLimited;
+
   let body: unknown;
   try {
-    body = await req.json();
+    const text = await req.text();
+    if (text.length > MAX_BODY_BYTES) {
+      return new Response(JSON.stringify({ error: "Payload too large" }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    body = JSON.parse(text);
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,
