@@ -33,7 +33,7 @@ export const DashboardEditControls = memo(function DashboardEditControls({
     <div className={cn("flex items-center gap-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" aria-label="Personalizar dashboard" className="gap-2">
             <Settings2 className="h-4 w-4" />
             <span className="hidden sm:inline">Personalizar</span>
           </Button>
@@ -66,6 +66,7 @@ export const DashboardEditControls = memo(function DashboardEditControls({
       <Button
         variant={isEditMode ? 'default' : 'outline'}
         size="sm"
+        aria-label={isEditMode ? 'Concluir edição do layout' : 'Reorganizar widgets'}
         onClick={onToggleEditMode}
         className="gap-2"
       >
