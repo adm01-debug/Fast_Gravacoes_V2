@@ -41,7 +41,12 @@ test.describe('Regressão Visual', () => {
     await waitForFonts(page);
     await expect(page).toHaveScreenshot('dashboard-desktop.png', {
       fullPage: true,
-      mask: [page.locator('.stats-value')], // Mascarar valores que mudam com o tempo
+      mask: [
+        page.locator('.stats-value'), // Mascarar valores que mudam com o tempo
+        // Barra de favoritos tem animações JS (framer-motion/dnd-kit) que
+        // `animations: 'disabled'` não congela — o frame capturado varia.
+        page.getByTestId('quick-favorites-bar'),
+      ],
       animations: 'disabled',
     });
   });
@@ -71,6 +76,7 @@ test.describe('Regressão Visual', () => {
     await page.waitForTimeout(1000);
     await waitForFonts(page);
     await expect(page).toHaveScreenshot('dashboard-mobile.png', {
+      mask: [page.getByTestId('quick-favorites-bar')],
       animations: 'disabled',
     });
   });

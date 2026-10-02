@@ -1,4 +1,5 @@
-import { useMemo, useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useMemo, useState, useCallback, useEffect, Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,7 +28,7 @@ import { useBIExport } from '@/features/admin';
 import { BITooltip } from './BITooltip';
 import { BIEmptyState } from './BIEmptyState';
 import { BILoadingSkeleton } from './BILoadingSkeleton';
-const BIAIInsights = lazy(() => import('./BIAIInsights').then(m => ({ default: m.BIAIInsights })));
+const BIAIInsights = lazyWithRetry(() => import('./BIAIInsights').then(m => ({ default: m.BIAIInsights })));
 import { BIPredictiveROI } from './BIPredictiveROI';
 import { CHART_COLORS, GRADIENTS } from '@/constants/biConstants';
 

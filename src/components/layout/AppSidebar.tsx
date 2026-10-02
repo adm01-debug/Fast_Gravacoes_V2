@@ -144,6 +144,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
+                    aria-label={t('common.back', 'Voltar')}
                     onClick={() => {
                       SoundFeedback.navBack();
                       navigate(-1);
@@ -284,7 +285,7 @@ export function AppSidebar() {
           {collapsed && !isMobile ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={handleSignOut} className="w-full mt-4 h-10 flex items-center justify-center text-sidebar-foreground/50 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all">
+                <Button variant="ghost" size="icon" aria-label={t('common.logout')} onClick={handleSignOut} className="w-full mt-4 h-10 flex items-center justify-center text-sidebar-foreground/50 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
