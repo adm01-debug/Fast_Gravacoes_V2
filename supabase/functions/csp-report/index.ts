@@ -50,6 +50,31 @@ function getClientIp(req: Request): string | null {
 // declarados com max() próprio.
 const MAX_BODY_BYTES = 16 * 1024;
 
+// Throttle grosso pré-parse EM MEMÓRIA (por isolate, não-durável): um flood
+// público sustentado não pode virar volume de escrita em rate_limit_logs —
+// cada request admitida por bucket durável grava 2 linhas, e a 1800/min isso
+// seria ~5M linhas/dia só de tráfego malformado. Após o parse, os buckets
+// duráveis (rejected/accepted) seguem cobrindo per-IP e global.
+const INBOUND_WINDOW_MS = 60_000;
+const inboundHits = new Map<string, { count: number; resetAt: number }>();
+
+function inboundThrottle(key: string, max: number): boolean {
+  const now = Date.now();
+  let entry = inboundHits.get(key);
+  if (!entry || now >= entry.resetAt) {
+    entry = { count: 0, resetAt: now + INBOUND_WINDOW_MS };
+    inboundHits.set(key, entry);
+  }
+  entry.count += 1;
+  if (entry.count > max) return true;
+  if (inboundHits.size > 50_000) {
+    for (const [k, v] of inboundHits) {
+      if (now >= v.resetAt) inboundHits.delete(k);
+    }
+  }
+  return false;
+}
+
 // Reserva atômica do par per-IP+global (RPC rate_limit_check_and_record_pair):
 // os dois counts são avaliados sob advisory locks e as duas linhas inserem
 // juntas — request negada não grava NADA em nenhum bucket. Nenhuma ordenação
@@ -150,21 +175,16 @@ Deno.serve(async (req) => {
   const declaredLength = Number(req.headers.get("content-length") ?? 0);
   if (declaredLength > MAX_BODY_BYTES) return tooLarge();
 
-  // Throttle grosso ANTES de ler/parsear o body: endpoint público, então a
-  // primeira linha de defesa cobre todo o tráfego (válido ou não) sem
-  // discriminar origem — limita o custo de stream+zod por flood. Os buckets
-  // de produção/rejeitados abaixo ficam com cotas próprias e mais apertadas.
-  const inboundLimited = await guardedRateLimitPair(
-    supabase,
-    getClientIp(req),
-    "csp-report-inbound",
-    300,
-    "csp-report-inbound-global",
-    1800,
-    corsHeaders,
-    requestId,
-  );
-  if (inboundLimited) return inboundLimited;
+  // Throttle grosso ANTES de ler/parsear o body, em memória: primeira linha
+  // de defesa contra flood sem custo de escrita no banco. Os buckets
+  // duráveis abaixo ficam com cotas próprias e mais apertadas.
+  const clientIp = getClientIp(req);
+  if (
+    inboundThrottle("inbound-global", 1800) ||
+    inboundThrottle(`inbound:${sanitizeIp(clientIp)}`, 300)
+  ) {
+    return tooManyRequests(300, 60, corsHeaders, requestId);
+  }
 
   // Leitura streamada com teto: cobre chunked/sem Content-Length sem
   // materializar o body inteiro na memória da function.
@@ -229,7 +249,7 @@ Deno.serve(async (req) => {
     if (!allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))) {
       const rejectedLimited = await guardedRateLimitPair(
         supabase,
-        getClientIp(req),
+        clientIp,
         "csp-report-rejected",
         120,
         "csp-report-rejected-global",
@@ -244,7 +264,7 @@ Deno.serve(async (req) => {
 
   const limited = await guardedRateLimitPair(
     supabase,
-    getClientIp(req),
+    clientIp,
     "csp-report",
     120,
     "csp-report-global",
