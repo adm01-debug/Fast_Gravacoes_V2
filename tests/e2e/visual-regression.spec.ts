@@ -41,6 +41,11 @@ test.describe('Regressão Visual', () => {
     await waitForFonts(page);
     await expect(page).toHaveScreenshot('dashboard-desktop.png', {
       fullPage: true,
+      // Rasterização de fonte/subpixel difere entre a máquina que gera o
+      // snapshot e o runner do CI — diferença determinística de ~1% de pixels
+      // sem nenhuma mudança de layout. O limiar absorve esse ruído de ambiente
+      // sem esconder regressões reais (deslocamentos de layout passam de 5%).
+      maxDiffPixelRatio: 0.02,
       mask: [
         page.locator('.stats-value'), // Mascarar valores que mudam com o tempo
         // Barra de favoritos tem animações JS (framer-motion/dnd-kit) que
@@ -76,6 +81,7 @@ test.describe('Regressão Visual', () => {
     await page.waitForTimeout(1000);
     await waitForFonts(page);
     await expect(page).toHaveScreenshot('dashboard-mobile.png', {
+      maxDiffPixelRatio: 0.02,
       mask: [page.getByTestId('quick-favorites-bar')],
       animations: 'disabled',
     });

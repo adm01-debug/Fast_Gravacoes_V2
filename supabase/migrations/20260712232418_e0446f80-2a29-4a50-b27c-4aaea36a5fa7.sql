@@ -5,6 +5,10 @@ DECLARE
   t text;
 BEGIN
   FOR t IN SELECT unnest(ARRAY['login_audit','security_events','geo_blocking_logs','rate_limit_logs','query_telemetry','tpm_notification_logs']) LOOP
+    -- geo_blocking_logs pode não existir num rebuild limpo (tabelas manuais
+    -- em prod, sem migration de criação até 20261001143000) — DROP POLICY
+    -- exige a tabela, então pula a iteração inteira quando ausente.
+    IF to_regclass('public.' || t) IS NULL THEN CONTINUE; END IF;
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert audit records', t);
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert security events', t);
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert geo logs', t);
@@ -21,8 +25,15 @@ WITH CHECK (user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR
 CREATE POLICY "Users can insert own log entries" ON public.security_events FOR INSERT TO authenticated
 WITH CHECK (user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));
 
-CREATE POLICY "Users can insert own log entries" ON public.geo_blocking_logs FOR INSERT TO authenticated
-WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));
+-- geo_blocking_logs pode não existir num rebuild limpo (tabelas manuais em
+-- prod, sem migration de criação até 20261001143000) — guardada em to_regclass.
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_logs') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "Users can insert own log entries" ON public.geo_blocking_logs FOR INSERT TO authenticated
+      WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR app_private.has_role(auth.uid(),''coordinator'') OR app_private.has_role(auth.uid(),''manager'') OR app_private.has_role(auth.uid(),''admin''))';
+  END IF;
+END $$;
 
 CREATE POLICY "Users can insert own log entries" ON public.rate_limit_logs FOR INSERT TO authenticated
 WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));

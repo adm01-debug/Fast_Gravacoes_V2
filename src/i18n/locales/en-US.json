@@ -101,7 +101,7 @@
     "backToLogin": "Back to login",
     "invalidResetLink": "Invalid or expired reset link",
     "resetEmailSent": "Reset email sent! Check your inbox.",
-    "passwordRequirements": "At least 6 characters, 1 uppercase and 1 number",
+    "passwordRequirements": "At least 8 characters, 1 uppercase, 1 lowercase and 1 number",
     "invalidEmail": "Invalid email",
     "passwordMinLength": "Password must be at least {{min}} characters",
     "passwordMismatch": "Passwords do not match",
@@ -366,6 +366,7 @@
     "integer": "Must be an integer",
     "date": "Invalid date",
     "url": "Invalid URL",
+    "passwordLowercase": "Must contain at least one lowercase letter",
     "passwordUppercase": "Must contain at least one uppercase letter",
     "passwordNumber": "Must contain at least one number"
   },
