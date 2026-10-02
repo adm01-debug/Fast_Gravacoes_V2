@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 import { escapeHtml } from "../_shared/htmlEscape.ts";
 import { parseOrError } from "../_shared/validate.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
 import { tpmAlertWebhookSchema } from "../_shared/validation.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
@@ -35,7 +36,7 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const parsed = await parseOrError(tpmAlertWebhookSchema, req, { corsHeaders: getCorsHeaders(req) });
+    const parsed = await parseOrError(tpmAlertWebhookSchema, req, { corsHeaders: getCorsHeaders(req), requestId: getOrCreateRequestId(req) });
     if (parsed.response) return parsed.response;
     const { record, event_type } = parsed.data;
 

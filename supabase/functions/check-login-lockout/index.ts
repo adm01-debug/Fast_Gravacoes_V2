@@ -4,6 +4,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { parseOrError } from "../_shared/validate.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
 import { lockoutRequestSchema } from "../_shared/validation.ts";
 
 const MAX_FAILED_ATTEMPTS = 5;
@@ -43,7 +44,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const parsed = await parseOrError(lockoutRequestSchema, req, { corsHeaders: getCorsHeaders(req) });
+    const parsed = await parseOrError(lockoutRequestSchema, req, { corsHeaders: getCorsHeaders(req), requestId: getOrCreateRequestId(req) });
     if (parsed.response) return parsed.response;
     const { email, action } = parsed.data;
     // Server-derived — a client-supplied IP would let an attacker spoof/rotate

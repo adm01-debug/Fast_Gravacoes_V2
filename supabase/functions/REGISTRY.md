@@ -50,9 +50,9 @@ Complementa `README.md` (inventário da camada 2 de autenticação).
 | rate-limit-check | **órfã** — criada para o fluxo de login, nunca ligada (`authService` chama só `check-login-lockout`) | — | própria |
 | security-alert | pg_cron **(painel — não versionado)** | — | própria |
 | send-email-report | pg_cron **(painel — não versionado)** | — | própria |
-| send-loss-risk-alert | db-webhook (`tpm_execution_alerts` INSERT) **(painel — não versionado)** | — | `tpmExecutionAlertWebhookSchema` |
+| send-loss-risk-alert | db-trigger versionado `on_tpm_execution_alert` (`20260508144832`) via pg_net + possível db-webhook no painel | — | `tpmExecutionAlertWebhookSchema` |
 | send-push-notification | frontend + interno (`new-device-alert`) | `src/`, `new-device-alert/index.ts` | própria |
-| send-tpm-email | db-webhook (`maintenance_alerts` INSERT) **(painel — não versionado)**; migration `20261001143100` corrige a função `trigger_send_tpm_email` para a URL canonical (gatilho permanece desativado por design) | — | `tpmAlertWebhookSchema` |
+| send-tpm-email | db-trigger versionado `on_maintenance_alert_insert` (`20260508115950`) via pg_net + possível db-webhook no painel; migration `20261001143100` (PR #79) recria `trigger_send_tpm_email` lendo URL/secret de `app.settings.*` | — | `tpmAlertWebhookSchema` |
 | technical-assistant | frontend (`edgeFunctionFetch`) | `src/pages/TechnicalAssistantPage.tsx` | própria |
 | tpm-notifications | pg_cron **(painel — não versionado)** | — | própria |
 | update-operator | frontend (admin) | `src/` | própria |
@@ -73,13 +73,18 @@ calculate-rankings, calculate-inventory-intelligence) vivem só no painel do
 Supabase.** Não há fonte de verdade versionada — documentar schedules aqui ou
 migrá-los para `cron.schedule` em migrations futuras.
 
-## Webhooks de banco (painel, não versionados)
+## Webhooks/triggers de banco
 
-- `maintenance_alerts` INSERT → `send-tpm-email`
-- `tpm_execution_alerts` INSERT → `send-loss-risk-alert`
+- `maintenance_alerts` INSERT → `send-tpm-email`: trigger versionado
+  `on_maintenance_alert_insert` (`20260508115950`) que chama
+  `trigger_send_tpm_email()` via pg_net. A migration `20261001143100` (PR #79)
+  reescreve a função para ler URL/secret de `app.settings.*` (GUCs).
+- `tpm_execution_alerts` INSERT → `send-loss-risk-alert`: trigger versionado
+  `on_tpm_execution_alert` (`20260508144832`) via pg_net.
 
-Ambos exigem header `x-cron-secret` (ou service-role/`WEBHOOK_API_KEY` no caso
-de `send-loss-risk-alert`). Se recriar os webhooks, configurar o header no painel.
+Além dos triggers, pode haver db-webhooks equivalentes configurados no painel
+(deduplicar se houver envio duplo). Chamadas exigem header `x-cron-secret`
+(ou service-role/`WEBHOOK_API_KEY` no caso de `send-loss-risk-alert`).
 
 ## Órfãs — decisão documentada
 

@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { parseOrError } from "../_shared/validate.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
 import { validateIPRequestSchema } from "../_shared/validation.ts";
 
 // IPv4-only general-prefix CIDR match (any /0-/32, not just /8, /16, /24).
@@ -62,7 +63,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const parsed = await parseOrError(validateIPRequestSchema, req, { corsHeaders: getCorsHeaders(req) });
+    const parsed = await parseOrError(validateIPRequestSchema, req, { corsHeaders: getCorsHeaders(req), requestId: getOrCreateRequestId(req) });
     if (parsed.response) return parsed.response;
     const { user_id, user_email, user_agent, action, failure_reason } = parsed.data;
     // Server-derived — never trust a client-supplied IP for an allowlist decision.
