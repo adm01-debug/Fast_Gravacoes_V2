@@ -57,3 +57,19 @@ BEGIN
     RETURN TRUE;
 END;
 $$;
+
+-- A migration de default-privileges de setembro tira EXECUTE de PUBLIC nas
+-- functions novas — sem grant explícito, a edge function (service_role) não
+-- consegue chamar a RPC e toda telemetria CSP retornaria 500.
+REVOKE EXECUTE ON FUNCTION public.insert_csp_report_dedup(
+    text, text, text, text, text, text, text, integer, integer, integer, text, text, jsonb
+) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.insert_csp_report_dedup(
+    text, text, text, text, text, text, text, integer, integer, integer, text, text, jsonb
+) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.insert_csp_report_dedup(
+    text, text, text, text, text, text, text, integer, integer, integer, text, text, jsonb
+) FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.insert_csp_report_dedup(
+    text, text, text, text, text, text, text, integer, integer, integer, text, text, jsonb
+) TO service_role;
