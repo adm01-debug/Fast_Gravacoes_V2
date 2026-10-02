@@ -42,11 +42,22 @@ export interface RateLimitOptions {
   requestId?: string;
 }
 
+// XFF pode trazer texto que não é IP — sem sanitizar, o cast INET quebrava
+// os dois caminhos (RPC e legado) e o rate limit por IP abria bypass.
+// Valores inválidos colapsam no bucket compartilhado 0.0.0.0.
+const IPV4_RE = /^\d{1,3}(\.\d{1,3}){3}$/;
+const IPV6_RE = /^[0-9a-fA-F:]+$/;
+function sanitizeIp(raw: string | null | undefined): string {
+  const ip = (raw ?? "").split(",")[0].trim();
+  if (IPV4_RE.test(ip)) return ip;
+  if (ip.includes(":") && IPV6_RE.test(ip)) return ip;
+  return "0.0.0.0";
+}
+
 function resolveKey(identity: RateLimitIdentity): { field: "user_id" | "user_email" | "ip_address"; value: string } {
   if (identity.userId) return { field: "user_id", value: identity.userId };
   if (identity.email) return { field: "user_email", value: identity.email };
-  const ip = (identity.ip ?? "").split(",")[0].trim() || "0.0.0.0";
-  return { field: "ip_address", value: ip };
+  return { field: "ip_address", value: sanitizeIp(identity.ip) };
 }
 
 function tooManyRequests(
@@ -93,7 +104,7 @@ export async function checkRateLimit(
         p_endpoint: endpoint,
         p_user_id: key.field === "user_id" ? key.value : null,
         p_user_email: key.field === "user_email" ? key.value : null,
-        p_ip: key.field === "ip_address" ? key.value : (identity.ip ?? "").split(",")[0].trim() || null,
+        p_ip: key.field === "ip_address" ? key.value : sanitizeIp(identity.ip),
         p_max: max,
         p_window_seconds: windowSeconds,
       },
@@ -124,7 +135,7 @@ export async function checkRateLimit(
     // Insert record (fire-and-forget style, but await to keep count truthful).
     const insertRow: Record<string, unknown> = {
       endpoint,
-      ip_address: (identity.ip ?? "").split(",")[0].trim() || "0.0.0.0", // NOT NULL
+      ip_address: sanitizeIp(identity.ip), // NOT NULL
       request_count: 1,
       window_start: windowStart.toISOString(),
       window_end: now.toISOString(),
