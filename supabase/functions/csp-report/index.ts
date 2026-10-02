@@ -79,16 +79,6 @@ Deno.serve(async (req) => {
   // primeira linha de defesa cobre todo o tráfego (válido ou não) sem
   // discriminar origem — limita o custo de stream+zod por flood. Os buckets
   // de produção/rejeitados abaixo ficam com cotas próprias e mais apertadas.
-  const inboundLimited = await checkRateLimit(supabase, {
-    endpoint: "csp-report-inbound",
-    identity: { ip: getClientIp(req) },
-    max: 300,
-    windowSeconds: 60,
-    corsHeaders,
-    requestId,
-  });
-  if (inboundLimited) return inboundLimited;
-
   const inboundGlobalLimited = await checkRateLimit(supabase, {
     endpoint: "csp-report-inbound-global",
     identity: { ip: "0.0.0.0" },
@@ -98,6 +88,16 @@ Deno.serve(async (req) => {
     requestId,
   });
   if (inboundGlobalLimited) return inboundGlobalLimited;
+
+  const inboundLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-inbound",
+    identity: { ip: getClientIp(req) },
+    max: 300,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (inboundLimited) return inboundLimited;
 
   // Leitura streamada com teto: cobre chunked/sem Content-Length sem
   // materializar o body inteiro na memória da function.
@@ -160,15 +160,6 @@ Deno.serve(async (req) => {
       }
     })();
     if (!allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))) {
-      const rejectedLimited = await checkRateLimit(supabase, {
-        endpoint: "csp-report-rejected",
-        identity: { ip: getClientIp(req) },
-        max: 120,
-        windowSeconds: 60,
-        corsHeaders,
-        requestId,
-      });
-      if (rejectedLimited) return rejectedLimited;
       // Teto agregado próprio: IPs rotativos não podem gerar RPCs ilimitados.
       const rejectedGlobalLimited = await checkRateLimit(supabase, {
         endpoint: "csp-report-rejected-global",
@@ -179,9 +170,32 @@ Deno.serve(async (req) => {
         requestId,
       });
       if (rejectedGlobalLimited) return rejectedGlobalLimited;
+      const rejectedLimited = await checkRateLimit(supabase, {
+        endpoint: "csp-report-rejected",
+        identity: { ip: getClientIp(req) },
+        max: 120,
+        windowSeconds: 60,
+        corsHeaders,
+        requestId,
+      });
+      if (rejectedLimited) return rejectedLimited;
       return new Response(null, { status: 204, headers: corsHeaders });
     }
   }
+
+  // Bucket global ANTES do per-IP: saturado, o agregado corta a request sem
+  // gravar linha per-IP — senão IPs novos continuariam escrevendo
+  // rate_limit_logs mesmo com o teto global estourado. O mesmo padrão se
+  // repete nos buckets inbound e rejected acima.
+  const globalLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-global",
+    identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
+    max: 300,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (globalLimited) return globalLimited;
 
   const limited = await checkRateLimit(supabase, {
     endpoint: "csp-report",
@@ -192,18 +206,6 @@ Deno.serve(async (req) => {
     requestId,
   });
   if (limited) return limited;
-
-  // Bucket global: mesmo quem rotaciona IPs forjados no XFF fica limitado
-  // pelo teto agregado do endpoint.
-  const globalLimited = await checkRateLimit(supabase, {
-    endpoint: "csp-report-global",
-    identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
-    max: 300,
-    windowSeconds: 60,
-    corsHeaders,
-    requestId,
-  });
-  if (globalLimited) return globalLimited;
 
   const report = parsed.data["csp-report"];
 
