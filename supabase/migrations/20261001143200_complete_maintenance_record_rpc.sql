@@ -117,3 +117,9 @@ BEGIN
   FROM jsonb_array_elements(coalesce(payload->'parts', '[]'::jsonb)) AS p;
 END;
 $$;
+
+-- 20260905120000 revogou os grants default de EXECUTE (PUBLIC/anon/authenticated)
+-- para funções novas — sem este GRANT o PostgREST nem expõe a RPC e a conclusão
+-- de manutenção falharia com 404/permission denied.
+REVOKE EXECUTE ON FUNCTION public.complete_maintenance_record(jsonb) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.complete_maintenance_record(jsonb) TO authenticated, service_role;
