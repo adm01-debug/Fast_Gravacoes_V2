@@ -13,7 +13,7 @@ interface ExecutionRecordViewProps {
   record: ExecutionRecord;
   validationErrors: string[];
   onApprove: () => void;
-  onSendCorrection: (notes: string) => void;
+  onSendCorrection: (notes: string) => void | Promise<void>;
 }
 
 const Label = ({ children, className }: { children: React.ReactNode, className?: string }) => (
@@ -24,9 +24,14 @@ export function ExecutionRecordView({ record, validationErrors, onApprove, onSen
   const [isRequestingCorrection, setIsRequestingCorrection] = useState(false);
   const [correctionNotes, setCorrectionNotes] = useState('');
 
-  const handleSendCorrection = () => {
-    onSendCorrection(correctionNotes);
-    setIsRequestingCorrection(false);
+  const handleSendCorrection = async () => {
+    try {
+      await onSendCorrection(correctionNotes);
+      setIsRequestingCorrection(false);
+      setCorrectionNotes('');
+    } catch {
+      // erro já tratado pela mutation — mantém o formulário aberto com o texto
+    }
   };
 
   return (

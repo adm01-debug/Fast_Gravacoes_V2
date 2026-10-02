@@ -1,4 +1,5 @@
-import { useState, lazy, Suspense, useMemo, memo, useCallback, useEffect } from 'react';
+import { useState, Suspense, useMemo, memo, useCallback, useEffect } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { cn } from '@/lib/utils';
@@ -63,7 +64,7 @@ import { OEEAuditPanel } from '@/features/analytics/components/oee/OEEAuditPanel
 import { OEESimulatorPanel } from '@/features/analytics/components/oee/OEESimulatorPanel';
 import { OEEOverviewTab } from '@/features/analytics/components/oee/OEEOverviewTab';
 import { OEEStudiosTab } from '@/features/analytics/components/oee/OEEStudiosTab';
-const OEEGaugeCard = lazy(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
+const OEEGaugeCard = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
 import { Skeleton } from '@/components/ui/skeleton';
 import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
@@ -77,21 +78,21 @@ import { useDashboardPresets, DashboardPreset } from '@/features/admin';
 import { KPIPageSkeleton, ChartSkeleton, TableSkeleton } from '@/components/loading';
 
 // Lazy load heavy dashboard components
-const OEEMachineTable = lazy(() => import('@/features/analytics/components/oee/OEEMachineTable').then(m => ({ default: m.OEEMachineTable })));
-const OEETrendChart = lazy(() => import('@/features/analytics/components/oee/OEETrendChart').then(m => ({ default: m.OEETrendChart })));
-const OEELossesChart = lazy(() => import('@/features/analytics/components/oee/OEELossesChart').then(m => ({ default: m.OEELossesChart })));
-const OEETechniqueComparison = lazy(() => import('@/features/analytics/components/oee/OEETechniqueComparison').then(m => ({ default: m.OEETechniqueComparison })));
-const OEEHeatmap = lazy(() => import('@/features/analytics/components/oee/OEEHeatmap').then(m => ({ default: m.OEEHeatmap })));
-const PredictiveAlerts = lazy(() => import('@/features/analytics/components/oee/PredictiveAlerts').then(m => ({ default: m.PredictiveAlerts })));
-const ParetoLossesChart = lazy(() => import('@/features/analytics/components/oee/ParetoLossesChart').then(m => ({ default: m.ParetoLossesChart })));
-const OEELossDrilldown = lazy(() => import('@/features/analytics/components/oee/OEELossDrilldown').then(m => ({ default: m.OEELossDrilldown })));
-const OEEShiftComparison = lazy(() => import('@/features/analytics/components/oee/OEEShiftComparison').then(m => ({ default: m.OEEShiftComparison })));
-const OEERecommendations = lazy(() => import('@/features/analytics/components/oee/OEERecommendations').then(m => ({ default: m.OEERecommendations })));
-const OEERankingGap = lazy(() => import('@/features/analytics/components/oee/OEERankingGap').then(m => ({ default: m.OEERankingGap })));
-const StudioEfficiencyGrid = lazy(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
-const MaterialEfficiencyChart = lazy(() => import('@/features/analytics/components/oee/MaterialEfficiencyChart').then(m => ({ default: m.MaterialEfficiencyChart })));
-const StudioHealthMonitor = lazy(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
-const HyperInsights = lazy(() => import('@/features/analytics/components/oee/HyperInsights').then(m => ({ default: m.HyperInsights })));
+const OEEMachineTable = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEMachineTable').then(m => ({ default: m.OEEMachineTable })));
+const OEETrendChart = lazyWithRetry(() => import('@/features/analytics/components/oee/OEETrendChart').then(m => ({ default: m.OEETrendChart })));
+const OEELossesChart = lazyWithRetry(() => import('@/features/analytics/components/oee/OEELossesChart').then(m => ({ default: m.OEELossesChart })));
+const OEETechniqueComparison = lazyWithRetry(() => import('@/features/analytics/components/oee/OEETechniqueComparison').then(m => ({ default: m.OEETechniqueComparison })));
+const OEEHeatmap = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEHeatmap').then(m => ({ default: m.OEEHeatmap })));
+const PredictiveAlerts = lazyWithRetry(() => import('@/features/analytics/components/oee/PredictiveAlerts').then(m => ({ default: m.PredictiveAlerts })));
+const ParetoLossesChart = lazyWithRetry(() => import('@/features/analytics/components/oee/ParetoLossesChart').then(m => ({ default: m.ParetoLossesChart })));
+const OEELossDrilldown = lazyWithRetry(() => import('@/features/analytics/components/oee/OEELossDrilldown').then(m => ({ default: m.OEELossDrilldown })));
+const OEEShiftComparison = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEShiftComparison').then(m => ({ default: m.OEEShiftComparison })));
+const OEERecommendations = lazyWithRetry(() => import('@/features/analytics/components/oee/OEERecommendations').then(m => ({ default: m.OEERecommendations })));
+const OEERankingGap = lazyWithRetry(() => import('@/features/analytics/components/oee/OEERankingGap').then(m => ({ default: m.OEERankingGap })));
+const StudioEfficiencyGrid = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
+const MaterialEfficiencyChart = lazyWithRetry(() => import('@/features/analytics/components/oee/MaterialEfficiencyChart').then(m => ({ default: m.MaterialEfficiencyChart })));
+const StudioHealthMonitor = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
+const HyperInsights = lazyWithRetry(() => import('@/features/analytics/components/oee/HyperInsights').then(m => ({ default: m.HyperInsights })));
 
 
 
@@ -210,7 +211,7 @@ const OEEDashboard = memo(function OEEDashboard() {
           <div className="absolute -top-10 -left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-1">
-               <Badge className="bg-primary text-primary-foreground border-none text-[8px] font-black uppercase tracking-tighter px-1.5 py-0 h-4">Industrial Intelligence</Badge>
+               <Badge className="bg-primary/20 text-foreground border-primary/30 text-[8px] font-black uppercase tracking-tighter px-1.5 py-0 h-4">Industrial Intelligence</Badge>
                <div className="h-px w-12 bg-primary/20" />
             </div>
             <h1 className="text-display-lg flex items-center gap-3 tracking-tighter">
@@ -228,6 +229,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             <Button 
               variant="outline" 
               size="sm" 
+              aria-label="Compartilhar dashboard"
               onClick={handleShare}
               className="flex gap-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-transform"
             >
@@ -237,7 +239,7 @@ const OEEDashboard = memo(function OEEDashboard() {
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="flex gap-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-transform">
+                <Button variant="outline" size="sm" aria-label="Presets de filtros" className="flex gap-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-transform">
                   <Bookmark className="h-4 w-4" />
                   <span className="hidden sm:inline">Presets</span>
                 </Button>
@@ -252,18 +254,18 @@ const OEEDashboard = memo(function OEEDashboard() {
                       onChange={(e) => setPresetName(e.target.value)}
                       className="h-8 text-xs"
                     />
-                    <Button size="sm" onClick={handleSavePreset} className="h-8 px-3">
+                    <Button size="sm" aria-label="Salvar preset" onClick={handleSavePreset} className="h-8 px-3">
                       <Save className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className="space-y-2 max-h-40 overflow-auto">
+                  <div role="region" aria-label="Presets salvos" tabIndex={0} className="space-y-2 max-h-40 overflow-auto">
                     {presets && presets.length === 0 ? (
                       <p className="text-[10px] text-muted-foreground text-center py-4 italic">Nenhum preset salvo</p>
                     ) : (
                       presets?.map((preset) => (
                         <div key={preset.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
                           <span role="button" tabIndex={0} aria-label={`Aplicar preset ${preset.name}`} className="text-xs font-medium truncate flex-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" onClick={() => applyPreset(preset)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyPreset(preset); } }}>{preset.name}</span>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => deletePreset(preset.id)}>
+                          <Button variant="ghost" size="icon" aria-label={`Excluir preset ${preset.name}`} className="h-6 w-6 text-destructive" onClick={() => deletePreset(preset.id)}>
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
@@ -276,7 +278,7 @@ const OEEDashboard = memo(function OEEDashboard() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex gap-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-transform">
+                <Button variant="outline" size="sm" aria-label={t('common.export', 'Exportar')} className="flex gap-2 border-primary/20 hover:bg-primary/5 active:scale-95 transition-transform">
                   <FileDown className="h-4 w-4" />
                   <span className="hidden sm:inline">{t('common.export', 'Exportar')}</span>
                 </Button>
@@ -295,7 +297,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             </DropdownMenu>
 
             <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-[100px] sm:w-28 md:w-36 glass-card border-primary/20">
+              <SelectTrigger aria-label={t('common.period', 'Período')} className="w-[100px] sm:w-28 md:w-36 glass-card border-primary/20">
                 <SelectValue placeholder={t('common.period', 'Período')} />
               </SelectTrigger>
               <SelectContent>
@@ -310,7 +312,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             </Select>
 
             <Select value={studioId} onValueChange={setStudioId}>
-              <SelectTrigger className="w-[120px] sm:w-36 md:w-52 glass-card border-primary/20">
+              <SelectTrigger aria-label="Studio" className="w-[120px] sm:w-36 md:w-52 glass-card border-primary/20">
                 <SelectValue placeholder="Studio" />
               </SelectTrigger>
               <SelectContent>
@@ -321,7 +323,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             </Select>
 
             <Select value={techniqueId} onValueChange={setTechniqueId}>
-              <SelectTrigger className="w-[110px] sm:w-32 md:w-44 glass-card border-primary/20">
+              <SelectTrigger aria-label={t('common.technique', 'Técnica')} className="w-[110px] sm:w-32 md:w-44 glass-card border-primary/20">
                 <SelectValue placeholder={t('common.technique', 'Técnica')} />
               </SelectTrigger>
               <SelectContent>
@@ -339,7 +341,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             </Select>
 
             <Select value={machineId} onValueChange={setMachineId}>
-              <SelectTrigger className="w-[110px] sm:w-32 md:w-44 glass-card border-primary/20">
+              <SelectTrigger aria-label={t('common.machine', 'Máquina')} className="w-[110px] sm:w-32 md:w-44 glass-card border-primary/20">
                 <SelectValue placeholder={t('common.machine', 'Máquina')} />
               </SelectTrigger>
               <SelectContent>
@@ -353,7 +355,7 @@ const OEEDashboard = memo(function OEEDashboard() {
             </Select>
 
             <Select value={shift} onValueChange={setShift}>
-              <SelectTrigger className="w-[100px] sm:w-28 md:w-36 glass-card border-primary/20">
+              <SelectTrigger aria-label="Turno" className="w-[100px] sm:w-28 md:w-36 glass-card border-primary/20">
                 <SelectValue placeholder="Turno" />
               </SelectTrigger>
               <SelectContent>

@@ -470,9 +470,9 @@ export function useOfflineSync() {
 
     // Actions
     cacheData,
+    addPendingAction,
     syncPendingActions,
     forceSync,
-    addPendingAction,
     clearPendingActions,
     clearFailedActions,
 

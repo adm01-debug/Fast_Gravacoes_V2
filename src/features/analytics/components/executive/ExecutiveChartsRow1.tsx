@@ -1,6 +1,6 @@
 import { BarChart3, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
-import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '@/lib/recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ExecutiveKPIs } from '@/features/analytics/hooks/useExecutiveDashboard';
 

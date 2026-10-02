@@ -119,7 +119,9 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
       });
       loadDetails();
     } catch (error) {
-      // Error handled
+      // Erro já exibido pela mutation; propaga para o formulário não fechar
+      // e perder o texto digitado.
+      throw error;
     }
   };
 

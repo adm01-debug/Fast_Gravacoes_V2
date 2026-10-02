@@ -1,4 +1,5 @@
-import { useState, useMemo, lazy, Suspense } from 'react';
+import { useState, useMemo, Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useNavigate } from 'react-router-dom';
 import {
   format,
@@ -22,8 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
-const CalendarHeader = lazy(() => import('@/components/calendar/CalendarHeader').then(m => ({ default: m.CalendarHeader })));
-const CalendarFilters = lazy(() => import('@/components/calendar/CalendarFilters').then(m => ({ default: m.CalendarFilters })));
+const CalendarHeader = lazyWithRetry(() => import('@/components/calendar/CalendarHeader').then(m => ({ default: m.CalendarHeader })));
+const CalendarFilters = lazyWithRetry(() => import('@/components/calendar/CalendarFilters').then(m => ({ default: m.CalendarFilters })));
 import { CalendarLegend } from '@/components/calendar/CalendarLegend';
 import { CalendarEmptyState } from '@/components/calendar/CalendarEmptyState';
 import { MobileFAB } from '@/components/calendar/MobileFAB';

@@ -1,4 +1,5 @@
-import { ReactNode, lazy, Suspense } from 'react';
+import { ReactNode, Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Bell } from 'lucide-react';
@@ -15,20 +16,20 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
 // Lazy-load non-critical layout components
-const AssistantButton = lazy(() => import('../assistant/AssistantButton').then(m => ({ default: m.AssistantButton })));
-const NotificationIntegrator = lazy(() => import('@/features/notifications').then(m => ({ default: m.NotificationIntegrator })));
-const RealtimeIndicator = lazy(() => import('../dashboard/RealtimeIndicator').then(m => ({ default: m.RealtimeIndicator })));
-const OperatorMachinesIndicator = lazy(() => import('./OperatorMachinesIndicator').then(m => ({ default: m.OperatorMachinesIndicator })));
-const QuickFavoritesBar = lazy(() => import('./QuickFavoritesBar').then(m => ({ default: m.QuickFavoritesBar })));
-const OfflineReadyIndicator = lazy(() => import('../offline/OfflineReadyIndicator').then(m => ({ default: m.OfflineReadyIndicator })));
-const MobileNavigation = lazy(() => import('../navigation/MobileNavigation').then(m => ({ default: m.MobileNavigation })));
-const MobileQuickActions = lazy(() => import('../navigation/MobileQuickActions').then(m => ({ default: m.MobileQuickActions })));
+const AssistantButton = lazyWithRetry(() => import('../assistant/AssistantButton').then(m => ({ default: m.AssistantButton })));
+const NotificationIntegrator = lazyWithRetry(() => import('@/features/notifications').then(m => ({ default: m.NotificationIntegrator })));
+const RealtimeIndicator = lazyWithRetry(() => import('../dashboard/RealtimeIndicator').then(m => ({ default: m.RealtimeIndicator })));
+const OperatorMachinesIndicator = lazyWithRetry(() => import('./OperatorMachinesIndicator').then(m => ({ default: m.OperatorMachinesIndicator })));
+const QuickFavoritesBar = lazyWithRetry(() => import('./QuickFavoritesBar').then(m => ({ default: m.QuickFavoritesBar })));
+const OfflineReadyIndicator = lazyWithRetry(() => import('../offline/OfflineReadyIndicator').then(m => ({ default: m.OfflineReadyIndicator })));
+const MobileNavigation = lazyWithRetry(() => import('../navigation/MobileNavigation').then(m => ({ default: m.MobileNavigation })));
+const MobileQuickActions = lazyWithRetry(() => import('../navigation/MobileQuickActions').then(m => ({ default: m.MobileQuickActions })));
 
-const SystemOnboarding = lazy(() => import('../onboarding/SystemOnboarding').then(m => ({ default: m.SystemOnboarding })));
-const Breadcrumbs = lazy(() => import('../navigation/Breadcrumbs').then(m => ({ default: m.Breadcrumbs })));
-const BackButton = lazy(() => import('../navigation/BackButton').then(m => ({ default: m.BackButton })));
-const SwipeIndicator = lazy(() => import('../navigation/SwipeIndicator').then(m => ({ default: m.SwipeIndicator })));
-const TopProgressBar = lazy(() => import('../navigation/TopProgressBar').then(m => ({ default: m.TopProgressBar })));
+const SystemOnboarding = lazyWithRetry(() => import('../onboarding/SystemOnboarding').then(m => ({ default: m.SystemOnboarding })));
+const Breadcrumbs = lazyWithRetry(() => import('../navigation/Breadcrumbs').then(m => ({ default: m.Breadcrumbs })));
+const BackButton = lazyWithRetry(() => import('../navigation/BackButton').then(m => ({ default: m.BackButton })));
+const SwipeIndicator = lazyWithRetry(() => import('../navigation/SwipeIndicator').then(m => ({ default: m.SwipeIndicator })));
+const TopProgressBar = lazyWithRetry(() => import('../navigation/TopProgressBar').then(m => ({ default: m.TopProgressBar })));
 
 
 
@@ -186,7 +187,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               </div>
               
               <div className="hidden sm:flex items-center gap-4">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full border border-border/40 shadow-inner">
+                <div className="flex items-center gap-2 text-xs font-medium text-foreground/70 bg-muted/30 px-3 py-1.5 rounded-full border border-border/40 shadow-inner">
                   <span className="relative flex h-2 w-2" aria-hidden="true">
                     <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>

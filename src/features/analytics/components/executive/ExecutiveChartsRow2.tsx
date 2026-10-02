@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '@/lib/recharts';
 import { cn } from '@/lib/utils';
 import type { Database } from '@/integrations/supabase/types';
 import type { ExecutiveKPIs } from '@/features/analytics/hooks/useExecutiveDashboard';

@@ -1,4 +1,5 @@
-import { Suspense, lazy, useMemo, ComponentType, useState, useEffect, useCallback } from 'react';
+import { Suspense, useMemo, ComponentType, useState, useEffect, useCallback } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -26,19 +27,19 @@ import { useSmartDelayAlerts } from '@/hooks/useSmartDelayAlerts';
 import { usePerformanceMetrics } from '@/features/production';
 
 import { VoiceButton } from '@/components/voice/VoiceCommands';
-const ActivityFeedWidget = lazy(() => import('@/components/dashboard/ActivityFeedWidget').then(m => ({ default: m.ActivityFeedWidget })));
-const InventoryAlertsWidget = lazy(() => import('@/components/dashboard/InventoryAlertsWidget').then(m => ({ default: m.InventoryAlertsWidget })));
-const BufferPromotionStatus = lazy(() => import('@/components/dashboard/BufferPromotionStatus').then(m => ({ default: m.BufferPromotionStatus })));
-const LiveMachineStatusPanel = lazy(() => import('@/components/dashboard/LiveMachineStatusPanel').then(m => ({ default: m.LiveMachineStatusPanel })));
-const AutoShiftSummary = lazy(() => import('@/components/shift/AutoShiftSummary').then(m => ({ default: m.AutoShiftSummary })));
-const QuickChat = lazy(() => import('@/components/chat/QuickChat').then(m => ({ default: m.QuickChat })));
-const MaintenanceAlertsWidget = lazy(() => import('@/components/dashboard/MaintenanceAlertsWidget').then(m => ({ default: m.MaintenanceAlertsWidget })));
-const EnergyWidget = lazy(() => import('@/components/dashboard/EnergyWidget').then(m => ({ default: m.EnergyWidget })));
-const PredictiveAnalyticsWidget = lazy(() => import('@/components/dashboard/PredictiveAnalyticsWidget').then(m => ({ default: m.PredictiveAnalyticsWidget })));
-const ShiftHandoverWidget = lazy(() => import('@/components/dashboard/ShiftHandoverWidget').then(m => ({ default: m.ShiftHandoverWidget })));
-const LeaderboardWidget = lazy(() => import('@/components/dashboard/LeaderboardWidget').then(m => ({ default: m.LeaderboardWidget })));
-const OperatorGoalsWidget = lazy(() => import('@/components/dashboard/OperatorGoalsWidget').then(m => ({ default: m.OperatorGoalsWidget })));
-const DailySummaryCard = lazy(() => import('@/features/notifications/components/DailySummaryCard').then(m => ({ default: m.DailySummaryCard })));
+const ActivityFeedWidget = lazyWithRetry(() => import('@/components/dashboard/ActivityFeedWidget').then(m => ({ default: m.ActivityFeedWidget })));
+const InventoryAlertsWidget = lazyWithRetry(() => import('@/components/dashboard/InventoryAlertsWidget').then(m => ({ default: m.InventoryAlertsWidget })));
+const BufferPromotionStatus = lazyWithRetry(() => import('@/components/dashboard/BufferPromotionStatus').then(m => ({ default: m.BufferPromotionStatus })));
+const LiveMachineStatusPanel = lazyWithRetry(() => import('@/components/dashboard/LiveMachineStatusPanel').then(m => ({ default: m.LiveMachineStatusPanel })));
+const AutoShiftSummary = lazyWithRetry(() => import('@/components/shift/AutoShiftSummary').then(m => ({ default: m.AutoShiftSummary })));
+const QuickChat = lazyWithRetry(() => import('@/components/chat/QuickChat').then(m => ({ default: m.QuickChat })));
+const MaintenanceAlertsWidget = lazyWithRetry(() => import('@/components/dashboard/MaintenanceAlertsWidget').then(m => ({ default: m.MaintenanceAlertsWidget })));
+const EnergyWidget = lazyWithRetry(() => import('@/components/dashboard/EnergyWidget').then(m => ({ default: m.EnergyWidget })));
+const PredictiveAnalyticsWidget = lazyWithRetry(() => import('@/components/dashboard/PredictiveAnalyticsWidget').then(m => ({ default: m.PredictiveAnalyticsWidget })));
+const ShiftHandoverWidget = lazyWithRetry(() => import('@/components/dashboard/ShiftHandoverWidget').then(m => ({ default: m.ShiftHandoverWidget })));
+const LeaderboardWidget = lazyWithRetry(() => import('@/components/dashboard/LeaderboardWidget').then(m => ({ default: m.LeaderboardWidget })));
+const OperatorGoalsWidget = lazyWithRetry(() => import('@/components/dashboard/OperatorGoalsWidget').then(m => ({ default: m.OperatorGoalsWidget })));
+const DailySummaryCard = lazyWithRetry(() => import('@/features/notifications/components/DailySummaryCard').then(m => ({ default: m.DailySummaryCard })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DashboardExport } from '@/components/dashboard/DashboardExport';
@@ -71,16 +72,16 @@ interface WidgetComponentConfig {
 }
 
 // Lazy load heavy dashboard widgets
-const OccupancyChart = lazy(() => import('@/components/dashboard/OccupancyChart').then(m => ({ default: m.OccupancyChart })));
-const RecentJobsTable = lazy(() => import('@/components/dashboard/RecentJobsTable').then(m => ({ default: m.RecentJobsTable })));
-const CompactTimeline = lazy(() => import('@/components/dashboard/CompactTimeline').then(m => ({ default: m.CompactTimeline })));
-const AlertsWidget = lazy(() => import('@/components/dashboard/AlertsWidget').then(m => ({ default: m.AlertsWidget })));
-const BufferStatusWidget = lazy(() => import('@/components/dashboard/BufferStatusWidget').then(m => ({ default: m.BufferStatusWidget })));
-const ConflictAlertsWidget = lazy(() => import('@/components/dashboard/ConflictAlertsWidget').then(m => ({ default: m.ConflictAlertsWidget })));
-const SmartSequencingWidget = lazy(() => import('@/components/dashboard/SmartSequencingWidget').then(m => ({ default: m.SmartSequencingWidget })));
-const LoadBalancingWidget = lazy(() => import('@/components/dashboard/LoadBalancingWidget').then(m => ({ default: m.LoadBalancingWidget })));
-const BottleneckWidget = lazy(() => import('@/components/dashboard/BottleneckWidget').then(m => ({ default: m.BottleneckWidget })));
-const OEELoadTrendWidget = lazy(() => import('@/components/dashboard/OEELoadTrendWidget').then(m => ({ default: m.OEELoadTrendWidget })));
+const OccupancyChart = lazyWithRetry(() => import('@/components/dashboard/OccupancyChart').then(m => ({ default: m.OccupancyChart })));
+const RecentJobsTable = lazyWithRetry(() => import('@/components/dashboard/RecentJobsTable').then(m => ({ default: m.RecentJobsTable })));
+const CompactTimeline = lazyWithRetry(() => import('@/components/dashboard/CompactTimeline').then(m => ({ default: m.CompactTimeline })));
+const AlertsWidget = lazyWithRetry(() => import('@/components/dashboard/AlertsWidget').then(m => ({ default: m.AlertsWidget })));
+const BufferStatusWidget = lazyWithRetry(() => import('@/components/dashboard/BufferStatusWidget').then(m => ({ default: m.BufferStatusWidget })));
+const ConflictAlertsWidget = lazyWithRetry(() => import('@/components/dashboard/ConflictAlertsWidget').then(m => ({ default: m.ConflictAlertsWidget })));
+const SmartSequencingWidget = lazyWithRetry(() => import('@/components/dashboard/SmartSequencingWidget').then(m => ({ default: m.SmartSequencingWidget })));
+const LoadBalancingWidget = lazyWithRetry(() => import('@/components/dashboard/LoadBalancingWidget').then(m => ({ default: m.LoadBalancingWidget })));
+const BottleneckWidget = lazyWithRetry(() => import('@/components/dashboard/BottleneckWidget').then(m => ({ default: m.BottleneckWidget })));
+const OEELoadTrendWidget = lazyWithRetry(() => import('@/components/dashboard/OEELoadTrendWidget').then(m => ({ default: m.OEELoadTrendWidget })));
 
 // Widget skeleton fallback with shimmer
 function WidgetSkeleton({ className = "h-64" }: { className?: string }) {

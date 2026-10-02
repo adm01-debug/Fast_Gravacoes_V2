@@ -88,6 +88,7 @@ export function DashboardExport() {
         <Button
           variant="outline"
           size="sm"
+          aria-label="Exportar dashboard"
           className="h-8 gap-2 border-primary/20 bg-primary/5 hover:bg-primary/10 no-export"
           disabled={isExporting}
         >

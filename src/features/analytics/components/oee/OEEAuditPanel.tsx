@@ -38,7 +38,7 @@ export function OEEAuditPanel({ data, machineId, industryBenchmark, onBenchmarkC
                 <div className="flex items-center gap-2 bg-background/50 p-1 rounded-lg border border-border/50">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase px-2">Setor:</span>
                   <Select value={industryBenchmark} onValueChange={onBenchmarkChange}>
-                    <SelectTrigger className="h-7 w-40 text-[10px] font-bold border-none bg-transparent">
+                    <SelectTrigger aria-label="Setor de referência" className="h-7 w-40 text-[10px] font-bold border-none bg-transparent">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
