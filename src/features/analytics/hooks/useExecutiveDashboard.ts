@@ -209,7 +209,9 @@ async function fetchPeriodData(startDate: string, endDate: string, filters?: { m
     fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1)),
     supabase.from('machines').select('*'),
     supabase.from('techniques').select('*'),
-    fetchAllRows((o, l) => maintenanceQuery.range(o, o + l - 1)),
+    // maintenance não alimenta os KPIs do painel: isola a falha para não
+    // derrubar a carga inteira (comportamento anterior era `data || []`).
+    fetchAllRows((o, l) => maintenanceQuery.range(o, o + l - 1)).catch(() => []),
     supabase.from('machine_health_metrics').select('*'),
     supabase.from('profiles').select('*'),
   ]);

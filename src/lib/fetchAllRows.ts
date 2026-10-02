@@ -33,3 +33,41 @@ export async function fetchAllRows<T>(
   }
   return all;
 }
+
+// Variante por cursor (keyset) para consultas em tabelas que recebem INSERTs
+// durante a leitura: paginar por offset sobre a lista pode duplicar/omitir
+// linhas quando um registro novo desloca as posições. A cada página o caller
+// filtra pela tupla de ordenação da última linha vista, então inserções
+// posteriores não afetam as páginas seguintes.
+//
+// Uso:
+//   const rows = await fetchAllRowsByCursor(
+//     (cursor, limit) => {
+//       let q = supabase.from('audit_log').select('*')
+//         .order('created_at', { ascending: false }).order('id', { ascending: false });
+//       if (cursor) {
+//         q = q.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`);
+//       }
+//       return q.limit(limit);
+//     },
+//     (row) => ({ created_at: row.created_at, id: row.id }),
+//   );
+export async function fetchAllRowsByCursor<T, C>(
+  fetchPage: (cursor: C | null, limit: number) => PromiseLike<SupabasePage<T>>,
+  cursorOf: (row: T) => C,
+  options: { pageSize?: number; maxRows?: number } = {},
+): Promise<T[]> {
+  const { pageSize = 1000, maxRows = Infinity } = options;
+  const all: T[] = [];
+  let cursor: C | null = null;
+  while (all.length < maxRows) {
+    const limit = Math.min(pageSize, maxRows - all.length);
+    const { data, error } = await fetchPage(cursor, limit);
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) return all;
+    all.push(...data);
+    if (data.length < limit) return all;
+    cursor = cursorOf(data[data.length - 1]);
+  }
+  return all;
+}

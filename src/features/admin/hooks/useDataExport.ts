@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { fetchAllRows } from '@/lib/fetchAllRows';
+import { fetchAllRowsByCursor } from '@/lib/fetchAllRows';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { format } from 'date-fns';
@@ -158,18 +158,31 @@ export function useDataExport(tableName: TableName) {
   const exportAuditTrail = useCallback(async (filters: AuditExportFilters, fileName?: string, formatType: 'csv' | 'pdf' = 'csv') => {
     setIsExporting(true);
     try {
-      // limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes —
-      // paginamos até 10 mil de verdade.
-      let query = supabase.from('audit_log').select('*').order('created_at', { ascending: false }).order('id');
+      // limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes.
+      // Paginação por cursor na tupla (created_at, id): audit_log recebe
+      // INSERTs durante a exportação e offset puro duplicaria/omitir linhas.
+      let query = supabase.from('audit_log').select('*')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false });
 
       if (filters.entityType) query = query.eq('entity_type', filters.entityType);
       if (filters.entityId) query = query.eq('entity_id', filters.entityId);
       if (filters.fromDate) query = query.gte('created_at', filters.fromDate);
       if (filters.toDate) query = query.lte('created_at', filters.toDate);
 
-      const data = await fetchAllRows(
-        (o, l) => query.range(o, o + l - 1),
-        { maxRows: 10000 },
+      type AuditLogRow = Database['public']['Tables']['audit_log']['Row'];
+      const data = await fetchAllRowsByCursor<AuditLogRow, Pick<AuditLogRow, 'created_at' | 'id'>>(
+        (cursor, limit) => {
+          let page = query;
+          if (cursor) {
+            page = page.or(
+              `created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},id.lt.${cursor.id})`,
+            );
+          }
+          return page.limit(limit);
+        },
+        (row) => ({ created_at: row.created_at, id: row.id }),
+        { pageSize: 1000, maxRows: 10000 },
       );
       if (!data || data.length === 0) {
         toast.info('Nenhum dado para exportar');
