@@ -95,16 +95,22 @@ test.describe('Offline Syncing and Persistence', () => {
     // CustomEvent morto da versão anterior deste teste nunca fazia.
     await withCrashContext(() => expect.poll(getPendingCount, { timeout: 5_000 }).toBe(1));
 
-    // 4. Go back online
+    // 4. Go back online — com a escrita no PostgREST interceptada: a
+    // asserção deste teste é o PIPELINE de drenagem (fila → sync pass →
+    // esvaziar), não o comportamento do backend. Sem o mock, o job fake
+    // 'e2e-offline-test' falharia 4x até o dead-letter em ~21s+RTT (backoff
+    // exponencial em useOfflineSync.ts) — margem apertada e falha
+    // determinística no CI. Com 200/[], o primeiro passe já drena.
+    await page.route('**/rest/v1/jobs*', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
+    );
     await context.setOffline(false);
 
-    // 5. A fila precisa esvaziar — sucesso, conflito, ou exaustão de retries
-    // (MAX_RETRIES=3, backoff exponencial 3s/6s/12s em useOfflineSync.ts,
-    // ~21s no pior caso) — provando que um passe de sync de verdade
+    // 5. A fila precisa esvaziar — provando que um passe de sync de verdade
     // processou a ação enfileirada. Não usa texto de toast: "Conexão
     // restaurada" (NetworkStatusToaster.tsx) dispara em qualquer evento
     // 'online', com ou sem ação pendente na fila, e não prova que o
     // pipeline de sync rodou.
-    await expect.poll(getPendingCount, { timeout: 35_000 }).toBe(0);
+    await expect.poll(getPendingCount, { timeout: 15_000 }).toBe(0);
   });
 });
