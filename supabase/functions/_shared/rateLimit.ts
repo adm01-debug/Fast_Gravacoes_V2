@@ -45,13 +45,23 @@ export interface RateLimitOptions {
 // XFF pode trazer texto que não é IP — sem sanitizar, o cast INET quebrava
 // os dois caminhos (RPC e legado) e o rate limit por IP abria bypass.
 // Valores inválidos colapsam no bucket compartilhado 0.0.0.0.
-const IPV4_RE = /^\d{1,3}(\.\d{1,3}){3}$/;
-const IPV6_RE = /^[0-9a-fA-F:]+$/;
+const IPV4_RE =
+  /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+function isValidInet(ip: string): boolean {
+  if (IPV4_RE.test(ip)) return true;
+  if (!ip.includes(":")) return false;
+  // new URL valida IPv6 completo (inclui :: e notação IPv4-mapped
+  // ::ffff:a.b.c.d) — regex manual cobriria só um subconjunto.
+  try {
+    new URL(`http://[${ip}]`);
+    return true;
+  } catch {
+    return false;
+  }
+}
 function sanitizeIp(raw: string | null | undefined): string {
   const ip = (raw ?? "").split(",")[0].trim();
-  if (IPV4_RE.test(ip)) return ip;
-  if (ip.includes(":") && IPV6_RE.test(ip)) return ip;
-  return "0.0.0.0";
+  return isValidInet(ip) ? ip : "0.0.0.0";
 }
 
 function resolveKey(identity: RateLimitIdentity): { field: "user_id" | "user_email" | "ip_address"; value: string } {
