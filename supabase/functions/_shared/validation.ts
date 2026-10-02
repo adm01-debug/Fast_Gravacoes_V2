@@ -35,4 +35,68 @@ export const approvePasswordResetSchema = z.object({
 
 export type ApprovePasswordResetPayload = z.infer<typeof approvePasswordResetSchema>;
 
+export const lockoutRequestSchema = z.object({
+  email: z.string().email("E-mail inválido"),
+  action: z.enum(["check", "record_failure", "record_success"]),
+});
+
+export type LockoutRequestPayload = z.infer<typeof lockoutRequestSchema>;
+
+export const validateIPRequestSchema = z.object({
+  user_id: z.string().uuid().optional(),
+  user_email: z.string().email("E-mail inválido"),
+  user_agent: z.string().optional(),
+  action: z.enum([
+    "login_attempt",
+    "login_success",
+    "login_failed",
+    "mfa_required",
+    "mfa_failed",
+    "mfa_success",
+  ]),
+  failure_reason: z.string().optional(),
+});
+
+export type ValidateIPRequestPayload = z.infer<typeof validateIPRequestSchema>;
+
+// Payload de Database Webhook do Supabase (INSERT em tabela-monitorada).
+// `record` é o objeto da linha; campos conhecidos são tipados, o restante
+// passa pelo passthrough.
+export const tpmAlertWebhookSchema = z.object({
+  event_type: z.string().optional(),
+  schema: z.string().optional(),
+  table: z.string().optional(),
+  // Colunas nullable do Postgres serializam como null no record — nullable()
+  // é necessário além de optional() ou o payload falha com 400.
+  record: z.object({
+    machine_id: z.string().optional().nullable(),
+    alert_type: z.string().optional().nullable(),
+    message: z.string().optional().nullable(),
+    severity: z.string().optional().nullable(),
+    created_at: z.string().optional().nullable(),
+  }).passthrough().optional().nullable(),
+  old_record: z.record(z.string(), z.unknown()).optional().nullable(),
+});
+
+export type TpmAlertWebhookPayload = z.infer<typeof tpmAlertWebhookSchema>;
+
+export const tpmExecutionAlertWebhookSchema = z.object({
+  event_type: z.string().optional(),
+  schema: z.string().optional(),
+  table: z.string().optional(),
+  record: z.object({
+    execution_id: z.string().optional().nullable(),
+    parameter_name: z.string().optional().nullable(),
+    actual_value: z.string().optional().nullable(),
+    expected_range: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    severity: z.string().optional().nullable(),
+    created_at: z.string().optional().nullable(),
+    evidence_urls: z.array(z.string()).optional().nullable(),
+  }).passthrough().optional().nullable(),
+  old_record: z.record(z.string(), z.unknown()).optional().nullable(),
+});
+
+export type TpmExecutionAlertWebhookPayload = z.infer<typeof tpmExecutionAlertWebhookSchema>;
+
 

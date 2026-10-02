@@ -2,6 +2,9 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 import { escapeHtml } from "../_shared/htmlEscape.ts";
+import { parseOrError } from "../_shared/validate.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
+import { tpmExecutionAlertWebhookSchema } from "../_shared/validation.ts";
 
 function safeImageUrl(url: unknown): string | null {
   if (typeof url !== 'string') return null;
@@ -45,11 +48,11 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const payload = await req.json();
-    
-    console.log('[send-loss-risk-alert] Payload received:', payload?.event_type, 'execution_id:', payload?.record?.execution_id);
-    
-    const { record, event_type } = payload;
+    const parsed = await parseOrError(tpmExecutionAlertWebhookSchema, req, { corsHeaders: getCorsHeaders(req), requestId: getOrCreateRequestId(req) });
+    if (parsed.response) return parsed.response;
+    const { record, event_type } = parsed.data;
+
+    console.log('[send-loss-risk-alert] Payload received:', event_type, 'execution_id:', record?.execution_id);
     
     if (event_type !== 'INSERT' || !record) {
       return new Response(JSON.stringify({ message: 'Ignore non-insert events' }), { status: 200 });
@@ -145,7 +148,7 @@ serve(async (req) => {
             <p><strong>Evento:</strong> ${escapeHtml(alert.description)}</p>
             <p><strong>Valor Registrado:</strong> ${escapeHtml(alert.actual_value)}</p>
             <p><strong>Range Esperado:</strong> ${escapeHtml(alert.expected_range)}</p>
-            <p><strong>Horário da Ocorrência:</strong> ${escapeHtml(new Date(alert.created_at).toLocaleString('pt-BR'))}</p>
+            <p><strong>Horário da Ocorrência:</strong> ${escapeHtml(new Date(alert.created_at ?? '').toLocaleString('pt-BR'))}</p>
             <p><strong>Operador:</strong> ${escapeHtml(execution.performed_by_name || 'N/A')}</p>
           </div>
           ${evidenceHtml}
