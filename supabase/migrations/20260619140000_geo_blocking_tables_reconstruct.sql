@@ -1,6 +1,8 @@
 -- Reconstrói as 3 tabelas geo_blocking_* que foram criadas manualmente no
--- banco e nunca tiveram migration (índices/policies já versionados em
--- 20260619153319, 20260619153505, 20260317221345 e 20260712232418).
+-- banco e nunca tiveram migration. Timestamp deliberadamente ANTERIOR à
+-- primeira migration dependente (20260619153319 cria índices nessas tabelas
+-- sem guarda) para o schema reconstruir do zero na ordem certa. As policies
+-- versionadas depois (20260619153505, 20260712232418) passam a achar a tabela.
 -- DDL compatível com src/integrations/supabase/types.ts (gerado do banco real).
 -- CREATE TABLE IF NOT EXISTS: no-op no banco de produção atual, e permite
 -- reconstruir o schema do zero.
