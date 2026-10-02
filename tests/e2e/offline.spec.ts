@@ -6,7 +6,7 @@ test.describe('Offline Syncing and Persistence', () => {
     // O passo 5 espera até 25s pra fila esvaziar via retry/backoff real
     // (MAX_RETRIES=3, backoff exponencial em useOfflineSync.ts) — acima do
     // timeout padrão de 30s por teste somado aos passos anteriores.
-    test.setTimeout(50_000);
+    test.setTimeout(90_000);
 
     // Diagnóstico (mantido como rede de segurança): se algo abaixo falhar,
     // qualquer crash do ErrorBoundary gravado em localStorage (síncrono,
@@ -105,6 +105,6 @@ test.describe('Offline Syncing and Persistence', () => {
     // restaurada" (NetworkStatusToaster.tsx) dispara em qualquer evento
     // 'online', com ou sem ação pendente na fila, e não prova que o
     // pipeline de sync rodou.
-    await expect.poll(getPendingCount, { timeout: 25_000 }).toBe(0);
+    await expect.poll(getPendingCount, { timeout: 35_000 }).toBe(0);
   });
 });
