@@ -52,10 +52,12 @@ BEGIN
     technical_sheet_id = CASE WHEN v_update ? 'technical_sheet_id' THEN nullif(v_update->>'technical_sheet_id', '')::uuid ELSE technical_sheet_id END,
     technical_sheet_version = CASE WHEN v_update ? 'technical_sheet_version' THEN (v_update->>'technical_sheet_version')::integer ELSE technical_sheet_version END,
     adjustment_parameters = CASE WHEN v_update ? 'adjustment_parameters' THEN v_update->'adjustment_parameters' ELSE adjustment_parameters END
-  WHERE id = v_record_id;
+  -- status <> 'approved': um registro já aprovado não pode voltar a
+  -- 'completed' nem ter os dados sobrescritos por esta RPC.
+  WHERE id = v_record_id AND status <> 'approved';
 
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'Registro de manutenção não encontrado no sistema.';
+    RAISE EXCEPTION 'Registro de manutenção não encontrado ou já aprovado.';
   END IF;
 
   INSERT INTO public.tpm_execution_alerts
@@ -80,7 +82,7 @@ BEGIN
     s->>'name',
     s->>'quantity',
     coalesce(nullif(s->>'alternative_used', '')::boolean, false),
-    nullif(s->>'original_recommended_id', '')::uuid
+    nullif(s->>'original_recommended_id', '') -- coluna é TEXT: ids textuais quebrariam ::uuid
   FROM jsonb_array_elements(coalesce(payload->'supplies', '[]'::jsonb)) AS s;
 
   INSERT INTO public.tpm_parameter_alerts

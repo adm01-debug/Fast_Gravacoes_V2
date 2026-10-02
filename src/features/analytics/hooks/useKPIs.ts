@@ -164,7 +164,12 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
   const { jobs, techniques, machines, isLoading } = useSchedulingData();
   const { averageUnitCost } = useABCCosts();
   const { getConfig } = useBusinessConfig();
-  const pricePerPiece = getConfig<number>('price_per_piece', 2.5);
+  // business_config aceita qualquer valor — coage e valida para não
+  // propagar NaN/negativo nos painéis de receita.
+  const pricePerPiece = (() => {
+    const n = Number(getConfig('price_per_piece', 2.5));
+    return Number.isFinite(n) && n > 0 ? n : 2.5;
+  })();
 
   const data = useMemo(() => {
     if (!jobs || !techniques || !machines) return null;

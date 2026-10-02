@@ -5,6 +5,10 @@ DECLARE
   t text;
 BEGIN
   FOR t IN SELECT unnest(ARRAY['login_audit','security_events','geo_blocking_logs','rate_limit_logs','query_telemetry','tpm_notification_logs']) LOOP
+    -- geo_blocking_logs pode não existir num rebuild limpo (tabelas manuais
+    -- em prod, sem migration de criação até 20261001143000) — DROP POLICY
+    -- exige a tabela, então pula a iteração inteira quando ausente.
+    IF to_regclass('public.' || t) IS NULL THEN CONTINUE; END IF;
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert audit records', t);
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert security events', t);
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', 'Authenticated can insert geo logs', t);
