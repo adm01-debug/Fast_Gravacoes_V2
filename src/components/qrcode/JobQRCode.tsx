@@ -99,7 +99,10 @@ export const JobQRCode = forwardRef<HTMLDivElement, JobQRCodeProps>(({
     printWindow.document.close();
     // A janela herda o CSP do opener, que bloqueia <script> inline —
     // o print() é disparado daqui, como em LotLabelPrint.
-    setTimeout(() => { printWindow.print(); }, 500);
+    setTimeout(() => {
+      printWindow.addEventListener("afterprint", () => printWindow.close(), { once: true });
+      printWindow.print();
+    }, 500);
   };
 
   return (
