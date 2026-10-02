@@ -127,6 +127,7 @@ const SortableFavorite = memo(function SortableFavorite({
             <Button
               variant="ghost"
               size="icon"
+              aria-label={fav.label}
               className={cn(
                 'h-9 w-9 rounded-lg relative transition-all duration-500 cursor-grab active:cursor-grabbing',
                 'hover:scale-110 active:scale-90',
@@ -333,7 +334,7 @@ export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
   };
 
   return (
-    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted/40 backdrop-blur-md border border-border/30 shadow-inner">
+    <div data-testid="quick-favorites-bar" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted/40 backdrop-blur-md border border-border/30 shadow-inner">
       {isSyncing && (
         <Tooltip>
           <TooltipTrigger asChild>
@@ -383,6 +384,7 @@ export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Editar favoritos"
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
           >
             <Settings2 className="h-4 w-4" />
