@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
   const globalLimited = await checkRateLimit(supabase, {
     endpoint: "csp-report-global",
     identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
-    max: 600,
+    max: 300,
     windowSeconds: 60,
     corsHeaders,
     requestId,
@@ -206,6 +206,36 @@ Deno.serve(async (req) => {
   if (globalLimited) return globalLimited;
 
   const report = parsed.data["csp-report"];
+
+  // Dedupe: floods repetem a mesma assinatura de violação. Sem teto de
+  // volume real, o bucket global × ~16 KiB de raw encheria dezenas de GiB antes da
+  // retenção de 14 dias agir — relatório idêntico (mesma página + diretiva +
+  // uri bloqueada + origem) na última hora é descartado sem insert.
+  const dupWindowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  let dupQuery = supabase
+    .from("csp_violation_reports")
+    .select("id")
+    .gte("created_at", dupWindowStart)
+    .limit(1);
+  const signature: Record<string, string | null> = {
+    document_uri: report["document-uri"] ?? null,
+    violated_directive: report["violated-directive"] ?? null,
+    blocked_uri: report["blocked-uri"] != null ? String(report["blocked-uri"]) : null,
+    source_file: report["source-file"] ?? null,
+  };
+  for (const [col, val] of Object.entries(signature)) {
+    // NULL nunca casa com .eq — precisa de .is para casar linhas sem o campo.
+    dupQuery = val === null ? dupQuery.is(col, null) : dupQuery.eq(col, val);
+  }
+  const { data: dup } = await dupQuery.maybeSingle();
+  if (dup) {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // original_policy já vai para a coluna própria; tirar do raw evita
+  // duplicar o maior campo do payload (até 4 KiB) em JSONB.
+  const { "csp-report": rawReport } = parsed.data;
+  const { "original-policy": _originalPolicy, ...rawTrimmed } = rawReport;
   const { error } = await supabase.from("csp_violation_reports").insert({
     document_uri: report["document-uri"] ?? null,
     referrer: report.referrer ?? null,
@@ -219,7 +249,7 @@ Deno.serve(async (req) => {
     status_code: report["status-code"] ?? null,
     disposition: report.disposition ?? null,
     user_agent: req.headers.get("user-agent")?.slice(0, 512) ?? null,
-    raw: parsed.data,
+    raw: { "csp-report": rawTrimmed },
   });
 
   if (error) {
