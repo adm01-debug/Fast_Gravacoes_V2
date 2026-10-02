@@ -73,17 +73,22 @@ export function lazyWithRetry<T extends LazyComponentType>(
     importer().catch(async (error: unknown) => {
       if (!isChunkLoadError(error)) throw error;
 
+      // Offline não é chunk quebrado: espera a rede voltar sem consumir
+      // tentativas e nunca faz reload — recarregar sem conectividade
+      // descartaria a árvore montada e qualquer trabalho em memória.
+      while (!navigator.onLine) {
+        await waitForOnline(OFFLINE_WAIT_MS);
+      }
+
       attempt += 1;
       if (attempt >= MAX_ATTEMPTS) {
-        // Último recurso: chunks de deploy antigo — um único reload pega o novo.
+        // Último recurso (chunks de deploy antigo): um único reload pega o novo.
         if (tryReloadOnce()) {
           return new Promise<never>(() => {});
         }
         throw error;
       }
 
-      // Se a rede caiu, espera voltar antes da próxima tentativa.
-      await waitForOnline(OFFLINE_WAIT_MS);
       return load();
     });
 
