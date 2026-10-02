@@ -259,6 +259,8 @@ export const VoiceButton = forwardRef<HTMLDivElement, {
       <Button
         size="icon"
         variant={isListening ? 'default' : 'outline'}
+        aria-label={isListening ? 'Parar comando de voz' : 'Ativar comando de voz'}
+        aria-pressed={isListening}
         onClick={toggleListening}
         className={cn(
           'relative transition-all',
