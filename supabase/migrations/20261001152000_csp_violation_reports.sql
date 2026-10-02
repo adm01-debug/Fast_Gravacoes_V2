@@ -38,9 +38,9 @@ BEGIN
     ) THEN
         CREATE POLICY "Coordinators and managers can view csp reports"
             ON public.csp_violation_reports FOR SELECT
-            USING (public.has_role(auth.uid(), 'coordinator'::app_role)
-                OR public.has_role(auth.uid(), 'manager'::app_role)
-                OR public.has_role(auth.uid(), 'admin'::app_role));
+            USING (app_private.has_role(auth.uid(), 'coordinator'::app_role)
+                OR app_private.has_role(auth.uid(), 'manager'::app_role)
+                OR app_private.has_role(auth.uid(), 'admin'::app_role));
     END IF;
 END $$;
 

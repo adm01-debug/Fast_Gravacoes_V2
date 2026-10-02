@@ -26,8 +26,8 @@ const cspReportSchema = z.object({
     "status-code": z.number().optional(),
     disposition: z.enum(["enforce", "report", "reporting"]).optional(),
     "script-sample": z.string().max(1024).optional(),
-  }).passthrough(),
-}).passthrough();
+  }),
+});
 
 // Último IP do XFF é o que o ingress anexou — o primeiro pode ser forjado
 // pelo cliente e driblaria o rate limit por IP.
@@ -40,8 +40,9 @@ function getClientIp(req: Request): string | null {
   return req.headers.get("x-real-ip")?.trim() ?? null;
 }
 
-// Relatórios CSP reais têm < 4 KB; bodies maiores só servem para estourar
-// memória/storage via campos extras do .passthrough().
+// Relatórios CSP reais têm < 4 KB. O schema não usa passthrough, então o zod
+// descarta campos extras — o `raw` persistido fica limitado aos campos
+// declarados com max() próprio.
 const MAX_BODY_BYTES = 16 * 1024;
 
 Deno.serve(async (req) => {
@@ -77,7 +78,7 @@ Deno.serve(async (req) => {
   // pelo teto agregado do endpoint.
   const globalLimited = await checkRateLimit(supabase, {
     endpoint: "csp-report-global",
-    identity: { ip: "global" },
+    identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
     max: 600,
     windowSeconds: 60,
     corsHeaders,

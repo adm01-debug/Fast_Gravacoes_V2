@@ -49,6 +49,31 @@ function resolveKey(identity: RateLimitIdentity): { field: "user_id" | "user_ema
   return { field: "ip_address", value: ip };
 }
 
+function tooManyRequests(
+  max: number,
+  windowSeconds: number,
+  corsHeaders: Record<string, string>,
+  requestId?: string,
+): Response {
+  return new Response(
+    JSON.stringify({
+      error: "Too Many Requests",
+      message: `Limite de ${max} requisições por ${windowSeconds}s excedido.`,
+      requestId,
+    }),
+    {
+      status: 429,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Retry-After": String(windowSeconds),
+        "X-RateLimit-Limit": String(max),
+        "X-RateLimit-Remaining": "0",
+      },
+    },
+  );
+}
+
 export async function checkRateLimit(
   supabase: Supa,
   opts: RateLimitOptions,
@@ -59,6 +84,26 @@ export async function checkRateLimit(
   const windowStart = new Date(now.getTime() - windowSeconds * 1000);
 
   try {
+    // Caminho atômico (migration 20261001153000): count+insert na mesma
+    // transação via advisory lock — elimina a corrida do SELECT+INSERT.
+    // Retorna o nº na janela antes desta requisição; -1 = bloqueado.
+    const { data: used, error: rpcError } = await supabase.rpc(
+      "rate_limit_check_and_record",
+      {
+        p_endpoint: endpoint,
+        p_user_id: key.field === "user_id" ? key.value : null,
+        p_user_email: key.field === "user_email" ? key.value : null,
+        p_ip: key.field === "ip_address" ? key.value : (identity.ip ?? "").split(",")[0].trim() || null,
+        p_max: max,
+        p_window_seconds: windowSeconds,
+      },
+    );
+
+    if (!rpcError && typeof used === "number") {
+      return used >= 0 ? null : tooManyRequests(max, windowSeconds, corsHeaders, requestId);
+    }
+    // RPC ausente (deploy sem db push) ou erro: cai no caminho legado.
+
     const { count, error } = await supabase
       .from("rate_limit_logs")
       .select("id", { count: "exact", head: true })
@@ -71,31 +116,15 @@ export async function checkRateLimit(
       return null;
     }
 
-    const used = count ?? 0;
-    if (used >= max) {
-      const retryAfter = windowSeconds;
-      return new Response(
-        JSON.stringify({
-          error: "Too Many Requests",
-          message: `Limite de ${max} requisições por ${windowSeconds}s excedido.`,
-          requestId,
-        }),
-        {
-          status: 429,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-            "Retry-After": String(retryAfter),
-            "X-RateLimit-Limit": String(max),
-            "X-RateLimit-Remaining": "0",
-          },
-        },
-      );
+    const legacyUsed = count ?? 0;
+    if (legacyUsed >= max) {
+      return tooManyRequests(max, windowSeconds, corsHeaders, requestId);
     }
 
     // Insert record (fire-and-forget style, but await to keep count truthful).
     const insertRow: Record<string, unknown> = {
       endpoint,
+      ip_address: (identity.ip ?? "").split(",")[0].trim() || "0.0.0.0", // NOT NULL
       request_count: 1,
       window_start: windowStart.toISOString(),
       window_end: now.toISOString(),
