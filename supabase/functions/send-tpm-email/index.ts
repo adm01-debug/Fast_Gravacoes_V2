@@ -69,7 +69,11 @@ serve(async (req) => {
       const types = s.notification_types ?? [];
       const machineFilters = s.machine_filters ?? [];
       const typeMatch = alert.alert_type ? types.includes(alert.alert_type) : false;
-      const machineMatch = machineFilters.length === 0 || alert.machine_id ? machineFilters.includes(alert.machine_id) : false;
+      // machine_filters vazio = inscrição em todas as máquinas (ver default em
+      // 20260508115841). Sem parênteses, `?:` tem precedência menor que `||`
+      // e um array vazio exigiria conter o machine_id — filtro errado.
+      const machineMatch = machineFilters.length === 0 ||
+        (alert.machine_id != null && machineFilters.includes(alert.machine_id));
       return typeMatch && machineMatch;
     });
 

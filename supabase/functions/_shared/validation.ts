@@ -66,12 +66,14 @@ export const tpmAlertWebhookSchema = z.object({
   event_type: z.string().optional(),
   schema: z.string().optional(),
   table: z.string().optional(),
+  // Colunas nullable do Postgres serializam como null no record — nullable()
+  // é necessário além de optional() ou o payload falha com 400.
   record: z.object({
-    machine_id: z.string().optional(),
-    alert_type: z.string().optional(),
-    message: z.string().optional(),
-    severity: z.string().optional(),
-    created_at: z.string().optional(),
+    machine_id: z.string().optional().nullable(),
+    alert_type: z.string().optional().nullable(),
+    message: z.string().optional().nullable(),
+    severity: z.string().optional().nullable(),
+    created_at: z.string().optional().nullable(),
   }).passthrough().optional().nullable(),
   old_record: z.record(z.string(), z.unknown()).optional().nullable(),
 });
@@ -83,14 +85,14 @@ export const tpmExecutionAlertWebhookSchema = z.object({
   schema: z.string().optional(),
   table: z.string().optional(),
   record: z.object({
-    execution_id: z.string().optional(),
-    parameter_name: z.string().optional(),
-    actual_value: z.string().optional(),
-    expected_range: z.string().optional(),
-    description: z.string().optional(),
-    severity: z.string().optional(),
-    created_at: z.string().optional(),
-    evidence_urls: z.array(z.string()).optional(),
+    execution_id: z.string().optional().nullable(),
+    parameter_name: z.string().optional().nullable(),
+    actual_value: z.string().optional().nullable(),
+    expected_range: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    severity: z.string().optional().nullable(),
+    created_at: z.string().optional().nullable(),
+    evidence_urls: z.array(z.string()).optional().nullable(),
   }).passthrough().optional().nullable(),
   old_record: z.record(z.string(), z.unknown()).optional().nullable(),
 });
