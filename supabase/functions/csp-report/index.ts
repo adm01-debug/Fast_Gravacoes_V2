@@ -207,50 +207,36 @@ Deno.serve(async (req) => {
 
   const report = parsed.data["csp-report"];
 
-  // Dedupe: floods repetem a mesma assinatura de violação. Sem teto de
-  // volume real, o bucket global × ~16 KiB de raw encheria dezenas de GiB antes da
-  // retenção de 14 dias agir — relatório idêntico (mesma página + diretiva +
-  // uri bloqueada + origem) na última hora é descartado sem insert.
-  const dupWindowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  let dupQuery = supabase
-    .from("csp_violation_reports")
-    .select("id")
-    .gte("created_at", dupWindowStart)
-    .limit(1);
-  const signature: Record<string, string | null> = {
-    document_uri: report["document-uri"] ?? null,
-    violated_directive: report["violated-directive"] ?? null,
-    blocked_uri: report["blocked-uri"] != null ? String(report["blocked-uri"]) : null,
-    source_file: report["source-file"] ?? null,
-  };
-  for (const [col, val] of Object.entries(signature)) {
-    // NULL nunca casa com .eq — precisa de .is para casar linhas sem o campo.
-    dupQuery = val === null ? dupQuery.is(col, null) : dupQuery.eq(col, val);
-  }
-  const { data: dup } = await dupQuery.maybeSingle();
-  if (dup) {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
-
   // original_policy já vai para a coluna própria; tirar do raw evita
   // duplicar o maior campo do payload (até 4 KiB) em JSONB.
   const { "csp-report": rawReport } = parsed.data;
   const { "original-policy": _originalPolicy, ...rawTrimmed } = rawReport;
-  const { error } = await supabase.from("csp_violation_reports").insert({
-    document_uri: report["document-uri"] ?? null,
-    referrer: report.referrer ?? null,
-    violated_directive: report["violated-directive"] ?? null,
-    effective_directive: report["effective-directive"] ?? null,
-    original_policy: report["original-policy"] ?? null,
-    blocked_uri: report["blocked-uri"] != null ? String(report["blocked-uri"]) : null,
-    source_file: report["source-file"] ?? null,
-    line_number: report["line-number"] ?? null,
-    column_number: report["column-number"] ?? null,
-    status_code: report["status-code"] ?? null,
-    disposition: report.disposition ?? null,
-    user_agent: req.headers.get("user-agent")?.slice(0, 512) ?? null,
-    raw: { "csp-report": rawTrimmed },
+
+  // Insert atômico com dedupe: a RPC faz verificação + insert numa única
+  // transação com advisory lock por assinatura (mesma página + diretiva +
+  // uri bloqueada + origem + disposition na última hora → duplicata). Sem
+  // esse teto de volume, floods repetidos encheriam a tabela muito antes da
+  // retenção de 14 dias agir; o lock fecha a janela check-then-insert que
+  // deixava rajadas concorrentes idênticas passarem juntas.
+  const { data: inserted, error } = await supabase.rpc("insert_csp_report_dedup", {
+    p_document_uri: report["document-uri"] ?? null,
+    p_referrer: report.referrer ?? null,
+    p_violated_directive: report["violated-directive"] ?? null,
+    p_effective_directive: report["effective-directive"] ?? null,
+    p_original_policy: report["original-policy"] ?? null,
+    p_blocked_uri: report["blocked-uri"] != null ? String(report["blocked-uri"]) : null,
+    p_source_file: report["source-file"] ?? null,
+    p_line_number: report["line-number"] ?? null,
+    p_column_number: report["column-number"] ?? null,
+    p_status_code: report["status-code"] ?? null,
+    p_disposition: report.disposition ?? null,
+    p_user_agent: req.headers.get("user-agent")?.slice(0, 512) ?? null,
+    p_raw: { "csp-report": rawTrimmed },
   });
+
+  if (inserted === false) {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
 
   if (error) {
     console.error("[csp-report] insert failed", requestId, error.message);
