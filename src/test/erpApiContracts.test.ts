@@ -4,55 +4,15 @@
  * and covers 400+ scenarios across all ERP endpoints.
  */
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
 
-// ── Schemas (mirror _shared/contracts.ts) ─────────────────────────────────
-const ERPJobRequestSchema = z.object({
-  order_number: z.string().min(1),
-  client: z.string().min(1),
-  product: z.string().min(1),
-  quantity: z.number().positive(),
-  technique_id: z.string().uuid(),
-  priority: z.enum(['low','medium','high','urgent']).default('medium'),
-  scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  machine_id: z.string().uuid().optional(),
-  notes: z.string().optional(),
-});
-
-const ERPJobPatchSchema = z.object({
-  status: z.enum(['queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework']).optional(),
-  machine_id: z.string().uuid().optional(),
-  scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  notes: z.string().optional(),
-  priority: z.enum(['low','medium','high','urgent']).optional(),
-  produced_quantity: z.number().nonnegative().optional(),
-  lost_pieces: z.number().nonnegative().optional(),
-}).strict();
-
-const ERPLotRequestSchema = z.object({
-  job_id: z.string().uuid(),
-  lot_number: z.string().min(1),
-  quantity: z.number().positive(),
-  operator_id: z.string().uuid().optional(),
-  notes: z.string().optional(),
-});
-
-const ERPJobResponseSchema = z.object({
-  id: z.string().uuid(),
-  order_number: z.string(),
-  client: z.string(),
-  product: z.string(),
-  quantity: z.number().nonnegative(),
-  status: z.string(),
-  created_at: z.string(),
-});
-
-const ERPListResponseSchema = z.object({
-  data: z.array(z.any()),
-  total: z.number().nonnegative(),
-  limit: z.number().positive(),
-  offset: z.number().nonnegative(),
-});
+// Schemas REAIS de _shared/contracts.ts — se o contrato mudar, a suite quebra.
+import {
+  ERPJobRequestSchema,
+  ERPJobPatchSchema,
+  ERPLotRequestSchema,
+  ERPJobResponseSchema,
+  ERPListResponseSchema,
+} from '../../supabase/functions/_shared/contracts';
 
 // ── Simulated ERP response builder ────────────────────────────────────────
 function makeJobResponse(overrides: Record<string, unknown> = {}) {

@@ -8,6 +8,12 @@ interface jsPDFWithAutoTable {
   lastAutoTable: { finalY: number };
 }
 
+// jspdf-autotable v5 anexa `lastAutoTable` ao doc em runtime mas não declara
+// na tipagem (`jsPDFDocument = any`). Centraliza o cast num único ponto.
+function lastAutoTableY(doc: object): number {
+  return (doc as jsPDFWithAutoTable).lastAutoTable.finalY;
+}
+
 export interface LossJobRow {
   id: string;
   order_number?: string | null;
@@ -96,7 +102,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+  yPosition = lastAutoTableY(doc) + 10;
 
   // Section: Machine KPIs
   yPosition = addSection(doc, 'Indicadores de Máquinas', yPosition, margin);
@@ -117,7 +123,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+  yPosition = lastAutoTableY(doc) + 10;
 
   // Section: Quality KPIs
   yPosition = addSection(doc, 'Indicadores de Qualidade', yPosition, margin);
@@ -137,7 +143,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+  yPosition = lastAutoTableY(doc) + 10;
 
   // Check if we need a new page
   if (yPosition > pageHeight - 80) {
@@ -164,7 +170,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     styles: { fontSize: 10 },
   });
 
-  yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+  yPosition = lastAutoTableY(doc) + 10;
 
   // Section: Top Operators
   if (kpis.topOperators.length > 0) {
@@ -192,7 +198,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
       styles: { fontSize: 10 },
     });
 
-    yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+    yPosition = lastAutoTableY(doc) + 10;
   }
 
   // Section: Technique Distribution
@@ -219,7 +225,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
       styles: { fontSize: 10 },
     });
 
-    yPosition = (doc as unknown as jsPDFWithAutoTable).lastAutoTable.finalY + 10;
+    yPosition = lastAutoTableY(doc) + 10;
   }
 
   // Section: Machine Performance

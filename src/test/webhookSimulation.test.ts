@@ -6,15 +6,8 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-// ── Inline schemas matching supabase/functions/_shared/contracts.ts ────────
-const WebhookSourceSchema = z.enum(['bitrix24', 'stripe', 'external_system']);
-
-const WebhookPayloadSchema = z.object({
-  source: WebhookSourceSchema,
-  event: z.string(),
-  data: z.record(z.any()),
-  timestamp: z.string().datetime().optional(),
-});
+// Schemas REAIS de _shared/contracts.ts — se o contrato mudar, a suite quebra.
+import { WebhookPayloadSchema, WebhookResponseSchema } from '../../supabase/functions/_shared/contracts';
 
 type WebhookPayload = z.infer<typeof WebhookPayloadSchema>;
 
@@ -232,13 +225,6 @@ describe('Webhook — HMAC signature enforcement', () => {
 
 // ── Response shape contract ───────────────────────────────────────────────
 describe('Webhook — response shape', () => {
-  const WebhookResponseSchema = z.object({
-    processed: z.boolean(),
-    source: WebhookSourceSchema.optional(),
-    event: z.string().optional(),
-    timestamp: z.string().datetime(),
-  });
-
   it('successful response conforms to response schema', () => {
     const result = simulateWebhookHandler(validPayload());
     expect(result.status).toBe(200);
