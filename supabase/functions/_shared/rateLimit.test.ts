@@ -124,3 +124,18 @@ Deno.test("resolveKey prefers userId over email over ip", async () => {
   assertEquals(row.user_id, "u1");
   assertEquals(row.user_email, undefined);
 });
+
+Deno.test("checkRateLimit collapses malformed forwarded IP into shared bucket", async () => {
+  const { mock, inserts } = makeSupabaseMock(0);
+  const r = await checkRateLimit(mock, {
+    endpoint: "x",
+    // lixo que o new URL aceitaria como host+porta+path mas não é INET
+    identity: { ip: "::1]:80/[::2" },
+    max: 100,
+    windowSeconds: 60,
+    corsHeaders: CORS,
+  });
+  assertEquals(r, null);
+  const row = inserts[0] as Record<string, unknown>;
+  assertEquals(row.ip_address, "0.0.0.0");
+});

@@ -50,6 +50,9 @@ const IPV4_RE =
 function isValidInet(ip: string): boolean {
   if (IPV4_RE.test(ip)) return true;
   if (!ip.includes(":")) return false;
+  // Só hex/colon/dot chegam ao parser — sem isso, `::1]:80/[::2` passaria no
+  // new URL (válido como host+porta+path) mas quebraria o cast INET no banco.
+  if (!/^[0-9a-fA-F:.]+$/.test(ip)) return false;
   // new URL valida IPv6 completo (inclui :: e notação IPv4-mapped
   // ::ffff:a.b.c.d) — regex manual cobriria só um subconjunto.
   try {
