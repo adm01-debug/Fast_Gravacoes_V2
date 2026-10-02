@@ -49,12 +49,13 @@ function getClientIp(req: Request): string | null {
 // declarados com max() próprio.
 const MAX_BODY_BYTES = 16 * 1024;
 
-// Par global→per-IP em três passos: peek read-only no agregado (saturado →
-// 429 sem gravar NENHUMA linha), depois reserva per-IP (requests rejeitadas
-// aqui nunca cobram a cota agregada) e só então a reserva global. Nenhuma
-// das duas ordenações simples fecha os dois buracos: global-primeiro cobra
-// a cota compartilhada de requests que o per-IP iria rejeitar; per-IP-
-// primeiro grava linhas de log sem teto depois do global saturado.
+// Reserva atômica do par per-IP+global (RPC rate_limit_check_and_record_pair):
+// os dois counts são avaliados sob advisory locks e as duas linhas inserem
+// juntas — request negada não grava NADA em nenhum bucket. Nenhuma ordenação
+// de chamadas separadas resolve os dois modos de falha ao mesmo tempo:
+// global-primeiro cobra a cota agregada de requests que o per-IP rejeitaria;
+// per-IP-primeiro grava linhas sem teto depois do global saturado.
+// Fallback (RPC não deployada): peek read-only no global + duas reservas.
 async function guardedRateLimitPair(
   supabase: Parameters<typeof checkRateLimit>[0],
   ip: string | null,
@@ -65,6 +66,30 @@ async function guardedRateLimitPair(
   corsHeaders: Record<string, string>,
   requestId?: string,
 ): Promise<Response | null> {
+  try {
+    const { data: code, error: rpcError } = await supabase.rpc(
+      "rate_limit_check_and_record_pair",
+      {
+        p_per_ip_endpoint: perIpEndpoint,
+        p_ip: ip ?? "0.0.0.0",
+        p_per_ip_max: perIpMax,
+        p_global_endpoint: globalEndpoint,
+        p_global_max: globalMax,
+        p_window_seconds: 60,
+      },
+    );
+    if (!rpcError && typeof code === "number") {
+      if (code === 1) return tooManyRequests(perIpMax, 60, corsHeaders, requestId);
+      if (code === 2) return tooManyRequests(globalMax, 60, corsHeaders, requestId);
+      return null;
+    }
+  } catch {
+    // cai no fallback abaixo
+  }
+
+  // Fallback: peek read-only (saturado → 429 sem gravar nada) → per-IP →
+  // global. Mantém as duas propriedades principais enquanto a migration
+  // do par não está aplicada.
   if (await isRateLimitSaturated(supabase, {
     endpoint: globalEndpoint,
     identity: { ip: "0.0.0.0" },
