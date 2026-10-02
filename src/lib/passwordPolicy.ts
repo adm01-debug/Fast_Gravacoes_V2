@@ -6,12 +6,18 @@ import type { TFunction } from 'i18next';
  * server-side by the create-operator edge function (>= 8 chars) plus the
  * complexity rules PasswordStrengthIndicator already advertises.
  * Login screens must NOT reuse this — they validate existing credentials.
+ * The reset-password flow has no edge-function boundary: its floor is the
+ * Supabase Auth `password_min_length` project setting — keep it at 8.
  */
 export const PASSWORD_MIN_LENGTH = 8;
 
 export function newPasswordSchema(t?: TFunction) {
   const msg = (key: string, fallback: string, opts?: Record<string, unknown>) =>
-    t ? t(key, { defaultValue: fallback, ...opts }) : fallback;
+    t
+      ? t(key, { defaultValue: fallback, ...opts })
+      : fallback.replace(/\{\{(\w+)\}\}/g, (m, name: string) =>
+          String(opts?.[name] ?? m),
+        );
 
   return z
     .string()

@@ -631,7 +631,6 @@ export function useOfflineSync() {
     addPendingAction,
     syncPendingActions,
     forceSync,
-    addPendingAction,
     clearPendingActions,
     clearFailedActions,
 
