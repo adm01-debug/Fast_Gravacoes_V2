@@ -64,28 +64,6 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
   );
 
-  const limited = await checkRateLimit(supabase, {
-    endpoint: "csp-report",
-    identity: { ip: getClientIp(req) },
-    max: 120,
-    windowSeconds: 60,
-    corsHeaders,
-    requestId,
-  });
-  if (limited) return limited;
-
-  // Bucket global: mesmo quem rotaciona IPs forjados no XFF fica limitado
-  // pelo teto agregado do endpoint.
-  const globalLimited = await checkRateLimit(supabase, {
-    endpoint: "csp-report-global",
-    identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
-    max: 600,
-    windowSeconds: 60,
-    corsHeaders,
-    requestId,
-  });
-  if (globalLimited) return globalLimited;
-
   const tooLarge = () =>
     new Response(JSON.stringify({ error: "Payload too large" }), {
       status: 413,
@@ -137,6 +115,51 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  // Vercel preview deploys herdam o mesmo vercel.json e reportam para este
+  // coletor de produção — poluem a telemetria e consumiriam o bucket global
+  // de rate limit, então o filtro roda ANTES dos contadores.
+  // CSP_REPORT_ALLOWED_HOSTS (vírgula-separado) restringe a origem: relatório
+  // de host fora da lista é descartado com 204. Vazio = aceita tudo
+  // (comportamento anterior).
+  const allowedHosts = (Deno.env.get("CSP_REPORT_ALLOWED_HOSTS") ?? "")
+    .split(",")
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean);
+  if (allowedHosts.length > 0) {
+    const reportHost = (() => {
+      try {
+        return new URL(parsed.data["csp-report"]["document-uri"] ?? "").hostname.toLowerCase();
+      } catch {
+        return "";
+      }
+    })();
+    if (!allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))) {
+      return new Response(null, { status: 204, headers: corsHeaders });
+    }
+  }
+
+  const limited = await checkRateLimit(supabase, {
+    endpoint: "csp-report",
+    identity: { ip: getClientIp(req) },
+    max: 120,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (limited) return limited;
+
+  // Bucket global: mesmo quem rotaciona IPs forjados no XFF fica limitado
+  // pelo teto agregado do endpoint.
+  const globalLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-global",
+    identity: { ip: "0.0.0.0" }, // ip_address é INET — 'global' quebraria o cast
+    max: 600,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (globalLimited) return globalLimited;
 
   const report = parsed.data["csp-report"];
   const { error } = await supabase.from("csp_violation_reports").insert({

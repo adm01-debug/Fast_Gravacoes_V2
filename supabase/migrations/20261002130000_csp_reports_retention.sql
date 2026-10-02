@@ -70,3 +70,23 @@ REVOKE EXECUTE ON FUNCTION public.purge_old_logs() FROM anon;
 REVOKE EXECUTE ON FUNCTION public.purge_old_logs() FROM authenticated;
 REVOKE EXECUTE ON FUNCTION public.purge_old_logs() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.purge_old_logs() TO service_role;
+
+-- Agenda versionada do purge: até aqui não existia NENHUM cron.schedule para
+-- purge_old_logs no repo — a retenção só rodava se o operador agendasse pelo
+-- painel (não reproduzível num rebuild). Chama a função direto em SQL: é
+-- SECURITY DEFINER e roda como o owner, sem depender de HTTP/JWT.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    BEGIN
+      PERFORM cron.unschedule('purge-old-logs-daily');
+    EXCEPTION WHEN OTHERS THEN
+      NULL;
+    END;
+    PERFORM cron.schedule(
+      'purge-old-logs-daily',
+      '15 3 * * *',
+      'SELECT public.purge_old_logs()'
+    );
+  END IF;
+END $$;
