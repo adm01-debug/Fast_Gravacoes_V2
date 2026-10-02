@@ -75,6 +75,30 @@ Deno.serve(async (req) => {
   const declaredLength = Number(req.headers.get("content-length") ?? 0);
   if (declaredLength > MAX_BODY_BYTES) return tooLarge();
 
+  // Throttle grosso ANTES de ler/parsear o body: endpoint público, então a
+  // primeira linha de defesa cobre todo o tráfego (válido ou não) sem
+  // discriminar origem — limita o custo de stream+zod por flood. Os buckets
+  // de produção/rejeitados abaixo ficam com cotas próprias e mais apertadas.
+  const inboundLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-inbound",
+    identity: { ip: getClientIp(req) },
+    max: 300,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (inboundLimited) return inboundLimited;
+
+  const inboundGlobalLimited = await checkRateLimit(supabase, {
+    endpoint: "csp-report-inbound-global",
+    identity: { ip: "0.0.0.0" },
+    max: 1800,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (inboundGlobalLimited) return inboundGlobalLimited;
+
   // Leitura streamada com teto: cobre chunked/sem Content-Length sem
   // materializar o body inteiro na memória da function.
   let body: unknown;
