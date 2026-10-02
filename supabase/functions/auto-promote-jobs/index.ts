@@ -16,12 +16,20 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabaseClient = createClient(supabaseUrl, serviceRoleKey)
 
-    // Allow either a verified cron invocation (x-cron-secret) OR an
-    // authenticated coordinator/manager/admin call. A missing Authorization header no
-    // longer implies "trusted cron" — that was bypassable by simply omitting
-    // the header, running job-state mutations unauthenticated.
+    // Allow either a verified cron invocation (x-cron-secret, or Bearer equal
+    // to CRON_SECRET) OR an authenticated coordinator/manager/admin call. A
+    // missing Authorization header no longer implies "trusted cron" — that
+    // was bypassable by simply omitting the header.
+    // The cron check runs BEFORE the user-JWT branch: a cron bearer would
+    // fail auth.getUser() and 401 before requireCronSecret was reached.
     const authHeader = req.headers.get('Authorization')
-    if (authHeader) {
+    const bearer = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : ''
+    const cronSecret = Deno.env.get('CRON_SECRET') ?? ''
+    const isCronAttempt = req.headers.get('x-cron-secret') !== null || (cronSecret !== '' && bearer === cronSecret)
+    if (isCronAttempt) {
+      const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) })
+      if (unauthorized) return unauthorized
+    } else if (authHeader) {
       const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
         global: { headers: { Authorization: authHeader } },
       })

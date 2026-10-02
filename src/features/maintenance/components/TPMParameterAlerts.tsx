@@ -35,7 +35,10 @@ export function TPMParameterAlerts() {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('tpm_parameter_alerts')
-        .select('*, execution:tpm_executions(id, machine:machines(name, code))')
+        // execution_id referencia maintenance_records (o fluxo de conclusão
+        // grava record.id, nunca tpm_executions.id — ver migration
+        // 20261001143400_realign_tpm_execution_fks).
+        .select('*, execution:maintenance_records(id, machine:machines(name, code))')
         .eq('is_resolved', false)
         .order('created_at', { ascending: false });
 
