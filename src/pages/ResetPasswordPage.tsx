@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Loader2, KeyRound, Check, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
+import { newPasswordSchema } from '@/lib/passwordPolicy';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -25,10 +26,7 @@ export default function ResetPasswordPage() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   const passwordSchema = z.object({
-    password: z.string()
-      .min(6, t('auth.passwordMinLength', { min: 6 }))
-      .regex(/[A-Z]/, t('validation.passwordUppercase', 'Deve conter pelo menos uma letra maiúscula'))
-      .regex(/[0-9]/, t('validation.passwordNumber', 'Deve conter pelo menos um número')),
+    password: newPasswordSchema(t),
     confirmPassword: z.string(),
   }).refine(data => data.password === data.confirmPassword, {
     message: t('auth.passwordMismatch'),
@@ -202,7 +200,7 @@ export default function ResetPasswordPage() {
                 <p className="text-xs text-destructive animate-fade-in">{errors.password}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                {t('auth.passwordRequirements', 'Mínimo 6 caracteres, 1 maiúscula e 1 número')}
+                {t('auth.passwordRequirements', 'Mínimo 8 caracteres, 1 minúscula, 1 maiúscula e 1 número')}
               </p>
             </div>
 

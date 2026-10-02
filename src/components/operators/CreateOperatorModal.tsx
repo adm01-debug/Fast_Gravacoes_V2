@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryConfig';
 import { Loader2, UserPlus } from 'lucide-react';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
+import { newPasswordSchema } from '@/lib/passwordPolicy';
 
 interface CreateOperatorModalProps {
   open: boolean;
@@ -55,8 +56,11 @@ export function CreateOperatorModal({ open, onOpenChange }: CreateOperatorModalP
 
     if (!formData.password) {
       newErrors.password = 'Senha é obrigatória';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+    } else {
+      const parsed = newPasswordSchema().safeParse(formData.password);
+      if (!parsed.success) {
+        newErrors.password = parsed.error.issues[0].message;
+      }
     }
 
     if (formData.phone && !PHONE_REGEX.test(formData.phone.replace(/\s/g, ''))) {
@@ -164,7 +168,7 @@ export function CreateOperatorModal({ open, onOpenChange }: CreateOperatorModalP
                 setFormData({ ...formData, password: e.target.value });
                 if (errors.password) setErrors({ ...errors, password: undefined });
               }}
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres"
               disabled={isLoading}
               className={errors.password ? 'border-destructive' : ''}
             />

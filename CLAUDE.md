@@ -36,7 +36,7 @@ npx playwright test tests/e2e/auth.spec.ts
 npx playwright test --project=chromium        # or --project=mobile-chrome
 ```
 
-Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committed. npm scripts work; `bun install` also works. Pick one and stay consistent.
+Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committed. npm scripts work; `bun install` also works (requires Bun ≥1.3 — `bun.lock` is lockfileVersion 3). Pick one and stay consistent.
 
 ## Test layout
 

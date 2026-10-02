@@ -39,8 +39,6 @@ import { useMFA } from '@/features/auth';
 import { useUserDevices } from '@/hooks/useUserDevices';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
-import { CyberResilienceScore } from '@/features/admin/components/security/CyberResilienceScore';
-import { AICyberAdvisor } from '@/features/admin/components/security/AICyberAdvisor';
 import { MainLayout } from '@/components/layout/MainLayout';
 
 
@@ -203,18 +201,10 @@ export default function SecurityDashboard() {
         </TabsList>
 
         <TabsContent value="overview">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <div className="grid gap-6 md:grid-cols-2">
-                <CyberResilienceScore />
-                <SecurityOverviewCard />
-                <div className="md:col-span-2">
-                  <SecurityAlertsPanel />
-                </div>
-              </div>
-            </div>
-            <div className="lg:col-span-1">
-              <AICyberAdvisor />
+          <div className="grid gap-6 md:grid-cols-2">
+            <SecurityOverviewCard />
+            <div className="md:col-span-2">
+              <SecurityAlertsPanel />
             </div>
           </div>
         </TabsContent>

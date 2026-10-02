@@ -86,9 +86,15 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Minimum password length
+    // Password policy — must match src/lib/passwordPolicy.ts (newPasswordSchema)
     if (password.length < 8) {
       return new Response(JSON.stringify({ error: 'A senha deve ter no mínimo 8 caracteres' }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
+    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return new Response(JSON.stringify({ error: 'A senha deve conter letra minúscula, maiúscula e número' }), {
         status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       })

@@ -206,7 +206,7 @@
         "npm:react-joyride@^3.1.0",
         "npm:react-markdown@^10.1.0",
         "npm:react-resizable-panels@^2.1.9",
-        "npm:react-router-dom@6.30.6",
+        "npm:react-router-dom@^7.18.4",
         "npm:react@^18.3.1",
         "npm:recharts@^2.15.4",
         "npm:remark-gfm@^4.0.1",
