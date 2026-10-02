@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { useOfflineSyncContext } from '@/contexts/OfflineSyncContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,7 +33,7 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
     forceSync,
     cacheData,
     hasCachedData
-  } = useOfflineSync();
+  } = useOfflineSyncContext();
 
   const [cachedCounts, setCachedCounts] = useState<{
     jobs: number;

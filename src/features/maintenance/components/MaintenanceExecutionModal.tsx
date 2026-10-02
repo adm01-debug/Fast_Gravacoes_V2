@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 /* eslint-disable react-hooks/set-state-in-effect --
    Effects nesse arquivo sincronizam com sistemas externos legítimos
    (URL params, localStorage, timers, subscriptions Supabase realtime,
@@ -26,8 +25,11 @@ import { AlertRiskPanel } from './execution/AlertRiskPanel';
 import { SupplyList } from './execution/SupplyList';
 import { AdjustmentParameters } from './execution/AdjustmentParameters';
 import { ReplacementParts } from './execution/ReplacementParts';
+import { ChecklistSection } from '@/features/maintenance/components/execution/ChecklistSection';
+import { RegulagemSection } from '@/features/maintenance/components/execution/RegulagemSection';
+import { GeneralInfoSection } from '@/features/maintenance/components/execution/GeneralInfoSection';
 
-interface ExecutionAlert {
+export interface ExecutionAlert {
   alert_type: string;
   parameter_name?: string;
   expected_range?: string;
@@ -447,32 +449,13 @@ export function MaintenanceExecutionModal({
         <ScrollArea className="flex-1 pr-4 -mr-4">
           <div className="space-y-6 py-4">
             {/* Checklist Items */}
-            {checklist ? (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-success" />
-                  Checklist Obrigatório
-                </h3>
-                <div className="space-y-3">
-                  {checklist.items?.map((item) => (
-                    <ChecklistItem
-                      key={item.id}
-                      item={item}
-                      response={responses[item.id]}
-                      onUpdate={(updates) => handleResponseUpdate(item.id, updates)}
-                      onFileUpload={(file) => handleFileUpload(item.id, file)}
-                      isUploading={isUploading}
-                    />
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-warning/10 border border-warning/20 text-warning">
-                <AlertTriangle className="h-5 w-5" />
-                <p className="text-sm">Nenhum checklist configurado para este tipo de manutenção.</p>
-              </div>
-            )}
-
+            <ChecklistSection
+              checklist={checklist}
+              responses={responses}
+              onResponseUpdate={handleResponseUpdate}
+              onFileUpload={handleFileUpload}
+              isUploading={isUploading}
+            />
             {/* Alert/Risk Monitoring */}
             <AlertRiskPanel
               alerts={activeAlerts}
@@ -481,223 +464,37 @@ export function MaintenanceExecutionModal({
             />
 
             {/* Technical Sheet & Adjustments */}
-            <div className="space-y-4 pt-4 border-t border-border/50">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Zap className="h-5 w-5 text-warning" />
-                Regulagem Técnica
-              </h3>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Vincular Ficha Técnica (Obrigatório) *</Label>
-                  <Select
-                    value={selectedSheetId || ""}
-                    onValueChange={(value) => setSelectedSheetId(value || null)}
-                  >
-                    <SelectTrigger className={!selectedSheetId ? "border-destructive/50" : ""}>
-                      <SelectValue placeholder="Selecione o Produto/Técnica..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {technicalSheets.filter(s => s.recommended_machine_id === schedule.machine_id).map(sheet => (
-                        <SelectItem key={sheet.id} value={sheet.id}>{sheet.title} ({sheet.techniques?.name || 'Técnica'})</SelectItem>
-                      ))}
-                      {technicalSheets.filter(s => s.recommended_machine_id !== schedule.machine_id).length > 0 && (
-                        <>
-                          <Separator className="my-2" />
-                          <p className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">Outras Máquinas</p>
-                          {technicalSheets.filter(s => s.recommended_machine_id !== schedule.machine_id).map(sheet => (
-                            <SelectItem key={sheet.id} value={sheet.id}>{sheet.title} (Outra Máquina)</SelectItem>
-                          ))}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <AdjustmentParameters
-                  adjustmentParams={adjustmentParams}
-                  setAdjustmentParams={setAdjustmentParams}
-                  activeAlerts={activeAlerts}
-                  selectedSheetId={selectedSheetId}
-                  technicalSheets={technicalSheets}
-                />
-
-                {/* Real-time Alerts Panel */}
-                {activeAlerts.length > 0 && (
-                  <div className="space-y-3">
-                    <Label className="text-xs font-bold text-destructive uppercase flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3" /> Alertas de Risco Identificados
-                    </Label>
-                    <div className="space-y-2">
-                      {activeAlerts.map((alert, idx) => (
-                        <div key={idx} className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 flex items-start justify-between gap-3">
-                          <div className="flex-1 space-y-1">
-                            <p className="text-sm font-semibold text-destructive">{alert.description}</p>
-                            <p className="text-[10px] text-muted-foreground">Range: {alert.expected_range}</p>
-                            {alert.evidence_urls.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                {alert.evidence_urls.map((url, i) => (
-                                  <img key={i} src={url} alt="Evidência" className="h-10 w-10 object-cover rounded border" />
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col items-end gap-2">
-                            <div className="relative">
-                              <Input
-                                type="file"
-                                className="hidden"
-                                id={`evidence-${idx}`}
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleAlertEvidenceUpload(idx, file);
-                                }}
-                                disabled={isUploading}
-                              />
-                              <Label
-                                htmlFor={`evidence-${idx}`}
-                                className="inline-flex items-center justify-center rounded-md text-[10px] font-medium border border-destructive/20 bg-background hover:bg-destructive/5 h-7 px-2 cursor-pointer gap-1 text-destructive"
-                              >
-                                <Camera className="h-3 w-3" /> Anexar Evidência
-                              </Label>
-                            </div>
-                            {alert.is_critical_risk && alert.evidence_urls.length === 0 && (
-                              <Badge variant="outline" className="text-[8px] bg-destructive/10 text-destructive border-destructive/20 uppercase">
-                                Bloqueante
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {selectedSheetId && technicalSheets.find(s => s.id === selectedSheetId)?.setup_instructions && (
-                  <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10 space-y-2">
-                    <Label className="text-xs text-blue-700 font-bold uppercase flex items-center gap-1">
-                      <Info className="h-3 w-3" /> Setup e Preparação
-                    </Label>
-                    <p className="text-xs text-blue-800 whitespace-pre-wrap">
-                      {technicalSheets.find(s => s.id === selectedSheetId)?.setup_instructions}
-                    </p>
-                  </div>
-                )}
-
-                {/* Supplies Used Tracking */}
-                {selectedSheetId && Object.keys(suppliesUsed).length > 0 && (
-                  <SupplyList
-                    supplies={suppliesUsed}
-                    onUpdate={(id, updates) => setSuppliesUsed(prev => ({
-                      ...prev,
-                      [id]: { ...prev[id], ...updates }
-                    }))}
-                  />
-                )}
-
-                {selectedSheetId && technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist && (technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist?.length || 0) > 0 && (
-                  <div className="space-y-3 pt-2">
-                    <Label className="text-sm font-semibold flex items-center gap-2">
-                      <CheckSquare className="h-4 w-4 text-success" />
-                      Checklist de Qualidade (Obrigatório)
-                    </Label>
-                    <div className="grid grid-cols-1 gap-3">
-                      {technicalSheets.find(s => s.id === selectedSheetId)?.quality_checklist?.map((item) => (
-                        <div key={item.id} className="space-y-2 p-3 rounded-lg bg-success/5 border border-success/10">
-                          <div className="flex items-center gap-3">
-                            <Checkbox
-                              id={`quality-${item.id}`}
-                              checked={qualityResponses[item.id]?.approved || false}
-                              onCheckedChange={(checked) => setQualityResponses(prev => ({
-                                ...prev,
-                                [item.id]: { ...prev[item.id], approved: !!checked }
-                              }))}
-                            />
-                            <Label htmlFor={`quality-${item.id}`} className="text-sm cursor-pointer flex-1">
-                              {item.description}
-                              {item.required && <span className="text-destructive ml-1">*</span>}
-                            </Label>
-                          </div>
-                          {!qualityResponses[item.id]?.approved && (
-                            <div className="pl-7">
-                              <Input
-                                placeholder="Justificativa da reprovação/pendência..."
-                                className="h-8 text-xs bg-background"
-                                value={qualityResponses[item.id]?.justification || ""}
-                                onChange={(e) => setQualityResponses(prev => ({
-                                  ...prev,
-                                  [item.id]: { ...prev[item.id], justification: e.target.value }
-                                }))}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <RegulagemSection
+              machineId={schedule.machine_id}
+              technicalSheets={technicalSheets}
+              selectedSheetId={selectedSheetId}
+              onSheetChange={setSelectedSheetId}
+              adjustmentParams={adjustmentParams}
+              setAdjustmentParams={setAdjustmentParams}
+              activeAlerts={activeAlerts}
+              suppliesUsed={suppliesUsed}
+              setSuppliesUsed={setSuppliesUsed}
+              qualityResponses={qualityResponses}
+              setQualityResponses={setQualityResponses}
+              onAlertEvidenceUpload={handleAlertEvidenceUpload}
+              isUploading={isUploading}
+            />
 
             {/* General Info */}
-            <div className="space-y-4 pt-4 border-t border-border/50">
-              <h3 className="text-lg font-semibold">Informações Gerais</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Tempo de Máquina Parada (min)
-                  </Label>
-                  <Input
-                    type="number"
-                    value={downtime}
-                    onChange={(e) => setDowntime(parseInt(e.target.value, 10) || 0)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Custo Total (Opcional)</Label>
-                  <Input
-                    type="number"
-                    placeholder="R$ 0,00"
-                    value={totalCost}
-                    onChange={(e) => setTotalCost(parseFloat(e.target.value) || 0)}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Observações Adicionais</Label>
-                <Textarea
-                  placeholder="Relate problemas encontrados, peças trocadas, etc."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="min-h-[80px]"
-                />
-              </div>
-
-              {/* Parts Replacement */}
-              <ReplacementParts
-                parts={parts}
-                onAdd={handleAddPart}
-                onRemove={handleRemovePart}
-                onUpdate={handleUpdatePart}
-              />
-
-              {/* Signature */}
-              <div className="space-y-4 pt-4 border-t border-border/50">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <PenTool className="h-5 w-5 text-primary" />
-                  Assinatura Digital
-                </h3>
-                <div className="p-4 border border-dashed rounded-lg bg-muted/20 text-center">
-                  <Input
-                    placeholder="Assine aqui (Nome Completo)"
-                    value={signature}
-                    onChange={(e) => setSignature(e.target.value)}
-                    className="max-w-md mx-auto text-center font-serif italic text-lg"
-                  />
-                  <p className="text-[10px] text-muted-foreground mt-2">Esta assinatura declara a veracidade dos dados informados.</p>
-                </div>
-              </div>
-            </div>
+            <GeneralInfoSection
+              downtime={downtime}
+              onDowntimeChange={setDowntime}
+              totalCost={totalCost}
+              onTotalCostChange={setTotalCost}
+              notes={notes}
+              onNotesChange={setNotes}
+              parts={parts}
+              onAddPart={handleAddPart}
+              onRemovePart={handleRemovePart}
+              onUpdatePart={handleUpdatePart}
+              signature={signature}
+              onSignatureChange={setSignature}
+            />
           </div>
         </ScrollArea>
 

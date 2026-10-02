@@ -16,7 +16,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth";
-import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { useOfflineSyncContext } from "@/contexts/OfflineSyncContext";
 
 interface ScannedJob {
   id: string;
@@ -31,7 +31,7 @@ interface ScannedJob {
 
 export const QRScanner = () => {
   const { user } = useAuth();
-  const { isOnline, recordQRScanOffline, updateJobOffline, getCachedJobs } = useOfflineSync();
+  const { isOnline, recordQRScanOffline, updateJobOffline, getCachedJobs } = useOfflineSyncContext();
   const [isScanning, setIsScanning] = useState(false);
   const [scannedJob, setScannedJob] = useState<ScannedJob | null>(null);
   const [isLoading, setIsLoading] = useState(false);
