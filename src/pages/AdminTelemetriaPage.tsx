@@ -143,7 +143,7 @@ export default function AdminTelemetriaPage() {
         logger.error('Falha ao buscar telemetria de queries', error, 'AdminTelemetria');
         throw error;
       }
-      return (data as unknown as TelemetryRow[]) || [];
+      return data ?? [];
     },
     refetchInterval: realtimeEnabled ? 10000 : false, // Auto-refresh every 10s if realtime is enabled
   });

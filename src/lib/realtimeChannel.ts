@@ -125,28 +125,24 @@ interface PresenceEntry {
 const presenceRegistry = new Map<string, PresenceEntry>();
 
 function buildPresenceAndSubscribe(name: string): PresenceEntry {
-  const entry: PresenceEntry = {
-    channel: undefined as unknown as RealtimeChannel,
-    refCount: 0,
-    syncListeners: new Set(),
-    joinListeners: new Set(),
-    leaveListeners: new Set(),
-  };
+  const syncListeners = new Set<PresenceListener>();
+  const joinListeners = new Set<PresenceJoinListener>();
+  const leaveListeners = new Set<PresenceLeaveListener>();
   // All presence callbacks are attached BEFORE subscribe() to satisfy
   // the Supabase client validation. Fanout to the listener sets at runtime.
   const ch = supabase.channel(name)
     .on('presence', { event: 'sync' }, () => {
       const state = ch.presenceState() as RealtimePresenceState<Record<string, unknown>>;
-      entry.syncListeners.forEach((fn) => fn(state));
+      syncListeners.forEach((fn) => fn(state));
     })
     .on('presence', { event: 'join' }, ({ newPresences }) => {
-      entry.joinListeners.forEach((fn) => fn(newPresences as unknown[]));
+      joinListeners.forEach((fn) => fn(newPresences));
     })
     .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-      entry.leaveListeners.forEach((fn) => fn(leftPresences as unknown[]));
+      leaveListeners.forEach((fn) => fn(leftPresences));
     })
     .subscribe();
-  entry.channel = ch;
+  const entry: PresenceEntry = { channel: ch, refCount: 0, syncListeners, joinListeners, leaveListeners };
   presenceRegistry.set(name, entry);
   return entry;
 }
