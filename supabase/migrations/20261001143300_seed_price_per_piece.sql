@@ -10,4 +10,4 @@ DROP POLICY IF EXISTS "Gestores podem inserir configs" ON public.business_config
 CREATE POLICY "Gestores podem inserir configs"
 ON public.business_config FOR INSERT
 TO authenticated
-WITH CHECK (public.has_role(auth.uid(), 'manager'));
+WITH CHECK (app_private.has_role(auth.uid(), 'manager'));

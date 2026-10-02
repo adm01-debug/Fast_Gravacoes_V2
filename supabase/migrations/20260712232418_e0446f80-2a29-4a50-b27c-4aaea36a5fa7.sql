@@ -21,8 +21,15 @@ WITH CHECK (user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR
 CREATE POLICY "Users can insert own log entries" ON public.security_events FOR INSERT TO authenticated
 WITH CHECK (user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));
 
-CREATE POLICY "Users can insert own log entries" ON public.geo_blocking_logs FOR INSERT TO authenticated
-WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));
+-- geo_blocking_logs pode não existir num rebuild limpo (tabelas manuais em
+-- prod, sem migration de criação até 20261001143000) — guardada em to_regclass.
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_logs') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "Users can insert own log entries" ON public.geo_blocking_logs FOR INSERT TO authenticated
+      WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR app_private.has_role(auth.uid(),''coordinator'') OR app_private.has_role(auth.uid(),''manager'') OR app_private.has_role(auth.uid(),''admin''))';
+  END IF;
+END $$;
 
 CREATE POLICY "Users can insert own log entries" ON public.rate_limit_logs FOR INSERT TO authenticated
 WITH CHECK (user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin'));
