@@ -12,6 +12,7 @@ import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import {
   checkRateLimit,
   isRateLimitSaturated,
+  sanitizeIp,
   tooManyRequests,
 } from "../_shared/rateLimit.ts";
 import { getOrCreateRequestId } from "../_shared/logger.ts";
@@ -71,7 +72,9 @@ async function guardedRateLimitPair(
       "rate_limit_check_and_record_pair",
       {
         p_per_ip_endpoint: perIpEndpoint,
-        p_ip: ip ?? "0.0.0.0",
+        // sanitizeIp garante inet válido — um XFF malformado quebraria o
+        // cast do parâmetro e derrubaria a request pro fallback não-atômico.
+        p_ip: sanitizeIp(ip),
         p_per_ip_max: perIpMax,
         p_global_endpoint: globalEndpoint,
         p_global_max: globalMax,

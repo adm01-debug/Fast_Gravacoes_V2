@@ -62,7 +62,7 @@ function isValidInet(ip: string): boolean {
     return false;
   }
 }
-function sanitizeIp(raw: string | null | undefined): string {
+export function sanitizeIp(raw: string | null | undefined): string {
   const ip = (raw ?? "").split(",")[0].trim();
   return isValidInet(ip) ? ip : "0.0.0.0";
 }
