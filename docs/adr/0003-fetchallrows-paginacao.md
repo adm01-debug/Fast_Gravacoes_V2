@@ -1,6 +1,6 @@
 # ADR 0003 — `fetchAllRows` como padrão para selects ilimitados
 
-- **Status:** aceito — 2026-10-01
+- **Status:** aceito — 2026-10-01 (helper implementado no PR #83, incluindo variante keyset `fetchAllRowsByCursor` para tabelas com INSERTs concorrentes)
 - **Contexto:** o PostgREST aplica `max-rows` (~1000) **silenciosamente**:
   `.select()` sem `.range()`/`.limit()` devolve 1000 linhas e o resto some
   sem erro. KPIs, rankings, export/backup e listas de estoque ficavam

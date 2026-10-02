@@ -5,7 +5,9 @@ info:
   description: >-
     Contrato das 34 Deno Edge Functions do Supabase self-hosted.
     Detalhe de gatilhos (quem chama o quê): supabase/functions/REGISTRY.md.
-    Todas respondem JSON e exigem POST, salvo indicado.
+    Todas respondem JSON e exigem POST, salvo indicado
+    (technical-assistant responde stream SSE; pdf-generator retorna
+    text/plain; excel-export retorna text/csv).
 servers:
   - url: https://supabase.atomicabr.com.br
 security:
@@ -24,6 +26,11 @@ components:
       in: header
       name: x-cron-secret
       description: Segredo interno para crons/functions internas (requireCronSecret).
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Chave estática por function (ex.: ERP_API_KEY, BACKUP_API_KEY).
     webhookSignature:
       type: apiKey
       in: header
@@ -101,24 +108,62 @@ paths:
   /functions/v1/technical-assistant:
     post:
       summary: Assistente técnico (RAG sobre knowledge base)
-      responses: { '200': { description: Resposta }, '429': { $ref: '#/components/responses/RateLimited' } }
+      responses:
+        '200':
+          description: >-
+            Stream SSE (`Content-Type: text/event-stream`) — a function faz
+            proxy do stream upstream; NÃO é JSON. Clientes devem consumir
+            eventos SSE e concatenar os deltas de texto.
+        '429': { $ref: '#/components/responses/RateLimited' }
 
   # ============ Integrações ============
-  /functions/v1/erp-api:
+  /functions/v1/erp-api/{resource}:
+    get:
+      summary: >-
+        API pública do ERP — recursos reais sob /erp-api/: jobs (GET/POST,
+        /:id GET/PATCH), machines, operators, production/summary, lots
+        (GET/POST), kpis. POST/PATCH seguem os mesmos paths.
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Recurso (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
-      summary: API pública do ERP (chamada pelo Bitrix24)
-      security: [{ webhookSignature: [] }]
-      responses: { '200': { description: JobResponse (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
+      summary: Cria recurso (jobs, lots)
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
+    patch:
+      summary: Atualiza recurso (/jobs/:id)
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Atualizado }, '401': { $ref: '#/components/responses/Unauthorized' } }
+    parameters:
+      - in: path
+        name: resource
+        required: true
+        schema: { type: string }
+        description: jobs | jobs/:id | machines | operators | production/summary | lots | kpis
   /functions/v1/webhook-handler:
     post:
-      summary: Webhooks ERP (cria/atualiza jobs via HMAC)
-      security: [{ webhookSignature: [] }]
+      summary: >-
+        Webhooks ERP (cria/atualiza jobs via HMAC). verify_jwt=true no
+        gateway: o chamador precisa de Bearer JWT (ex.: anon key do projeto)
+        ALÉM do x-webhook-signature, senão 401 antes do handler.
+      security: [{ bearerAuth: [], webhookSignature: [] }]
       responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/bitrix24-sync:
     post:
-      summary: Sincronização Bitrix24 (cron no painel)
-      security: [{ cronSecret: [] }]
-      responses: { '200': { description: OK } }
+      summary: >-
+        Sincronização Bitrix24 — despacha pelo query param obrigatório
+        `?action=`: `push` (cron, x-cron-secret), `webhook` (chamada pelo
+        Bitrix, x-webhook-secret/segredo Bitrix), `oauth-callback` (redirect
+        de autorização, sem auth), demais ações de gestão exigem Bearer JWT
+        com papel coordinator/manager/admin. Chamada sem action retorna
+        'Invalid action'.
+      security: [{ cronSecret: [] }, { bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema: { type: string }
+          description: push | webhook | oauth-callback | ações de gestão (ver function)
+      responses: { '200': { description: OK }, '400': { description: Invalid action } }
   /functions/v1/external-db-bridge:
     post:
       summary: Ponte para banco externo (órfã — ver REGISTRY.md)
@@ -165,20 +210,29 @@ paths:
   # ============ Relatórios / export ============
   /functions/v1/pdf-generator:
     post:
-      summary: Gera PDF server-side (relatórios, etiquetas)
-      responses: { '200': { description: application/pdf } }
+      summary: >-
+        Relatório server-side — apesar do nome, retorna `text/plain` UTF-8
+        (header `X-Report-Format: text`, download `.txt`). Não gera PDF
+        binário hoje.
+      responses: { '200': { description: text/plain (.txt, X-Report-Format: text) } }
   /functions/v1/excel-export:
     post:
-      summary: Export Excel (órfã — export no front é via lib)
-      responses: { '200': { description: Arquivo } }
+      summary: >-
+        Export de dados — retorna `text/csv` com attachment `.csv`
+        (não gera XLSX; o nome "excel" é histórico). Export no front
+        usa a lib local.
+      responses: { '200': { description: text/csv (.csv) } }
   /functions/v1/image-optimizer:
     post:
-      summary: Otimização de imagem server-side (órfã)
-      responses: { '200': { description: Imagem } }
+      summary: STUB — retorna 501 JSON em toda chamada (não implementado)
+      responses: { '501': { description: Não implementado } }
   /functions/v1/calculate-inventory-intelligence:
     post:
-      summary: Métricas inteligentes de estoque (consumo, dias de suprimento)
-      responses: { '200': { description: Métricas } }
+      summary: >-
+        Métricas de estoque — só atualiza `daily_usage_avg` a partir de 30d
+        de saídas; a resposta traz contagem processada + acurácia simulada.
+        NÃO calcula dias de suprimento nem lê estoque atual.
+      responses: { '200': { description: '{ processed, accuracy(simulada) }' } }
 
   # ============ Infra / housekeeping ============
   /functions/v1/health-check:
@@ -207,11 +261,15 @@ paths:
       responses: { '200': { description: OK } }
   /functions/v1/backup-scheduler:
     post:
-      summary: Orquestra backup agendado (ver RUNBOOK — sem evidência de agendamento ativo)
-      security: [{ cronSecret: [] }]
-      responses: { '200': { description: OK } }
+      summary: >-
+        Orquestra backup agendado (ver RUNBOOK — sem evidência de agendamento
+        ativo). Credenciais exigidas juntas: Bearer JWT do gateway
+        (verify_jwt=true) + `x-cron-secret` (requireCronSecret) + `x-api-key`
+        igual a `BACKUP_API_KEY` (ou Bearer com o mesmo valor).
+      security: [{ bearerAuth: [], cronSecret: [], apiKey: [] }]
+      responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/csp-report:
     post:
-      summary: Recebe relatórios CSP report-uri (única function pública — verify_jwt=false)
+      summary: Recebe relatórios CSP report-uri (única function pública — verify_jwt=false; implementada no PR #82)
       security: []
       responses: { '204': { description: Persistido em csp_violation_reports }, '413': { description: '>16KB' }, '429': { $ref: '#/components/responses/RateLimited' } }

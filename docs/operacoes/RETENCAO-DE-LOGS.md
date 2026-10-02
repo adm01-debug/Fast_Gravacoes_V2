@@ -5,7 +5,7 @@ log de segurança/telemetria tem retenção curta; dado de negócio
 (jobs, lotes, manutenção) NUNCA é apagado por rotina — só via purge
 manual do `cron-cleanup` (arquivação de jobs antigos).
 
-## Já implementado (cleanup-security-logs, roda via cron)
+## Implementado na function cleanup-security-logs — **sem cron versionado**: o agendamento depende de configuração no painel do Supabase **[PAINEL — não verificado]**. Sem cron, nada abaixo roda sozinho.
 
 | Tabela | Retenção | Observação |
 |---|---|---|

@@ -8,19 +8,19 @@ está marcado com **[PAINEL]** — o resto é feito pelo repositório.
 | Componente | Onde vive | Como é deployado |
 |---|---|---|
 | Frontend (SPA Vite) | Vercel (`juca1/fast-gravacoes-v2`) | push na `main` → deploy automático |
-| Postgres + Auth + PostgREST | Supabase self-hosted `supabase.atomicabr.com.br` | `supabase db push` (migrations) |
-| Edge Functions (34) | mesmo Supabase self-hosted | `supabase functions deploy` |
+| Postgres + Auth + PostgREST | Supabase produção canônica `uoujzvpecohinketylud` (`supabase/ENVIRONMENTS.md`, confirmado pelo owner) | `supabase db push` (migrations) |
+| Edge Functions (34) | mesmo projeto Supabase `uoujzvpecohinketylud` | `supabase functions deploy` |
 | Crons | 2 versionados em migrations (`rollup-cron-p95-daily`, `auto-promote-jobs-fallback`) + ~11 no painel **[PAINEL]** | migrations / Supabase Dashboard → Edge Functions → Cron |
 | DB Webhooks | painel **[PAINEL]** | Supabase Dashboard → Database → Webhooks |
 
-Os gatilhos de cada function estão em `supabase/functions/REGISTRY.md`.
+Os gatilhos de cada function estão em `supabase/functions/REGISTRY.md` (introduzido no PR #80).
 
 ## Deploy normal
 
 1. PR aprovado + CI verde → merge na `main`. A Vercel deploya sozinha.
 2. Se o PR tem `supabase/migrations/`:
    ```bash
-   supabase link --project-ref <ref-do-self-hosted>
+   supabase link --project-ref uoujzvpecohinketylud
    supabase db push            # aplica só migrations novas, em ordem
    ```
 3. Se o PR mexe em `supabase/functions/<nome>`:
@@ -57,7 +57,7 @@ aplicada, nunca `db reset` em produção.
 
 ## Backup e restore
 
-O Supabase self-hosted não tem PITR automático — backup é via `pg_dump`
+Sem PITR automático confirmado no projeto canônico — backup é via `pg_dump`
 agendado **[PAINEL]**. A function `backup-scheduler` existe no repo mas
 hoje não há evidência de agendamento ativo nem de restore testado.
 
@@ -83,7 +83,7 @@ Copiar para storage fora do mesmo host (S3/B2/outro servidor).
 | Sintoma | Provável causa | Ação |
 |---|---|---|
 | Página em branco pós-deploy | CSP bloqueou recurso novo | console do browser → diretiva violada → ajustar `vercel.json`/`index.html` |
-| Login não abre (lockout) | `blocked_ips`/`check-login-lockout` | desbloquear IP no painel ou `UPDATE blocked_ips SET unblocked_at=now()` |
+| Login não abre (lockout) | `check-login-lockout` consulta `login_lockouts` por e-mail/IP | expirar o lock: `UPDATE login_lockouts SET locked_until = now() - interval '1 minute' WHERE email = '<email>'` |
 | Função 401 do nada | `verify_jwt` vs. chamador sem JWT | conferir `config.toml` + quem invoca (REGISTRY.md) |
 | Cron não rodou | cron só existe no painel | Dashboard → Edge Functions → Cron **[PAINEL]** |
 | Dados sumindo da tela | query passou de 1000 linhas (cap PostgREST) | usar `fetchAllRows` (`src/lib/fetchAllRows.ts`) |
