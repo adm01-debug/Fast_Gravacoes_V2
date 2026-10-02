@@ -73,7 +73,7 @@ function resolveKey(identity: RateLimitIdentity): { field: "user_id" | "user_ema
   return { field: "ip_address", value: sanitizeIp(identity.ip) };
 }
 
-function tooManyRequests(
+export function tooManyRequests(
   max: number,
   windowSeconds: number,
   corsHeaders: Record<string, string>,
@@ -96,6 +96,33 @@ function tooManyRequests(
       },
     },
   );
+}
+
+// Consulta read-only: diz se o bucket já está saturado SEM gravar linha.
+// Uso: preceder um checkRateLimit gravador quando a ordem importa — ex.
+// saturado, o global corta a request sem cobrar nenhum bucket; o per-IP
+// grava antes e o global grava depois, então requests rejeitadas pelo
+// per-IP nunca consomem a cota agregada. Fail-open igual ao checkRateLimit.
+export async function isRateLimitSaturated(
+  supabase: Supa,
+  opts: Pick<RateLimitOptions, "endpoint" | "identity" | "max" | "windowSeconds">,
+): Promise<boolean> {
+  const { endpoint, identity, max, windowSeconds } = opts;
+  const key = resolveKey(identity);
+  const windowStart = new Date(Date.now() - windowSeconds * 1000);
+  try {
+    const { count, error } = await supabase
+      .from("rate_limit_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("endpoint", endpoint)
+      .eq(key.field, key.value)
+      .eq("is_blocked", false)
+      .gte("created_at", windowStart.toISOString());
+    if (error) return false;
+    return (count ?? 0) >= max;
+  } catch {
+    return false;
+  }
 }
 
 export async function checkRateLimit(
