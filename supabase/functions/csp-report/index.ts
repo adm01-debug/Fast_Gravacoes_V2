@@ -116,25 +116,13 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Rate limit por IP ANTES do filtro de host: spam descartado por origem
-  // continua throttled por IP — o que não consome é só o bucket global.
-  const limited = await checkRateLimit(supabase, {
-    endpoint: "csp-report",
-    identity: { ip: getClientIp(req) },
-    max: 120,
-    windowSeconds: 60,
-    corsHeaders,
-    requestId,
-  });
-  if (limited) return limited;
-
   // Vercel preview deploys herdam o mesmo vercel.json e reportam para este
-  // coletor de produção — poluem a telemetria e consumiriam o bucket global
-  // de rate limit, então o filtro roda antes do contador global (o por-IP já
-  // foi cobrado acima).
-  // CSP_REPORT_ALLOWED_HOSTS (vírgula-separado) restringe a origem: relatório
-  // de host fora da lista é descartado com 204. Vazio = aceita tudo
-  // (comportamento anterior).
+  // coletor de produção — poluem a telemetria e não podem consumir a cota de
+  // produção. CSP_REPORT_ALLOWED_HOSTS (vírgula-separado) restringe a origem:
+  // relatório de host fora da lista é descartado com 204 — mas antes passa
+  // por um bucket per-IP PRÓPRIO ('csp-report-rejected'), que throttles o
+  // spam sem cobrar a cota de produção. Vazio = aceita tudo (comportamento
+  // anterior).
   const allowedHosts = (Deno.env.get("CSP_REPORT_ALLOWED_HOSTS") ?? "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
@@ -148,9 +136,28 @@ Deno.serve(async (req) => {
       }
     })();
     if (!allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))) {
+      const rejectedLimited = await checkRateLimit(supabase, {
+        endpoint: "csp-report-rejected",
+        identity: { ip: getClientIp(req) },
+        max: 120,
+        windowSeconds: 60,
+        corsHeaders,
+        requestId,
+      });
+      if (rejectedLimited) return rejectedLimited;
       return new Response(null, { status: 204, headers: corsHeaders });
     }
   }
+
+  const limited = await checkRateLimit(supabase, {
+    endpoint: "csp-report",
+    identity: { ip: getClientIp(req) },
+    max: 120,
+    windowSeconds: 60,
+    corsHeaders,
+    requestId,
+  });
+  if (limited) return limited;
 
   // Bucket global: mesmo quem rotaciona IPs forjados no XFF fica limitado
   // pelo teto agregado do endpoint.
