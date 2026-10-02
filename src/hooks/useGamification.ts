@@ -279,7 +279,8 @@ async function calculateRankingsLocally(
     .select('*')
     .eq('status', 'finished')
     .gte('actual_end_time', periodStart.toISOString())
-    .lte('actual_end_time', periodEnd.toISOString());
+    .lte('actual_end_time', periodEnd.toISOString())
+    .order('id');
   const jobs = await fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1));
 
   const { data: assignments } = await supabase

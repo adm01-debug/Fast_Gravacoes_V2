@@ -160,7 +160,7 @@ export function useDataExport(tableName: TableName) {
     try {
       // limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes —
       // paginamos até 10 mil de verdade.
-      let query = supabase.from('audit_log').select('*').order('created_at', { ascending: false });
+      let query = supabase.from('audit_log').select('*').order('created_at', { ascending: false }).order('id');
 
       if (filters.entityType) query = query.eq('entity_type', filters.entityType);
       if (filters.entityId) query = query.eq('entity_id', filters.entityId);

@@ -4,8 +4,13 @@
 // Este helper pagina a query em blocos até esgotar (ou atingir maxRows).
 //
 // Uso:
-//   const query = supabase.from('jobs').select('*').eq('status', 'finished');
+//   const query = supabase.from('jobs').select('*').eq('status', 'finished').order('id');
 //   const rows = await fetchAllRows((o, l) => query.range(o, o + l - 1));
+//
+// A query DEVE ter .order() determinístico (chave única como 'id', ou
+// .order('created_at').order('id') como desempate): sem ordenação o
+// PostgreSQL pode devolver as páginas em ordem diferente e linhas se
+// duplicam ou somem entre páginas.
 
 export interface SupabasePage<T> {
   data: T[] | null;

@@ -83,8 +83,8 @@ export default function SettingsPage() {
     try {
       // Export/backup precisa de TODAS as linhas: .select() puro trunca em
       // 1000 (cap do PostgREST) e o backup sairia incompleto sem aviso.
-      const jobsQuery = supabase.from('jobs').select('*');
-      const profilesQuery = supabase.from('profiles').select('*');
+      const jobsQuery = supabase.from('jobs').select('*').order('id');
+      const profilesQuery = supabase.from('profiles').select('*').order('id');
       const [jobs, operators] = await Promise.all([
         fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1)),
         fetchAllRows((o, l) => profilesQuery.range(o, o + l - 1)),

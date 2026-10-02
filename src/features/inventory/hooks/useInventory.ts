@@ -56,7 +56,7 @@ export function useInventory() {
     queryFn: async () => {
       // Paginado: inventory_items passando de 1000 truncaria silenciosamente
       // (cap do PostgREST) e o estoque sumiria da tela.
-      const query = supabase.from('inventory_items').select('*').order('name');
+      const query = supabase.from('inventory_items').select('*').order('name').order('id');
       const rows = await fetchAllRows((o, l) => query.range(o, o + l - 1));
       return rows as InventoryItem[];
     },

@@ -190,11 +190,11 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
 }
 
 async function fetchPeriodData(startDate: string, endDate: string, filters?: { machineId?: string; techniqueId?: string }) {
-  let jobsQuery = supabase.from('jobs').select('*').gte('created_at', startDate).lte('created_at', endDate);
+  let jobsQuery = supabase.from('jobs').select('*').gte('created_at', startDate).lte('created_at', endDate).order('id');
   if (filters?.machineId) jobsQuery = jobsQuery.eq('machine_id', filters.machineId);
   if (filters?.techniqueId) jobsQuery = jobsQuery.eq('technique_id', filters.techniqueId);
 
-  const maintenanceQuery = supabase.from('maintenance_records').select('*').gte('created_at', startDate).lte('created_at', endDate);
+  const maintenanceQuery = supabase.from('maintenance_records').select('*').gte('created_at', startDate).lte('created_at', endDate).order('id');
 
   const [
     jobs,
