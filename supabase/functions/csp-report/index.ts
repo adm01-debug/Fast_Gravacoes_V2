@@ -145,6 +145,16 @@ Deno.serve(async (req) => {
         requestId,
       });
       if (rejectedLimited) return rejectedLimited;
+      // Teto agregado próprio: IPs rotativos não podem gerar RPCs ilimitados.
+      const rejectedGlobalLimited = await checkRateLimit(supabase, {
+        endpoint: "csp-report-rejected-global",
+        identity: { ip: "0.0.0.0" },
+        max: 600,
+        windowSeconds: 60,
+        corsHeaders,
+        requestId,
+      });
+      if (rejectedGlobalLimited) return rejectedGlobalLimited;
       return new Response(null, { status: 204, headers: corsHeaders });
     }
   }
