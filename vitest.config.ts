@@ -28,6 +28,10 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**', '**/supabase/functions/**'],
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // As suites de contrato importam os schemas REAIS de
+      // supabase/functions/_shared/contracts.ts, que puxa o zod via URL Deno.
+      // Redireciona para o zod do package.json (mesma API, v3.x).
+      'https://esm.sh/zod@3.22.4': 'zod',
     },
     // Use the forks pool to isolate large simulation suites (500+ cases).
     // (Vitest 4 removed `poolOptions`; `singleFork` defaults to false.)
@@ -38,10 +42,13 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov', 'json-summary'],
       thresholds: {
-        lines: 20,
-        functions: 17,
-        branches: 15,
-        statements: 20,
+        // Ratchet travado ~1pt abaixo do medido em 01/10/2026
+        // (35.4 lines / 33.5 stmts / 28.7 funcs / 27.2 branches).
+        // Só subir, nunca descer.
+        lines: 34,
+        functions: 27,
+        branches: 26,
+        statements: 32,
       },
       exclude: [
         '**/node_modules/**',

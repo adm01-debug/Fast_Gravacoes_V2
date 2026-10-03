@@ -3,14 +3,12 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
+import { parseOrError } from "../_shared/validate.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
+import { lockoutRequestSchema } from "../_shared/validation.ts";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const BASE_LOCKOUT_MINUTES = 1; // First lockout: 1 minute
-
-interface LockoutRequest {
-  email: string;
-  action: 'check' | 'record_failure' | 'record_success';
-}
 
 function getClientIp(req: Request): string | null {
   const forwardedFor = req.headers.get('x-forwarded-for');
@@ -46,7 +44,9 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { email, action }: LockoutRequest = await req.json();
+    const parsed = await parseOrError(lockoutRequestSchema, req, { corsHeaders: getCorsHeaders(req), requestId: getOrCreateRequestId(req) });
+    if (parsed.response) return parsed.response;
+    const { email, action } = parsed.data;
     // Server-derived — a client-supplied IP would let an attacker spoof/rotate
     // to evade IP-based lockout, or frame another IP as the failing source.
     const ip_address = getClientIp(req);
@@ -63,13 +63,6 @@ serve(async (req) => {
     if (limited) return limited;
 
 
-
-    if (!email || !action) {
-      return new Response(
-        JSON.stringify({ error: 'Email and action are required' }),
-        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
-      );
-    }
 
     const normalizedEmail = email.toLowerCase().trim();
     // Reject malformed email addresses to prevent abuse
