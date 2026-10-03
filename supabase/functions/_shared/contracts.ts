@@ -45,7 +45,7 @@ export const ERPJobResponseSchema = z.object({
   order_number: z.string(),
   client: z.string(),
   product: z.string(),
-  quantity: z.number(),
+  quantity: z.number().nonnegative(),
   status: z.string(),
   created_at: z.string(),
 });
@@ -56,8 +56,8 @@ export const ERPJobPatchSchema = z.object({
   scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   notes: z.string().optional(),
   priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
-  produced_quantity: z.number().nonnegative().optional(),
-  lost_pieces: z.number().nonnegative().optional(),
+  produced_quantity: z.number().nonnegative().finite().optional(),
+  lost_pieces: z.number().nonnegative().finite().optional(),
 }).strict();
 
 // Production Lots

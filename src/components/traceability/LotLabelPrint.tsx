@@ -38,8 +38,7 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
     return `LOT:${lot.lot_number}`;
   };
 
-  const buildLabelHTML = (lot: ProductionLot, cfg: typeof config) => {
-    const qrValue = generateQrValue(lot);
+  const buildLabelHTML = (lot: ProductionLot, cfg: typeof config, qrSvg: string) => {
     const isLandscape = cfg.w > cfg.h;
     const safeLotNumber = escapeHtml(lot.lot_number);
     const safeProductName = escapeHtml(lot.product_name);
@@ -55,8 +54,8 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
         font-family:'Courier New',monospace;box-sizing:border-box;
         page-break-inside:avoid;break-inside:avoid;
       ">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
-          <div id="qr-placeholder-${escapeHtml(lot.id)}" data-value="${escapeHtml(qrValue)}" data-size="${cfg.qrSize}"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:${cfg.qrSize}px;">
+          ${qrSvg}
         </div>
         <div style="text-align:${isLandscape ? 'left' : 'center'};flex:1;min-width:0;overflow:hidden;">
           <div style="font-size:${isLandscape ? '13px' : '16px'};font-weight:bold;margin-bottom:4px;word-break:break-word;">
@@ -96,8 +95,15 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
       return;
     }
 
-    const labelsHTML = lots.flatMap(lot =>
-      Array.from({ length: copies }, () => buildLabelHTML(lot, config))
+    // A janela de impressão herda o CSP do opener, que bloqueia <script>
+    // inline. Os QRs são serializados como SVG aqui no opener (mesma
+    // convenção de JobQRCode/InventoryPage) e o print() é disparado daqui.
+    const qrSvgs = lots.map(lot =>
+      document.getElementById(`label-qr-print-${lot.id}`)?.outerHTML ?? ''
+    );
+
+    const labelsHTML = lots.flatMap((lot, i) =>
+      Array.from({ length: copies }, () => buildLabelHTML(lot, config, qrSvgs[i]))
     ).join('');
 
     printWindow.document.write(`
@@ -105,7 +111,6 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
       <html>
         <head>
           <title>Etiquetas - ${lots.length} lote(s)</title>
-          <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
           <style>
             @page { size: auto; margin: 5mm; }
             body {
@@ -120,21 +125,11 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
         </head>
         <body>
           ${labelsHTML}
-          <script>
-            document.querySelectorAll('[id^="qr-placeholder-"]').forEach(el => {
-              const value = el.dataset.value;
-              const size = parseInt(el.dataset.size, 10);
-              const canvas = document.createElement('canvas');
-              QRCode.toCanvas(canvas, value, { width: size, margin: 1, errorCorrectionLevel: 'H' }, () => {
-                el.appendChild(canvas);
-              });
-            });
-            setTimeout(() => { window.print(); }, 800);
-          </script>
         </body>
       </html>
     `);
     printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 500);
     toast.success(`Imprimindo ${lots.length * copies} etiqueta(s)`);
   };
 
@@ -263,6 +258,21 @@ export function LotLabelPrint({ lots, open, onClose }: LotLabelPrintProps) {
               Preview do primeiro lote. Serão impressas {lots.length * copies} etiqueta(s) no total.
             </p>
           )}
+
+          {/* QRs de todos os lotes — serializados como SVG para a janela de
+              impressão, que não pode executar scripts sob o CSP. */}
+          <div aria-hidden style={{ position: 'absolute', left: -99999, top: 0, width: 0, height: 0, overflow: 'hidden' }}>
+            {lots.map(lot => (
+              <QRCodeSVG
+                key={lot.id}
+                id={`label-qr-print-${lot.id}`}
+                value={generateQrValue(lot)}
+                size={config.qrSize}
+                level="H"
+                includeMargin
+              />
+            ))}
+          </div>
 
           {/* Actions */}
           <div className="flex gap-2 justify-end">

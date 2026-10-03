@@ -101,7 +101,7 @@
     "backToLogin": "Voltar ao login",
     "invalidResetLink": "Link de redefinição inválido ou expirado",
     "resetEmailSent": "E-mail de redefinição enviado! Verifique sua caixa de entrada.",
-    "passwordRequirements": "Mínimo 6 caracteres, 1 maiúscula e 1 número",
+    "passwordRequirements": "Mínimo 8 caracteres, 1 maiúscula, 1 minúscula e 1 número",
     "invalidEmail": "E-mail inválido",
     "passwordMinLength": "Senha deve ter pelo menos {{min}} caracteres",
     "passwordMismatch": "As senhas não coincidem",
@@ -366,6 +366,7 @@
     "integer": "Deve ser um número inteiro",
     "date": "Data inválida",
     "url": "URL inválida",
+    "passwordLowercase": "Deve conter pelo menos uma letra minúscula",
     "passwordUppercase": "Deve conter pelo menos uma letra maiúscula",
     "passwordNumber": "Deve conter pelo menos um número"
   },
