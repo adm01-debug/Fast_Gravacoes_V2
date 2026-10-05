@@ -117,7 +117,7 @@ function StatsCardComponent({
                 {value}
               </p>
               {subtitle && (
-                <p className="text-[11px] font-semibold text-muted-foreground/80 truncate bg-muted/30 px-2 py-0.5 rounded-full">
+                <p className="text-[11px] font-semibold text-foreground/80 truncate bg-muted/30 px-2 py-0.5 rounded-full">
                   {subtitle}
                 </p>
               )}
@@ -150,7 +150,7 @@ function StatsCardComponent({
             {value}
           </p>
           {subtitle && (
-            <p className="text-sm font-medium text-muted-foreground/80 mt-1 truncate inline-flex bg-muted/30 px-2.5 py-0.5 rounded-full">
+            <p className="text-sm font-medium text-foreground/80 mt-1 truncate inline-flex bg-muted/30 px-2.5 py-0.5 rounded-full">
               {subtitle}
             </p>
           )}
