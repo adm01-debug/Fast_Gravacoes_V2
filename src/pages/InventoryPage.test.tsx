@@ -18,6 +18,12 @@ vi.mock('@/features/inventory', async (importOriginal) => {
     ...actual,
     useInventory: vi.fn(),
     useInventoryMovements: vi.fn().mockReturnValue({ data: [], isLoading: false }),
+    // Estes componentes consomem useInventory/useInventoryMovements pelo barrel —
+    // carregá-los via importOriginal cria um ciclo barrel→componente→barrel e
+    // faz o hook real rodar fora do mock. Stubamos aqui; a página é o que está
+    // sob teste.
+    InventoryHistoryTable: () => <div data-testid="mock-inventory-history" />,
+    AIPredictionValidationModal: () => null,
   };
 });
 
