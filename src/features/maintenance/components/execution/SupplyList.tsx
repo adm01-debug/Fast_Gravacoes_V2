@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Package } from 'lucide-react';
 
-interface SupplyItem {
+export interface SupplyItem {
   name: string;
   quantity: string;
   is_checked?: boolean;

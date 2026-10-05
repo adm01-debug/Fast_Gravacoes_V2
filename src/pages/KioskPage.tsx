@@ -7,7 +7,7 @@ import { notifyStatusChange } from "@/features/notifications";
 import { logger } from "@/lib/logger";
 import { useAuth } from "@/features/auth";
 import { ProductionRegistrationModal } from "@/components/operator/ProductionRegistrationModal";
-import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { useOfflineSyncContext } from "@/contexts/OfflineSyncContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RefreshCw, CloudOff } from "lucide-react";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ export default function KioskPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { jobs, refetchAll, isLoading, getTechniqueById, getMachineById } = useSchedulingData();
-  const { isOnline, isSyncing, updateJobOffline, cacheData } = useOfflineSync();
+  const { isOnline, isSyncing, updateJobOffline, cacheData } = useOfflineSyncContext();
 
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
   const [productionJobId, setProductionJobId] = useState<string | null>(null);

@@ -38,13 +38,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SkillsMatrix } from '@/components/operators/SkillsMatrix';
 import { OperatorSkillsModal } from '@/components/operators/OperatorSkillsModal';
+import { OperatorCard } from '@/components/operators/OperatorCard';
+import { OperatorQRBadgeDialog } from '@/components/operators/OperatorQRBadgeDialog';
+import { OperatorDetailsDialog } from '@/components/operators/OperatorDetailsDialog';
 import { ShieldCheck, Trophy as TrophyIcon } from 'lucide-react';
 import { OperatorLeaderboard } from '@/components/operators/OperatorLeaderboard';
-
-const formatLastSeen = (date: Date | undefined) => {
-  if (!date) return null;
-  return formatDistanceToNow(date, { addSuffix: true, locale: ptBR });
-};
 
 export default function OperatorsPage() {
   const navigate = useNavigate();
@@ -267,231 +265,21 @@ export default function OperatorsPage() {
             ) : (
               <div className="space-y-3">
                 {filteredOperators.map((operator, index) => (
-                  <div
+                  <OperatorCard
                     key={operator.id}
-                    className={`flex items-center gap-4 p-4 rounded-lg border border-border/50 bg-card/50 hover:bg-accent/5 transition-colors animate-fade-in ${
-                      !operator.is_active ? 'opacity-60' : ''
-                    }`}
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <div className="relative">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={operator.avatar_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {operator.full_name
-                            ? operator.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-                            : 'OP'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span
-                              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-background cursor-default ${
-                                isOnline(operator.user_id) ? 'bg-success' : 'bg-muted-foreground/50'
-                              }`}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {isOnline(operator.user_id)
-                              ? 'Online agora'
-                              : getLastSeen(operator.user_id)
-                                ? `Visto ${formatLastSeen(getLastSeen(operator.user_id))}`
-                                : 'Offline'
-                            }
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium truncate">
-                          {operator.full_name || 'Nome não informado'}
-                        </p>
-                        {!operator.is_active && (
-                          <Badge variant="outline" className="text-warning border-warning/50 text-xs">
-                            Inativo
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-                        {operator.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            {operator.phone}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Desde {format(new Date(operator.created_at), "MMM yyyy", { locale: ptBR })}
-                        </span>
-                        {!isOnline(operator.user_id) && getLastSeen(operator.user_id) && (
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="h-3 w-3" />
-                            Visto {formatLastSeen(getLastSeen(operator.user_id))}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-                      {getAssignedMachines(operator.user_id).length > 0 ? (
-                        <div className="flex flex-wrap gap-1 max-w-xs">
-                          {getAssignedMachines(operator.user_id).slice(0, 3).map((machine) => (
-                            <TooltipProvider key={machine.id}>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Badge variant="secondary" className="text-xs cursor-default">
-                                    {machine.code}
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{machine.name}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ))}
-                          {getAssignedMachines(operator.user_id).length > 3 && (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Badge variant="outline" className="text-xs cursor-default">
-                                    +{getAssignedMachines(operator.user_id).length - 3}
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>
-                                    {getAssignedMachines(operator.user_id)
-                                      .slice(3)
-                                      .map(m => m.name)
-                                      .join(', ')}
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          )}
-                        </div>
-                      ) : (
-                        <Badge variant="outline" className="text-muted-foreground">
-                          Sem máquinas
-                        </Badge>
-                      )}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => setOperatorToToggle(operator)}
-                              className={`h-8 w-8 ${
-                                operator.is_active
-                                  ? 'text-muted-foreground hover:text-warning hover:bg-warning/10'
-                                  : 'text-success hover:text-success hover:bg-success/10'
-                              }`}
-                            >
-                              <Power className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {operator.is_active ? 'Desativar operador' : 'Reativar operador'}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => setOperatorToRemove(operator)}
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Remover operador</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => setOperatorForQR(operator)}
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                            >
-                              <QrCodeIcon className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Crachá Digital (QR)</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                setOperatorToShowDetails(operator);
-                                setDetailsModalOpen(true);
-                              }}
-                              className="h-8 w-8 text-primary"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Visualizar Perfil</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                setOperatorForSkills(operator);
-                                setIsSkillsModalOpen(true);
-                              }}
-                              className="h-8 w-8 text-primary hover:bg-primary/10"
-                            >
-                              <ShieldCheck className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Competências Técnicas</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => handleOpenEdit(operator)}
-                              className="h-8 w-8"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Editar Operador</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleOpenAssignment(operator)}
-                      >
-                        <Settings2 className="h-4 w-4 mr-1" />
-                        Atribuir
-                      </Button>
-                    </div>
-                  </div>
+                    operator={operator}
+                    index={index}
+                    assignedMachines={getAssignedMachines(operator.user_id)}
+                    isOnline={isOnline(operator.user_id)}
+                    lastSeen={getLastSeen(operator.user_id)}
+                    onOpenDetails={() => { setOperatorToShowDetails(operator); setDetailsModalOpen(true); }}
+                    onOpenSkills={() => { setOperatorForSkills(operator); setIsSkillsModalOpen(true); }}
+                    onOpenEdit={() => handleOpenEdit(operator)}
+                    onOpenAssignment={() => handleOpenAssignment(operator)}
+                    onShowQR={() => setOperatorForQR(operator)}
+                    onToggle={() => setOperatorToToggle(operator)}
+                    onRemove={() => setOperatorToRemove(operator)}
+                  />
                 ))}
               </div>
             )}
@@ -508,175 +296,22 @@ export default function OperatorsPage() {
       </TabsContent>
     </Tabs>
 
-        {/* Operator QR Badge Dialog */}
-        <Dialog open={!!operatorForQR} onOpenChange={() => setOperatorForQR(null)}>
-          <DialogContent className="sm:max-w-xs text-center p-6">
-            <DialogHeader>
-              <DialogTitle className="text-center text-title font-black uppercase tracking-tighter">Crachá Digital</DialogTitle>
-              <DialogDescription className="text-center">FAST GRAVAÇÕES - Identificação Industrial</DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col items-center gap-6 py-6 bg-gradient-to-b from-primary/5 to-transparent rounded-2xl border border-primary/10">
-              <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg">
-                <AvatarImage src={operatorForQR?.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
-                  {operatorForQR?.full_name?.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-
-              <div className="p-4 bg-white rounded-2xl border-2 border-black shadow-xl">
-                <QRCodeSVG
-                  value={JSON.stringify({
-                    id: operatorForQR?.user_id,
-                    name: operatorForQR?.full_name,
-                    type: 'operator_badge'
-                  })}
-                  size={160}
-                  level="H"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-lg font-black uppercase leading-tight">{operatorForQR?.full_name}</p>
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em]">{operatorForQR?.role || 'OPERADOR INDUSTRIAL'}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-2 pt-2">
-              <Button className="gap-2 w-full font-bold" onClick={() => window.print()}>
-                <Printer className="h-4 w-4" /> Imprimir Crachá
-              </Button>
-              <Button variant="ghost" className="text-xs text-muted-foreground" onClick={() => setOperatorForQR(null)}>
-                Fechar
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <OperatorQRBadgeDialog
+          operator={operatorForQR}
+          onClose={() => setOperatorForQR(null)}
+        />
 
 
         {/* Operator Details Modal */}
-        <Dialog open={detailsModalOpen} onOpenChange={setDetailsModalOpen}>
-          <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-            <DialogHeader>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-12 w-12 border-2 border-primary/20">
-                  <AvatarImage src={operatorToShowDetails?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {operatorToShowDetails?.full_name
-                      ? operatorToShowDetails.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-                      : 'OP'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <DialogTitle className="text-xl">
-                    {operatorToShowDetails?.full_name}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {operatorToShowDetails?.phone || 'Sem telefone'} • Ativo desde {operatorToShowDetails && format(new Date(operatorToShowDetails.created_at), "dd/MM/yyyy")}
-                  </DialogDescription>
-                </div>
-              </div>
-            </DialogHeader>
-
-            <Tabs defaultValue="performance" className="mt-4 flex-1 flex flex-col overflow-hidden">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="performance" className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Desempenho
-                </TabsTrigger>
-                <TabsTrigger value="goals" className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4" />
-                  Metas
-                </TabsTrigger>
-                <TabsTrigger value="machines" className="flex items-center gap-2">
-                  <Settings2 className="h-4 w-4" />
-                  Máquinas & Config
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="performance" className="flex-1 mt-4 overflow-auto min-h-0">
-                {operatorToShowDetails && (
-                  <OperatorPerformanceTab operatorId={operatorToShowDetails.user_id} />
-                )}
-              </TabsContent>
-
-              <TabsContent value="goals" className="flex-1 mt-4 overflow-auto min-h-0">
-                {operatorToShowDetails && (
-                  <OperatorGoalsTab operatorId={operatorToShowDetails.user_id} />
-                )}
-              </TabsContent>
-
-              <TabsContent value="machines" className="flex-1 mt-4 overflow-auto min-h-0">
-                <div className="space-y-6 pb-6">
-                  <section className="space-y-3">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Máquinas Atribuídas</h3>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {operatorToShowDetails && getAssignedMachines(operatorToShowDetails.user_id).length > 0 ? (
-                        getAssignedMachines(operatorToShowDetails.user_id).map(machine => (
-                          <div key={machine.id} className="p-3 rounded-lg bg-secondary/30 border border-border/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded bg-background flex items-center justify-center">
-                                <Command className="h-4 w-4 text-muted-foreground" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium">{machine.code}</p>
-                                <p className="text-xs text-muted-foreground">{machine.name}</p>
-                              </div>
-                            </div>
-                            {machine.is_active ? (
-                              <Badge variant="outline" className="text-success border-success/30 text-[10px]">Ativa</Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-destructive border-destructive/30 text-[10px]">Inativa</Badge>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-sm text-muted-foreground py-4 text-center col-span-2 border border-dashed rounded-lg">
-                          Nenhuma máquina atribuída a este operador.
-                        </p>
-                      )}
-                    </div>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-2"
-                      onClick={() => {
-                        setDetailsModalOpen(false);
-                        if (operatorToShowDetails) handleOpenAssignment(operatorToShowDetails);
-                      }}
-                    >
-                      Gerenciar Atribuições
-                    </Button>
-                  </section>
-
-                  <section className="space-y-3">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Status do Sistema</h3>
-                    <div className="p-4 rounded-lg bg-secondary/20 border border-border/50 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Conta Ativa</span>
-                        <Badge variant={operatorToShowDetails?.is_active ? 'success' : 'warning'}>
-                          {operatorToShowDetails?.is_active ? 'Sim' : 'Não'}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Presença (Tempo Real)</span>
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-full ${operatorToShowDetails && isOnline(operatorToShowDetails.user_id) ? 'bg-success' : 'bg-muted-foreground/50'}`} />
-                          <span className="text-sm">
-                            {operatorToShowDetails && isOnline(operatorToShowDetails.user_id) ? 'Conectado' : 'Desconectado'}
-                          </span>
-                        </div>
-                      </div>
-                      {operatorToShowDetails && !isOnline(operatorToShowDetails.user_id) && getLastSeen(operatorToShowDetails.user_id) && (
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Última vez visto</span>
-                          <span>{formatLastSeen(getLastSeen(operatorToShowDetails.user_id))}</span>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </DialogContent>
-        </Dialog>
+        <OperatorDetailsDialog
+          open={detailsModalOpen}
+          onOpenChange={setDetailsModalOpen}
+          operator={operatorToShowDetails}
+          isOnline={operatorToShowDetails ? isOnline(operatorToShowDetails.user_id) : false}
+          lastSeen={operatorToShowDetails ? getLastSeen(operatorToShowDetails.user_id) : undefined}
+          assignedMachines={operatorToShowDetails ? getAssignedMachines(operatorToShowDetails.user_id) : []}
+          onOpenAssignment={() => { if (operatorToShowDetails) handleOpenAssignment(operatorToShowDetails); }}
+        />
 
         <OperatorAuditHistory />
 

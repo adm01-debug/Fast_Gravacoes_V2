@@ -6,8 +6,10 @@ function makeSupabaseMock(
   opts: { insertShouldFail?: boolean; rpcUsed?: number | null } = {},
 ) {
   const inserts: unknown[] = [];
+  const rpcCalls: { fn: string; params: Record<string, unknown> }[] = [];
   const mock = {
-    rpc(_fn: string, _params: unknown) {
+    rpc(fn: string, params: Record<string, unknown>) {
+      rpcCalls.push({ fn, params });
       // rpcUsed simula a migration aplicada: número = usados na janela, -1 =
       // bloqueado. Default null simula função ausente (deploy sem db push)
       // e exercita o caminho legado.
@@ -31,7 +33,7 @@ function makeSupabaseMock(
       };
     },
   };
-  return { mock, inserts };
+  return { mock, inserts, rpcCalls };
 }
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
@@ -84,7 +86,7 @@ Deno.test("checkRateLimit fails open on infra error", async () => {
 });
 
 Deno.test("checkRateLimit atomic path: allows under limit without legacy insert", async () => {
-  const { mock, inserts } = makeSupabaseMock(0, { rpcUsed: 2 });
+  const { mock, inserts, rpcCalls } = makeSupabaseMock(0, { rpcUsed: 2 });
   const r = await checkRateLimit(mock, {
     endpoint: "test-fn",
     identity: { ip: "1.2.3.4" },
@@ -94,13 +96,24 @@ Deno.test("checkRateLimit atomic path: allows under limit without legacy insert"
   });
   assertEquals(r, null);
   assertEquals(inserts.length, 0); // RPC já gravou — não duplica
+  // Garante que o caminho atômico levou identidade e cota corretas pro banco.
+  assertEquals(rpcCalls.length, 1);
+  assertEquals(rpcCalls[0].fn, "rate_limit_check_and_record");
+  assertEquals(rpcCalls[0].params, {
+    p_endpoint: "test-fn",
+    p_user_id: null,
+    p_user_email: null,
+    p_ip: "1.2.3.4",
+    p_max: 10,
+    p_window_seconds: 60,
+  });
 });
 
 Deno.test("checkRateLimit atomic path: 429 when RPC returns -1", async () => {
-  const { mock, inserts } = makeSupabaseMock(0, { rpcUsed: -1 });
+  const { mock, inserts, rpcCalls } = makeSupabaseMock(0, { rpcUsed: -1 });
   const r = await checkRateLimit(mock, {
     endpoint: "test-fn",
-    identity: { ip: "1.2.3.4" },
+    identity: { userId: "u-9" },
     max: 10,
     windowSeconds: 60,
     corsHeaders: CORS,
@@ -108,6 +121,10 @@ Deno.test("checkRateLimit atomic path: 429 when RPC returns -1", async () => {
   assert(r !== null);
   assertEquals(r.status, 429);
   assertEquals(inserts.length, 0);
+  assertEquals(rpcCalls.length, 1);
+  assertEquals(rpcCalls[0].fn, "rate_limit_check_and_record");
+  assertEquals(rpcCalls[0].params.p_user_id, "u-9");
+  assertEquals(rpcCalls[0].params.p_ip, "0.0.0.0"); // IP ausente → bucket compartilhado
 });
 
 Deno.test("resolveKey prefers userId over email over ip", async () => {

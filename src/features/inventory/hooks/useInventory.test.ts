@@ -53,7 +53,10 @@ interface FromOptions {
 function mockSupabaseFrom(opts: FromOptions = {}) {
   // inventory_items
   const listRange = vi.fn().mockResolvedValue({ data: opts.items ?? [], error: null });
-  const listOrder = vi.fn(() => ({ range: listRange }));
+  // O hook encadeia .order('name').order('id') antes de .range() — o objeto
+  // precisa ser auto-referente para suportar N orders seguidos.
+  const listChain: { order: Mock; range: Mock } = { order: vi.fn(() => listChain), range: listRange };
+  const listOrder = listChain.order;
   const stockSingle = vi.fn().mockResolvedValue({
     data: opts.stockCheck ?? null,
     error: opts.stockCheckError ?? null,

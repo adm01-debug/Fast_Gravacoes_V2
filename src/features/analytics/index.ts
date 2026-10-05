@@ -44,6 +44,11 @@ export { PredictiveAlerts } from './components/oee/PredictiveAlerts';
 export { HyperInsights } from './components/oee/HyperInsights';
 export { StudioEfficiencyGrid } from './components/oee/StudioEfficiencyGrid';
 export { StudioHealthMonitor } from './components/oee/StudioHealthMonitor';
+export { OEEAuditPanel } from './components/oee/OEEAuditPanel';
+export { OEEBenchmarkTooltip } from './components/oee/OEEBenchmarkTooltip';
+export { OEEOverviewTab } from './components/oee/OEEOverviewTab';
+export { OEESimulatorPanel } from './components/oee/OEESimulatorPanel';
+export { OEEStudiosTab } from './components/oee/OEEStudiosTab';
 
 export { QualityHistogram } from './components/spc/QualityHistogram';
 export { SPCControlChart } from './components/spc/SPCControlChart';
