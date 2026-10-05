@@ -20,6 +20,39 @@ const ALLOWED_PACKAGES = new Map([
     'react-router-dom',
     'Idem react-router: mesmo advisory via dependência transitiva, sem patch na v6 (afetadas 6.0.0–7.17.0). Remoção: upgrade v7 (Sprint 2).',
   ],
+  // Cadeia braces (GHSA: stack-exhaustion DoS em padrões aninhados): atinge
+  // apenas dependências de build/dev (tailwindcss, lovable-tagger →
+  // chokidar/fast-glob/micromatch → braces 3.0.3). Não existe release de
+  // braces corrigida (3.0.3 é a mais recente) e os padrões de glob que o
+  // braces expande vêm do nosso próprio tailwind.config/vite.config —
+  // input controlado, não explorável em runtime. Remoção: migração
+  // tailwindcss v4 (replanejada; remove chokidar/fast-glob/micromatch do
+  // grafo) + remoção do lovable-tagger quando o tooling Lovable for
+  // desativado de vez.
+  [
+    'braces',
+    'DoS por padrão aninhado afeta só build/dev (via tailwind/micromatch); sem release corrigida; input de glob é config própria. Remoção: migração tailwindcss v4.',
+  ],
+  [
+    'micromatch',
+    'Idem braces: vuln transitiva via braces, só build/dev. Remoção: migração tailwindcss v4.',
+  ],
+  [
+    'fast-glob',
+    'Idem braces: vuln transitiva via micromatch→braces, só build/dev. Remoção: migração tailwindcss v4.',
+  ],
+  [
+    'chokidar',
+    'Idem braces: vuln transitiva via braces no watcher de build/dev. Remoção: migração tailwindcss v4.',
+  ],
+  [
+    'tailwindcss',
+    'Raiz da cadeia braces em build-time; sem patch na linha 3.x e a v4 é migração breaking de config/plugins. Remoção: migração tailwindcss v4.',
+  ],
+  [
+    'lovable-tagger',
+    'Reusa a cadeia tailwind→braces; só roda em mode=development (vite.config.ts). Remoção: desligar o tagger quando o tooling Lovable for desativado.',
+  ],
 ]);
 
 // `npm audit` sai com código != 0 quando há vulnerabilidades — spawnSync
