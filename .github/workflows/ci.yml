@@ -526,7 +526,10 @@ jobs:
             status="${gates[$gate]}"
             if [ "$status" = "success" ]; then
               echo "✅ $gate: $status" >> $GITHUB_STEP_SUMMARY
-            elif [ "$status" = "skipped" ] || [ "$status" = "cancelled" ]; then
+            elif [ "$status" = "skipped" ] || [ "$status" = "cancelled" ] || [ "$status" = "abandoned" ]; then
+              # "abandoned" é o resultado que o GitHub atribui a jobs que nunca
+              # iniciaram quando a run é cancelada/substituída por concorrência —
+              # mesmo tratamento de "cancelled": a run nova é quem decide.
               echo "⏭️ $gate: $status (superseded by newer push)" >> $GITHUB_STEP_SUMMARY
             elif [ "$gate" = "e2e" ]; then
               # A suíte E2E roda contra o Supabase real (login + MFA TOTP +
