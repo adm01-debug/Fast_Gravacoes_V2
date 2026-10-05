@@ -525,7 +525,7 @@ Evidência: `graphify.yml` verde no GitHub (runs 37356507967–37360559734 sobre
 HEAD do PR #85, 2026-10-05); exigência nas proteções de branch segue pendente
 (item "Ainda não certificado" da VALIDACAO).
 
-### Etapa 42 — Criar comparação entre base e PR [P]
+### Etapa 42 — Criar comparação entre base e PR [I]
 
 Responsável: plataforma e arquitetura. Dependência: 38, 41.
 1. Gerar snapshots separados de base/head.
@@ -535,7 +535,7 @@ Responsável: plataforma e arquitetura. Dependência: 38, 41.
 5. Produzir relatório de impacto com evidência de ambos os lados.
 
 Checkpoint: alteração, renomeação e exclusão conhecidas produzem diffs corretos.
-Evidência: `graph:diff -- --baseline outro/graph.json` e teste de diff idêntico; integração com snapshots base/head do GitHub e casos de rename/exclusão pendem de CI remoto.
+Evidência: `graph:diff -- --baseline outro/graph.json`, teste de diff idêntico e step `Diff graph against PR base` no `graphify.yml` — builda o grafo do merge-base via worktree (`fetch-depth: 0`) e difa nós/arestas contra o head, em modo informativo (não bloqueia merge). Casos de rename/exclusão são cobertos pelos testes unitários de `quality.graph_diff`; exercício remoto contínuo em todo PR que toca o corpus.
 
 ### Etapa 43 — Definir ratchets de arquitetura [P]
 
@@ -585,7 +585,7 @@ Responsável: plataforma. Dependência: 21–25, 45.
 Checkpoint: cliente autorizado consulta o snapshot atual sem ampliar acesso ao sistema.
 Evidência: configuração revisada e teste de conexão; não instalado implicitamente.
 
-### Etapa 47 — Versionar evolução e rollback da ferramenta [P]
+### Etapa 47 — Versionar evolução e rollback da ferramenta [I]
 
 Responsável: plataforma. Dependência: 05, 20, 41.
 1. Atualizar versão somente em mudança isolada.
@@ -595,7 +595,7 @@ Responsável: plataforma. Dependência: 05, 20, 41.
 5. Ensaiar retorno à versão anterior com reconstrução das saídas.
 
 Checkpoint: upgrade e retorno exercitados sem depender de grafo gerado por outra versão.
-Evidência: procedimento inicial documentado; ensaio de upgrade/rollback pendente.
+Evidência: ensaio completo em 02/10/2026 — upgrade isolado 0.9.48→0.9.77 (lock regerado, build com +722/−63 nós e +9.027/−75 arestas) seguido de rollback que reproduziu a baseline preservada com `graph:diff` 0/0. Detalhes em `docs/graphify/VALIDACAO.md` ("Ensaio de upgrade/rollback"). Adoção da 0.9.77 segue decisão pendente: altera as métricas do ratchet e exige revisão da baseline.
 
 ### Etapa 48 — Homologar uso por outro desenvolvedor [F]
 
