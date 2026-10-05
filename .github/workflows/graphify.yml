@@ -79,3 +79,23 @@ jobs:
           if [ -f graphify-out/GRAPH_REPORT.md ]; then
             cat graphify-out/GRAPH_REPORT.md >> "$GITHUB_STEP_SUMMARY"
           fi
+          if [ -f graphify-out/graph-diff.json ]; then
+            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open('graphify-out/graph-diff.json'))
+          def section(title, items, fmt=lambda x: x, cap=50):
+              lines = [f'### {title} ({len(items)})']
+              for item in items[:cap]:
+                  lines.append(f'- `{fmt(item)}`')
+              if len(items) > cap:
+                  lines.append(f'- … +{len(items) - cap} mais (ver graph-diff.json)')
+              return lines
+          n, e = d['nodes'], d['edges']
+          out = [f'## Diff estrutural base×head ({d.get("baseline", "?")})', '']
+          out += section('Nós adicionados', n['added'])
+          out += section('Nós removidos', n['removed'])
+          out += section('Relações adicionadas', e['added'], lambda t: ' → '.join(str(p) for p in t))
+          out += section('Relações removidas', e['removed'], lambda t: ' → '.join(str(p) for p in t))
+          print('\n'.join(out))
+          PY
+          fi
