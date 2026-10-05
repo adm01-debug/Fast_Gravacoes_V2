@@ -46,7 +46,7 @@ export function EditorMaterialsSection({ materials, sheetId, onAdd, onDelete, is
             {m.quantity && <span className="text-muted-foreground">({m.quantity})</span>}
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="ml-1 hover:text-destructive"><X className="h-3 w-3" /></button>
+                <button className="ml-1 hover:text-destructive" aria-label={`Remover material ${m.name}`}><X className="h-3 w-3" /></button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

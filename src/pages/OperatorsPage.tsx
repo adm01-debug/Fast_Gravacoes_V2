@@ -225,7 +225,7 @@ export default function OperatorsPage() {
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
-                <Button variant="outline" size="icon" onClick={clearFilters}>
+                <Button variant="outline" size="icon" onClick={clearFilters} aria-label="Limpar filtros">
                   <X className="h-4 w-4" />
                 </Button>
               )}

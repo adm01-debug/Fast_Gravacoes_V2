@@ -294,6 +294,7 @@ export const OEEMachineTable = memo(function OEEMachineTable({ machines }: OEEMa
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label={`Ver detalhes da máquina ${machine.machineName}`}
                         onClick={() => {
                           setSelectedMachineId(machine.machineId);
                           setDetailsOpen(true);

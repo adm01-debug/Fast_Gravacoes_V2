@@ -70,6 +70,8 @@ export function RealtimeIndicator() {
                 size="icon"
                 className="h-6 w-6"
                 onClick={reconnect}
+                aria-label="Reconectar em tempo real"
+                title="Reconectar"
               >
                 <RefreshCw className="h-3 w-3" />
               </Button>

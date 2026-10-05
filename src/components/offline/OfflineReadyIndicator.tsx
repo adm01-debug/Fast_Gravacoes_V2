@@ -98,6 +98,13 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
           variant="ghost"
           size="sm"
           className={cn('gap-2 h-9 px-3', className)}
+          aria-label={
+            pendingActionsCount > 0
+              ? `Status offline: ${pendingActionsCount} ações pendentes`
+              : isOnline
+                ? 'Status de conexão: online'
+                : 'Status de conexão: offline'
+          }
         >
           {isOnline ? (
             <Wifi className={cn(

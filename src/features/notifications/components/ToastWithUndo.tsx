@@ -256,6 +256,7 @@ function ToastItem({
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Fechar notificação"
           className="h-6 w-6 flex-shrink-0 hover:bg-muted/50"
           onClick={() => onDismiss(id)}
         >

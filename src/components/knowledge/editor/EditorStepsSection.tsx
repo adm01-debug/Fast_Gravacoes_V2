@@ -50,7 +50,7 @@ export function EditorStepsSection({ steps, sheetId, onAddStep, onDeleteStep, is
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Remover passo ${step.step_number}: ${step.title}`}>
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </AlertDialogTrigger>

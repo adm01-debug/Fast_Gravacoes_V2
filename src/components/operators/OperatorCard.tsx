@@ -143,6 +143,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               size="icon"
                               variant="ghost"
                               onClick={() => onToggle()}
+                              aria-label={operator.is_active ? `Desativar ${operator.full_name || 'operador'}` : `Reativar ${operator.full_name || 'operador'}`}
                               className={`h-8 w-8 ${
                                 operator.is_active
                                   ? 'text-muted-foreground hover:text-warning hover:bg-warning/10'
@@ -164,6 +165,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               size="icon"
                               variant="ghost"
                               onClick={() => onRemove()}
+                              aria-label={`Remover ${operator.full_name || 'operador'}`}
                               className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -179,6 +181,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               size="icon"
                               variant="ghost"
                               onClick={() => onShowQR()}
+                              aria-label={`Crachá digital (QR) de ${operator.full_name || 'operador'}`}
                               className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                             >
                               <QrCodeIcon className="h-4 w-4" />
@@ -198,6 +201,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                                 onOpenDetails();
                                 
                               }}
+                              aria-label={`Visualizar perfil de ${operator.full_name || 'operador'}`}
                               className="h-8 w-8 text-primary"
                             >
                               <Eye className="h-4 w-4" />
@@ -214,6 +218,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               size="icon"
                               variant="ghost"
                               onClick={onOpenSkills}
+                              aria-label={`Competências técnicas de ${operator.full_name || 'operador'}`}
                               className="h-8 w-8 text-primary hover:bg-primary/10"
                             >
                               <ShieldCheck className="h-4 w-4" />
@@ -230,6 +235,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               size="icon"
                               variant="ghost"
                               onClick={() => onOpenEdit()}
+                              aria-label={`Editar ${operator.full_name || 'operador'}`}
                               className="h-8 w-8"
                             >
                               <Pencil className="h-4 w-4" />
