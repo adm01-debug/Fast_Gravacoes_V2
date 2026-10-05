@@ -59,6 +59,12 @@ export function useOfflineSync() {
   // duplicating replays. This ref is set synchronously the instant a sync
   // pass starts, closing that window.
   const syncInFlightRef = useRef(false);
+  // Live mirror of the pending queue for the sync pass — the pass can run
+  // from a stale closure (the trigger effect calls the syncRef captured in
+  // a previous commit), and actions whose localStorage persist failed in
+  // addPendingAction exist only in memory; a ref read at pass time covers
+  // both cases without depending on closure freshness.
+  const pendingActionsRef = useRef<PendingAction[]>([]);
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CACHED_DATA);
@@ -73,6 +79,10 @@ export function useOfflineSync() {
   // Save pending actions to localStorage whenever they change
   useEffect(() => {
     safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(pendingActions));
+  }, [pendingActions]);
+
+  useEffect(() => {
+    pendingActionsRef.current = pendingActions;
   }, [pendingActions]);
 
   // Save failed (conflicted or retry-exhausted) actions — a dead-letter
@@ -213,7 +223,7 @@ export function useOfflineSync() {
   // stale `isOnline`/`pendingActions` would skip the pass and strand the
   // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
-    if (!navigator.onLine || readQueueFromStorage().length === 0 || syncInFlightRef.current) return;
+    if (!navigator.onLine || (readQueueFromStorage().length === 0 && pendingActionsRef.current.length === 0) || syncInFlightRef.current) return;
 
     if (typeof navigator !== 'undefined' && 'locks' in navigator) {
       const ran = await navigator.locks.request(
@@ -247,9 +257,15 @@ export function useOfflineSync() {
       const newlyFailed: FailedAction[] = [];
       let hadRetryableFailure = false;
 
-      // Replay from storage, not this instance's state — another instance
-      // may have queued or drained actions since this one last rendered.
-      const queue = readQueueFromStorage();
+      // Replay storage + in-memory-only actions (a failed persist in
+      // addPendingAction leaves the action in React state only — without
+      // the union it would never be replayed and would die on reload).
+      const storedQueue = readQueueFromStorage();
+      const storedIds = new Set(storedQueue.map(a => a.id));
+      const queue = [
+        ...storedQueue,
+        ...pendingActionsRef.current.filter(a => !storedIds.has(a.id)),
+      ];
 
       for (const action of queue) {
         const result = await processPendingAction(action);
