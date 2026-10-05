@@ -65,6 +65,12 @@ export function useOfflineSync() {
   // addPendingAction exist only in memory; a ref read at pass time covers
   // both cases without depending on closure freshness.
   const pendingActionsRef = useRef<PendingAction[]>([]);
+  // IDs of actions that were never durably persisted (localStorage write
+  // failed in addPendingAction). Only these may be unioned into a sync pass
+  // from memory — a hydrated copy of an action another tab already drained
+  // from storage must NOT re-enter the queue (it would duplicate the write
+  // or dead-letter a false conflict).
+  const unpersistedIdsRef = useRef<Set<string>>(new Set());
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CACHED_DATA);
@@ -185,7 +191,9 @@ export function useOfflineSync() {
     // stale state) so an already-processed queue can't be resurrected by an
     // instance that missed another instance's sync pass.
     const next = [...readQueueFromStorage(), action];
-    safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next));
+    if (!safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next))) {
+      unpersistedIdsRef.current.add(action.id);
+    }
     setPendingActions(next);
 
     // Ask the browser to fire the SW 'sync' event when connectivity returns,
@@ -223,7 +231,11 @@ export function useOfflineSync() {
   // stale `isOnline`/`pendingActions` would skip the pass and strand the
   // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
-    if (!navigator.onLine || (readQueueFromStorage().length === 0 && pendingActionsRef.current.length === 0) || syncInFlightRef.current) return;
+    const liveQueueSize = Math.max(
+      readQueueFromStorage().length,
+      unpersistedIdsRef.current.size,
+    );
+    if (!navigator.onLine || liveQueueSize === 0 || syncInFlightRef.current) return;
 
     if (typeof navigator !== 'undefined' && 'locks' in navigator) {
       const ran = await navigator.locks.request(
@@ -257,14 +269,17 @@ export function useOfflineSync() {
       const newlyFailed: FailedAction[] = [];
       let hadRetryableFailure = false;
 
-      // Replay storage + in-memory-only actions (a failed persist in
+      // Replay storage + never-persisted actions (a failed persist in
       // addPendingAction leaves the action in React state only — without
       // the union it would never be replayed and would die on reload).
+      // Hydrated in-memory copies of actions another tab already drained
+      // are excluded via unpersistedIdsRef — without it, cross-tab stale
+      // state would replay the same write twice.
       const storedQueue = readQueueFromStorage();
       const storedIds = new Set(storedQueue.map(a => a.id));
       const queue = [
         ...storedQueue,
-        ...pendingActionsRef.current.filter(a => !storedIds.has(a.id)),
+        ...pendingActionsRef.current.filter(a => !storedIds.has(a.id) && unpersistedIdsRef.current.has(a.id)),
       ];
 
       for (const action of queue) {
@@ -289,7 +304,15 @@ export function useOfflineSync() {
 
       // Persist immediately so other instances reading storage see the
       // drained queue even before this instance's persist effect runs.
-      safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingActions));
+      // Every action in this pass is done being "memory-only": processed
+      // ones are finished, retried ones are in remainingActions. If that
+      // persist also fails (private mode), re-mark the survivors so the
+      // next pass still unions them.
+      const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingActions));
+      queue.forEach(a => unpersistedIdsRef.current.delete(a.id));
+      if (!persisted) {
+        remainingActions.forEach(a => unpersistedIdsRef.current.add(a.id));
+      }
       setPendingActions(remainingActions);
       if (newlyFailed.length > 0) {
         setFailedActions(prev => [...prev, ...newlyFailed]);
