@@ -56,7 +56,10 @@ Procedimento da etapa 47 exercitado de ponta a ponta sobre a mesma baseline:
 4. **Rollback**: `requirements.in`/`graphify.config.json` restaurados, lock
    regerado, `graph:install` + `graph:build` — `graph:diff` contra a baseline
    preservada retornou **0 nós adicionados/removidos e 0 arestas** (5.499 nós,
-   18.737 relações — saída idêntica).
+   18.737 relações). A igualdade é **estrutural**: o `graph:diff` compara IDs
+   de nós e tuplas `(origem, destino, relação)` de arestas — não cobre
+   metadados de nós, atributos de arestas nem o `manifest.json` (que leva um
+   novo timestamp de build).
 
 Conclusão: upgrade e retorno funcionam sem depender de grafo gerado por outra
 versão. O projeto permanece pinado em **0.9.48** — adotar a 0.9.77 é decisão
