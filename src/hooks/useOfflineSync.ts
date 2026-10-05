@@ -206,8 +206,14 @@ export function useOfflineSync() {
   // replay it. Replays are individually idempotent (updated_at guards,
   // upsert-by-id), so the lock is belt-and-suspenders; when Web Locks is
   // unavailable the behavior degrades to today's per-tab guard.
+  // The guards read live state (navigator.onLine + the storage queue, which
+  // is already the source of truth for runSyncPass) rather than the captured
+  // render state: the trigger effect can invoke a stale closure from the
+  // previous commit (its ref is only refreshed by a later effect), and a
+  // stale `isOnline`/`pendingActions` would skip the pass and strand the
+  // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
-    if (!isOnline || pendingActions.length === 0 || syncInFlightRef.current) return;
+    if (!navigator.onLine || readQueueFromStorage().length === 0 || syncInFlightRef.current) return;
 
     if (typeof navigator !== 'undefined' && 'locks' in navigator) {
       const ran = await navigator.locks.request(
@@ -303,7 +309,7 @@ export function useOfflineSync() {
       setIsSyncing(false);
     }
     }
-  }, [isOnline, pendingActions, cacheData]);
+  }, [cacheData]);
 
   useEffect(() => {
     syncRef.current = syncPendingActions;
