@@ -116,7 +116,8 @@ const TechniqueLoadCard = memo(function TechniqueLoadCard({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-5 px-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                aria-label={`Aplicar sugestão para ${suggestion.orderNumber} em ${suggestion.suggestedMachineName}`}
+                className="h-6 px-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
                 onClick={() => onApplySuggestion(suggestion)}
                 disabled={isApplying}
               >

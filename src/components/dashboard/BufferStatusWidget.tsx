@@ -90,8 +90,9 @@ const BufferRow = memo(function BufferRow({ data, onPromote, isPromoting }: Buff
           <Button
             size="sm"
             variant="ghost"
+            aria-label={`Promover fila da técnica ${technique.name} para o buffer`}
             className={cn(
-              "h-5 text-[10px] px-1.5",
+              "h-6 text-[10px] px-1.5",
               isCritical && "text-primary hover:text-primary/80 hover:bg-primary/10",
               !isCritical && "text-warning hover:text-warning hover:bg-warning/10"
             )}

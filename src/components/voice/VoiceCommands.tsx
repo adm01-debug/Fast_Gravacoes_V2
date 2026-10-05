@@ -304,7 +304,7 @@ export const VoiceButton = forwardRef<HTMLDivElement, {
                   </>
                 )}
               </span>
-              <button onClick={() => setShowFeedback(false)}>
+              <button onClick={() => setShowFeedback(false)} aria-label="Fechar feedback de voz">
                 <X className="h-4 w-4 text-muted-foreground" />
               </button>
             </div>

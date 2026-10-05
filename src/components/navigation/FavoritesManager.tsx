@@ -121,6 +121,7 @@ export function FavoriteButton({ path, name, icon, variant = "icon", className }
         isStarred ? "text-warning hover:text-warning" : "text-muted-foreground hover:text-warning",
         className
       )}
+      aria-label={isStarred ? `Remover ${name} dos favoritos` : `Adicionar ${name} aos favoritos`}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -194,6 +195,7 @@ export function FavoritesDropdown({ onNavigate, className }: FavoritesDropdownPr
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label={`Remover ${item.name} dos favoritos`}
                     className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => removeFavorite(item.id)}
                   >

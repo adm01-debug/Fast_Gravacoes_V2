@@ -58,6 +58,7 @@ export const DraggableWidget = memo(function DraggableWidget({
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Ocultar widget"
               className="h-6 w-6"
               onClick={onToggleVisibility}
             >
