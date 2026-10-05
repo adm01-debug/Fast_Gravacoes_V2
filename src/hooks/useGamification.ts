@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfDay, endOfDay } from 'date-fns';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/auth';
@@ -271,12 +272,16 @@ async function calculateRankingsLocally(
   periodEnd: Date,
   period: string
 ): Promise<OperatorRanking[]> {
-  const { data: jobs } = await supabase
+  // jobs cresce sem teto: paginado para não truncar em 1000 linhas
+  // (cap do PostgREST) e distorcer o ranking.
+  const jobsQuery = supabase
     .from('jobs')
     .select('*')
     .eq('status', 'finished')
     .gte('actual_end_time', periodStart.toISOString())
-    .lte('actual_end_time', periodEnd.toISOString());
+    .lte('actual_end_time', periodEnd.toISOString())
+    .order('id');
+  const jobs = await fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1));
 
   const { data: assignments } = await supabase
     .from('operator_machines')
@@ -293,7 +298,7 @@ async function calculateRankingsLocally(
   // Aggregate stats by operator
   const operatorStats: Record<string, { produced: number; quantity: number; lost: number; jobs: number }> = {};
 
-  (jobs || []).forEach(job => {
+  jobs.forEach(job => {
     if (!job.machine_id) return;
     const operatorId = machineToOperator[job.machine_id];
     if (!operatorId) return;

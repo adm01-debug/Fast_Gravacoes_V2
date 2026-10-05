@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { login } from './helpers/e2e-setup';
 
-const ROUTES = ['/', '/operator', '/kpi', '/oee'];
+const ROUTES = ['/', '/operator', '/kpis', '/oee'];
 
 test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
   for (const route of ROUTES) {

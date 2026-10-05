@@ -101,7 +101,7 @@
     "backToLogin": "Volver al inicio de sesión",
     "invalidResetLink": "Enlace de restablecimiento inválido o expirado",
     "resetEmailSent": "¡Correo de restablecimiento enviado! Revisa tu bandeja.",
-    "passwordRequirements": "Mínimo 6 caracteres, 1 mayúscula y 1 número",
+    "passwordRequirements": "Mínimo 8 caracteres, 1 mayúscula, 1 minúscula y 1 número",
     "invalidEmail": "Correo electrónico inválido",
     "passwordMinLength": "La contraseña debe tener al menos {{min}} caracteres",
     "passwordMismatch": "Las contraseñas no coinciden",
@@ -366,6 +366,7 @@
     "integer": "Debe ser un número entero",
     "date": "Fecha inválida",
     "url": "URL inválida",
+    "passwordLowercase": "Debe contener al menos una letra minúscula",
     "passwordUppercase": "Debe contener al menos una letra mayúscula",
     "passwordNumber": "Debe contener al menos un número"
   },

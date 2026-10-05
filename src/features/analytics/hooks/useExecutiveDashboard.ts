@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 import {
   startOfMonth,
   endOfMonth,
@@ -189,31 +190,37 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
 }
 
 async function fetchPeriodData(startDate: string, endDate: string, filters?: { machineId?: string; techniqueId?: string }) {
-  let jobsQuery = supabase.from('jobs').select('*').gte('created_at', startDate).lte('created_at', endDate);
+  let jobsQuery = supabase.from('jobs').select('*').gte('created_at', startDate).lte('created_at', endDate).order('id');
   if (filters?.machineId) jobsQuery = jobsQuery.eq('machine_id', filters.machineId);
   if (filters?.techniqueId) jobsQuery = jobsQuery.eq('technique_id', filters.techniqueId);
 
+  const maintenanceQuery = supabase.from('maintenance_records').select('*').gte('created_at', startDate).lte('created_at', endDate).order('id');
+
   const [
-    jobsRes,
+    jobs,
     machinesRes,
     techniquesRes,
-    maintenanceRes,
+    maintenance,
     healthMetricsRes,
     profilesRes
   ] = await Promise.all([
-    jobsQuery,
+    // jobs e maintenance_records crescem sem teto: paginados para não
+    // truncar em 1000 linhas (cap do PostgREST) e distorcer os KPIs.
+    fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1)),
     supabase.from('machines').select('*'),
     supabase.from('techniques').select('*'),
-    supabase.from('maintenance_records').select('*').gte('created_at', startDate).lte('created_at', endDate),
+    // maintenance não alimenta os KPIs do painel: isola a falha para não
+    // derrubar a carga inteira (comportamento anterior era `data || []`).
+    fetchAllRows((o, l) => maintenanceQuery.range(o, o + l - 1)).catch(() => []),
     supabase.from('machine_health_metrics').select('*'),
     supabase.from('profiles').select('*'),
   ]);
 
   return {
-    jobs: jobsRes.data || [],
+    jobs,
     machines: machinesRes.data || [],
     techniques: techniquesRes.data || [],
-    maintenance: maintenanceRes.data || [],
+    maintenance,
     healthMetrics: healthMetricsRes.data || [],
     profiles: profilesRes.data || [],
   };

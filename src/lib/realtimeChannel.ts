@@ -28,16 +28,26 @@ const registry = new Map<string, Entry>();
 function buildAndSubscribe(name: string, specs: PgBindSpec[], fanout: (p: RealtimeChangePayload) => void): Entry {
   let ch = supabase.channel(name);
   for (const spec of specs) {
-    ch = ch.on(
-      'postgres_changes',
-      {
-        event: spec.event ?? '*',
-        schema: spec.schema ?? 'public',
-        ...(spec.table ? { table: spec.table } : {}),
-        ...(spec.filter ? { filter: spec.filter } : {}),
-      },
-      fanout,
-    );
+    const extra = {
+      schema: spec.schema ?? 'public',
+      ...(spec.table ? { table: spec.table } : {}),
+      ...(spec.filter ? { filter: spec.filter } : {}),
+    };
+    // Each .on() overload requires a literal event type in the filter, so a
+    // union event can't be passed through a single call — dispatch instead.
+    switch (spec.event ?? '*') {
+      case 'INSERT':
+        ch = ch.on('postgres_changes', { event: 'INSERT', ...extra }, fanout);
+        break;
+      case 'UPDATE':
+        ch = ch.on('postgres_changes', { event: 'UPDATE', ...extra }, fanout);
+        break;
+      case 'DELETE':
+        ch = ch.on('postgres_changes', { event: 'DELETE', ...extra }, fanout);
+        break;
+      default:
+        ch = ch.on('postgres_changes', { event: '*', ...extra }, fanout);
+    }
   }
   const subscribed = ch.subscribe();
   const entry: Entry = { channel: subscribed, refCount: 0, listeners: new Set() };
@@ -115,28 +125,24 @@ interface PresenceEntry {
 const presenceRegistry = new Map<string, PresenceEntry>();
 
 function buildPresenceAndSubscribe(name: string): PresenceEntry {
-  const entry: PresenceEntry = {
-    channel: undefined as unknown as RealtimeChannel,
-    refCount: 0,
-    syncListeners: new Set(),
-    joinListeners: new Set(),
-    leaveListeners: new Set(),
-  };
+  const syncListeners = new Set<PresenceListener>();
+  const joinListeners = new Set<PresenceJoinListener>();
+  const leaveListeners = new Set<PresenceLeaveListener>();
   // All presence callbacks are attached BEFORE subscribe() to satisfy
   // the Supabase client validation. Fanout to the listener sets at runtime.
   const ch = supabase.channel(name)
     .on('presence', { event: 'sync' }, () => {
       const state = ch.presenceState() as RealtimePresenceState<Record<string, unknown>>;
-      entry.syncListeners.forEach((fn) => fn(state));
+      syncListeners.forEach((fn) => fn(state));
     })
     .on('presence', { event: 'join' }, ({ newPresences }) => {
-      entry.joinListeners.forEach((fn) => fn(newPresences as unknown[]));
+      joinListeners.forEach((fn) => fn(newPresences));
     })
     .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-      entry.leaveListeners.forEach((fn) => fn(leftPresences as unknown[]));
+      leaveListeners.forEach((fn) => fn(leftPresences));
     })
     .subscribe();
-  entry.channel = ch;
+  const entry: PresenceEntry = { channel: ch, refCount: 0, syncListeners, joinListeners, leaveListeners };
   presenceRegistry.set(name, entry);
   return entry;
 }

@@ -39,7 +39,11 @@ function badRequest(
     JSON.stringify({ error: message, details, requestId: ctx.requestId }),
     {
       status: 400,
-      headers: { ...ctx.corsHeaders, "Content-Type": "application/json" },
+      headers: {
+        ...ctx.corsHeaders,
+        "Content-Type": "application/json",
+        ...(ctx.requestId ? { "x-request-id": ctx.requestId } : {}),
+      },
     },
   );
 }

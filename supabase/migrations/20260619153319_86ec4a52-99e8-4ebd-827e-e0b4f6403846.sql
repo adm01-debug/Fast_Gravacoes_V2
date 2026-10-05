@@ -10,8 +10,18 @@ CREATE INDEX IF NOT EXISTS idx_document_versions_document_id ON public.document_
 CREATE INDEX IF NOT EXISTS idx_efficiency_alert_history_machine_id ON public.efficiency_alert_history(machine_id);
 CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON public.email_verification_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_energy_targets_machine_id ON public.energy_targets(machine_id);
-CREATE INDEX IF NOT EXISTS idx_geo_blocking_rules_created_by ON public.geo_blocking_rules(created_by);
-CREATE INDEX IF NOT EXISTS idx_geo_blocking_settings_updated_by ON public.geo_blocking_settings(updated_by);
+-- geo_blocking_* nunca teve migration de criação (tabelas manuais em prod) —
+-- num rebuild do zero elas não existem neste ponto, então os índices ficam
+-- guardados; a migration 20261001143000 recria tabelas + índices.
+DO $$
+BEGIN
+  IF to_regclass('public.geo_blocking_rules') IS NOT NULL THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_geo_blocking_rules_created_by ON public.geo_blocking_rules(created_by)';
+  END IF;
+  IF to_regclass('public.geo_blocking_settings') IS NOT NULL THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_geo_blocking_settings_updated_by ON public.geo_blocking_settings(updated_by)';
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_inventory_movements_item_id ON public.inventory_movements(item_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_movements_job_id ON public.inventory_movements(job_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_movements_user_id ON public.inventory_movements(user_id);

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/fetchAllRows';
 import { useQuery } from '@tanstack/react-query';
 import { UserManagement } from '@/components/settings/UserManagement';
 import { PasswordResetRequests } from '@/components/settings/PasswordResetRequests';
@@ -80,8 +81,14 @@ export default function SettingsPage() {
   const handleExportData = async () => {
     toast.loading('Exportando dados...', { id: 'export' });
     try {
-      const { data: jobs } = await supabase.from('jobs').select('*');
-      const { data: operators } = await supabase.from('profiles').select('*');
+      // Export/backup precisa de TODAS as linhas: .select() puro trunca em
+      // 1000 (cap do PostgREST) e o backup sairia incompleto sem aviso.
+      const jobsQuery = supabase.from('jobs').select('*').order('id');
+      const profilesQuery = supabase.from('profiles').select('*').order('id');
+      const [jobs, operators] = await Promise.all([
+        fetchAllRows((o, l) => jobsQuery.range(o, o + l - 1)),
+        fetchAllRows((o, l) => profilesQuery.range(o, o + l - 1)),
+      ]);
       const { data: machines } = await supabase.from('machines').select('*');
       const exportData = { exportedAt: new Date().toISOString(), jobs, operators, machines };
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
