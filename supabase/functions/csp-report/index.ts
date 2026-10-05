@@ -232,34 +232,38 @@ Deno.serve(async (req) => {
   // produção. CSP_REPORT_ALLOWED_HOSTS (vírgula-separado) restringe a origem:
   // relatório de host fora da lista é descartado com 204 — mas antes passa
   // por um bucket per-IP PRÓPRIO ('csp-report-rejected'), que throttles o
-  // spam sem cobrar a cota de produção. Vazio = aceita tudo (comportamento
-  // anterior).
+  // spam sem cobrar a cota de produção. Sem a env, o filtro NÃO fica inerte:
+  // previews (*.vercel.app) e localhost são rejeitados por padrão — quem
+  // serve produção num subdomínio .vercel.app precisa declarar a env.
   const allowedHosts = (Deno.env.get("CSP_REPORT_ALLOWED_HOSTS") ?? "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean);
-  if (allowedHosts.length > 0) {
-    const reportHost = (() => {
-      try {
-        return new URL(parsed.data["csp-report"]["document-uri"] ?? "").hostname.toLowerCase();
-      } catch {
-        return "";
-      }
-    })();
-    if (!allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))) {
-      const rejectedLimited = await guardedRateLimitPair(
-        supabase,
-        clientIp,
-        "csp-report-rejected",
-        120,
-        "csp-report-rejected-global",
-        600,
-        corsHeaders,
-        requestId,
-      );
-      if (rejectedLimited) return rejectedLimited;
-      return new Response(null, { status: 204, headers: corsHeaders });
+  const reportHost = (() => {
+    try {
+      return new URL(parsed.data["csp-report"]["document-uri"] ?? "").hostname.toLowerCase();
+    } catch {
+      return "";
     }
+  })();
+  const hostRejected = allowedHosts.length > 0
+    ? !allowedHosts.some((h) => reportHost === h || reportHost.endsWith("." + h))
+    : reportHost.endsWith(".vercel.app") ||
+      reportHost === "localhost" ||
+      reportHost.endsWith(".localhost");
+  if (hostRejected) {
+    const rejectedLimited = await guardedRateLimitPair(
+      supabase,
+      clientIp,
+      "csp-report-rejected",
+      120,
+      "csp-report-rejected-global",
+      600,
+      corsHeaders,
+      requestId,
+    );
+    if (rejectedLimited) return rejectedLimited;
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   const limited = await guardedRateLimitPair(
