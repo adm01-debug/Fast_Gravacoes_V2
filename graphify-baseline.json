@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "reviewed_on": "2026-09-11",
+  "reviewed_on": "2026-10-05",
   "metrics": {
-    "unresolved_relations": 3289,
-    "parallel_relation_groups": 458
+    "unresolved_relations": 3415,
+    "parallel_relation_groups": 490
   },
   "exceptions": [],
-  "notes": "Baseline do snapshot all revisado localmente em 2026-09-11: 1.202 arquivos, 21.295 relações brutas, 3.289 endpoints não resolvidos e 458 grupos paralelos. O modo report é deliberadamente não bloqueante até haver validação no CI remoto. Para exceção, documente métrica, motivo, responsável e expires_on ISO-8601."
+  "notes": "Baseline do snapshot all revisado em 2026-10-05 sobre main 2d424182 (pós-merge dos PRs #78–#87): 1.277 arquivos, 22.674 relações brutas, 3.415 endpoints não resolvidos e 490 grupos paralelos. O crescimento vs. 2026-09-11 (3.289/458) vem de código novo revisado — decomposição de arquivos grandes, novas edge functions e migrations — não de regressão do parser. O modo report é deliberadamente não bloqueante até haver validação no CI remoto. Para exceção, documente métrica, motivo, responsável e expires_on ISO-8601."
 }

@@ -511,7 +511,7 @@ Evidência: `journey-views.json` oferece filtros estáticos para auth, produçã
 
 ## E. CI, automação e homologação
 
-### Etapa 41 — Executar validação estrutural no CI [P]
+### Etapa 41 — Executar validação estrutural no CI [I]
 
 Responsável: plataforma. Dependência: 20–25.
 1. Criar workflow dedicado com actions pinadas por SHA.
@@ -521,7 +521,9 @@ Responsável: plataforma. Dependência: 20–25.
 5. Executar em uma PR real e registrar o SHA validado.
 
 Checkpoint: workflow remoto passa sobre o commit exato; configuração local não basta.
-Evidência: workflow entregue; run remoto pendente.
+Evidência: `graphify.yml` verde no GitHub (runs 37356507967–37360559734 sobre o
+HEAD do PR #85, 2026-10-05); exigência nas proteções de branch segue pendente
+(item "Ainda não certificado" da VALIDACAO).
 
 ### Etapa 42 — Criar comparação entre base e PR [P]
 

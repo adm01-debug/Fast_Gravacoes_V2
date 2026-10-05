@@ -76,7 +76,8 @@ Isso é uma política de seleção, não um scanner capaz de reconhecer todo seg
 eventualmente colocado dentro de um arquivo fonte; revise artefatos antes de compartilhá-los.
 
 O perfil `all` fica em `graphify-out/`; os demais em
-`graphify-out/profiles/<perfil>/`. O grafo antigo de `_shared` permanece independente.
+`graphify-out/profiles/<perfil>/`. (O grafo legado de `supabase/functions/_shared`
+foi removido na limpeza de arquivos mortos — hoje existe só este snapshot.)
 
 | Artefato | Uso |
 |---|---|
@@ -150,7 +151,8 @@ benchmark com perguntas e respostas esperadas; não derive economia de uma conta
 executa testes, gera o perfil completo, checa o snapshot, audita os controles,
 executa benchmark e ratchet informativo, e prova o caminho sem alterações. O relatório entra no resumo do job. O workflow usa actions pinadas e
 permissão `contents: read`; não publica HTML nem envia o grafo a serviços externos.
-Ele só será validado no GitHub após commit/push. Branch protection é configuração externa.
+O job executou e passou remotamente nos PRs do pacote de auditoria (ver VALIDACAO.md).
+Exigi-lo nas proteções de branch é configuração externa pendente.
 
 `CLAUDE.md` e o corpo espelhado de `AGENTS.md` orientam consulta e atualização.
 Husky permanece com seu comportamento existente; hooks automáticos, watcher e MCP
