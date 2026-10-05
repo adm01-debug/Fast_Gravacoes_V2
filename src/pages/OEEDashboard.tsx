@@ -59,11 +59,13 @@ import { exportOeeCsv, exportOeePdf } from '@/features/analytics/lib/oeeReportEx
 import { STUDIOS, INDUSTRY_BENCHMARKS } from '@/features/analytics/constants/oee';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { Progress } from '@/components/ui/progress';
-import { OEEBenchmarkTooltip } from '@/features/analytics/components/oee/OEEBenchmarkTooltip';
-import { OEEAuditPanel } from '@/features/analytics/components/oee/OEEAuditPanel';
-import { OEESimulatorPanel } from '@/features/analytics/components/oee/OEESimulatorPanel';
-import { OEEOverviewTab } from '@/features/analytics/components/oee/OEEOverviewTab';
-import { OEEStudiosTab } from '@/features/analytics/components/oee/OEEStudiosTab';
+import {
+  OEEAuditPanel,
+  OEEBenchmarkTooltip,
+  OEEOverviewTab,
+  OEESimulatorPanel,
+  OEEStudiosTab,
+} from '@/features/analytics';
 const OEEGaugeCard = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
 import { Skeleton } from '@/components/ui/skeleton';
 import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';

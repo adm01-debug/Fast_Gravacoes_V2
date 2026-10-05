@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
@@ -18,12 +19,12 @@ import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import type { BenchmarkConfig } from '@/features/analytics/constants/oee';
 import type { OEEData } from '@/features/production/hooks/useOEE';
 
-const OEEGaugeCard = lazy(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
-const OEETrendChart = lazy(() => import('@/features/analytics/components/oee/OEETrendChart').then(m => ({ default: m.OEETrendChart })));
-const OEERecommendations = lazy(() => import('@/features/analytics/components/oee/OEERecommendations').then(m => ({ default: m.OEERecommendations })));
-const OEEHeatmap = lazy(() => import('@/features/analytics/components/oee/OEEHeatmap').then(m => ({ default: m.OEEHeatmap })));
-const StudioEfficiencyGrid = lazy(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
-const StudioHealthMonitor = lazy(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
+const OEEGaugeCard = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
+const OEETrendChart = lazyWithRetry(() => import('@/features/analytics/components/oee/OEETrendChart').then(m => ({ default: m.OEETrendChart })));
+const OEERecommendations = lazyWithRetry(() => import('@/features/analytics/components/oee/OEERecommendations').then(m => ({ default: m.OEERecommendations })));
+const OEEHeatmap = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEHeatmap').then(m => ({ default: m.OEEHeatmap })));
+const StudioEfficiencyGrid = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
+const StudioHealthMonitor = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
 
 interface OEEOverviewTabProps {
   data: OEEData;

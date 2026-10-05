@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Calculator, Award, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +15,7 @@ import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { INDUSTRY_BENCHMARKS, type BenchmarkConfig } from '@/features/analytics/constants/oee';
 import type { OEEData } from '@/features/production/hooks/useOEE';
 
-const OEECalculationAudit = lazy(() => import('@/features/analytics/components/oee/OEECalculationAudit').then(m => ({ default: m.OEECalculationAudit })));
+const OEECalculationAudit = lazyWithRetry(() => import('@/features/analytics/components/oee/OEECalculationAudit').then(m => ({ default: m.OEECalculationAudit })));
 
 interface OEEAuditPanelProps {
   data: OEEData;

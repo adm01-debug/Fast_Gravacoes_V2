@@ -27,10 +27,12 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { WarehouseMap } from '@/components/inventory/WarehouseMap';
 import { InventoryStats } from '@/components/inventory/InventoryStats';
 import { ProductGridSkeleton } from '@/components/inventory/ProductGridSkeleton';
-import { InventoryCard } from '@/features/inventory/components/inventory-page/InventoryCard';
-import { InventoryHistoryTable } from '@/features/inventory/components/inventory-page/InventoryHistoryTable';
-import { BatchQRLabelModal } from '@/features/inventory/components/inventory-page/BatchQRLabelModal';
-import { AIPredictionValidationModal } from '@/features/inventory/components/inventory-page/AIPredictionValidationModal';
+import {
+  AIPredictionValidationModal,
+  BatchQRLabelModal,
+  InventoryCard,
+  InventoryHistoryTable,
+} from '@/features/inventory';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';

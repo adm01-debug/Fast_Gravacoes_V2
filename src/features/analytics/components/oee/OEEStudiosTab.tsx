@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import {
   Activity,
   AlertTriangle,
@@ -21,9 +22,9 @@ import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { getOEEColor } from '@/features/production';
 import type { OEEData } from '@/features/production/hooks/useOEE';
 
-const StudioEfficiencyGrid = lazy(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
-const StudioHealthMonitor = lazy(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
-const MaterialEfficiencyChart = lazy(() => import('@/features/analytics/components/oee/MaterialEfficiencyChart').then(m => ({ default: m.MaterialEfficiencyChart })));
+const StudioEfficiencyGrid = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioEfficiencyGrid').then(m => ({ default: m.StudioEfficiencyGrid })));
+const StudioHealthMonitor = lazyWithRetry(() => import('@/features/analytics/components/oee/StudioHealthMonitor').then(m => ({ default: m.StudioHealthMonitor })));
+const MaterialEfficiencyChart = lazyWithRetry(() => import('@/features/analytics/components/oee/MaterialEfficiencyChart').then(m => ({ default: m.MaterialEfficiencyChart })));
 
 interface OEEStudiosTabProps {
   data: OEEData;

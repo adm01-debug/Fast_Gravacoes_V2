@@ -11,47 +11,70 @@ import { spawnSync } from 'node:child_process';
 
 // ── Allowlist (pacote → justificativa) ────────────────────────────────────────
 // Cada entrada PRECISA ter: por que é seguro hoje + como/quando será removida.
+// Exceções são escopadas por advisory: um pacote listado aqui só é
+// tolerado se TODOS os `via` do npm audit forem (a) um advisory já
+// conhecido (source id abaixo) ou (b) outro pacote também isento —
+// qualquer advisory NOVO nesses pacotes volta a quebrar o gate.
+// source 1240992 = GHSA-vfj7-8cjw-p6xm (braces stack-exhaustion).
+const BRACES_ADVISORY = 1240992;
+
 const ALLOWED_PACKAGES = new Map([
-  [
-    'react-router',
-    'GHSA-337j-9hxr-rhxg (deserializeErrors) ataca apenas hidratação SSR; este app é SPA Vite sem SSR — não explorável. Remoção: upgrade react-router v7 (Sprint 2).',
-  ],
-  [
-    'react-router-dom',
-    'Idem react-router: mesmo advisory via dependência transitiva, sem patch na v6 (afetadas 6.0.0–7.17.0). Remoção: upgrade v7 (Sprint 2).',
-  ],
-  // Cadeia braces (GHSA: stack-exhaustion DoS em padrões aninhados): atinge
-  // apenas dependências de build/dev (tailwindcss, lovable-tagger →
-  // chokidar/fast-glob/micromatch → braces 3.0.3). Não existe release de
-  // braces corrigida (3.0.3 é a mais recente) e os padrões de glob que o
-  // braces expande vêm do nosso próprio tailwind.config/vite.config —
-  // input controlado, não explorável em runtime. Remoção: migração
-  // tailwindcss v4 (replanejada; remove chokidar/fast-glob/micromatch do
-  // grafo) + remoção do lovable-tagger quando o tooling Lovable for
-  // desativado de vez.
+  // Cadeia braces (GHSA-vfj7-8cjw-p6xm: stack-exhaustion DoS em padrões
+  // aninhados): atinge apenas dependências de build/dev (tailwindcss,
+  // lovable-tagger → chokidar/fast-glob/micromatch → braces 3.0.3). Não
+  // existe release de braces corrigida (3.0.3 é a mais recente) e os
+  // padrões de glob que o braces expande vêm do nosso próprio
+  // tailwind.config/vite.config — input controlado, não explorável em
+  // runtime. Remoção: migração tailwindcss v4 (replanejada; remove
+  // chokidar/fast-glob/micromatch do grafo) + remoção do lovable-tagger
+  // quando o tooling Lovable for desativado de vez.
   [
     'braces',
-    'DoS por padrão aninhado afeta só build/dev (via tailwind/micromatch); sem release corrigida; input de glob é config própria. Remoção: migração tailwindcss v4.',
+    {
+      reason:
+        'DoS por padrão aninhado afeta só build/dev (via tailwind/micromatch); sem release corrigida; input de glob é config própria. Remoção: migração tailwindcss v4.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
   [
     'micromatch',
-    'Idem braces: vuln transitiva via braces, só build/dev. Remoção: migração tailwindcss v4.',
+    {
+      reason:
+        'Idem braces: vuln transitiva via braces, só build/dev. Remoção: migração tailwindcss v4.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
   [
     'fast-glob',
-    'Idem braces: vuln transitiva via micromatch→braces, só build/dev. Remoção: migração tailwindcss v4.',
+    {
+      reason:
+        'Idem braces: vuln transitiva via micromatch→braces, só build/dev. Remoção: migração tailwindcss v4.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
   [
     'chokidar',
-    'Idem braces: vuln transitiva via braces no watcher de build/dev. Remoção: migração tailwindcss v4.',
+    {
+      reason:
+        'Idem braces: vuln transitiva via braces no watcher de build/dev. Remoção: migração tailwindcss v4.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
   [
     'tailwindcss',
-    'Raiz da cadeia braces em build-time; sem patch na linha 3.x e a v4 é migração breaking de config/plugins. Remoção: migração tailwindcss v4.',
+    {
+      reason:
+        'Raiz da cadeia braces em build-time; sem patch na linha 3.x e a v4 é migração breaking de config/plugins. Remoção: migração tailwindcss v4.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
   [
     'lovable-tagger',
-    'Reusa a cadeia tailwind→braces; só roda em mode=development (vite.config.ts). Remoção: desligar o tagger quando o tooling Lovable for desativado.',
+    {
+      reason:
+        'Reusa a cadeia tailwind→braces; só roda em mode=development (vite.config.ts). Remoção: desligar o tagger quando o tooling Lovable for desativado.',
+      advisories: new Set([BRACES_ADVISORY]),
+    },
   ],
 ]);
 
@@ -98,9 +121,19 @@ const skipped = [];
 for (const [pkg, v] of Object.entries(vulns)) {
   const sev = v.severity ?? 'unknown';
   if (sev !== 'high' && sev !== 'critical') continue;
-  const justification = ALLOWED_PACKAGES.get(pkg);
-  if (justification) {
-    skipped.push(`${pkg} (${sev}) — ${justification}`);
+  const exemption = ALLOWED_PACKAGES.get(pkg);
+  // A exceção só vale quando TODO `via` é um advisory conhecido (objeto com
+  // source id permitido) ou uma dependência também isenta — assim um
+  // advisory novo no MESMO pacote continua quebrando o gate.
+  const viaCovered =
+    exemption &&
+    (v.via ?? []).every((x) =>
+      typeof x === 'object' && x !== null
+        ? exemption.advisories.has(x.source)
+        : ALLOWED_PACKAGES.has(String(x)),
+    );
+  if (viaCovered) {
+    skipped.push(`${pkg} (${sev}) — ${exemption.reason}`);
     continue;
   }
   const via = (v.via ?? [])
