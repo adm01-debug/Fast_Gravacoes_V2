@@ -17,7 +17,9 @@ remota pendente na revisão anterior agora existe.
 - Evidência bruta preservada por relação, mapas estáticos de arquitetura/segurança/SQL/testes, relatório de comunidades e diagnóstico de referências incompletas.
 - Workflow dedicado rodando no CI remoto (job `graph` verde nos PRs do pacote).
 - Plano com **50 etapas, 250 atividades e 50 checkpoints**. Após esta execução:
-  **26 I**, **19 P**, **5 F**; I significa base local implementada, não aceite final.
+  **28 I**, **17 P**, **5 F**; I significa base local implementada, não aceite final.
+  (42 e 47 promovidas nesta revisão: diff base×head no CI e ensaio de
+  upgrade/rollback, respectivamente — ver seção acima.)
 
 ## Resultados executados
 
@@ -39,6 +41,30 @@ isolamento de perfis; no-op; edição/exclusão/configuração; extração vazia
 preservação; concorrência; corrupção; endpoint ausente; ID duplicado; alteração
 durante a extração; mapas JSX/Edge/SQL/simulação; relações paralelas; e diff/ratchet.
 Eles não substituem os testes do aplicativo.
+
+## Ensaio de upgrade/rollback (02/10/2026)
+
+Procedimento da etapa 47 exercitado de ponta a ponta sobre a mesma baseline:
+
+1. **Baseline preservada**: `graph.json` + `manifest.json` do build 0.9.48 copiados antes do ensaio.
+2. **Upgrade isolado**: `scripts/graphify/requirements.in` e `graphify.config.json`
+   para `graphifyy[sql]==0.9.77`; lock regerado com `uv pip compile --generate-hashes`;
+   `graph:install` + `graph:build`.
+3. **Resultado 0.9.77**: 6.158 nós, 27.689 relações — `graph:diff` vs baseline
+   0.9.48 reporta **+722/−63 nós e +9.027/−75 arestas** (extrator mais rico,
+   mudança majoritariamente aditiva, sem perda relevante).
+4. **Rollback**: `requirements.in`/`graphify.config.json` restaurados, lock
+   regerado, `graph:install` + `graph:build` — `graph:diff` contra a baseline
+   preservada retornou **0 nós adicionados/removidos e 0 arestas** (5.499 nós,
+   18.737 relações). A igualdade é **estrutural**: o `graph:diff` compara IDs
+   de nós e tuplas `(origem, destino, relação)` de arestas — não cobre
+   metadados de nós, atributos de arestas nem o `manifest.json` (que leva um
+   novo timestamp de build).
+
+Conclusão: upgrade e retorno funcionam sem depender de grafo gerado por outra
+versão. O projeto permanece pinado em **0.9.48** — adotar a 0.9.77 é decisão
+separada, pois as +722 nós alteram as métricas do ratchet e exigem revisão da
+`graphify-baseline.json`.
 
 ## Limitações medidas
 
@@ -83,7 +109,6 @@ respostas citadas e comparação humana com/sem grafo para medir utilidade real.
 - Resolução completa de aliases/calls dinâmicas, contratos UI/API/DB e estado final de RLS.
 - Hooks automáticos, watcher, MCP e visualizações de jornada com navegação revisada.
 - Suporte verificado fora de Linux (esta validação é Linux/Python 3.12; a anterior era Python 3.11).
-- Ensaio de upgrade/rollback da versão Graphify com dataset de referência.
 
 Nenhuma alteração no banco, deployment, permissões de produção ou bundle React
 foi necessária para esta integração. O Graphify fornece evidência para continuar
