@@ -48,6 +48,7 @@ jobs:
       - name: Build structural graph
         run: npm run graph:build
       - name: Diff graph against PR base (etapa 42)
+        id: graph-diff
         if: github.event_name == 'pull_request'
         run: |
           set -e
@@ -102,7 +103,7 @@ jobs:
       # O summary trunca cada seção em 50 entradas e aponta para
       # graph-diff.json — sem upload o arquivo morre com o runner.
       - name: Upload graph diff artifact
-        if: always() && github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request' && steps.graph-diff.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: graph-diff
