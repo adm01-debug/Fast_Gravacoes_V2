@@ -156,8 +156,11 @@ export function useOfflineSync() {
   }, []);
 
   // Cache essential data for offline use
+  // Reads live connectivity, not the captured isOnline — the sync pass can
+  // invoke this through a closure created while still offline (the trigger
+  // effect fires before the syncRef refresh effect in the same commit).
   const cacheData = useCallback(async () => {
-    if (!isOnline) return;
+    if (!navigator.onLine) return;
 
     try {
       const [jobsRes, machinesRes, techniquesRes] = await Promise.all([
@@ -180,7 +183,7 @@ export function useOfflineSync() {
     } catch (error) {
       logger.error('Falha ao armazenar dados em cache offline', error, 'useOfflineSync');
     }
-  }, [isOnline]);
+  }, []);
 
   // Add a pending action
   const addPendingAction = useCallback((
@@ -197,8 +200,14 @@ export function useOfflineSync() {
 
     // Read-modify-write against localStorage (not this instance's possibly
     // stale state) so an already-processed queue can't be resurrected by an
-    // instance that missed another instance's sync pass.
-    const next = [...readQueueFromStorage(), action];
+    // instance that missed another instance's sync pass. Actions that only
+    // exist in memory (earlier persist failures) are merged too — with
+    // storage still broken, dropping them here loses those operations.
+    const next = [
+      ...readQueueFromStorage(),
+      ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id)),
+      action,
+    ];
     if (!safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next))) {
       unpersistedIdsRef.current.add(action.id);
     }
@@ -239,11 +248,25 @@ export function useOfflineSync() {
   // stale `isOnline`/`pendingActions` would skip the pass and strand the
   // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
-    const liveQueueSize = Math.max(
-      readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id) && !readAcknowledgedFromStorage().has(a.id)).length,
-      unpersistedIdsRef.current.size,
-    );
-    if (!navigator.onLine || liveQueueSize === 0 || syncInFlightRef.current) return;
+    if (!navigator.onLine || syncInFlightRef.current) return;
+
+    const acknowledged = new Set([
+      ...acknowledgedIdsRef.current,
+      ...readAcknowledgedFromStorage(),
+    ]);
+    const storedNow = readQueueFromStorage();
+    const actionable = storedNow.filter(a => !acknowledged.has(a.id));
+    if (actionable.length === 0 && unpersistedIdsRef.current.size === 0) {
+      // Nothing actionable — but if acknowledged ghosts still occupy the
+      // stored queue, retry their removal so stale entries don't outlive
+      // the storage outage and linger as fake "pending" rows forever.
+      if (storedNow.length > 0 && safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(actionable))) {
+        storedNow.forEach(a => acknowledgedIdsRef.current.delete(a.id));
+        safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
+        setPendingActions(readQueueFromStorage());
+      }
+      return;
+    }
 
     if (typeof navigator !== 'undefined' && 'locks' in navigator) {
       const ran = await navigator.locks.request(
