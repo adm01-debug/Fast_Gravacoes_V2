@@ -405,10 +405,18 @@ export function useOfflineSync() {
       const concurrentAdds = readQueueFromStorage().filter(
         a => !snapshotIds.has(a.id) && !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
       );
-      const remainingMerged = [...remainingActions, ...concurrentAdds];
+      // Actions enqueued in THIS tab during the pass whose storage append
+      // failed live only in memory + unpersisted marks — union them too or
+      // the state replace below erases their only copy.
+      const concurrentIds = new Set(concurrentAdds.map(a => a.id));
+      const inFlightAdds = pendingActionsRef.current.filter(
+        a => unpersistedIdsRef.current.has(a.id) && !snapshotIds.has(a.id) && !concurrentIds.has(a.id),
+      );
+      const remainingMerged = [...remainingActions, ...concurrentAdds, ...inFlightAdds];
       const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingMerged));
       queue.forEach(a => unpersistedIdsRef.current.delete(a.id));
       if (persisted) {
+        inFlightAdds.forEach(a => unpersistedIdsRef.current.delete(a.id));
         queue.forEach(a => acknowledgedIdsRef.current.delete(a.id));
       } else {
         // Storage still holds every entry from this pass: mark the processed
