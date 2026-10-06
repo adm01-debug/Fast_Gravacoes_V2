@@ -71,6 +71,12 @@ export function useOfflineSync() {
   // from storage must NOT re-enter the queue (it would duplicate the write
   // or dead-letter a false conflict).
   const unpersistedIdsRef = useRef<Set<string>>(new Set());
+  // IDs already processed but whose removal couldn't be written back to
+  // storage (persist of remainingActions failed — they stay in the stored
+  // queue as ghosts). Future passes must skip them or the same write gets
+  // replayed: false updated_at conflicts, or a real double write when the
+  // action has no baseUpdatedAt.
+  const acknowledgedIdsRef = useRef<Set<string>>(new Set());
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CACHED_DATA);
@@ -232,7 +238,7 @@ export function useOfflineSync() {
   // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
     const liveQueueSize = Math.max(
-      readQueueFromStorage().length,
+      readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id)).length,
       unpersistedIdsRef.current.size,
     );
     if (!navigator.onLine || liveQueueSize === 0 || syncInFlightRef.current) return;
@@ -250,8 +256,13 @@ export function useOfflineSync() {
       if (!ran) {
         logger.info('Sync pass skipped — another instance holds the sync lock', undefined, 'useOfflineSync');
         // Reconcile this instance's view with the queue the lock holder is
-        // draining, so it doesn't keep exposing already-processed actions.
-        setPendingActions(readQueueFromStorage());
+        // draining, so it doesn't keep exposing already-processed actions —
+        // but keep actions that exist only in memory (unpersisted): storage
+        // can't contain them and dropping them here loses the operation.
+        setPendingActions([
+          ...readQueueFromStorage(),
+          ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id)),
+        ]);
       }
       return;
     }
@@ -275,7 +286,7 @@ export function useOfflineSync() {
       // Hydrated in-memory copies of actions another tab already drained
       // are excluded via unpersistedIdsRef — without it, cross-tab stale
       // state would replay the same write twice.
-      const storedQueue = readQueueFromStorage();
+      const storedQueue = readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id));
       const storedIds = new Set(storedQueue.map(a => a.id));
       const queue = [
         ...storedQueue,
@@ -310,8 +321,20 @@ export function useOfflineSync() {
       // next pass still unions them.
       const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingActions));
       queue.forEach(a => unpersistedIdsRef.current.delete(a.id));
-      if (!persisted) {
-        remainingActions.forEach(a => unpersistedIdsRef.current.add(a.id));
+      if (persisted) {
+        queue.forEach(a => acknowledgedIdsRef.current.delete(a.id));
+      } else {
+        // Storage still holds every entry from this pass: mark the processed
+        // ones so future passes skip them instead of replaying applied
+        // writes, and re-mark the unprocessed survivors as memory-only.
+        const remainingIds = new Set(remainingActions.map(a => a.id));
+        queue.forEach(a => {
+          if (remainingIds.has(a.id)) {
+            unpersistedIdsRef.current.add(a.id);
+          } else {
+            acknowledgedIdsRef.current.add(a.id);
+          }
+        });
       }
       setPendingActions(remainingActions);
       if (newlyFailed.length > 0) {
