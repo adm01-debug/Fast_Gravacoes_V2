@@ -339,9 +339,18 @@ export function useOfflineSync() {
         a => !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
       );
       const storedIds = new Set(storedQueue.map(a => a.id));
+      // For ids that live in both places, prefer the memory copy: when the
+      // write-back of remainingActions failed, memory holds the fresher
+      // version (incremented retryCount) while storage keeps the stale one —
+      // replaying the stale copy resets retries forever.
+      const memoryOnlyById = new Map(
+        pendingActionsRef.current
+          .filter(a => unpersistedIdsRef.current.has(a.id))
+          .map(a => [a.id, a]),
+      );
       const queue = [
-        ...storedQueue,
-        ...pendingActionsRef.current.filter(a => !storedIds.has(a.id) && unpersistedIdsRef.current.has(a.id)),
+        ...storedQueue.map(a => memoryOnlyById.get(a.id) ?? a),
+        ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id) && !storedIds.has(a.id)),
       ];
 
       for (const action of queue) {
