@@ -10,6 +10,7 @@ import {
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
   mergeJobIntoCache,
+  readAcknowledgedFromStorage,
   readQueueFromStorage,
   safeLocalStorageSet,
 } from '@/lib/offline/offlineQueue';
@@ -75,8 +76,9 @@ export function useOfflineSync() {
   // storage (persist of remainingActions failed — they stay in the stored
   // queue as ghosts). Future passes must skip them or the same write gets
   // replayed: false updated_at conflicts, or a real double write when the
-  // action has no baseUpdatedAt.
-  const acknowledgedIdsRef = useRef<Set<string>>(new Set());
+  // action has no baseUpdatedAt. Seeded from storage so acknowledgements
+  // made by another tab are honored here too.
+  const acknowledgedIdsRef = useRef<Set<string>>(readAcknowledgedFromStorage());
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CACHED_DATA);
@@ -238,7 +240,7 @@ export function useOfflineSync() {
   // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
     const liveQueueSize = Math.max(
-      readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id)).length,
+      readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id) && !readAcknowledgedFromStorage().has(a.id)).length,
       unpersistedIdsRef.current.size,
     );
     if (!navigator.onLine || liveQueueSize === 0 || syncInFlightRef.current) return;
@@ -286,7 +288,12 @@ export function useOfflineSync() {
       // Hydrated in-memory copies of actions another tab already drained
       // are excluded via unpersistedIdsRef — without it, cross-tab stale
       // state would replay the same write twice.
-      const storedQueue = readQueueFromStorage().filter(a => !acknowledgedIdsRef.current.has(a.id));
+      // Ghost entries acknowledged by this or another tab (whose removal
+      // never persisted) are skipped — replaying them doubles the write.
+      const storedAcknowledged = readAcknowledgedFromStorage();
+      const storedQueue = readQueueFromStorage().filter(
+        a => !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
+      );
       const storedIds = new Set(storedQueue.map(a => a.id));
       const queue = [
         ...storedQueue,
@@ -326,7 +333,9 @@ export function useOfflineSync() {
       } else {
         // Storage still holds every entry from this pass: mark the processed
         // ones so future passes skip them instead of replaying applied
-        // writes, and re-mark the unprocessed survivors as memory-only.
+        // writes, and re-mark the unprocessed survivors as memory-only. The
+        // acknowledgement is persisted too — another tab with an empty
+        // in-memory set would otherwise replay the same ghosts.
         const remainingIds = new Set(remainingActions.map(a => a.id));
         queue.forEach(a => {
           if (remainingIds.has(a.id)) {
@@ -335,6 +344,7 @@ export function useOfflineSync() {
             acknowledgedIdsRef.current.add(a.id);
           }
         });
+        safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
       }
       setPendingActions(remainingActions);
       if (newlyFailed.length > 0) {
