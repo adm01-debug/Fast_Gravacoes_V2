@@ -397,7 +397,16 @@ export function useOfflineSync() {
       // ones are finished, retried ones are in remainingActions. If that
       // persist also fails (private mode), re-mark the survivors so the
       // next pass still unions them.
-      const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingActions));
+      // Re-read before writing: enqueue doesn't take the sync lock, so
+      // another tab can append while this pass holds it. Entries in
+      // storage that aren't part of this pass's snapshot must survive the
+      // write-back instead of being clobbered by it.
+      const snapshotIds = new Set(queue.map(a => a.id));
+      const concurrentAdds = readQueueFromStorage().filter(
+        a => !snapshotIds.has(a.id) && !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
+      );
+      const remainingMerged = [...remainingActions, ...concurrentAdds];
+      const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingMerged));
       queue.forEach(a => unpersistedIdsRef.current.delete(a.id));
       if (persisted) {
         queue.forEach(a => acknowledgedIdsRef.current.delete(a.id));
@@ -417,7 +426,7 @@ export function useOfflineSync() {
         });
         safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
       }
-      setPendingActions(remainingActions);
+      setPendingActions(remainingMerged);
       if (newlyFailed.length > 0) {
         setFailedActions(prev => [...prev, ...newlyFailed]);
       }
