@@ -17,6 +17,9 @@ import { spawnSync } from 'node:child_process';
 // qualquer advisory NOVO nesses pacotes volta a quebrar o gate.
 // source 1240992 = GHSA-vfj7-8cjw-p6xm (braces stack-exhaustion).
 const BRACES_ADVISORY = 1240992;
+// source 1241232 = GHSA-rj75-hqrm-r3gf (postcss-selector-parser complexidade
+// quadrática no parsing de seletores).
+const POSTCSS_PARSER_ADVISORY = 1241232;
 
 const ALLOWED_PACKAGES = new Map([
   // Cadeia braces (GHSA-vfj7-8cjw-p6xm: stack-exhaustion DoS em padrões
@@ -74,6 +77,29 @@ const ALLOWED_PACKAGES = new Map([
       reason:
         'Reusa a cadeia tailwind→braces; só roda em mode=development (vite.config.ts). Remoção: desligar o tagger quando o tooling Lovable for desativado.',
       advisories: new Set([BRACES_ADVISORY]),
+    },
+  ],
+  // Cadeia postcss-selector-parser (GHSA-rj75-hqrm-r3gf: complexidade
+  // quadrática no parsing de seletores — CPU exhaustion): só roda em
+  // build-time sobre o CSS gerado dos NOSSOS arquivos (tailwind.config +
+  // classes do repo) — input controlado, não explorável em runtime.
+  // Remoção: migração tailwindcss v4 (troca a cadeia postcss-selector-parser
+  // pela da v4) ou bump de postcss-selector-parser >=7.1.6 quando o
+  // tailwindcss 3.x declarar range compatível.
+  [
+    'postcss-selector-parser',
+    {
+      reason:
+        'CPU exhaustion só em build-time sobre CSS próprio; versão fix 7.1.6 não coberta pelo range do tailwindcss 3.x. Remoção: migração tailwindcss v4.',
+      advisories: new Set([POSTCSS_PARSER_ADVISORY]),
+    },
+  ],
+  [
+    'postcss-nested',
+    {
+      reason:
+        'Vuln transitiva via postcss-selector-parser, só build-time sobre CSS próprio. Remoção: migração tailwindcss v4.',
+      advisories: new Set([POSTCSS_PARSER_ADVISORY]),
     },
   ],
 ]);
