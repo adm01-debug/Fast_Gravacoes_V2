@@ -237,6 +237,10 @@ export function useOfflineSync() {
     if (!safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next))) {
       unpersistedIdsRef.current.add(action.id);
     }
+    // Update the mirror synchronously — the mirror effect only runs after
+    // commit, and a second enqueue in the same event (e.g. status update +
+    // QR scan in one handler) would otherwise miss this action entirely.
+    pendingActionsRef.current = next;
     setPendingActions(next);
 
     // Ask the browser to fire the SW 'sync' event when connectivity returns,
