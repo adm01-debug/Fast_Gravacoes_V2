@@ -90,9 +90,14 @@ export function useOfflineSync() {
     }
   });
 
-  // Save pending actions to localStorage whenever they change
+  // Save pending actions to localStorage whenever they change. When the
+  // write succeeds after earlier failures, those actions are durable again —
+  // clear their unpersisted marks so the next enqueue doesn't merge
+  // duplicate copies into the queue.
   useEffect(() => {
-    safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(pendingActions));
+    if (safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(pendingActions))) {
+      pendingActions.forEach(a => unpersistedIdsRef.current.delete(a.id));
+    }
   }, [pendingActions]);
 
   useEffect(() => {
@@ -203,11 +208,18 @@ export function useOfflineSync() {
     // instance that missed another instance's sync pass. Actions that only
     // exist in memory (earlier persist failures) are merged too — with
     // storage still broken, dropping them here loses those operations.
+    const seenIds = new Set<string>();
     const next = [
       ...readQueueFromStorage(),
       ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id)),
       action,
-    ];
+    ].filter(a => {
+      // An unpersisted mark can be stale (a later persist succeeded) — the
+      // same action would then arrive from both storage and memory.
+      if (seenIds.has(a.id)) return false;
+      seenIds.add(a.id);
+      return true;
+    });
     if (!safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next))) {
       unpersistedIdsRef.current.add(action.id);
     }
@@ -260,11 +272,20 @@ export function useOfflineSync() {
       // Nothing actionable — but if acknowledged ghosts still occupy the
       // stored queue, retry their removal so stale entries don't outlive
       // the storage outage and linger as fake "pending" rows forever.
-      if (storedNow.length > 0 && safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(actionable))) {
-        storedNow.forEach(a => acknowledgedIdsRef.current.delete(a.id));
+      // Re-read before writing: another tab may have enqueued an action
+      // between our snapshot and this cleanup.
+      const fresh = readQueueFromStorage();
+      const cleaned = fresh.filter(a => !acknowledged.has(a.id));
+      if (fresh.length !== cleaned.length && safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(cleaned))) {
+        fresh.filter(a => acknowledged.has(a.id)).forEach(a => acknowledgedIdsRef.current.delete(a.id));
         safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
-        setPendingActions(readQueueFromStorage());
       }
+      // Reconcile this tab's state either way — it may still display actions
+      // another tab already drained, while keeping true memory-only ones.
+      setPendingActions([
+        ...cleaned,
+        ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id) && !cleaned.some(c => c.id === a.id)),
+      ]);
       return;
     }
 
