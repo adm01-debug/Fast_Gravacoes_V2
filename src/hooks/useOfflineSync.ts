@@ -10,6 +10,7 @@ import {
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
   mergeJobIntoCache,
+  readAcknowledgedFromStorage,
   readQueueFromStorage,
   safeLocalStorageSet,
 } from '@/lib/offline/offlineQueue';
@@ -59,6 +60,25 @@ export function useOfflineSync() {
   // duplicating replays. This ref is set synchronously the instant a sync
   // pass starts, closing that window.
   const syncInFlightRef = useRef(false);
+  // Live mirror of the pending queue for the sync pass — the pass can run
+  // from a stale closure (the trigger effect calls the syncRef captured in
+  // a previous commit), and actions whose localStorage persist failed in
+  // addPendingAction exist only in memory; a ref read at pass time covers
+  // both cases without depending on closure freshness.
+  const pendingActionsRef = useRef<PendingAction[]>([]);
+  // IDs of actions that were never durably persisted (localStorage write
+  // failed in addPendingAction). Only these may be unioned into a sync pass
+  // from memory — a hydrated copy of an action another tab already drained
+  // from storage must NOT re-enter the queue (it would duplicate the write
+  // or dead-letter a false conflict).
+  const unpersistedIdsRef = useRef<Set<string>>(new Set());
+  // IDs already processed but whose removal couldn't be written back to
+  // storage (persist of remainingActions failed — they stay in the stored
+  // queue as ghosts). Future passes must skip them or the same write gets
+  // replayed: false updated_at conflicts, or a real double write when the
+  // action has no baseUpdatedAt. Seeded from storage so acknowledgements
+  // made by another tab are honored here too.
+  const acknowledgedIdsRef = useRef<Set<string>>(readAcknowledgedFromStorage());
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CACHED_DATA);
@@ -70,9 +90,32 @@ export function useOfflineSync() {
     }
   });
 
-  // Save pending actions to localStorage whenever they change
+  // Save pending actions to localStorage whenever they change. When the
+  // write succeeds after earlier failures, those actions are durable again —
+  // clear their unpersisted marks so the next enqueue doesn't merge
+  // duplicate copies into the queue.
+  // Merge instead of blind overwrite: this snapshot may be stale relative to
+  // the shared queue (another tab can enqueue while storage was broken and
+  // recover before this write). Unioning storage ∪ state (memory copy
+  // preferred for the same id — it carries the fresher retryCount) keeps
+  // both sides' operations.
   useEffect(() => {
-    safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(pendingActions));
+    const storedNow = readQueueFromStorage();
+    const storedIds = new Set(storedNow.map(a => a.id));
+    const memoryById = new Map(
+      pendingActions.filter(a => unpersistedIdsRef.current.has(a.id)).map(a => [a.id, a]),
+    );
+    const merged = [
+      ...storedNow.map(a => memoryById.get(a.id) ?? a),
+      ...pendingActions.filter(a => unpersistedIdsRef.current.has(a.id) && !storedIds.has(a.id)),
+    ];
+    if (safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(merged))) {
+      pendingActions.forEach(a => unpersistedIdsRef.current.delete(a.id));
+    }
+  }, [pendingActions]);
+
+  useEffect(() => {
+    pendingActionsRef.current = pendingActions;
   }, [pendingActions]);
 
   // Save failed (conflicted or retry-exhausted) actions — a dead-letter
@@ -132,8 +175,11 @@ export function useOfflineSync() {
   }, []);
 
   // Cache essential data for offline use
+  // Reads live connectivity, not the captured isOnline — the sync pass can
+  // invoke this through a closure created while still offline (the trigger
+  // effect fires before the syncRef refresh effect in the same commit).
   const cacheData = useCallback(async () => {
-    if (!isOnline) return;
+    if (!navigator.onLine) return;
 
     try {
       const [jobsRes, machinesRes, techniquesRes] = await Promise.all([
@@ -156,7 +202,7 @@ export function useOfflineSync() {
     } catch (error) {
       logger.error('Falha ao armazenar dados em cache offline', error, 'useOfflineSync');
     }
-  }, [isOnline]);
+  }, []);
 
   // Add a pending action
   const addPendingAction = useCallback((
@@ -173,9 +219,28 @@ export function useOfflineSync() {
 
     // Read-modify-write against localStorage (not this instance's possibly
     // stale state) so an already-processed queue can't be resurrected by an
-    // instance that missed another instance's sync pass.
-    const next = [...readQueueFromStorage(), action];
-    safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next));
+    // instance that missed another instance's sync pass. Actions that only
+    // exist in memory (earlier persist failures) are merged too — with
+    // storage still broken, dropping them here loses those operations.
+    const seenIds = new Set<string>();
+    const next = [
+      ...readQueueFromStorage(),
+      ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id)),
+      action,
+    ].filter(a => {
+      // An unpersisted mark can be stale (a later persist succeeded) — the
+      // same action would then arrive from both storage and memory.
+      if (seenIds.has(a.id)) return false;
+      seenIds.add(a.id);
+      return true;
+    });
+    if (!safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(next))) {
+      unpersistedIdsRef.current.add(action.id);
+    }
+    // Update the mirror synchronously — the mirror effect only runs after
+    // commit, and a second enqueue in the same event (e.g. status update +
+    // QR scan in one handler) would otherwise miss this action entirely.
+    pendingActionsRef.current = next;
     setPendingActions(next);
 
     // Ask the browser to fire the SW 'sync' event when connectivity returns,
@@ -206,8 +271,41 @@ export function useOfflineSync() {
   // replay it. Replays are individually idempotent (updated_at guards,
   // upsert-by-id), so the lock is belt-and-suspenders; when Web Locks is
   // unavailable the behavior degrades to today's per-tab guard.
+  // The guards read live state (navigator.onLine + the storage queue, which
+  // is already the source of truth for runSyncPass) rather than the captured
+  // render state: the trigger effect can invoke a stale closure from the
+  // previous commit (its ref is only refreshed by a later effect), and a
+  // stale `isOnline`/`pendingActions` would skip the pass and strand the
+  // queue forever after reconnecting.
   const syncPendingActions = useCallback(async () => {
-    if (!isOnline || pendingActions.length === 0 || syncInFlightRef.current) return;
+    if (!navigator.onLine || syncInFlightRef.current) return;
+
+    const acknowledged = new Set([
+      ...acknowledgedIdsRef.current,
+      ...readAcknowledgedFromStorage(),
+    ]);
+    const storedNow = readQueueFromStorage();
+    const actionable = storedNow.filter(a => !acknowledged.has(a.id));
+    if (actionable.length === 0 && unpersistedIdsRef.current.size === 0) {
+      // Nothing actionable — but if acknowledged ghosts still occupy the
+      // stored queue, retry their removal so stale entries don't outlive
+      // the storage outage and linger as fake "pending" rows forever.
+      // Re-read before writing: another tab may have enqueued an action
+      // between our snapshot and this cleanup.
+      const fresh = readQueueFromStorage();
+      const cleaned = fresh.filter(a => !acknowledged.has(a.id));
+      if (fresh.length !== cleaned.length && safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(cleaned))) {
+        fresh.filter(a => acknowledged.has(a.id)).forEach(a => acknowledgedIdsRef.current.delete(a.id));
+        safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
+      }
+      // Reconcile this tab's state either way — it may still display actions
+      // another tab already drained, while keeping true memory-only ones.
+      setPendingActions([
+        ...cleaned,
+        ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id) && !cleaned.some(c => c.id === a.id)),
+      ]);
+      return;
+    }
 
     if (typeof navigator !== 'undefined' && 'locks' in navigator) {
       const ran = await navigator.locks.request(
@@ -222,8 +320,13 @@ export function useOfflineSync() {
       if (!ran) {
         logger.info('Sync pass skipped — another instance holds the sync lock', undefined, 'useOfflineSync');
         // Reconcile this instance's view with the queue the lock holder is
-        // draining, so it doesn't keep exposing already-processed actions.
-        setPendingActions(readQueueFromStorage());
+        // draining, so it doesn't keep exposing already-processed actions —
+        // but keep actions that exist only in memory (unpersisted): storage
+        // can't contain them and dropping them here loses the operation.
+        setPendingActions([
+          ...readQueueFromStorage(),
+          ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id)),
+        ]);
       }
       return;
     }
@@ -241,9 +344,32 @@ export function useOfflineSync() {
       const newlyFailed: FailedAction[] = [];
       let hadRetryableFailure = false;
 
-      // Replay from storage, not this instance's state — another instance
-      // may have queued or drained actions since this one last rendered.
-      const queue = readQueueFromStorage();
+      // Replay storage + never-persisted actions (a failed persist in
+      // addPendingAction leaves the action in React state only — without
+      // the union it would never be replayed and would die on reload).
+      // Hydrated in-memory copies of actions another tab already drained
+      // are excluded via unpersistedIdsRef — without it, cross-tab stale
+      // state would replay the same write twice.
+      // Ghost entries acknowledged by this or another tab (whose removal
+      // never persisted) are skipped — replaying them doubles the write.
+      const storedAcknowledged = readAcknowledgedFromStorage();
+      const storedQueue = readQueueFromStorage().filter(
+        a => !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
+      );
+      const storedIds = new Set(storedQueue.map(a => a.id));
+      // For ids that live in both places, prefer the memory copy: when the
+      // write-back of remainingActions failed, memory holds the fresher
+      // version (incremented retryCount) while storage keeps the stale one —
+      // replaying the stale copy resets retries forever.
+      const memoryOnlyById = new Map(
+        pendingActionsRef.current
+          .filter(a => unpersistedIdsRef.current.has(a.id))
+          .map(a => [a.id, a]),
+      );
+      const queue = [
+        ...storedQueue.map(a => memoryOnlyById.get(a.id) ?? a),
+        ...pendingActionsRef.current.filter(a => unpersistedIdsRef.current.has(a.id) && !storedIds.has(a.id)),
+      ];
 
       for (const action of queue) {
         const result = await processPendingAction(action);
@@ -267,8 +393,48 @@ export function useOfflineSync() {
 
       // Persist immediately so other instances reading storage see the
       // drained queue even before this instance's persist effect runs.
-      safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingActions));
-      setPendingActions(remainingActions);
+      // Every action in this pass is done being "memory-only": processed
+      // ones are finished, retried ones are in remainingActions. If that
+      // persist also fails (private mode), re-mark the survivors so the
+      // next pass still unions them.
+      // Re-read before writing: enqueue doesn't take the sync lock, so
+      // another tab can append while this pass holds it. Entries in
+      // storage that aren't part of this pass's snapshot must survive the
+      // write-back instead of being clobbered by it.
+      const snapshotIds = new Set(queue.map(a => a.id));
+      const concurrentAdds = readQueueFromStorage().filter(
+        a => !snapshotIds.has(a.id) && !acknowledgedIdsRef.current.has(a.id) && !storedAcknowledged.has(a.id),
+      );
+      // Actions enqueued in THIS tab during the pass whose storage append
+      // failed live only in memory + unpersisted marks — union them too or
+      // the state replace below erases their only copy.
+      const concurrentIds = new Set(concurrentAdds.map(a => a.id));
+      const inFlightAdds = pendingActionsRef.current.filter(
+        a => unpersistedIdsRef.current.has(a.id) && !snapshotIds.has(a.id) && !concurrentIds.has(a.id),
+      );
+      const remainingMerged = [...remainingActions, ...concurrentAdds, ...inFlightAdds];
+      const persisted = safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(remainingMerged));
+      queue.forEach(a => unpersistedIdsRef.current.delete(a.id));
+      if (persisted) {
+        inFlightAdds.forEach(a => unpersistedIdsRef.current.delete(a.id));
+        queue.forEach(a => acknowledgedIdsRef.current.delete(a.id));
+      } else {
+        // Storage still holds every entry from this pass: mark the processed
+        // ones so future passes skip them instead of replaying applied
+        // writes, and re-mark the unprocessed survivors as memory-only. The
+        // acknowledgement is persisted too — another tab with an empty
+        // in-memory set would otherwise replay the same ghosts.
+        const remainingIds = new Set(remainingActions.map(a => a.id));
+        queue.forEach(a => {
+          if (remainingIds.has(a.id)) {
+            unpersistedIdsRef.current.add(a.id);
+          } else {
+            acknowledgedIdsRef.current.add(a.id);
+          }
+        });
+        safeLocalStorageSet(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS, JSON.stringify([...acknowledgedIdsRef.current]));
+      }
+      setPendingActions(remainingMerged);
       if (newlyFailed.length > 0) {
         setFailedActions(prev => [...prev, ...newlyFailed]);
       }
@@ -303,7 +469,7 @@ export function useOfflineSync() {
       setIsSyncing(false);
     }
     }
-  }, [isOnline, pendingActions, cacheData]);
+  }, [cacheData]);
 
   useEffect(() => {
     syncRef.current = syncPendingActions;

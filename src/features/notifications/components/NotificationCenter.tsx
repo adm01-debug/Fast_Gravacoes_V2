@@ -29,7 +29,7 @@ export function NotificationCenter() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label={unreadCount > 0 ? `Notificações (${unreadCount} não lidas)` : 'Notificações'}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
@@ -57,7 +57,7 @@ export function NotificationCenter() {
               </TabsTrigger>
             </TabsList>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => markAllAsRead()} disabled={unreadCount === 0} title="Marcar todas como lidas">
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => markAllAsRead()} disabled={unreadCount === 0} title="Marcar todas como lidas" aria-label="Marcar todas como lidas">
                 <CheckCheck className="h-4 w-4" />
               </Button>
             </div>
@@ -102,11 +102,11 @@ export function NotificationCenter() {
                         </div>
                         <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {!n.is_read && (
-                            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary" onClick={(e) => { e.stopPropagation(); markAsRead(n.id); }}>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary" aria-label={`Marcar como lida: ${n.title || n.type}`} onClick={(e) => { e.stopPropagation(); markAsRead(n.id); }}>
                               <Check className="h-3.5 w-3.5" />
                             </Button>
                           )}
-                          <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={(e) => { e.stopPropagation(); deleteNotification(n.id); }}>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" aria-label={`Excluir notificação: ${n.title || n.type}`} onClick={(e) => { e.stopPropagation(); deleteNotification(n.id); }}>
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>

@@ -24,11 +24,11 @@ export function BufferPromotionStatus() {
             <div>
               <h3 className="font-bold text-sm flex items-center gap-2">
                 Gestão Automática de Buffer
-                <Badge variant="outline" className="text-[10px] h-4 px-1 border-blue-500/30 text-blue-400">
+                <Badge variant="outline" className="text-[10px] h-4 px-1 border-blue-500/30 text-blue-300">
                   IA Ativa
                 </Badge>
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-foreground/70 mt-0.5">
                 Mantendo alvo de <strong>{bufferTarget} jobs</strong> "No Jeito" por técnica.
               </p>
             </div>
@@ -45,7 +45,7 @@ export function BufferPromotionStatus() {
                     <TooltipTrigger asChild>
                       <div className={cn(
                         "flex items-center gap-1.5 px-2 py-1 rounded-full border text-[10px] font-bold transition-all",
-                        isHealthy ? "bg-green-500/10 border-green-500/20 text-green-400" : "bg-blue-500/10 border-blue-500/20 text-blue-400"
+                        isHealthy ? "bg-green-500/10 border-green-500/20 text-green-400" : "bg-blue-500/10 border-blue-500/20 text-blue-300"
                       )}>
                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tech.color }} />
                         {tech.short_name}: {readyCount}/{bufferTarget}
@@ -65,7 +65,7 @@ export function BufferPromotionStatus() {
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 text-[10px] uppercase font-bold text-blue-400 hover:bg-blue-500/10"
+            className="h-8 text-[10px] uppercase font-bold text-blue-300 hover:bg-blue-500/10"
             onClick={() => triggerPromotion()}
             disabled={isPromoting}
           >

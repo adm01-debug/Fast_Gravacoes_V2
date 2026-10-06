@@ -59,7 +59,8 @@ export const OEEHeatmap = memo(function OEEHeatmap({ data }: OEEHeatmapProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável focável (WCAG scrollable-region-focusable) */}
+        <div className="overflow-x-auto" role="region" aria-label="Heatmap de OEE por máquina" tabIndex={0}>
           <table className="w-full border-separate border-spacing-x-1 border-spacing-y-2">
             <thead>
               <tr>

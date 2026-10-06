@@ -40,7 +40,7 @@ const KPIOverviewTabComponent = ({
           >
             <Card className="glass-card hover-scale relative overflow-hidden group">
               <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-6 w-6"><Settings2 className="h-3 w-3" /></Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Configurar indicador"><Settings2 className="h-3 w-3" /></Button>
               </div>
               <CardContent className="pt-4 sm:pt-6">
                 <div className="flex items-center justify-between gap-2">
@@ -80,7 +80,7 @@ const KPIOverviewTabComponent = ({
           >
             <Card className="glass-card hover-scale group">
               <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-6 w-6"><Settings2 className="h-3 w-3" /></Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Configurar indicador"><Settings2 className="h-3 w-3" /></Button>
               </div>
               <CardContent className="pt-4 sm:pt-6">
                 <div className="flex items-center justify-between gap-2">
@@ -118,7 +118,7 @@ const KPIOverviewTabComponent = ({
               onClick={() => handleDrillDown('TAXA DE PERDA', 'lost')}
             >
               <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-6 w-6"><Settings2 className="h-3 w-3" /></Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Configurar indicador"><Settings2 className="h-3 w-3" /></Button>
               </div>
               <CardContent className="pt-4 sm:pt-6">
                 <div className="flex items-center justify-between gap-2">

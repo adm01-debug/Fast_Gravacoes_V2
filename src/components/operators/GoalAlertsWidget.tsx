@@ -139,7 +139,7 @@ export function GoalAlertsWidget({ maxVisible = 5, compact = false }: GoalAlerts
                 Nenhum operador com metas em risco
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={forceCheckGoals}>
+            <Button variant="ghost" size="sm" onClick={forceCheckGoals} aria-label="Verificar metas agora">
               <RefreshCw className="h-4 w-4" />
             </Button>
           </div>
@@ -197,7 +197,7 @@ export function GoalAlertsWidget({ maxVisible = 5, compact = false }: GoalAlerts
               )}
             </CardDescription>
           </div>
-          <Button variant="ghost" size="icon" onClick={forceCheckGoals}>
+          <Button variant="ghost" size="icon" onClick={forceCheckGoals} aria-label="Verificar metas agora">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>

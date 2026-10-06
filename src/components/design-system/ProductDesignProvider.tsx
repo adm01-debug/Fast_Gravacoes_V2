@@ -3,7 +3,6 @@ import { OnboardingTour, useOnboarding } from "@/components/onboarding/Onboardin
 import { CommandPaletteAdvanced } from "@/components/navigation/CommandPaletteAdvanced";
 import { KeyboardShortcutsProvider } from "@/components/shortcuts/KeyboardShortcuts";
 import { ToastContainer } from "@/features/notifications/components/ToastWithUndo";
-import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
 
 interface ProductDesignProviderProps {
   children: React.ReactNode;
@@ -11,7 +10,6 @@ interface ProductDesignProviderProps {
   enableCommandPalette?: boolean;
   enableKeyboardShortcuts?: boolean;
   enableToastWithUndo?: boolean;
-  enableAIAssistant?: boolean;
 }
 
 /**
@@ -22,7 +20,8 @@ interface ProductDesignProviderProps {
  * - Command Palette (Cmd+K for quick navigation)
  * - Keyboard Shortcuts (vim-like navigation)
  * - Toast with Undo (undoable notifications)
- * - AI Assistant (floating chat widget)
+ *
+ * Note: the floating AI assistant button lives in MainLayout (AssistantButton).
  */
 export function ProductDesignProvider({
   children,
@@ -30,7 +29,6 @@ export function ProductDesignProvider({
   enableCommandPalette = true,
   enableKeyboardShortcuts = true,
   enableToastWithUndo = true,
-  enableAIAssistant = true,
 }: ProductDesignProviderProps) {
   const { showTour, setShowTour } = useOnboarding();
 
@@ -53,8 +51,6 @@ export function ProductDesignProvider({
       {/* Toast Container for undoable notifications */}
       {enableToastWithUndo && <ToastContainer />}
 
-      {/* Floating AI Assistant */}
-      {enableAIAssistant && <FloatingAIAssistant />}
     </>
   );
 

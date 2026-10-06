@@ -218,7 +218,7 @@ export default function KPIDashboard() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="glass-button h-9 w-9">
+                <Button variant="outline" size="icon" className="glass-button h-9 w-9" aria-label="Personalizar dashboard">
                   <Settings2 className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>

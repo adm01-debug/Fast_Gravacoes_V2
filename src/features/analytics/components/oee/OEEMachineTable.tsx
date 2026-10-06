@@ -173,7 +173,8 @@ export const OEEMachineTable = memo(function OEEMachineTable({ machines }: OEEMa
       </CardHeader>
 
       <CardContent className="p-0 sm:p-6">
-        <div className="rounded-md border-x sm:border overflow-x-auto">
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável focável (WCAG scrollable-region-focusable) */}
+        <div className="rounded-md border-x sm:border overflow-x-auto" role="region" aria-label="Tabela de OEE por máquina" tabIndex={0}>
           <Table className="min-w-[800px] sm:min-w-full">
             <TableHeader>
               <TableRow>
@@ -294,6 +295,7 @@ export const OEEMachineTable = memo(function OEEMachineTable({ machines }: OEEMa
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label={`Ver detalhes da máquina ${machine.machineName}`}
                         onClick={() => {
                           setSelectedMachineId(machine.machineId);
                           setDetailsOpen(true);

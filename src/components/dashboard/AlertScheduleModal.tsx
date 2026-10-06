@@ -179,7 +179,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
                         )}
                       </SelectContent>
                     </Select>
-                    {selectedMachineId && <Button type="button" variant="outline" size="icon" onClick={() => setSelectedMachineId('')} className="shrink-0"><X className="w-4 h-4" /></Button>}
+                    {selectedMachineId && <Button type="button" variant="outline" size="icon" aria-label="Limpar máquina selecionada" onClick={() => setSelectedMachineId('')} className="shrink-0"><X className="w-4 h-4" /></Button>}
                   </div>
                 </div>
                 {selectedMachineId && (

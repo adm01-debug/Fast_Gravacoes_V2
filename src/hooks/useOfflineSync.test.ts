@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useOfflineSync } from './useOfflineSync';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -102,17 +102,18 @@ describe('useOfflineSync', () => {
       return Promise.resolve({ data: null, error: new Error('Network error') }).then(onFulfilled);
     });
 
-    // Flip online in its own act() so result.current points at the fresh
-    // (isOnline=true) closure before invoking the sync.
+    // Reconnecting triggers a sync pass automatically (the 'online' event
+    // effect); wait for that pass to settle instead of calling
+    // syncPendingActions manually — a second pass would consume another
+    // mocked response and inflate the retry count non-deterministically.
     await act(async () => {
       setOnline(true);
     });
-    await act(async () => {
-      await result.current.syncPendingActions();
+    await waitFor(() => {
+      expect(result.current.pendingActions[0]?.retryCount).toBe(1);
     });
 
     expect(result.current.pendingActionsCount).toBe(1);
-    expect(result.current.pendingActions[0].retryCount).toBe(1);
   });
 
   it('detects a conflict instead of blindly overwriting a job that changed on the server while queued', async () => {

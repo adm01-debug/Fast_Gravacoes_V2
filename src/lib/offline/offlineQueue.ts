@@ -31,6 +31,7 @@ export const STORAGE_KEYS = {
   PENDING_ACTIONS: 'fastgravacoes_pending_actions',
   CACHED_DATA: 'fastgravacoes_cached_data',
   FAILED_ACTIONS: 'fastgravacoes_failed_actions',
+  ACKNOWLEDGED_ACTIONS: 'fastgravacoes_acknowledged_actions',
 } as const;
 
 export const MAX_RETRIES = 3;
@@ -51,6 +52,18 @@ export function readQueueFromStorage(): PendingAction[] {
     return stored ? (JSON.parse(stored) as PendingAction[]) : [];
   } catch {
     return [];
+  }
+}
+
+/** IDs already replayed whose removal from the pending queue could not be
+ * persisted. Shared across tabs via localStorage so a second tab doesn't
+ * replay a ghost entry the first tab already applied. */
+export function readAcknowledgedFromStorage(): Set<string> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.ACKNOWLEDGED_ACTIONS);
+    return stored ? new Set(JSON.parse(stored) as string[]) : new Set();
+  } catch {
+    return new Set();
   }
 }
 

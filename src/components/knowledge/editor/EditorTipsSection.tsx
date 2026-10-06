@@ -43,7 +43,7 @@ export function EditorTipsSection({ tips, sheetId, onAdd, onDelete, isAdding }: 
             <span className="flex-1 text-sm">{tip.content}</span>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label="Remover dica">
                   <Trash2 className="h-3 w-3 text-destructive" />
                 </Button>
               </AlertDialogTrigger>
