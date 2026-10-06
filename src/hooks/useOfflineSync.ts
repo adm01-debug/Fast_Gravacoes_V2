@@ -94,8 +94,22 @@ export function useOfflineSync() {
   // write succeeds after earlier failures, those actions are durable again —
   // clear their unpersisted marks so the next enqueue doesn't merge
   // duplicate copies into the queue.
+  // Merge instead of blind overwrite: this snapshot may be stale relative to
+  // the shared queue (another tab can enqueue while storage was broken and
+  // recover before this write). Unioning storage ∪ state (memory copy
+  // preferred for the same id — it carries the fresher retryCount) keeps
+  // both sides' operations.
   useEffect(() => {
-    if (safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(pendingActions))) {
+    const storedNow = readQueueFromStorage();
+    const storedIds = new Set(storedNow.map(a => a.id));
+    const memoryById = new Map(
+      pendingActions.filter(a => unpersistedIdsRef.current.has(a.id)).map(a => [a.id, a]),
+    );
+    const merged = [
+      ...storedNow.map(a => memoryById.get(a.id) ?? a),
+      ...pendingActions.filter(a => unpersistedIdsRef.current.has(a.id) && !storedIds.has(a.id)),
+    ];
+    if (safeLocalStorageSet(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify(merged))) {
       pendingActions.forEach(a => unpersistedIdsRef.current.delete(a.id));
     }
   }, [pendingActions]);
