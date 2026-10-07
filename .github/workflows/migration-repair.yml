@@ -1,0 +1,96 @@
+name: Migration repair
+
+# Reconcilia o histórico quando o banco remoto foi construído por outro canal
+# (Lovable/SQL Editor): arquivos locais mais antigos que a última versão
+# registrada no remoto derrubam `supabase db push` ("local migration files to
+# be inserted before the last migration on remote database"). Este workflow
+# marca essas versões antigas como `applied` — elas já estão no schema real —
+# e deixa `db push` aplicar apenas as migrations genuinamente novas.
+#
+# Execução 100% manual: workflow_dispatch. Rode UMA vez para reconciliar,
+# depois dispare o Deploy normalmente.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    name: Reconcile migration history
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1 # v1
+        with:
+          version: latest
+
+      - name: Reconcile history
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+
+          configured_ref="$(sed -n 's/^project_id = "\([^"]*\)"/\1/p' supabase/config.toml)"
+          if [ -z "$configured_ref" ] || [ "$SUPABASE_PROJECT_ID" != "$configured_ref" ]; then
+            echo "::error title=Supabase target mismatch::SUPABASE_PROJECT_ID não corresponde ao project_id versionado."
+            exit 1
+          fi
+
+          supabase link --project-ref "$SUPABASE_PROJECT_ID"
+
+          echo "===== migration list (antes) ====="
+          supabase migration list | tee /tmp/miglist.txt
+
+          # Colunas da tabela: LOCAL │ REMOTE │ TIME. Versão na coluna REMOTE
+          # = já registrada no remoto; na coluna LOCAL = arquivo no repo.
+          REMOTES=(); LOCALS=()
+          while IFS='│' read -r _ lv rv _rest; do
+            lv="$(echo "$lv" | tr -d ' ')"; rv="$(echo "$rv" | tr -d ' ')"
+            [[ "$lv" =~ ^[0-9]{14}$ ]] && LOCALS+=("$lv")
+            [[ "$rv" =~ ^[0-9]{14}$ ]] && REMOTES+=("$rv")
+          done < /tmp/miglist.txt
+
+          if [ "${#REMOTES[@]}" -eq 0 ]; then
+            echo "::error::Nenhuma versão remota encontrada — confira o migration list acima."
+            exit 1
+          fi
+          LAST_REMOTE="$(printf '%s\n' "${REMOTES[@]}" | sort | tail -1)"
+          echo "Última versão registrada no remoto: $LAST_REMOTE"
+
+          # Repair só em versões locais AUSENTES do remoto e ANTERIORES à
+          # última remota — o remoto só avançou além delas se já recebeu seu
+          # conteúdo por outro canal. Versões locais mais novas ficam para o
+          # `db push` normal (são as que realmente precisam ser aplicadas).
+          declare -A IN_REMOTE=()
+          for v in "${REMOTES[@]}"; do IN_REMOTE["$v"]=1; done
+
+          repaired=0; pending=0
+          for v in $(printf '%s\n' "${LOCALS[@]}" | sort); do
+            if [ -n "${IN_REMOTE[$v]:-}" ]; then
+              continue
+            elif [[ "$v" < "$LAST_REMOTE" ]]; then
+              echo "repair --status applied $v"
+              supabase migration repair "$v" --status applied --linked
+              repaired=$((repaired + 1))
+            else
+              echo "pendente (será aplicada pelo db push): $v"
+              pending=$((pending + 1))
+            fi
+          done
+          echo "Reconciliadas como applied: $repaired | Pendentes p/ db push: $pending"
+
+          echo "===== migration list (depois) ====="
+          supabase migration list
+
+          echo "===== dry-run pós-repair ====="
+          supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
