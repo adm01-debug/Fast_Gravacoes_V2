@@ -58,17 +58,14 @@ jobs:
           supabase migration list | tee /tmp/miglist.txt
 
           # Saída real do CLI: "`local` | `remote` | `time`" (backticks + |
-          # ASCII). Linha que começa com | tem coluna LOCAL vazia → versão é
-          # do remoto. Demais linhas: 1º campo = local, 2º = remoto.
+          # ASCII). Célula vazia pode aparecer como ` ` — por isso o split é
+          # por | em células (preserva vazias) e só depois remove backticks.
           REMOTES=(); LOCALS=()
           while read -r line; do
             ltrim="${line#"${line%%[! ]*}"}"
-            first_is_remote=0
-            case "$ltrim" in \|*) first_is_remote=1;; esac
-            clean="$(printf '%s' "$ltrim" | tr -d '`' | tr '|│' ' ')"
-            read -r c1 c2 _rest <<< "$clean"
-            lv=""; rv=""
-            if [ "$first_is_remote" = 1 ]; then rv="$c1"; else lv="$c1"; rv="$c2"; fi
+            IFS='|' read -r c1 c2 _rest <<< "$ltrim"
+            lv="$(printf '%s' "$c1" | tr -d '\` \t')"
+            rv="$(printf '%s' "$c2" | tr -d '\` \t')"
             [[ "$lv" =~ ^[0-9]{14}$ ]] && LOCALS+=("$lv")
             [[ "$rv" =~ ^[0-9]{14}$ ]] && REMOTES+=("$rv")
           done < /tmp/miglist.txt
