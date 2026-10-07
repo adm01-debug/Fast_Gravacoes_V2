@@ -71,7 +71,7 @@ Copiar para storage fora do mesmo host (S3/B2/outro servidor).
 
 ### Restore testado (drill trimestral obrigatório)
 1. Subir Postgres descartável (Docker local ou VPS separada).
-2. `pg_restore --clean --if-exists backup-<data>.dump`.
+2. `pg_restore --dbname="postgresql://postgres:<senha>@<host-descartavel>:5432/postgres" --clean --if-exists backup-<data>.dump`.
 3. Conferir contagens: `jobs`, `profiles`, `audit_log`, `production_lots`.
 4. Anotar: tempo total, linhas esperadas vs. restauradas, quem assinou.
 5. Registrar a evidência em `docs/operacoes/drills/AAAA-MM-restore.md`.
@@ -83,7 +83,7 @@ Copiar para storage fora do mesmo host (S3/B2/outro servidor).
 | Sintoma | Provável causa | Ação |
 |---|---|---|
 | Página em branco pós-deploy | CSP bloqueou recurso novo | console do browser → diretiva violada → ajustar `vercel.json`/`index.html` |
-| Login não abre (lockout) | `check-login-lockout` consulta `login_lockouts` por e-mail/IP | expirar o lock: `UPDATE login_lockouts SET locked_until = now() - interval '1 minute' WHERE email = '<email>'` |
+| Login não abre (lockout) | `check-login-lockout` consulta `login_lockouts` por e-mail/IP | expirar o lock: `UPDATE login_lockouts SET locked_until = now() - interval '1 minute' WHERE identifier = lower('<email>') AND identifier_type = 'email';` Para lock por IP, usar `identifier = '<ip>' AND identifier_type = 'ip'`. |
 | Função 401 do nada | `verify_jwt` vs. chamador sem JWT | conferir `config.toml` + quem invoca (REGISTRY.md) |
 | Cron não rodou | cron só existe no painel | Dashboard → Edge Functions → Cron **[PAINEL]** |
 | Dados sumindo da tela | query passou de 1000 linhas (cap PostgREST) | usar `fetchAllRows` (`src/lib/fetchAllRows.ts`) |
