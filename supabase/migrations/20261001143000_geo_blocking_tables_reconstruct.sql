@@ -7,6 +7,39 @@
 -- rebuild limpo pularia são recriados abaixo. has_role é chamado via
 -- app_private (public.has_role foi revogada de authenticated em 20260619160053).
 
+-- Garante app_private.has_role: no remoto construído fora da cadeia
+-- versionada (Lovable/SQL Editor), 20260619160053 foi marcada `applied` via
+-- `supabase migration repair` sem executar — o schema nunca foi criado e
+-- todas as policies remotas ainda chamam public.has_role. Este bloco é a
+-- primeira coisa que roda porque esta é a primeira migration pendente que
+-- usa app_private. Idempotente (IF NOT EXISTS / OR REPLACE): no-op onde o
+-- schema já existe.
+-- Divergência intencional de 20260619160053: NÃO revoga public.has_role de
+-- authenticated e NÃO reescreve policies existentes — no remoto divergente
+-- elas dependem de public.has_role, e revogar quebraria todas as RLS.
+CREATE SCHEMA IF NOT EXISTS app_private;
+REVOKE ALL ON SCHEMA app_private FROM public, anon, authenticated;
+GRANT USAGE ON SCHEMA app_private TO authenticated, service_role;
+
+CREATE OR REPLACE FUNCTION app_private.has_role(_user_id uuid, _role public.app_role)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_roles
+    WHERE user_id = _user_id
+      AND role = _role
+      AND is_active = true
+  )
+$$;
+
+REVOKE ALL ON FUNCTION app_private.has_role(uuid, public.app_role) FROM public, anon;
+GRANT EXECUTE ON FUNCTION app_private.has_role(uuid, public.app_role) TO authenticated, service_role;
+
 CREATE TABLE IF NOT EXISTS public.geo_blocking_settings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   is_enabled boolean NOT NULL DEFAULT false,
