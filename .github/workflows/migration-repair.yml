@@ -12,6 +12,12 @@ name: Migration repair
 
 on:
   workflow_dispatch:
+    inputs:
+      inspect_only:
+        description: 'Só inspecionar o schema remoto (db dump), sem repair'
+        type: boolean
+        default: false
+        required: false
 
 permissions:
   contents: read
@@ -36,6 +42,7 @@ jobs:
           version: latest
 
       - name: Reconcile history
+        if: ${{ !inputs.inspect_only }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
@@ -105,6 +112,35 @@ jobs:
           echo "===== dry-run pós-repair ====="
           supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
 
+      # Diagnóstico do schema REMOTO real: `repair --status applied` marca
+      # versões sem executar o SQL — objetos que nunca existiram no remoto
+      # (ex.: schema app_private) só aparecem quando a próxima migration
+      # nova tenta usá-los. O dump mostra o que existe de fato, para
+      # decidir quais defensivos (IF NOT EXISTS / CREATE OR REPLACE) as
+      # migrations pendentes precisam.
+      - name: Inspect remote schema (diagnóstico)
+        id: inspect
+        if: ${{ inputs.inspect_only }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          supabase link --project-ref "$SUPABASE_PROJECT_ID"
+          supabase db dump --linked -f /tmp/remote-schema.sql
+          wc -l /tmp/remote-schema.sql
+          echo "===== objetos-chave no remoto ====="
+          grep -nE 'app_private|has_role|has_permission|app_role|geo_blocking|csp_violation_reports|rate_limit|purge_old_logs|login_lockouts' /tmp/remote-schema.sql | head -120 || true
+
+      - name: Upload remote schema dump
+        if: ${{ inputs.inspect_only && steps.inspect.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: remote-schema
+          path: /tmp/remote-schema.sql
+          if-no-files-found: ignore
+
       # Verificação de conteúdo: `repair --status applied` registra a versão
       # sem executar o SQL — certo para arquivos cujo DDL já foi aplicado por
       # outro canal, mas silencioso se um arquivo antigo nunca rodou. O
@@ -116,6 +152,7 @@ jobs:
       - name: Schema drift check (informativo)
         id: drift-diff
         continue-on-error: true
+        if: ${{ !inputs.inspect_only }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
