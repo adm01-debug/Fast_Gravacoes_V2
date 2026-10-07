@@ -127,8 +127,18 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+
+          configured_ref="$(sed -n 's/^project_id = "\([^"]*\)"/\1/p' supabase/config.toml)"
+          if [ -z "$configured_ref" ] || [ "$SUPABASE_PROJECT_ID" != "$configured_ref" ]; then
+            echo "::error title=Supabase target mismatch::SUPABASE_PROJECT_ID não corresponde ao project_id versionado."
+            exit 1
+          fi
+
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
-          supabase db dump --linked -f /tmp/remote-schema.sql
+          supabase db dump --linked --schema public,app_private -f /tmp/remote-schema.sql
           wc -l /tmp/remote-schema.sql
           echo "===== objetos-chave no remoto ====="
           grep -nE 'app_private|has_role|has_permission|app_role|geo_blocking|csp_violation_reports|rate_limit|purge_old_logs|login_lockouts' /tmp/remote-schema.sql | head -120 || true
@@ -140,6 +150,7 @@ jobs:
           name: remote-schema
           path: /tmp/remote-schema.sql
           if-no-files-found: ignore
+          retention-days: 1
 
       # Verificação de conteúdo: `repair --status applied` registra a versão
       # sem executar o SQL — certo para arquivos cujo DDL já foi aplicado por
