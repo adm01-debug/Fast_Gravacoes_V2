@@ -167,6 +167,16 @@ paths:
       summary: Cria lote
       security: [{ bearerAuth: [] }, { apiKey: [] }]
       responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/lots/{id}:
+    get:
+      summary: Detalhe do lote
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Lote }, '401': { $ref: '#/components/responses/Unauthorized' } }
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
   /functions/v1/erp-api/kpis:
     get:
       summary: KPIs de produção
@@ -181,24 +191,53 @@ paths:
       security: [{ bearerAuth: [], webhookSignature: [] }]
       responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/bitrix24-sync:
+    get:
+      summary: >-
+        OAuth callback do Bitrix24 — o fluxo de autorização redireciona o
+        browser para `?action=oauth-callback&code=...&state=...` via GET.
+        verify_jwt=true no gateway: o redirect também precisa de JWT válido.
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema: { type: string, enum: [oauth-callback] }
+        - in: query
+          name: code
+          schema: { type: string }
+        - in: query
+          name: state
+          schema: { type: string }
+      responses: { '302': { description: Redirect pós-autorização }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
       summary: >-
         Sincronização Bitrix24 — despacha pelo query param obrigatório
         `?action=`. verify_jwt=true no gateway: TODA chamada precisa de
         Bearer JWT válido (ex.: anon key) só para chegar ao handler.
         Autorização por action: `push` exige usuário autenticado (não
-        x-cron-secret), `webhook` exige segredo Bitrix + token
-        (x-webhook-secret ou ?token=) além do JWT do gateway,
-        `oauth-callback` é o redirect de autorização (sem auth de app),
-        demais ações exigem JWT com papel coordinator/manager/admin.
-        Chamada sem action retorna 'Invalid action'.
+        x-cron-secret), `webhook` passa por DUAS checagens —
+        `x-bitrix-webhook-secret` ou `?token=` igual a
+        BITRIX24_WEBHOOK_SECRET, E `x-webhook-secret` ou `?token=` igual a
+        BITRIX24_WEBHOOK_TOKEN (se os valores forem iguais, um único
+        `?token=` satisfaz as duas), demais ações exigem JWT com papel
+        coordinator/manager/admin. Chamada sem action retorna
+        'Invalid action'.
       security: [{ bearerAuth: [] }]
       parameters:
         - in: query
           name: action
           required: true
           schema: { type: string }
-          description: push | webhook | oauth-callback | ações de gestão (ver function)
+          description: push | webhook | ações de gestão (ver function); oauth-callback é GET
+        - in: header
+          name: x-bitrix-webhook-secret
+          required: false
+          schema: { type: string }
+          description: BITRIX24_WEBHOOK_SECRET — 1ª checagem de action=webhook
+        - in: header
+          name: x-webhook-secret
+          required: false
+          schema: { type: string }
+          description: BITRIX24_WEBHOOK_TOKEN — 2ª checagem de action=webhook
       responses: { '200': { description: OK }, '400': { description: Invalid action } }
   /functions/v1/external-db-bridge:
     post:
