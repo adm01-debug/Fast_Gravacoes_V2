@@ -140,12 +140,18 @@ jobs:
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
           # pg_dump rejeita schema inexistente: se app_private faltar no remoto
           # (o caso que este diagnóstico investiga), o seletor completo falha.
-          # Tenta os dois schemas; no fracasso, registra a ausência no log e
-          # cai para public — o artifact sempre sai.
+          # Só cai para public quando o erro é explicitamente schema ausente —
+          # qualquer outra falha propaga, senão um dump incompleto passaria
+          # por inspeção bem-sucedida.
           if ! supabase db dump --linked --schema public,app_private -f /tmp/remote-schema.sql 2>/tmp/dump-err.txt; then
-            echo "::warning::dump com app_private falhou (schema ausente no remoto?) — retentando só public"
-            tail -5 /tmp/dump-err.txt || true
-            supabase db dump --linked --schema public -f /tmp/remote-schema.sql
+            if grep -qiE 'schema.*(does not exist|not found|inexistente|missing|unknown)|no schema matching' /tmp/dump-err.txt; then
+              echo "::warning::app_private ausente no remoto — dump restrito a public"
+              tail -5 /tmp/dump-err.txt || true
+              supabase db dump --linked --schema public -f /tmp/remote-schema.sql
+            else
+              cat /tmp/dump-err.txt
+              exit 1
+            fi
           fi
           wc -l /tmp/remote-schema.sql
           echo "===== objetos-chave no remoto ====="
