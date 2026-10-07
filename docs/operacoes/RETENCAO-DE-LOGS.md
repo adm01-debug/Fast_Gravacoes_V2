@@ -5,14 +5,32 @@ log de segurança/telemetria tem retenção curta; dado de negócio
 (jobs, lotes, manutenção) NUNCA é apagado por rotina — só via purge
 manual do `cron-cleanup` (arquivação de jobs antigos).
 
-## Implementado na function cleanup-security-logs — **sem cron versionado**: o agendamento depende de configuração no painel do Supabase **[PAINEL — não verificado]**. Sem cron, nada abaixo roda sozinho.
+## Implementado: `purge_old_logs()` — migration `20261002130000_csp_reports_retention.sql`
+
+A function `purge_old_logs()` (SECURITY DEFINER, `REVOKE EXECUTE` de anon/
+authenticated/PUBLIC, `GRANT` só para service_role) é agendada
+**versionada** via `pg_cron` como `purge-old-logs-daily` (`15 3 * * *`),
+chamada direto em SQL — não depende de HTTP/JWT. Cobertura real:
 
 | Tabela | Retenção | Observação |
 |---|---|---|
 | `rate_limit_logs` | 7 dias | DELETE `< created_at - 7d` |
-| `security_events` | 30 dias | DELETE `< created_at - 30d` |
-| `login_audit` | 30 dias | DELETE `< created_at - 30d` |
+| `login_audit` | 90 dias | DELETE `< created_at - 90d` |
+| `security_events` | 180 dias | DELETE `< created_at - 180d` |
+| `webhook_logs` | 30 dias | DELETE `< created_at - 30d` |
+| `error_logs` | 30 dias | DELETE `< created_at - 30d` |
+| `geo_blocking_logs` | 60 dias | DELETE `< created_at - 60d` |
+| `push_notifications` | 60 dias | só `status IN ('sent','delivered','failed')` |
+| `query_telemetry` | 14 dias | DELETE `< created_at - 14d` |
+| `telemetry_traces` | 14 dias | DELETE `< created_at - 14d` |
+| `edge_health_history` | 30 dias | DELETE `< captured_at - 30d` |
+| `csp_violation_reports` | 14 dias | condicional (`to_regclass`) — tolerante a ambientes sem a tabela |
 | `blocked_ips` | não expira | `unblocked_at` marcado quando `expires_at` passa |
+
+> A Edge Function `cleanup-security-logs` faz purge próprio sobre
+> `security_events`/`login_audit` com janelas mais curtas — convive com o
+> purge versionado (o mais restritivo vence na prática). Exige
+> `x-cron-secret` + `x-api-key` (`CRON_API_KEY`).
 
 ## Sem retenção hoje — pendências **[PAINEL]**
 
@@ -20,21 +38,9 @@ manual do `cron-cleanup` (arquivação de jobs antigos).
 |---|---|---|
 | `audit_log` | trilha de auditoria de negócio — cresce rápido | 12 meses (manter por LGPD/forense) |
 | `job_status_audit` | trilha por job | seguir `audit_log` |
-| `csp_violation_reports` | ruído alto por design | 90 dias |
 | `machine_health_metrics` / telemetria | série temporal | 12 meses, depois rollup mensal |
 | `webhook_deliveries` / dead letters | cresce com ERP | 90 dias |
 
 ### Como aplicar (quando tiver acesso ao banco)
-Estender `cleanup-security-logs` ou criar migration com `pg_cron`:
-
-```sql
--- Ex.: retenção de 90 dias para relatórios de CSP
-SELECT cron.schedule('csp-reports-retention', '15 3 * * *', $$
-  DELETE FROM public.csp_violation_reports
-  WHERE created_at < now() - interval '90 days';
-$$);
-```
-
-Aplicar o mesmo padrão (`cron.schedule` versionado em migration) para as
-demais tabelas — o cron só fica auditável se estiver em migration, não
-só configurado no painel.
+Estender `purge_old_logs()` numa migration nova — o padrão é `cron.schedule`
+versionado em migration (auditável), não agendamento no painel.

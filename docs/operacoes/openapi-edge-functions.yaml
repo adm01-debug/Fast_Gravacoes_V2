@@ -117,28 +117,71 @@ paths:
         '429': { $ref: '#/components/responses/RateLimited' }
 
   # ============ Integrações ============
-  /functions/v1/erp-api/{resource}:
+  # Paths declarados literais (sem segmento-variável) porque o roteador do
+  # erp-api faz split por `/` — um {resource} único serializaria 'jobs/123'
+  # como 'jobs%2F123' e clientes gerados não alcançariam a rota real.
+  /functions/v1/erp-api/jobs:
     get:
-      summary: >-
-        API pública do ERP — recursos reais sob /erp-api/: jobs (GET/POST,
-        /:id GET/PATCH), machines, operators, production/summary, lots
-        (GET/POST), kpis. POST/PATCH seguem os mesmos paths.
+      summary: Lista jobs do ERP
       security: [{ bearerAuth: [] }, { apiKey: [] }]
-      responses: { '200': { description: Recurso (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
+      responses: { '200': { description: Jobs (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
-      summary: Cria recurso (jobs, lots)
+      summary: Cria job
       security: [{ bearerAuth: [] }, { apiKey: [] }]
       responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/jobs/{id}:
+    get:
+      summary: Detalhe do job
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Job }, '401': { $ref: '#/components/responses/Unauthorized' } }
     patch:
-      summary: Atualiza recurso (/jobs/:id)
+      summary: Atualiza job
       security: [{ bearerAuth: [] }, { apiKey: [] }]
       responses: { '200': { description: Atualizado }, '401': { $ref: '#/components/responses/Unauthorized' } }
     parameters:
       - in: path
-        name: resource
+        name: id
         required: true
         schema: { type: string }
-        description: jobs | jobs/:id | machines | operators | production/summary | lots | kpis
+  /functions/v1/erp-api/machines:
+    get:
+      summary: Lista máquinas
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Máquinas }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/operators:
+    get:
+      summary: Lista operadores
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Operadores }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/production/summary:
+    get:
+      summary: Resumo de produção
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Resumo }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/lots:
+    get:
+      summary: Lista lotes
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Lotes }, '401': { $ref: '#/components/responses/Unauthorized' } }
+    post:
+      summary: Cria lote
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
+  /functions/v1/erp-api/lots/{id}:
+    get:
+      summary: Detalhe do lote
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: Lote }, '401': { $ref: '#/components/responses/Unauthorized' } }
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+  /functions/v1/erp-api/kpis:
+    get:
+      summary: KPIs de produção
+      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      responses: { '200': { description: KPIs }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/webhook-handler:
     post:
       summary: >-
@@ -148,21 +191,53 @@ paths:
       security: [{ bearerAuth: [], webhookSignature: [] }]
       responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/bitrix24-sync:
+    get:
+      summary: >-
+        OAuth callback do Bitrix24 — o fluxo de autorização redireciona o
+        browser para `?action=oauth-callback&code=...&state=...` via GET.
+        verify_jwt=true no gateway: o redirect também precisa de JWT válido.
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema: { type: string, enum: [oauth-callback] }
+        - in: query
+          name: code
+          schema: { type: string }
+        - in: query
+          name: state
+          schema: { type: string }
+      responses: { '302': { description: Redirect pós-autorização }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
       summary: >-
         Sincronização Bitrix24 — despacha pelo query param obrigatório
-        `?action=`: `push` (cron, x-cron-secret), `webhook` (chamada pelo
-        Bitrix, x-webhook-secret/segredo Bitrix), `oauth-callback` (redirect
-        de autorização, sem auth), demais ações de gestão exigem Bearer JWT
-        com papel coordinator/manager/admin. Chamada sem action retorna
+        `?action=`. verify_jwt=true no gateway: TODA chamada precisa de
+        Bearer JWT válido (ex.: anon key) só para chegar ao handler.
+        Autorização por action: `push` exige usuário autenticado (não
+        x-cron-secret), `webhook` passa por DUAS checagens —
+        `x-bitrix-webhook-secret` ou `?token=` igual a
+        BITRIX24_WEBHOOK_SECRET, E `x-webhook-secret` ou `?token=` igual a
+        BITRIX24_WEBHOOK_TOKEN (se os valores forem iguais, um único
+        `?token=` satisfaz as duas), demais ações exigem JWT com papel
+        coordinator/manager/admin. Chamada sem action retorna
         'Invalid action'.
-      security: [{ cronSecret: [] }, { bearerAuth: [] }]
+      security: [{ bearerAuth: [] }]
       parameters:
         - in: query
           name: action
           required: true
           schema: { type: string }
-          description: push | webhook | oauth-callback | ações de gestão (ver function)
+          description: push | webhook | ações de gestão (ver function); oauth-callback é GET
+        - in: header
+          name: x-bitrix-webhook-secret
+          required: false
+          schema: { type: string }
+          description: BITRIX24_WEBHOOK_SECRET — 1ª checagem de action=webhook
+        - in: header
+          name: x-webhook-secret
+          required: false
+          schema: { type: string }
+          description: BITRIX24_WEBHOOK_TOKEN — 2ª checagem de action=webhook
       responses: { '200': { description: OK }, '400': { description: Invalid action } }
   /functions/v1/external-db-bridge:
     post:
@@ -256,9 +331,13 @@ paths:
       responses: { '200': { description: '{ purged }' } }
   /functions/v1/cleanup-security-logs:
     post:
-      summary: Retenção de logs de segurança (7d/30d)
-      security: [{ cronSecret: [] }]
-      responses: { '200': { description: OK } }
+      summary: >-
+        Retenção de logs de segurança. Exige DUAS credenciais juntas:
+        `x-cron-secret` (requireCronSecret, fail-closed) E `x-api-key`
+        igual a `CRON_API_KEY` (ou Bearer com o mesmo valor). Só
+        x-cron-secret retorna 401.
+      security: [{ cronSecret: [], apiKey: [] }]
+      responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/backup-scheduler:
     post:
       summary: >-
