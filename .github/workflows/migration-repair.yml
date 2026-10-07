@@ -111,6 +111,8 @@ jobs:
       # `db diff --linked` compara o schema remoto com a shadow DB montada a
       # partir das migrations locais e publica o SQL de diferença como
       # artifact, permitindo confirmar que não ficou gap antes do deploy.
+      # --schema cobre public E app_private (functions privadas do repo);
+      # sem ele, o diff só olha public e esconde drift em app_private.
       - name: Schema drift check (informativo)
         id: drift-diff
         continue-on-error: true
@@ -118,7 +120,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: supabase db diff --linked > /tmp/schema-drift.sql && { wc -l /tmp/schema-drift.sql; cat /tmp/schema-drift.sql; }
+        run: supabase db diff --linked --schema public,app_private > /tmp/schema-drift.sql && { wc -l /tmp/schema-drift.sql; cat /tmp/schema-drift.sql; }
 
       - name: Upload schema drift artifact
         if: always() && steps.drift-diff.outcome == 'success'
