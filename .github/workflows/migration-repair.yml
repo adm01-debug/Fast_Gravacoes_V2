@@ -57,15 +57,18 @@ jobs:
           echo "===== migration list (antes) ====="
           supabase migration list | tee /tmp/miglist.txt
 
-          # Colunas da tabela: LOCAL │ REMOTE │ TIME (separador | ou │,
-          # conforme a versão do CLI). Versão na coluna REMOTE = já
-          # registrada no remoto; na coluna LOCAL = arquivo no repo.
+          # Saída real do CLI: "`local` | `remote` | `time`" (backticks + |
+          # ASCII). Linha que começa com | tem coluna LOCAL vazia → versão é
+          # do remoto. Demais linhas: 1º campo = local, 2º = remoto.
           REMOTES=(); LOCALS=()
           while read -r line; do
-            line="${line#"${line%%[! ]*}"}"   # ltrim
-            [[ "$line" == [|│]* ]] && line="${line:1}"   # separador inicial
-            IFS='|│' read -r lv rv _rest <<< "$line"
-            lv="$(echo "$lv" | tr -d ' ')"; rv="$(echo "$rv" | tr -d ' ')"
+            ltrim="${line#"${line%%[! ]*}"}"
+            first_is_remote=0
+            case "$ltrim" in \|*) first_is_remote=1;; esac
+            clean="$(printf '%s' "$ltrim" | tr -d '`' | tr '|│' ' ')"
+            read -r c1 c2 _rest <<< "$clean"
+            lv=""; rv=""
+            if [ "$first_is_remote" = 1 ]; then rv="$c1"; else lv="$c1"; rv="$c2"; fi
             [[ "$lv" =~ ^[0-9]{14}$ ]] && LOCALS+=("$lv")
             [[ "$rv" =~ ^[0-9]{14}$ ]] && REMOTES+=("$rv")
           done < /tmp/miglist.txt
