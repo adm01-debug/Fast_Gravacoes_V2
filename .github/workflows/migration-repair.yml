@@ -16,11 +16,17 @@ on:
 permissions:
   contents: read
 
+# Mesmo grupo do deploy.yml para o mesmo ref: serializa repair × deploy,
+# sem cancelar um deploy em andamento.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   repair:
     name: Reconcile migration history
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
@@ -51,10 +57,14 @@ jobs:
           echo "===== migration list (antes) ====="
           supabase migration list | tee /tmp/miglist.txt
 
-          # Colunas da tabela: LOCAL │ REMOTE │ TIME. Versão na coluna REMOTE
-          # = já registrada no remoto; na coluna LOCAL = arquivo no repo.
+          # Colunas da tabela: LOCAL │ REMOTE │ TIME (separador | ou │,
+          # conforme a versão do CLI). Versão na coluna REMOTE = já
+          # registrada no remoto; na coluna LOCAL = arquivo no repo.
           REMOTES=(); LOCALS=()
-          while IFS='│' read -r _ lv rv _rest; do
+          while read -r line; do
+            line="${line#"${line%%[! ]*}"}"   # ltrim
+            [[ "$line" == [|│]* ]] && line="${line:1}"   # separador inicial
+            IFS='|│' read -r lv rv _rest <<< "$line"
             lv="$(echo "$lv" | tr -d ' ')"; rv="$(echo "$rv" | tr -d ' ')"
             [[ "$lv" =~ ^[0-9]{14}$ ]] && LOCALS+=("$lv")
             [[ "$rv" =~ ^[0-9]{14}$ ]] && REMOTES+=("$rv")
@@ -94,3 +104,26 @@ jobs:
 
           echo "===== dry-run pós-repair ====="
           supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
+
+      # Verificação de conteúdo: `repair --status applied` registra a versão
+      # sem executar o SQL — certo para arquivos cujo DDL já foi aplicado por
+      # outro canal, mas silencioso se um arquivo antigo nunca rodou. O
+      # `db diff --linked` compara o schema remoto com a shadow DB montada a
+      # partir das migrations locais e publica o SQL de diferença como
+      # artifact, permitindo confirmar que não ficou gap antes do deploy.
+      - name: Schema drift check (informativo)
+        id: drift-diff
+        continue-on-error: true
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase db diff --linked > /tmp/schema-drift.sql && { wc -l /tmp/schema-drift.sql; cat /tmp/schema-drift.sql; }
+
+      - name: Upload schema drift artifact
+        if: always() && steps.drift-diff.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: schema-drift
+          path: /tmp/schema-drift.sql
+          if-no-files-found: ignore
