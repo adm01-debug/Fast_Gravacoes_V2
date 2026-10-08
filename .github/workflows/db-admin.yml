@@ -257,7 +257,8 @@ jobs:
           run_admin_sql() {
             local resp http
             resp="$(mktemp)"
-            http="$(curl -sS -o "$resp" -w '%{http_code}' -X POST \
+            http="$(curl -sS --connect-timeout 15 --max-time 60 \
+              -o "$resp" -w '%{http_code}' -X POST \
               "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_ID/database/query" \
               -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
               -H 'Content-Type: application/json' \
@@ -274,9 +275,28 @@ jobs:
 
           sql_lit() { printf %s "$1" | sed "s/'/''/g"; }
 
+          # ALTER DATABASE cobre todas as roles (postgres p/ pg_cron,
+          # authenticator p/ triggers em requests PostgREST, service_role).
+          # Com SUPABASE_DB_URL (self-hosted) o ALTER vai no próprio target —
+          # nesse modo o usuário da URL precisa ser dono do banco/superuser.
+          # No hospedado vai pela Management API (pg-meta, supabase_admin).
+          set_guc() {
+            local sql="ALTER DATABASE postgres SET $1 = '$(sql_lit "$2")'"
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" -v ON_ERROR_STOP=1 -c "$sql"
+            else
+              run_admin_sql "$sql" >/dev/null
+            fi
+          }
+
+          echo "== 0/5 probe Management API (role que executa o SQL) =="
+          if [ -z "${DB_URL:-}" ]; then
+            run_admin_sql "SELECT current_user AS executor"
+          fi
+
           echo "== 1/5 app.settings.functions_base_url (não-secreto) =="
-          run_admin_sql \
-            "ALTER DATABASE postgres SET app.settings.functions_base_url = 'https://supabase.atomicabr.com.br/functions/v1'"
+          set_guc app.settings.functions_base_url \
+            'https://supabase.atomicabr.com.br/functions/v1'
 
           echo "== 2/5 CRON_SECRET (edge primeiro, DB depois, com rollback) =="
           # Lê o valor atual do GUC para poder restaurar o edge secret se o
@@ -287,8 +307,7 @@ jobs:
           echo "::add-mask::$CRON_SECRET"
           [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
           supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
-          if ! run_admin_sql \
-            "ALTER DATABASE postgres SET app.settings.cron_secret = '$(sql_lit "$CRON_SECRET")'" >/dev/null
+          if ! set_guc app.settings.cron_secret "$CRON_SECRET"
           then
             echo "::error::ALTER DATABASE falhou após edge secret ser atualizado — revertendo CRON_SECRET."
             if [ -n "$OLD_CRON" ]; then
@@ -309,8 +328,7 @@ jobs:
           fi
           if [ -n "$SVC" ]; then
             echo "::add-mask::$SVC"
-            run_admin_sql \
-              "ALTER DATABASE postgres SET app.settings.service_role_key = '$(sql_lit "$SVC")'" >/dev/null
+            set_guc app.settings.service_role_key "$SVC"
             echo "service_role_key gravado."
           else
             echo "::warning title=service_role_key::Não consegui obter a service_role key automaticamente."
