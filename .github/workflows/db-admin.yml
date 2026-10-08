@@ -248,27 +248,49 @@ jobs:
             fi
           }
 
+          # Executa SQL como supabase_admin via Management API (mesmo backend
+          # do SQL Editor). É o único caminho que aceita ALTER DATABASE no
+          # Supabase hospedado: o usuário postgres via pooler não é
+          # superusuário e ALTER ROLE só cobriria sessões desse role —
+          # triggers em requisições PostgREST (login role `authenticator`)
+          # e chamadas com service_role continuariam sem os GUCs.
+          run_admin_sql() {
+            local resp http
+            resp="$(mktemp)"
+            http="$(curl -sS -o "$resp" -w '%{http_code}' -X POST \
+              "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_ID/database/query" \
+              -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+              -H 'Content-Type: application/json' \
+              --data "$(jq -nc --arg q "$1" '{query: $q}')")"
+            if [ "$http" -ge 300 ] || [ "$http" -lt 200 ]; then
+              echo "::error::Management API /database/query HTTP $http"
+              head -c 500 "$resp" >&2; echo >&2
+              rm -f "$resp"
+              return 1
+            fi
+            cat "$resp"
+            rm -f "$resp"
+          }
+
+          sql_lit() { printf %s "$1" | sed "s/'/''/g"; }
+
           echo "== 1/5 app.settings.functions_base_url (não-secreto) =="
-          # ALTER ROLE (não ALTER DATABASE): no Supabase hospedado o usuário
-          # postgres não é superusuário e ALTER DATABASE ... SET é negado; um
-          # role pode ajustar os próprios GUCs e o pg_cron roda como postgres.
-          run_sql -v ON_ERROR_STOP=1 -c \
-            "ALTER ROLE postgres SET app.settings.functions_base_url = 'https://supabase.atomicabr.com.br/functions/v1'"
+          run_admin_sql \
+            "ALTER DATABASE postgres SET app.settings.functions_base_url = 'https://supabase.atomicabr.com.br/functions/v1'"
 
           echo "== 2/5 CRON_SECRET (edge primeiro, DB depois, com rollback) =="
           # Lê o valor atual do GUC para poder restaurar o edge secret se o
           # ALTER falhar. A ordem edge→DB garante que uma falha na API (a parte
-          # mais frágil) sai sem mudar nada; falha no psql reverte o secret.
+          # mais frágil) sai sem mudar nada; falha no SQL reverte o secret.
           OLD_CRON="$(run_sql -Atqc "SELECT coalesce(current_setting('app.settings.cron_secret', true), '')")"
           CRON_SECRET="$(openssl rand -hex 32)"
           echo "::add-mask::$CRON_SECRET"
           [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
           supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
-          if ! run_sql -v ON_ERROR_STOP=1 -v cron_secret="$CRON_SECRET" <<'SQL'
-            ALTER ROLE postgres SET app.settings.cron_secret = :'cron_secret';
-          SQL
+          if ! run_admin_sql \
+            "ALTER DATABASE postgres SET app.settings.cron_secret = '$(sql_lit "$CRON_SECRET")'" >/dev/null
           then
-            echo "::error::ALTER ROLE falhou após edge secret ser atualizado — revertendo CRON_SECRET."
+            echo "::error::ALTER DATABASE falhou após edge secret ser atualizado — revertendo CRON_SECRET."
             if [ -n "$OLD_CRON" ]; then
               supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" || true
             else
@@ -287,9 +309,8 @@ jobs:
           fi
           if [ -n "$SVC" ]; then
             echo "::add-mask::$SVC"
-            run_sql -v ON_ERROR_STOP=1 -v svc="$SVC" <<'SQL'
-              ALTER ROLE postgres SET app.settings.service_role_key = :'svc';
-          SQL
+            run_admin_sql \
+              "ALTER DATABASE postgres SET app.settings.service_role_key = '$(sql_lit "$SVC")'" >/dev/null
             echo "service_role_key gravado."
           else
             echo "::warning title=service_role_key::Não consegui obter a service_role key automaticamente."
