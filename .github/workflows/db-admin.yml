@@ -1,0 +1,344 @@
+name: DB Admin
+
+# Administração pontual do banco canônico (uoujzvpecohinketylud) que NÃO cabe em
+# migration versionada: GUCs `app.settings.*` (usados pelos triggers/crons que
+# chamam edge functions) e secrets de Edge Function.
+#
+# Roda só via workflow_dispatch — nunca em push/PR.
+#
+#   inspect — só leitura, de qualquer ref: mostra QUAIS GUCs estão setados
+#             (apenas `functions_base_url` aparece em claro; todo o resto sai
+#             mascarado como <set len=N>), lista cron.job + últimos runs,
+#             `supabase secrets list` e `supabase functions list`.
+#   apply   — só na main: grava app.settings.functions_base_url
+#             (não-secreto), gera um CRON_SECRET novo e grava na edge function
+#             ANTES do GUC (rollback do edge secret se o ALTER falhar),
+#             tenta app.settings.service_role_key via `supabase projects
+#             api-keys` (ou o repo secret SUPABASE_SERVICE_ROLE_KEY, se
+#             existir), define CSP_REPORT_ALLOWED_HOSTS na edge csp-report e
+#             reinstala o cron `auto-promote-jobs-fallback` (a migration só o
+#             agenda se o GUC já existia na época).
+#
+# Restrição: `apply` só roda a partir da main — um dispatch de branch usa o
+# config.toml DA BRANCH na validação de alvo, então o gate `ref == main`
+# impede que uma branch editada redirecione as escritas privilegiadas.
+#
+# Segurança: valores secretos nunca são impressos — ::add-mask:: antes de
+# qualquer uso e a inspeção só reporta <set len=N> / <empty> / <unset>.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'inspect (qualquer ref, só leitura) ou apply (só main)'
+        type: choice
+        options:
+          - inspect
+          - apply
+        default: inspect
+        required: true
+
+permissions:
+  contents: read
+
+# Mesmo grupo do deploy.yml/migration-repair.yml: serializa com deploys.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  admin:
+    name: DB Admin (${{ inputs.mode }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1 # v1
+        with:
+          version: latest
+
+      - name: Ensure psql
+        run: |
+          if ! command -v psql >/dev/null; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          fi
+          psql --version
+
+      - name: Validate target and resolve DB host
+        id: conn
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          # Override opcional: connection string completa (host:self-hosted ou
+          # pooler custom). Quando setada, tem precedência sobre a descoberta.
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
+          : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
+          : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
+
+          configured_ref="$(sed -n 's/^project_id = "\([^"]*\)"/\1/p' supabase/config.toml)"
+          if [ -z "$configured_ref" ] || [ "$SUPABASE_PROJECT_ID" != "$configured_ref" ]; then
+            echo "::error title=Supabase target mismatch::SUPABASE_PROJECT_ID não corresponde ao project_id versionado."
+            exit 1
+          fi
+
+          # Override explícito vence a descoberta (self-hosted / host custom).
+          if [ -n "${SUPABASE_DB_URL:-}" ]; then
+            if timeout 15 psql "$SUPABASE_DB_URL" -Atqc 'select 1' >/dev/null 2>&1; then
+              echo "conectado via SUPABASE_DB_URL"
+              echo "DB_URL=$SUPABASE_DB_URL" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            echo "::warning::SUPABASE_DB_URL definida mas não respondeu — tentando descoberta padrão."
+          fi
+
+          REGION="$(supabase projects list --output json \
+            | jq -r --arg ref "$SUPABASE_PROJECT_ID" \
+                '.[] | select((.id? // .ref? // "") == $ref) | (.region // "")' \
+            | head -1)"
+          echo "region do projeto: ${REGION:-<desconhecida>}"
+          # Alguns tenants devolvem nome amigável ("South America (Sao Paulo)")
+          # em vez do slug; normaliza os casos conhecidos.
+          case "$REGION" in
+            *[Ss]ao*Paulo*|*sa-east*) REGION=sa-east-1 ;;
+            *[Uu]S*East*)            REGION=us-east-1 ;;
+          esac
+
+          # Candidatos: host direto (IPv6-only — geralmente falha em runner
+          # GitHub IPv4) e poolers aws-0/aws-1 na região do projeto.
+          try_conn() { # $1 host, $2 user
+            PGPASSWORD="$SUPABASE_DB_PASSWORD" timeout 15 psql \
+              "host=$1 port=5432 dbname=postgres user=$2 sslmode=require connect_timeout=10" \
+              -Atqc 'select 1' >/dev/null 2>&1
+          }
+
+          HOST=""; USER=""
+          if try_conn "db.${SUPABASE_PROJECT_ID}.supabase.co" "postgres"; then
+            HOST="db.${SUPABASE_PROJECT_ID}.supabase.co"; USER="postgres"
+          elif [ -n "$REGION" ] && try_conn "aws-0-${REGION}.pooler.supabase.com" "postgres.${SUPABASE_PROJECT_ID}"; then
+            HOST="aws-0-${REGION}.pooler.supabase.com"; USER="postgres.${SUPABASE_PROJECT_ID}"
+          elif [ -n "$REGION" ] && try_conn "aws-1-${REGION}.pooler.supabase.com" "postgres.${SUPABASE_PROJECT_ID}"; then
+            HOST="aws-1-${REGION}.pooler.supabase.com"; USER="postgres.${SUPABASE_PROJECT_ID}"
+          else
+            {
+              echo "### DB unreachable"
+              echo "Nenhum endpoint respondeu (host direto + poolers). Se o banco"
+              echo "está atrás de host próprio/self-hosted, adicione o repo secret"
+              echo "\`SUPABASE_DB_URL\` com a connection string completa e rode de novo."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=DB unreachable::Configure SUPABASE_DB_URL ou verifique o host."
+            exit 1
+          fi
+
+          echo "conectado via $HOST"
+          {
+            echo "PGHOST=$HOST"
+            echo "PGUSER=$USER"
+            echo "PGDATABASE=postgres"
+            echo "PGSSLMODE=require"
+          } >> "$GITHUB_ENV"
+
+      - name: Inspect — GUCs, crons, tabelas
+        if: ${{ inputs.mode == 'inspect' }}
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+
+          run_sql() {
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" "$@"
+            else
+              psql "$@"
+            fi
+          }
+
+          echo "===== app.settings.* (só functions_base_url em claro) ====="
+          # Qualquer GUC diferente de functions_base_url pode conter
+          # credencial — o valor nunca sai do banco, só o status.
+          run_sql -v ON_ERROR_STOP=1 <<'SQL'
+            SELECT d.datname,
+                   substr(cfg, 1, strpos(cfg, '=') - 1) AS guc,
+                   CASE
+                     WHEN substr(cfg, 1, strpos(cfg, '=') - 1) = 'app.settings.functions_base_url'
+                     THEN substr(cfg, strpos(cfg, '=') + 1)
+                     ELSE CASE WHEN substr(cfg, strpos(cfg, '=') + 1) = ''
+                          THEN '<empty>'
+                          ELSE '<set len=' || length(substr(cfg, strpos(cfg, '=') + 1)) || '>'
+                     END
+                   END AS value
+            FROM pg_db_role_setting s
+            JOIN pg_database d ON d.oid = s.setdatabase,
+            LATERAL unnest(s.setconfig) AS cfg
+            WHERE cfg LIKE 'app.settings.%'
+            ORDER BY 1, 2;
+          SQL
+
+          echo "===== current_setting() nesta sessão ====="
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL'
+            SELECT 'app.settings.functions_base_url = ' ||
+                   coalesce(current_setting('app.settings.functions_base_url', true), '<unset>');
+            SELECT 'app.settings.cron_secret = ' ||
+                   CASE WHEN current_setting('app.settings.cron_secret', true) IS NULL THEN '<unset>'
+                        WHEN current_setting('app.settings.cron_secret', true) = '' THEN '<empty>'
+                        ELSE '<set len=' || length(current_setting('app.settings.cron_secret', true)) || '>' END;
+            SELECT 'app.settings.service_role_key = ' ||
+                   CASE WHEN current_setting('app.settings.service_role_key', true) IS NULL THEN '<unset>'
+                        WHEN current_setting('app.settings.service_role_key', true) = '' THEN '<empty>'
+                        ELSE '<set len=' || length(current_setting('app.settings.service_role_key', true)) || '>' END;
+          SQL
+
+          echo "===== pg_cron jobs ====="
+          if run_sql -Atqc "SELECT to_regnamespace('cron') IS NOT NULL" | grep -qx t; then
+            run_sql -v ON_ERROR_STOP=1 -c \
+              "SELECT jobid, jobname, schedule, active FROM cron.job ORDER BY jobid"
+            echo "----- últimos 15 runs -----"
+            run_sql -v ON_ERROR_STOP=1 -c \
+              "SELECT j.jobname, r.status, left(coalesce(r.return_message,''),120) AS msg, r.start_time
+               FROM cron.job_run_details r
+               LEFT JOIN cron.job j ON j.jobid = r.jobid
+               ORDER BY r.start_time DESC NULLS LAST LIMIT 15" || true
+          else
+            echo "pg_cron não está instalado neste banco."
+          fi
+
+          echo "===== tabelas de telemetria ====="
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'csp_violation_reports: ' || CASE WHEN to_regclass('public.csp_violation_reports') IS NULL
+              THEN 'tabela ausente'
+              ELSE (SELECT count(*)::text FROM public.csp_violation_reports) || ' linhas' END;
+          SQL
+
+          echo "===== edge function secrets (nomes) ====="
+          supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
+
+          echo "===== edge functions ====="
+          supabase functions list --project-ref "$SUPABASE_PROJECT_ID" || true
+
+      - name: Gate — apply só na main
+        if: ${{ inputs.mode == 'apply' && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error title=Apply bloqueado::mode=apply só pode ser disparado a partir da main (a validação de alvo usa o config.toml do ref disparado)."
+          exit 1
+
+      - name: Apply — GUCs e edge secrets
+        if: ${{ inputs.mode == 'apply' && github.ref == 'refs/heads/main' }}
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          run_sql() {
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" "$@"
+            else
+              psql "$@"
+            fi
+          }
+
+          echo "== 1/5 app.settings.functions_base_url (não-secreto) =="
+          run_sql -v ON_ERROR_STOP=1 -c \
+            "ALTER DATABASE postgres SET app.settings.functions_base_url = 'https://supabase.atomicabr.com.br/functions/v1'"
+
+          echo "== 2/5 CRON_SECRET (edge primeiro, DB depois, com rollback) =="
+          # Lê o valor atual do GUC para poder restaurar o edge secret se o
+          # ALTER falhar. A ordem edge→DB garante que uma falha na API (a parte
+          # mais frágil) sai sem mudar nada; falha no psql reverte o secret.
+          OLD_CRON="$(run_sql -Atqc "SELECT coalesce(current_setting('app.settings.cron_secret', true), '')")"
+          CRON_SECRET="$(openssl rand -hex 32)"
+          echo "::add-mask::$CRON_SECRET"
+          [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
+          supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
+          if ! run_sql -v ON_ERROR_STOP=1 -v cron_secret="$CRON_SECRET" <<'SQL'
+            ALTER DATABASE postgres SET app.settings.cron_secret = :'cron_secret';
+          SQL
+          then
+            echo "::error::ALTER DATABASE falhou após edge secret ser atualizado — revertendo CRON_SECRET."
+            if [ -n "$OLD_CRON" ]; then
+              supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" || true
+            else
+              supabase secrets unset CRON_SECRET --project-ref "$SUPABASE_PROJECT_ID" || true
+            fi
+            exit 1
+          fi
+
+          echo "== 3/5 app.settings.service_role_key =="
+          SVC="${SUPABASE_SERVICE_ROLE_KEY:-}"
+          if [ -z "$SVC" ]; then
+            echo "secret SUPABASE_SERVICE_ROLE_KEY ausente; tentando Management API…"
+            SVC="$(supabase projects api-keys --project-ref "$SUPABASE_PROJECT_ID" --output json 2>/dev/null \
+              | jq -r '.[] | select((.name? // "") == "service_role") | (.api_key // "")' \
+              | head -1 || true)"
+          fi
+          if [ -n "$SVC" ]; then
+            echo "::add-mask::$SVC"
+            run_sql -v ON_ERROR_STOP=1 -v svc="$SVC" <<'SQL'
+              ALTER DATABASE postgres SET app.settings.service_role_key = :'svc';
+          SQL
+            echo "service_role_key gravado."
+          else
+            echo "::warning title=service_role_key::Não consegui obter a service_role key automaticamente."
+            {
+              echo "### Ação manual necessária"
+              echo "Adicione o repo secret \`SUPABASE_SERVICE_ROLE_KEY\` (Dashboard → Project Settings → API → service_role) e rode este workflow com \`mode=apply\` de novo."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo "== 4/5 CSP_REPORT_ALLOWED_HOSTS =="
+          supabase secrets set \
+            "CSP_REPORT_ALLOWED_HOSTS=fastgravacoes.com.br,fast-gravacoes-v2.vercel.app" \
+            --project-ref "$SUPABASE_PROJECT_ID"
+
+          echo "== 5/5 reconcilia cron auto-promote-jobs-fallback =="
+          # A migration 20261001143100 só agenda o job quando o GUC já existia
+          # na época — quem configurou depois fica sem o fallback. Reexecuta o
+          # mesmo bloco idempotente agora que os GUCs estão gravados.
+          run_sql -v ON_ERROR_STOP=1 <<'SQL'
+            DO $$
+            DECLARE
+              v_base_url text := current_setting('app.settings.functions_base_url', true);
+            BEGIN
+              IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+                BEGIN
+                  PERFORM cron.unschedule('auto-promote-jobs-fallback');
+                EXCEPTION WHEN OTHERS THEN
+                  NULL;
+                END;
+                IF coalesce(v_base_url, '') <> '' THEN
+                  PERFORM cron.schedule(
+                    'auto-promote-jobs-fallback',
+                    '*/5 * * * *',
+                    format(
+                      'SELECT net.http_post(url := %L || ''/auto-promote-jobs'', headers := jsonb_build_object(''Content-Type'', ''application/json'', ''Authorization'', ''Bearer '' || coalesce(current_setting(''app.settings.service_role_key'', true), ''''), ''x-cron-secret'', coalesce(current_setting(''app.settings.cron_secret'', true), '''')), body := ''{}''::jsonb)',
+                      v_base_url
+                    )
+                  );
+                END IF;
+              END IF;
+            END $$;
+            SELECT jobid, jobname, schedule, active FROM cron.job
+             WHERE jobname = 'auto-promote-jobs-fallback';
+          SQL
+
+          echo "===== verificação ====="
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL'
+            SELECT 'app.settings.functions_base_url = ' ||
+                   coalesce(current_setting('app.settings.functions_base_url', true), '<unset>');
+            SELECT 'app.settings.cron_secret = ' ||
+                   CASE WHEN current_setting('app.settings.cron_secret', true) IS NULL THEN '<unset>'
+                        ELSE '<set>' END;
+            SELECT 'app.settings.service_role_key = ' ||
+                   CASE WHEN current_setting('app.settings.service_role_key', true) IS NULL THEN '<unset>'
+                        ELSE '<set>' END;
+          SQL
+          supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
