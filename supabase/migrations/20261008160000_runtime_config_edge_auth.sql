@@ -17,6 +17,21 @@ CREATE TABLE IF NOT EXISTS app_private.runtime_config (
   value text NOT NULL
 );
 
+-- Defesa explícita: ninguém lê a tabela fora do owner (postgres) e dos
+-- roles com GRANT pontual (dono de cron job convertido pelo db-admin).
+-- O schema segue com USAGE para quem chama app_private.* via definer/RLS.
+REVOKE ALL ON app_private.runtime_config FROM PUBLIC;
+DO $$
+DECLARE
+  v_role text;
+BEGIN
+  FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated', 'service_role'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = v_role) THEN
+      EXECUTE format('REVOKE ALL ON app_private.runtime_config FROM %I', v_role);
+    END IF;
+  END LOOP;
+END $$;
+
 -- Helper de leitura: retorna NULL quando a key não existe — mesmo
 -- comportamento de current_setting(..., true) com GUC ausente.
 CREATE OR REPLACE FUNCTION app_private.runtime_config_get(p_key text)
