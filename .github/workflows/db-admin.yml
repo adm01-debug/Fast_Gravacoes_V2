@@ -211,6 +211,21 @@ jobs:
             echo "pg_cron não está instalado neste banco."
           fi
 
+          echo "===== funções que leem app.settings (GUCs anexados) ====="
+          # Trigger SECURITY DEFINER em sessão PostgREST (authenticator) só
+          # enxerga GUC via proconfig (ALTER FUNCTION ... SET), não ALTER ROLE.
+          run_sql -v ON_ERROR_STOP=1 <<'SQL' || true
+            SELECT n.nspname || '.' || p.proname AS fn,
+                   CASE WHEN p.proconfig IS NULL THEN '(sem GUCs anexados)'
+                        ELSE (SELECT string_agg(substr(c, 1, strpos(c, '=') - 1), ', ' ORDER BY 1)
+                              FROM unnest(p.proconfig) c)
+                   END AS gucs
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE p.prosrc LIKE '%app.settings.%'
+            ORDER BY 1;
+          SQL
+
           echo "===== tabelas de telemetria ====="
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
             SELECT 'csp_violation_reports: ' || CASE WHEN to_regclass('public.csp_violation_reports') IS NULL
@@ -248,77 +263,17 @@ jobs:
             fi
           }
 
-          # Executa SQL como supabase_admin via Management API (mesmo backend
-          # do SQL Editor). É o único caminho que aceita ALTER DATABASE no
-          # Supabase hospedado: o usuário postgres via pooler não é
-          # superusuário e ALTER ROLE só cobriria sessões desse role —
-          # triggers em requisições PostgREST (login role `authenticator`)
-          # e chamadas com service_role continuariam sem os GUCs.
-          run_admin_sql() {
-            local resp http
-            resp="$(mktemp)"
-            http="$(curl -sS --connect-timeout 15 --max-time 60 \
-              -o "$resp" -w '%{http_code}' -X POST \
-              "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_ID/database/query" \
-              -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
-              -H 'Content-Type: application/json' \
-              --data "$(jq -nc --arg q "$1" '{query: $q}')")"
-            if [ "$http" -ge 300 ] || [ "$http" -lt 200 ]; then
-              echo "::error::Management API /database/query HTTP $http"
-              head -c 500 "$resp" >&2; echo >&2
-              rm -f "$resp"
-              return 1
-            fi
-            cat "$resp"
-            rm -f "$resp"
-          }
+          # ALTER DATABASE precisa de superuser/dono do banco e o usuário
+          # postgres do Supabase hospedado não é (verificado no run:
+          # pooler e Management API /database/query executam como postgres).
+          # Cobertura equivalente sem superuser:
+          #  - ALTER ROLE CURRENT_USER SET: pg_cron (o job roda na sessão do role que o agendou)
+          #  - ALTER FUNCTION ... SET: triggers SECURITY DEFINER executados em
+          #    sessões PostgREST (login authenticator) — o dono da função pode
+          #    anexar GUCs escopados à chamada, sem expor secrets a todo login.
+          BASE_URL='https://supabase.atomicabr.com.br/functions/v1'
 
-          sql_lit() { printf %s "$1" | sed "s/'/''/g"; }
-
-          # ALTER DATABASE cobre todas as roles (postgres p/ pg_cron,
-          # authenticator p/ triggers em requests PostgREST, service_role).
-          # Com SUPABASE_DB_URL (self-hosted) o ALTER vai no próprio target —
-          # nesse modo o usuário da URL precisa ser dono do banco/superuser.
-          # No hospedado vai pela Management API (pg-meta, supabase_admin).
-          set_guc() {
-            local sql="ALTER DATABASE postgres SET $1 = '$(sql_lit "$2")'"
-            if [ -n "${DB_URL:-}" ]; then
-              psql "$DB_URL" -v ON_ERROR_STOP=1 -c "$sql"
-            else
-              run_admin_sql "$sql" >/dev/null
-            fi
-          }
-
-          echo "== 0/5 probe Management API (role que executa o SQL) =="
-          if [ -z "${DB_URL:-}" ]; then
-            run_admin_sql "SELECT current_user AS executor"
-          fi
-
-          echo "== 1/5 app.settings.functions_base_url (não-secreto) =="
-          set_guc app.settings.functions_base_url \
-            'https://supabase.atomicabr.com.br/functions/v1'
-
-          echo "== 2/5 CRON_SECRET (edge primeiro, DB depois, com rollback) =="
-          # Lê o valor atual do GUC para poder restaurar o edge secret se o
-          # ALTER falhar. A ordem edge→DB garante que uma falha na API (a parte
-          # mais frágil) sai sem mudar nada; falha no SQL reverte o secret.
-          OLD_CRON="$(run_sql -Atqc "SELECT coalesce(current_setting('app.settings.cron_secret', true), '')")"
-          CRON_SECRET="$(openssl rand -hex 32)"
-          echo "::add-mask::$CRON_SECRET"
-          [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
-          supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
-          if ! set_guc app.settings.cron_secret "$CRON_SECRET"
-          then
-            echo "::error::ALTER DATABASE falhou após edge secret ser atualizado — revertendo CRON_SECRET."
-            if [ -n "$OLD_CRON" ]; then
-              supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" || true
-            else
-              supabase secrets unset CRON_SECRET --project-ref "$SUPABASE_PROJECT_ID" || true
-            fi
-            exit 1
-          fi
-
-          echo "== 3/5 app.settings.service_role_key =="
+          echo "== 1/6 resolve service_role_key (leitura) =="
           SVC="${SUPABASE_SERVICE_ROLE_KEY:-}"
           if [ -z "$SVC" ]; then
             echo "secret SUPABASE_SERVICE_ROLE_KEY ausente; tentando Management API…"
@@ -328,26 +283,86 @@ jobs:
           fi
           if [ -n "$SVC" ]; then
             echo "::add-mask::$SVC"
-            set_guc app.settings.service_role_key "$SVC"
-            echo "service_role_key gravado."
           else
-            echo "::warning title=service_role_key::Não consegui obter a service_role key automaticamente."
+            echo "::warning title=service_role_key::Não consegui obter a service_role key — GUCs dele serão pulados; o resto aplica."
             {
               echo "### Ação manual necessária"
               echo "Adicione o repo secret \`SUPABASE_SERVICE_ROLE_KEY\` (Dashboard → Project Settings → API → service_role) e rode este workflow com \`mode=apply\` de novo."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
-          echo "== 4/5 CSP_REPORT_ALLOWED_HOSTS =="
+          echo "== 2/6 CRON_SECRET → edge secret =="
+          # Guarda o valor atual do GUC para restaurar o edge secret se o SQL
+          # falhar. A ordem edge→DB sai limpa quando a API (a parte mais
+          # frágil) falha; falha no SQL reverte o secret.
+          OLD_CRON="$(run_sql -Atqc "SELECT coalesce(current_setting('app.settings.cron_secret', true), '')")"
+          CRON_SECRET="$(openssl rand -hex 32)"
+          echo "::add-mask::$CRON_SECRET"
+          [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
+          supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
+
+          echo "== 3/6 tx: GUCs (ALTER ROLE CURRENT_USER + ALTER FUNCTION) =="
+          # Um único DO block = uma transação: ou aplica tudo ou nada —
+          # nunca fica função com cron_secret velho contra edge secret novo.
+          # service_role_key só é anexado quando resolvido (SVC não vazio).
+          if ! run_sql -v ON_ERROR_STOP=1 -v base_url="$BASE_URL" -v cron_secret="$CRON_SECRET" -v svc="$SVC" <<'SQL'
+            SET app.settings.functions_base_url = :'base_url';
+            SET app.settings.cron_secret = :'cron_secret';
+            SET app.settings.service_role_key = :'svc';
+            DO $$
+            DECLARE
+              fn      text;
+              v_fbase text := current_setting('app.settings.functions_base_url', true);
+              v_cron  text := current_setting('app.settings.cron_secret', true);
+              v_svc   text := current_setting('app.settings.service_role_key', true);
+            BEGIN
+              EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.functions_base_url = %L', v_fbase);
+              EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.cron_secret = %L', v_cron);
+              IF coalesce(v_svc, '') <> '' THEN
+                EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.service_role_key = %L', v_svc);
+              END IF;
+              FOREACH fn IN ARRAY ARRAY[
+                'public.trigger_send_tpm_email()',
+                'public.notify_loss_risk()',
+                'public.trigger_auto_promotion()'
+              ] LOOP
+                IF to_regprocedure(fn) IS NOT NULL THEN
+                  EXECUTE format('ALTER FUNCTION %s SET app.settings.functions_base_url = %L', fn, v_fbase);
+                  EXECUTE format('ALTER FUNCTION %s SET app.settings.cron_secret = %L', fn, v_cron);
+                  IF coalesce(v_svc, '') <> '' THEN
+                    EXECUTE format('ALTER FUNCTION %s SET app.settings.service_role_key = %L', fn, v_svc);
+                  END IF;
+                  RAISE NOTICE '%: GUCs anexados', fn;
+                ELSE
+                  RAISE NOTICE '% ausente neste banco — pulando', fn;
+                END IF;
+              END LOOP;
+            END $$;
+          SQL
+          then
+            echo "::error::transação de GUCs falhou após edge secret ser atualizado — revertendo CRON_SECRET."
+            if [ -n "$OLD_CRON" ]; then
+              supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" || true
+            else
+              supabase secrets unset CRON_SECRET --project-ref "$SUPABASE_PROJECT_ID" || true
+            fi
+            exit 1
+          fi
+
+          echo "== 4/6 CSP_REPORT_ALLOWED_HOSTS =="
           supabase secrets set \
             "CSP_REPORT_ALLOWED_HOSTS=fastgravacoes.com.br,fast-gravacoes-v2.vercel.app" \
             --project-ref "$SUPABASE_PROJECT_ID"
 
-          echo "== 5/5 reconcilia cron auto-promote-jobs-fallback =="
+          echo "== 5/6 reconcilia cron auto-promote-jobs-fallback =="
           # A migration 20261001143100 só agenda o job quando o GUC já existia
           # na época — quem configurou depois fica sem o fallback. Reexecuta o
           # mesmo bloco idempotente agora que os GUCs estão gravados.
-          run_sql -v ON_ERROR_STOP=1 <<'SQL'
+          if ! run_sql -Atqc "SELECT to_regnamespace('cron') IS NOT NULL" | grep -qx t; then
+            echo "pg_cron ausente neste banco — pulando reconciliação."
+          else
+          run_sql -v ON_ERROR_STOP=1 -v base_url="$BASE_URL" <<'SQL'
+            SET app.settings.functions_base_url = :'base_url';
             DO $$
             DECLARE
               v_base_url text := current_setting('app.settings.functions_base_url', true);
@@ -373,8 +388,9 @@ jobs:
             SELECT jobid, jobname, schedule, active FROM cron.job
              WHERE jobname = 'auto-promote-jobs-fallback';
           SQL
+          fi
 
-          echo "===== verificação ====="
+          echo "== 6/6 verificação =="
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL'
             SELECT 'app.settings.functions_base_url = ' ||
                    coalesce(current_setting('app.settings.functions_base_url', true), '<unset>');
@@ -384,5 +400,8 @@ jobs:
             SELECT 'app.settings.service_role_key = ' ||
                    CASE WHEN current_setting('app.settings.service_role_key', true) IS NULL THEN '<unset>'
                         ELSE '<set>' END;
+            SELECT 'funções com GUCs: ' ||
+                   coalesce((SELECT string_agg(proname, ', ' ORDER BY proname)
+                             FROM pg_proc WHERE proconfig::text LIKE '%app.settings%'), '(nenhuma)');
           SQL
           supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
