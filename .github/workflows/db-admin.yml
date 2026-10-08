@@ -267,7 +267,7 @@ jobs:
           # postgres do Supabase hospedado não é (verificado no run:
           # pooler e Management API /database/query executam como postgres).
           # Cobertura equivalente sem superuser:
-          #  - ALTER ROLE postgres SET: pg_cron (cada run abre sessão postgres)
+          #  - ALTER ROLE CURRENT_USER SET: pg_cron (o job roda na sessão do role que o agendou)
           #  - ALTER FUNCTION ... SET: triggers SECURITY DEFINER executados em
           #    sessões PostgREST (login authenticator) — o dono da função pode
           #    anexar GUCs escopados à chamada, sem expor secrets a todo login.
@@ -301,7 +301,7 @@ jobs:
           [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
           supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
 
-          echo "== 3/6 tx: GUCs (ALTER ROLE postgres + ALTER FUNCTION) =="
+          echo "== 3/6 tx: GUCs (ALTER ROLE CURRENT_USER + ALTER FUNCTION) =="
           # Um único DO block = uma transação: ou aplica tudo ou nada —
           # nunca fica função com cron_secret velho contra edge secret novo.
           # service_role_key só é anexado quando resolvido (SVC não vazio).
@@ -316,10 +316,10 @@ jobs:
               v_cron  text := current_setting('app.settings.cron_secret', true);
               v_svc   text := current_setting('app.settings.service_role_key', true);
             BEGIN
-              EXECUTE format('ALTER ROLE postgres SET app.settings.functions_base_url = %L', v_fbase);
-              EXECUTE format('ALTER ROLE postgres SET app.settings.cron_secret = %L', v_cron);
+              EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.functions_base_url = %L', v_fbase);
+              EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.cron_secret = %L', v_cron);
               IF coalesce(v_svc, '') <> '' THEN
-                EXECUTE format('ALTER ROLE postgres SET app.settings.service_role_key = %L', v_svc);
+                EXECUTE format('ALTER ROLE CURRENT_USER SET app.settings.service_role_key = %L', v_svc);
               END IF;
               FOREACH fn IN ARRAY ARRAY[
                 'public.trigger_send_tpm_email()',
@@ -358,6 +358,9 @@ jobs:
           # A migration 20261001143100 só agenda o job quando o GUC já existia
           # na época — quem configurou depois fica sem o fallback. Reexecuta o
           # mesmo bloco idempotente agora que os GUCs estão gravados.
+          if ! run_sql -Atqc "SELECT to_regnamespace('cron') IS NOT NULL" | grep -qx t; then
+            echo "pg_cron ausente neste banco — pulando reconciliação."
+          else
           run_sql -v ON_ERROR_STOP=1 -v base_url="$BASE_URL" <<'SQL'
             SET app.settings.functions_base_url = :'base_url';
             DO $$
@@ -385,13 +388,9 @@ jobs:
             SELECT jobid, jobname, schedule, active FROM cron.job
              WHERE jobname = 'auto-promote-jobs-fallback';
           SQL
+          fi
 
-          echo "== 6/6 CSP_REPORT_ALLOWED_HOSTS =="
-          supabase secrets set \
-            "CSP_REPORT_ALLOWED_HOSTS=fastgravacoes.com.br,fast-gravacoes-v2.vercel.app" \
-            --project-ref "$SUPABASE_PROJECT_ID"
-
-          echo "===== verificação ====="
+          echo "== 6/6 verificação =="
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL'
             SELECT 'app.settings.functions_base_url = ' ||
                    coalesce(current_setting('app.settings.functions_base_url', true), '<unset>');
