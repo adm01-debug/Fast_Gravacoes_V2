@@ -211,6 +211,16 @@ jobs:
             echo "pg_cron não está instalado neste banco."
           fi
 
+          echo "===== app_private.runtime_config (mascarado) ====="
+          if run_sql -Atqc "SELECT to_regclass('app_private.runtime_config') IS NOT NULL" | grep -qx t; then
+            run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+              SELECT key || ' = <set len=' || length(value) || '>'
+              FROM app_private.runtime_config ORDER BY key;
+          SQL
+          else
+            echo "tabela ausente — cron jobs não têm fonte de config."
+          fi
+
           echo "===== funções que leem app.settings (GUCs anexados) ====="
           # Trigger SECURITY DEFINER em sessão PostgREST (authenticator) só
           # enxerga GUC via proconfig (ALTER FUNCTION ... SET), não ALTER ROLE.
@@ -357,6 +367,15 @@ jobs:
                     END IF;
                     RAISE NOTICE '%: GUCs anexados', fn;
                   EXCEPTION WHEN OTHERS THEN
+                    -- Se a função já tinha cron_secret anexado, deixar velho
+                    -- contra edge novo = 401 silencioso → aborta (rollback).
+                    IF EXISTS (
+                      SELECT 1 FROM pg_proc p
+                      WHERE p.oid = to_regprocedure(fn)
+                        AND p.proconfig::text LIKE '%app.settings.cron_secret%'
+                    ) THEN
+                      RAISE;
+                    END IF;
                     RAISE WARNING '%: ALTER FUNCTION negado (%): triggers seguirão sem GUCs', fn, SQLERRM;
                   END;
                 ELSE
@@ -366,8 +385,14 @@ jobs:
 
               -- 2) cron jobs: current_setting('app.settings.*') → runtime_config
               IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
-                FOR r IN SELECT jobid, jobname, command FROM cron.job
+                FOR r IN SELECT jobid, jobname, username, command FROM cron.job
                          WHERE command LIKE '%app.settings.%' LOOP
+                  -- job de outro role precisa ler a tabela no próximo run
+                  IF r.username IS NOT NULL AND r.username <> current_user THEN
+                    EXECUTE format('GRANT USAGE ON SCHEMA app_private TO %I', r.username);
+                    EXECUTE format('GRANT SELECT ON app_private.runtime_config TO %I', r.username);
+                    RAISE NOTICE 'grant SELECT em runtime_config p/ %', r.username;
+                  END IF;
                   v_cmd := r.command;
                   v_cmd := replace(v_cmd,
                     'current_setting(''app.settings.functions_base_url'', true)',
