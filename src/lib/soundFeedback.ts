@@ -24,16 +24,21 @@ function getAudioContext(): AudioContext | null {
 }
 
 function currentUserId(): string | null {
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && /^sb-.*-auth-token$/.test(key)) {
-        const session = JSON.parse(localStorage.getItem(key) ?? '{}');
-        return session?.user?.id ?? session?.currentSession?.user?.id ?? null;
+  // O client Supabase persiste a sessão em sessionStorage
+  // (src/integrations/supabase/client.ts) — varre os dois storages.
+  for (const storage of [localStorage, sessionStorage]) {
+    try {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key && /^sb-.*-auth-token$/.test(key)) {
+          const session = JSON.parse(storage.getItem(key) ?? '{}');
+          const id = session?.user?.id ?? session?.currentSession?.user?.id;
+          if (id) return id;
+        }
       }
+    } catch {
+      // storage indisponível — tenta o próximo
     }
-  } catch {
-    // ignora
   }
   return null;
 }

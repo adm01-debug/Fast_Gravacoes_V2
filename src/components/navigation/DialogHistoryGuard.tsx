@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { MODAL_PUSHED_STATE } from '@/hooks/use-modal-param';
+import { urlOwnedDialogCount } from '@/hooks/use-modal-param';
 
 const SENTINEL_KEY = 'dialog-guard';
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do
@@ -12,15 +12,13 @@ function openDialogs(): HTMLElement[] {
   return Array.from(document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR));
 }
 
-function urlOwnsModal(): boolean {
-  // Modais abertos pela UI via useModalParam já possuem entrada própria no
-  // histórico — sentinela duplicada faria o voltar reabrir o modal. Modais
-  // de deep-link (sem PUSH do hook) continuam precisando da sentinela.
-  const state = history.state as { usr?: Record<string, unknown> } | null;
-  return (
-    new URLSearchParams(window.location.search).has('modal') &&
-    typeof state?.usr?.[MODAL_PUSHED_STATE] === 'string'
-  );
+function unownedDialogs(): number {
+  // Modais abertos pela UI via useModalParam já possuem entrada própria
+  // no histórico — sentinela duplicada faria o voltar reabrir o modal.
+  // Isso só vale para os próprios modais de URL: um dialog comum
+  // empilhado por cima deles (ex.: ajuda de atalhos) ainda precisa da
+  // sentinela, senão o voltar fecha o modal de baixo e deixa o de cima.
+  return Math.max(0, openDialogs().length - urlOwnedDialogCount());
 }
 
 /**
@@ -42,7 +40,7 @@ export function DialogHistoryGuard() {
 
   useEffect(() => {
     const pushSentinel = () => {
-      if (sentinelActiveRef.current || suppressUntilClosedRef.current || urlOwnsModal()) return;
+      if (sentinelActiveRef.current || suppressUntilClosedRef.current || unownedDialogs() === 0) return;
       sentinelActiveRef.current = true;
       sentinelConsumedByPopRef.current = false;
       history.pushState({ [SENTINEL_KEY]: true }, '');
@@ -58,7 +56,7 @@ export function DialogHistoryGuard() {
     };
 
     const observer = new MutationObserver(() => {
-      if (openDialogs().length > 0) {
+      if (unownedDialogs() > 0) {
         pushSentinel();
       } else {
         suppressUntilClosedRef.current = false;
@@ -79,7 +77,7 @@ export function DialogHistoryGuard() {
       sentinelActiveRef.current = false;
       // Re-arma de cara quando ainda restam diálogos abertos (pilha de
       // diálogos) — suprimir deixaria os demais sem proteção do voltar.
-      const remaining = openDialogs().length;
+      const remaining = unownedDialogs();
       suppressUntilClosedRef.current = remaining <= 1;
       if (remaining > 1) {
         sentinelActiveRef.current = true;
@@ -90,6 +88,17 @@ export function DialogHistoryGuard() {
         document.dispatchEvent(
           new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })
         );
+        // Dialog controlado que rejeita Escape (ex.: SessionTimeoutDialog
+        // sem onOpenChange) continua montado — re-arma a sentinela para
+        // o próximo voltar em vez de deixar a página desprotegida.
+        setTimeout(() => {
+          if (unownedDialogs() > 0 && !sentinelActiveRef.current) {
+            suppressUntilClosedRef.current = false;
+            sentinelActiveRef.current = true;
+            sentinelConsumedByPopRef.current = false;
+            history.pushState({ [SENTINEL_KEY]: true }, '');
+          }
+        }, 0);
       }
     };
 

@@ -17,6 +17,12 @@ import { NetworkStatusProvider } from "@/hooks/useNetworkStatus";
 // OfflineProvider removed (redundant)
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { NavigationListener } from "@/components/navigation/NavigationListener";
+import { Suspense } from "react";
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
+
+// Montado aqui (não no MainLayout) para cobrir também rotas públicas e
+// páginas sem layout — o guard é só DOM/history, não depende do layout.
+const DialogHistoryGuard = lazyWithRetry(() => import("@/components/navigation/DialogHistoryGuard").then(m => ({ default: m.DialogHistoryGuard })));
 import { InAppNotificationWatcher } from "@/features/notifications/components/InAppNotificationWatcher";
 import { SmartAlertsWatcher } from "@/features/notifications/components/SmartAlertsWatcher";
 import { BIAlertsWatcher } from "@/features/analytics/components/bi/BIAlertsWatcher";
@@ -110,6 +116,9 @@ function Observers() {
   return (
     <>
       <NavigationListener />
+      <Suspense fallback={null}>
+        <DialogHistoryGuard />
+      </Suspense>
       {isAuthenticated && (
         <>
           <InAppNotificationWatcher />

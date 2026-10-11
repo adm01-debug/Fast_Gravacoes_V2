@@ -27,7 +27,9 @@ export function useSmartBack(fallbackTo = '/') {
     if (internalDepth() > 0) {
       navigate(-1);
     } else {
-      navigate(fallbackTo);
+      // REPLACE no deep-link: um PUSH criaria o ciclo voltar→home→
+      // browser-back→página original→voltar→home.
+      navigate(fallbackTo, { replace: true });
     }
   }, [navigate, fallbackTo]);
 

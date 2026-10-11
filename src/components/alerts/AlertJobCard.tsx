@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Calendar, Clock, ChevronRight } from "lucide-react";
 import { DbJob } from "@/features/jobs";
 import { parseDateOnly } from "@/lib/dateUtils";
+import { useLocation } from "react-router-dom";
 
 const priorityColors: Record<string, string> = {
   urgent: 'bg-primary/20 text-primary border-primary/30',
@@ -38,6 +39,17 @@ export function AlertJobCard({
   title, icon: Icon, iconColor, bgColor, jobs: cardJobs,
   emptyMessage, isCritical = false, onJobClick, onViewAll, getTechniqueById
 }: AlertJobCardProps) {
+  const { search } = useLocation();
+  // Deep-link `?focus=<jobId>` precisa do elemento `data-focus-id` no DOM.
+  // A lista corta em 5 — se o job focado está além do corte, ele entra no
+  // topo da prévia para o highlight/scroll do use-deeplink-focus achar.
+  const focusId = new URLSearchParams(search).get('focus');
+  const visibleJobs = (() => {
+    if (!focusId) return cardJobs.slice(0, 5);
+    const focused = cardJobs.find((j) => j.id === focusId);
+    if (!focused) return cardJobs.slice(0, 5);
+    return [focused, ...cardJobs.filter((j) => j.id !== focusId)].slice(0, 5);
+  })();
   return (
     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
       <CardHeader className="pb-3">
@@ -57,7 +69,7 @@ export function AlertJobCard({
         {cardJobs.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">{emptyMessage}</p>
         ) : (
-          cardJobs.slice(0, 5).map((job) => {
+          visibleJobs.map((job) => {
             const technique = getTechniqueById(job.technique_id);
             return (
               <div

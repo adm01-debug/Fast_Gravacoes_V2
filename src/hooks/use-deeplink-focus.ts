@@ -17,6 +17,7 @@ export function useDeepLinkFocus() {
     let attempts = 0;
     let timer = 0;
     let highlightTimer = 0;
+    let highlighted: HTMLElement | null = null;
     const tryFocus = () => {
       const el = document.querySelector<HTMLElement>(`[data-focus-id="${CSS.escape(focus)}"]`);
       if (!el) {
@@ -26,7 +27,11 @@ export function useDeepLinkFocus() {
       }
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       el.classList.add('deeplink-focus-highlight');
-      highlightTimer = window.setTimeout(() => el.classList.remove('deeplink-focus-highlight'), 2400);
+      highlighted = el;
+      highlightTimer = window.setTimeout(() => {
+        el.classList.remove('deeplink-focus-highlight');
+        if (highlighted === el) highlighted = null;
+      }, 2400);
     };
 
     timer = window.setTimeout(tryFocus, 350); // espera a transição de página/loading
@@ -34,6 +39,7 @@ export function useDeepLinkFocus() {
     return () => {
       window.clearTimeout(timer);
       window.clearTimeout(highlightTimer);
+      highlighted?.classList.remove('deeplink-focus-highlight');
     };
   }, [location.search]);
 }

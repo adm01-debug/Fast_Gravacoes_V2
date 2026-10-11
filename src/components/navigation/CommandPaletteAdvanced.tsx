@@ -16,6 +16,7 @@ import {
 import { Search, Star, StarOff, ChevronRight, Command, Zap, ArrowRight, Layers, Plus } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/features/auth";
+import { useDirtyGuard } from "@/contexts/DirtyFormContext";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CommandItemType, buildAllCommands, buildContextualCommands, searchCommands } from "./CommandPaletteCommands";
@@ -42,6 +43,7 @@ export function CommandPaletteAdvanced() {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
   const { signOut } = useAuth();
+  const { confirmIfDirty } = useDirtyGuard();
 
   React.useEffect(() => {
     try {
@@ -64,7 +66,12 @@ export function CommandPaletteAdvanced() {
 
   React.useEffect(() => { if (!open) { setQuery(""); setMode("default"); } }, [open]);
 
-  const navigateTo = (path: string, commandId: string) => { navigate(path); setOpen(false); addRecentCommand(commandId); };
+  // Sair da página via paleta respeita o dirty-guard (formulário com
+  // dados não salvos pergunta antes).
+  const navigateTo = (path: string, commandId: string) => {
+    addRecentCommand(commandId);
+    confirmIfDirty(() => { navigate(path); setOpen(false); });
+  };
   const executeAction = (commandId: string, action: () => void) => { action(); addRecentCommand(commandId); };
   const addRecentCommand = (id: string) => {
     const updated = [id, ...recentCommands.filter(c => c !== id)].slice(0, 10);

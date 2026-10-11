@@ -49,12 +49,14 @@ export function useNavigationHotkeys() {
         confirmIfDirty(() => navigate('/notifications'));
       }
 
-      // Alt + S to open Global Search (simulates Cmd+K)
+      // Alt + S to open Global Search (simulates Cmd+K) — não navega,
+      // então não passa pelo confirmIfDirty (evitaria dialog de
+      // descarte numa ação que só abre a paleta).
       if (event.altKey && (event.key === 's' || event.key === 'S')) {
         event.preventDefault();
         trigger('light');
         SoundFeedback.click();
-        confirmIfDirty(() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })));
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
       }
       
       // Alt + R for Refresh data

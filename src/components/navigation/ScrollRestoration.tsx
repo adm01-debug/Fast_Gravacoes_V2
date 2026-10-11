@@ -4,12 +4,19 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 const STORAGE_KEY = 'fg-scroll-restore';
 const MAX_ENTRIES = 30;
 
+// Mapa cacheado em memória — parse/serialize do sessionStorage a cada
+// evento de scroll rodava várias vezes por segundo na thread principal.
+let cachedMap: Record<string, number> | null = null;
+let writeTimer = 0;
+
 function readMap(): Record<string, number> {
+  if (cachedMap) return cachedMap;
   try {
-    return JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, number>;
+    cachedMap = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, number>;
   } catch {
-    return {};
+    cachedMap = {};
   }
+  return cachedMap;
 }
 
 function writeMap(map: Record<string, number>) {
@@ -22,6 +29,14 @@ function writeMap(map: Record<string, number>) {
   } catch {
     // sessionStorage indisponível — restauração desligada
   }
+}
+
+function flushWrites() {
+  if (writeTimer) {
+    window.clearTimeout(writeTimer);
+    writeTimer = 0;
+  }
+  writeMap(readMap());
 }
 
 function getScrollY(): number {
@@ -59,19 +74,26 @@ export function ScrollRestoration() {
   useEffect(() => {
     // scroll não borbulha — listener em capture no document pega tanto o
     // scroll do window quanto o do <main>, mesmo quando o <main> ainda
-    // não existia na montagem (páginas lazy).
-    const onScroll = () => save();
+    // não existia na montagem (páginas lazy). Escrita no storage é
+    // debounced; o flush acontece na saída da rota e no unload.
+    const onScroll = () => {
+      readMap()[lastKeyRef.current] = getScrollY();
+      if (!writeTimer) writeTimer = window.setTimeout(() => { writeTimer = 0; writeMap(readMap()); }, 150);
+    };
     document.addEventListener('scroll', onScroll, { passive: true, capture: true });
-    window.addEventListener('beforeunload', save);
+    window.addEventListener('beforeunload', flushWrites);
     return () => {
       document.removeEventListener('scroll', onScroll, { capture: true });
-      window.removeEventListener('beforeunload', save);
+      window.removeEventListener('beforeunload', flushWrites);
+      flushWrites();
     };
   }, []);
 
   useEffect(() => {
     // Guarda a posição da entrada que está saindo antes de trocar de key.
+    flushWrites();
     save();
+    flushWrites();
     lastKeyRef.current = location.key;
 
     const samePage = location.pathname === lastPathRef.current;
@@ -81,25 +103,32 @@ export function ScrollRestoration() {
     // deve mover o scroll.
     if (samePage) return;
 
+    let rafId = 0;
+    let cancelled = false;
+
     if (navType === 'POP') {
       const saved = readMap()[location.key];
       if (saved !== undefined && saved > 0) {
-        // Página lazy pode demorar para pintar — retenta até o conteúdo
-        // ter altura suficiente (ou ~1.2s).
+        // Página lazy pode demorar para pintar — retenta até alcançar de
+        // fato o offset salvo (scrollTop real, não só altura do
+        // conteúdo), ou ~1.2s. Frames pendentes são cancelados se a rota
+        // mudar no meio para não aplicar offset de outra página.
         let attempts = 0;
         const tryRestore = () => {
-          const main = document.querySelector<HTMLElement>('main');
-          const enough = (main?.scrollHeight ?? document.body.scrollHeight) >= saved;
+          if (cancelled) return;
           setScrollY(saved);
+          const main = document.querySelector<HTMLElement>('main');
+          const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
           attempts += 1;
-          if (!enough && attempts < 12) requestAnimationFrame(tryRestore);
+          if (achieved < saved - 2 && attempts < 12) rafId = requestAnimationFrame(tryRestore);
         };
-        requestAnimationFrame(() => requestAnimationFrame(tryRestore));
-        return;
+        rafId = requestAnimationFrame(() => { rafId = requestAnimationFrame(tryRestore); });
+        return () => { cancelled = true; cancelAnimationFrame(rafId); };
       }
     }
     window.scrollTo(0, 0);
     document.querySelector('main')?.scrollTo(0, 0);
+    return () => { cancelled = true; cancelAnimationFrame(rafId); };
   }, [location.key, location.pathname, navType]);
 
   return null;

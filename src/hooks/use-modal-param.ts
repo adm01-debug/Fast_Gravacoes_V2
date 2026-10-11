@@ -5,6 +5,15 @@ export const MODAL_PUSHED_STATE = 'modalPushed';
 
 type ModalLocationState = { [MODAL_PUSHED_STATE]?: string } | null;
 
+// Quantos dialogs abertos são "dono de URL" (entrada própria no histórico
+// via PUSH do hook). O DialogHistoryGuard usa para não criar sentinela
+// duplicada — mas continua protegendo outros dialogs empilhados acima.
+let urlOwnedDialogs = 0;
+
+export function urlOwnedDialogCount(): number {
+  return urlOwnedDialogs;
+}
+
 /**
  * Torna um modal compartilhável via URL: `?modal=<name>` abre o modal e a
  * URL pode ser copiada/enviada. Aberto pela UI, o modal ganha uma entrada
@@ -21,7 +30,13 @@ export function useModalParam(
   const isOpen = searchParams.get('modal') === name;
   const pushedByHook = (location.state as ModalLocationState)?.[MODAL_PUSHED_STATE] === name;
   const normalizedRef = useRef(false);
+  const pendingPushRef = useRef<string | null>(null);
 
+  // Fase 1 — deep-link `?modal=` direto: REPLACE na entrada base (sem
+  // modal) e agenda o PUSH do modal. Rodar os dois navigate na mesma
+  // passada faria o React Router renderizar só o PUSH e a entrada base
+  // nunca seria registrada no navHistory — ao fechar o modal, o voltar
+  // trataria a base como entrada externa.
   useEffect(() => {
     if (!isOpen || pushedByHook || normalizedRef.current) return;
     normalizedRef.current = true;
@@ -29,11 +44,26 @@ export function useModalParam(
     const withoutModal = new URLSearchParams(location.search);
     withoutModal.delete('modal');
     const base = withoutModal.toString();
+    pendingPushRef.current = `${location.pathname}?${withModal.toString()}${location.hash}`;
     navigate(`${location.pathname}${base ? `?${base}` : ''}${location.hash}`, { replace: true });
-    navigate(`${location.pathname}?${withModal.toString()}${location.hash}`, {
-      state: { [MODAL_PUSHED_STATE]: name },
-    });
   }, [isOpen, pushedByHook, location.pathname, location.search, location.hash, name, navigate]);
+
+  // Fase 2 — depois do REPLACE ser observado (entrada base registrada),
+  // empurra a entrada do modal com o state que a marca como do hook.
+  useEffect(() => {
+    if (!pendingPushRef.current || isOpen || pushedByHook) return;
+    const url = pendingPushRef.current;
+    pendingPushRef.current = null;
+    navigate(url, { state: { [MODAL_PUSHED_STATE]: name } });
+  }, [isOpen, pushedByHook, name, navigate]);
+
+  // Registra este modal como "dono de URL" enquanto aberto via PUSH do
+  // hook — ver urlOwnedDialogCount().
+  useEffect(() => {
+    if (!isOpen || !pushedByHook) return;
+    urlOwnedDialogs += 1;
+    return () => { urlOwnedDialogs -= 1; };
+  }, [isOpen, pushedByHook]);
 
   const setOpen = useCallback(
     (open: boolean, extraParams?: Record<string, string>) => {

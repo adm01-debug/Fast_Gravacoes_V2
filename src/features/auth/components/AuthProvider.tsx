@@ -310,6 +310,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     offlineStorage.clearAll().catch((err) => {
       logger.warn('Failed to clear offline storage on sign out', err, 'AuthProvider');
     });
+    // Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
+    // em localStorage por usuário — não podem ficar legíveis após logout.
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('fg-new-job-draft:')) localStorage.removeItem(key);
+      }
+    } catch { /* storage indisponível — best-effort */ }
   };
 
   // Memoizado: evita re-render em cascata de todos os consumidores quando

@@ -48,8 +48,13 @@ export function BackButton({ className, fallbackTo = '/' }: BackButtonProps) {
     trigger('light');
     SoundFeedback.navBack();
     trackNavBack('button', hasInternalEntry ? 'history' : 'fallback');
-    if (!hasInternalEntry) trackDeepLinkExit(location.pathname);
-    confirmIfDirty(goBack);
+    confirmIfDirty(() => {
+      // Só conta a saída de deep-link quando ela realmente acontece —
+      // antes de confirmIfDirty um "Continuar editando" viraria métrica
+      // de saída falsa.
+      if (!hasInternalEntry) trackDeepLinkExit(location.pathname);
+      goBack();
+    });
   }, [trigger, goBack, hasInternalEntry, confirmIfDirty, location.pathname]);
 
   if (!visible) return null;

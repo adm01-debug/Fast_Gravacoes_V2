@@ -12,9 +12,41 @@ import type { NavigationType } from 'react-router-dom';
  */
 const stack: string[] = [];
 const listeners = new Set<() => void>();
+const MAX_STACK = 60;
+const NAV_STACK_STATE = '__fgNavStack';
 
 function notify() {
   for (const listener of listeners) listener();
+}
+
+type HistoryStateWithUsr = { usr?: Record<string, unknown> } | null;
+
+/**
+ * Retrato da pilha embutido em `history.state.usr` de cada entrada —
+ * sobrevive a reload e acompanha back/forward: ao chegar numa entrada que
+ * já tem retrato, restaura a pilha daquele ponto (em vez de tratar um POP
+ * desconhecido pós-reload como predecessor interno, o que poderia fazer o
+ * Voltar navegar para fora do app).
+ */
+function persistedSnapshot(): string[] | null {
+  try {
+    const snap = (history.state as HistoryStateWithUsr)?.usr?.[NAV_STACK_STATE];
+    return Array.isArray(snap) ? snap.filter((k): k is string => typeof k === 'string') : null;
+  } catch {
+    return null;
+  }
+}
+
+function persist() {
+  try {
+    const state = history.state as (Record<string, unknown> & { usr?: Record<string, unknown> }) | null;
+    history.replaceState(
+      { ...(state ?? {}), usr: { ...(state?.usr ?? {}), [NAV_STACK_STATE]: stack.slice(-MAX_STACK) } },
+      ''
+    );
+  } catch {
+    // history indisponível (jsdom/SSR) — pilha continua só em memória
+  }
 }
 
 export function subscribeNavHistory(listener: () => void): () => void {
@@ -24,8 +56,17 @@ export function subscribeNavHistory(listener: () => void): () => void {
 
 export function recordLocation(action: NavigationType, key: string) {
   // Idempotente: vários hooks/componentes podem registrar a mesma key.
-  if (stack[stack.length - 1] === key) return;
-  if (action === 'POP') {
+  if (stack[stack.length - 1] === key) {
+    persist();
+    return;
+  }
+  const snap = persistedSnapshot();
+  if (snap && snap.length > 0) {
+    // A entrada atual carrega o retrato da pilha no momento em que foi
+    // criada — restaura esse retrato com a key atual no topo.
+    stack.length = 0;
+    stack.push(...snap.slice(0, -1).filter((k) => k !== key), key);
+  } else if (action === 'POP') {
     const idx = stack.lastIndexOf(key);
     if (idx >= 0) {
       // Voltou a uma entrada conhecida — descarta o que veio depois.
@@ -41,6 +82,7 @@ export function recordLocation(action: NavigationType, key: string) {
     // PUSH
     stack.push(key);
   }
+  persist();
   notify();
 }
 
@@ -62,5 +104,6 @@ export function popDirectionFor(key: string): 'back' | 'forward' {
 /** Limpa a pilha — usado em testes para isolar casos. */
 export function resetNavHistory(): void {
   stack.length = 0;
+  persist();
   notify();
 }

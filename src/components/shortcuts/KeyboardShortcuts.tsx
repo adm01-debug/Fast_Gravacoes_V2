@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { useDirtyGuard } from "@/contexts/DirtyFormContext";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,7 @@ export function useKeyboardShortcuts() {
 
 export function KeyboardShortcutsProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const { confirmIfDirty } = useDirtyGuard();
   const { theme, setTheme } = useTheme();
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
   const [shortcuts, setShortcuts] = React.useState<Shortcut[]>([]);
@@ -119,7 +121,13 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
       if (matchingShortcut && matchingShortcut.keys.length === newSequence.length) {
         e.preventDefault();
-        matchingShortcut.action();
+        // Atalhos que saem da página respeitam o dirty-guard (formulário
+        // com dados não salvos pergunta antes); "view"/"help" ficam diretos.
+        if (matchingShortcut.category === 'navigation' || matchingShortcut.category === 'actions') {
+          confirmIfDirty(() => matchingShortcut.action());
+        } else {
+          matchingShortcut.action();
+        }
         setKeySequence([]);
         return;
       }
@@ -143,7 +151,7 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [keySequence, allShortcuts]);
+  }, [keySequence, allShortcuts, confirmIfDirty]);
 
   const contextValue: KeyboardShortcutsContextValue = React.useMemo(
     () => ({

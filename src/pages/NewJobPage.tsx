@@ -110,7 +110,7 @@ export default function NewJobPage() {
   const draftKey = draftKeyFor(user?.id);
   const draft = useMemo(() => readDraft(draftKey), [draftKey]);
 
-  const { control, handleSubmit, watch, setValue, trigger, formState: { errors, isDirty } } = useForm<JobFormValues>({
+  const { control, handleSubmit, watch, setValue, trigger, getValues, formState: { errors, isDirty } } = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: draft?.values ?? defaultValues,
   });
@@ -120,10 +120,12 @@ export default function NewJobPage() {
   // rascunho restaurado ainda não enviado.
   const restoredDate = draft?.scheduled_date ?? '';
   const currentDate = date ? format(date, 'yyyy-MM-dd') : '';
+  const [draftPending, setDraftPending] = useState(() => Boolean(draft));
   const clearDraft = useCallback(() => {
+    setDraftPending(false);
     try { localStorage.removeItem(draftKey); } catch { /* opcional */ }
   }, [draftKey]);
-  useDirtyForm(isDirty || currentDate !== restoredDate, clearDraft);
+  useDirtyForm(isDirty || currentDate !== restoredDate || draftPending, clearDraft);
 
   // Restaura rascunho salvo (data fica fora do react-hook-form).
   useEffect(() => {
@@ -136,26 +138,34 @@ export default function NewJobPage() {
   }, []);
 
   // Persiste rascunho a cada alteração — permite retomar depois.
-  useEffect(() => {
-    const subscription = watch((values) => {
-      const hasContent = Object.values(values).some(v => typeof v === 'string' && v.trim() !== '' && v !== 'medium');
-      if (hasContent) {
-        const payload: JobDraft = {
-          values: values as JobFormValues,
-          scheduled_date: date ? format(date, 'yyyy-MM-dd') : undefined,
-          saved_at: new Date().toISOString(),
-        };
-        try {
-          localStorage.setItem(draftKey, JSON.stringify(payload));
-        } catch {
-          // storage cheio/indisponível — rascunho opcional
-        }
-      } else {
-        clearDraft();
+  const persistDraft = useCallback((values: JobFormValues) => {
+    const hasContent = Object.values(values).some(v => typeof v === 'string' && v.trim() !== '' && v !== 'medium');
+    if (hasContent) {
+      const payload: JobDraft = {
+        values,
+        scheduled_date: date ? format(date, 'yyyy-MM-dd') : undefined,
+        saved_at: new Date().toISOString(),
+      };
+      try {
+        localStorage.setItem(draftKey, JSON.stringify(payload));
+      } catch {
+        // storage cheio/indisponível — rascunho opcional
       }
-    });
+    } else {
+      clearDraft();
+    }
+  }, [date, draftKey, clearDraft]);
+
+  useEffect(() => {
+    const subscription = watch((values) => persistDraft(values as JobFormValues));
     return () => subscription.unsubscribe();
-  }, [watch, date, draftKey, clearDraft]);
+  }, [watch, persistDraft]);
+
+  // A data vive fora do react-hook-form — o watch não dispara quando só
+  // ela muda; repersiste o rascunho com a nova data.
+  useEffect(() => {
+    persistDraft(getValues());
+  }, [date, getValues, persistDraft]);
 
   const techniqueId = watch('technique_id');
   const availableMachines = techniqueId ? getMachinesByTechnique(techniqueId) : [];
