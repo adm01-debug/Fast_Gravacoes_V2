@@ -59,9 +59,17 @@ export function DialogHistoryGuard() {
     // Reload com dialog aberto deixa a sentinela como entrada atual (o
     // marcador persiste no history.state) mas o dialog não reabre — sem
     // consumir a entrada, o primeiro voltar cai na duplicata da página e
-    // parece não fazer nada.
-    if ((history.state as Record<string, unknown> | null)?.[SENTINEL_KEY] && unownedDialogs() === 0) {
+    // parece não fazer nada. E dialog aberto ANTES da guarda montar
+    // (componente lazy — ex.: paleta aberta durante o chunk) não é visto
+    // pelo observer: arma a sentinela para proteger o voltar.
+    const stateAtMount = history.state as Record<string, unknown> | null;
+    if (stateAtMount?.[SENTINEL_KEY] && unownedDialogs() === 0) {
       history.back();
+    } else if (!stateAtMount?.[SENTINEL_KEY] && unownedDialogs() > 0) {
+      sentinelActiveRef.current = true;
+      sentinelConsumedByPopRef.current = false;
+      sentinelBaseIdxRef.current = readIdx() ?? null;
+      history.pushState({ ...(history.state ?? {}), [SENTINEL_KEY]: true }, '');
     }
     // PUSH não emite popstate — acompanha as mudanças de rota registradas
     // pelo navHistory para manter o último idx real atualizado.
@@ -121,14 +129,19 @@ export function DialogHistoryGuard() {
         if (base !== null && last !== null) {
           if (last > base) {
             history.back();
-          } else if (typeof st.idx === 'number' && st.idx >= history.length - 1) {
-            // Sentinela é a entrada mais recente (ex.: dialog fechado
-            // pela UI e o usuário apertou Avançar): não há destino real
-            // depois dela — volta à base em vez de ficar parado numa
-            // cópia morta da página.
-            history.back();
           } else {
+            // Não dá para saber se existe entrada depois da sentinela:
+            // o idx do router reinicia por sessão e history.length
+            // inclui páginas de fora do app. Tenta avançar e, se ainda
+            // estamos na MESMA sentinela quando o popstate assentar,
+            // ela era a última entrada (dialog fechado pela UI) —
+            // volta à base em vez de ficar parado na cópia morta.
+            const probeIdx = st.idx;
             history.forward();
+            window.setTimeout(() => {
+              const now = history.state as Record<string, unknown> | null;
+              if (now?.[SENTINEL_KEY] && now.idx === probeIdx) history.back();
+            }, 60);
           }
         }
         return;
