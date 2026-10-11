@@ -25,7 +25,8 @@ export function useDeepLinkFocus() {
         if (attempts < 15) timer = window.setTimeout(tryFocus, 200);
         return;
       }
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
       el.classList.add('deeplink-focus-highlight');
       highlighted = el;
       highlightTimer = window.setTimeout(() => {

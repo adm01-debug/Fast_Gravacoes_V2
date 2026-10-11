@@ -109,18 +109,17 @@ export function ScrollRestoration() {
     if (navType === 'POP') {
       const saved = readMap()[location.key];
       if (saved !== undefined && saved > 0) {
-        // Página lazy pode demorar para pintar — retenta até alcançar de
-        // fato o offset salvo (scrollTop real, não só altura do
-        // conteúdo), ou ~1.2s. Frames pendentes são cancelados se a rota
-        // mudar no meio para não aplicar offset de outra página.
-        let attempts = 0;
+        // Página lazy pode demorar para pintar — retenta por ~1.5s até
+        // alcançar de fato o offset salvo (scrollTop real, não só altura
+        // do conteúdo). Frames pendentes são cancelados se a rota mudar
+        // no meio para não aplicar offset de outra página.
+        const deadline = performance.now() + 1500;
         const tryRestore = () => {
           if (cancelled) return;
           setScrollY(saved);
           const main = document.querySelector<HTMLElement>('main');
           const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
-          attempts += 1;
-          if (achieved < saved - 2 && attempts < 12) rafId = requestAnimationFrame(tryRestore);
+          if (achieved < saved - 2 && performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
         };
         rafId = requestAnimationFrame(() => { rafId = requestAnimationFrame(tryRestore); });
         return () => { cancelled = true; cancelAnimationFrame(rafId); };

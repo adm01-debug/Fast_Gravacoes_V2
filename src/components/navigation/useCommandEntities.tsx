@@ -1,14 +1,20 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useInventory } from '@/features/inventory';
 import { useOperatorDashboardData } from '@/features/production';
 import { Package, Printer, FileText, Hash } from 'lucide-react';
 import { CommandItemType } from './CommandPaletteCommands';
 import { useNavigate } from 'react-router-dom';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 
 export function useCommandEntities(query: string, setOpen: (open: boolean) => void) {
   const { items: inventoryItems } = useInventory();
   const { machines, jobs } = useOperatorDashboardData();
   const navigate = useNavigate();
+  const { confirmIfDirty } = useDirtyGuard();
+  const navigateTo = useCallback(
+    (path: string) => confirmIfDirty(() => { navigate(path); setOpen(false); }),
+    [confirmIfDirty, navigate, setOpen]
+  );
 
   const entityResults = useMemo(() => {
     if (query.length < 2 && query.length !== 0) return [];
@@ -24,7 +30,7 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
           name: machine.name,
           description: "Máquina Ativa",
           icon: <Printer className="h-4 w-4 text-blue-500" />,
-          action: () => { navigate('/machines'); setOpen(false); },
+          action: () => navigateTo('/machines'),
           category: 'search',
           priority: 50
         });
@@ -42,10 +48,7 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
         name: item.name,
         description: `Material: ${item.current_stock} ${item.unit} | ${item.category}`,
         icon: <Package className="h-4 w-4 text-warning" />,
-        action: () => {
-          navigate('/inventory');
-          setOpen(false);
-        },
+        action: () => navigateTo('/inventory'),
         category: 'search',
         priority: 50
       });
@@ -61,10 +64,7 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
         name: machine.name,
         description: `Máquina: ${machine.code} | ${machine.is_active ? 'Ativa' : 'Inativa'}`,
         icon: <Printer className="h-4 w-4 text-blue-500" />,
-        action: () => {
-          navigate('/machines');
-          setOpen(false);
-        },
+        action: () => navigateTo('/machines'),
         category: 'search',
         priority: 50
       });
@@ -80,17 +80,14 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
         name: `OP ${job.order_number || job.id.slice(0, 8)}`,
         description: `Cliente: ${job.client || 'N/A'} | Status: ${job.status}`,
         icon: <Hash className="h-4 w-4 text-success" />,
-        action: () => {
-          navigate('/kanban');
-          setOpen(false);
-        },
+        action: () => navigateTo('/kanban'),
         category: 'search',
         priority: 60
       });
     });
 
     return results;
-  }, [query, inventoryItems, machines, jobs, navigate, setOpen]);
+  }, [query, inventoryItems, machines, jobs, navigateTo]);
 
   return entityResults;
 }

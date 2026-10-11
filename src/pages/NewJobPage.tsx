@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Plus, ArrowRight, ArrowLeft, Check } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedulingData } from '@/features/jobs';
 import { supabase } from '@/integrations/supabase/client';
@@ -165,7 +165,15 @@ export default function NewJobPage() {
 
   // A data vive fora do react-hook-form — o watch não dispara quando só
   // ela muda; repersiste o rascunho com a nova data.
+  // Com rascunho restaurado, a primeira execução roda antes do setDate
+  // da restauração aplicar — pular evita o persistDraft ler valores
+  // vazios e apagar o rascunho que acabou de ser lido.
+  const skipFirstDatePersistRef = useRef(Boolean(draft));
   useEffect(() => {
+    if (skipFirstDatePersistRef.current) {
+      skipFirstDatePersistRef.current = false;
+      return;
+    }
     persistDraft(getValues());
   }, [date, getValues, persistDraft]);
 

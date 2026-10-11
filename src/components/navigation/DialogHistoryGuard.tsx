@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { urlOwnedDialogCount } from '@/hooks/use-modal-param';
+import { subscribeNavHistory } from '@/lib/navHistory';
 
 const SENTINEL_KEY = 'dialog-guard';
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do
@@ -37,12 +38,29 @@ export function DialogHistoryGuard() {
   // diálogos fecharem: pushState sem gesto do usuário é pulado pelo botão
   // Voltar do Chrome, e o próximo voltar sairia do app.
   const suppressUntilClosedRef = useRef(false);
+  // Entradas reais do history carregam state.idx (posição na pilha,
+  // escrita pela lib do router); a sentinela não tem. Guardando o idx da
+  // última entrada real visitada, dá para saber — ao cair numa sentinela
+  // órfã — se o usuário estava voltando ou avançando, e pular a entrada
+  // morta na mesma direção.
+  const lastRealIdxRef = useRef<number | null>(null);
+  const sentinelBaseIdxRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const readIdx = () => (history.state as { idx?: number } | null)?.idx;
+    lastRealIdxRef.current = readIdx() ?? null;
+    // PUSH não emite popstate — acompanha as mudanças de rota registradas
+    // pelo navHistory para manter o último idx real atualizado.
+    const unsubscribeNav = subscribeNavHistory(() => {
+      const idx = readIdx();
+      if (typeof idx === 'number') lastRealIdxRef.current = idx;
+    });
+
     const pushSentinel = () => {
       if (sentinelActiveRef.current || suppressUntilClosedRef.current || unownedDialogs() === 0) return;
       sentinelActiveRef.current = true;
       sentinelConsumedByPopRef.current = false;
+      sentinelBaseIdxRef.current = readIdx() ?? null;
       history.pushState({ [SENTINEL_KEY]: true }, '');
     };
 
@@ -72,6 +90,23 @@ export function DialogHistoryGuard() {
     });
 
     const onPopState = () => {
+      const st = history.state as Record<string, unknown> | null;
+      if (st?.[SENTINEL_KEY] && !sentinelActiveRef.current && unownedDialogs() === 0) {
+        // Sentinela órfã: o diálogo navegou (PUSH) antes de fechar e a
+        // entrada ficou "morta" no histórico. Pula ela na mesma direção
+        // em que o usuário estava viajando — sem isso o voltar cai numa
+        // cópia da página atual e o próximo voltar parece não fazer nada.
+        const base = sentinelBaseIdxRef.current;
+        const last = lastRealIdxRef.current;
+        if (base !== null && last !== null) {
+          if (last > base) history.back();
+          else history.forward();
+        }
+        return;
+      }
+      if (st && !st[SENTINEL_KEY] && typeof st.idx === 'number') {
+        lastRealIdxRef.current = st.idx;
+      }
       if (!sentinelActiveRef.current) return;
       sentinelConsumedByPopRef.current = true;
       sentinelActiveRef.current = false;
@@ -106,6 +141,7 @@ export function DialogHistoryGuard() {
 
     return () => {
       observer.disconnect();
+      unsubscribeNav();
       window.removeEventListener('popstate', onPopState);
     };
   }, []);
