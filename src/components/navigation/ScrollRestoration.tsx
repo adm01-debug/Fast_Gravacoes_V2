@@ -127,7 +127,10 @@ export function ScrollRestoration() {
         // Frames pendentes são cancelados se a rota mudar no meio para
         // não aplicar offset de outra página.
         const deadline = performance.now() + 1500;
-        const outgoingMain = document.querySelector<HTMLElement>('main');
+        // Na primeira execução (reload) NÃO existe rota saindo — o <main>
+        // encontrado já é o do destino; marcá-lo como "outgoing" faria a
+        // condição nunca passar e prenderia o scroll por 1.5s.
+        const outgoingMain = isFirst ? null : document.querySelector<HTMLElement>('main');
         let seenEl: Element | null = null;
         const tryRestore = () => {
           if (cancelled) return;

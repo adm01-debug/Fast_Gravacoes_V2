@@ -44,8 +44,15 @@ class LockoutError extends Error {
 // Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
 // em localStorage por usuário — limpa em qualquer saída (logout manual,
 // inatividade, token expirado) para não ficarem legíveis após o logout.
-const clearFormDrafts = () => {
+// Só o rascunho do USUÁRIO QUE SAI: contas diferentes em abas distintas
+// compartilham o localStorage — apagar tudo destruiria o rascunho da
+// outra conta ainda logada.
+const clearFormDrafts = (userId?: string) => {
   try {
+    if (userId) {
+      localStorage.removeItem(`fg-new-job-draft:${userId}`);
+      return;
+    }
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const key = localStorage.key(i);
       if (key?.startsWith('fg-new-job-draft:')) localStorage.removeItem(key);
@@ -78,6 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const lastActivityRef = useRef<Date>(new Date());
   const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const authRequestSeqRef = useRef(0);
+  // Último usuário autenticado — o evento SIGNED_OUT chega sem session,
+  // então o id precisa vir daqui para limpar só o rascunho dele.
+  const lastUserIdRef = useRef<string | null>(null);
   const ACTIVITY_TIMEOUT_MINUTES = 60;
   const REFRESH_INTERVAL_MINUTES = 30;
 
@@ -208,7 +218,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Qualquer saída (logout manual, inatividade, token expirado) limpa
       // rascunhos com dados de cliente/OS — não só o signOut do contexto.
-      if (event === 'SIGNED_OUT') clearFormDrafts();
+      if (event === 'SIGNED_OUT') {
+        clearFormDrafts(lastUserIdRef.current ?? undefined);
+        lastUserIdRef.current = null;
+      }
+      if (nextSession?.user) lastUserIdRef.current = nextSession.user.id;
 
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
@@ -328,7 +342,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     // Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
     // em localStorage por usuário — não podem ficar legíveis após logout.
-    clearFormDrafts();
+    clearFormDrafts(user?.id ?? undefined);
   };
 
   // Memoizado: evita re-render em cascata de todos os consumidores quando
