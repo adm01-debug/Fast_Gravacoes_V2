@@ -61,6 +61,11 @@ export function DirtyGuardProvider({ children }: { children: ReactNode }) {
 
   const confirmIfDirty = useCallback((nav: PendingNavigation) => {
     if (dirtyRegistry) {
+      // Confirmação já aberta: ignora novos pedidos — sobrescrever o
+      // pendente faria "Sair sem salvar" executar uma navegação diferente
+      // da que o usuário confirmou (ex.: Alt+H disparado com o dialog
+      // aberto troca o destino para Home).
+      if (pendingRef.current) return;
       pendingRef.current = nav;
       setPending(() => nav);
     } else {

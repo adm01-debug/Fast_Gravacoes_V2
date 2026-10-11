@@ -111,15 +111,22 @@ export function ScrollRestoration() {
       if (saved !== undefined && saved > 0) {
         // Página lazy pode demorar para pintar — retenta por ~1.5s até
         // alcançar de fato o offset salvo (scrollTop real, não só altura
-        // do conteúdo). Frames pendentes são cancelados se a rota mudar
-        // no meio para não aplicar offset de outra página.
+        // do conteúdo). Exige o offset alcançado em DUAS verificações
+        // seguidas no MESMO elemento: o AnimatePresence mode="wait"
+        // mantém o <main> da rota que sai montado durante a transição, e
+        // restaurar nele daria "sucesso" falso antes do destino montar.
+        // Frames pendentes são cancelados se a rota mudar no meio para
+        // não aplicar offset de outra página.
         const deadline = performance.now() + 1500;
+        let seenEl: Element | null = null;
         const tryRestore = () => {
           if (cancelled) return;
           setScrollY(saved);
           const main = document.querySelector<HTMLElement>('main');
           const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
-          if (achieved < saved - 2 && performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
+          if (achieved >= saved - 2 && main === seenEl) return;
+          seenEl = main;
+          if (performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
         };
         rafId = requestAnimationFrame(() => { rafId = requestAnimationFrame(tryRestore); });
         return () => { cancelled = true; cancelAnimationFrame(rafId); };

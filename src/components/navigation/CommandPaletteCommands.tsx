@@ -25,6 +25,7 @@ export interface CommandItemType {
 interface BuildCommandsArgs {
   navigateTo: (path: string, commandId: string) => void;
   executeAction: (commandId: string, action: () => void) => void;
+  confirmIfDirty: (navigate: () => void) => void;
   theme: string | undefined;
   setTheme: (t: string) => void;
   signOut: () => void;
@@ -32,7 +33,7 @@ interface BuildCommandsArgs {
 }
 
 export function buildAllCommands({
-  navigateTo, executeAction, theme, setTheme, signOut, setOpen
+  navigateTo, executeAction, confirmIfDirty, theme, setTheme, signOut, setOpen
 }: BuildCommandsArgs): CommandItemType[] {
   return [
     { id: "nav-dashboard", name: "Dashboard", description: "Visão geral do sistema", icon: <LayoutDashboard className="h-4 w-4" />, shortcut: "⌘D", action: () => navigateTo("/", "nav-dashboard"), category: "navigation", keywords: ["home", "início", "painel", "principal"], priority: 100 },
@@ -57,13 +58,13 @@ export function buildAllCommands({
     { id: "nav-security", name: "Segurança", description: "Dashboard de segurança", icon: <Shield className="h-4 w-4" />, action: () => navigateTo("/security", "nav-security"), category: "navigation", keywords: ["auditoria", "logs", "acessos"], priority: 40 },
     { id: "nav-settings", name: "Configurações", description: "Configurações do sistema", icon: <Settings className="h-4 w-4" />, shortcut: "⌘,", action: () => navigateTo("/settings", "nav-settings"), category: "navigation", keywords: ["preferências", "opções", "config"], priority: 35 },
     { id: "action-new-job", name: "Criar Nova Ordem", description: "Nova ordem de produção", icon: <Plus className="h-4 w-4 text-success" />, shortcut: "⌘N", action: () => navigateTo("/new-job", "action-new-job"), category: "actions", keywords: ["criar", "adicionar", "ordem", "nova"], priority: 100, badge: "Ação", badgeVariant: "default" },
-    { id: "action-refresh", name: "Atualizar Dados", description: "Recarregar informações", icon: <RefreshCw className="h-4 w-4 text-blue-400" />, shortcut: "⌘R", action: () => { window.location.reload(); setOpen(false); }, category: "actions", keywords: ["refresh", "reload", "atualizar"], priority: 90 },
+    { id: "action-refresh", name: "Atualizar Dados", description: "Recarregar informações", icon: <RefreshCw className="h-4 w-4 text-blue-400" />, shortcut: "⌘R", action: () => executeAction("action-refresh", () => { setOpen(false); confirmIfDirty(() => window.location.reload()); }), category: "actions", keywords: ["refresh", "reload", "atualizar"], priority: 90 },
     { id: "action-export", name: "Exportar Dados", description: "Download em Excel/CSV", icon: <Download className="h-4 w-4 text-primary" />, action: () => setOpen(false), category: "actions", keywords: ["download", "excel", "csv", "exportar"], priority: 80 },
     { id: "action-filter", name: "Abrir Filtros", description: "Filtrar visualização", icon: <Filter className="h-4 w-4" />, shortcut: "⌘F", action: () => setOpen(false), category: "actions", keywords: ["filtrar", "buscar", "pesquisar"], priority: 75 },
     { id: "settings-theme", name: theme === "dark" ? "Ativar Modo Claro" : "Ativar Modo Escuro", description: "Alternar tema do sistema", icon: theme === "dark" ? <Sun className="h-4 w-4 text-warning" /> : <Moon className="h-4 w-4 text-primary" />, shortcut: "⌘T", action: () => executeAction("settings-theme", () => { setTheme(theme === "dark" ? "light" : "dark"); setOpen(false); }), category: "settings", keywords: ["tema", "dark", "light", "escuro", "claro"], priority: 60 },
     { id: "settings-shortcuts", name: "Ver Atalhos de Teclado", description: "Lista de atalhos", icon: <Keyboard className="h-4 w-4" />, shortcut: "⌘/", action: () => setOpen(false), category: "settings", keywords: ["keyboard", "atalhos", "teclas"], priority: 55 },
     { id: "settings-help", name: "Central de Ajuda", description: "Documentação e suporte", icon: <HelpCircle className="h-4 w-4" />, action: () => navigateTo("/knowledge-base", "settings-help"), category: "settings", keywords: ["ajuda", "help", "suporte", "docs"], priority: 50 },
-    { id: "settings-logout", name: "Sair do Sistema", description: "Encerrar sessão", icon: <LogOut className="h-4 w-4 text-destructive" />, action: () => executeAction("settings-logout", () => { signOut(); setOpen(false); }), category: "settings", keywords: ["logout", "desconectar", "sair"], priority: 10 },
+    { id: "settings-logout", name: "Sair do Sistema", description: "Encerrar sessão", icon: <LogOut className="h-4 w-4 text-destructive" />, action: () => executeAction("settings-logout", () => { setOpen(false); confirmIfDirty(() => signOut()); }), category: "settings", keywords: ["logout", "desconectar", "sair"], priority: 10 },
   ];
 }
 

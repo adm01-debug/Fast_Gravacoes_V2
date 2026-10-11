@@ -69,9 +69,13 @@ export function MainLayout({ children }: MainLayoutProps) {
   useDeepLinkFocus();
 
   // Acessibilidade: ao trocar de rota, move o foco para o h1 da página
-  // para leitores de tela anunciarem o novo contexto.
+  // para leitores de tela anunciarem o novo contexto. Retenta por ~2s:
+  // em navegação fria para página lazy o destino (e o h1) monta depois
+  // do primeiro timer — sem retry o foco ficaria fora da página nova.
   useEffect(() => {
-    const timer = window.setTimeout(() => {
+    let timer = 0;
+    let attempts = 0;
+    const tryFocusHeading = () => {
       // Não rouba o foco se o usuário já está interagindo (input, dialog…)
       const active = document.activeElement as HTMLElement | null;
       if (active && active !== document.body && active.tagName !== 'MAIN' && active.id !== 'main-content-scroll') return;
@@ -79,8 +83,12 @@ export function MainLayout({ children }: MainLayoutProps) {
       if (heading) {
         heading.setAttribute('tabindex', '-1');
         heading.focus({ preventScroll: true });
+        return;
       }
-    }, 400);
+      attempts += 1;
+      if (attempts < 10) timer = window.setTimeout(tryFocusHeading, 200);
+    };
+    timer = window.setTimeout(tryFocusHeading, 400);
     return () => window.clearTimeout(timer);
   }, [location.pathname]);
 

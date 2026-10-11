@@ -62,10 +62,19 @@ export default function InventoryPage() {
     }, { replace: true });
   };
   // `?items=id1,id2` compartilha a seleção junto com ?modal=batch-qr.
+  const itemsParam = searchParams.get('items');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(() => {
-    const ids = searchParams.get('items');
-    return new Set(ids ? ids.split(',').filter(Boolean) : []);
+    return new Set(itemsParam ? itemsParam.split(',').filter(Boolean) : []);
   });
+  // Voltar/Avançar do browser reabrindo a entrada com ?items=... precisa
+  // ressincronizar a seleção — sem isso o modal mostraria etiquetas de
+  // itens diferentes dos compartilhados na URL. Ajuste durante o render
+  // (padrão React) em vez de effect.
+  const [prevItemsParam, setPrevItemsParam] = useState(itemsParam);
+  if (itemsParam !== prevItemsParam) {
+    setPrevItemsParam(itemsParam);
+    setSelectedItems(new Set(itemsParam ? itemsParam.split(',').filter(Boolean) : []));
+  }
   // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).
   const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useModalParam('batch-qr');
   const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useModalParam('ai-prediction');

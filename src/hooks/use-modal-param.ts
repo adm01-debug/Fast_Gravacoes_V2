@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 export const MODAL_PUSHED_STATE = 'modalPushed';
@@ -58,8 +58,12 @@ export function useModalParam(
   }, [isOpen, pushedByHook, name, navigate]);
 
   // Registra este modal como "dono de URL" enquanto aberto via PUSH do
-  // hook — ver urlOwnedDialogCount().
-  useEffect(() => {
+  // hook — ver urlOwnedDialogCount(). Layout effect: roda síncrono no
+  // commit, antes do MutationObserver da guarda (microtask) — com
+  // useEffect a guarda veria o dialog montado com contador ainda zero e
+  // empurraria uma sentinela extra que o navigate(-1) de fechar
+  // consumiria no lugar da entrada própria do modal.
+  useLayoutEffect(() => {
     if (!isOpen || !pushedByHook) return;
     urlOwnedDialogs += 1;
     return () => { urlOwnedDialogs -= 1; };

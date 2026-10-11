@@ -61,7 +61,10 @@ export function DialogHistoryGuard() {
       sentinelActiveRef.current = true;
       sentinelConsumedByPopRef.current = false;
       sentinelBaseIdxRef.current = readIdx() ?? null;
-      history.pushState({ [SENTINEL_KEY]: true }, '');
+      // Preserva o state do router (idx/key/usr): um PUSH feito pelo
+      // próprio diálogo logo em seguida derivaria o índice novo de um
+      // state vazio, e o skip direcional perderia a referência.
+      history.pushState({ ...(history.state ?? {}), [SENTINEL_KEY]: true }, '');
     };
 
     const popSentinel = () => {
@@ -116,7 +119,8 @@ export function DialogHistoryGuard() {
       suppressUntilClosedRef.current = remaining <= 1;
       if (remaining > 1) {
         sentinelActiveRef.current = true;
-        history.pushState({ [SENTINEL_KEY]: true }, '');
+        sentinelBaseIdxRef.current = readIdx() ?? null;
+        history.pushState({ ...(history.state ?? {}), [SENTINEL_KEY]: true }, '');
       }
       if (remaining > 0) {
         // Escape aciona o close nativo de Dialog/Sheet do Radix.
@@ -131,7 +135,8 @@ export function DialogHistoryGuard() {
             suppressUntilClosedRef.current = false;
             sentinelActiveRef.current = true;
             sentinelConsumedByPopRef.current = false;
-            history.pushState({ [SENTINEL_KEY]: true }, '');
+            sentinelBaseIdxRef.current = readIdx() ?? null;
+            history.pushState({ ...(history.state ?? {}), [SENTINEL_KEY]: true }, '');
           }
         }, 0);
       }

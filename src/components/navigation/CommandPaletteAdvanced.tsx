@@ -84,7 +84,7 @@ export function CommandPaletteAdvanced() {
     try { localStorage.setItem("command_favorites", JSON.stringify(updated)); } catch { /* quota exceeded */ }
   };
 
-  const allCommands = React.useMemo(() => buildAllCommands({ navigateTo, executeAction, theme, setTheme, signOut, setOpen }), [theme, navigate, signOut, setTheme]);
+  const allCommands = React.useMemo(() => buildAllCommands({ navigateTo, executeAction, confirmIfDirty, theme, setTheme, signOut, setOpen }), [theme, navigate, signOut, setTheme, confirmIfDirty]);
   const contextualCommands = React.useMemo(() => buildContextualCommands(location.pathname, setOpen), [location.pathname]);
   const entityCommands = useCommandEntities(query, setOpen);
 
