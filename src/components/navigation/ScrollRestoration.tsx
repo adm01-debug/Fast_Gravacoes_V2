@@ -144,7 +144,9 @@ export function ScrollRestoration() {
           const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
           // Conteúdo encolheu desde o save: o clamp do browser impede
           // alcançar o offset antigo — aceita o máximo alcançável para
-          // não prender o scroll do usuário até o deadline.
+          // não prender o scroll do usuário até o deadline. Exige
+          // maxAchievable > 0: um container ainda vazio (dados async
+          // chegando) não é prova de conteúdo permanentemente curto.
           const maxAchievable = (main && main.scrollHeight > main.clientHeight)
             ? main.scrollHeight - main.clientHeight
             : Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -153,7 +155,7 @@ export function ScrollRestoration() {
           // rola no window — aceita assim que o antigo desmontar e o
           // contêiner se mantiver igual por duas verificações seguidas.
           const outgoingGone = !outgoingMain || !outgoingMain.isConnected || main !== outgoingMain;
-          if (main === seenEl && outgoingGone && achieved >= Math.min(saved, maxAchievable) - 2) return;
+          if (main === seenEl && outgoingGone && maxAchievable > 0 && achieved >= Math.min(saved, maxAchievable) - 2) return;
           seenEl = main;
           if (performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
         };

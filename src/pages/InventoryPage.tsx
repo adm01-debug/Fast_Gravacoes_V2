@@ -76,9 +76,12 @@ export default function InventoryPage() {
   // seleção velha por cima da seleção atual do usuário. E ao fechar o
   // modal (param some) a seleção local é preservada.
   const modalParam = searchParams.get('modal');
-  const [prevItemsParam, setPrevItemsParam] = useState(itemsParam);
-  if (itemsParam !== prevItemsParam) {
-    setPrevItemsParam(itemsParam);
+  // Acompanha o par (items, modal): revisitar a entrada do modal por
+  // Avançar muda só o `modal` (o items na base é igual) — e ainda assim
+  // precisa ressincronizar com a seleção codificada na URL.
+  const [prevNavEntry, setPrevNavEntry] = useState({ items: itemsParam, modal: modalParam });
+  if (itemsParam !== prevNavEntry.items || modalParam !== prevNavEntry.modal) {
+    setPrevNavEntry({ items: itemsParam, modal: modalParam });
     if (itemsParam && modalParam) setSelectedItems(new Set(itemsParam.split(',').filter(Boolean)));
   }
   // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).

@@ -25,8 +25,10 @@ function getAudioContext(): AudioContext | null {
 
 function currentUserId(): string | null {
   // O client Supabase persiste a sessão em sessionStorage
-  // (src/integrations/supabase/client.ts) — varre os dois storages.
-  for (const storage of [localStorage, sessionStorage]) {
+  // (src/integrations/supabase/client.ts) — checa ele PRIMEIRO: um
+  // auth-token velho no localStorage (setup anterior) não pode
+  // sequestrar o userId da sessão ativa.
+  for (const storage of [sessionStorage, localStorage]) {
     try {
       for (let i = 0; i < storage.length; i++) {
         const key = storage.key(i);
