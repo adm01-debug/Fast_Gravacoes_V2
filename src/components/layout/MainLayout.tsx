@@ -39,6 +39,7 @@ import { useNavigationHotkeys } from '@/hooks/use-navigation-hotkeys';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { useDeepLinkFocus } from '@/hooks/use-deeplink-focus';
 import { trackNavBack } from '@/lib/navTelemetry';
 
@@ -97,7 +98,9 @@ export function MainLayout({ children }: MainLayoutProps) {
     onSwipeRight: () => {
       if (isMobile && location.pathname !== '/' && location.pathname !== '/auth') {
         trackNavBack('swipe', hasInternalEntry ? 'history' : 'fallback');
-        confirmIfDirty(goBack);
+        // Sentinela ativa = dialog aberto — Back fecha o dialog, não
+        // deve pedir confirmação de descarte do formulário atr��s dele.
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
     },
     threshold: 80,

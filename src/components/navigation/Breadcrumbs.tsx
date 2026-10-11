@@ -7,6 +7,7 @@ import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { useCallback } from 'react';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { useBreadcrumbContext } from '@/contexts/BreadcrumbContext';
 import { trackNavBack } from '@/lib/navTelemetry';
 import {
@@ -110,7 +111,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
   const handleBack = useCallback(() => {
     trigger('light');
     trackNavBack('breadcrumb', hasInternalEntry ? 'history' : 'fallback');
-    confirmIfDirty(goBack);
+    if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
   }, [trigger, goBack, hasInternalEntry, confirmIfDirty]);
 
   // Don't show breadcrumbs on home page or specific utility pages

@@ -7,6 +7,7 @@ import { useDevice } from '@/hooks/use-device';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { trackNavBack } from '@/lib/navTelemetry';
 
 interface MobileHeaderProps {
@@ -52,7 +53,7 @@ export function MobileHeader({
   const handleBack = useCallback(() => {
     trigger('light');
     trackNavBack('mobile-header', hasInternalEntry ? 'history' : 'fallback');
-    confirmIfDirty(goBack);
+    if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
   }, [trigger, goBack, hasInternalEntry, confirmIfDirty]);
 
   const handleHome = useCallback(() => {

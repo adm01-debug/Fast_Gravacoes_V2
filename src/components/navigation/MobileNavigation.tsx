@@ -30,6 +30,7 @@ import { useNotifications } from '@/features/notifications';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { trackNavBack } from '@/lib/navTelemetry';
 import { useScrollDirection } from '@/hooks/use-scroll-direction';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -378,7 +379,7 @@ export function MobileNavigation() {
                 onClick={() => {
                   SoundFeedback.navBack();
                   trackNavBack('mobile-header', hasInternalEntry ? 'history' : 'fallback');
-                  confirmIfDirty(goBack);
+                  if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
                 }}
                 onHaptic={() => trigger('light')}
               />

@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +58,16 @@ export function DirtyGuardProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<PendingNavigation | null>(null);
   const pendingRef = useRef<PendingNavigation | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Botão Voltar do browser com a confirmação aberta: o POP já aconteceu
+  // e não pode ser cancelado — a confirmação pendente apontaria para a
+  // página antiga (e o callback poderia navegar de novo). Descarta sem
+  // executar a navegação pendente.
+  useEffect(() => {
+    pendingRef.current = null;
+    setPending(null);
+  }, [location.key]);
 
   const confirmIfDirty = useCallback((nav: PendingNavigation) => {
     if (dirtyRegistry) {

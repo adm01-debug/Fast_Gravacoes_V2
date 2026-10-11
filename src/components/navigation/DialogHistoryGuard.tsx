@@ -3,11 +3,18 @@ import { urlOwnedDialogCount } from '@/hooks/use-modal-param';
 import { subscribeNavHistory } from '@/lib/navHistory';
 
 export const SENTINEL_KEY = 'dialog-guard';
+
+/** A entrada atual é a sentinela de um dialog (Back consome/fecha o dialog). */
+export const hasActiveDialogSentinel = (): boolean =>
+  Boolean((history.state as Record<string, unknown> | null)?.[SENTINEL_KEY]);
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do
 // dirty-guard, cuja ação navega) ficam fora — a sentinela faria o
 // navigate(-1) só consumir a entrada extra em vez de sair da página.
+// :not([data-state="closed"]) — o conteúdo animado do Radix permanece no
+// DOM com data-state="closed" por ~300ms após fechar; contá-lo faria a
+// guarda rearmar uma sentinela para um dialog que já está saindo.
 const DIALOG_SELECTOR =
-  '[role="dialog"]:not([data-history-guard="off"]), [role="alertdialog"]:not([data-history-guard="off"])';
+  '[role="dialog"]:not([data-history-guard="off"]):not([data-state="closed"]), [role="alertdialog"]:not([data-history-guard="off"]):not([data-state="closed"])';
 
 function openDialogs(): HTMLElement[] {
   return Array.from(document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR));

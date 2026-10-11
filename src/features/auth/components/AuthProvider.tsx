@@ -41,6 +41,18 @@ class LockoutError extends Error {
   }
 }
 
+// Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
+// em localStorage por usuário — limpa em qualquer saída (logout manual,
+// inatividade, token expirado) para não ficarem legíveis após o logout.
+const clearFormDrafts = () => {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('fg-new-job-draft:')) localStorage.removeItem(key);
+    }
+  } catch { /* storage indisponível — best-effort */ }
+};
+
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
   return new Promise((resolve, reject) => {
     const timeoutId = window.setTimeout(() => {
@@ -194,6 +206,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       logger.debug('Auth state change event:', { event, hasSession: !!nextSession }, 'AuthProvider');
 
+      // Qualquer saída (logout manual, inatividade, token expirado) limpa
+      // rascunhos com dados de cliente/OS — não só o signOut do contexto.
+      if (event === 'SIGNED_OUT') clearFormDrafts();
+
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
       const requestSeq = ++authRequestSeqRef.current;
@@ -312,12 +328,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     // Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
     // em localStorage por usuário — não podem ficar legíveis após logout.
-    try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key?.startsWith('fg-new-job-draft:')) localStorage.removeItem(key);
-      }
-    } catch { /* storage indisponível — best-effort */ }
+    clearFormDrafts();
   };
 
   // Memoizado: evita re-render em cascata de todos os consumidores quando

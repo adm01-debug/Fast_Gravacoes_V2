@@ -4,6 +4,7 @@ import { useHapticFeedback } from './use-haptic-feedback';
 import { SoundFeedback } from '@/lib/soundFeedback';
 import { useSmartBack } from './use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { trackNavBack } from '@/lib/navTelemetry';
 
 export function useNavigationHotkeys() {
@@ -31,7 +32,7 @@ export function useNavigationHotkeys() {
         trigger('light');
         SoundFeedback.navBack();
         trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
-        confirmIfDirty(goBack);
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
 
       // Alt + H to go Home
@@ -73,7 +74,7 @@ export function useNavigationHotkeys() {
         trigger('light');
         SoundFeedback.navBack();
         trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
-        confirmIfDirty(goBack);
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
     };
 
