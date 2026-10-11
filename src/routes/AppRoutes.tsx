@@ -8,6 +8,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import type { TransitionPreset } from "@/lib/transitions";
 import { useRoutePrefetch } from "@/hooks/useRoutePrefetch";
 import { ScrollRestoration } from "@/components/navigation/ScrollRestoration";
+import { recordLocation } from "@/lib/navHistory";
 import {
   DashboardPageSkeleton,
   CalendarPageSkeleton,
@@ -155,6 +156,11 @@ export function AnimatedRoutes() {
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
   useRoutePrefetch();
+
+  // Registra a profundidade de histórico interno (usado pelo useSmartBack)
+  useEffect(() => {
+    recordLocation(navType, location.key);
+  }, [navType, location.key]);
 
   // Derived state pattern: compute during render when input changes (React docs recommended)
   if (location.pathname !== prevPath) {

@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,15 +54,39 @@ let dirtyRegistry = false;
 export function DirtyGuardProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<PendingNavigation | null>(null);
   const pendingRef = useRef<PendingNavigation | null>(null);
+  const navigate = useNavigate();
 
-  const confirmIfDirty = useCallback((navigate: PendingNavigation) => {
+  const confirmIfDirty = useCallback((nav: PendingNavigation) => {
     if (dirtyRegistry) {
-      pendingRef.current = navigate;
-      setPending(() => navigate);
+      pendingRef.current = nav;
+      setPending(() => nav);
     } else {
-      navigate();
+      nav();
     }
   }, []);
+
+  // Intercepta cliques em links internos (<Link>/<a href="/...">) enquanto
+  // houver formulário sujo — breadcrumbs, sidebar, cards e notificações
+  // navegam direto, sem passar por confirmIfDirty. Navegação por
+  // modifier-click/nova aba não é interrompida. O botão Voltar do browser
+  // (popstate) não pode ser cancelado; formulários com rascunho
+  // (ex.: Novo Job) persistem os dados e o usuário não perde nada.
+  useEffect(() => {
+    const onClickCapture = (event: MouseEvent) => {
+      if (!dirtyRegistry || pendingRef.current) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      const anchor = (event.target as HTMLElement).closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+      const href = anchor.getAttribute('href') ?? '';
+      if (!href.startsWith('/') || href.startsWith('//')) return;
+      if (anchor.pathname === window.location.pathname && anchor.search === window.location.search) return;
+      event.preventDefault();
+      event.stopPropagation();
+      confirmIfDirty(() => navigate(href));
+    };
+    document.addEventListener('click', onClickCapture, true);
+    return () => document.removeEventListener('click', onClickCapture, true);
+  }, [confirmIfDirty, navigate]);
 
   const value = useMemo<DirtyGuardState>(() => ({ confirmIfDirty }), [confirmIfDirty]);
 

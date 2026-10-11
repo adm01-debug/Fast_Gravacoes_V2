@@ -49,26 +49,30 @@ export function ScrollRestoration() {
   const navType = useNavigationType();
   const lastKeyRef = useRef<string>(location.key);
 
+  const save = () => {
+    const map = readMap();
+    map[lastKeyRef.current] = getScrollY();
+    writeMap(map);
+  };
+
   useEffect(() => {
-    const save = () => {
-      const map = readMap();
-      map[lastKeyRef.current] = getScrollY();
-      writeMap(map);
-    };
-    // Salva antes de sair da entrada atual: scroll e unload.
-    window.addEventListener('scroll', save, { passive: true });
-    document.querySelector('main')?.addEventListener('scroll', save, { passive: true });
+    // scroll não borbulha — listener em capture no document pega tanto o
+    // scroll do window quanto o do <main>, mesmo quando o <main> ainda
+    // não existia na montagem (páginas lazy).
+    const onScroll = () => save();
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
     window.addEventListener('beforeunload', save);
     return () => {
-      save();
-      window.removeEventListener('scroll', save);
-      document.querySelector('main')?.removeEventListener('scroll', save);
+      document.removeEventListener('scroll', onScroll, { capture: true });
       window.removeEventListener('beforeunload', save);
     };
   }, []);
 
   useEffect(() => {
+    // Guarda a posição da entrada que está saindo antes de trocar de key.
+    save();
     lastKeyRef.current = location.key;
+
     if (navType === 'POP') {
       const saved = readMap()[location.key];
       if (saved !== undefined && saved > 0) {

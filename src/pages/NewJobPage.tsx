@@ -25,6 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyForm, useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { useAuth } from '@/features/auth';
 
 const jobSchema = z.object({
   order_number: z.string().min(1, 'Número da OS é obrigatório').trim(),
@@ -44,7 +45,13 @@ const jobSchema = z.object({
 
 type JobFormValues = z.infer<typeof jobSchema>;
 
-const DRAFT_KEY = 'fg-new-job-draft';
+const DRAFT_KEY_BASE = 'fg-new-job-draft';
+
+// Chave por usuário: impede que um rascunho de uma conta apareça para a
+// próxima pessoa que usar o mesmo navegador (privacidade do cliente/OS).
+function draftKeyFor(userId: string | undefined): string {
+  return `${DRAFT_KEY_BASE}:${userId ?? 'anon'}`;
+}
 
 interface JobDraft {
   values: JobFormValues;
@@ -52,9 +59,9 @@ interface JobDraft {
   saved_at: string;
 }
 
-function readDraft(): JobDraft | null {
+function readDraft(key: string): JobDraft | null {
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
     const draft = JSON.parse(raw) as JobDraft;
     return draft?.values ? draft : null;
@@ -93,13 +100,15 @@ const defaultValues: JobFormValues = {
 export default function NewJobPage() {
   const navigate = useNavigate();
   const { techniques, getMachinesByTechnique, refetchJobs } = useSchedulingData();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [date, setDate] = useState<Date>();
   const [step, setStep] = useState(0);
   const { goBack } = useSmartBack();
   const { confirmIfDirty } = useDirtyGuard();
 
-  const draft = useMemo(() => readDraft(), []);
+  const draftKey = draftKeyFor(user?.id);
+  const draft = useMemo(() => readDraft(draftKey), [draftKey]);
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors, isDirty } } = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
@@ -107,7 +116,11 @@ export default function NewJobPage() {
   });
 
   // Guarda de formulário sujo: Voltar/swipe/atalhos pedem confirmação.
-  useDirtyForm(isDirty);
+  // Inclui mudanças na data agendada (fora do react-hook-form) e um
+  // rascunho restaurado ainda não enviado.
+  const restoredDate = draft?.scheduled_date ?? '';
+  const currentDate = date ? format(date, 'yyyy-MM-dd') : '';
+  useDirtyForm(isDirty || currentDate !== restoredDate);
 
   // Restaura rascunho salvo (data fica fora do react-hook-form).
   useEffect(() => {
@@ -130,14 +143,14 @@ export default function NewJobPage() {
           saved_at: new Date().toISOString(),
         };
         try {
-          localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+          localStorage.setItem(draftKey, JSON.stringify(payload));
         } catch {
           // storage cheio/indisponível — rascunho opcional
         }
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, date]);
+  }, [watch, date, draftKey]);
 
   const techniqueId = watch('technique_id');
   const availableMachines = techniqueId ? getMachinesByTechnique(techniqueId) : [];
@@ -181,7 +194,7 @@ export default function NewJobPage() {
 
       if (error) throw error;
 
-      localStorage.removeItem(DRAFT_KEY);
+      try { localStorage.removeItem(draftKey); } catch { /* rascunho opcional */ }
       toast.success('Job criado com sucesso!');
       refetchJobs();
       navigate('/');

@@ -1,11 +1,16 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 
 const SENTINEL_KEY = 'dialog-guard';
 const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
 
 function openDialogs(): HTMLElement[] {
   return Array.from(document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR));
+}
+
+function urlOwnsModal(): boolean {
+  // Modais via useModalParam já possuem sua própria entrada no histórico
+  // (?modal=<name>) — sentinela duplicada faria o voltar reabrir o modal.
+  return new URLSearchParams(window.location.search).has('modal');
 }
 
 /**
@@ -16,24 +21,22 @@ function openDialogs(): HTMLElement[] {
  * para não deixar um "back morto".
  */
 export function DialogHistoryGuard() {
-  const location = useLocation();
+  // Refs no nível do componente: estado persiste entre re-execuções do
+  // effect (mudanças de rota com dialog aberto não perdem a sentinela).
+  const sentinelActiveRef = useRef(false);
+  const sentinelConsumedByPopRef = useRef(false);
 
   useEffect(() => {
-    let sentinelActive = false;
-    // Após um popstate o browser já consumiu a sentinela; este flag evita
-    // que o ramo "dialog fechou pela UI" tente removê-la de novo.
-    let sentinelConsumedByPop = false;
-
     const pushSentinel = () => {
-      if (sentinelActive) return;
-      sentinelActive = true;
-      sentinelConsumedByPop = false;
+      if (sentinelActiveRef.current || urlOwnsModal()) return;
+      sentinelActiveRef.current = true;
+      sentinelConsumedByPopRef.current = false;
       history.pushState({ [SENTINEL_KEY]: true }, '');
     };
 
     const popSentinel = () => {
-      if (!sentinelActive || sentinelConsumedByPop) return;
-      sentinelActive = false;
+      if (!sentinelActiveRef.current || sentinelConsumedByPopRef.current) return;
+      sentinelActiveRef.current = false;
       history.back();
     };
 
@@ -53,9 +56,9 @@ export function DialogHistoryGuard() {
     });
 
     const onPopState = () => {
-      if (!sentinelActive) return;
-      sentinelConsumedByPop = true;
-      sentinelActive = false;
+      if (!sentinelActiveRef.current) return;
+      sentinelConsumedByPopRef.current = true;
+      sentinelActiveRef.current = false;
       if (openDialogs().length > 0) {
         // Escape aciona o close nativo de Dialog/Sheet do Radix.
         document.dispatchEvent(
@@ -70,7 +73,7 @@ export function DialogHistoryGuard() {
       observer.disconnect();
       window.removeEventListener('popstate', onPopState);
     };
-  }, [location.key]);
+  }, []);
 
   return null;
 }
