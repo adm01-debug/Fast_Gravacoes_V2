@@ -70,14 +70,16 @@ export default function InventoryPage() {
   // ressincronizar a seleção — sem isso o modal mostraria etiquetas de
   // itens diferentes dos compartilhados na URL. Ajuste durante o render
   // (padrão React) em vez de effect.
-  // O param some quando o modal fecha via navigate(-1) — nesse caso a
-  // seleção local é preservada (comportamento anterior ao deep-link);
-  // só ressincroniza quando o param EXISTE (abrir/revisitar a entrada
-  // com ?items=... compartilhado).
+  // Só ressincroniza quando a entrada é a do modal compartilhado
+  // (?modal=...&items=...). A base normalizada do deep-link guarda o
+  // items antigo SEM modal — voltar até ela não pode restaurar a
+  // seleção velha por cima da seleção atual do usuário. E ao fechar o
+  // modal (param some) a seleção local é preservada.
+  const modalParam = searchParams.get('modal');
   const [prevItemsParam, setPrevItemsParam] = useState(itemsParam);
   if (itemsParam !== prevItemsParam) {
     setPrevItemsParam(itemsParam);
-    if (itemsParam) setSelectedItems(new Set(itemsParam.split(',').filter(Boolean)));
+    if (itemsParam && modalParam) setSelectedItems(new Set(itemsParam.split(',').filter(Boolean)));
   }
   // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).
   const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useModalParam('batch-qr');

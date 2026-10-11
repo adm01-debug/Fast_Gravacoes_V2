@@ -91,8 +91,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         if (container?.contains(active)) {
           attempts += 1;
           if (attempts < 10) timer = window.setTimeout(tryFocusHeading, 200);
+          return;
         }
-        return;
+        // Foco no chrome persistente (sidebar/header): é o controle que
+        // disparou a navegação — segue para anunciar a página nova no h1.
       }
       const heading = document.querySelector<HTMLElement>('#main-content-scroll h1');
       if (heading) {

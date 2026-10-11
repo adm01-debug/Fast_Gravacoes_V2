@@ -6,20 +6,24 @@ const MAX_ENTRIES = 30;
 
 // Mapa cacheado em memória — parse/serialize do sessionStorage a cada
 // evento de scroll rodava várias vezes por segundo na thread principal.
-let cachedMap: Record<string, number> | null = null;
+// Cada entrada guarda o offset + o pathname: a location.key pode se
+// repetir em rotas diferentes depois de hard-nav na mesma aba (o router
+// novo reusa 'default'), e validar a rota evita aplicar o scroll de
+// uma página em outra sem relação.
+let cachedMap: Record<string, { y: number; p: string }> | null = null;
 let writeTimer = 0;
 
-function readMap(): Record<string, number> {
+function readMap(): Record<string, { y: number; p: string }> {
   if (cachedMap) return cachedMap;
   try {
-    cachedMap = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, number>;
+    cachedMap = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, { y: number; p: string }>;
   } catch {
     cachedMap = {};
   }
   return cachedMap;
 }
 
-function writeMap(map: Record<string, number>) {
+function writeMap(map: Record<string, { y: number; p: string }>) {
   try {
     const keys = Object.keys(map);
     if (keys.length > MAX_ENTRIES) {
@@ -68,7 +72,7 @@ export function ScrollRestoration() {
 
   const save = () => {
     const map = readMap();
-    map[lastKeyRef.current] = getScrollY();
+    map[lastKeyRef.current] = { y: getScrollY(), p: lastPathRef.current };
     writeMap(map);
   };
 
@@ -78,7 +82,7 @@ export function ScrollRestoration() {
     // não existia na montagem (páginas lazy). Escrita no storage é
     // debounced; o flush acontece na saída da rota e no unload.
     const onScroll = () => {
-      readMap()[lastKeyRef.current] = getScrollY();
+      readMap()[lastKeyRef.current] = { y: getScrollY(), p: lastPathRef.current };
       if (!writeTimer) writeTimer = window.setTimeout(() => { writeTimer = 0; writeMap(readMap()); }, 150);
     };
     document.addEventListener('scroll', onScroll, { passive: true, capture: true });
@@ -115,7 +119,8 @@ export function ScrollRestoration() {
     let cancelled = false;
 
     if (navType === 'POP') {
-      const saved = readMap()[location.key];
+      const entry = readMap()[location.key];
+      const saved = entry && entry.p === location.pathname ? entry.y : undefined;
       if (saved !== undefined && saved > 0) {
         // Página lazy pode demorar para pintar — retenta por ~1.5s até
         // alcançar de fato o offset salvo (scrollTop real, não só altura
@@ -137,12 +142,18 @@ export function ScrollRestoration() {
           setScrollY(saved);
           const main = document.querySelector<HTMLElement>('main');
           const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
+          // Conteúdo encolheu desde o save: o clamp do browser impede
+          // alcançar o offset antigo — aceita o máximo alcançável para
+          // não prender o scroll do usuário até o deadline.
+          const maxAchievable = (main && main.scrollHeight > main.clientHeight)
+            ? main.scrollHeight - main.clientHeight
+            : Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
           // O <main> da rota que sai ainda montado (exit ~350ms do
           // mode="wait") não vale; destino sem <main> (rotas públicas)
           // rola no window — aceita assim que o antigo desmontar e o
           // contêiner se mantiver igual por duas verificações seguidas.
           const outgoingGone = !outgoingMain || !outgoingMain.isConnected || main !== outgoingMain;
-          if (achieved >= saved - 2 && main === seenEl && outgoingGone) return;
+          if (main === seenEl && outgoingGone && achieved >= Math.min(saved, maxAchievable) - 2) return;
           seenEl = main;
           if (performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
         };
