@@ -96,10 +96,11 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
         return;
       }
 
-      // Handle Command+K separately (Command Palette)
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        return; // Let Command Palette handle this
-      }
+      // Combinações com Alt/Ctrl/Meta (Alt+N, ⌘K…) são tratadas por
+      // useNavigationHotkeys/paleta; teclas modificadoras sozinhas (Shift
+      // antes do "?") não entram na sequência.
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (["Shift", "Control", "Alt", "Meta", "CapsLock"].includes(e.key)) return;
 
       const key = e.key.toLowerCase();
 
