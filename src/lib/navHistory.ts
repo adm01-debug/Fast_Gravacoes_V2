@@ -61,10 +61,11 @@ export function recordLocation(action: NavigationType, key: string) {
     return;
   }
   const snap = persistedSnapshot();
-  if (snap && snap.length > 0) {
-    // A entrada atual carrega o retrato da pilha no momento em que foi
-    // criada — restaura esse retrato com a key atual no topo.
-    stack.length = 0;
+  // O retrato só manda quando a pilha em memória está vazia (módulo
+  // recarregado = reload da página). Com pilha viva, o fluxo normal de
+  // PUSH/REPLACE/POP decide — restaurar aqui descartaria entradas reais
+  // (em jsdom o history.state é global e o retrato vaza entre testes).
+  if (snap && snap.length > 0 && stack.length === 0) {
     stack.push(...snap.slice(0, -1).filter((k) => k !== key), key);
   } else if (action === 'POP') {
     const idx = stack.lastIndexOf(key);
