@@ -134,7 +134,12 @@ export function ScrollRestoration() {
           setScrollY(saved);
           const main = document.querySelector<HTMLElement>('main');
           const achieved = (main && main.scrollHeight > main.clientHeight) ? main.scrollTop : window.scrollY;
-          if (main && main !== outgoingMain && main === seenEl && achieved >= saved - 2) return;
+          // O <main> da rota que sai ainda montado (exit ~350ms do
+          // mode="wait") não vale; destino sem <main> (rotas públicas)
+          // rola no window — aceita assim que o antigo desmontar e o
+          // contêiner se mantiver igual por duas verificações seguidas.
+          const outgoingGone = !outgoingMain || !outgoingMain.isConnected || main !== outgoingMain;
+          if (achieved >= saved - 2 && main === seenEl && outgoingGone) return;
           seenEl = main;
           if (performance.now() < deadline) rafId = requestAnimationFrame(tryRestore);
         };

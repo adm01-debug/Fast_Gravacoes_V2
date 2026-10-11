@@ -57,17 +57,18 @@ export function useModalParam(
     navigate(url, { state: { [MODAL_PUSHED_STATE]: name } });
   }, [isOpen, pushedByHook, name, navigate]);
 
-  // Registra este modal como "dono de URL" enquanto aberto via PUSH do
-  // hook — ver urlOwnedDialogCount(). Layout effect: roda síncrono no
-  // commit, antes do MutationObserver da guarda (microtask) — com
-  // useEffect a guarda veria o dialog montado com contador ainda zero e
-  // empurraria uma sentinela extra que o navigate(-1) de fechar
-  // consumiria no lugar da entrada própria do modal.
+  // Registra este modal como "dono de URL" enquanto `?modal=` está na
+  // URL — ver urlOwnedDialogCount(). Conta também o deep-link direto
+  // antes da normalização (pushedByHook=false): sem reservar já no
+  // primeiro commit, o MutationObserver da guarda veria o dialog aberto
+  // e empurraria sentinela — que o REPLACE da fase 1 reescreveria,
+  // deixando a URL do modal presa no histórico. Layout effect roda
+  // síncrono no commit, antes do observer (microtask).
   useLayoutEffect(() => {
-    if (!isOpen || !pushedByHook) return;
+    if (!isOpen) return;
     urlOwnedDialogs += 1;
     return () => { urlOwnedDialogs -= 1; };
-  }, [isOpen, pushedByHook]);
+  }, [isOpen]);
 
   const setOpen = useCallback(
     (open: boolean, extraParams?: Record<string, string>) => {

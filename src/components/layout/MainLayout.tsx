@@ -79,7 +79,21 @@ export function MainLayout({ children }: MainLayoutProps) {
     const tryFocusHeading = () => {
       // Não rouba o foco se o usuário já está interagindo (input, dialog…)
       const active = document.activeElement as HTMLElement | null;
-      if (active && active !== document.body && active.tagName !== 'MAIN' && active.id !== 'main-content-scroll') return;
+      if (active && active !== document.body && active.tagName !== 'MAIN' && active.id !== 'main-content-scroll') {
+        // Foco em dialog aberto: nunca rouba.
+        if (active.closest('[role="dialog"], [role="alertdialog"]')) return;
+        // Foco dentro do <main> pode ser um controle da ROTA QUE SAI —
+        // transições duram até ~800ms, mais que o delay inicial de 400ms:
+        // ela vai desmontar e devolver o foco ao body, então retenta em
+        // vez de desistir. Se for interação real na página nova, o retry
+        // simplesmente não move o foco (sem roubo).
+        const container = document.querySelector<HTMLElement>('#main-content-scroll');
+        if (container?.contains(active)) {
+          attempts += 1;
+          if (attempts < 10) timer = window.setTimeout(tryFocusHeading, 200);
+        }
+        return;
+      }
       const heading = document.querySelector<HTMLElement>('#main-content-scroll h1');
       if (heading) {
         heading.setAttribute('tabindex', '-1');

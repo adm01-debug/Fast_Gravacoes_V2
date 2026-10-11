@@ -119,8 +119,17 @@ export function DialogHistoryGuard() {
         const base = sentinelBaseIdxRef.current ?? (typeof st.idx === 'number' ? st.idx : null);
         const last = lastRealIdxRef.current;
         if (base !== null && last !== null) {
-          if (last > base) history.back();
-          else history.forward();
+          if (last > base) {
+            history.back();
+          } else if (typeof st.idx === 'number' && st.idx >= history.length - 1) {
+            // Sentinela é a entrada mais recente (ex.: dialog fechado
+            // pela UI e o usuário apertou Avançar): não há destino real
+            // depois dela — volta à base em vez de ficar parado numa
+            // cópia morta da página.
+            history.back();
+          } else {
+            history.forward();
+          }
         }
         return;
       }
