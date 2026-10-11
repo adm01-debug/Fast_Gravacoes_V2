@@ -1526,3 +1526,22 @@
   }
 }
 
+
+/* Deep-link focus highlight — anel pulsante ao abrir ?focus=<id> */
+@keyframes deeplink-focus-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.55); }
+  50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0.15); }
+}
+
+.deeplink-focus-highlight {
+  animation: deeplink-focus-pulse 0.8s var(--easing-standard, ease-in-out) 3;
+  outline: 2px solid hsl(var(--primary) / 0.7);
+  outline-offset: 2px;
+  border-radius: var(--radius, 0.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deeplink-focus-highlight {
+    animation: none;
+  }
+}

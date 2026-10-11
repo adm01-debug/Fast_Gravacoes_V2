@@ -1,0 +1,85 @@
+import { useEffect, useRef } from 'react';
+import { useLocation, useNavigationType } from 'react-router-dom';
+
+const STORAGE_KEY = 'fg-scroll-restore';
+const MAX_ENTRIES = 30;
+
+function readMap(): Record<string, number> {
+  try {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, number>;
+  } catch {
+    return {};
+  }
+}
+
+function writeMap(map: Record<string, number>) {
+  try {
+    const keys = Object.keys(map);
+    if (keys.length > MAX_ENTRIES) {
+      for (const key of keys.slice(0, keys.length - MAX_ENTRIES)) delete map[key];
+    }
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+  } catch {
+    // sessionStorage indisponível — restauração desligada
+  }
+}
+
+function getScrollY(): number {
+  const main = document.querySelector<HTMLElement>('main');
+  if (main && main.scrollHeight > main.clientHeight) return main.scrollTop;
+  return window.scrollY;
+}
+
+function setScrollY(y: number) {
+  const main = document.querySelector<HTMLElement>('main');
+  if (main && main.scrollHeight > main.clientHeight) {
+    main.scrollTop = y;
+  } else {
+    window.scrollTo(0, y);
+  }
+}
+
+/**
+ * Restaura a posição de scroll ao voltar (POP): cada location.key guarda
+ * seu scrollY; num POP a posição salva é reaplicada após a pintura, e uma
+ * navegação nova (PUSH) volta ao topo.
+ */
+export function ScrollRestoration() {
+  const location = useLocation();
+  const navType = useNavigationType();
+  const lastKeyRef = useRef<string>(location.key);
+
+  useEffect(() => {
+    const save = () => {
+      const map = readMap();
+      map[lastKeyRef.current] = getScrollY();
+      writeMap(map);
+    };
+    // Salva antes de sair da entrada atual: scroll e unload.
+    window.addEventListener('scroll', save, { passive: true });
+    document.querySelector('main')?.addEventListener('scroll', save, { passive: true });
+    window.addEventListener('beforeunload', save);
+    return () => {
+      save();
+      window.removeEventListener('scroll', save);
+      document.querySelector('main')?.removeEventListener('scroll', save);
+      window.removeEventListener('beforeunload', save);
+    };
+  }, []);
+
+  useEffect(() => {
+    lastKeyRef.current = location.key;
+    if (navType === 'POP') {
+      const saved = readMap()[location.key];
+      if (saved !== undefined && saved > 0) {
+        // Duplo rAF: espera a página lazy pintar antes de restaurar.
+        requestAnimationFrame(() => requestAnimationFrame(() => setScrollY(saved)));
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
+    document.querySelector('main')?.scrollTo(0, 0);
+  }, [location.key, navType]);
+
+  return null;
+}

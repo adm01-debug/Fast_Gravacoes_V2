@@ -32,6 +32,7 @@ import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { WebSocketProvider } from "@/contexts/WebSocketContext";
 import { TransitionConfigProvider } from "@/contexts/TransitionConfigContext";
+import { DirtyGuardProvider } from "@/contexts/DirtyFormContext";
 import { useAuth } from "@/features/auth";
 
 import { createQueryClient } from "@/lib/queryConfig";
@@ -126,10 +127,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <ComposedProviders>
-              <Observers />
-              {children}
-            </ComposedProviders>
+            <DirtyGuardProvider>
+              <ComposedProviders>
+                <Observers />
+                {children}
+              </ComposedProviders>
+            </DirtyGuardProvider>
           </BrowserRouter>
         </QueryClientProvider>
       </ErrorBoundary>

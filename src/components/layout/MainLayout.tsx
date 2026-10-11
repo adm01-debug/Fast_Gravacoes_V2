@@ -1,4 +1,4 @@
-import { ReactNode, Suspense } from 'react';
+import { ReactNode, Suspense, useEffect } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -30,6 +30,8 @@ const Breadcrumbs = lazyWithRetry(() => import('../navigation/Breadcrumbs').then
 const BackButton = lazyWithRetry(() => import('../navigation/BackButton').then(m => ({ default: m.BackButton })));
 const SwipeIndicator = lazyWithRetry(() => import('../navigation/SwipeIndicator').then(m => ({ default: m.SwipeIndicator })));
 const TopProgressBar = lazyWithRetry(() => import('../navigation/TopProgressBar').then(m => ({ default: m.TopProgressBar })));
+const DialogHistoryGuard = lazyWithRetry(() => import('../navigation/DialogHistoryGuard').then(m => ({ default: m.DialogHistoryGuard })));
+const KeyboardShortcutsDialog = lazyWithRetry(() => import('../navigation/KeyboardShortcutsDialog').then(m => ({ default: m.KeyboardShortcutsDialog })));
 
 
 
@@ -37,7 +39,10 @@ import { useDevice } from '@/hooks/use-device';
 import { cn } from '@/lib/utils';
 import { useNavigationHotkeys } from '@/hooks/use-navigation-hotkeys';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
-import { useNavigate } from 'react-router-dom';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { useDeepLinkFocus } from '@/hooks/use-deeplink-focus';
+import { trackNavBack } from '@/lib/navTelemetry';
 
 
 
@@ -51,8 +56,9 @@ const EmptyFallback = null;
 export function MainLayout({ children }: MainLayoutProps) {
   const { isMobile, prefersReducedMotion } = useDevice();
   const location = useLocation();
-  const navigate = useNavigate();
   const { unreadCount } = useNotifications();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
 
   // Dynamic page title for SEO
@@ -61,11 +67,28 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Navigation global hotkeys
   useNavigationHotkeys();
 
+  // Deep-link com foco (?focus=<id> → scroll + destaque no item)
+  useDeepLinkFocus();
+
+  // Acessibilidade: ao trocar de rota, move o foco para o h1 da página
+  // para leitores de tela anunciarem o novo contexto.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const heading = document.querySelector<HTMLElement>('#main-content-scroll h1');
+      if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+      }
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname]);
+
   // Swipe to back on mobile
   const { ref: swipeRef } = useSwipeGesture({
     onSwipeRight: () => {
       if (isMobile && location.pathname !== '/' && location.pathname !== '/auth') {
-        navigate(-1);
+        trackNavBack('swipe', hasInternalEntry ? 'history' : 'fallback');
+        confirmIfDirty(goBack);
       }
     },
     threshold: 80,
@@ -83,6 +106,12 @@ export function MainLayout({ children }: MainLayoutProps) {
         <SkipLinks />
         <Suspense fallback={null}>
           <TopProgressBar />
+        </Suspense>
+        <Suspense fallback={null}>
+          <DialogHistoryGuard />
+        </Suspense>
+        <Suspense fallback={null}>
+          <KeyboardShortcutsDialog />
         </Suspense>
 
         {/* Sidebar - hidden on mobile, shown on tablet+ */}

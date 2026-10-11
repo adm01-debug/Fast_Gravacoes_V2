@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { NAVIGATION_EVENT, isNavigationEvent } from '@/lib/navigation';
+import { trackNavEvent } from '@/lib/navTelemetry';
 
 /**
  * Component that listens for custom navigation events and handles them
@@ -11,6 +12,12 @@ import { NAVIGATION_EVENT, isNavigationEvent } from '@/lib/navigation';
  */
 export function NavigationListener() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Telemetria de navegação (breadcrumb no Sentry a cada pageview)
+  useEffect(() => {
+    trackNavEvent('pageview', { path: location.pathname });
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleNavigation = (event: Event) => {

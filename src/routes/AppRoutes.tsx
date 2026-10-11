@@ -1,12 +1,13 @@
 import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useNavigationType } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { type AppRole } from "@/features/auth";
 import { PageTransition } from "@/components/layout/PageTransition";
 import type { TransitionPreset } from "@/lib/transitions";
 import { useRoutePrefetch } from "@/hooks/useRoutePrefetch";
+import { ScrollRestoration } from "@/components/navigation/ScrollRestoration";
 import {
   DashboardPageSkeleton,
   CalendarPageSkeleton,
@@ -149,6 +150,7 @@ function PublicPage({
 
 export function AnimatedRoutes() {
   const location = useLocation();
+  const navType = useNavigationType();
   const [prevPath, setPrevPath] = useState(location.pathname);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
@@ -156,7 +158,9 @@ export function AnimatedRoutes() {
 
   // Derived state pattern: compute during render when input changes (React docs recommended)
   if (location.pathname !== prevPath) {
-    setDirection(getNavigationDirection(prevPath, location.pathname));
+    // POP (voltar do browser/botão Voltar) sempre desliza para trás;
+    // PUSH usa a heurística de profundidade.
+    setDirection(navType === 'POP' ? 'backward' : getNavigationDirection(prevPath, location.pathname));
     setPrevPath(location.pathname);
   }
 
@@ -166,7 +170,9 @@ export function AnimatedRoutes() {
 
 
   return (
-    <AnimatePresence mode="wait">
+    <>
+      <ScrollRestoration />
+      <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* Public routes */}
         <Route path="/auth" element={<PublicPage direction={direction} fallback={<AuthPageSkeleton />}><AuthPage /></PublicPage>} />
@@ -256,6 +262,7 @@ export function AnimatedRoutes() {
         {/* 404 */}
         <Route path="*" element={<PublicPage direction={direction} fallback={<AuthPageSkeleton />}><NotFound /></PublicPage>} />
       </Routes>
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   );
 }

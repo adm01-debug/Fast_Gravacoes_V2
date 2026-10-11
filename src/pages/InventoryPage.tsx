@@ -3,6 +3,7 @@
    infinitos, invalidação excessiva de cache ou recomputação em cada
    render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useRBAC } from '@/features/auth';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -36,16 +37,34 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useModalParam } from '@/hooks/use-modal-param';
 
 export default function InventoryPage() {
   const { items, isLoading, recordMovement, stats, transferItems, deleteMovement, calculateAI, isCalculatingAI } = useInventory();
   const { data: movements } = useInventoryMovements();
   const { hasPermission } = useRBAC();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  // Filtros persistidos na URL: sobrevivem a voltar/recarregar/compartilhar.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get('q') ?? '';
+  const selectedCategory = searchParams.get('categoria') ?? 'all';
+  const setSearchTerm = (value: string) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (value) next.set('q', value); else next.delete('q');
+      return next;
+    }, { replace: true });
+  };
+  const setSelectedCategory = (value: string) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (value && value !== 'all') next.set('categoria', value); else next.delete('categoria');
+      return next;
+    }, { replace: true });
+  };
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useState(false);
-  const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useState(false);
+  // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).
+  const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useModalParam('batch-qr');
+  const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useModalParam('ai-prediction');
   const debouncedSearch = useDebounce(searchTerm, 300);
   const isSearching = searchTerm !== debouncedSearch;
 

@@ -62,6 +62,7 @@ export function AlertJobCard({
             return (
               <div
                 key={job.id}
+                data-focus-id={job.id}
                 {...clickableProps(() => onJobClick(job), { label: `Abrir job ${job.order_number}` })}
                 className="p-3 rounded-lg bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >

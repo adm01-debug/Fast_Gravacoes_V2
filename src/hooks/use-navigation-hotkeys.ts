@@ -2,11 +2,16 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useHapticFeedback } from './use-haptic-feedback';
 import { SoundFeedback } from '@/lib/soundFeedback';
+import { useSmartBack } from './use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { trackNavBack } from '@/lib/navTelemetry';
 
 export function useNavigationHotkeys() {
   const navigate = useNavigate();
   const location = useLocation();
   const { trigger } = useHapticFeedback();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -25,7 +30,8 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('light');
         SoundFeedback.navBack();
-        navigate(-1);
+        trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
+        confirmIfDirty(goBack);
       }
 
       // Alt + H to go Home
@@ -64,11 +70,12 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('light');
         SoundFeedback.navBack();
-        navigate(-1);
+        trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
+        confirmIfDirty(goBack);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigate, location, trigger]);
+  }, [navigate, location, trigger, goBack, hasInternalEntry, confirmIfDirty]);
 }

@@ -23,7 +23,30 @@ function getAudioContext(): AudioContext | null {
   }
 }
 
+/**
+ * Respeita o opt-out de sons: lê `soundEnabled` em `user-preferences`
+ * (UserPreferencesContext) e `sounds` em `app-settings-<uid>`
+ * (SettingsPage). Qualquer um desligado silencia tudo.
+ */
+export function isSoundEnabled(): boolean {
+  try {
+    const prefs = localStorage.getItem('user-preferences');
+    if (prefs && JSON.parse(prefs).soundEnabled === false) return false;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('app-settings-')) {
+        const settings = JSON.parse(localStorage.getItem(key) ?? '{}');
+        if (settings.sounds === false) return false;
+      }
+    }
+  } catch {
+    // storage indisponível — mantém som ligado
+  }
+  return true;
+}
+
 function playTone(frequency: number, duration: number, type: OscillatorType = 'sine', volume = 0.15) {
+  if (!isSoundEnabled()) return;
   const ctx = getAudioContext();
   if (!ctx) return;
 
