@@ -71,8 +71,15 @@ export function DialogHistoryGuard() {
       if (!sentinelActiveRef.current) return;
       sentinelConsumedByPopRef.current = true;
       sentinelActiveRef.current = false;
-      suppressUntilClosedRef.current = true;
-      if (openDialogs().length > 0) {
+      // Re-arma de cara quando ainda restam diálogos abertos (pilha de
+      // diálogos) — suprimir deixaria os demais sem proteção do voltar.
+      const remaining = openDialogs().length;
+      suppressUntilClosedRef.current = remaining <= 1;
+      if (remaining > 1) {
+        sentinelActiveRef.current = true;
+        history.pushState({ [SENTINEL_KEY]: true }, '');
+      }
+      if (remaining > 0) {
         // Escape aciona o close nativo de Dialog/Sheet do Radix.
         document.dispatchEvent(
           new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })

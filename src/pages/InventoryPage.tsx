@@ -61,7 +61,11 @@ export default function InventoryPage() {
       return next;
     }, { replace: true });
   };
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  // `?items=id1,id2` compartilha a seleção junto com ?modal=batch-qr.
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(() => {
+    const ids = searchParams.get('items');
+    return new Set(ids ? ids.split(',').filter(Boolean) : []);
+  });
   // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).
   const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useModalParam('batch-qr');
   const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useModalParam('ai-prediction');

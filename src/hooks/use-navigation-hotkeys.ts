@@ -39,14 +39,14 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('medium');
         SoundFeedback.navForward();
-        navigate('/');
+        confirmIfDirty(() => navigate('/'));
       }
 
       // Alt + N to go Notifications
       if (event.altKey && (event.key === 'n' || event.key === 'N')) {
         event.preventDefault();
         trigger('light');
-        navigate('/notifications');
+        confirmIfDirty(() => navigate('/notifications'));
       }
 
       // Alt + S to open Global Search (simulates Cmd+K)
@@ -54,7 +54,7 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('light');
         SoundFeedback.click();
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
+        confirmIfDirty(() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })));
       }
       
       // Alt + R for Refresh data
@@ -62,7 +62,7 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('medium');
         SoundFeedback.click();
-        window.location.reload();
+        confirmIfDirty(() => window.location.reload());
       }
 
       // Alt + B for Back (additional shortcut)

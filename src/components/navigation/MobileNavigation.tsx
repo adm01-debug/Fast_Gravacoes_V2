@@ -327,9 +327,9 @@ export function MobileNavigation() {
   };
 
   const handleNavigate = useCallback((href: string) => {
-    navigate(href);
+    confirmIfDirty(() => navigate(href));
     setSheetOpen(false);
-  }, [navigate]);
+  }, [navigate, confirmIfDirty]);
 
   const handleMoreClick = useCallback(() => {
     trigger('light');

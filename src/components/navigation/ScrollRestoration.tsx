@@ -48,6 +48,7 @@ export function ScrollRestoration() {
   const location = useLocation();
   const navType = useNavigationType();
   const lastKeyRef = useRef<string>(location.key);
+  const lastPathRef = useRef<string>(location.pathname);
 
   const save = () => {
     const map = readMap();
@@ -73,17 +74,33 @@ export function ScrollRestoration() {
     save();
     lastKeyRef.current = location.key;
 
+    const samePage = location.pathname === lastPathRef.current;
+    lastPathRef.current = location.pathname;
+
+    // Troca só de query (?q=, ?categoria=, ?modal=) na mesma página não
+    // deve mover o scroll.
+    if (samePage) return;
+
     if (navType === 'POP') {
       const saved = readMap()[location.key];
       if (saved !== undefined && saved > 0) {
-        // Duplo rAF: espera a página lazy pintar antes de restaurar.
-        requestAnimationFrame(() => requestAnimationFrame(() => setScrollY(saved)));
+        // Página lazy pode demorar para pintar — retenta até o conteúdo
+        // ter altura suficiente (ou ~1.2s).
+        let attempts = 0;
+        const tryRestore = () => {
+          const main = document.querySelector<HTMLElement>('main');
+          const enough = (main?.scrollHeight ?? document.body.scrollHeight) >= saved;
+          setScrollY(saved);
+          attempts += 1;
+          if (!enough && attempts < 12) requestAnimationFrame(tryRestore);
+        };
+        requestAnimationFrame(() => requestAnimationFrame(tryRestore));
         return;
       }
     }
     window.scrollTo(0, 0);
     document.querySelector('main')?.scrollTo(0, 0);
-  }, [location.key, navType]);
+  }, [location.key, location.pathname, navType]);
 
   return null;
 }

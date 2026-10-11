@@ -8,7 +8,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import type { TransitionPreset } from "@/lib/transitions";
 import { useRoutePrefetch } from "@/hooks/useRoutePrefetch";
 import { ScrollRestoration } from "@/components/navigation/ScrollRestoration";
-import { recordLocation } from "@/lib/navHistory";
+import { recordLocation, popDirectionFor } from "@/lib/navHistory";
 import {
   DashboardPageSkeleton,
   CalendarPageSkeleton,
@@ -164,9 +164,13 @@ export function AnimatedRoutes() {
 
   // Derived state pattern: compute during render when input changes (React docs recommended)
   if (location.pathname !== prevPath) {
-    // POP (voltar do browser/botão Voltar) sempre desliza para trás;
-    // PUSH usa a heurística de profundidade.
-    setDirection(navType === 'POP' ? 'backward' : getNavigationDirection(prevPath, location.pathname));
+    // POP para trás desliza backward; Forward do browser também chega como
+    // POP, mas a pilha mostra que o alvo nunca foi visitado nesta sessão.
+    setDirection(
+      navType === 'POP' && popDirectionFor(location.key) === 'back'
+        ? 'backward'
+        : getNavigationDirection(prevPath, location.pathname)
+    );
     setPrevPath(location.pathname);
   }
 

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Plus, ArrowRight, ArrowLeft, Check } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedulingData } from '@/features/jobs';
 import { supabase } from '@/integrations/supabase/client';
@@ -120,7 +120,10 @@ export default function NewJobPage() {
   // rascunho restaurado ainda não enviado.
   const restoredDate = draft?.scheduled_date ?? '';
   const currentDate = date ? format(date, 'yyyy-MM-dd') : '';
-  useDirtyForm(isDirty || currentDate !== restoredDate);
+  const clearDraft = useCallback(() => {
+    try { localStorage.removeItem(draftKey); } catch { /* opcional */ }
+  }, [draftKey]);
+  useDirtyForm(isDirty || currentDate !== restoredDate, clearDraft);
 
   // Restaura rascunho salvo (data fica fora do react-hook-form).
   useEffect(() => {
@@ -147,10 +150,12 @@ export default function NewJobPage() {
         } catch {
           // storage cheio/indisponível — rascunho opcional
         }
+      } else {
+        clearDraft();
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, date, draftKey]);
+  }, [watch, date, draftKey, clearDraft]);
 
   const techniqueId = watch('technique_id');
   const availableMachines = techniqueId ? getMachinesByTechnique(techniqueId) : [];
@@ -211,6 +216,7 @@ export default function NewJobPage() {
         <PageHeader
           title="Novo Agendamento"
           description="Cadastre um novo job de produção"
+          showBreadcrumbs={false}
         />
 
         {/* Stepper de progresso */}

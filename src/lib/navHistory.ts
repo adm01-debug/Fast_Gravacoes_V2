@@ -49,6 +49,16 @@ export function internalDepth(): number {
   return Math.max(0, stack.length - 1);
 }
 
+/**
+ * Direção de um POP para `key`: 'back' se a entrada existe abaixo do topo,
+ * 'forward' quando o usuário avançou para uma entrada que já tinha sido
+ * descartada da pilha (Forward do browser também chega como POP).
+ */
+export function popDirectionFor(key: string): 'back' | 'forward' {
+  const idx = stack.lastIndexOf(key);
+  return idx >= 0 && idx < stack.length - 1 ? 'back' : 'forward';
+}
+
 /** Limpa a pilha — usado em testes para isolar casos. */
 export function resetNavHistory(): void {
   stack.length = 0;

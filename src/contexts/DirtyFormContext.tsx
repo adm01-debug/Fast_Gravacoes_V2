@@ -50,6 +50,9 @@ const DirtyGuardContext = createContext<DirtyGuardState>({
 // estado React (evita re-render global a cada tecla) e confirmIfDirty lê
 // na hora do clique — sempre o valor mais recente.
 let dirtyRegistry = false;
+// Callbacks de limpeza ao confirmar "Sair sem salvar" (ex.: descartar
+// rascunho persistido do Novo Job).
+const discardListeners = new Set<() => void>();
 
 export function DirtyGuardProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<PendingNavigation | null>(null);
@@ -94,6 +97,7 @@ export function DirtyGuardProvider({ children }: { children: ReactNode }) {
     const nav = pendingRef.current;
     pendingRef.current = null;
     setPending(null);
+    for (const listener of discardListeners) listener();
     nav?.();
   }, []);
 
@@ -132,11 +136,19 @@ export function useDirtyGuard() {
  * Registra o estado sujo do formulário da página atual.
  * Deve ser chamado dentro do provider (MainLayout).
  */
-export function useDirtyForm(isDirty: boolean) {
+export function useDirtyForm(isDirty: boolean, onDiscard?: () => void) {
   useEffect(() => {
     dirtyRegistry = isDirty;
     return () => {
       dirtyRegistry = false;
     };
   }, [isDirty]);
+
+  useEffect(() => {
+    if (!onDiscard) return;
+    discardListeners.add(onDiscard);
+    return () => {
+      discardListeners.delete(onDiscard);
+    };
+  }, [onDiscard]);
 }

@@ -9,13 +9,16 @@ import { login } from './helpers/e2e-setup';
 test.describe('Botão Voltar', () => {
   test('volta uma entrada do histórico interno', async ({ page }) => {
     await login(page);
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1000);
+    // Navega internamente (link do breadcrumb) — goto seria um reload e
+    // só exercitaria o fallback, não a pilha de histórico do app.
     await page.goto('/alerts', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
+    await page.getByRole('link', { name: 'Ir para o início' }).first().click();
+    await expect(page).toHaveURL(/\/$/);
+    await page.waitForTimeout(500);
 
     await page.getByRole('button', { name: 'Voltar para a página anterior' }).first().click();
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/alerts/);
   });
 
   test('deep-link sem histórico interno cai no fallback (home, não sai do app)', async ({ page }) => {

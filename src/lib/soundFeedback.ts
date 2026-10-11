@@ -23,6 +23,21 @@ function getAudioContext(): AudioContext | null {
   }
 }
 
+function currentUserId(): string | null {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && /^sb-.*-auth-token$/.test(key)) {
+        const session = JSON.parse(localStorage.getItem(key) ?? '{}');
+        return session?.user?.id ?? session?.currentSession?.user?.id ?? null;
+      }
+    }
+  } catch {
+    // ignora
+  }
+  return null;
+}
+
 /**
  * Respeita o opt-out de sons: lê `soundEnabled` em `user-preferences`
  * (UserPreferencesContext) e `sounds` em `app-settings-<uid>`
@@ -32,12 +47,12 @@ export function isSoundEnabled(): boolean {
   try {
     const prefs = localStorage.getItem('user-preferences');
     if (prefs && JSON.parse(prefs).soundEnabled === false) return false;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith('app-settings-')) {
-        const settings = JSON.parse(localStorage.getItem(key) ?? '{}');
-        if (settings.sounds === false) return false;
-      }
+    // `app-settings-<uid>` é por usuário — respeitar só o do usuário ativo
+    // (a preferência de outra conta no mesmo navegador não pode vazar).
+    const userId = currentUserId();
+    if (userId) {
+      const settings = JSON.parse(localStorage.getItem(`app-settings-${userId}`) ?? '{}');
+      if (settings.sounds === false) return false;
     }
   } catch {
     // storage indisponível — mantém som ligado

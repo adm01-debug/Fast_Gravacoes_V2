@@ -73,6 +73,9 @@ export function MainLayout({ children }: MainLayoutProps) {
   // para leitores de tela anunciarem o novo contexto.
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      // Não rouba o foco se o usuário já está interagindo (input, dialog…)
+      const active = document.activeElement as HTMLElement | null;
+      if (active && active !== document.body && active.tagName !== 'MAIN' && active.id !== 'main-content-scroll') return;
       const heading = document.querySelector<HTMLElement>('#main-content-scroll h1');
       if (heading) {
         heading.setAttribute('tabindex', '-1');
