@@ -41,9 +41,14 @@ test.describe('Botão Voltar', () => {
     // Alt+ArrowLeft/Alt+B físicos são capturados pelo próprio Chromium
     // antes de chegar à página — despacha o evento no window para
     // exercitar o mesmo caminho (hotkey → confirmIfDirty → goBack).
-    await page.evaluate(() => {
+    const probe = await page.evaluate(() => {
+      const r = { before: location.href, ae: document.activeElement?.tagName };
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', altKey: true, bubbles: true }));
+      // navigate() dá pushState síncrono — se o handler rodou, a URL já mudou.
+      Object.assign(r, { after: location.href });
+      return r;
     });
+    console.log('ALT-B PROBE', JSON.stringify(probe));
     await expect(page).toHaveURL(/\/$/);
   });
 });
