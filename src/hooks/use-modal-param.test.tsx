@@ -49,6 +49,30 @@ describe('useModalParam', () => {
     expect(currentSearch).not.toContain('modal=');
   });
 
+  it('fechar pela UI consome a entrada criada ao abrir (sem Voltar "morto")', () => {
+    const { result } = renderHook(
+      () => ({ modal: useModalParam('batch-qr'), location: useLocation() }),
+      { wrapper: wrapper(['/inventory']) }
+    );
+    const baseKey = result.current.location.key;
+    act(() => result.current.modal[1](true));
+    expect(result.current.location.key).not.toBe(baseKey);
+    act(() => result.current.modal[1](false));
+    expect(result.current.location.key).toBe(baseKey);
+    expect(currentSearch).not.toContain('modal=');
+  });
+
+  it('deep-link é normalizado: entrada sem modal + entrada com modal', () => {
+    const { result } = renderHook(
+      () => ({ modal: useModalParam('batch-qr'), location: useLocation() }),
+      { wrapper: wrapper(['/inventory?modal=batch-qr&items=a,b']) }
+    );
+    expect(result.current.modal[0]).toBe(true);
+    act(() => result.current.modal[1](false));
+    expect(result.current.modal[0]).toBe(false);
+    expect(currentSearch).toContain('items=a%2Cb');
+  });
+
   it('preserva outros params ao alternar', () => {
     const { result } = renderHook(() => useModalParam('batch-qr'), {
       wrapper: wrapper(['/inventory?q=tinta']),

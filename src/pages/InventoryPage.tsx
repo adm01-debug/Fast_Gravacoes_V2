@@ -105,7 +105,7 @@ export default function InventoryPage() {
                <BrainCircuit className="h-4 w-4 text-primary" />
                Acurácia IA
              </Button>
-             <Button variant="outline" className="gap-2" disabled={selectedItems.size === 0} onClick={() => setIsBatchQRModalOpen(true)}>
+             <Button variant="outline" className="gap-2" disabled={selectedItems.size === 0} onClick={() => setIsBatchQRModalOpen(true, { items: Array.from(selectedItems).join(',') })}>
                <QrCode className="h-4 w-4" />
                Etiquetas em Lote ({selectedItems.size})
              </Button>

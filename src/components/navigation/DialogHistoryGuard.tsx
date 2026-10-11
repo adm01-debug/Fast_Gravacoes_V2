@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { MODAL_PUSHED_STATE } from '@/hooks/use-modal-param';
 
 const SENTINEL_KEY = 'dialog-guard';
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do
@@ -12,9 +13,14 @@ function openDialogs(): HTMLElement[] {
 }
 
 function urlOwnsModal(): boolean {
-  // Modais via useModalParam já possuem sua própria entrada no histórico
-  // (?modal=<name>) — sentinela duplicada faria o voltar reabrir o modal.
-  return new URLSearchParams(window.location.search).has('modal');
+  // Modais abertos pela UI via useModalParam já possuem entrada própria no
+  // histórico — sentinela duplicada faria o voltar reabrir o modal. Modais
+  // de deep-link (sem PUSH do hook) continuam precisando da sentinela.
+  const state = history.state as { usr?: Record<string, unknown> } | null;
+  return (
+    new URLSearchParams(window.location.search).has('modal') &&
+    typeof state?.usr?.[MODAL_PUSHED_STATE] === 'string'
+  );
 }
 
 /**
