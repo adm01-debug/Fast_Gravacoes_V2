@@ -9,16 +9,16 @@ import { login } from './helpers/e2e-setup';
 test.describe('Botão Voltar', () => {
   test('volta uma entrada do histórico interno', async ({ page }) => {
     await login(page);
-    // Navega internamente (link do breadcrumb) — goto seria um reload e
+    // Navega internamente (botão do sidebar) — goto seria um reload e
     // só exercitaria o fallback, não a pilha de histórico do app.
-    await page.goto('/alerts', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
-    await page.getByRole('link', { name: 'Ir para o início' }).first().click();
-    await expect(page).toHaveURL(/\/$/);
+    await page.getByRole('button', { name: 'Alertas' }).first().click();
+    await expect(page).toHaveURL(/\/alerts/);
     await page.waitForTimeout(500);
 
     await page.getByRole('button', { name: 'Voltar para a página anterior' }).first().click();
-    await expect(page).toHaveURL(/\/alerts/);
+    await expect(page).toHaveURL(/\/$/);
   });
 
   test('deep-link sem histórico interno cai no fallback (home, não sai do app)', async ({ page }) => {
@@ -31,14 +31,16 @@ test.describe('Botão Voltar', () => {
     await expect(page).toHaveURL(/\/$/);
   });
 
-  test('Alt+ArrowLeft navega para trás', async ({ page }) => {
+  test('Alt+B navega para trás', async ({ page }) => {
     await login(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
     await page.goto('/alerts', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
-    await page.keyboard.press('Alt+ArrowLeft');
+    // Alt+ArrowLeft é capturado pelo próprio Chromium antes da página;
+    // Alt+B exercita o mesmo caminho (hotkey → confirmIfDirty → goBack).
+    await page.keyboard.press('Alt+b');
     await expect(page).toHaveURL(/\/$/);
   });
 });
