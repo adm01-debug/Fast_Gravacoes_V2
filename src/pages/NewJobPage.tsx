@@ -139,7 +139,9 @@ export default function NewJobPage() {
 
   // Persiste rascunho a cada alteração — permite retomar depois.
   const persistDraft = useCallback((values: JobFormValues) => {
-    const hasContent = Object.values(values).some(v => typeof v === 'string' && v.trim() !== '' && v !== 'medium');
+    // A data mora fora do form — um rascunho "só com data" também vale
+    // guardar, senão ela some num reload.
+    const hasContent = Boolean(date) || Object.values(values).some(v => typeof v === 'string' && v.trim() !== '' && v !== 'medium');
     if (hasContent) {
       const payload: JobDraft = {
         values,
