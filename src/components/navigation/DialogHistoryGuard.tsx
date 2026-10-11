@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react';
 
 const SENTINEL_KEY = 'dialog-guard';
-const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
+// Diálogos com data-history-guard="off" (ex.: confirmação de saída do
+// dirty-guard, cuja ação navega) ficam fora — a sentinela faria o
+// navigate(-1) só consumir a entrada extra em vez de sair da página.
+const DIALOG_SELECTOR =
+  '[role="dialog"]:not([data-history-guard="off"]), [role="alertdialog"]:not([data-history-guard="off"])';
 
 function openDialogs(): HTMLElement[] {
   return Array.from(document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR));
@@ -25,10 +29,14 @@ export function DialogHistoryGuard() {
   // effect (mudanças de rota com dialog aberto não perdem a sentinela).
   const sentinelActiveRef = useRef(false);
   const sentinelConsumedByPopRef = useRef(false);
+  // Após um voltar consumir a sentinela, não re-arma até todos os
+  // diálogos fecharem: pushState sem gesto do usuário é pulado pelo botão
+  // Voltar do Chrome, e o próximo voltar sairia do app.
+  const suppressUntilClosedRef = useRef(false);
 
   useEffect(() => {
     const pushSentinel = () => {
-      if (sentinelActiveRef.current || urlOwnsModal()) return;
+      if (sentinelActiveRef.current || suppressUntilClosedRef.current || urlOwnsModal()) return;
       sentinelActiveRef.current = true;
       sentinelConsumedByPopRef.current = false;
       history.pushState({ [SENTINEL_KEY]: true }, '');
@@ -37,13 +45,17 @@ export function DialogHistoryGuard() {
     const popSentinel = () => {
       if (!sentinelActiveRef.current || sentinelConsumedByPopRef.current) return;
       sentinelActiveRef.current = false;
-      history.back();
+      // Só remove a sentinela se ela ainda é a entrada atual — se uma ação
+      // do diálogo navegou (PUSH), voltar desfaria essa navegação.
+      const state = history.state as Record<string, unknown> | null;
+      if (state?.[SENTINEL_KEY]) history.back();
     };
 
     const observer = new MutationObserver(() => {
       if (openDialogs().length > 0) {
         pushSentinel();
       } else {
+        suppressUntilClosedRef.current = false;
         popSentinel();
       }
     });
@@ -59,6 +71,7 @@ export function DialogHistoryGuard() {
       if (!sentinelActiveRef.current) return;
       sentinelConsumedByPopRef.current = true;
       sentinelActiveRef.current = false;
+      suppressUntilClosedRef.current = true;
       if (openDialogs().length > 0) {
         // Escape aciona o close nativo de Dialog/Sheet do Radix.
         document.dispatchEvent(

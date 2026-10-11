@@ -106,7 +106,7 @@ export function DirtyGuardProvider({ children }: { children: ReactNode }) {
     <DirtyGuardContext.Provider value={value}>
       {children}
       <AlertDialog open={pending !== null} onOpenChange={(open) => { if (!open) handleStay(); }}>
-        <AlertDialogContent>
+        <AlertDialogContent data-history-guard="off">
           <AlertDialogHeader>
             <AlertDialogTitle>Descartar alterações não salvas?</AlertDialogTitle>
             <AlertDialogDescription>

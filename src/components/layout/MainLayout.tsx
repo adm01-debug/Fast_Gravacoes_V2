@@ -31,7 +31,6 @@ const BackButton = lazyWithRetry(() => import('../navigation/BackButton').then(m
 const SwipeIndicator = lazyWithRetry(() => import('../navigation/SwipeIndicator').then(m => ({ default: m.SwipeIndicator })));
 const TopProgressBar = lazyWithRetry(() => import('../navigation/TopProgressBar').then(m => ({ default: m.TopProgressBar })));
 const DialogHistoryGuard = lazyWithRetry(() => import('../navigation/DialogHistoryGuard').then(m => ({ default: m.DialogHistoryGuard })));
-const KeyboardShortcutsDialog = lazyWithRetry(() => import('../navigation/KeyboardShortcutsDialog').then(m => ({ default: m.KeyboardShortcutsDialog })));
 
 
 
@@ -109,9 +108,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Suspense>
         <Suspense fallback={null}>
           <DialogHistoryGuard />
-        </Suspense>
-        <Suspense fallback={null}>
-          <KeyboardShortcutsDialog />
         </Suspense>
 
         {/* Sidebar - hidden on mobile, shown on tablet+ */}

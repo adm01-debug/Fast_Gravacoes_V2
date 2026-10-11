@@ -47,7 +47,8 @@ test.describe('Breadcrumbs', () => {
     await page.waitForTimeout(1000);
 
     const nav = page.locator('nav[aria-label="Trilha de navegação"]').first();
-    await expect(nav).toContainText('Início');
+    // O primeiro item é um link ícone "Ir para o início" (rótulo no aria-label)
+    await expect(nav.getByRole('link', { name: 'Ir para o início' })).toBeVisible();
     await expect(nav).toContainText('Alertas');
     await expect(nav.locator('[aria-current="page"]')).toHaveText(/Alertas/);
   });
@@ -119,7 +120,8 @@ test.describe('Ajuda de atalhos', () => {
     await page.keyboard.press('?');
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible({ timeout: 3000 });
-    await expect(dialog).toContainText('Atalhos de teclado');
+    await expect(page.getByRole('dialog')).toHaveCount(1);
+    await expect(dialog).toContainText(/Atalhos de teclado/i);
     await expect(dialog).toContainText('Alt + ←');
   });
 });

@@ -46,6 +46,10 @@ test.describe('Production and Jobs Flow', () => {
     await page.click('button[role="combobox"]:has-text("Selecione a técnica")');
     await page.click('role=option >> nth=0');
 
+    // Avança para a etapa 2 (agendamento) — o submit só existe lá desde que o
+    // form virou wizard.
+    await page.getByRole('button', { name: /^Próximo$/ }).click();
+
     // Não submete de verdade: o CI roda contra a mesma instância Supabase usada
     // em produção (VITE_SUPABASE_URL), e um submit real insere um job de teste
     // sem teardown a cada run/retry. Confirma que o form aceitou os dados e
