@@ -25,6 +25,9 @@ import { useNotifications } from '@/features/notifications';
 import { usePackagingOverdueCount } from '@/features/packaging/hooks/usePackagingOverdueCount';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { trackNavBack } from '@/lib/navTelemetry';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { NavButton } from './sidebar/NavButton';
@@ -44,6 +47,8 @@ export function AppSidebar() {
   const alertCount = useAlertCount();
   const { unreadCount: notificationCount } = useNotifications();
   const { data: packagingOverdueCount = 0 } = usePackagingOverdueCount();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
   const toggleGroup = useCallback((groupId: string) => {
     setOpenGroups(prev => prev.includes(groupId) ? prev.filter(id => id !== groupId) : [...prev, groupId]);
@@ -57,7 +62,11 @@ export function AppSidebar() {
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => { if (!isMobile) setMobileOpen(false); }, [isMobile]);
 
-  const handleSignOut = useCallback(async () => { await signOut(); navigate('/auth'); }, [signOut, navigate]);
+  // Logout apaga o rascunho do Novo Job — formulário sujo pede
+  // confirmação antes de sair (mesmo guard do Voltar/atalhos).
+  const handleSignOut = useCallback(() => {
+    confirmIfDirty(() => { void signOut().then(() => navigate('/auth')); });
+  }, [confirmIfDirty, signOut, navigate]);
 
   const filteredNavGroups = useMemo(() => {
     return navGroups
@@ -147,7 +156,8 @@ export function AppSidebar() {
                     aria-label={t('common.back', 'Voltar')}
                     onClick={() => {
                       SoundFeedback.navBack();
-                      navigate(-1);
+                      trackNavBack('button', hasInternalEntry ? 'history' : 'fallback');
+                      confirmIfDirty(goBack);
                     }}
                     className="h-8 w-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all"
                   >

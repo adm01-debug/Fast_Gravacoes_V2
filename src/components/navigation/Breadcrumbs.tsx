@@ -5,6 +5,11 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { useCallback } from 'react';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
+import { useBreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import { trackNavBack } from '@/lib/navTelemetry';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,23 +83,36 @@ const routeLabels: Record<string, string> = {
   'master-api': 'Master API',
   'telemetria': 'Telemetria',
   'kiosk': 'Kiosk',
-  'track': 'Rastreio Público'
+  'track': 'Rastreio Público',
+  'admin': 'Administração',
+  'digital-twin': 'Gêmeo Digital',
+  'inventory': 'Inventário',
+  'logistics': 'Logística',
+  'mfa-enrollment': 'Ativar MFA',
+  'monitoring': 'Monitoramento',
+  'monthly': 'Mensal',
+  'operator-history': 'Histórico do Operador',
+  'operator-productivity': 'Produtividade do Operador',
+  'packaging': 'Embalagem',
+  'report-builder': 'Construtor de Relatórios',
+  'simulation': 'Simulação',
+  'status': 'Status do Sistema'
 };
 
 export function Breadcrumbs({ className }: { className?: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { trigger } = useHapticFeedback();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
+  const { items: contextItems } = useBreadcrumbContext();
   const pathnames = location.pathname.split('/').filter(Boolean);
 
   const handleBack = useCallback(() => {
     trigger('light');
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
-  }, [navigate, trigger]);
+    trackNavBack('breadcrumb', hasInternalEntry ? 'history' : 'fallback');
+    if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
+  }, [trigger, goBack, hasInternalEntry, confirmIfDirty]);
 
   // Don't show breadcrumbs on home page or specific utility pages
   if (pathnames.length === 0 || ['/auth', '/reset-password', '/install', '/track'].includes(location.pathname)) {
@@ -116,6 +134,13 @@ export function Breadcrumbs({ className }: { className?: string }) {
     });
   });
 
+  // Páginas podem substituir o último item pelo nome do recurso
+  // (useBreadcrumbLabel) — ex.: "Job OS-2024-001" em vez do id.
+  if (contextItems.length > 0) {
+    const start = Math.max(0, breadcrumbs.length - contextItems.length);
+    breadcrumbs.splice(start, breadcrumbs.length - start, ...contextItems);
+  }
+
   // Truncamento inteligente: se a trilha for muito longa, colapsamos os itens
   // intermediários em um botão "..." que abre um menu com o caminho completo.
   const shouldCollapse = breadcrumbs.length > MAX_VISIBLE_ITEMS;
@@ -135,7 +160,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
   return (
     <TooltipProvider delayDuration={300}>
       <nav
-        aria-label="Breadcrumb"
+        aria-label="Trilha de navegação"
         className={cn(
           "flex items-center gap-2 text-sm text-muted-foreground no-export animate-in fade-in slide-in-from-left-2 duration-500 ease-out",
           className

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { useDirtyGuard } from "@/contexts/DirtyFormContext";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,16 @@ interface KeyboardShortcutsContextValue {
 
 const KeyboardShortcutsContext = React.createContext<KeyboardShortcutsContextValue | null>(null);
 
+// Atalhos tratados no MainLayout (Alt+…) — só exibidos na ajuda.
+const GLOBAL_NAV_SHORTCUTS: Array<{ keys: string; description: string }> = [
+  { keys: "Alt + ←", description: "Voltar para a página anterior" },
+  { keys: "Alt + B", description: "Voltar para a página anterior" },
+  { keys: "Alt + H", description: "Ir para o início" },
+  { keys: "Alt + N", description: "Abrir notificações" },
+  { keys: "Alt + S", description: "Abrir busca global" },
+  { keys: "Alt + R", description: "Recarregar dados" },
+];
+
 export function useKeyboardShortcuts() {
   const context = React.useContext(KeyboardShortcutsContext);
   if (!context) {
@@ -36,6 +47,7 @@ export function useKeyboardShortcuts() {
 
 export function KeyboardShortcutsProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const { confirmIfDirty } = useDirtyGuard();
   const { theme, setTheme } = useTheme();
   const [isHelpOpen, setIsHelpOpen] = React.useState(false);
   const [shortcuts, setShortcuts] = React.useState<Shortcut[]>([]);
@@ -86,10 +98,11 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
         return;
       }
 
-      // Handle Command+K separately (Command Palette)
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        return; // Let Command Palette handle this
-      }
+      // Combinações com Alt/Ctrl/Meta (Alt+N, ⌘K…) são tratadas por
+      // useNavigationHotkeys/paleta; teclas modificadoras sozinhas (Shift
+      // antes do "?") não entram na sequência.
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (["Shift", "Control", "Alt", "Meta", "CapsLock"].includes(e.key)) return;
 
       const key = e.key.toLowerCase();
 
@@ -108,7 +121,13 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
       if (matchingShortcut && matchingShortcut.keys.length === newSequence.length) {
         e.preventDefault();
-        matchingShortcut.action();
+        // Atalhos que saem da página respeitam o dirty-guard (formulário
+        // com dados não salvos pergunta antes); "view"/"help" ficam diretos.
+        if (matchingShortcut.category === 'navigation' || matchingShortcut.category === 'actions') {
+          confirmIfDirty(() => matchingShortcut.action());
+        } else {
+          matchingShortcut.action();
+        }
         setKeySequence([]);
         return;
       }
@@ -132,7 +151,7 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [keySequence, allShortcuts]);
+  }, [keySequence, allShortcuts, confirmIfDirty]);
 
   const contextValue: KeyboardShortcutsContextValue = React.useMemo(
     () => ({
@@ -199,6 +218,20 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
           </DialogHeader>
 
           <div className="space-y-6">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">Navegação global</h3>
+              <div className="space-y-2">
+                {GLOBAL_NAV_SHORTCUTS.map(({ keys, description }) => (
+                  <div
+                    key={keys}
+                    className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50"
+                  >
+                    <span className="text-sm">{description}</span>
+                    <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">{keys}</kbd>
+                  </div>
+                ))}
+              </div>
+            </div>
             {Object.entries(categorizedShortcuts).map(([category, items]) => (
               items.length > 0 && (
                 <div key={category}>

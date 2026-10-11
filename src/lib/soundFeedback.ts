@@ -23,7 +23,52 @@ function getAudioContext(): AudioContext | null {
   }
 }
 
+function currentUserId(): string | null {
+  // O client Supabase persiste a sessão em sessionStorage
+  // (src/integrations/supabase/client.ts) — checa ele PRIMEIRO: um
+  // auth-token velho no localStorage (setup anterior) não pode
+  // sequestrar o userId da sessão ativa.
+  for (const storage of [sessionStorage, localStorage]) {
+    try {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key && /^sb-.*-auth-token$/.test(key)) {
+          const session = JSON.parse(storage.getItem(key) ?? '{}');
+          const id = session?.user?.id ?? session?.currentSession?.user?.id;
+          if (id) return id;
+        }
+      }
+    } catch {
+      // storage indisponível — tenta o próximo
+    }
+  }
+  return null;
+}
+
+/**
+ * Respeita o opt-out de sons: lê `soundEnabled` em `user-preferences`
+ * (UserPreferencesContext) e `sounds` em `app-settings-<uid>`
+ * (SettingsPage). Qualquer um desligado silencia tudo.
+ */
+export function isSoundEnabled(): boolean {
+  try {
+    const prefs = localStorage.getItem('user-preferences');
+    if (prefs && JSON.parse(prefs).soundEnabled === false) return false;
+    // `app-settings-<uid>` é por usuário — respeitar só o do usuário ativo
+    // (a preferência de outra conta no mesmo navegador não pode vazar).
+    const userId = currentUserId();
+    if (userId) {
+      const settings = JSON.parse(localStorage.getItem(`app-settings-${userId}`) ?? '{}');
+      if (settings.sounds === false) return false;
+    }
+  } catch {
+    // storage indisponível — mantém som ligado
+  }
+  return true;
+}
+
 function playTone(frequency: number, duration: number, type: OscillatorType = 'sine', volume = 0.15) {
+  if (!isSoundEnabled()) return;
   const ctx = getAudioContext();
   if (!ctx) return;
 

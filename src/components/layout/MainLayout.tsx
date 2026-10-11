@@ -1,4 +1,4 @@
-import { ReactNode, Suspense } from 'react';
+import { ReactNode, Suspense, useEffect } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -37,7 +37,11 @@ import { useDevice } from '@/hooks/use-device';
 import { cn } from '@/lib/utils';
 import { useNavigationHotkeys } from '@/hooks/use-navigation-hotkeys';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
-import { useNavigate } from 'react-router-dom';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
+import { useDeepLinkFocus } from '@/hooks/use-deeplink-focus';
+import { trackNavBack } from '@/lib/navTelemetry';
 
 
 
@@ -51,8 +55,9 @@ const EmptyFallback = null;
 export function MainLayout({ children }: MainLayoutProps) {
   const { isMobile, prefersReducedMotion } = useDevice();
   const location = useLocation();
-  const navigate = useNavigate();
   const { unreadCount } = useNotifications();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
 
   // Dynamic page title for SEO
@@ -61,11 +66,57 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Navigation global hotkeys
   useNavigationHotkeys();
 
+  // Deep-link com foco (?focus=<id> → scroll + destaque no item)
+  useDeepLinkFocus();
+
+  // Acessibilidade: ao trocar de rota, move o foco para o h1 da página
+  // para leitores de tela anunciarem o novo contexto. Retenta por ~2s:
+  // em navegação fria para página lazy o destino (e o h1) monta depois
+  // do primeiro timer — sem retry o foco ficaria fora da página nova.
+  useEffect(() => {
+    let timer = 0;
+    let attempts = 0;
+    const tryFocusHeading = () => {
+      // Não rouba o foco se o usuário já está interagindo (input, dialog…)
+      const active = document.activeElement as HTMLElement | null;
+      if (active && active !== document.body && active.tagName !== 'MAIN' && active.id !== 'main-content-scroll') {
+        // Foco em dialog aberto: nunca rouba.
+        if (active.closest('[role="dialog"], [role="alertdialog"]')) return;
+        // Foco dentro do <main> pode ser um controle da ROTA QUE SAI —
+        // transições duram até ~800ms, mais que o delay inicial de 400ms:
+        // ela vai desmontar e devolver o foco ao body, então retenta em
+        // vez de desistir. Se for interação real na página nova, o retry
+        // simplesmente não move o foco (sem roubo).
+        const container = document.querySelector<HTMLElement>('#main-content-scroll');
+        if (container?.contains(active)) {
+          attempts += 1;
+          if (attempts < 10) timer = window.setTimeout(tryFocusHeading, 200);
+          return;
+        }
+        // Foco no chrome persistente (sidebar/header): é o controle que
+        // disparou a navegação — segue para anunciar a página nova no h1.
+      }
+      const heading = document.querySelector<HTMLElement>('#main-content-scroll h1');
+      if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+        return;
+      }
+      attempts += 1;
+      if (attempts < 10) timer = window.setTimeout(tryFocusHeading, 200);
+    };
+    timer = window.setTimeout(tryFocusHeading, 400);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname]);
+
   // Swipe to back on mobile
   const { ref: swipeRef } = useSwipeGesture({
     onSwipeRight: () => {
       if (isMobile && location.pathname !== '/' && location.pathname !== '/auth') {
-        navigate(-1);
+        trackNavBack('swipe', hasInternalEntry ? 'history' : 'fallback');
+        // Sentinela ativa = dialog aberto — Back fecha o dialog, não
+        // deve pedir confirmação de descarte do formulário atr��s dele.
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
     },
     threshold: 80,

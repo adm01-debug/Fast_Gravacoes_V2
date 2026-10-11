@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, ReactNode } from 'react';
 
 interface BreadcrumbItem {
   label: string;
@@ -44,4 +44,16 @@ export function useBreadcrumbContext() {
   const ctx = useContext(BreadcrumbContext);
   if (!ctx) throw new Error('useBreadcrumbContext must be used within BreadcrumbProvider');
   return ctx;
+}
+
+/**
+ * Substitui o último item do breadcrumb pelo nome do recurso da página
+ * (ex.: "Job OS-2024-001"). Limpa ao desmontar/navegar.
+ */
+export function useBreadcrumbLabel(label: string | null | undefined) {
+  const { setItems } = useBreadcrumbContext();
+  useEffect(() => {
+    if (label) setItems([{ label }]);
+    return () => setItems([]);
+  }, [label, setItems]);
 }

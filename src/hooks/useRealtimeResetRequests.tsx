@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 import { toast } from 'sonner';
 import { KeyRound } from 'lucide-react';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
@@ -7,6 +8,7 @@ import { useRealtimeChannel } from '@/lib/realtimeChannel';
 export function useRealtimeResetRequests() {
   const { isCoordinator, isManager, user } = useAuth();
   const navigate = useNavigate();
+  const { confirmIfDirty } = useDirtyGuard();
 
   useRealtimeChannel('password-reset-notifications', [{ table: 'password_reset_requests' }], (payload) => {
     if (!isCoordinator && !isManager) return;
@@ -26,7 +28,9 @@ export function useRealtimeResetRequests() {
         action: {
           label: 'Ver',
           onClick: () => {
-            navigate('/settings?tab=users');
+            // Botão do toast navega por callback — o fallback global só
+            // intercepta <a>, então passa pelo dirty-guard explicitamente.
+            confirmIfDirty(() => navigate('/settings?tab=users'));
           },
         },
       }

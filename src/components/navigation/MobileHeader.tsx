@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/use-device';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
+import { trackNavBack } from '@/lib/navTelemetry';
 
 interface MobileHeaderProps {
   title?: string;
@@ -43,16 +47,14 @@ export function MobileHeader({
 
   const { trigger } = useHapticFeedback();
 
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack(backTo ?? '/');
+  const { confirmIfDirty } = useDirtyGuard();
+
   const handleBack = useCallback(() => {
     trigger('light');
-    if (backTo) {
-      navigate(backTo);
-    } else if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
-  }, [backTo, navigate, trigger]);
+    trackNavBack('mobile-header', hasInternalEntry ? 'history' : 'fallback');
+    if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
+  }, [trigger, goBack, hasInternalEntry, confirmIfDirty]);
 
   const handleHome = useCallback(() => {
     trigger('light');

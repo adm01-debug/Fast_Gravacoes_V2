@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { NAVIGATION_EVENT, isNavigationEvent } from '@/lib/navigation';
+import { trackNavEvent } from '@/lib/navTelemetry';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 
 /**
  * Component that listens for custom navigation events and handles them
@@ -11,11 +13,18 @@ import { NAVIGATION_EVENT, isNavigationEvent } from '@/lib/navigation';
  */
 export function NavigationListener() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { confirmIfDirty } = useDirtyGuard();
+
+  // Telemetria de navegação (breadcrumb no Sentry a cada pageview)
+  useEffect(() => {
+    trackNavEvent('pageview', { path: location.pathname });
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleNavigation = (event: Event) => {
       if (isNavigationEvent(event)) {
-        navigate(event.detail.path);
+        confirmIfDirty(() => navigate(event.detail.path));
       }
     };
 
@@ -24,7 +33,7 @@ export function NavigationListener() {
     return () => {
       window.removeEventListener(NAVIGATION_EVENT, handleNavigation);
     };
-  }, [navigate]);
+  }, [navigate, confirmIfDirty]);
 
   return null;
 }

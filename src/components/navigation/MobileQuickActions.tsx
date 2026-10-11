@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/use-device';
 import { useAuth } from '@/features/auth';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 
 interface QuickAction {
   id: string;
@@ -44,6 +45,7 @@ export function MobileQuickActions() {
   const { isMobile } = useDevice();
   const { role } = useAuth();
   const { trigger } = useHapticFeedback();
+  const { confirmIfDirty } = useDirtyGuard();
 
   const actions = role === 'operator'
     ? operatorActions
@@ -58,9 +60,13 @@ export function MobileQuickActions() {
 
   const handleAction = useCallback((action: QuickAction) => {
     trigger('light');
-    setIsOpen(false);
-    navigate(action.href);
-  }, [navigate, trigger]);
+    // Sair da página respeita o dirty-guard — mantém o menu aberto se o
+    // usuário cancelar a saída no AlertDialog.
+    confirmIfDirty(() => {
+      setIsOpen(false);
+      navigate(action.href);
+    });
+  }, [navigate, trigger, confirmIfDirty]);
 
   if (!isMobile) return null;
 

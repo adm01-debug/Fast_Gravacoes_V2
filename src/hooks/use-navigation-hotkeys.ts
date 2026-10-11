@@ -2,11 +2,17 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useHapticFeedback } from './use-haptic-feedback';
 import { SoundFeedback } from '@/lib/soundFeedback';
+import { useSmartBack } from './use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
+import { trackNavBack } from '@/lib/navTelemetry';
 
 export function useNavigationHotkeys() {
   const navigate = useNavigate();
   const location = useLocation();
   const { trigger } = useHapticFeedback();
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -25,7 +31,8 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('light');
         SoundFeedback.navBack();
-        navigate(-1);
+        trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
 
       // Alt + H to go Home
@@ -33,17 +40,19 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('medium');
         SoundFeedback.navForward();
-        navigate('/');
+        confirmIfDirty(() => navigate('/'));
       }
 
       // Alt + N to go Notifications
       if (event.altKey && (event.key === 'n' || event.key === 'N')) {
         event.preventDefault();
         trigger('light');
-        navigate('/notifications');
+        confirmIfDirty(() => navigate('/notifications'));
       }
 
-      // Alt + S to open Global Search (simulates Cmd+K)
+      // Alt + S to open Global Search (simulates Cmd+K) — não navega,
+      // então não passa pelo confirmIfDirty (evitaria dialog de
+      // descarte numa ação que só abre a paleta).
       if (event.altKey && (event.key === 's' || event.key === 'S')) {
         event.preventDefault();
         trigger('light');
@@ -56,7 +65,7 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('medium');
         SoundFeedback.click();
-        window.location.reload();
+        confirmIfDirty(() => window.location.reload());
       }
 
       // Alt + B for Back (additional shortcut)
@@ -64,11 +73,12 @@ export function useNavigationHotkeys() {
         event.preventDefault();
         trigger('light');
         SoundFeedback.navBack();
-        navigate(-1);
+        trackNavBack('hotkey', hasInternalEntry ? 'history' : 'fallback');
+        if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigate, location, trigger]);
+  }, [navigate, location, trigger, goBack, hasInternalEntry, confirmIfDirty]);
 }

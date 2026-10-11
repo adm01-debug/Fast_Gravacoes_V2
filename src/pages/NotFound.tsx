@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MobileHeader, MobileHeaderSpacer } from "@/components/navigation/MobileHeader";
 import { cn } from "@/lib/utils";
+import { useSmartBack } from "@/hooks/use-smart-back";
 
 // Popular pages for suggestions
 const popularPages = [
@@ -57,12 +58,10 @@ const NotFound = () => {
     document.title = 'Página não encontrada | FAST GRAVAÇÕES - GESTÃO DE GRAVAÇÃO';
   }, [location.pathname]);
 
+  const { goBack } = useSmartBack();
+
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
+    goBack();
   };
 
   const handleSearch = (e: React.FormEvent) => {

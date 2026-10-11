@@ -3,7 +3,7 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ChevronLeft, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,9 @@ import { useHapticFeedback } from "@/hooks/use-haptic-feedback";
 import { useDevice } from "@/hooks/use-device";
 import { motion, AnimatePresence } from "framer-motion";
 import { SoundFeedback } from "@/lib/soundFeedback";
+import { useSmartBack } from "@/hooks/use-smart-back";
+import { useDirtyGuard } from "@/contexts/DirtyFormContext";
+import { trackNavBack, trackDeepLinkExit } from "@/lib/navTelemetry";
 import {
   Tooltip,
   TooltipContent,
@@ -23,32 +26,38 @@ import {
 
 interface BackButtonProps {
   className?: string;
+  /** Destino quando não há entrada interna para voltar (deep-link). */
+  fallbackTo?: string;
 }
 
-export function BackButton({ className }: BackButtonProps) {
-  const navigate = useNavigate();
+export function BackButton({ className, fallbackTo = '/' }: BackButtonProps) {
   const location = useLocation();
   const { trigger } = useHapticFeedback();
   const { isMobile } = useDevice();
-  const [canGoBack, setCanGoBack] = useState(false);
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack(fallbackTo);
+  const { confirmIfDirty } = useDirtyGuard();
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     // Only show if not on home/dashboard or utility pages
     const isExcluded = ["/", "/operator", "/auth", "/reset-password", "/install", "/track"].includes(location.pathname);
-    setCanGoBack(!isExcluded);
+    setVisible(!isExcluded);
   }, [location]);
 
   const handleBack = useCallback(() => {
     trigger('light');
     SoundFeedback.navBack();
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
-  }, [navigate, trigger]);
+    trackNavBack('button', hasInternalEntry ? 'history' : 'fallback');
+    confirmIfDirty(() => {
+      // Só conta a saída de deep-link quando ela realmente acontece —
+      // antes de confirmIfDirty um "Continuar editando" viraria métrica
+      // de saída falsa.
+      if (!hasInternalEntry) trackDeepLinkExit(location.pathname);
+      goBack();
+    });
+  }, [trigger, goBack, hasInternalEntry, confirmIfDirty, location.pathname]);
 
-  if (!canGoBack) return null;
+  if (!visible) return null;
 
   if (isMobile) {
     return null; // Integrated into MobileNavigation
@@ -63,7 +72,7 @@ export function BackButton({ className }: BackButtonProps) {
             size="sm"
             onClick={handleBack}
             className={cn(
-              "gap-2 px-3 h-10 text-muted-foreground hover:text-primary transition-all duration-300",
+              "gap-2 px-3 h-11 text-muted-foreground hover:text-primary transition-all duration-300",
               "border-2 border-transparent hover:border-primary/20 rounded-xl group/back",
               "hover:bg-primary/5 hover:shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)] active:scale-95",
               className

@@ -28,6 +28,10 @@ import { useAuth } from '@/features/auth';
 import { useAlertCount } from '@/hooks/useAlertCount';
 import { useNotifications } from '@/features/notifications';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
+import { useSmartBack } from '@/hooks/use-smart-back';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
+import { trackNavBack } from '@/lib/navTelemetry';
 import { useScrollDirection } from '@/hooks/use-scroll-direction';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -286,6 +290,8 @@ export function MobileNavigation() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { trigger } = useHapticFeedback();
   const { isVisible } = useScrollDirection({ threshold: 20 });
+  const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
+  const { confirmIfDirty } = useDirtyGuard();
 
   const primaryItems = useMemo(() => {
     switch (role) {
@@ -322,9 +328,9 @@ export function MobileNavigation() {
   };
 
   const handleNavigate = useCallback((href: string) => {
-    navigate(href);
+    confirmIfDirty(() => navigate(href));
     setSheetOpen(false);
-  }, [navigate]);
+  }, [navigate, confirmIfDirty]);
 
   const handleMoreClick = useCallback(() => {
     trigger('light');
@@ -372,7 +378,8 @@ export function MobileNavigation() {
                 isActive={false}
                 onClick={() => {
                   SoundFeedback.navBack();
-                  navigate(-1);
+                  trackNavBack('mobile-header', hasInternalEntry ? 'history' : 'fallback');
+                  if (hasActiveDialogSentinel()) { goBack(); } else { confirmIfDirty(goBack); }
                 }}
                 onHaptic={() => trigger('light')}
               />

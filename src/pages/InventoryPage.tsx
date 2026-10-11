@@ -3,6 +3,7 @@
    infinitos, invalidação excessiva de cache ou recomputação em cada
    render. Callbacks/valores externos são estáveis por contrato. */
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useRBAC } from '@/features/auth';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -36,16 +37,56 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useModalParam } from '@/hooks/use-modal-param';
 
 export default function InventoryPage() {
   const { items, isLoading, recordMovement, stats, transferItems, deleteMovement, calculateAI, isCalculatingAI } = useInventory();
   const { data: movements } = useInventoryMovements();
   const { hasPermission } = useRBAC();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useState(false);
-  const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useState(false);
+  // Filtros persistidos na URL: sobrevivem a voltar/recarregar/compartilhar.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get('q') ?? '';
+  const selectedCategory = searchParams.get('categoria') ?? 'all';
+  const setSearchTerm = (value: string) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (value) next.set('q', value); else next.delete('q');
+      return next;
+    }, { replace: true });
+  };
+  const setSelectedCategory = (value: string) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (value && value !== 'all') next.set('categoria', value); else next.delete('categoria');
+      return next;
+    }, { replace: true });
+  };
+  // `?items=id1,id2` compartilha a seleção junto com ?modal=batch-qr.
+  const itemsParam = searchParams.get('items');
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(() => {
+    return new Set(itemsParam ? itemsParam.split(',').filter(Boolean) : []);
+  });
+  // Voltar/Avançar do browser reabrindo a entrada com ?items=... precisa
+  // ressincronizar a seleção — sem isso o modal mostraria etiquetas de
+  // itens diferentes dos compartilhados na URL. Ajuste durante o render
+  // (padrão React) em vez de effect.
+  // Só ressincroniza quando a entrada é a do modal compartilhado
+  // (?modal=...&items=...). A base normalizada do deep-link guarda o
+  // items antigo SEM modal — voltar até ela não pode restaurar a
+  // seleção velha por cima da seleção atual do usuário. E ao fechar o
+  // modal (param some) a seleção local é preservada.
+  const modalParam = searchParams.get('modal');
+  // Acompanha o par (items, modal): revisitar a entrada do modal por
+  // Avançar muda só o `modal` (o items na base é igual) — e ainda assim
+  // precisa ressincronizar com a seleção codificada na URL.
+  const [prevNavEntry, setPrevNavEntry] = useState({ items: itemsParam, modal: modalParam });
+  if (itemsParam !== prevNavEntry.items || modalParam !== prevNavEntry.modal) {
+    setPrevNavEntry({ items: itemsParam, modal: modalParam });
+    if (itemsParam && modalParam) setSelectedItems(new Set(itemsParam.split(',').filter(Boolean)));
+  }
+  // Modais compartilháveis via URL (?modal=batch-qr | ai-prediction).
+  const [isBatchQRModalOpen, setIsBatchQRModalOpen] = useModalParam('batch-qr');
+  const [isAIPredictionModalOpen, setIsAIPredictionModalOpen] = useModalParam('ai-prediction');
   const debouncedSearch = useDebounce(searchTerm, 300);
   const isSearching = searchTerm !== debouncedSearch;
 
@@ -82,7 +123,7 @@ export default function InventoryPage() {
                <BrainCircuit className="h-4 w-4 text-primary" />
                Acurácia IA
              </Button>
-             <Button variant="outline" className="gap-2" disabled={selectedItems.size === 0} onClick={() => setIsBatchQRModalOpen(true)}>
+             <Button variant="outline" className="gap-2" disabled={selectedItems.size === 0} onClick={() => setIsBatchQRModalOpen(true, { items: Array.from(selectedItems).join(',') })}>
                <QrCode className="h-4 w-4" />
                Etiquetas em Lote ({selectedItems.size})
              </Button>
