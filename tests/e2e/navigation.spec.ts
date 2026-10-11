@@ -36,25 +36,17 @@ test.describe('Botão Voltar', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
     await page.goto('/alerts', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1000);
+    // O hotkey é registrado pelo MainLayout, que só monta depois do chunk
+    // lazy da página resolver — espera o botão Voltar aparecer (prova de
+    // que o layout montou) antes de despachar a tecla.
+    await page.getByRole('button', { name: 'Voltar para a página anterior' }).first().waitFor();
 
     // Alt+ArrowLeft/Alt+B físicos são capturados pelo próprio Chromium
     // antes de chegar à página — despacha o evento no window para
     // exercitar o mesmo caminho (hotkey → confirmIfDirty → goBack).
-    const probe = await page.evaluate(() => {
-      const r: Record<string, unknown> = { before: location.href, ae: document.activeElement?.tagName, pushed: null, errors: [] };
-      const origPush = history.pushState.bind(history);
-      history.pushState = ((state: unknown, t: string, url?: string | URL | null) => { r.pushed = url; return origPush(state, t, url); }) as typeof history.pushState;
-      const origErr = window.onerror;
-      window.onerror = (m, s, l, c, e) => { (r.errors as unknown[]).push(String(m)); return false; };
+    await page.evaluate(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', altKey: true, bubbles: true }));
-      // navigate() dá pushState síncrono — se o handler rodou, a URL já mudou.
-      r.after = location.href;
-      history.pushState = origPush;
-      window.onerror = origErr;
-      return r;
     });
-    console.log('ALT-B PROBE', JSON.stringify(probe));
     await expect(page).toHaveURL(/\/$/);
   });
 });
