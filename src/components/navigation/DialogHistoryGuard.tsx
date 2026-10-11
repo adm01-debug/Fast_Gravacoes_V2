@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { urlOwnedDialogCount } from '@/hooks/use-modal-param';
 import { subscribeNavHistory } from '@/lib/navHistory';
 
-const SENTINEL_KEY = 'dialog-guard';
+export const SENTINEL_KEY = 'dialog-guard';
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do
 // dirty-guard, cuja ação navega) ficam fora — a sentinela faria o
 // navigate(-1) só consumir a entrada extra em vez de sair da página.
@@ -49,6 +49,13 @@ export function DialogHistoryGuard() {
   useEffect(() => {
     const readIdx = () => (history.state as { idx?: number } | null)?.idx;
     lastRealIdxRef.current = readIdx() ?? null;
+    // Reload com dialog aberto deixa a sentinela como entrada atual (o
+    // marcador persiste no history.state) mas o dialog não reabre — sem
+    // consumir a entrada, o primeiro voltar cai na duplicata da página e
+    // parece não fazer nada.
+    if ((history.state as Record<string, unknown> | null)?.[SENTINEL_KEY] && unownedDialogs() === 0) {
+      history.back();
+    }
     // PUSH não emite popstate — acompanha as mudanças de rota registradas
     // pelo navHistory para manter o último idx real atualizado.
     const unsubscribeNav = subscribeNavHistory(() => {
@@ -99,7 +106,10 @@ export function DialogHistoryGuard() {
         // entrada ficou "morta" no histórico. Pula ela na mesma direção
         // em que o usuário estava viajando — sem isso o voltar cai numa
         // cópia da página atual e o próximo voltar parece não fazer nada.
-        const base = sentinelBaseIdxRef.current;
+        // A sentinela órfã preserva o idx da entrada base (state
+        // copiado no push) — serve de referência quando a ref se perdeu
+        // (ex.: remontagem após reload).
+        const base = sentinelBaseIdxRef.current ?? (typeof st.idx === 'number' ? st.idx : null);
         const last = lastRealIdxRef.current;
         if (base !== null && last !== null) {
           if (last > base) history.back();

@@ -46,6 +46,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useQuickFavorites, QuickFavorite } from '@/hooks/useQuickFavorites';
+import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 import { useAlertCount } from '@/hooks/useAlertCount';
 
 type BrowserAudioWindow = Window & {
@@ -179,6 +180,7 @@ const DragOverlayItem = memo(function DragOverlayItem({ fav }: DragOverlayItemPr
 export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { confirmIfDirty } = useDirtyGuard();
   const [isEditing, setIsEditing] = useState(false);
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [triggeredFavId, setTriggeredFavId] = useState<string | null>(null);
@@ -263,9 +265,10 @@ export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
           playShortcutSound();
           // Trigger visual feedback
           setTriggeredFavId(favorites[favIndex].id);
-          // Navigate after brief delay for visual effect
+          // Navigate after brief delay for visual effect — passa pelo
+          // dirty-guard como os demais pontos de saída.
           setTimeout(() => {
-            navigate(favorites[favIndex].href);
+            confirmIfDirty(() => navigate(favorites[favIndex].href));
           }, 150);
         }
       }
@@ -273,7 +276,7 @@ export const QuickFavoritesBar = memo(function QuickFavoritesBar() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [favorites, navigate, playShortcutSound]);
+  }, [favorites, navigate, playShortcutSound, confirmIfDirty]);
 
   // Clear triggered state after animation
   useEffect(() => {

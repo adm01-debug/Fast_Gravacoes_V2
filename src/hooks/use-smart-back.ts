@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { internalDepth, recordLocation, subscribeNavHistory } from '@/lib/navHistory';
+import { SENTINEL_KEY } from '@/components/navigation/DialogHistoryGuard';
 
 const getCanGoBack = () => internalDepth() > 0;
 
@@ -24,6 +25,14 @@ export function useSmartBack(fallbackTo = '/') {
   }, [navType, location.key]);
 
   const goBack = useCallback(() => {
+    // Sentinela de dialog ativa (pushState da guarda, invisível ao
+    // navHistory): o voltar deve consumi-la e fechar o dialog — o
+    // REPLACE do fallback substituiria a sentinela pela Home e deixaria
+    // a entrada original logo atrás, criando um bounce inesperado.
+    if ((history.state as Record<string, unknown> | null)?.[SENTINEL_KEY]) {
+      history.back();
+      return;
+    }
     if (internalDepth() > 0) {
       navigate(-1);
     } else {

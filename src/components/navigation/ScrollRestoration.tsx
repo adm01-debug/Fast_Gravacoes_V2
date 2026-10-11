@@ -64,6 +64,7 @@ export function ScrollRestoration() {
   const navType = useNavigationType();
   const lastKeyRef = useRef<string>(location.key);
   const lastPathRef = useRef<string>(location.pathname);
+  const firstRunRef = useRef(true);
 
   const save = () => {
     const map = readMap();
@@ -90,13 +91,20 @@ export function ScrollRestoration() {
   }, []);
 
   useEffect(() => {
-    // Guarda a posição da entrada que está saindo antes de trocar de key.
-    flushWrites();
-    save();
-    flushWrites();
-    lastKeyRef.current = location.key;
+    // Na montagem (reload), não há entrada saindo — o save() aqui
+    // sobrescreveria com a posição atual (zero) o offset que o
+    // beforeunload persistiu, antes da restauração poder lê-lo.
+    const isFirst = firstRunRef.current;
+    firstRunRef.current = false;
+    if (!isFirst) {
+      // Guarda a posição da entrada que está saindo antes de trocar de key.
+      flushWrites();
+      save();
+      flushWrites();
+      lastKeyRef.current = location.key;
+    }
 
-    const samePage = location.pathname === lastPathRef.current;
+    const samePage = !isFirst && location.pathname === lastPathRef.current;
     lastPathRef.current = location.pathname;
 
     // Troca só de query (?q=, ?categoria=, ?modal=) na mesma página não

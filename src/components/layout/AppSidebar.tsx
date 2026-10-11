@@ -62,7 +62,11 @@ export function AppSidebar() {
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => { if (!isMobile) setMobileOpen(false); }, [isMobile]);
 
-  const handleSignOut = useCallback(async () => { await signOut(); navigate('/auth'); }, [signOut, navigate]);
+  // Logout apaga o rascunho do Novo Job — formulário sujo pede
+  // confirmação antes de sair (mesmo guard do Voltar/atalhos).
+  const handleSignOut = useCallback(() => {
+    confirmIfDirty(() => { void signOut().then(() => navigate('/auth')); });
+  }, [confirmIfDirty, signOut, navigate]);
 
   const filteredNavGroups = useMemo(() => {
     return navGroups
