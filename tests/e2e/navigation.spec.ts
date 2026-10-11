@@ -42,10 +42,16 @@ test.describe('Botão Voltar', () => {
     // antes de chegar à página — despacha o evento no window para
     // exercitar o mesmo caminho (hotkey → confirmIfDirty → goBack).
     const probe = await page.evaluate(() => {
-      const r = { before: location.href, ae: document.activeElement?.tagName };
+      const r: Record<string, unknown> = { before: location.href, ae: document.activeElement?.tagName, pushed: null, errors: [] };
+      const origPush = history.pushState.bind(history);
+      history.pushState = ((state: unknown, t: string, url?: string | URL | null) => { r.pushed = url; return origPush(state, t, url); }) as typeof history.pushState;
+      const origErr = window.onerror;
+      window.onerror = (m, s, l, c, e) => { (r.errors as unknown[]).push(String(m)); return false; };
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', altKey: true, bubbles: true }));
       // navigate() dá pushState síncrono — se o handler rodou, a URL já mudou.
-      Object.assign(r, { after: location.href });
+      r.after = location.href;
+      history.pushState = origPush;
+      window.onerror = origErr;
       return r;
     });
     console.log('ALT-B PROBE', JSON.stringify(probe));
