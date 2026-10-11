@@ -38,9 +38,12 @@ test.describe('Botão Voltar', () => {
     await page.goto('/alerts', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
-    // Alt+ArrowLeft é capturado pelo próprio Chromium antes da página;
-    // Alt+B exercita o mesmo caminho (hotkey → confirmIfDirty → goBack).
-    await page.keyboard.press('Alt+b');
+    // Alt+ArrowLeft/Alt+B físicos são capturados pelo próprio Chromium
+    // antes de chegar à página — despacha o evento no window para
+    // exercitar o mesmo caminho (hotkey → confirmIfDirty → goBack).
+    await page.evaluate(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', altKey: true, bubbles: true }));
+    });
     await expect(page).toHaveURL(/\/$/);
   });
 });
