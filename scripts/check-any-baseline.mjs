@@ -10,9 +10,9 @@
  *   node scripts/check-any-baseline.mjs --update # atualiza baseline (só reduzir!)
  */
 import { execSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BASELINE_FILE = join(__dirname, '..', '.any-baseline.json');
@@ -23,6 +23,33 @@ const IGNORES = [
   '!**/*.spec.*',
   '!src/integrations/supabase/types.ts',
 ];
+
+// Fallback sem dependência de `rg` (runners de CI não o instalam — antes
+// o `catch { return 0 }` mascarava isso e o gate nunca rodava lá).
+function countAnyNode() {
+  const rx = new RegExp(PATTERN, 'g');
+  const isIgnored = (rel) =>
+    /\.(test|spec)\.[tj]sx?$/.test(rel) ||
+    rel === 'src/integrations/supabase/types.ts';
+  let total = 0;
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry);
+      if (statSync(full).isDirectory()) {
+        if (entry !== 'node_modules') walk(full);
+        continue;
+      }
+      const rel = relative('src', full).replaceAll('\\', '/');
+      const srcRel = join('src', rel).replaceAll('\\', '/');
+      if (!/\.tsx?$/.test(entry) || isIgnored(srcRel)) continue;
+      const text = readFileSync(full, 'utf8');
+      const matches = text.match(rx);
+      if (matches) total += matches.length;
+    }
+  };
+  walk('src');
+  return total;
+}
 
 function countAny() {
   const args = [
@@ -47,8 +74,11 @@ function countAny() {
     // rg sai com status 1 quando não há matches — isso é o resultado
     // legítimo "0 ocorrências", não um erro do gate.
     if (err?.status === 1) return 0;
-    // FALHA ABERTA: outros erros (rg ausente, git quebrado) não podem
-    // passar o ratchet silenciosamente como se fossem 0.
+    // rg ausente (127/ENOENT) → contador Node equivalente. Outros erros
+    // não podem passar o ratchet silenciosamente como se fossem 0.
+    if (err?.status === 127 || err?.code === 'ENOENT') {
+      return countAnyNode();
+    }
     console.error('check-any-baseline: falha ao contar `any`:', err?.message ?? err);
     process.exit(2);
   }
