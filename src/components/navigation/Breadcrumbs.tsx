@@ -31,6 +31,8 @@ const LABEL_MAX_CHARS = 22;
 interface BreadcrumbItem {
   label: string;
   href?: string;
+  /** Segmento-pai sem rota própria — renderiza como texto apagado, não como página atual. */
+  nonNavigable?: boolean;
 }
 
 // Route to breadcrumb mapping
@@ -137,6 +139,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
       // Segmento-pai só vira link quando é uma rota REAL — '/calendar',
       // '/integrations' e '/admin' não existem em AppRoutes e caíam no 404.
       href: isLast || !NAVIGABLE_PARENT_PATHS.has(currentPath) ? undefined : currentPath,
+      nonNavigable: !isLast && !NAVIGABLE_PARENT_PATHS.has(currentPath),
     });
   });
 
@@ -252,6 +255,15 @@ export function Breadcrumbs({ className }: { className?: string }) {
                   </TooltipTrigger>
                   <TooltipContent side="bottom">{item.label}</TooltipContent>
                 </Tooltip>
+              ) : item.nonNavigable ? (
+                // Pai sem rota própria: texto apagado — não pode parecer
+                // clicável nem o crumb da página atual.
+                <span
+                  className="px-2.5 py-1 text-muted-foreground/60 max-w-[180px] truncate inline-block"
+                  title={item.label}
+                >
+                  {truncateLabel(item.label)}
+                </span>
               ) : (
                 <Tooltip>
                   <TooltipTrigger asChild>
