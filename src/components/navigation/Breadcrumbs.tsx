@@ -123,6 +123,10 @@ export function Breadcrumbs({ className }: { className?: string }) {
     { label: 'Início', href: '/' },
   ];
 
+  // Prefixos de rota que EXISTEM em AppRoutes e podem ser pai de outra
+  // rota — atualizar quando uma rota-pai ganhar página própria.
+  const NAVIGABLE_PARENT_PATHS = new Set(['/machines', '/operators', '/packaging']);
+
   let currentPath = '';
   pathnames.forEach((segment, index) => {
     currentPath += `/${segment}`;
@@ -130,7 +134,9 @@ export function Breadcrumbs({ className }: { className?: string }) {
 
     breadcrumbs.push({
       label: routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' '),
-      href: isLast ? undefined : currentPath,
+      // Segmento-pai só vira link quando é uma rota REAL — '/calendar',
+      // '/integrations' e '/admin' não existem em AppRoutes e caíam no 404.
+      href: isLast || !NAVIGABLE_PARENT_PATHS.has(currentPath) ? undefined : currentPath,
     });
   });
 

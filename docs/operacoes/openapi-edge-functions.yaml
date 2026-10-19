@@ -95,7 +95,7 @@ paths:
   /functions/v1/auto-promote-jobs:
     post:
       summary: Promove jobs planejados para produção (cron versionado + fallback)
-      security: [{ bearerAuth: [] }, { cronSecret: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: Resumo de promoções } }
   /functions/v1/calculate-rankings:
     post:
@@ -123,20 +123,20 @@ paths:
   /functions/v1/erp-api/jobs:
     get:
       summary: Lista jobs do ERP
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Jobs (schema contracts.ts) }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
       summary: Cria job
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/erp-api/jobs/{id}:
     get:
       summary: Detalhe do job
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Job }, '401': { $ref: '#/components/responses/Unauthorized' } }
     patch:
       summary: Atualiza job
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Atualizado }, '401': { $ref: '#/components/responses/Unauthorized' } }
     parameters:
       - in: path
@@ -146,31 +146,31 @@ paths:
   /functions/v1/erp-api/machines:
     get:
       summary: Lista máquinas
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Máquinas }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/erp-api/operators:
     get:
       summary: Lista operadores
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Operadores }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/erp-api/production/summary:
     get:
       summary: Resumo de produção
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Resumo }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/erp-api/lots:
     get:
       summary: Lista lotes
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Lotes }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
       summary: Cria lote
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Criado }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/erp-api/lots/{id}:
     get:
       summary: Detalhe do lote
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: Lote }, '401': { $ref: '#/components/responses/Unauthorized' } }
     parameters:
       - in: path
@@ -180,14 +180,17 @@ paths:
   /functions/v1/erp-api/kpis:
     get:
       summary: KPIs de produção
-      security: [{ bearerAuth: [] }, { apiKey: [] }]
+      security: [{ bearerAuth: [] }, { bearerAuth: [], apiKey: [] }]
       responses: { '200': { description: KPIs }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/webhook-handler:
     post:
       summary: >-
         Webhooks ERP (cria/atualiza jobs via HMAC). verify_jwt=true no
         gateway: o chamador precisa de Bearer JWT (ex.: anon key do projeto)
-        ALÉM do x-webhook-signature, senão 401 antes do handler.
+        ALÉM do x-webhook-signature, senão 401 antes do handler. Sem o
+        WEBHOOK_SECRET_<SOURCE> configurado retorna 401 antes da assinatura.
+        bitrix24/stripe são stubs: respondem processed=false 'logged_only'
+        (mapping ainda não implementado).
       security: [{ bearerAuth: [], webhookSignature: [] }]
       responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/bitrix24-sync:
@@ -207,7 +210,7 @@ paths:
         - in: query
           name: state
           schema: { type: string }
-      responses: { '302': { description: Redirect pós-autorização }, '401': { $ref: '#/components/responses/Unauthorized' } }
+      responses: { '200': { description: 'JSON { success, expiresAt } — o handler responde JSON, não redirect' }, '401': { $ref: '#/components/responses/Unauthorized' } }
     post:
       summary: >-
         Sincronização Bitrix24 — despacha pelo query param obrigatório
@@ -248,7 +251,7 @@ paths:
   /functions/v1/daily-maintenance-summary:
     post:
       summary: Resumo diário de manutenção (cron)
-      security: [{ cronSecret: [] }]
+      security: [{ bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: OK } }
   /functions/v1/tpm-notifications:
     post:
@@ -271,7 +274,7 @@ paths:
   /functions/v1/cron-alert-email:
     post:
       summary: E-mails agendados de alertas (cron no painel)
-      security: [{ cronSecret: [] }]
+      security: [{ bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: OK } }
   /functions/v1/send-email-report:
     post:
@@ -317,17 +320,17 @@ paths:
   /functions/v1/health-monitor:
     post:
       summary: Monitor agendado de saúde (pg_cron)
-      security: [{ cronSecret: [] }]
+      security: [{ bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: OK } }
   /functions/v1/metrics-collector:
     post:
       summary: Coleta métricas operacionais (cron)
-      security: [{ cronSecret: [] }]
+      security: [{ bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: OK } }
   /functions/v1/cron-cleanup:
     post:
       summary: Purge/arquivação de jobs antigos
-      security: [{ cronSecret: [] }]
+      security: [{ bearerAuth: [], cronSecret: [] }]
       responses: { '200': { description: '{ purged }' } }
   /functions/v1/cleanup-security-logs:
     post:
@@ -336,7 +339,7 @@ paths:
         `x-cron-secret` (requireCronSecret, fail-closed) E `x-api-key`
         igual a `CRON_API_KEY` (ou Bearer com o mesmo valor). Só
         x-cron-secret retorna 401.
-      security: [{ cronSecret: [], apiKey: [] }]
+      security: [{ bearerAuth: [], cronSecret: [], apiKey: [] }]
       responses: { '200': { description: OK }, '401': { $ref: '#/components/responses/Unauthorized' } }
   /functions/v1/backup-scheduler:
     post:

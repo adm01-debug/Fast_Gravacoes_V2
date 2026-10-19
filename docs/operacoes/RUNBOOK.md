@@ -10,7 +10,7 @@ está marcado com **[PAINEL]** — o resto é feito pelo repositório.
 | Frontend (SPA Vite) | Vercel (`juca1/fast-gravacoes-v2`) | push na `main` → deploy automático |
 | Postgres + Auth + PostgREST | Supabase produção canônica `uoujzvpecohinketylud` (`supabase/ENVIRONMENTS.md`, confirmado pelo owner) | `supabase db push` (migrations) |
 | Edge Functions (34) | mesmo projeto Supabase `uoujzvpecohinketylud` | `supabase functions deploy` |
-| Crons | 2 versionados em migrations (`rollup-cron-p95-daily`, `auto-promote-jobs-fallback`) + ~11 no painel **[PAINEL]** | migrations / Supabase Dashboard → Edge Functions → Cron |
+| Crons | 3 versionados em migrations (`rollup-cron-p95-daily`, `auto-promote-jobs-fallback`, `purge-old-logs-daily`) + ~11 no painel **[PAINEL]** | migrations / Supabase Dashboard → Edge Functions → Cron |
 | DB Webhooks | painel **[PAINEL]** | Supabase Dashboard → Database → Webhooks |
 
 Os gatilhos de cada function estão em `supabase/functions/REGISTRY.md` (introduzido no PR #80).

@@ -43,8 +43,14 @@ function countAny() {
       .split('\n')
       .filter(Boolean)
       .reduce((sum, line) => sum + Number(line.split(':').pop()), 0);
-  } catch {
-    return 0;
+  } catch (err) {
+    // rg sai com status 1 quando não há matches — isso é o resultado
+    // legítimo "0 ocorrências", não um erro do gate.
+    if (err?.status === 1) return 0;
+    // FALHA ABERTA: outros erros (rg ausente, git quebrado) não podem
+    // passar o ratchet silenciosamente como se fossem 0.
+    console.error('check-any-baseline: falha ao contar `any`:', err?.message ?? err);
+    process.exit(2);
   }
 }
 

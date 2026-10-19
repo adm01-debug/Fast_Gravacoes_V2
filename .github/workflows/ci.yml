@@ -148,7 +148,7 @@ jobs:
 
       - name: Enforce coverage thresholds
         run: |
-          echo "Coverage thresholds enforced: lines≥15%, functions≥10%, branches≥10%, statements≥15%"
+          echo "Coverage thresholds enforced: lines≥34%, functions≥27%, branches≥26%, statements≥32% (vitest.config.ts)"
           echo "vitest enforces thresholds — if this step ran, thresholds passed."
 
       - name: Upload test results
@@ -250,8 +250,8 @@ jobs:
         run: |
           echo "## Simulation Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Webhook scenarios: 500+ valid + negative + fuzz" >> $GITHUB_STEP_SUMMARY
-          echo "- ERP contract cases: 400+" >> $GITHUB_STEP_SUMMARY
-          echo "- Fuzz payloads: 1000+ random malformed" >> $GITHUB_STEP_SUMMARY
+          echo "- ERP contract cases: ~50 (it.each em erpApiContracts)" >> $GITHUB_STEP_SUMMARY
+          echo "- Fuzz payloads: 1000 random malformed (webhookFuzz)" >> $GITHUB_STEP_SUMMARY
           echo "- Load scenarios: 10k–50k concurrent ops" >> $GITHUB_STEP_SUMMARY
 
 # ──────────────────────────────────────────────────────────────────────────

@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SoundFeedback } from "@/lib/soundFeedback";
 import { useSmartBack } from "@/hooks/use-smart-back";
 import { useDirtyGuard } from "@/contexts/DirtyFormContext";
+import { hasActiveDialogSentinel } from "./DialogHistoryGuard";
 import { trackNavBack, trackDeepLinkExit } from "@/lib/navTelemetry";
 import {
   Tooltip,
@@ -48,6 +49,14 @@ export function BackButton({ className, fallbackTo = '/' }: BackButtonProps) {
     trigger('light');
     SoundFeedback.navBack();
     trackNavBack('button', hasInternalEntry ? 'history' : 'fallback');
+    // Sentinela de dialog primeiro (mesmo padrão de MainLayout/Breadcrumbs/
+    // MobileHeader/hotkeys): com dialog aberto o Voltar só consome a
+    // sentinela — pedir confirmação de "descartar alterações?" aqui seria
+    // enganoso, porque "Sair sem salvar" não sairia da página.
+    if (hasActiveDialogSentinel()) {
+      goBack();
+      return;
+    }
     confirmIfDirty(() => {
       // Só conta a saída de deep-link quando ela realmente acontece —
       // antes de confirmIfDirty um "Continuar editando" viraria métrica

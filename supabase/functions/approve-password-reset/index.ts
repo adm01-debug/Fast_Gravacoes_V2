@@ -34,10 +34,10 @@ Deno.serve(async (req) => {
       return auth.response
     }
 
-    // Comportamento preservado (coordinator/manager). Elevação para AAL2 é
-    // evolução futura do plano-mestre — não introduzida aqui para não quebrar
-    // o contrato atual do aprovador.
-    const forbidden = requireRole(auth.ctx, ['coordinator', 'manager'], { requestId, corsHeaders: cors })
+    // admin é o chamador real (PasswordResetRequests no settings?tab=users) —
+    // sem ele aqui o botão de aprovar reset devolvia 403 para admin.
+    // Elevação para AAL2 é evolução futura do plano-mestre.
+    const forbidden = requireRole(auth.ctx, ['admin', 'coordinator', 'manager'], { requestId, corsHeaders: cors })
     if (forbidden) {
       log.warn('guard.rejected', { roles: auth.ctx.roles })
       return forbidden

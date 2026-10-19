@@ -51,8 +51,9 @@ serve(async (req) => {
     // to evade IP-based lockout, or frame another IP as the failing source.
     const ip_address = getClientIp(req);
 
-    // Endpoint público (verify_jwt = false): limita enumeração de e-mails e
-    // flood de tentativas a partir de um mesmo IP.
+    // Endpoint com verify_jwt = true no gateway (config.toml) — o JWT do
+    // gateway já barra chamadas sem credencial; este bucket limita
+    // enumeração de e-mails e flood de tentativas a partir do mesmo IP.
     const limited = await checkRateLimit(supabase, {
       endpoint: 'check-login-lockout',
       identity: { ip: ip_address },
@@ -181,25 +182,16 @@ serve(async (req) => {
     }
 
     // RECORD_FAILURE action - increment failed attempts.
-    // Guard: limit how fast a single IP can call this action to prevent
-    // account-lockout DoS (attacker flooding record_failure for victim email).
-    // 20 calls per minute per IP is generous for legitimate auth flows.
-    if (action === 'record_failure') {
-      if (ip_address) {
-        const oneMinuteAgo = new Date(now.getTime() - 60_000).toISOString();
-        const { count: recentCalls } = await supabase
-          .from('login_lockouts')
-          .select('*', { count: 'exact', head: true })
-          .eq('identifier', ip_address)
-          .eq('identifier_type', 'ip')
-          .gte('last_failed_at', oneMinuteAgo);
-        if ((recentCalls ?? 0) > 20) {
-          return new Response(
-            JSON.stringify({ error: 'Too many requests from this IP' }),
-            { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
-          );
-        }
-      }
+    // Anti-flood: a linha do IP é UNIQUE(identifier, identifier_type) —
+    // o contador failed_attempts dela acumula as falhas do IP na janela
+    // de lockout. >20 já indica abuso antes do lock duro (que dispara em
+    // MAX_FAILED_ATTEMPTS*2); o guard anterior contava LINHAS e era
+    // código morto (a UNIQUE impede >1 linha por IP).
+    if (action === 'record_failure' && ip_address && (ipLockout?.failed_attempts ?? 0) > 20) {
+      return new Response(
+        JSON.stringify({ error: 'Too many requests from this IP' }),
+        { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      );
     }
     if (action === 'record_failure') {
       const currentAttempts = (emailLockout?.failed_attempts || 0) + 1;

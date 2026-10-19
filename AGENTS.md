@@ -46,7 +46,7 @@ Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committ
 
 ## Test layout
 
-- **Unit/integration (Vitest, jsdom):** colocated `*.test.ts(x)` next to source, plus `src/test/*.test.ts`. Setup is `src/test/setup.ts`. Vitest excludes `tests/e2e/**` and `supabase/functions/**`. Coverage thresholds are intentionally low (lines/statements 15%, functions/branches 10%).
+- **Unit/integration (Vitest, jsdom):** colocated `*.test.ts(x)` next to source, plus `src/test/*.test.ts`. Setup is `src/test/setup.ts`. Vitest excludes `tests/e2e/**` and `supabase/functions/**`. Coverage thresholds are a ratchet in `vitest.config.ts` (lines 34%, statements 32%, functions 27%, branches 26% — only raise, never lower).
 - **E2E (Playwright):** `tests/e2e/*.spec.ts`, baseURL `http://localhost:8090`, projects `chromium` and `mobile-chrome`, includes accessibility (`@axe-core/playwright`) and visual-regression specs.
 
 ## Architecture
@@ -111,4 +111,4 @@ Husky is configured: `pre-commit` runs `lint-staged`; `commit-msg` runs `commitl
 
 ## Environment
 
-Vite env vars (prefixed `VITE_`). Required: `VITE_SUPABASE_URL` and the Supabase publishable/anon key. **Note a known inconsistency:** `client.ts` reads `VITE_SUPABASE_PUBLISHABLE_KEY` while `.env.example` documents `VITE_SUPABASE_ANON_KEY` — set the variable the client actually reads. Other integrations (`.env.example`): `VITE_BITRIX_WEBHOOK_URL`, Resend, Twilio, Sentry DSN, Google keys. Per-environment files exist (`.env.production`, `.env.staging`). Never commit real secrets.
+Vite env vars (prefixed `VITE_`). Required: `VITE_SUPABASE_URL` and the Supabase publishable/anon key. `client.ts` reads `VITE_SUPABASE_PUBLISHABLE_KEY` — `.env.example` already documents that name (the old `VITE_SUPABASE_ANON_KEY` note was fixed). Other integrations (`.env.example`): `VITE_BITRIX_WEBHOOK_URL`, Resend, Twilio, Sentry DSN, Google keys. Per-environment files exist (`.env.production`, `.env.staging`). Never commit real secrets.

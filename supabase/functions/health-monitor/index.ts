@@ -7,6 +7,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import { createLogger, getOrCreateRequestId } from "../_shared/logger.ts";
+import { requireCronSecret } from "../_shared/cronAuth.ts";
 
 interface HealthResponse {
   status: "pass" | "warn" | "fail";
@@ -55,11 +56,12 @@ Deno.serve(async (req) => {
   const log = createLogger({ fn: "health-monitor", requestId });
   const corsHeaders = { ...getCorsHeaders(req), "Content-Type": "application/json" };
 
-  // Cron auth
-  const cronSecret = Deno.env.get("CRON_SECRET");
-  if (cronSecret && req.headers.get("x-cron-secret") !== cronSecret) {
+  // Cron auth — fail closed: sem CRON_SECRET configurado ninguém passa
+  // (as irmãs usam o mesmo requireCronSecret; a versão inline era fail-open).
+  const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders });
+  if (unauthorized) {
     log.warn("unauthorized_cron_call");
-    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: corsHeaders });
+    return unauthorized;
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";

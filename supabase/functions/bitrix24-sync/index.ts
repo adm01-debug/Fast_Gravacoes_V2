@@ -1160,7 +1160,7 @@ serve(async (req) => {
           }
         }
         
-        const redirectUri = url.searchParams.get('redirect_uri') || `${url.origin}/bitrix24-sync?action=oauth-callback`;
+        const redirectUri = url.searchParams.get('redirect_uri') || `${url.origin}/functions/v1/bitrix24-sync?action=oauth-callback`;
         
         result = {
           tokenStatus,
@@ -1196,7 +1196,7 @@ serve(async (req) => {
 
         // Handle OAuth callback with authorization code
         const code = url.searchParams.get('code');
-        const callbackRedirectUri = url.searchParams.get('redirect_uri') || `${url.origin}/bitrix24-sync?action=oauth-callback`;
+        const callbackRedirectUri = url.searchParams.get('redirect_uri') || `${url.origin}/functions/v1/bitrix24-sync?action=oauth-callback`;
 
         if (!code) {
           result = {

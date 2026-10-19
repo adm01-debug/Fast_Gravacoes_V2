@@ -69,8 +69,10 @@ serve(async (req: Request): Promise<Response> => {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // isCronKey já autenticou via x-api-key — o Bearer do padrão dual-header
+    // (service_role) não resolve usuário e não deve ser re-checado aqui.
     const authHeader = req.headers.get("Authorization");
-    if (authHeader) {
+    if (authHeader && !isCronKey) {
       const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
         global: { headers: { Authorization: authHeader } },
       });

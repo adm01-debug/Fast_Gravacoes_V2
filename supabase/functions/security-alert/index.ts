@@ -33,13 +33,12 @@ Deno.serve(async (req) => {
       const { data: { user }, error: authError } = await userClient.auth.getUser(
         authHeader.replace('Bearer ', '')
       );
-      if (authError || !user) {
-        return new Response(JSON.stringify({ error: 'Token inválido' }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        });
+      // Bearer que não resolve usuário (ex.: service_role do padrão
+      // dual-header dos crons) não é rejeitado — a chamada já passou no
+      // CRON_SECRET acima; registra sem identidade vinculada.
+      if (!authError && user) {
+        jwtIdentity = { id: user.id, email: user.email ?? null };
       }
-      jwtIdentity = { id: user.id, email: user.email ?? null };
     }
 
     const payload = await req.json().catch(() => null);
