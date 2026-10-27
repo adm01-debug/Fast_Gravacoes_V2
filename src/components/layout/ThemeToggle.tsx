@@ -44,7 +44,7 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
-  const { playLightModeSound, playDarkModeSound, soundEnabled, toggleSound } = useThemeSound();
+  const { playLightModeSound, playDarkModeSound, soundEnabled, localSoundEnabled, toggleSound } = useThemeSound();
 
   useEffect(() => {
     setMounted(true);
@@ -185,8 +185,10 @@ export function ThemeToggle() {
 
           <DropdownMenuSeparator />
 
+          {/* O rótulo reflete a chave LOCAL que toggleSound escreve — não
+              o estado efetivo, que pode estar mudo por outro opt-out. */}
           <DropdownMenuItem onClick={toggleSound} className="cursor-pointer">
-            {soundEnabled ? (
+            {localSoundEnabled ? (
               <>
                 <VolumeX className="mr-2 h-4 w-4" />
                 <span>Desativar Som</span>

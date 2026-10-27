@@ -185,6 +185,16 @@ BEGIN
 END $$;
 
 -- 5) geo_blocking_settings — a UI assume linha única de configuração.
+-- Dedupe ANTES do índice único: se a tabela já tiver linhas duplicadas,
+-- CREATE UNIQUE INDEX falha e reverte a migration inteira. Mantém a linha
+-- mais recentemente alterada (updated_at DESC; id só desempata de forma
+-- determinística — uuid é aleatório e não ordena por recência).
+DELETE FROM public.geo_blocking_settings a
+ WHERE EXISTS (
+   SELECT 1 FROM public.geo_blocking_settings b
+    WHERE (b.updated_at, b.id) > (a.updated_at, a.id)
+ );
+
 CREATE UNIQUE INDEX IF NOT EXISTS geo_blocking_settings_singleton
   ON public.geo_blocking_settings ((true));
 
@@ -220,9 +230,17 @@ BEGIN
     ORDER BY n.nspname, c.relname, p.polname
   LOOP
     IF policy_record.using_expr IS NOT NULL THEN
-      optimized_using := replace(
-        replace(policy_record.using_expr, 'public.has_role(', 'app_private.has_role('),
-        'has_role(', 'app_private.has_role('
+      -- Um único regexp_replace com borda de identificador: converte
+      -- 'public.has_role(' e 'has_role(' solto para 'app_private.has_role(',
+      -- sem tocar em 'app_private.has_role(' já existente (o '.' antes de
+      -- has_role impede o match). O antigo replace() encadeado corrompia
+      -- expressões já migradas: 'app_private.has_role(' continha 'has_role('
+      -- e virava 'app_private.app_private.has_role(' — quebrando o ALTER.
+      optimized_using := regexp_replace(
+        policy_record.using_expr,
+        '(^|[^a-zA-Z0-9_.])(public\.)?has_role\(',
+        '\1app_private.has_role(',
+        'g'
       );
 
       EXECUTE format(
@@ -235,9 +253,11 @@ BEGIN
     END IF;
 
     IF policy_record.check_expr IS NOT NULL THEN
-      optimized_check := replace(
-        replace(policy_record.check_expr, 'public.has_role(', 'app_private.has_role('),
-        'has_role(', 'app_private.has_role('
+      optimized_check := regexp_replace(
+        policy_record.check_expr,
+        '(^|[^a-zA-Z0-9_.])(public\.)?has_role\(',
+        '\1app_private.has_role(',
+        'g'
       );
 
       EXECUTE format(
