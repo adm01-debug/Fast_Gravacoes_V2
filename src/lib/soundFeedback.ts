@@ -53,12 +53,12 @@ function currentUserId(): string | null {
 export function isSoundEnabled(): boolean {
   try {
     const userId = currentUserId();
-    // 'user-preferences' é chave GLOBAL do navegador — aplicá-la com sessão
-    // ativa vazaria o opt-out de uma conta para outra. Com usuário
-    // identificado vale só `app-settings-<uid>`; a global só vale para
-    // uso anônimo.
+    // 'user-preferences' é a chave que o UserPreferencesContext grava —
+    // é o opt-out explícito do usuário DESTE navegador e vale logado ou
+    // anônimo. 'app-settings-<uid>' é o opt-out por conta (SettingsPage).
+    // Qualquer um desligado silencia tudo.
     const prefs = localStorage.getItem('user-preferences');
-    if (!userId && prefs && JSON.parse(prefs).soundEnabled === false) return false;
+    if (prefs && JSON.parse(prefs).soundEnabled === false) return false;
     if (userId) {
       const settings = JSON.parse(localStorage.getItem(`app-settings-${userId}`) ?? '{}');
       if (settings.sounds === false) return false;
