@@ -213,4 +213,17 @@ jobs:
           set -euo pipefail
           : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
           : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
-          supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"
+          # O bundling baixa ghcr.io/supabase/edge-runtime pelo docker; o pull
+          # anônimo estoura o rate-limit do ghcr nos IPs compartilhados do
+          # runner (toomanyrequests, ~44000/min). O retry interno do CLI cobre
+          # só ~12s, então a retentativa com backoff fica aqui no step.
+          attempt=1
+          until supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"; do
+            if [ "$attempt" -ge 5 ]; then
+              echo "functions deploy falhou após $attempt tentativas."
+              exit 1
+            fi
+            echo "tentativa $attempt falhou; aguardando 60s antes de re-tentar..."
+            attempt=$((attempt + 1))
+            sleep 60
+          done
