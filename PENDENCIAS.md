@@ -1,5 +1,19 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
+## 0. Merge do PR #105 (correção dos workflows) — decisão do Joaquim
+
+O PR https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/105 corrige a causa
+raiz das falhas de CI/Deploy e está com todos os checks obrigatórios verdes.
+Ele NÃO foi mergeado porque a regra do projeto proíbe merge automático quando
+o PR altera código da aplicação (não só CI/config) e o merge dispara deploy de
+produção — este PR toca `src/lib/soundFeedback.ts` e uma migration SQL, e o
+merge no main dispara o workflow Deploy, que aplicará
+`20261019140000_validation_hardening.sql` em produção.
+
+**O que fazer:** revisar e mergear o PR #105. Sem o merge, CI e Deploy na main
+seguem falhando (audit gate) e a migration com o bug `has_role` continua armada
+para quebrar o próximo deploy.
+
 ## 1. Secrets E2E (GitHub Actions)
 
 A suíte E2E autenticada não roda sem estes secrets no repositório
