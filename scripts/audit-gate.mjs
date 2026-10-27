@@ -20,6 +20,9 @@ const BRACES_ADVISORY = 1240992;
 // source 1241232 = GHSA-rj75-hqrm-r3gf (postcss-selector-parser complexidade
 // quadrática no parsing de seletores).
 const POSTCSS_PARSER_ADVISORY = 1241232;
+// source 1243066 = GHSA-mrhx-c7xc-m3w5 (zod: DoS por bound astronômico
+// em schemas .min()/.max() declarados pelo próprio código).
+const ZOD_ADVISORY = 1243066;
 
 const ALLOWED_PACKAGES = new Map([
   // Cadeia braces (GHSA-vfj7-8cjw-p6xm: stack-exhaustion DoS em padrões
@@ -100,6 +103,20 @@ const ALLOWED_PACKAGES = new Map([
       reason:
         'Vuln transitiva via postcss-selector-parser, só build-time sobre CSS próprio. Remoção: migração tailwindcss v4.',
       advisories: new Set([POSTCSS_PARSER_ADVISORY]),
+    },
+  ],
+  // zod (GHSA-mrhx-c7xc-m3w5: DoS por bound astronômico em coleções):
+  // para ser explorada, um schema NOSSO precisaria declarar .max() com
+  // valor irreal — os bounds vêm do próprio código, não de input externo.
+  // Não existe backport para a linha 3.x; o fix só está na v4, que é
+  // major breaking (API de schemas, zod-validation-error compat).
+  // Remoção: migração zod v4 com revisão do zod-validation-error.
+  [
+    'zod',
+    {
+      reason:
+        'DoS por bound astronômico em coleções exige schema nosso declarar .max() irreal; fix só existe na v4 (major breaking). Remoção: migração zod v4 com revisão do zod-validation-error.',
+      advisories: new Set([ZOD_ADVISORY]),
     },
   ],
 ]);
