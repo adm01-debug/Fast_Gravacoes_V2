@@ -149,6 +149,7 @@ jobs:
           PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
         run: |
           set -euo pipefail
 
@@ -242,6 +243,85 @@ jobs:
               THEN 'tabela ausente'
               ELSE (SELECT count(*)::text FROM public.csp_violation_reports) || ' linhas' END;
           SQL
+
+          echo "===== has_role — definições (diagnóstico RLS) ====="
+          # Compara public.has_role (legado divergente do remote) com
+          # app_private.has_role (canônico). Se o remoto divergir das
+          # migrations, as policies reescritas podem estar negando SELECT.
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'fn: ' || n.nspname || '.' || p.proname ||
+                   ' secdef=' || p.prosecdef ||
+                   ' search_path=' || coalesce((SELECT c FROM unnest(p.proconfig) c WHERE c LIKE 'search_path=%'), '<default>')
+            FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE p.proname = 'has_role' ORDER BY 1;
+          SQL
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT n.nspname || '.' || p.proname || ' body: ' || pg_get_functiondef(p.oid)
+            FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE p.proname = 'has_role' AND n.nspname IN ('public','app_private')
+            ORDER BY 1;
+          SQL
+
+          echo "===== user_roles — policies + agregados ====="
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT pol.polname::text || ' ' || pol.polcmd::text || ' using=' || coalesce(pg_get_expr(pol.polqual, pol.polrelid), '<none>')
+                 || ' check=' || coalesce(pg_get_expr(pol.polwithcheck, pol.polrelid), '<none>')
+            FROM pg_policy pol
+            WHERE pol.polrelid = 'public.user_roles'::regclass
+            ORDER BY pol.polname;
+          SQL
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'user_roles por papel: ' || role::text || ' ativo=' || is_active || ' n=' || count(*)
+            FROM public.user_roles GROUP BY role, is_active ORDER BY role, is_active;
+            SELECT 'contagens: jobs=' || (SELECT count(*) FROM public.jobs)
+                 || ' profiles=' || (SELECT count(*) FROM public.profiles)
+                 || ' user_roles=' || (SELECT count(*) FROM public.user_roles);
+          SQL
+
+          echo "===== funções de auth referenciadas por policies ====="
+          # Policies podem chamar helpers que só existem no remoto (drift):
+          # se faltar a função, TODA query na tabela aborta no planejador.
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'fn: ' || n.nspname || '.' || p.proname || ' secdef=' || p.prosecdef
+            FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE p.proname IN ('is_staff','has_role','is_admin','current_user_role','get_my_role')
+            ORDER BY 1;
+          SQL
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'is_staff body: ' || pg_get_functiondef(p.oid)
+            FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE p.proname = 'is_staff' AND n.nspname = 'public';
+          SQL
+
+          echo "===== simulação como usuário E2E (RLS real) ====="
+          # Reproduz exatamente o que o app faz pós-login: SELECT em
+          # user_roles/jobs como `authenticated` com claim.sub do usuário E2E.
+          if [ -n "${E2E_EMAIL:-}" ]; then
+            run_sql -v ON_ERROR_STOP=1 -At -v e2e_email="$E2E_EMAIL" <<'SQL' || true
+              SELECT 'e2e id=' || id || ' criado=' || created_at::date
+                   || ' confirmed=' || (email_confirmed_at IS NOT NULL)
+              FROM auth.users WHERE email = :'e2e_email';
+              SELECT 'e2e user_roles: ' || coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
+              FROM public.user_roles
+              WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
+              BEGIN;
+              SELECT set_config('tmp.e2e_id',
+                     (SELECT id::text FROM auth.users WHERE email = :'e2e_email'), true);
+              SET LOCAL ROLE authenticated;
+              SELECT set_config('request.jwt.claim.sub', current_setting('tmp.e2e_id'), true);
+              SELECT set_config('request.jwt.claims',
+                     json_build_object('sub', current_setting('tmp.e2e_id'),
+                       'role','authenticated','aal','aal2')::text, true);
+              SELECT 'e2e RLS user_roles visiveis: ' || count(*) FROM public.user_roles;
+              SELECT 'e2e RLS proprias ativas: ' || count(*) FROM public.user_roles
+                WHERE user_id = auth.uid() AND is_active;
+              SELECT 'e2e RLS jobs visiveis: ' || count(*) FROM public.jobs;
+              SELECT 'e2e RLS profile: ' || count(*) FROM public.profiles WHERE id = auth.uid();
+              ROLLBACK;
+          SQL
+          else
+            echo "E2E_EMAIL não configurado — pulando simulação."
+          fi
 
           echo "===== edge function secrets (nomes) ====="
           supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
@@ -469,3 +549,78 @@ jobs:
             echo "pg_cron ausente — verificação de jobs pulada."
           fi
           supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
+
+      - name: Apply — papéis do usuário E2E
+        if: ${{ inputs.mode == 'apply' && github.ref == 'refs/heads/main' }}
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+        run: |
+          set -euo pipefail
+
+          run_sql() {
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" "$@"
+            else
+              psql "$@"
+            fi
+          }
+
+          if [ -z "${E2E_EMAIL:-}" ]; then
+            echo "E2E_EMAIL não configurado — pulando provisionamento."
+            exit 0
+          fi
+
+          # A conta E2E ficou sem nenhuma linha em user_roles (recriada ou
+          # linhas apagadas): o app resolve role=null e TODA rota protegida
+          # redireciona p/ "/" em silêncio — a suíte quebrava com páginas
+          # vazias. Reprovisiona operator+coordinator, como a conta tinha
+          # quando os specs passavam (AuthProvider: prioridade → coordinator).
+          run_sql -v ON_ERROR_STOP=1 -v e2e_email="$E2E_EMAIL" <<'SQL'
+            BEGIN;
+
+            -- psql não interpola :'var' dentro de corpos DO $$ — passa o
+            -- e-mail por GUC de transação.
+            SELECT set_config('tmp.e2e_email', :'e2e_email', true);
+
+            -- Conta precisa existir; perfil é pré-requisito do FK de
+            -- user_roles (handle_new_user pode ter falhado na criação).
+            DO $$
+            DECLARE v_uid uuid;
+            BEGIN
+              SELECT id INTO v_uid FROM auth.users
+              WHERE email = current_setting('tmp.e2e_email');
+              IF v_uid IS NULL THEN
+                RAISE EXCEPTION 'conta E2E não encontrada em auth.users — confira o secret E2E_EMAIL';
+              END IF;
+              INSERT INTO public.profiles (id, full_name)
+              VALUES (v_uid, 'E2E')
+              ON CONFLICT (id) DO NOTHING;
+              INSERT INTO public.user_roles (user_id, role, is_active)
+              SELECT v_uid, r.role, true
+              FROM (VALUES
+                ('operator'::public.app_role),
+                ('coordinator'::public.app_role)
+              ) AS r(role)
+              ON CONFLICT (user_id, role) DO UPDATE SET is_active = true;
+            END $$;
+
+            DO $$
+            DECLARE n int;
+            BEGIN
+              SELECT count(*) INTO n FROM public.user_roles
+              WHERE user_id = (SELECT id FROM auth.users
+                               WHERE email = current_setting('tmp.e2e_email'))
+                AND role IN ('operator','coordinator') AND is_active;
+              IF n < 2 THEN
+                RAISE EXCEPTION 'papéis E2E incompletos após grant (%/2)', n;
+              END IF;
+            END $$;
+
+            SELECT 'e2e user_roles após grant: ' ||
+                   coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
+            FROM public.user_roles
+            WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
+
+            COMMIT;
+          SQL
