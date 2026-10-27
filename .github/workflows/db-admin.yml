@@ -647,9 +647,16 @@ jobs:
             fi
           }
 
-          if [ -z "${E2E_EMAIL:-}" ] || [ -z "${E2E_TOTP_SECRET:-}" ]; then
-            echo "E2E_EMAIL ou E2E_TOTP_SECRET não configurado — pulando enrollment."
+          if [ -z "${E2E_EMAIL:-}" ]; then
+            echo "E2E_EMAIL não configurado — conta E2E ausente, pulando enrollment."
             exit 0
+          fi
+          if [ -z "${E2E_TOTP_SECRET:-}" ]; then
+            echo "ERRO: conta E2E configurada (E2E_EMAIL) mas E2E_TOTP_SECRET ausente."
+            echo "Sem fator TOTP verificado, o papel coordinator é redirecionado p/"
+            echo "/mfa-enrollment e a suíte E2E continua vermelha. Cadastre o secret"
+            echo "E2E_TOTP_SECRET (seed base32 do 2FA da conta) e rode o apply de novo."
+            exit 1
           fi
 
           # A conta E2E recriada perdeu também o fator TOTP: papel elevado
@@ -661,9 +668,10 @@ jobs:
             BEGIN;
 
             -- psql não interpola :'var' dentro de corpos DO $$ — passa os
-            -- valores por GUCs de transação.
-            SELECT set_config('tmp.e2e_email', :'e2e_email', true);
-            SELECT set_config('tmp.e2e_totp', :'e2e_totp', true);
+            -- valores por GUCs de transação. Os resultados são embrulhados
+            -- em IS NOT NULL para o seed não aparecer no log do job.
+            SELECT (set_config('tmp.e2e_email', :'e2e_email', true)) IS NOT NULL AS email_cfg;
+            SELECT (set_config('tmp.e2e_totp', :'e2e_totp', true)) IS NOT NULL AS totp_cfg;
 
             DO $$
             DECLARE v_uid uuid;
