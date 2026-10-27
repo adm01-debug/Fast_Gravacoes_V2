@@ -3,7 +3,7 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import { isSoundEnabled } from '@/lib/soundFeedback';
 
 const SOUND_ENABLED_KEY = 'theme-sound-enabled';
@@ -27,6 +27,9 @@ const createBrowserAudioContext = (): AudioContext => {
 export function useThemeSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  // Bumped quando outra aba/contexto altera prefs de som, para o estado
+  // efetivo re-renderizar sem depender só de re-renders casuais.
+  const [prefsVersion, setPrefsVersion] = useState(0);
 
   // Load preference from localStorage on mount
   useEffect(() => {
@@ -34,6 +37,22 @@ export function useThemeSound() {
     if (stored !== null) {
       setSoundEnabled(stored === 'true');
     }
+  }, []);
+
+  // `storage` só dispara entre abas — cobre opt-out mudado em outra janela.
+  // Escritas na MESMA aba ainda dependem de um re-render natural (navegação,
+  // interação) — o indicador pode ficar uma tela atrás, nunca o áudio.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === SOUND_ENABLED_KEY && e.newValue !== null) {
+        setSoundEnabled(e.newValue === 'true');
+      }
+      if (e.key === 'user-preferences' || e.key?.startsWith('app-settings-')) {
+        setPrefsVersion(v => v + 1);
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const toggleSound = useCallback(() => {
@@ -163,9 +182,20 @@ export function useThemeSound() {
     }
   }, [getAudioContext, soundEnabled]);
 
-  // `soundEnabled` exposto = estado EFETIVO (chave local && opt-outs
-  // global/por conta), para a UI (ícone de mudo, rótulo Ativar/Desativar)
-  // refletir o que realmente vai soar — `isSoundEnabled()` lê o
-  // localStorage a cada render, então já reflete mudanças externas.
-  return { playLightModeSound, playDarkModeSound, soundEnabled: soundEnabled && isSoundEnabled(), toggleSound };
+  // `soundEnabled` = estado EFETIVO (chave local && opt-outs global/por
+  // conta) — alimenta o indicador de mudo e o que realmente toca.
+  // `localSoundEnabled` = só a chave local — alimenta o rótulo/ação do
+  // menu, que é consistente com a preferência que `toggleSound` escreve.
+  // `prefsVersion` na dependência re-lê os opt-outs quando outra aba muda.
+  const effectiveSoundEnabled = useMemo(
+    () => soundEnabled && isSoundEnabled(),
+    [soundEnabled, prefsVersion],
+  );
+  return {
+    playLightModeSound,
+    playDarkModeSound,
+    soundEnabled: effectiveSoundEnabled,
+    localSoundEnabled: soundEnabled,
+    toggleSound,
+  };
 }
