@@ -1,23 +1,26 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
-## 0. Rodar o DB Admin em modo `apply` (reprovisionar papéis do usuário E2E)
+## 0. Reprovisionar conta E2E — papéis ✅ / fator MFA (depende do PR)
 
-Diagnóstico fechado pelo inspect do DB Admin: a conta E2E
-(`aa2878da-ee51-4e89-88b0-96f18406bb22`, criada em 2026-10-16) está **sem
-nenhuma linha em `user_roles`** — a conta foi recriada depois de 11/out e o
-`ON DELETE CASCADE` de `user_roles.user_id` apagou os papéis. Sem papel, o app
-resolve `role=null` e TODA rota protegida redireciona para `/` em silêncio:
-é a causa exata dos 21 specs E2E vermelhos na main (páginas vazias, sem
-conteúdo e sem "acesso negado").
+**Status dos papéis:** RESOLVIDO em produção — `operator` + `coordinator`
+ativos (DB Admin `apply`, run 40581585129). Os specs de auth/navegação já
+voltaram a passar.
 
-A correção já está no workflow DB Admin (step "Apply — papéis do usuário E2E",
-idempotente: `INSERT ... ON CONFLICT DO UPDATE` de `operator` + `coordinator`
-para o e-mail do secret `E2E_EMAIL`).
+**Restante — fator TOTP:** a conta E2E recriada também perdeu o fator MFA.
+Como `coordinator` é papel elevado, o `ProtectedRoute` redireciona toda rota
+protegida para `/mfa-enrollment` quando `listFactors()` não tem fator
+`verified` — a causa dos ~29 specs que ainda falham (admin, production,
+packaging, system-status, visual, accessibility).
 
-**O que fazer:** em Actions → **DB Admin** → Run workflow → ref `main` →
-`mode = apply`. Depois, re-rodar o job E2E do CI (ou esperar o próximo push)
-— a suíte deve voltar a verde. RLS/functions/migrations já foram descartados
-como causa via simulação autenticada (0 linhas visíveis, sem erro de policy).
+A correção está no step "Apply — fator MFA TOTP do usuário E2E" do DB Admin
+(idempotente: promove/realinha fatores `totp` existentes ao seed do secret
+`E2E_TOTP_SECRET`, ou enrola um novo `verified`; a suíte gera o código do
+desafio a partir de `E2E_TOTP_SECRET`).
+
+**O que fazer:** mergear o PR que adiciona o step e rodar Actions →
+**DB Admin** → Run workflow → ref `main` → `mode = apply`. Depois, re-rodar
+o job E2E do CI — a suíte deve voltar a verde. RLS/functions/migrations já
+foram descartados como causa via simulação autenticada.
 
 ## 1. Secrets E2E (GitHub Actions)
 
