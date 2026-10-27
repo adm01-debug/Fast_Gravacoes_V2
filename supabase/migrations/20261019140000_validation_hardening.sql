@@ -187,10 +187,13 @@ END $$;
 -- 5) geo_blocking_settings — a UI assume linha única de configuração.
 -- Dedupe ANTES do índice único: se a tabela já tiver linhas duplicadas,
 -- CREATE UNIQUE INDEX falha e reverte a migration inteira. Mantém a linha
--- mais recente (id maior) como configuração vigente.
+-- mais recentemente alterada (updated_at DESC; id só desempata de forma
+-- determinística — uuid é aleatório e não ordena por recência).
 DELETE FROM public.geo_blocking_settings a
-  USING public.geo_blocking_settings b
- WHERE a.id < b.id;
+ WHERE EXISTS (
+   SELECT 1 FROM public.geo_blocking_settings b
+    WHERE (b.updated_at, b.id) > (a.updated_at, a.id)
+ );
 
 CREATE UNIQUE INDEX IF NOT EXISTS geo_blocking_settings_singleton
   ON public.geo_blocking_settings ((true));
