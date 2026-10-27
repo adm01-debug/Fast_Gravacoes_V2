@@ -298,19 +298,19 @@ jobs:
           # user_roles/jobs como `authenticated` com claim.sub do usuário E2E.
           if [ -n "${E2E_EMAIL:-}" ]; then
             run_sql -v ON_ERROR_STOP=1 -At -v e2e_email="$E2E_EMAIL" <<'SQL' || true
-              SELECT 'e2e id=' || id || ' confirmed=' || (email_confirmed_at IS NOT NULL)
-                   || ' aal_enforced=' || coalesce((raw_app_meta_data->>'aal_enforced'),'?')
+              SELECT 'e2e id=' || id || ' criado=' || created_at::date
+                   || ' confirmed=' || (email_confirmed_at IS NOT NULL)
               FROM auth.users WHERE email = :'e2e_email';
               SELECT 'e2e user_roles: ' || coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
               FROM public.user_roles
               WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
               BEGIN;
-              SET LOCAL ROLE authenticated;
-              SELECT set_config('request.jwt.claim.sub',
+              SELECT set_config('tmp.e2e_id',
                      (SELECT id::text FROM auth.users WHERE email = :'e2e_email'), true);
+              SET LOCAL ROLE authenticated;
+              SELECT set_config('request.jwt.claim.sub', current_setting('tmp.e2e_id'), true);
               SELECT set_config('request.jwt.claims',
-                     json_build_object('sub',
-                       (SELECT id::text FROM auth.users WHERE email = :'e2e_email'),
+                     json_build_object('sub', current_setting('tmp.e2e_id'),
                        'role','authenticated','aal','aal2')::text, true);
               SELECT 'e2e RLS user_roles visiveis: ' || count(*) FROM public.user_roles;
               SELECT 'e2e RLS proprias ativas: ' || count(*) FROM public.user_roles
@@ -549,3 +549,46 @@ jobs:
             echo "pg_cron ausente — verificação de jobs pulada."
           fi
           supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
+
+      - name: Apply — papéis do usuário E2E
+        if: ${{ inputs.mode == 'apply' && github.ref == 'refs/heads/main' }}
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+        run: |
+          set -euo pipefail
+
+          run_sql() {
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" "$@"
+            else
+              psql "$@"
+            fi
+          }
+
+          if [ -z "${E2E_EMAIL:-}" ]; then
+            echo "E2E_EMAIL não configurado — pulando provisionamento."
+            exit 0
+          fi
+
+          # A conta E2E ficou sem nenhuma linha em user_roles (recriada ou
+          # linhas apagadas): o app resolve role=null e TODA rota protegida
+          # redireciona p/ "/" em silêncio — a suíte quebrava com páginas
+          # vazias. Reprovisiona operator+coordinator, como a conta tinha
+          # quando os specs passavam (AuthProvider: prioridade → coordinator).
+          run_sql -v ON_ERROR_STOP=1 -v e2e_email="$E2E_EMAIL" <<'SQL'
+            INSERT INTO public.user_roles (user_id, role, is_active)
+            SELECT u.id, r.role, true
+            FROM auth.users u
+            CROSS JOIN (VALUES
+              ('operator'::public.app_role),
+              ('coordinator'::public.app_role)
+            ) AS r(role)
+            WHERE u.email = :'e2e_email'
+            ON CONFLICT (user_id, role) DO UPDATE SET is_active = true;
+
+            SELECT 'e2e user_roles após grant: ' ||
+                   coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
+            FROM public.user_roles
+            WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
+          SQL
