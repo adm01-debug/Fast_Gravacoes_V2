@@ -318,7 +318,7 @@ jobs:
               SELECT 'e2e RLS jobs visiveis: ' || count(*) FROM public.jobs;
               SELECT 'e2e RLS profile: ' || count(*) FROM public.profiles WHERE id = auth.uid();
               ROLLBACK;
-            SQL
+          SQL
           else
             echo "E2E_EMAIL não configurado — pulando simulação."
           fi
