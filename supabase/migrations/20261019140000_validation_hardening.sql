@@ -170,7 +170,10 @@ GRANT EXECUTE ON FUNCTION public.complete_maintenance_record(jsonb) TO authentic
 
 -- 4) rollup-cron-p95-daily — o nome e o RUNBOOK dizem "daily" mas a agenda era
 --    '20 * * * *' (a cada hora no minuto 20). Reagenda para 03:20 diário.
-DO $$
+-- O corpo do DO usa tag $do$ porque o comando do cron também é
+-- dollar-quoted: $$ interno fecharia o corpo do bloco antes do tempo
+-- e quebrava a migration com "syntax error at or near SELECT" no deploy.
+DO $do$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
     IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'rollup-cron-p95-daily') THEN
@@ -179,10 +182,10 @@ BEGIN
     PERFORM cron.schedule(
       'rollup-cron-p95-daily',
       '20 3 * * *',
-      $$SELECT public.rollup_cron_p95_daily(2);$$
+      $cmd$SELECT public.rollup_cron_p95_daily(2);$cmd$
     );
   END IF;
-END $$;
+END $do$;
 
 -- 5) geo_blocking_settings — a UI assume linha única de configuração.
 -- Dedupe ANTES do índice único: se a tabela já tiver linhas duplicadas,
