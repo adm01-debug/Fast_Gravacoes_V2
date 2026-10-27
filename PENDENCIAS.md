@@ -1,18 +1,22 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
-## 0. Merge do PR #105 (correção dos workflows) — decisão do Joaquim
+## 0. Merge do PR #106 (correção do Deploy) — decisão do Joaquim
 
-O PR https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/105 corrige a causa
-raiz das falhas de CI/Deploy e está com todos os checks obrigatórios verdes.
-Ele NÃO foi mergeado porque a regra do projeto proíbe merge automático quando
-o PR altera código da aplicação (não só CI/config) e o merge dispara deploy de
-produção — este PR toca `src/lib/soundFeedback.ts` e uma migration SQL, e o
-merge no main dispara o workflow Deploy, que aplicará
-`20261019140000_validation_hardening.sql` em produção.
+O PR #105 foi mergeado e destravou o CI da main (todos os gates verdes), mas o
+workflow Deploy continuou falhando: o `supabase db push` aborta em
+`20261019140000_validation_hardening.sql` com
+`ERROR: syntax error at or near "SELECT" (SQLSTATE 42601)` — o agendamento do
+cron usa `$$` dentro de um bloco `DO $$`, e o `$$` interno fecha o corpo do
+bloco antes da hora.
 
-**O que fazer:** revisar e mergear o PR #105. Sem o merge, CI e Deploy na main
-seguem falhando (audit gate) e a migration com o bug `has_role` continua armada
-para quebrar o próximo deploy.
+O PR https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/106 troca as tags
+para `$do$`/`$cmd$` (6 linhas em 1 arquivo) e está com todos os checks
+obrigatórios verdes. Ele NÃO foi mergeado pela mesma regra do projeto: altera
+SQL de migration e o merge dispara o Deploy de produção.
+
+**O que fazer:** mergear o PR #106. Sem ele, o Deploy na main segue vermelho e
+nenhuma migration nova entra em produção. A migration continua segura para
+editar porque ela ainda NÃO foi aplicada (o deploy falhou antes).
 
 ## 1. Secrets E2E (GitHub Actions)
 
