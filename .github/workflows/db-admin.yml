@@ -263,7 +263,7 @@ jobs:
 
           echo "===== user_roles — policies + agregados ====="
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
-            SELECT pol.polname || ' ' || pol.polcmd || ' using=' || coalesce(pg_get_expr(pol.polqual, pol.polrelid), '<none>')
+            SELECT pol.polname::text || ' ' || pol.polcmd::text || ' using=' || coalesce(pg_get_expr(pol.polqual, pol.polrelid), '<none>')
                  || ' check=' || coalesce(pg_get_expr(pol.polwithcheck, pol.polrelid), '<none>')
             FROM pg_policy pol
             WHERE pol.polrelid = 'public.user_roles'::regclass
@@ -271,7 +271,7 @@ jobs:
           SQL
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
             SELECT 'user_roles por papel: ' || role::text || ' ativo=' || is_active || ' n=' || count(*)
-            FROM public.user_roles GROUP BY 1, 2 ORDER BY 1, 2;
+            FROM public.user_roles GROUP BY role, is_active ORDER BY role, is_active;
             SELECT 'contagens: jobs=' || (SELECT count(*) FROM public.jobs)
                  || ' profiles=' || (SELECT count(*) FROM public.profiles)
                  || ' user_roles=' || (SELECT count(*) FROM public.user_roles);
