@@ -163,5 +163,9 @@ export function useThemeSound() {
     }
   }, [getAudioContext, soundEnabled]);
 
-  return { playLightModeSound, playDarkModeSound, soundEnabled, toggleSound };
+  // `soundEnabled` exposto = estado EFETIVO (chave local && opt-outs
+  // global/por conta), para a UI (ícone de mudo, rótulo Ativar/Desativar)
+  // refletir o que realmente vai soar — `isSoundEnabled()` lê o
+  // localStorage a cada render, então já reflete mudanças externas.
+  return { playLightModeSound, playDarkModeSound, soundEnabled: soundEnabled && isSoundEnabled(), toggleSound };
 }
