@@ -1,37 +1,43 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
-## 0. Merge do PR #106 (correção do Deploy) — decisão do Joaquim
+## 0. Rodar o DB Admin em modo `apply` (reprovisionar papéis do usuário E2E)
 
-O PR #105 foi mergeado e destravou o CI da main (todos os gates verdes), mas o
-workflow Deploy continuou falhando: o `supabase db push` aborta em
-`20261019140000_validation_hardening.sql` com
-`ERROR: syntax error at or near "SELECT" (SQLSTATE 42601)` — o agendamento do
-cron usa `$$` dentro de um bloco `DO $$`, e o `$$` interno fecha o corpo do
-bloco antes da hora.
+Diagnóstico fechado pelo inspect do DB Admin: a conta E2E
+(`aa2878da-ee51-4e89-88b0-96f18406bb22`, criada em 2026-10-16) está **sem
+nenhuma linha em `user_roles`** — a conta foi recriada depois de 11/out e o
+`ON DELETE CASCADE` de `user_roles.user_id` apagou os papéis. Sem papel, o app
+resolve `role=null` e TODA rota protegida redireciona para `/` em silêncio:
+é a causa exata dos 21 specs E2E vermelhos na main (páginas vazias, sem
+conteúdo e sem "acesso negado").
 
-O PR https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/106 troca as tags
-para `$do$`/`$cmd$` (6 linhas em 1 arquivo) e está com todos os checks
-obrigatórios verdes. Ele NÃO foi mergeado pela mesma regra do projeto: altera
-SQL de migration e o merge dispara o Deploy de produção.
+A correção já está no workflow DB Admin (step "Apply — papéis do usuário E2E",
+idempotente: `INSERT ... ON CONFLICT DO UPDATE` de `operator` + `coordinator`
+para o e-mail do secret `E2E_EMAIL`).
 
-**O que fazer:** mergear o PR #106. Sem ele, o Deploy na main segue vermelho e
-nenhuma migration nova entra em produção. A migration continua segura para
-editar porque ela ainda NÃO foi aplicada (o deploy falhou antes).
+**O que fazer:** em Actions → **DB Admin** → Run workflow → ref `main` →
+`mode = apply`. Depois, re-rodar o job E2E do CI (ou esperar o próximo push)
+— a suíte deve voltar a verde. RLS/functions/migrations já foram descartados
+como causa via simulação autenticada (0 linhas visíveis, sem erro de policy).
 
 ## 1. Secrets E2E (GitHub Actions)
 
-A suíte E2E autenticada não roda sem estes secrets no repositório
-(Settings → Secrets and variables → Actions):
+A suíte E2E autenticada depende destes secrets no repositório
+(Settings → Secrets and variables → Actions). O workflow lê `E2E_EMAIL`,
+`E2E_PASSWORD`, `E2E_TOTP_SECRET`, `VITE_SUPABASE_URL` e
+`VITE_SUPABASE_PUBLISHABLE_KEY` (opcionalmente `E2E_OPERATOR_EMAIL`/
+`E2E_OPERATOR_PASSWORD`) — conferir se os nomes cadastrados batem exatamente:
 
 | Secret | Para que serve |
 |---|---|
-| `FAST_GRAVACOES_VITE_SUPABASE_PUBLISHABLE_KEY` | chave publishable do Supabase |
-| `FAST_GRAVACOES_E2E_EMAIL` | e-mail do usuário de teste |
-| `FAST_GRAVACOES_E2E_PASSWORD` | senha do usuário de teste |
-| `_2FA_FAST_GRAVACOES_2FA_SEED` | seed TOTP do 2FA do usuário de teste |
+| `E2E_EMAIL` | e-mail do usuário de teste |
+| `E2E_PASSWORD` | senha do usuário de teste |
+| `E2E_TOTP_SECRET` | seed TOTP do 2FA do usuário de teste |
+| `VITE_SUPABASE_URL` | URL do projeto Supabase |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | chave publishable do Supabase |
+| `E2E_OPERATOR_EMAIL` / `E2E_OPERATOR_PASSWORD` | usuário operador (opcional) |
 
-Sem eles, fluxos autenticados (wizard etapa 2, dirty-guard com data, scroll
-restaurado, deep-link pós-login, `?focus=`, opt-out de som) ficam sem cobertura.
+Obs.: os cartões anteriores usavam o prefixo `FAST_GRAVACOES_` — o nome final
+é o do workflow acima.
 
 ## 2. Bitrix OAuth callback vs. gateway JWT
 
@@ -43,8 +49,11 @@ o config.toml exige validação contra o projeto canônico antes de mudar gatewa
 O handler já se protege (cada action exige a própria credencial), então a
 mudança é segura; falta a validação formal no projeto canônico.
 
-## 3. Reexecução dos workflows pós-merge
+## 3. Rate-limit do ghcr.io nos runners do GitHub
 
-Após o merge do PR, os workflows de push da main (CI + Deploy) precisam
-rodar verdes — monitorar na página de Actions. O Deploy aplicará a migration
-`20261019140000_validation_hardening.sql` (corrigida neste PR).
+Pulls do registry `ghcr.io` (edge-runtime no deploy, postgres no
+`migration-repair`) estouram `toomanyrequests` (~44k/min compartilhado entre
+todos os IPs de runner do GitHub). Mitigado no `deploy.yml` com retry de 5×
+60s (PR #107) — o deploy ficou verde. Se voltar a falhar com
+`toomanyrequests`, re-rodar o job; o `migration-repair` segue suscetível no
+dump via `supabase db dump` (usa imagem `supabase/postgres`).
