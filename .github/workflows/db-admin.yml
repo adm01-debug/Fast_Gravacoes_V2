@@ -304,6 +304,11 @@ jobs:
               SELECT 'e2e user_roles: ' || coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
               FROM public.user_roles
               WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
+              -- Fatores MFA (sem o secret): papel elevado sem fator verificado
+              -- é redirecionado p/ /mfa-enrollment pelo ProtectedRoute.
+              SELECT 'e2e mfa_factors: ' || coalesce(string_agg(factor_type::text || ' status=' || status::text, ' | '), 'NENHUM')
+              FROM auth.mfa_factors
+              WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
               BEGIN;
               SELECT set_config('tmp.e2e_id',
                      (SELECT id::text FROM auth.users WHERE email = :'e2e_email'), true);
@@ -620,6 +625,97 @@ jobs:
             SELECT 'e2e user_roles após grant: ' ||
                    coalesce(string_agg(role::text || ' ativo=' || is_active, ' | '), 'NENHUMA')
             FROM public.user_roles
+            WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
+
+            COMMIT;
+          SQL
+
+      - name: Apply — fator MFA TOTP do usuário E2E
+        if: ${{ inputs.mode == 'apply' && github.ref == 'refs/heads/main' }}
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_TOTP_SECRET: ${{ secrets.E2E_TOTP_SECRET }}
+        run: |
+          set -euo pipefail
+
+          run_sql() {
+            if [ -n "${DB_URL:-}" ]; then
+              psql "$DB_URL" "$@"
+            else
+              psql "$@"
+            fi
+          }
+
+          if [ -z "${E2E_EMAIL:-}" ]; then
+            echo "E2E_EMAIL não configurado — conta E2E ausente, pulando enrollment."
+            exit 0
+          fi
+          if [ -z "${E2E_TOTP_SECRET:-}" ]; then
+            echo "ERRO: conta E2E configurada (E2E_EMAIL) mas E2E_TOTP_SECRET ausente."
+            echo "Sem fator TOTP verificado, o papel coordinator é redirecionado p/"
+            echo "/mfa-enrollment e a suíte E2E continua vermelha. Cadastre o secret"
+            echo "E2E_TOTP_SECRET (seed base32 do 2FA da conta) e rode o apply de novo."
+            exit 1
+          fi
+
+          # A conta E2E recriada perdeu também o fator TOTP: papel elevado
+          # (coordinator) sem fator verificado é redirecionado p/
+          # /mfa-enrollment pelo ProtectedRoute → ~30 specs falham. Re-enrola
+          # com o MESMO seed do secret E2E_TOTP_SECRET — a suíte gera o
+          # código do desafio a partir dele (tests/e2e/helpers/totp.ts).
+          run_sql -v ON_ERROR_STOP=1 -v e2e_email="$E2E_EMAIL" -v e2e_totp="$E2E_TOTP_SECRET" <<'SQL'
+            BEGIN;
+
+            -- psql não interpola :'var' dentro de corpos DO $$ — passa os
+            -- valores por GUCs de transação. Os resultados são embrulhados
+            -- em IS NOT NULL para o seed não aparecer no log do job.
+            SELECT (set_config('tmp.e2e_email', :'e2e_email', true)) IS NOT NULL AS email_cfg;
+            SELECT (set_config('tmp.e2e_totp', :'e2e_totp', true)) IS NOT NULL AS totp_cfg;
+
+            DO $$
+            DECLARE v_uid uuid;
+            BEGIN
+              SELECT id INTO v_uid FROM auth.users
+              WHERE email = current_setting('tmp.e2e_email');
+              IF v_uid IS NULL THEN
+                RAISE EXCEPTION 'conta E2E não encontrada em auth.users — confira o secret E2E_EMAIL';
+              END IF;
+              -- Promove/realinha qualquer fator totp existente ao seed do
+              -- secret; se não houver nenhum, enrola um fator verificado.
+              UPDATE auth.mfa_factors
+                 SET status = 'verified'::auth.factor_status,
+                     secret = current_setting('tmp.e2e_totp'),
+                     updated_at = now()
+               WHERE user_id = v_uid
+                 AND factor_type = 'totp'::auth.factor_type;
+              IF NOT FOUND THEN
+                INSERT INTO auth.mfa_factors
+                  (id, user_id, friendly_name, factor_type, status, secret,
+                   created_at, updated_at)
+                VALUES
+                  (gen_random_uuid(), v_uid, 'e2e-ci',
+                   'totp'::auth.factor_type, 'verified'::auth.factor_status,
+                   current_setting('tmp.e2e_totp'), now(), now());
+              END IF;
+            END $$;
+
+            DO $$
+            DECLARE n int;
+            BEGIN
+              SELECT count(*) INTO n FROM auth.mfa_factors
+              WHERE user_id = (SELECT id FROM auth.users
+                               WHERE email = current_setting('tmp.e2e_email'))
+                AND factor_type = 'totp'::auth.factor_type
+                AND status = 'verified'::auth.factor_status;
+              IF n < 1 THEN
+                RAISE EXCEPTION 'fator TOTP verificado ausente após enrollment';
+              END IF;
+            END $$;
+
+            SELECT 'e2e mfa_factors após enrollment: ' ||
+                   coalesce(string_agg(factor_type::text || ' status=' || status::text, ' | '), 'NENHUM')
+            FROM auth.mfa_factors
             WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email');
 
             COMMIT;
