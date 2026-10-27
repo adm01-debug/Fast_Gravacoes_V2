@@ -4,6 +4,7 @@
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useCallback, useRef, useState, useEffect } from 'react';
+import { isSoundEnabled } from '@/lib/soundFeedback';
 
 const SOUND_ENABLED_KEY = 'theme-sound-enabled';
 
@@ -63,7 +64,10 @@ export function useThemeSound() {
   }, []);
 
   const playLightModeSound = useCallback(() => {
-    if (!soundEnabled) return;
+    // Opt-out unificado: a chave local `theme-sound-enabled` controla este
+    // hook; `isSoundEnabled()` cobre os opt-outs global (user-preferences)
+    // e por conta (app-settings-<uid>) — qualquer um desligado silencia.
+    if (!soundEnabled || !isSoundEnabled()) return;
 
     try {
       const ctx = getAudioContext();
@@ -110,7 +114,10 @@ export function useThemeSound() {
   }, [getAudioContext, soundEnabled]);
 
   const playDarkModeSound = useCallback(() => {
-    if (!soundEnabled) return;
+    // Opt-out unificado: a chave local `theme-sound-enabled` controla este
+    // hook; `isSoundEnabled()` cobre os opt-outs global (user-preferences)
+    // e por conta (app-settings-<uid>) — qualquer um desligado silencia.
+    if (!soundEnabled || !isSoundEnabled()) return;
 
     try {
       const ctx = getAudioContext();
