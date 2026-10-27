@@ -502,6 +502,7 @@ jobs:
   quality-gate:
     name: Quality Gate ✅
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [lint, security, unit-tests, deno-tests, simulation-tests, build, e2e, rls-regression]
     if: always()
     steps:
