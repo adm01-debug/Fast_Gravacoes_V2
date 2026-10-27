@@ -1,3 +1,5 @@
+import { isSoundEnabled } from '@/lib/soundFeedback';
+
 // Sound configurations for different scan actions
 export const actionSounds: Record<string, { frequencies: number[]; durations: number[]; type: OscillatorType }> = {
   start: { frequencies: [523.25, 659.25, 783.99], durations: [0.1, 0.1, 0.15], type: 'sine' },
@@ -12,6 +14,7 @@ interface WebkitWindow extends Window {
 }
 
 export function playNotificationSound(action: string) {
+  if (!isSoundEnabled()) return;
   try {
     const windowWithWebkit = window as WebkitWindow;
     const AudioContextClass = window.AudioContext || windowWithWebkit.webkitAudioContext;

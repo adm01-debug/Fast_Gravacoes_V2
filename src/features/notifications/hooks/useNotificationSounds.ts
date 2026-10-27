@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { isSoundEnabled } from '@/lib/soundFeedback';
 
 type BrowserAudioWindow = Window & {
   AudioContext?: typeof AudioContext;
@@ -122,7 +123,9 @@ export const useNotificationSounds = () => {
   }, [getAudioContext]);
 
   const playSound = useCallback((soundType: SoundType) => {
-    if (!isEnabledRef.current) return;
+    // Opt-out unificado (user-preferences + app-settings-<uid>) em cima da
+    // chave própria 'notification_sounds_enabled' — qualquer um silencia.
+    if (!isEnabledRef.current || !isSoundEnabled()) return;
 
     const config = soundConfigs[soundType];
     if (!config) return;
