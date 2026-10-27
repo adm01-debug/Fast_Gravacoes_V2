@@ -579,12 +579,17 @@ jobs:
           run_sql -v ON_ERROR_STOP=1 -v e2e_email="$E2E_EMAIL" <<'SQL'
             BEGIN;
 
+            -- psql não interpola :'var' dentro de corpos DO $$ — passa o
+            -- e-mail por GUC de transação.
+            SELECT set_config('tmp.e2e_email', :'e2e_email', true);
+
             -- Conta precisa existir; perfil é pré-requisito do FK de
             -- user_roles (handle_new_user pode ter falhado na criação).
             DO $$
             DECLARE v_uid uuid;
             BEGIN
-              SELECT id INTO v_uid FROM auth.users WHERE email = :'e2e_email';
+              SELECT id INTO v_uid FROM auth.users
+              WHERE email = current_setting('tmp.e2e_email');
               IF v_uid IS NULL THEN
                 RAISE EXCEPTION 'conta E2E não encontrada em auth.users — confira o secret E2E_EMAIL';
               END IF;
@@ -604,7 +609,8 @@ jobs:
             DECLARE n int;
             BEGIN
               SELECT count(*) INTO n FROM public.user_roles
-              WHERE user_id = (SELECT id FROM auth.users WHERE email = :'e2e_email')
+              WHERE user_id = (SELECT id FROM auth.users
+                               WHERE email = current_setting('tmp.e2e_email'))
                 AND role IN ('operator','coordinator') AND is_active;
               IF n < 2 THEN
                 RAISE EXCEPTION 'papéis E2E incompletos após grant (%/2)', n;
