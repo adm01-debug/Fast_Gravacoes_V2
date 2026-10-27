@@ -69,8 +69,9 @@ serve(async (req) => {
     // Server-derived — never trust a client-supplied IP for an allowlist decision.
     const ip_address = getClientIp(req);
 
-    // Abuse mitigation: este endpoint é público (verify_jwt = false) e grava em
-    // login_audit. Limitamos por IP para impedir enumeração/flood de registros.
+    // Abuse mitigation: o gateway exige JWT válido (verify_jwt = true em
+    // config.toml) mas qualquer sessão pode gravar em login_audit.
+    // Limitamos por IP para impedir enumeração/flood de registros.
     const limited = await checkRateLimit(supabase, {
       endpoint: 'validate-login-ip',
       identity: { ip: ip_address },
