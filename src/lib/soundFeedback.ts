@@ -52,11 +52,13 @@ function currentUserId(): string | null {
  */
 export function isSoundEnabled(): boolean {
   try {
-    const prefs = localStorage.getItem('user-preferences');
-    if (prefs && JSON.parse(prefs).soundEnabled === false) return false;
-    // `app-settings-<uid>` é por usuário — respeitar só o do usuário ativo
-    // (a preferência de outra conta no mesmo navegador não pode vazar).
     const userId = currentUserId();
+    // 'user-preferences' é chave GLOBAL do navegador — aplicá-la com sessão
+    // ativa vazaria o opt-out de uma conta para outra. Com usuário
+    // identificado vale só `app-settings-<uid>`; a global só vale para
+    // uso anônimo.
+    const prefs = localStorage.getItem('user-preferences');
+    if (!userId && prefs && JSON.parse(prefs).soundEnabled === false) return false;
     if (userId) {
       const settings = JSON.parse(localStorage.getItem(`app-settings-${userId}`) ?? '{}');
       if (settings.sounds === false) return false;

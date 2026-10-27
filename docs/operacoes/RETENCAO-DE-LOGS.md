@@ -25,11 +25,13 @@ chamada direto em SQL — não depende de HTTP/JWT. Cobertura real:
 | `telemetry_traces` | 14 dias | DELETE `< created_at - 14d` |
 | `edge_health_history` | 30 dias | DELETE `< captured_at - 30d` |
 | `csp_violation_reports` | 14 dias | condicional (`to_regclass`) — tolerante a ambientes sem a tabela |
-| `blocked_ips` | não expira | `unblocked_at` marcado quando `expires_at` passa |
+| `blocked_ips` | não expira | — |
 
 > A Edge Function `cleanup-security-logs` faz purge próprio sobre
 > `security_events`/`login_audit` com janelas mais curtas — convive com o
-> purge versionado (o mais restritivo vence na prática). Exige
+> purge versionado (o mais restritivo vence na prática). É ela também quem
+> marca `unblocked_at` em `blocked_ips` quando `expires_at` passa (o
+> `purge_old_logs()` não toca nessa tabela). Exige
 > `x-cron-secret` + `x-api-key` (`CRON_API_KEY`).
 
 ## Sem retenção hoje — pendências **[PAINEL]**

@@ -153,7 +153,11 @@ for (const [pkg, v] of Object.entries(vulns)) {
   // advisory novo no MESMO pacote continua quebrando o gate.
   const viaCovered =
     exemption &&
-    (v.via ?? []).every((x) =>
+    // `via` vazio/nulo não isenta — sem rastreabilidade do advisory a
+    // exceção não pode ser verificada (falha fechada).
+    Array.isArray(v.via) &&
+    v.via.length > 0 &&
+    v.via.every((x) =>
       typeof x === 'object' && x !== null
         ? exemption.advisories.has(x.source)
         : ALLOWED_PACKAGES.has(String(x)),

@@ -1,6 +1,6 @@
 # Registry de Edge Functions — gatilhos e validação de entrada
 
-33 functions. Este arquivo responde: **quem pode chamar cada function, de onde,
+34 functions. Este arquivo responde: **quem pode chamar cada function, de onde,
 e se o gatilho está versionado no repositório.** Sem isso, nenhuma function pode
 ser considerada "órfã" com segurança — algumas são chamadas por fora do código
 (pg_cron, DB webhooks do painel, integrações externas) e não aparecem em grep.
@@ -36,6 +36,7 @@ Complementa `README.md` (inventário da camada 2 de autenticação).
 | create-operator | frontend (admin, AAL2) | `src/` | zod via `_shared` |
 | cron-alert-email | pg_cron **(painel — não versionado)** | — | própria |
 | cron-cleanup | pg_cron **(painel — não versionado)** | — | própria |
+| csp-report | externo (browser CSP reports; `verify_jwt = false`, rate-limit 300/min) | — | zod própria (strip) |
 | daily-maintenance-summary | frontend + pg_cron (painel) | `src/` | própria |
 | erp-api | externo (ERP/Bitrix24, `x-api-key`) | contrato em `src/test/erpApiContracts.test.ts` | `_shared/contracts` |
 | excel-export | **órfã** — frontend usa `src/lib/excelExport.ts` (geração client-side); esta function não tem chamador | — | própria |
@@ -65,6 +66,7 @@ Versionados em `supabase/migrations/`:
 - `rollup-cron-p95-daily` (`20260726161334`) — SQL interno, sem function.
 - `auto-promote-jobs-fallback` (`20260512110942`, reagendado com URL corrigida
   em `20261001143100`) — */5min → `auto-promote-jobs`.
+- `purge-old-logs-daily` (`20261002130000`) — diário → `purge_old_logs()` (SQL).
 
 **Todos os demais crons (backup-scheduler, health-monitor, metrics-collector,
 cron-alert-email, cron-cleanup, cleanup-security-logs, security-alert,

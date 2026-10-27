@@ -73,7 +73,11 @@ export function recordLocation(action: NavigationType, key: string) {
       // Voltou a uma entrada conhecida — descarta o que veio depois.
       stack.length = idx + 1;
     } else {
-      // POP para entrada ainda não registrada (ex.: reload mid-history).
+      // POP para entrada sem retrato nem registro — pode ser uma entrada
+      // EXTERNA na mesma aba. Tratá-la como interna deixaria o Voltar
+      // seguir para fora do app; rebatendo a pilha o Voltar cai no
+      // fallback em vez de navegar para fora.
+      stack.length = 0;
       stack.push(key);
     }
   } else if (action === 'REPLACE') {

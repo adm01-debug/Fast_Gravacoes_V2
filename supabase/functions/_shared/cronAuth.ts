@@ -77,10 +77,9 @@ export async function requireUserOrCronSecret(
     });
     const { data: { user } } = await userClient.auth.getUser();
     if (user) return null;
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // Bearer que não resolve usuário (ex.: service_role do padrão dual-header
+    // Bearer + x-cron-secret dos crons/triggers versionados) — cai para a
+    // checagem de cron secret em vez de rejeitar aqui.
   }
 
   return requireCronSecret(req, { failClosed: true, corsHeaders });

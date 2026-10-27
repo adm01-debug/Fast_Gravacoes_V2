@@ -32,12 +32,25 @@ function simulateWebhookHandler(rawBody: unknown, signature?: string | null, has
     };
   }
 
-  // HMAC signature check (simulated)
-  if (hasSecret && !signature) {
+  // Espelha supabase/functions/webhook-handler/index.ts:
+  // - secret da source ausente → 401 antes de checar assinatura
+  //   (index.ts:69-76); secret presente + assinatura faltando → 401
+  // - bitrix24/stripe são stubs → processed:false 'logged_only'
+  //   (index.ts:183-204)
+  if (!hasSecret) {
+    return { status: 401, body: { error: 'Webhook source not configured' } };
+  }
+  if (!signature) {
     return { status: 401, body: { error: 'Invalid signature' } };
   }
 
   const { source, event } = validation.data;
+  if (source === 'bitrix24' || source === 'stripe') {
+    return {
+      status: 200,
+      body: { processed: false, status: 'logged_only', source, event, timestamp: new Date().toISOString() },
+    };
+  }
   return {
     status: 200,
     body: { processed: true, source, event, timestamp: new Date().toISOString() },
@@ -76,9 +89,10 @@ describe('Webhook — valid combinations (happy path)', () => {
 
   it.each(cases)('source=%s event=%s → 200', (source, event) => {
     const payload = validPayload({ source: source as WebhookPayload['source'], event });
-    const result = simulateWebhookHandler(payload);
+    const result = simulateWebhookHandler(payload, 'valid-sig', true);
     expect(result.status).toBe(200);
-    expect(result.body.processed).toBe(true);
+    // bitrix24/stripe são stubs no handler real → processed:false 'logged_only'
+    expect(result.body.processed).toBe(source === 'external_system');
     expect(result.body.source).toBe(source);
     expect(result.body.event).toBe(event);
   });
@@ -99,7 +113,7 @@ describe('Webhook — data field variations', () => {
   ] as const;
 
   it.each(dataVariants)('data=%s → 200', (_, data) => {
-    const result = simulateWebhookHandler(validPayload({ data: data as Record<string, unknown> }));
+    const result = simulateWebhookHandler(validPayload({ data: data as Record<string, unknown> }), 'valid-sig', true);
     expect(result.status).toBe(200);
   });
 });
@@ -108,11 +122,11 @@ describe('Webhook — data field variations', () => {
 describe('Webhook — timestamp field', () => {
   it('timestamp absent → 200', () => {
     const { timestamp: _ts, ...payload } = validPayload();
-    expect(simulateWebhookHandler(payload).status).toBe(200);
+    expect(simulateWebhookHandler(payload, 'valid-sig', true).status).toBe(200);
   });
 
   it('valid ISO timestamp → 200', () => {
-    expect(simulateWebhookHandler(validPayload({ timestamp: '2026-05-20T00:00:00.000Z' })).status).toBe(200);
+    expect(simulateWebhookHandler(validPayload({ timestamp: '2026-05-20T00:00:00.000Z' }), 'valid-sig', true).status).toBe(200);
   });
 
   it('invalid timestamp format → 400', () => {
@@ -206,12 +220,15 @@ describe('Webhook — non-object bodies', () => {
 
 // ── HMAC Signature ────────────────────────────────────────────────────────
 describe('Webhook — HMAC signature enforcement', () => {
-  it('no signature, no secret → 200', () => {
-    expect(simulateWebhookHandler(validPayload(), null, false).status).toBe(200);
+  it('no signature, no secret → 401 (handler real exige secret configurado)', () => {
+    expect(simulateWebhookHandler(validPayload(), null, false).status).toBe(401);
   });
 
   it('valid signature, has secret → 200', () => {
-    expect(simulateWebhookHandler(validPayload(), 'valid-sig', true).status).toBe(200);
+    const result = simulateWebhookHandler(validPayload(), 'valid-sig', true);
+    expect(result.status).toBe(200);
+    expect(result.body.processed).toBe(false);
+    expect(result.body.status).toBe('logged_only');
   });
 
   it('missing signature, secret enforced → 401', () => {
@@ -226,7 +243,7 @@ describe('Webhook — HMAC signature enforcement', () => {
 // ── Response shape contract ───────────────────────────────────────────────
 describe('Webhook — response shape', () => {
   it('successful response conforms to response schema', () => {
-    const result = simulateWebhookHandler(validPayload());
+    const result = simulateWebhookHandler(validPayload(), 'valid-sig', true);
     expect(result.status).toBe(200);
     const parse = WebhookResponseSchema.safeParse(result.body);
     expect(parse.success).toBe(true);
@@ -247,13 +264,15 @@ describe('Webhook — high-volume valid load (500 payloads)', () => {
   }));
 
   it('all 500 payloads return 200', () => {
-    const results = payloads.map(p => simulateWebhookHandler(p));
+    const results = payloads.map(p => simulateWebhookHandler(p, 'valid-sig', true));
     const failures = results.filter(r => r.status !== 200);
     expect(failures).toHaveLength(0);
   });
 
-  it('all 500 responses have processed:true', () => {
-    const results = payloads.map(p => simulateWebhookHandler(p));
-    expect(results.every(r => r.body.processed === true)).toBe(true);
+  it('stub sources log only; external_system processes', () => {
+    const results = payloads.map(p => simulateWebhookHandler(p, 'valid-sig', true));
+    results.forEach((r, i) => {
+      expect(r.body.processed).toBe(payloads[i].source === 'external_system');
+    });
   });
 });

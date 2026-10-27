@@ -48,6 +48,12 @@ export function useModalParam(
     navigate(`${location.pathname}${base ? `?${base}` : ''}${location.hash}`, { replace: true });
   }, [isOpen, pushedByHook, location.pathname, location.search, location.hash, name, navigate]);
 
+  // Reabre a normalização quando o modal fecha: um NOVO deep-link ?modal=
+  // com a página já montada precisa rodar as fases 1/2 de novo.
+  useEffect(() => {
+    if (!isOpen) normalizedRef.current = false;
+  }, [isOpen]);
+
   // Fase 2 — depois do REPLACE ser observado (entrada base registrada),
   // empurra a entrada do modal com o state que a marca como do hook.
   useEffect(() => {
