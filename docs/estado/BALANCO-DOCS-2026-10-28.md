@@ -57,8 +57,10 @@ Leitura correta dos números:
 
 ### A. Depende do Joaquim (fora do repo)
 
-- Rotação de credenciais expostas no passado: service-role key, DB
-  password, tokens Bitrix/Resend/Twilio (post-mortem 10/09).
+- Rotação de credenciais: service-role key e DB password (expostas
+  conforme post-mortem 10/09 — que lista só essas duas); rotação
+  precaucional dos tokens Bitrix/Resend/Twilio (sem evidência de
+  exposição no post-mortem).
 - `verify_jwt=false` em bitrix24-sync (PENDENCIAS.md item 2).
 - PITR/restore testado, monitor externo/SLOs, reviewers de Environments,
   alertas Sentry, branch protection com checks required.
@@ -102,7 +104,10 @@ Leitura correta dos números:
   ShiftSummaryCard.tsx:22-29 e shiftReportPdf.ts:50-55 — job sem produção
   registrada conta como 100% produzido: nos três primeiros subestima a
   taxa de perda; no ShiftSummaryCard e no PDF só infla o total de
-  peças exibido (achado ALTO de jul/2026 ainda ativo).
+  peças exibido; e o mesmo fallback sai para o Bitrix em
+  bitrix24-sync/index.ts:667-670 (UF_CRM_PRODUCED_QTY recebe a
+  quantidade planejada quando a produzida é null/0), corrompendo o
+  deal externo (achado ALTO de jul/2026 ainda ativo).
 - TPM: `correction_requested` é terminal — nenhuma ação reabre ou
   ressubmete o registro e o TPMExecutionHistory não tem branch para
   esse status; o técnico não consegue corrigir.
@@ -136,6 +141,27 @@ Leitura correta dos números:
   policies SELECT versionadas, mas useInventory.ts:110-115,128-134,
   159-170 faz INSERT/DELETE do browser — o fluxo de movimentação de
   estoque não consegue gravar (P1).
+- Bloqueio de IP inócuo: BlockedIPsPanel insere em `blocked_ips` e
+  confirma "IP bloqueado com sucesso", mas só a function órfã
+  rate-limit-check consulta a tabela — o login usa check-login-lockout,
+  que não lê blocked_ips (P1, controle de segurança falso).
+- Troca de papel quebrada: UserManagement.tsx:103 faz upsert com
+  onConflict 'user_id', mas o schema só tem UNIQUE(user_id, role) —
+  retorna 42P10 após o profile já ter sido salvo (P2).
+- Reset de senha inacessível: AuthPage.tsx:135-139 insere em
+  password_reset_requests como anon, mas a policy versionada
+  (20260712231426:35-41) é TO authenticated exigindo email do JWT —
+  todo "Esqueci minha senha" é negado com 42501 (P1).
+- Portal público /track sem acesso: PublicTrackingPage consulta `jobs`
+  com o client anon, mas 20251214203346:40-47 restringe SELECT a
+  authenticated — links de tracking públicos voltam "não encontrado"
+  (P1).
+- Corrida em rejected_quantity: packagingService.recordDefect:183-193
+  faz read-modify-write no cliente — dois operadores simultâneos
+  perdem um defeito (lost update).
+- Ranking de operadores mistura períodos: useOperatorRankings.ts:26-30
+  filtra só por ranking_type e retorna todos os períodos históricos —
+  leaderboard duplica operadores e mostra vários 1º lugares.
 
 ### D. Dívida estrutural (multi-sprint)
 
