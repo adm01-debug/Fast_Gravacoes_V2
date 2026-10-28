@@ -46,3 +46,25 @@ todos os IPs de runner do GitHub). Mitigado no `deploy.yml` com retry de 5×
 60s (PR #107) — o deploy ficou verde. Se voltar a falhar com
 `toomanyrequests`, re-rodar o job; o `migration-repair` segue suscetível no
 dump via `supabase db dump` (usa imagem `supabase/postgres`).
+
+## 4. Balanço de planos × código (auditoria 28/10/2026)
+
+7 agentes auditaram cada doc de plano contra a main — 547 itens: 202
+implementados, 160 parciais, 171 pendentes. Detalhe completo em
+`docs/estado/BALANCO-DOCS-2026-10-28.md`. Resumo do que falta:
+
+- **Só o Joaquim resolve**: rotação de credenciais antigas
+  (service-role, DB password, Bitrix/Resend/Twilio), PITR/restore
+  testado, monitor externo, reviewers de Environments, alertas Sentry,
+  branch protection com required checks.
+- **Bugs reais para o próximo sprint**: Web Push sem criptografia real
+  (aes128gcm declarado, payload em texto), JobQRCode↔QRScanner
+  incompatíveis, NotificationsList não marca m-/p-/s- como lidas,
+  aprovação TPM sem guarda atômica, useMFA.unenroll sem challenge,
+  botões inertes (Novo Item, Aplicar Sequenciamento, Mover OS, envio QR),
+  KanbanBoard bypass do jobsService.
+- **Dívida estrutural**: ~30 painéis com dados fabricados, ~50 itens de
+  código morto, autociclos de barrels, ciclo logger↔client, ~21
+  providers, state machine de jobs só no client, tabelas ausentes
+  (shifts, suppliers, archived_jobs), Bitrix→jobs mapping, stubs
+  (pdf-generator, image-optimizer, Twilio), E2E advisory, cobertura ~35%.
