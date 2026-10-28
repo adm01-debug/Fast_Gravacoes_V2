@@ -103,8 +103,10 @@ Leitura correta dos números:
   10+ páginas >300 linhas, state machine de jobs só no client,
   sem Idempotency-Key genérico.
 - Backend ausente: tabelas shifts/escalas/treinamentos, suppliers,
-  curva ABC, produced_quantity nunca escrito, archived_jobs inexistente
-  (cron-cleanup arquiva para tabela que não existe), mapeamento
+  curva ABC, `produced_lots.produced_quantity` nunca escrito (atenção:
+  `jobs.produced_quantity` é escrito — ProductionRegistrationModal e
+  registerProductionOffline; o gap é só na tabela de lotes), archived_jobs
+  inexistente (cron-cleanup arquiva para tabela que não existe), mapeamento
   Bitrix24→jobs (webhook registra `logged_only`), pdf-generator real,
   image-optimizer real, Twilio/SMS/WhatsApp, resgate de recompensa sem
   aprovação, Google OAuth bypassa lockout/device-check.
@@ -126,7 +128,10 @@ Leitura correta dos números:
 
 ## Recomendação
 
-1. Sprint "bugs reais" (seção C): ~1 PR médio, sem decisão de produto.
+1. Sprint "bugs reais" (seção C): primeiro os itens sem decisão de
+   produto (NotificationsList por prefixo, QR incompatível, guarda TPM,
+   useMFA.unenroll); os que exigem decisão (onSkip do checklist, horas
+   úteis do MTBF, formato QR) vão para PENDENCIAS até o Joaquim decidir.
 2. Sprint "código morto + dados fabricados" (seção D, primeiras duas
    linhas): remover ou conectar de verdade — elimina ruído do painel.
 3. Decisões do Joaquim (seção A) destravam: E2E full, Bitrix OAuth,
