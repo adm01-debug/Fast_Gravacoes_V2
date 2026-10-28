@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import {
   Package,
-  Plus,
   History,
   Search,
   Filter,
@@ -127,10 +126,8 @@ export default function InventoryPage() {
                <QrCode className="h-4 w-4" />
                Etiquetas em Lote ({selectedItems.size})
              </Button>
-             <Button className="gap-2">
-               <Plus className="h-4 w-4" />
-               Novo Item
-             </Button>
+             {/* Botão "Novo Item" removido: não havia ação/modal de criação
+                 implementado — reintroduzir quando o formulário existir. */}
           </div>
         </div>
 

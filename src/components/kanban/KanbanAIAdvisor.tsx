@@ -27,14 +27,15 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { useSmartSequencing, SequencingSuggestion } from '@/features/jobs';
-import { useLoadBalancing, useBottleneckPrediction, LoadBalancingSuggestion } from '@/features/analytics';
+import { SequencingSuggestion } from '@/features/jobs';
+import { useSmartSequencingWithActions } from '@/features/jobs/hooks/useSmartSequencingWithActions';
+import { useLoadBalancingWithActions, useBottleneckPrediction, LoadBalancingSuggestion } from '@/features/analytics';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function KanbanAIAdvisor() {
-  const { suggestions: sequenceSuggestions, totalSavings } = useSmartSequencing();
-  const { suggestions: balancingSuggestions } = useLoadBalancing();
+  const { suggestions: sequenceSuggestions, totalSavings, applySequencing, isApplying: isApplyingSequencing } = useSmartSequencingWithActions();
+  const { suggestions: balancingSuggestions, applySuggestion: applyBalancingSuggestion, isApplying: isApplyingBalancing } = useLoadBalancingWithActions();
   const { alerts: bottleneckAlerts } = useBottleneckPrediction();
   
   const [healthScore, setHealthScore] = useState(100);
@@ -230,7 +231,7 @@ export function KanbanAIAdvisor() {
                     </p>
                   </div>
 
-                  <Button className="w-full h-8 text-xs gap-2" variant="outline">
+                  <Button className="w-full h-8 text-xs gap-2" variant="outline" disabled={isApplyingSequencing} onClick={() => applySequencing(s).catch(() => undefined)}>
                     Aplicar Sequenciamento Inteligente
                   </Button>
                 </div>
@@ -273,7 +274,7 @@ export function KanbanAIAdvisor() {
                     </p>
                   </div>
 
-                  <Button className="w-full h-8 text-xs gap-2" variant="outline">
+                  <Button className="w-full h-8 text-xs gap-2" variant="outline" disabled={isApplyingBalancing} onClick={() => applyBalancingSuggestion(s).catch(() => undefined)}>
                     Mover OS para {s.suggestedMachineName}
                   </Button>
                 </div>

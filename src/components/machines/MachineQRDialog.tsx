@@ -1,6 +1,4 @@
-import { Zap } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { TargetArrowIcon } from '@/components/icons/TargetArrowIcon';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -32,15 +30,9 @@ export function MachineQRDialog({ machine, onClose }: MachineQRDialogProps) {
                 <p className="text-xs text-muted-foreground uppercase font-bold">{machine?.name}</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" className="gap-2" onClick={() => window.print()}>
+            <div>
+              <Button variant="outline" className="gap-2 w-full" onClick={() => window.print()}>
                 <TargetArrowIcon className="h-4 w-4" /> Imprimir
-              </Button>
-              <Button className="gap-2" onClick={() => {
-                toast.success("QR Code enviado para o terminal móvel.");
-                onClose();
-              }}>
-                <Zap className="h-4 w-4" /> Enviar
               </Button>
             </div>
           </DialogContent>
