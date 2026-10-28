@@ -24,9 +24,11 @@ Twilio/Google Maps que são só placeholders de .env.example).
 Leitura correta dos números:
 
 - **Auditorias legadas (81/105 implementados)** é o recorte mais
-  representativo: os achados ALTA/CRÍTICA de jun–jul/2026 estão todos
-  corrigidos (ERP API reescrito, RLS endurecido, CORS centralizado,
-  MFA AAL2, webhooks via env, 6 workflows verdes).
+  representativo: os achados ALTA/CRÍTICA de jun–jul/2026 estão quase
+  todos corrigidos (ERP API reescrito, RLS endurecido, CORS
+  centralizado, MFA AAL2, webhooks via env, 6 workflows verdes) —
+  exceção residual: o fallback `produced_quantity || quantity` em BI
+  (ver seção C).
 - **Lotes de `docs/estado/`** são inventários de achados de ago/2026 —
   "pendente" ali significa dívida registrada (código morto, painéis com
   dados fabricados, features sem caller), não regressão.
@@ -46,7 +48,10 @@ Leitura correta dos números:
 - Pacote de navegação UX (PR #103 + correções #104/#110): Voltar
   seguro, dirty-guard, modais no histórico, breadcrumbs, restauração de
   scroll, rascunho de Novo Job, deep-links, a11y.
-- Todos os achados ALTA/CRÍTICA de QA_AUDIT 14/06 e auditoria 18/07.
+- Quase todos os achados ALTA/CRÍTICA de QA_AUDIT 14/06 e auditoria
+  18/07 — exceção residual: `produced_quantity || quantity` em
+  `FuturisticBI.tsx`/`LossesTable.tsx` trata produção não registrada
+  como 100% produzida (item aberto na seção C).
 
 ## Pendências agrupadas (o que falta e por quê)
 
@@ -92,6 +97,10 @@ Leitura correta dos números:
 - useTPMApprovalMutations: update incondicional sem guarda de
   status/versão — dupla aprovação/TOCTOU possíveis.
 - `useMFA.unenroll` sem challenge TOTP nem gravação em user_mfa_settings.
+- BI de perdas: `produced_quantity || quantity` em FuturisticBI.tsx:108
+  e LossesTable.tsx:87 — job sem produção registrada conta como 100%
+  produzido, subestimando a taxa de perda (achado ALTO de jul/2026
+  ainda ativo).
 - `useMTBFMTTR` assume 24h/dia — decisão de domínio (horas úteis).
 - `useKPIs` já corrigido; `useSessionManager` exporta arquivo vazio;
   KanbanBoard escreve `jobs.status` direto (bypass do jobsService);
@@ -140,14 +149,18 @@ Leitura correta dos números:
 ## Recomendação
 
 1. Sprint "bugs reais" (seção C): primeiro os itens sem decisão de
-   produto (NotificationsList por prefixo, QR incompatível, guarda TPM,
-   useMFA.unenroll); os que exigem decisão (checklist parcial/pular,
-   horas úteis do MTBF) vão para PENDENCIAS até o Joaquim decidir.
+   produto (NotificationsList m-/p-, QR incompatível, guarda TPM,
+   useMFA.unenroll, fallback produced_quantity no BI); os que exigem
+   decisão (marcar-lida de s-/daily_summaries — precisa de receipt por
+   usuário ou definição de produto, checklist parcial/pular, horas
+   úteis do MTBF) vão para PENDENCIAS até o Joaquim decidir.
 2. Sprint "código morto + dados fabricados" (seção D, primeiras duas
    linhas): remover ou conectar de verdade — elimina ruído do painel.
 3. Decisões do Joaquim (seção A) destravam: Bitrix OAuth
-   (verify_jwt=false + secrets do webhook), backup verificado,
-   branch protection e o restante da seção A.
+   (`verify_jwt=false` + `BITRIX24_CLIENT_ID`/`CLIENT_SECRET` — o
+   `action=webhook` usa credenciais próprias:
+   `BITRIX24_WEBHOOK_SECRET`/`BITRIX24_WEBHOOK_TOKEN`), backup
+   verificado, branch protection e o restante da seção A.
 4. Itens de arquitetura/backend ausente: planejar como épicos separados.
 
 _Audit gerado por 7 sessões-agente em paralelo (workflow
