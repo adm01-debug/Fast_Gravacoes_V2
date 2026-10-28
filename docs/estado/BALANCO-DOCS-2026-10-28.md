@@ -127,11 +127,11 @@ Leitura correta dos números:
   KanbanBoard escreve `jobs.status` direto (bypass do jobsService);
   botões inertes: "Novo Item" (InventoryPage), "Aplicar Sequenciamento"/
   "Mover OS" (KanbanAIAdvisor), MachineQRDialog "Enviar" (toast fake).
-- WhatsApp do TPM é stub ativo: TPMNotificationSettings.tsx permite
-  habilitar e testar o canal, mas useTPMNotifications.ts só grava o log
-  com `status: 'success'` e tosta sucesso sem enviar nada (diferente
-  dos placeholders Twilio da seção E — este é um fluxo visível que
-  finge funcionar).
+- Canais TPM de teste falsos (WhatsApp e E-mail): TPMNotificationSettings
+  permite habilitar e testar os dois, mas useTPMNotifications.ts:203-225
+  só grava o log com `status: 'success'` e tosta sucesso — o único ramo
+  de envio real é `channel === 'push'` (diferente dos placeholders
+  Twilio da seção E — fluxo visível que finge funcionar).
 - PredictiveHealthCard.tsx:88 multiplica `confidence` (escala 0-100,
   conforme ml-predictions/index.ts:152-155,240-243) por 100 de novo —
   confiabilidade de 60% aparece como 6000% no TPMDashboard.
@@ -184,9 +184,6 @@ Leitura correta dos números:
 - Exportações inertes no calendário: WeeklyCalendar.tsx:348-349 passa
   onExportPdf/onExportICal vazios ao CalendarToolbar — o menu exporta
   sem fazer nada.
-- Retrabalho prometido e não criado: DefectTriageForm promete "novo
-  pedido de retrabalho criado automaticamente", mas recordDefect só
-  grava o defeito e o contador — nenhum job de retrabalho é criado (P1).
 - buffer_size da config ignorado: a UI exibe o alvo por técnica de
   getConfig('buffer_size'), mas auto-promote-jobs calcula com constante
   própria — o alvo configurado nunca é honrado (P2).
@@ -204,6 +201,25 @@ Leitura correta dos números:
 - "QR Lote" inerte: TraceabilityPage guarda a seleção em labelLots mas
   nenhum JSX renderiza o LotLabelPrint importado — o clique não imprime
   nada.
+- "Verificar Alertas" truncado: useTPMAlertMutations.ts:70-75 chama
+  ml-predictions batch_analyze sem machine_id; a function processa só
+  as primeiras 10 máquinas (MAX_BATCH_SIZE) e devolve warning — as
+  outras ~42 nunca são analisadas.
+- Convite de usuário inutilizável: UserManagement.tsx:142-162 chama
+  supabase.auth.admin.inviteUserByEmail com o client publishable — a
+  API admin do GoTrue exige service key, então todo convite falha.
+- Thresholds de alerta ignorados: Settings → Alertas persiste 8
+  thresholds configuráveis, mas quase nenhum é lido fora do formulário
+  (bottleneckRiskMinutes é o único com consumidor claro) — lowBuffer,
+  criticalBuffer, delayedJobMinutes e os dois OEE não afetam nada.
+- "Impressoras" fake: PackagingDashboard.tsx:215-225 finge descoberta
+  e tosta "ZEBRA-GK420t encontrada e conectada" após 1,5s sem nenhuma
+  conexão real.
+- "Gerar Manifesto de Carga" inerte: PackagingDashboard.tsx:274-281 só
+  tosta sucesso — não cria documento, download ou registro.
+- Sync logística parcial: useLogistics.ts:79-88 e :115-123 atualizam o
+  job vinculado sem checar o erro retornado — falha de escrita deixa
+  shipping_status divergente entre shipments e jobs em silêncio.
 
 ### D. Dívida estrutural (multi-sprint)
 
