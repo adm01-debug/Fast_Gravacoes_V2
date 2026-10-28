@@ -7,16 +7,19 @@ vários marcadores 🟨/✅ estavam desatualizados nos dois sentidos.
 
 ## Veredito por documento
 
-| Documento | Itens | Implementados | Parciais | Pendentes |
-|---|---|---|---|---|
-| plano-mestre-10-10.md (blocos A–E, etapas 1–50) | 50 | 11 | 35 | 4 |
-| plano-mestre-10-10.md (blocos F–J, etapas 51–100) | 50 | 11 | 34 | 5 |
-| plano-graphify-50-etapas.md | 50 | 28 | 17 | 5 |
-| plano-50-etapas-260924 + consolidação | 62 | 26 | 9 | 22 |
-| docs/estado lotes 01–07 (backend) | 130 | 16 | 46 | 65 |
-| docs/estado lotes 08–14 + metas (UX/testes) | 100 | 29 | 6 | 63 |
-| auditorias legadas + ADRs + PENDENCIAS | 105 | 81 | 13 | 7 |
-| **Total** | **547** | **202** | **160** | **171** |
+| Documento | Itens | Implementados | Parciais | Pendentes | N/A |
+|---|---|---|---|---|---|
+| plano-mestre-10-10.md (blocos A–E, etapas 1–50) | 50 | 11 | 35 | 4 | 0 |
+| plano-mestre-10-10.md (blocos F–J, etapas 51–100) | 50 | 11 | 34 | 5 | 0 |
+| plano-graphify-50-etapas.md | 50 | 28 | 17 | 5 | 0 |
+| plano-50-etapas-260924 + consolidação | 62 | 26 | 9 | 22 | 5 |
+| docs/estado lotes 01–07 (backend) | 130 | 16 | 46 | 65 | 3 |
+| docs/estado lotes 08–14 + metas (UX/testes) | 100 | 29 | 6 | 63 | 2 |
+| auditorias legadas + ADRs + PENDENCIAS | 105 | 81 | 13 | 7 | 4 |
+| **Total** | **547** | **202** | **160** | **171** | **14** |
+
+N/A = obsoleto/fora de escopo (ex.: itens SUPERADA dos planos antigos,
+Twilio/Google Maps que são só placeholders de .env.example).
 
 Leitura correta dos números:
 
@@ -56,7 +59,7 @@ Leitura correta dos números:
   alertas Sentry, branch protection com checks required.
 - Secrets E2E (PENDENCIAS.md item 1 — nomes conferidos).
 
-### B. Bugs reais pequenos — corrigidos neste PR
+### B. Bugs reais pequenos — corrigidos no PR #113
 
 - CommandPalette: "Fila de Espera" navegava para `/pending-queue`
   (rota real: `/pending`) e "Central de Ajuda" para `/knowledge-base`

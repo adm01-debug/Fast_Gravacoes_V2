@@ -50,7 +50,7 @@ dump via `supabase db dump` (usa imagem `supabase/postgres`).
 ## 4. Balanço de planos × código (auditoria 28/10/2026)
 
 7 agentes auditaram cada doc de plano contra a main — 547 itens: 202
-implementados, 160 parciais, 171 pendentes. Detalhe completo em
+implementados, 160 parciais, 171 pendentes, 14 N/A. Detalhe completo em
 `docs/estado/BALANCO-DOCS-2026-10-28.md`. Resumo do que falta:
 
 - **Só o Joaquim resolve**: rotação de credenciais antigas
