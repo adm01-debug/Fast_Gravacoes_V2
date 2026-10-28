@@ -103,7 +103,7 @@ Leitura correta dos números:
   10+ páginas >300 linhas, state machine de jobs só no client,
   sem Idempotency-Key genérico.
 - Backend ausente: tabelas shifts/escalas/treinamentos, suppliers,
-  curva ABC, `produced_lots.produced_quantity` nunca escrito (atenção:
+  curva ABC, `production_lots.produced_quantity` nunca escrito (atenção:
   `jobs.produced_quantity` é escrito — ProductionRegistrationModal e
   registerProductionOffline; o gap é só na tabela de lotes), archived_jobs
   inexistente (cron-cleanup arquiva para tabela que não existe), mapeamento
