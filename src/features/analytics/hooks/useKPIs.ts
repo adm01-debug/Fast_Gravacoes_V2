@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { parseDateOnly } from '@/lib/dateUtils';
+import { parseDateOnly, formatDateOnly } from '@/lib/dateUtils';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob, DbMachine, DbTechnique } from '@/features/jobs';
 import { useABCCosts } from '@/hooks/useABCCosts';
@@ -240,7 +240,7 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       volumeDiff: prevStats.totalPcs > 0 ? ((currentStats.totalPcs - prevStats.totalPcs) / prevStats.totalPcs) * 100 : 0
     };
 
-    const today = now.toISOString().split('T')[0];
+    const today = formatDateOnly(now);
     const totalJobs = validJobs.length;
     const completedJobs = currentStats.completed;
     const inProgressJobs = validJobs.filter(j => j.status === 'production').length;
@@ -381,8 +381,13 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
     const performanceHistory = Array.from({ length: historyDays }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (historyDays - 1 - i));
-      const dayKey = date.toISOString().split('T')[0];
-      const dayJobs = validJobsAll.filter(j => j.scheduled_date === dayKey || j.created_at?.startsWith(dayKey));
+      const dayKey = formatDateOnly(date);
+      // Um job conta em um único dia: scheduled_date (DATE local) quando existe;
+      // senão a data local do created_at (timestamptz — o prefixo ISO seria UTC
+      // e misturaria dois calendários no mesmo OR).
+      const dayJobs = validJobsAll.filter(j =>
+        (j.scheduled_date || (j.created_at ? formatDateOnly(new Date(j.created_at)) : '')) === dayKey
+      );
       const dayStats = calculateStats(dayJobs);
       return {
         date: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),

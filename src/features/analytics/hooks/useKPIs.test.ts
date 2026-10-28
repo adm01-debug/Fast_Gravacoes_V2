@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { useKPIs } from './useKPIs';
+import { formatDateOnly } from '@/lib/dateUtils';
 import * as useSchedulingDataHook from '@/features/jobs';
 
 vi.mock('@/features/jobs', async (importOriginal) => {
@@ -73,35 +74,37 @@ describe('useKPIs', () => {
   });
 
   it('should calculate correct metrics when data is provided', () => {
-    const now = new Date().toISOString();
+    const now = new Date();
+    const todayStr = formatDateOnly(now);
+    const nowIso = now.toISOString();
     const mockJobs = [
-      { 
-        id: '1', 
-        quantity: 100, 
-        produced_quantity: 90, 
-        lost_pieces: 10, 
-        status: 'finished', 
-        scheduled_date: now.split('T')[0], 
-        created_at: now,
-        estimated_duration: 60 
+      {
+        id: '1',
+        quantity: 100,
+        produced_quantity: 90,
+        lost_pieces: 10,
+        status: 'finished',
+        scheduled_date: todayStr,
+        created_at: nowIso,
+        estimated_duration: 60
       },
-      { 
-        id: '2', 
-        quantity: 50, 
-        produced_quantity: 50, 
-        lost_pieces: 0, 
-        status: 'finished', 
-        scheduled_date: now.split('T')[0], 
-        created_at: now,
-        estimated_duration: 30 
+      {
+        id: '2',
+        quantity: 50,
+        produced_quantity: 50,
+        lost_pieces: 0,
+        status: 'finished',
+        scheduled_date: todayStr,
+        created_at: nowIso,
+        estimated_duration: 30
       },
-      { 
-        id: '3', 
-        quantity: 200, 
-        status: 'production', 
-        scheduled_date: now.split('T')[0], 
-        created_at: now,
-        estimated_duration: 120 
+      {
+        id: '3',
+        quantity: 200,
+        status: 'production',
+        scheduled_date: todayStr,
+        created_at: nowIso,
+        estimated_duration: 120
       },
     ];
     const mockTechniques = [{ id: 'tech1', name: 'Laser', color: '#ff0000' }];

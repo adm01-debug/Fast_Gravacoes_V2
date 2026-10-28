@@ -25,3 +25,16 @@ export function parseDateOnly(value: string | null | undefined): Date | null {
   const dt = new Date(value);
   return isNaN(dt.getTime()) ? null : dt;
 }
+
+/**
+ * Format a Date as a 'yyyy-MM-dd' string in LOCAL time — the inverse of
+ * `parseDateOnly`, for comparing a Date against `DATE` column values.
+ * `toISOString().split('T')[0]` yields the UTC date, which is already "tomorrow"
+ * between 21h and 24h in Brazil (UTC-3).
+ */
+export function formatDateOnly(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
