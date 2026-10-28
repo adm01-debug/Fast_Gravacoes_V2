@@ -34,11 +34,11 @@ async function hmacSha256(key: Uint8Array<ArrayBuffer>, data: Uint8Array<ArrayBu
   return new Uint8Array(await crypto.subtle.sign("HMAC", k, data));
 }
 
-async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array<ArrayBuffer>) {
+async function hkdfExtract(salt: Uint8Array<ArrayBuffer>, ikm: Uint8Array<ArrayBuffer>) {
   return hmacSha256(salt, ikm);
 }
 
-async function hkdfExpand(prk: Uint8Array, info: Uint8Array, length: number) {
+async function hkdfExpand(prk: Uint8Array<ArrayBuffer>, info: Uint8Array<ArrayBuffer>, length: number) {
   const t = await hmacSha256(prk, concat(info, new Uint8Array([1])));
   return t.slice(0, length);
 }

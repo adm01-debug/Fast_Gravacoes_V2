@@ -44,7 +44,7 @@ async function hmacSha256(key: Uint8Array<ArrayBuffer>, data: Uint8Array<ArrayBu
 }
 
 /** HKDF-Extract: PRK = HMAC-Hash(salt, IKM) — RFC 5869 §2.2 */
-async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
+async function hkdfExtract(salt: Uint8Array<ArrayBuffer>, ikm: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
   return hmacSha256(salt, ikm);
 }
 
@@ -52,7 +52,7 @@ async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array<ArrayBuffer>): Prom
  * HKDF-Expand para L <= 32 (um único bloco T(1) = HMAC(PRK, info || 0x01)).
  * CEK (16B) e NONCE (12B) e o IKM (32B) nunca passam de um bloco SHA-256.
  */
-async function hkdfExpand(prk: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array<ArrayBuffer>> {
+async function hkdfExpand(prk: Uint8Array<ArrayBuffer>, info: Uint8Array<ArrayBuffer>, length: number): Promise<Uint8Array<ArrayBuffer>> {
   const t = await hmacSha256(prk, concat(info, new Uint8Array([1])));
   return t.slice(0, length);
 }
