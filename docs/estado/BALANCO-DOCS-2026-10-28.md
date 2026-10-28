@@ -97,10 +97,21 @@ Leitura correta dos números:
 - useTPMApprovalMutations: update incondicional sem guarda de
   status/versão — dupla aprovação/TOCTOU possíveis.
 - `useMFA.unenroll` sem challenge TOTP nem gravação em user_mfa_settings.
-- BI de perdas: `produced_quantity || quantity` em FuturisticBI.tsx:108
-  e LossesTable.tsx:87 — job sem produção registrada conta como 100%
-  produzido, subestimando a taxa de perda (achado ALTO de jul/2026
-  ainda ativo).
+- BI de perdas: `produced_quantity || quantity` em FuturisticBI.tsx:108,
+  LossesTable.tsx:87 e KPIDashboard.tsx:111 — job sem produção
+  registrada conta como 100% produzido, subestimando a taxa de perda
+  (achado ALTO de jul/2026 ainda ativo).
+- TPM: `correction_requested` é terminal — nenhuma ação reabre ou
+  ressubmete o registro e o TPMExecutionHistory não tem branch para
+  esse status; o técnico não consegue corrigir.
+- Thresholds com unidade ambígua: TechniqueManagement define
+  low/medium/high_threshold como percentuais (30/70/90), mas
+  useLoadBalancingWithActions trata medium_threshold como capacidade
+  diária em minutos e useSmartSequencingWithActions como limiar em
+  minutos — com 70 a máquina bate 100% de ocupação em 70 min.
+- useAutoBufferPromotion: a ação por técnica envia o techniqueId, mas
+  `auto-promote-jobs` ignora o body e promove todas as técnicas —
+  mutação de estado de produção fora do escopo clicado (P1).
 - `useMTBFMTTR` assume 24h/dia — decisão de domínio (horas úteis).
 - `useKPIs` já corrigido; `useSessionManager` exporta arquivo vazio;
   KanbanBoard escreve `jobs.status` direto (bypass do jobsService);
@@ -128,6 +139,8 @@ Leitura correta dos números:
   real `bitrix24-sync?action=webhook` JÁ mapeia e grava deals em `jobs`
   via handleBitrixWebhook — mas a entrada depende de `verify_jwt=false`
   + `BITRIX24_WEBHOOK_SECRET`/`BITRIX24_WEBHOOK_TOKEN`, ver seção A),
+  backup_logs e system_metrics (backup-scheduler e metrics-collector
+  escrevem nelas mas não há CREATE TABLE nem tipo gerado),
   pdf-generator real, image-optimizer real, resgate de recompensa sem
   aprovação, Google OAuth bypassa lockout/device-check.
 - Higiene CI/cobertura: E2E advisory no quality-gate, cobertura ~35%
