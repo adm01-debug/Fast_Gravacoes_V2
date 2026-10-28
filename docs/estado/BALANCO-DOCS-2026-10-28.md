@@ -43,7 +43,10 @@ Leitura correta dos números:
   verdes (RELATORIO_CI.md §7 — prova com links de runs).
 - Conta E2E completa (papéis + fator TOTP verified) e suíte E2E verde.
 - Auth dual-header nos crons versionados; has_role corrigido;
-  geo_blocking reconstruída; complete_maintenance_record
+  tabelas geo_blocking_* reconstruídas com policies CRUD (atenção:
+  só o schema/admin — nenhuma function ou fluxo de login consulta
+  geo_blocking, então o bloqueio ainda não é aplicado em runtime;
+  ver seção C); complete_maintenance_record
   transacional+idempotente; audit chain com advisory lock.
 - Pacote de navegação UX (PR #103 + correções #104/#110): Voltar
   seguro, dirty-guard, modais no histórico, breadcrumbs, restauração de
@@ -162,6 +165,45 @@ Leitura correta dos números:
 - Ranking de operadores mistura períodos: useOperatorRankings.ts:26-30
   filtra só por ranking_type e retorna todos os períodos históricos —
   leaderboard duplica operadores e mostra vários 1º lugares.
+- Geo-blocking sem enforcement: geo_blocking_* só é lida/escrita pelo
+  painel admin — nenhuma function ou fluxo de login aplica o bloqueio
+  (P1, mesmo padrão de controle falso do blocked_ips).
+- Allowlist de IP inócua: IPAllowlist confirma CRUD de ip_allowlist,
+  mas só a function órfã validate-login-ip a consulta — o login não
+  verifica a lista (P1).
+- PermissionManager inócuo: grava role_permissions, mas a autorização
+  real sai do mapa hard-coded ROLE_PERMISSIONS (useRBAC.tsx:6,140) e
+  de allowedRoles nas rotas — a tela de permissões não muda nada (P1).
+- Corrida ao assumir tarefa: packagingService.assignToMe atualiza só a
+  linha ainda livre mas não lê o retorno — quem perde a corrida recebe
+  sucesso e não sabe que a tarefa já era de outro.
+- SSE do assistente perde fragmentos: TechnicalAssistantPage.tsx:100
+  faz chunk.split('\\n') por chunk de rede — um `data:` cortado no meio
+  é descartado (a versão correta com buffer existe em
+  TechnicalAssistant.tsx, mas não é a página roteada em /assistant).
+- Exportações inertes no calendário: WeeklyCalendar.tsx:348-349 passa
+  onExportPdf/onExportICal vazios ao CalendarToolbar — o menu exporta
+  sem fazer nada.
+- Retrabalho prometido e não criado: DefectTriageForm promete "novo
+  pedido de retrabalho criado automaticamente", mas recordDefect só
+  grava o defeito e o contador — nenhum job de retrabalho é criado (P1).
+- buffer_size da config ignorado: a UI exibe o alvo por técnica de
+  getConfig('buffer_size'), mas auto-promote-jobs calcula com constante
+  própria — o alvo configurado nunca é honrado (P2).
+- Exportação "PDF" falsa: ExecutionDetailsModal chama pdf-generator,
+  embrulha o retorno (que agora é text/plain honesto) em Blob
+  application/pdf, baixa .pdf e tosta "PDF gerado com sucesso" — o
+  arquivo baixado é texto com extensão errada.
+- Assinatura eletrônica falsa: ElectronicSignatureDialog aceita
+  qualquer senha não-vazia (sem validar contra Supabase Auth) e ainda
+  registra "assinada" na trilha — gate de segurança de status em
+  TraceabilityPage é bypassável (P1).
+- Resumo de turno errado: AutoShiftSummary só tem dois ramos (>=14h =
+  Tarde 14-22, senão Manhã 7-14) — o turno da noite (22-06) do modelo
+  de handover não existe e o período 22-24 aparece como Tarde.
+- "QR Lote" inerte: TraceabilityPage guarda a seleção em labelLots mas
+  nenhum JSX renderiza o LotLabelPrint importado — o clique não imprime
+  nada.
 
 ### D. Dívida estrutural (multi-sprint)
 
