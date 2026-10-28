@@ -100,8 +100,9 @@ Leitura correta dos números:
 - BI de perdas: `produced_quantity || quantity` em FuturisticBI.tsx:108,
   LossesTable.tsx:87, KPIDashboard.tsx:111, MachineComparisonPage.tsx:68,
   ShiftSummaryCard.tsx:22-29 e shiftReportPdf.ts:50-55 — job sem produção
-  registrada conta como 100% produzido, subestimando a taxa de perda
-  (achado ALTO de jul/2026 ainda ativo).
+  registrada conta como 100% produzido: nos três primeiros subestima a
+  taxa de perda; no ShiftSummaryCard e no PDF só infla o total de
+  peças exibido (achado ALTO de jul/2026 ainda ativo).
 - TPM: `correction_requested` é terminal — nenhuma ação reabre ou
   ressubmete o registro e o TPMExecutionHistory não tem branch para
   esse status; o técnico não consegue corrigir.
