@@ -57,7 +57,10 @@ Leitura correta dos números:
 - `verify_jwt=false` em bitrix24-sync (PENDENCIAS.md item 2).
 - PITR/restore testado, monitor externo/SLOs, reviewers de Environments,
   alertas Sentry, branch protection com checks required.
-- Secrets E2E (PENDENCIAS.md item 1 — nomes conferidos).
+- (Secrets E2E obrigatórios JÁ configurados — a suíte autenticada roda
+  verde na main e o workflow aborta antes do Playwright se faltar
+  URL/chave/email/senha; resta, opcional, `E2E_OPERATOR_EMAIL`/
+  `E2E_OPERATOR_PASSWORD` para specs de operador.)
 
 ### B. Bugs reais pequenos — corrigidos no PR #113
 
@@ -106,9 +109,11 @@ Leitura correta dos números:
   curva ABC, `production_lots.produced_quantity` nunca escrito (atenção:
   `jobs.produced_quantity` é escrito — ProductionRegistrationModal e
   registerProductionOffline; o gap é só na tabela de lotes), archived_jobs
-  inexistente (cron-cleanup arquiva para tabela que não existe), mapeamento
-  Bitrix24→jobs (webhook registra `logged_only`), pdf-generator real,
-  image-optimizer real, Twilio/SMS/WhatsApp, resgate de recompensa sem
+  inexistente (cron-cleanup arquiva para tabela que não existe), webhook-handler
+  genérico registra `logged_only` (atenção: o endpoint
+  real `bitrix24-sync?action=webhook` JÁ mapeia e grava deals em `jobs`
+  via handleBitrixWebhook — o gap é só no handler genérico sem uso),
+  pdf-generator real, image-optimizer real, resgate de recompensa sem
   aprovação, Google OAuth bypassa lockout/device-check.
 - Higiene CI/cobertura: E2E advisory no quality-gate, cobertura ~35%
   (meta 60%), sem matriz RLS completa das ~137 tabelas, sem pgTAP,

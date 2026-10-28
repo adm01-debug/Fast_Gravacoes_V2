@@ -8,25 +8,16 @@ snapshot da sidebar atualizado no PR #110 (mergeado). CI da main verde
 incluindo E2E (run 40669038502) e Deploy verde (run 40669038548).
 Nenhuma ação pendente.
 
-## 1. Secrets E2E (GitHub Actions)
+## 1. Secrets E2E (GitHub Actions) — RESOLVIDO ✅
 
-A suíte E2E autenticada depende destes secrets no repositório
-(Settings → Secrets and variables → Actions). O workflow lê `E2E_EMAIL`,
-`E2E_PASSWORD`, `E2E_TOTP_SECRET`, `VITE_SUPABASE_URL` e
-`VITE_SUPABASE_PUBLISHABLE_KEY` (opcionalmente `E2E_OPERATOR_EMAIL`/
-`E2E_OPERATOR_PASSWORD`) — conferir se os nomes cadastrados batem exatamente:
+Os secrets obrigatórios já estão configurados: a suíte E2E autenticada roda
+verde na main (CI run 40669038502) e o workflow aborta antes do Playwright
+se faltar `E2E_EMAIL`, `E2E_PASSWORD`, `E2E_TOTP_SECRET`, `VITE_SUPABASE_URL`
+ou `VITE_SUPABASE_PUBLISHABLE_KEY` — a conta também tem fator TOTP verified
+(prova registrada no RELATORIO_CI).
 
-| Secret | Para que serve |
-|---|---|
-| `E2E_EMAIL` | e-mail do usuário de teste |
-| `E2E_PASSWORD` | senha do usuário de teste |
-| `E2E_TOTP_SECRET` | seed TOTP do 2FA do usuário de teste |
-| `VITE_SUPABASE_URL` | URL do projeto Supabase |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | chave publishable do Supabase |
-| `E2E_OPERATOR_EMAIL` / `E2E_OPERATOR_PASSWORD` | usuário operador (opcional) |
-
-Obs.: os cartões anteriores usavam o prefixo `FAST_GRAVACOES_` — o nome final
-é o do workflow acima.
+Resta apenas, **opcional**: `E2E_OPERATOR_EMAIL`/`E2E_OPERATOR_PASSWORD`
+(usuário operador para specs que exigem papel operator sem coordinator).
 
 ## 2. Bitrix OAuth callback vs. gateway JWT
 
