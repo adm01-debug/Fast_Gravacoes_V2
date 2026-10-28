@@ -382,7 +382,12 @@ export function useKPIs(period: KPIPeriod = 'all', customTargets?: Partial<KPITa
       const date = new Date();
       date.setDate(date.getDate() - (historyDays - 1 - i));
       const dayKey = formatDateOnly(date);
-      const dayJobs = validJobsAll.filter(j => j.scheduled_date === dayKey || j.created_at?.startsWith(dayKey));
+      // Um job conta em um único dia: scheduled_date (DATE local) quando existe;
+      // senão a data local do created_at (timestamptz — o prefixo ISO seria UTC
+      // e misturaria dois calendários no mesmo OR).
+      const dayJobs = validJobsAll.filter(j =>
+        (j.scheduled_date || (j.created_at ? formatDateOnly(new Date(j.created_at)) : '')) === dayKey
+      );
       const dayStats = calculateStats(dayJobs);
       return {
         date: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),

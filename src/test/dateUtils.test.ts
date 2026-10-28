@@ -40,13 +40,21 @@ describe('parseDateOnly', () => {
 
 describe('formatDateOnly', () => {
   it('formats a Date as yyyy-MM-dd in local time (inverse of parseDateOnly)', () => {
-    // 2026-05-21T23:30 UTC is already May 22 UTC; in UTC-3 it is still May 21.
-    // Local formatting must not roll over to the next day the way
-    // toISOString().split('T')[0] would.
-    const local = new Date(2026, 4, 21, 23, 30, 0);
-    const s = formatDateOnly(local);
-    expect(s).toBe('2026-05-21');
-    expect(ensure(parseDateOnly(s)).getTime()).toBe(new Date(2026, 4, 21).getTime());
+    // Fixa o fuso para o teste distinguir formatação local de UTC mesmo em
+    // máquina com TZ=UTC (CI).
+    const prevTZ = process.env.TZ;
+    process.env.TZ = 'America/Sao_Paulo';
+    try {
+      // 2026-05-21 23:30 em UTC-3 é 2026-05-22 02:30Z — o dia local ainda é 21.
+      const local = new Date(2026, 4, 21, 23, 30, 0);
+      expect(local.toISOString().split('T')[0]).toBe('2026-05-22');
+      const s = formatDateOnly(local);
+      expect(s).toBe('2026-05-21');
+      expect(ensure(parseDateOnly(s)).getTime()).toBe(new Date(2026, 4, 21).getTime());
+    } finally {
+      if (prevTZ === undefined) delete process.env.TZ;
+      else process.env.TZ = prevTZ;
+    }
   });
 
   it('round-trips with parseDateOnly', () => {
