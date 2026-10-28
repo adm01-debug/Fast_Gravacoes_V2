@@ -57,5 +57,6 @@ implementados, 160 parciais, 171 pendentes, 14 N/A. Detalhe completo em
 - **Dívida estrutural**: ~30 painéis com dados fabricados, ~50 itens de
   código morto, autociclos de barrels, ciclo logger↔client, ~21
   providers, state machine de jobs só no client, tabelas ausentes
-  (shifts, suppliers, archived_jobs), Bitrix→jobs mapping, stubs
-  (pdf-generator, image-optimizer, Twilio), E2E advisory, cobertura ~35%.
+  (shifts, suppliers, archived_jobs), webhook-handler genérico sem
+  handler real (o mapping Bitrix→jobs já existe no endpoint dedicado),
+  stubs (pdf-generator, image-optimizer), E2E advisory, cobertura ~35%.

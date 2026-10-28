@@ -74,15 +74,20 @@ Leitura correta dos números:
 
 - NotificationsList: botões marcar-lida/excluir só aparecem para ids
   `push-*`; a página usa ids sintéticos `m-`/`p-`/`s-` de
-  maintenance_alerts/machine_predictions/daily_summaries — precisa de
-  dispatch por prefixo para a tabela certa.
+  maintenance_alerts/machine_predictions/daily_summaries — são registros
+  operacionais compartilhados (sem user_id); marcar-lida precisa do
+  campo de confirmação correto por tabela (is_read/acknowledged_at) e a
+  exclusão deve ficar restrita a `push-*` (recibo pessoal).
 - send-push-notification declara `Content-Encoding: aes128gcm` mas
   envia o payload sem criptografia — Web Push real provavelmente nunca
-  funcionou (precisa implementar ECDH+aes128gcm ou VAPID real).
+  funcionou (precisa de criptografia de payload ECDH+HKDF+AES-128-GCM
+  conforme RFC 8291/8188 — VAPID autentica o servidor, não criptografa).
 - `JobQRCode` gera URL `/track?q=` mas `QRScanner` espera JSON
   `{type:'job'}` — par gerador↔leitor incompatível.
 - `PreProductionChecklistModal`: `onSkip` chama `onComplete` (pular
-  registra como concluído) — decisão de domínio.
+  registra como concluído); o mesmo vale para "Salvar Parcial"
+  (onComplete com allChecked=false) e linhas antigas renderizadas como
+  concluídas sem checar completed_at — decisão de domínio.
 - useTPMApprovalMutations: update incondicional sem guarda de
   status/versão — dupla aprovação/TOCTOU possíveis.
 - `useMFA.unenroll` sem challenge TOTP nem gravação em user_mfa_settings.
@@ -135,12 +140,13 @@ Leitura correta dos números:
 
 1. Sprint "bugs reais" (seção C): primeiro os itens sem decisão de
    produto (NotificationsList por prefixo, QR incompatível, guarda TPM,
-   useMFA.unenroll); os que exigem decisão (onSkip do checklist, horas
-   úteis do MTBF, formato QR) vão para PENDENCIAS até o Joaquim decidir.
+   useMFA.unenroll); os que exigem decisão (checklist parcial/pular,
+   horas úteis do MTBF) vão para PENDENCIAS até o Joaquim decidir.
 2. Sprint "código morto + dados fabricados" (seção D, primeiras duas
    linhas): remover ou conectar de verdade — elimina ruído do painel.
-3. Decisões do Joaquim (seção A) destravam: E2E full, Bitrix OAuth,
-   backup verificado, branch protection.
+3. Decisões do Joaquim (seção A) destravam: Bitrix OAuth
+   (verify_jwt=false + secrets do webhook), backup verificado,
+   branch protection e o restante da seção A.
 4. Itens de arquitetura/backend ausente: planejar como épicos separados.
 
 _Audit gerado por 7 sessões-agente em paralelo (workflow
