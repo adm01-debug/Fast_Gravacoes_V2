@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { encryptPushPayload } from "../_shared/webpushEncrypt.ts";
 
 interface PushNotificationRequest {
   user_id?: string;
@@ -124,7 +125,7 @@ async function sendWebPush(
         "TTL": "86400",
         "Authorization": `vapid t=${token}, k=${vapidPublicKey}`,
       },
-      body: new TextEncoder().encode(payload),
+      body: await encryptPushPayload(subscription, payload),
     });
 
     if (response.status === 201 || response.status === 200) {
