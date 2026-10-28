@@ -57,10 +57,9 @@ Leitura correta dos números:
 - `verify_jwt=false` em bitrix24-sync (PENDENCIAS.md item 2).
 - PITR/restore testado, monitor externo/SLOs, reviewers de Environments,
   alertas Sentry, branch protection com checks required.
-- (Secrets E2E obrigatórios JÁ configurados — a suíte autenticada roda
-  verde na main e o workflow aborta antes do Playwright se faltar
-  URL/chave/email/senha; resta, opcional, `E2E_OPERATOR_EMAIL`/
-  `E2E_OPERATOR_PASSWORD` para specs de operador.)
+- (Secrets E2E TODOS configurados — suíte autenticada verde na main e o
+  job RLS Regression, que exige `E2E_OPERATOR_*`, também passa;
+  PENDENCIAS item 1 marcado resolvido.)
 
 ### B. Bugs reais pequenos — corrigidos no PR #113
 
@@ -112,7 +111,8 @@ Leitura correta dos números:
   inexistente (cron-cleanup arquiva para tabela que não existe), webhook-handler
   genérico registra `logged_only` (atenção: o endpoint
   real `bitrix24-sync?action=webhook` JÁ mapeia e grava deals em `jobs`
-  via handleBitrixWebhook — o gap é só no handler genérico sem uso),
+  via handleBitrixWebhook — mas a entrada depende de `verify_jwt=false`
+  + `BITRIX24_WEBHOOK_SECRET`/`BITRIX24_WEBHOOK_TOKEN`, ver seção A),
   pdf-generator real, image-optimizer real, resgate de recompensa sem
   aprovação, Google OAuth bypassa lockout/device-check.
 - Higiene CI/cobertura: E2E advisory no quality-gate, cobertura ~35%

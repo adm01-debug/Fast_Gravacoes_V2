@@ -11,13 +11,13 @@ Nenhuma ação pendente.
 ## 1. Secrets E2E (GitHub Actions) — RESOLVIDO ✅
 
 Os secrets obrigatórios já estão configurados: a suíte E2E autenticada roda
-verde na main (CI run 40669038502) e o workflow aborta antes do Playwright
-se faltar `E2E_EMAIL`, `E2E_PASSWORD`, `E2E_TOTP_SECRET`, `VITE_SUPABASE_URL`
-ou `VITE_SUPABASE_PUBLISHABLE_KEY` — a conta também tem fator TOTP verified
-(prova registrada no RELATORIO_CI).
-
-Resta apenas, **opcional**: `E2E_OPERATOR_EMAIL`/`E2E_OPERATOR_PASSWORD`
-(usuário operador para specs que exigem papel operator sem coordinator).
+verde na main (CI run 40669038502). O check de pré-requisitos do workflow
+aborta antes do Playwright se faltar `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_PUBLISHABLE_KEY`, `E2E_EMAIL` ou `E2E_PASSWORD`;
+`E2E_TOTP_SECRET` falha no login (conta tem fator TOTP verified — prova no
+RELATORIO_CI). `E2E_OPERATOR_EMAIL`/`E2E_OPERATOR_PASSWORD` são opcionais
+para o Playwright, mas exigidos pelo job RLS Regression — como esse job está
+verde na main, já existem também. Nenhuma ação pendente.
 
 ## 2. Bitrix OAuth callback vs. gateway JWT
 
