@@ -89,22 +89,42 @@ export const QRScanner = () => {
 
   const onScanSuccess = async (decodedText: string) => {
     try {
-      const data = JSON.parse(decodedText);
-      if (data.type !== "job" || !data.id) {
-        toast.error("QR Code inválido");
-        return;
+      // JobQRCode emite a URL pública `${origin}/track?q=<orderNumber>`;
+      // o formato legado é JSON {"type":"job","id":...}.
+      let jobId: string | null = null;
+      let orderNumber: string | null = null;
+      try {
+        const data = JSON.parse(decodedText);
+        if (data.type !== "job" || !data.id) {
+          toast.error("QR Code inválido");
+          return;
+        }
+        jobId = data.id;
+      } catch {
+        const match = decodedText.match(/[?&]q=([^&]+)/);
+        if (!match) {
+          toast.error("QR Code inválido");
+          return;
+        }
+        orderNumber = decodeURIComponent(match[1]);
       }
+
       await stopScanner();
       setIsLoading(true);
 
       let job;
       if (isOnline) {
-        const { data: res, error } = await supabase.from("jobs").select("*").eq("id", data.id).maybeSingle();
+        const query = jobId
+          ? supabase.from("jobs").select("*").eq("id", jobId).maybeSingle()
+          : supabase.from("jobs").select("*").eq("order_number", orderNumber ?? "").maybeSingle();
+        const { data: res, error } = await query;
         if (error) throw error;
         job = res;
       } else {
         const cached = getCachedJobs() as unknown as ScannedJob[];
-        job = cached.find(j => j.id === data.id);
+        job = jobId
+          ? cached.find(j => j.id === jobId)
+          : cached.find(j => j.order_number === orderNumber);
       }
 
       if (!job) {
