@@ -71,7 +71,7 @@ export const jobsService = {
   async updateStatus(id: string, status: JobStatus): Promise<Job> {
     const [{ data: { user } }, { data: current, error: fetchErr }] = await Promise.all([
       supabase.auth.getUser(),
-      supabase.from('jobs').select('status, actual_start_time, actual_end_time').eq('id', id).single(),
+      supabase.from('jobs').select('status, actual_start_time, actual_end_time, operator_id').eq('id', id).single(),
     ]);
     if (fetchErr) throw fetchErr;
 
@@ -86,7 +86,10 @@ export const jobsService = {
       // Retomada (paused/delayed/rework → production) preserva o início
       // original — só carimba quando o job nunca iniciou.
       if (!current.actual_start_time) updateData.actual_start_time = new Date().toISOString();
-      if (user) updateData.operator_id = user.id;
+      // Só atribui operador no primeiro início — retomada por
+      // coordenador/manager não pode roubar a produção do operador
+      // que executou o job.
+      if (user && !current.operator_id) updateData.operator_id = user.id;
     } else if (status === 'finished') {
       // Retorno direto packaging → finished preserva o fim real de produção
       // (a embalagem não reabre o ciclo). Retrabalho (rework → production →
