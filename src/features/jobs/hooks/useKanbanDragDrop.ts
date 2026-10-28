@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { DbJob } from '@/features/jobs';
+import { DbJob, jobsService } from '@/features/jobs';
 import { JobStatus, assertTransition } from '@/features/jobs';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
@@ -114,24 +114,10 @@ export function useKanbanDragDrop({ jobs, onJobsUpdate }: UseKanbanDragDropProps
 
     setIsUpdating(true);
     try {
-      const updateData: JobUpdate = {
-        status: targetStatus,
-        updated_at: new Date().toISOString(),
-      };
-
-      if (targetStatus === 'production' && !draggedJob.actual_start_time) {
-        updateData.actual_start_time = new Date().toISOString();
-      }
-      if (targetStatus === 'finished' && !draggedJob.actual_end_time) {
-        updateData.actual_end_time = new Date().toISOString();
-      }
-
-      const { error } = await supabase
-        .from('jobs')
-        .update(updateData)
-        .eq('id', draggedJob.id);
-
-      if (error) throw error;
+      // Passa pelo jobsService.updateStatus (não por update direto):
+      // ele revalida a transição, carimba actual_start/end_time e
+      // dispara o sync de status para o Bitrix24 — tudo em um só lugar.
+      await jobsService.updateStatus(draggedJob.id, targetStatus);
       toast.success(`Job movido para "${getStatusLabel(targetStatus)}"`);
       onJobsUpdate();
     } catch (error) {
