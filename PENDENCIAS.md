@@ -8,25 +8,16 @@ snapshot da sidebar atualizado no PR #110 (mergeado). CI da main verde
 incluindo E2E (run 40669038502) e Deploy verde (run 40669038548).
 Nenhuma ação pendente.
 
-## 1. Secrets E2E (GitHub Actions)
+## 1. Secrets E2E (GitHub Actions) — RESOLVIDO ✅
 
-A suíte E2E autenticada depende destes secrets no repositório
-(Settings → Secrets and variables → Actions). O workflow lê `E2E_EMAIL`,
-`E2E_PASSWORD`, `E2E_TOTP_SECRET`, `VITE_SUPABASE_URL` e
-`VITE_SUPABASE_PUBLISHABLE_KEY` (opcionalmente `E2E_OPERATOR_EMAIL`/
-`E2E_OPERATOR_PASSWORD`) — conferir se os nomes cadastrados batem exatamente:
-
-| Secret | Para que serve |
-|---|---|
-| `E2E_EMAIL` | e-mail do usuário de teste |
-| `E2E_PASSWORD` | senha do usuário de teste |
-| `E2E_TOTP_SECRET` | seed TOTP do 2FA do usuário de teste |
-| `VITE_SUPABASE_URL` | URL do projeto Supabase |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | chave publishable do Supabase |
-| `E2E_OPERATOR_EMAIL` / `E2E_OPERATOR_PASSWORD` | usuário operador (opcional) |
-
-Obs.: os cartões anteriores usavam o prefixo `FAST_GRAVACOES_` — o nome final
-é o do workflow acima.
+Os secrets obrigatórios já estão configurados: a suíte E2E autenticada roda
+verde na main (CI run 40669038502). O check de pré-requisitos do workflow
+aborta antes do Playwright se faltar `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_PUBLISHABLE_KEY`, `E2E_EMAIL` ou `E2E_PASSWORD`;
+`E2E_TOTP_SECRET` falha no login (conta tem fator TOTP verified — prova no
+RELATORIO_CI). `E2E_OPERATOR_EMAIL`/`E2E_OPERATOR_PASSWORD` são opcionais
+para o Playwright, mas exigidos pelo job RLS Regression — como esse job está
+verde na main, já existem também. Nenhuma ação pendente.
 
 ## 2. Bitrix OAuth callback vs. gateway JWT
 
@@ -46,3 +37,27 @@ todos os IPs de runner do GitHub). Mitigado no `deploy.yml` com retry de 5×
 60s (PR #107) — o deploy ficou verde. Se voltar a falhar com
 `toomanyrequests`, re-rodar o job; o `migration-repair` segue suscetível no
 dump via `supabase db dump` (usa imagem `supabase/postgres`).
+
+## 4. Balanço de planos × código (auditoria 28/10/2026)
+
+7 agentes auditaram cada doc de plano contra a main — 547 itens: 202
+implementados, 160 parciais, 171 pendentes, 14 N/A. Detalhe completo em
+`docs/estado/BALANCO-DOCS-2026-10-28.md`. Resumo do que falta:
+
+- **Só o Joaquim resolve**: rotação de credenciais antigas
+  (service-role, DB password, Bitrix/Resend/Twilio), PITR/restore
+  testado, monitor externo, reviewers de Environments, alertas Sentry,
+  branch protection com required checks.
+- **Bugs reais para o próximo sprint**: Web Push sem criptografia real
+  (aes128gcm declarado, payload em texto), JobQRCode↔QRScanner
+  incompatíveis, NotificationsList não marca m-/p- como lidas (o
+  prefixo s-/daily_summaries exige decisão de produto — ver BALANCO),
+  aprovação TPM sem guarda atômica, useMFA.unenroll sem challenge,
+  botões inertes (Novo Item, Aplicar Sequenciamento, Mover OS, envio QR),
+  KanbanBoard bypass do jobsService.
+- **Dívida estrutural**: ~30 painéis com dados fabricados, ~50 itens de
+  código morto, autociclos de barrels, ciclo logger↔client, ~21
+  providers, state machine de jobs só no client, tabelas ausentes
+  (shifts, suppliers, archived_jobs), webhook-handler genérico sem
+  handler real (o mapping Bitrix→jobs já existe no endpoint dedicado),
+  stubs (pdf-generator, image-optimizer), E2E advisory, cobertura ~35%.
