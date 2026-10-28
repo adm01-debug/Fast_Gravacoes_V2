@@ -87,10 +87,13 @@ export const jobsService = {
       // original — só carimba quando o job nunca iniciou.
       if (!current.actual_start_time) updateData.actual_start_time = new Date().toISOString();
       if (user) updateData.operator_id = user.id;
-    } else if (status === 'finished' && !current.actual_end_time) {
-      // finished → packaging → finished: preserva o fim real de produção —
-      // sobrescrever corromperia o cálculo de ciclo/KPIs.
-      updateData.actual_end_time = new Date().toISOString();
+    } else if (status === 'finished') {
+      // Retorno direto packaging → finished preserva o fim real de produção
+      // (a embalagem não reabre o ciclo). Retrabalho (rework → production →
+      // finished) é conclusão nova: carimba o horário atual.
+      if (!(current.status === 'packaging' && current.actual_end_time)) {
+        updateData.actual_end_time = new Date().toISOString();
+      }
     }
 
     const job = await this.update(id, updateData);
