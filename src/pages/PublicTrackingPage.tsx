@@ -84,7 +84,9 @@ export default function PublicTrackingPage() {
 
       // Etiquetas novas levam `j=<jobId>` junto do `q=<orderNumber>`: quando
       // vários jobs dividem o mesmo pedido, o id resolve o job exato.
-      const jobIdParam = searchParams.get('j');
+      // Só na busca automática (abertura via QR) — numa nova busca manual o
+      // `j` original não pode seqüestrar a consulta digitada.
+      const jobIdParam = e ? null : searchParams.get('j');
       if (jobIdParam) {
         ({ data, error: supabaseError } = await supabase
           .from('jobs')

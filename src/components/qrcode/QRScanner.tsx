@@ -126,9 +126,8 @@ export const QRScanner = () => {
           if (error) throw error;
           job = res;
         } else {
-          // order_number não é único: dois jobs podem dividir o mesmo pedido.
-          // maybeSingle() quebraria com 2+ linhas — pega o mais recente,
-          // coerente com a busca offline (primeiro do cache, mais recente).
+          // order_number não é único: dois jobs podem dividir o mesmo
+          // pedido. QR legado ambíguo é rejeitado em vez de escolher um.
           const { data: res, error } = await supabase
             .from("jobs")
             .select("*")
@@ -137,16 +136,27 @@ export const QRScanner = () => {
             .limit(2);
           if (error) throw error;
           if (res && res.length > 1) {
-            // QR legado sem `j=` é ambíguo — avisa em vez de agir em silêncio.
-            toast.warning(`Pedido ${orderNumber} tem ${res.length}+ jobs — aberto o mais recente`);
+            // QR legado sem `j=` é ambíguo: escolher um job arbitrário
+            // poderia levar o operador a iniciar/pausar o job errado.
+            toast.error(`Pedido ${orderNumber} tem ${res.length}+ jobs — escaneie a etiqueta da máquina (com j=) ou selecione o job manualmente`);
+            setIsLoading(false);
+            return;
           }
           job = res?.[0] ?? null;
         }
       } else {
         const cached = getCachedJobs() as unknown as ScannedJob[];
-        job = jobId
-          ? cached.find(j => j.id === jobId)
-          : cached.find(j => j.order_number === orderNumber);
+        if (jobId) {
+          job = cached.find(j => j.id === jobId);
+        } else {
+          const matches = cached.filter(j => j.order_number === orderNumber);
+          if (matches.length > 1) {
+            toast.error(`Pedido ${orderNumber} tem ${matches.length}+ jobs — sem desambiguação offline; selecione o job manualmente`);
+            setIsLoading(false);
+            return;
+          }
+          job = matches[0] ?? null;
+        }
       }
 
       if (!job) {
