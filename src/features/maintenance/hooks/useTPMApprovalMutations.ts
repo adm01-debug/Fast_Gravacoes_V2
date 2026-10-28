@@ -57,8 +57,11 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
 
 
 
-      // Update the record to 'approved'
-      const { error: recordError } = await supabase
+      // Update the record to 'approved' — atomic guard: só aprova se o
+      // registro ainda estiver aguardando decisão ('completed'). Sem isso,
+      // uma segunda aprovação concorrente ou uma correction_requested
+      // simultânea seria sobrescrita silenciosamente (TOCTOU).
+      const { data: approvedRows, error: recordError } = await supabase
         .from('maintenance_records')
         .update({
           status: 'approved',
@@ -66,9 +69,14 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
           approved_at: new Date().toISOString(),
           next_scheduled_date_after_approval: nextDue,
         } as never)
-        .eq('id', data.record_id);
+        .eq('id', data.record_id)
+        .eq('status', 'completed')
+        .select('id');
 
       if (recordError) throw recordError;
+      if (!approvedRows || approvedRows.length === 0) {
+        throw new Error('Registro já foi processado por outra aprovação/correção');
+      }
 
       // Update the schedule
       if (scheduleData) {
@@ -117,16 +125,23 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
       notes: string;
       deadline?: string;
     }) => {
-      const { error } = await (supabase
+      // Mesmo guarda atômico da aprovação: não sobrescrever um registro
+      // já aprovado/corrigido por outra decisão concorrente.
+      const { data: correctedRows, error } = await (supabase
         .from('maintenance_records')
         .update({
           status: 'correction_requested',
           correction_notes: data.notes,
           correction_deadline: data.deadline,
         } as never)
-        .eq('id', data.record_id));
+        .eq('id', data.record_id)
+        .eq('status', 'completed')
+        .select('id'));
 
       if (error) throw error;
+      if (!correctedRows || correctedRows.length === 0) {
+        throw new Error('Registro já foi processado por outra aprovação/correção');
+      }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
@@ -180,7 +195,7 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
 
         const nextDue = addDays(new Date(), record.schedule?.interval_days || 30).toISOString();
 
-        const { error: recordError } = await supabase
+        const { data: batchRows, error: recordError } = await supabase
           .from('maintenance_records')
           .update({
             status: 'approved',
@@ -188,10 +203,16 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
             approved_at: new Date().toISOString(),
             next_scheduled_date_after_approval: nextDue,
           } as never)
-          .eq('id', id);
+          .eq('id', id)
+          .eq('status', 'completed')
+          .select('id');
 
         if (recordError) {
           failed.push({ id, reason: recordError.message });
+          continue;
+        }
+        if (!batchRows || batchRows.length === 0) {
+          failed.push({ id, reason: 'Registro já processado' });
           continue;
         }
 
