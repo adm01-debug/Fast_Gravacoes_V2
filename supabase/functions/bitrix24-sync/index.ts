@@ -253,6 +253,18 @@ async function exchangeCodeForTokens(code: string, redirectUri: string, supabase
       return null;
     }
 
+    // Trava token substitution: mesmo com state válido de uso único, quem
+    // completa o callback pode ter autorizado a app em OUTRO portal Bitrix.
+    // A resposta do exchange declara `domain`/`member_id` — só aceita tokens
+    // do portal configurado em BITRIX24_DOMAIN.
+    const expectedDomain = (() => {
+      try { return new URL(BITRIX24_DOMAIN!).hostname; } catch { return null; }
+    })();
+    if (expectedDomain && data.domain && data.domain !== expectedDomain) {
+      console.error(`OAuth domain mismatch: got ${data.domain}, expected ${expectedDomain} — tokens rejected`);
+      return null;
+    }
+
     const expiresIn = data.expires_in || 3600;
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
 

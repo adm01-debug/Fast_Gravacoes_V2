@@ -89,8 +89,10 @@ export const QRScanner = () => {
 
   const onScanSuccess = async (decodedText: string) => {
     try {
-      // JobQRCode emite a URL pública `${origin}/track?q=<orderNumber>`;
+      // JobQRCode emite a URL `${origin}/track?q=<orderNumber>&j=<jobId>`;
       // o formato legado é JSON {"type":"job","id":...}.
+      // `j=` tem prioridade: identifica o job exato. `q=` (QRs antigos) cai
+      // na busca por order_number, que pode casar com mais de um job.
       let jobId: string | null = null;
       let orderNumber: string | null = null;
       try {
@@ -101,12 +103,17 @@ export const QRScanner = () => {
         }
         jobId = data.id;
       } catch {
-        const match = decodedText.match(/[?&]q=([^&]+)/);
-        if (!match) {
-          toast.error("QR Code inválido");
-          return;
+        const jMatch = decodedText.match(/[?&]j=([^&]+)/);
+        if (jMatch) {
+          jobId = decodeURIComponent(jMatch[1]);
+        } else {
+          const match = decodedText.match(/[?&]q=([^&]+)/);
+          if (!match) {
+            toast.error("QR Code inválido");
+            return;
+          }
+          orderNumber = decodeURIComponent(match[1]);
         }
-        orderNumber = decodeURIComponent(match[1]);
       }
 
       await stopScanner();
@@ -127,8 +134,12 @@ export const QRScanner = () => {
             .select("*")
             .eq("order_number", orderNumber ?? "")
             .order("created_at", { ascending: false })
-            .limit(1);
+            .limit(2);
           if (error) throw error;
+          if (res && res.length > 1) {
+            // QR legado sem `j=` é ambíguo — avisa em vez de agir em silêncio.
+            toast.warning(`Pedido ${orderNumber} tem ${res.length}+ jobs — aberto o mais recente`);
+          }
           job = res?.[0] ?? null;
         }
       } else {
