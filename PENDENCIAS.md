@@ -50,7 +50,8 @@ implementados, 160 parciais, 171 pendentes, 14 N/A. Detalhe completo em
   branch protection com required checks.
 - **Bugs reais para o próximo sprint**: Web Push sem criptografia real
   (aes128gcm declarado, payload em texto), JobQRCode↔QRScanner
-  incompatíveis, NotificationsList não marca m-/p-/s- como lidas,
+  incompatíveis, NotificationsList não marca m-/p- como lidas (o
+  prefixo s-/daily_summaries exige decisão de produto — ver BALANCO),
   aprovação TPM sem guarda atômica, useMFA.unenroll sem challenge,
   botões inertes (Novo Item, Aplicar Sequenciamento, Mover OS, envio QR),
   KanbanBoard bypass do jobsService.

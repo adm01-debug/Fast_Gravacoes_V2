@@ -98,7 +98,8 @@ Leitura correta dos números:
   status/versão — dupla aprovação/TOCTOU possíveis.
 - `useMFA.unenroll` sem challenge TOTP nem gravação em user_mfa_settings.
 - BI de perdas: `produced_quantity || quantity` em FuturisticBI.tsx:108,
-  LossesTable.tsx:87 e KPIDashboard.tsx:111 — job sem produção
+  LossesTable.tsx:87, KPIDashboard.tsx:111, MachineComparisonPage.tsx:68,
+  ShiftSummaryCard.tsx:22-29 e shiftReportPdf.ts:50-55 — job sem produção
   registrada conta como 100% produzido, subestimando a taxa de perda
   (achado ALTO de jul/2026 ainda ativo).
 - TPM: `correction_requested` é terminal — nenhuma ação reabre ou
@@ -117,6 +118,23 @@ Leitura correta dos números:
   KanbanBoard escreve `jobs.status` direto (bypass do jobsService);
   botões inertes: "Novo Item" (InventoryPage), "Aplicar Sequenciamento"/
   "Mover OS" (KanbanAIAdvisor), MachineQRDialog "Enviar" (toast fake).
+- WhatsApp do TPM é stub ativo: TPMNotificationSettings.tsx permite
+  habilitar e testar o canal, mas useTPMNotifications.ts só grava o log
+  com `status: 'success'` e tosta sucesso sem enviar nada (diferente
+  dos placeholders Twilio da seção E — este é um fluxo visível que
+  finge funcionar).
+- PredictiveHealthCard.tsx:88 multiplica `confidence` (escala 0-100,
+  conforme ml-predictions/index.ts:152-155,240-243) por 100 de novo —
+  confiabilidade de 60% aparece como 6000% no TPMDashboard.
+- Upload de evidência de alerta bloqueado: MaintenanceExecutionModal.tsx
+  :304-313 envia para `execution-alerts/<file>` no bucket
+  execution-evidence, mas a policy versionada
+  (20260712231142:25-33) exige que o primeiro segmento do path seja o
+  auth.uid() — todo upload desse fluxo é negado.
+- inventory_movements sem escrita: a tabela tem RLS habilitado e só
+  policies SELECT versionadas, mas useInventory.ts:110-115,128-134,
+  159-170 faz INSERT/DELETE do browser — o fluxo de movimentação de
+  estoque não consegue gravar (P1).
 
 ### D. Dívida estrutural (multi-sprint)
 
@@ -150,7 +168,10 @@ Leitura correta dos números:
   tsconfig noUnusedLocals off (CLAUDE.md diz "on"), vite-plugin-pwa
   declarado mas ausente de vite.config.ts, i18n es-ES com 59 chaves
   faltando e só 32/657 arquivos traduzidos, ESLint sem regras de
-  boundaries.
+  boundaries. Deploy dispara independente do ci.yml: todo push na main
+  roda deploy.yml e o job de migration de produção depende só do
+  security scan/testes/dry-run do próprio workflow — sem Quality Gate
+  obrigatório até branch protection ser ativada (seção A).
 
 ### E. Itens fora de escopo / N/A
 
