@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDateOnly } from '@/lib/dateUtils';
+import { parseDateOnly, formatDateOnly } from '@/lib/dateUtils';
 
 function ensure<T>(value: T | null | undefined): T {
   expect(value).not.toBeNull();
@@ -35,5 +35,21 @@ describe('parseDateOnly', () => {
 
   it('returns null for invalid input', () => {
     expect(parseDateOnly('not-a-date')).toBeNull();
+  });
+});
+
+describe('formatDateOnly', () => {
+  it('formats a Date as yyyy-MM-dd in local time (inverse of parseDateOnly)', () => {
+    // 2026-05-21T23:30 UTC is already May 22 UTC; in UTC-3 it is still May 21.
+    // Local formatting must not roll over to the next day the way
+    // toISOString().split('T')[0] would.
+    const local = new Date(2026, 4, 21, 23, 30, 0);
+    const s = formatDateOnly(local);
+    expect(s).toBe('2026-05-21');
+    expect(ensure(parseDateOnly(s)).getTime()).toBe(new Date(2026, 4, 21).getTime());
+  });
+
+  it('round-trips with parseDateOnly', () => {
+    expect(formatDateOnly(ensure(parseDateOnly('2026-12-31')))).toBe('2026-12-31');
   });
 });
