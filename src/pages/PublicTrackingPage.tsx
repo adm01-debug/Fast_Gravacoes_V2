@@ -82,7 +82,18 @@ export default function PublicTrackingPage() {
       let data = null;
       let supabaseError = null;
 
-      if (isUUID) {
+      // Etiquetas novas levam `j=<jobId>` junto do `q=<orderNumber>`: quando
+      // vários jobs dividem o mesmo pedido, o id resolve o job exato.
+      const jobIdParam = searchParams.get('j');
+      if (jobIdParam) {
+        ({ data, error: supabaseError } = await supabase
+          .from('jobs')
+          .select(selectClause)
+          .eq('id', jobIdParam)
+          .maybeSingle());
+      }
+
+      if (!supabaseError && !data && isUUID) {
         ({ data, error: supabaseError } = await supabase
           .from('jobs')
           .select(selectClause)
