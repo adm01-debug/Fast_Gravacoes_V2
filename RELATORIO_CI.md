@@ -1,4 +1,4 @@
-# RELATORIO_CI — Inventário e correção dos workflows (2026-10-01)
+# RELATORIO_CI — Inventário e correção dos workflows (2026-10-28)
 
 ## 1. Inventário (última execução na main)
 
@@ -58,3 +58,29 @@
 - Migração zod v4 (remove a exceção; breaking — precisa revisão de `zod-validation-error`).
 - Migração tailwindcss v4 (remove a cadeia de exceções braces/postcss).
 - `bitrix24-sync` `action=oauth-callback` exige `verify_jwt=false` no gateway — ver PENDENCIAS.md.
+
+## 7. Fechamento — prova final na main (2026-10-28)
+
+Cadeia de correções mergeada (PRs #105–#110): advisories npm + exceção
+documentada do zod (#105), dollar-quoting aninhado no db push (#106),
+retry anti rate-limit do ghcr no deploy (#107), DB Admin com
+diagnóstico RLS + reprovisionamento de papéis (#108) e fator TOTP da
+conta E2E (#109), baseline do snapshot + auth dual-header de cron +
+gaps de UX (#110).
+
+| Workflow | Último run na main | Conclusão |
+|---|---|---|
+| CI — Quality Gates | [40669038502](https://github.com/adm01-debug/Fast_Gravacoes_V2/actions/runs/40669038502) | ✅ success — 8/8 jobs incl. **E2E verde** |
+| Deploy | [40669038548](https://github.com/adm01-debug/Fast_Gravacoes_V2/actions/runs/40669038548) | ✅ success |
+| Migration repair | [40672488196](https://github.com/adm01-debug/Fast_Gravacoes_V2/actions/runs/40672488196) | ✅ success (re-run; falha anterior era rate-limit ghcr transitório) |
+| DB Admin | [40596235633](https://github.com/adm01-debug/Fast_Gravacoes_V2/actions/runs/40596235633) | ✅ success |
+| Visual Baselines Generator | [35506297337](https://github.com/adm01-debug/Fast_Gravacoes_V2/actions/runs/35506297337) | ✅ success |
+| Architecture graph | só roda em PR/dispatch | ✅ success no último PR |
+
+Obs.: o job E2E segue **advisory** no Quality Gate por design — falhas
+futuras não bloqueiam merge, então o verde acima é evidência do estado
+atual, não enforcement. Tirar a suíte da quarentena fica como decisão do
+Joaquim quando ela se provar estável.
+
+Baseline × final mantido sem regressão (lint 0, tsc ok, build ok,
+919/919 vitest, 8/8 deno). Nenhum workflow que estava verde quebrou.

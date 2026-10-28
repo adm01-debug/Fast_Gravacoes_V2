@@ -1,17 +1,12 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
-## 0. Conta E2E reprovisionada ✅ — resta só mergear o snapshot (PR #110)
+## 0. Conta E2E — RESOLVIDO ✅
 
-**RESOLVIDO em produção:** papéis `operator` + `coordinator` ativos (DB
-Admin `apply`, run 40581585129) e fator TOTP `verified` com o seed do
-secret `E2E_TOTP_SECRET` (run 40595010266). A suíte E2E caiu de 29 falhas
-para **1**: o snapshot `sidebar-expanded` (a conta recriada exibe nome
-"E2E", antes "E2E CI ROBOT") — baseline atualizado no PR #110, E2E verde
-no CI do próprio PR.
-
-**O que fazer:** mergear o PR #110 (toca `src/` → merge dispara deploy,
-então fica com o Joaquim). Depois do merge, o CI da main deve fechar
-verde em todos os jobs, incluindo E2E.
+Papéis `operator` + `coordinator` ativos (DB Admin `apply`, run
+40581585129), fator TOTP `verified` (run 40595010266) e baseline do
+snapshot da sidebar atualizado no PR #110 (mergeado). CI da main verde
+incluindo E2E (run 40669038502) e Deploy verde (run 40669038548).
+Nenhuma ação pendente.
 
 ## 1. Secrets E2E (GitHub Actions)
 
