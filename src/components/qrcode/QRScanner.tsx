@@ -114,12 +114,23 @@ export const QRScanner = () => {
 
       let job;
       if (isOnline) {
-        const query = jobId
-          ? supabase.from("jobs").select("*").eq("id", jobId).maybeSingle()
-          : supabase.from("jobs").select("*").eq("order_number", orderNumber ?? "").maybeSingle();
-        const { data: res, error } = await query;
-        if (error) throw error;
-        job = res;
+        if (jobId) {
+          const { data: res, error } = await supabase.from("jobs").select("*").eq("id", jobId).maybeSingle();
+          if (error) throw error;
+          job = res;
+        } else {
+          // order_number não é único: dois jobs podem dividir o mesmo pedido.
+          // maybeSingle() quebraria com 2+ linhas — pega o mais recente,
+          // coerente com a busca offline (primeiro do cache, mais recente).
+          const { data: res, error } = await supabase
+            .from("jobs")
+            .select("*")
+            .eq("order_number", orderNumber ?? "")
+            .order("created_at", { ascending: false })
+            .limit(1);
+          if (error) throw error;
+          job = res?.[0] ?? null;
+        }
       } else {
         const cached = getCachedJobs() as unknown as ScannedJob[];
         job = jobId

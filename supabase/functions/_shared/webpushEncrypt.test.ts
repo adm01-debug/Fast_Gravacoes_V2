@@ -4,13 +4,13 @@ import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.t
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-function base64UrlEncode(bytes: Uint8Array): string {
+function base64UrlEncode(bytes: Uint8Array<ArrayBuffer>): string {
   let bin = "";
   for (const b of bytes) bin += String.fromCharCode(b);
   return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function base64UrlToBytes(input: string): Uint8Array {
+function base64UrlToBytes(input: string): Uint8Array<ArrayBuffer> {
   const b64 = input.replace(/-/g, "+").replace(/_/g, "/");
   const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
   const bin = atob(padded);
@@ -19,7 +19,7 @@ function base64UrlToBytes(input: string): Uint8Array {
   return out;
 }
 
-function concat(...arrays: Uint8Array[]): Uint8Array {
+function concat(...arrays: Uint8Array<ArrayBuffer>[]): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(arrays.reduce((n, a) => n + a.length, 0));
   let offset = 0;
   for (const a of arrays) {
@@ -29,12 +29,12 @@ function concat(...arrays: Uint8Array[]): Uint8Array {
   return out;
 }
 
-async function hmacSha256(key: Uint8Array, data: Uint8Array): Promise<Uint8Array> {
+async function hmacSha256(key: Uint8Array<ArrayBuffer>, data: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
   const k = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return new Uint8Array(await crypto.subtle.sign("HMAC", k, data));
 }
 
-async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array) {
+async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array<ArrayBuffer>) {
   return hmacSha256(salt, ikm);
 }
 

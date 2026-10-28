@@ -13,7 +13,7 @@
 
 const encoder = new TextEncoder();
 
-function concat(...arrays: Uint8Array[]): Uint8Array {
+function concat(...arrays: Uint8Array<ArrayBuffer>[]): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(arrays.reduce((n, a) => n + a.length, 0));
   let offset = 0;
   for (const a of arrays) {
@@ -23,7 +23,7 @@ function concat(...arrays: Uint8Array[]): Uint8Array {
   return out;
 }
 
-function base64UrlToBytes(input: string): Uint8Array {
+function base64UrlToBytes(input: string): Uint8Array<ArrayBuffer> {
   const b64 = input.replace(/-/g, "+").replace(/_/g, "/");
   const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
   const bin = atob(padded);
@@ -32,7 +32,7 @@ function base64UrlToBytes(input: string): Uint8Array {
   return out;
 }
 
-async function hmacSha256(key: Uint8Array, data: Uint8Array): Promise<Uint8Array> {
+async function hmacSha256(key: Uint8Array<ArrayBuffer>, data: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
   const k = await crypto.subtle.importKey(
     "raw",
     key,
@@ -44,7 +44,7 @@ async function hmacSha256(key: Uint8Array, data: Uint8Array): Promise<Uint8Array
 }
 
 /** HKDF-Extract: PRK = HMAC-Hash(salt, IKM) — RFC 5869 §2.2 */
-async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array): Promise<Uint8Array> {
+async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
   return hmacSha256(salt, ikm);
 }
 
@@ -52,7 +52,7 @@ async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array): Promise<Uint8Arra
  * HKDF-Expand para L <= 32 (um único bloco T(1) = HMAC(PRK, info || 0x01)).
  * CEK (16B) e NONCE (12B) e o IKM (32B) nunca passam de um bloco SHA-256.
  */
-async function hkdfExpand(prk: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
+async function hkdfExpand(prk: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array<ArrayBuffer>> {
   const t = await hmacSha256(prk, concat(info, new Uint8Array([1])));
   return t.slice(0, length);
 }
@@ -65,7 +65,7 @@ export async function encryptPushPayload(
   subscription: { p256dh: string; auth: string },
   payload: string,
   recordSize = 4096
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const uaPublic = base64UrlToBytes(subscription.p256dh);
   const authSecret = base64UrlToBytes(subscription.auth);
 
@@ -111,6 +111,10 @@ export async function encryptPushPayload(
 
   // 3. Padding do último record: plaintext || 0x02 (RFC 8188 §2)
   const plaintext = concat(encoder.encode(payload), new Uint8Array([2]));
+  // Um record só: o plaintext não pode exceder o record size declarado (rs).
+  if (plaintext.length > recordSize) {
+    throw new Error(`Payload push excede o record de ${recordSize} bytes (${plaintext.length})`);
+  }
 
   // 4. AES-128-GCM
   const aesKey = await crypto.subtle.importKey("raw", cek, { name: "AES-GCM" }, false, ["encrypt"]);

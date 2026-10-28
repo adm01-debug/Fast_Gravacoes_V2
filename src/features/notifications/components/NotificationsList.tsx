@@ -89,7 +89,11 @@ export function NotificationsList({ notifications, isLoading }: NotificationsLis
                         <Check className="h-3.5 w-3.5" />
                       </Button>
                     )}
-                    {!notification.id.startsWith('s-') && (
+                    {/* Lixeira só existe para push_notifications — alertas de
+                        manutenção e predições são registros operacionais
+                        compartilhados: "excluir" não pode marcá-los como
+                        resolvidos/inativos para toda a equipe. */}
+                    {notification.id.startsWith('push-') && (
                       <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={() => deleteNotification(notification.id)}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>

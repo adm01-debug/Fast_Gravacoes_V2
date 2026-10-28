@@ -169,33 +169,51 @@ async function refreshAccessToken(refreshToken: string, supabase: any): Promise<
   }
 }
 
-// Generate a HMAC-signed, time-bound state token for OAuth CSRF protection
-async function generateOAuthState(): Promise<string> {
+// Generate a HMAC-signed, time-bound, single-use state token for OAuth CSRF
+// protection. O nonce vai gravado em bitrix24_oauth_states e é consumido no
+// callback — um state capturado não pode ser reutilizado para trocar o code
+// e substituir os tokens (token substitution).
+async function generateOAuthState(supabase: any): Promise<string> {
   const ts = Date.now().toString();
+  const nonce = crypto.randomUUID();
   const keyMat = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!keyMat) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey('raw', enc.encode(keyMat), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(ts)));
+  const sig = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(`${ts}.${nonce}`)));
   const sigHex = Array.from(sig).map(b => b.toString(16).padStart(2, '0')).join('');
-  return `${ts}.${sigHex}`;
+  const state = `${ts}.${nonce}.${sigHex}`;
+  await supabase
+    .from('bitrix24_oauth_states')
+    .delete()
+    .lt('created_at', new Date(Date.now() - 15 * 60 * 1000).toISOString());
+  const { error } = await supabase.from('bitrix24_oauth_states').insert({ state });
+  if (error) throw new Error(`Failed to persist OAuth state: ${error.message}`);
+  return state;
 }
 
-async function verifyOAuthState(state: string): Promise<boolean> {
+async function verifyOAuthState(state: string, supabase: any): Promise<boolean> {
   if (!state) return false;
-  const dot = state.lastIndexOf('.');
-  if (dot === -1) return false;
-  const ts = state.slice(0, dot);
-  const sig = state.slice(dot + 1);
+  const parts = state.split('.');
+  if (parts.length !== 3) return false;
+  const [ts, nonce, sig] = parts;
   const tsNum = parseInt(ts, 10);
   if (isNaN(tsNum) || Date.now() - tsNum > 15 * 60 * 1000) return false;
   const keyMat = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!keyMat) return false;
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey('raw', enc.encode(keyMat), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const expected = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(ts)));
+  const expected = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(`${ts}.${nonce}`)));
   const expectedHex = Array.from(expected).map(b => b.toString(16).padStart(2, '0')).join('');
-  return sig === expectedHex;
+  if (sig !== expectedHex) return false;
+  // Consome o state: só vale se existir na tabela (emitido por nós) e é
+  // removido na mesma operação — reutilizar retorna 0 linhas -> false.
+  const { data } = await supabase
+    .from('bitrix24_oauth_states')
+    .delete()
+    .eq('state', state)
+    .select('state');
+  return Array.isArray(data) && data.length === 1;
 }
 
 // Generate OAuth authorization URL for reauthorization
@@ -1168,7 +1186,7 @@ serve(async (req) => {
           needsReauthorization,
           reauthorizationReason,
           hasClientCredentials: !!(BITRIX24_CLIENT_ID && BITRIX24_CLIENT_SECRET),
-          authorizationUrl: getAuthorizationUrl(redirectUri, await generateOAuthState()),
+          authorizationUrl: getAuthorizationUrl(redirectUri, await generateOAuthState(supabase)),
           instructions: {
             pt: needsReauthorization 
               ? 'Reautorização necessária. Acesse a URL de autorização para reconectar sua conta Bitrix24.'
@@ -1184,7 +1202,7 @@ serve(async (req) => {
       case 'oauth-callback': {
         // Validate OAuth state to prevent CSRF token replacement
         const oauthState = url.searchParams.get('state');
-        if (!oauthState || !(await verifyOAuthState(oauthState))) {
+        if (!oauthState || !(await verifyOAuthState(oauthState, supabase))) {
           return new Response(JSON.stringify({
             error: 'Invalid or expired OAuth state parameter',
             message: 'Restart the authorization flow using action=oauth-status'

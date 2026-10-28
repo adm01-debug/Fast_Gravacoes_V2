@@ -27,8 +27,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { SequencingSuggestion } from '@/features/jobs';
-import { useSmartSequencingWithActions } from '@/features/jobs/hooks/useSmartSequencingWithActions';
+import { SequencingSuggestion, useSmartSequencingWithActions } from '@/features/jobs';
 import { useLoadBalancingWithActions, useBottleneckPrediction, LoadBalancingSuggestion } from '@/features/analytics';
 
 import { motion, AnimatePresence } from 'framer-motion';
