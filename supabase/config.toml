@@ -32,7 +32,11 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.bitrix24-sync]
-verify_jwt = true
+# verify_jwt = false: o callback OAuth do Bitrix chega do navegador sem Bearer
+# e seria rejeitado pelo gateway com 401 antes do handler. A function se
+# protege por action: webhook exige BITRIX24_WEBHOOK_SECRET + TOKEN,
+# oauth-* exige credenciais próprias, push/sync exigem auth interna.
+verify_jwt = false
 
 [functions.calculate-inventory-intelligence]
 verify_jwt = true
