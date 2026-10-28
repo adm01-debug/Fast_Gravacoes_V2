@@ -91,6 +91,7 @@ jobs:
           if [ -n "${SUPABASE_DB_URL:-}" ]; then
             if timeout 15 psql "$SUPABASE_DB_URL" -Atqc 'select 1' >/dev/null 2>&1; then
               echo "conectado via SUPABASE_DB_URL"
+              echo "::add-mask::$SUPABASE_DB_URL"
               echo "DB_URL=$SUPABASE_DB_URL" >> "$GITHUB_ENV"
               exit 0
             fi
@@ -658,6 +659,7 @@ jobs:
             echo "E2E_TOTP_SECRET (seed base32 do 2FA da conta) e rode o apply de novo."
             exit 1
           fi
+          echo "::add-mask::$E2E_TOTP_SECRET"
 
           # A conta E2E recriada perdeu também o fator TOTP: papel elevado
           # (coordinator) sem fator verificado é redirecionado p/

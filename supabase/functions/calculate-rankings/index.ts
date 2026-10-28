@@ -25,16 +25,22 @@ serve(async (req: Request): Promise<Response> => {
   const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
   const providedKey = req.headers.get("x-api-key") || authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
   const isCronKey = cronApiKey && providedKey === cronApiKey;
+  // Chamadas de cron no padrão dual-header (Bearer service_role +
+  // x-cron-secret) não resolvem usuário — o segredo precisa ser avaliado
+  // ANTES do getUser, senão o Bearer service_role vira 401 abaixo e o
+  // x-cron-secret nunca é consultado.
+  const isCron = isCronKey ||
+    !requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) });
   const hasBearer = authHeader?.startsWith("Bearer ");
 
-  if (!isCronKey && !hasBearer) {
+  if (!isCron && !hasBearer) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
-  if (!isCronKey && hasBearer) {
+  if (!isCron && hasBearer) {
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const userClient = createClient(supabaseUrl, anonKey);
     const { data: { user }, error: authError } = await userClient.auth.getUser(
@@ -69,10 +75,11 @@ serve(async (req: Request): Promise<Response> => {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // isCronKey já autenticou via x-api-key — o Bearer do padrão dual-header
-    // (service_role) não resolve usuário e não deve ser re-checado aqui.
+    // isCron já autenticou via x-api-key ou x-cron-secret — o Bearer do
+    // padrão dual-header (service_role) não resolve usuário e não deve ser
+    // re-checado aqui.
     const authHeader = req.headers.get("Authorization");
-    if (authHeader && !isCronKey) {
+    if (authHeader && !isCron) {
       const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
         global: { headers: { Authorization: authHeader } },
       });

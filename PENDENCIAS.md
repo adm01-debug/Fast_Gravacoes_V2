@@ -1,26 +1,17 @@
 # PENDENCIAS — itens que dependem de ação manual do Joaquim
 
-## 0. Reprovisionar conta E2E — papéis ✅ / fator MFA (depende do PR)
+## 0. Conta E2E reprovisionada ✅ — resta só mergear o snapshot (PR #110)
 
-**Status dos papéis:** RESOLVIDO em produção — `operator` + `coordinator`
-ativos (DB Admin `apply`, run 40581585129). Os specs de auth/navegação já
-voltaram a passar.
+**RESOLVIDO em produção:** papéis `operator` + `coordinator` ativos (DB
+Admin `apply`, run 40581585129) e fator TOTP `verified` com o seed do
+secret `E2E_TOTP_SECRET` (run 40595010266). A suíte E2E caiu de 29 falhas
+para **1**: o snapshot `sidebar-expanded` (a conta recriada exibe nome
+"E2E", antes "E2E CI ROBOT") — baseline atualizado no PR #110, E2E verde
+no CI do próprio PR.
 
-**Restante — fator TOTP:** a conta E2E recriada também perdeu o fator MFA.
-Como `coordinator` é papel elevado, o `ProtectedRoute` redireciona toda rota
-protegida para `/mfa-enrollment` quando `listFactors()` não tem fator
-`verified` — a causa dos ~29 specs que ainda falham (admin, production,
-packaging, system-status, visual, accessibility).
-
-A correção está no step "Apply — fator MFA TOTP do usuário E2E" do DB Admin
-(idempotente: promove/realinha fatores `totp` existentes ao seed do secret
-`E2E_TOTP_SECRET`, ou enrola um novo `verified`; a suíte gera o código do
-desafio a partir de `E2E_TOTP_SECRET`).
-
-**O que fazer:** mergear o PR que adiciona o step e rodar Actions →
-**DB Admin** → Run workflow → ref `main` → `mode = apply`. Depois, re-rodar
-o job E2E do CI — a suíte deve voltar a verde. RLS/functions/migrations já
-foram descartados como causa via simulação autenticada.
+**O que fazer:** mergear o PR #110 (toca `src/` → merge dispara deploy,
+então fica com o Joaquim). Depois do merge, o CI da main deve fechar
+verde em todos os jobs, incluindo E2E.
 
 ## 1. Secrets E2E (GitHub Actions)
 

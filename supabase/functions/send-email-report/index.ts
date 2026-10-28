@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts"
 import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'
 import { authenticate, requireRole } from '../_shared/auth.ts';
+import { requireCronSecret } from '../_shared/cronAuth.ts';
 import { escapeHtml } from "../_shared/htmlEscape.ts";
 
 interface ReportRequest {
@@ -30,24 +31,32 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
-    // duplicada. Contrato preservado: coordinator/admin (sem AAL2).
-    const auth = await authenticate(req, {
-      supabaseUrl,
-      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
-      requestId,
-      corsHeaders: cors,
-    });
-    if (!auth.ok) {
-      log.warn("auth.rejected");
-      return auth.response;
-    }
+    // Cron do painel chama no padrão dual-header (Bearer service_role +
+    // x-cron-secret) e não carrega JWT de usuário — avaliar o segredo ANTES
+    // do authenticate, senão a chamada do agendador vira 401 e o segredo
+    // nunca é consultado. failClosed: e-mail de relatório expõe dados de
+    // produção, então sem CRON_SECRET configurado ninguém passa por aqui.
+    const isCron = !requireCronSecret(req, { failClosed: true, corsHeaders: cors });
+    if (!isCron) {
+      // Etapas 26-27 do plano-50: middleware comum substitui a verificação manual
+      // duplicada. Contrato preservado: coordinator/admin (sem AAL2).
+      const auth = await authenticate(req, {
+        supabaseUrl,
+        supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+        requestId,
+        corsHeaders: cors,
+      });
+      if (!auth.ok) {
+        log.warn("auth.rejected");
+        return auth.response;
+      }
 
-    // Restrict to coordinator/admin role — report emails expose production data.
-    const forbidden = requireRole(auth.ctx, ["coordinator", "admin"], { requestId, corsHeaders: cors });
-    if (forbidden) {
-      log.warn("guard.rejected", { roles: auth.ctx.roles });
-      return forbidden;
+      // Restrict to coordinator/admin role — report emails expose production data.
+      const forbidden = requireRole(auth.ctx, ["coordinator", "admin"], { requestId, corsHeaders: cors });
+      if (forbidden) {
+        log.warn("guard.rejected", { roles: auth.ctx.roles });
+        return forbidden;
+      }
     }
 
     const rawBody = await req.json().catch(() => null);

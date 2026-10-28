@@ -1,5 +1,5 @@
 import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { requireCronSecret } from "./cronAuth.ts";
+import { requireCronSecret, requireUserOrCronSecret } from "./cronAuth.ts";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 const KEY = "CRON_SECRET";
@@ -59,4 +59,41 @@ Deno.test("sem CRON_SECRET: fail-closed rejeita", () => {
 
 Deno.test("sem CRON_SECRET: fail-open permite (padrão)", () => {
   assertEquals(withSecret(null, () => requireCronSecret(req(), { corsHeaders: CORS })), null);
+});
+
+// Regressão: o Bearer que não resolve usuário (ex.: service_role do padrão
+// dual-header Bearer + x-cron-secret dos crons versionados) deve cair na
+// checagem do segredo — rejeitar aqui faria o x-cron-secret nunca ser
+// avaliado e toda chamada de cron legítima virar 401.
+// Versão async de withSecret — o wrapper síncrono restauraria o env antes
+// da promise resolver.
+async function withSecretAsync(value: string | null, fn: () => Promise<unknown>): Promise<unknown> {
+  const previous = Deno.env.get(KEY);
+  if (value === null) Deno.env.delete(KEY);
+  else Deno.env.set(KEY, value);
+  try {
+    return await fn();
+  } finally {
+    if (previous === undefined) Deno.env.delete(KEY);
+    else Deno.env.set(KEY, previous);
+  }
+}
+
+Deno.test("requireUserOrCronSecret: Bearer não-usuário + x-cron-secret válido passa", async () => {
+  const res = await withSecretAsync("s3cr3t", () =>
+    requireUserOrCronSecret(
+      req({ authorization: "Bearer service-role-key", "x-cron-secret": "s3cr3t" }),
+      { supabaseUrl: "https://127.0.0.1:9", supabaseAnonKey: "anon", corsHeaders: CORS },
+    ));
+  assertEquals(res, null);
+});
+
+Deno.test("requireUserOrCronSecret: Bearer não-usuário sem x-cron-secret rejeita 401", async () => {
+  const res = await withSecretAsync("s3cr3t", () =>
+    requireUserOrCronSecret(
+      req({ authorization: "Bearer service-role-key" }),
+      { supabaseUrl: "https://127.0.0.1:9", supabaseAnonKey: "anon", corsHeaders: CORS },
+    ));
+  assert(res !== null);
+  assertEquals((res as Response).status, 401);
 });

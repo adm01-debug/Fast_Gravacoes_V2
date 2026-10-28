@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { isSoundEnabled } from '@/lib/soundFeedback';
 
 type SoundType = 'success' | 'error' | 'warning' | 'scan';
 
@@ -14,6 +15,8 @@ export function useSoundFeedback() {
   }, []);
 
   const playSound = (type: SoundType) => {
+    if (!isSoundEnabled()) return;
+
     if (!audioContext.current) {
       const AudioContextCtor =
         window.AudioContext ||

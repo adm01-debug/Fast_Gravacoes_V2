@@ -27,6 +27,7 @@ import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
 import { useSmartBack } from '@/hooks/use-smart-back';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
+import { hasActiveDialogSentinel } from '@/components/navigation/DialogHistoryGuard';
 import { trackNavBack } from '@/lib/navTelemetry';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -157,6 +158,14 @@ export function AppSidebar() {
                     onClick={() => {
                       SoundFeedback.navBack();
                       trackNavBack('button', hasInternalEntry ? 'history' : 'fallback');
+                      // Sentinela de dialog primeiro (mesmo padrão de
+                      // BackButton/MainLayout/Breadcrumbs): com dialog aberto
+                      // o Voltar só o fecha — confirmar "descartar?" aqui seria
+                      // enganoso.
+                      if (hasActiveDialogSentinel()) {
+                        goBack();
+                        return;
+                      }
                       confirmIfDirty(goBack);
                     }}
                     className="h-8 w-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all"
