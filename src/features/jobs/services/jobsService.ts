@@ -71,7 +71,7 @@ export const jobsService = {
   async updateStatus(id: string, status: JobStatus): Promise<Job> {
     const [{ data: { user } }, { data: current, error: fetchErr }] = await Promise.all([
       supabase.auth.getUser(),
-      supabase.from('jobs').select('status, actual_start_time').eq('id', id).single(),
+      supabase.from('jobs').select('status, actual_start_time, actual_end_time').eq('id', id).single(),
     ]);
     if (fetchErr) throw fetchErr;
 
@@ -87,7 +87,9 @@ export const jobsService = {
       // original — só carimba quando o job nunca iniciou.
       if (!current.actual_start_time) updateData.actual_start_time = new Date().toISOString();
       if (user) updateData.operator_id = user.id;
-    } else if (status === 'finished') {
+    } else if (status === 'finished' && !current.actual_end_time) {
+      // finished → packaging → finished: preserva o fim real de produção —
+      // sobrescrever corromperia o cálculo de ciclo/KPIs.
       updateData.actual_end_time = new Date().toISOString();
     }
 

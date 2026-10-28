@@ -107,7 +107,7 @@ export default function PublicTrackingPage() {
             .eq('order_number', safeQuery)
             .maybeSingle());
         }
-      } else {
+      } else if (!supabaseError && !data) {
         ({ data, error: supabaseError } = await supabase
           .from('jobs')
           .select(selectClause)
