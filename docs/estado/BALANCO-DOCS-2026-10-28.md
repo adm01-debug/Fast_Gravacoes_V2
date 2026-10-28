@@ -76,7 +76,8 @@ Leitura correta dos números:
   `push-*`; a página usa ids sintéticos `m-`/`p-`/`s-` de
   maintenance_alerts/machine_predictions/daily_summaries — são registros
   operacionais compartilhados (sem user_id); marcar-lida precisa do
-  campo de confirmação correto por tabela (is_read/acknowledged_at) e a
+  campo de confirmação correto por tabela (is_read/acknowledged_at —
+  daily_summaries não tem nenhum: exige receipt por usuário ou decisão) e a
   exclusão deve ficar restrita a `push-*` (recibo pessoal).
 - send-push-notification declara `Content-Encoding: aes128gcm` mas
   envia o payload sem criptografia — Web Push real provavelmente nunca
