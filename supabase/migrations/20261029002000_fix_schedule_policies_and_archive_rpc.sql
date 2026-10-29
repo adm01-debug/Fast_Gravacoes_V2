@@ -69,35 +69,41 @@ BEGIN
         );
 
         -- Netos: linhas de tabelas que referenciam a tabela filha.
-        FOR v_fk2 IN
-          SELECT kcu.table_name, kcu.column_name, ccu.column_name AS ref_column
-          FROM information_schema.table_constraints tc
-          JOIN information_schema.key_column_usage kcu
-            ON tc.constraint_name = kcu.constraint_name
-           AND tc.table_schema = kcu.table_schema
-          JOIN information_schema.constraint_column_usage ccu
-            ON tc.constraint_name = ccu.constraint_name
-           AND tc.table_schema = ccu.table_schema
-          WHERE tc.constraint_type = 'FOREIGN KEY'
-            AND tc.table_schema = 'public'
-            AND ccu.table_name = v_fk.table_name
-        LOOP
-          EXECUTE format(
-            'SELECT COALESCE(jsonb_agg(to_jsonb(u)), ''[]''::jsonb) FROM public.%I u WHERE u.%I IN (SELECT t.%I FROM public.%I t WHERE t.%I = $1)',
-            v_fk2.table_name, v_fk2.column_name, v_fk2.ref_column, v_fk.table_name, v_fk.column_name
-          ) INTO v_rows USING v_job.id;
-          v_children := jsonb_set(
-            v_children, ARRAY[v_fk2.table_name],
-            COALESCE(v_children -> v_fk2.table_name, '[]'::jsonb) || v_rows
-          );
-        END LOOP;
+        -- Pulado para a self-FK jobs→jobs: os filhos (retrabalho ativo)
+        -- ficam vivos, então seus dependentes não são "netos" a limpar.
+        IF v_fk.table_name <> 'jobs' THEN
+          FOR v_fk2 IN
+            SELECT kcu.table_name, kcu.column_name, ccu.column_name AS ref_column
+            FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu
+              ON tc.constraint_name = kcu.constraint_name
+             AND tc.table_schema = kcu.table_schema
+            JOIN information_schema.constraint_column_usage ccu
+              ON tc.constraint_name = ccu.constraint_name
+             AND tc.table_schema = ccu.table_schema
+            WHERE tc.constraint_type = 'FOREIGN KEY'
+              AND tc.table_schema = 'public'
+              AND ccu.table_name = v_fk.table_name
+          LOOP
+            EXECUTE format(
+              'SELECT COALESCE(jsonb_agg(to_jsonb(u)), ''[]''::jsonb) FROM public.%I u WHERE u.%I IN (SELECT t.%I FROM public.%I t WHERE t.%I = $1)',
+              v_fk2.table_name, v_fk2.column_name, v_fk2.ref_column, v_fk.table_name, v_fk.column_name
+            ) INTO v_rows USING v_job.id;
+            v_children := jsonb_set(
+              v_children, ARRAY[v_fk2.table_name],
+              COALESCE(v_children -> v_fk2.table_name, '[]'::jsonb) || v_rows
+            );
+          END LOOP;
+        END IF;
       END LOOP;
 
       INSERT INTO public.archived_jobs
         SELECT v_job.*, now(), v_children;
 
-      -- 2) Quebra de ciclos: anula FKs de saída do job que apontam para
-      -- tabelas filhas prestes a serem deletadas (ex.: shipment_id).
+      -- 2) Quebra de ciclos: anula só FKs NULLABLE do job que apontam
+      -- para tabelas filhas prestes a serem deletadas (ex.: shipment_id
+      -- no ciclo jobs↔shipments). FKs obrigatórias para tabelas de
+      -- domínio (technique_id etc.) não são tocadas.
       FOR v_fk2 IN
         SELECT kcu.column_name
         FROM information_schema.table_constraints tc
@@ -107,10 +113,29 @@ BEGIN
         JOIN information_schema.constraint_column_usage ccu
           ON tc.constraint_name = ccu.constraint_name
          AND tc.table_schema = ccu.table_schema
+        JOIN information_schema.columns col
+          ON col.table_schema = kcu.table_schema
+         AND col.table_name = kcu.table_name
+         AND col.column_name = kcu.column_name
         WHERE tc.constraint_type = 'FOREIGN KEY'
           AND tc.table_schema = 'public'
           AND tc.table_name = 'jobs'
           AND ccu.table_name <> 'jobs'
+          AND col.is_nullable = 'YES'
+          AND ccu.table_name IN (
+            SELECT kcu2.table_name
+            FROM information_schema.table_constraints tc2
+            JOIN information_schema.key_column_usage kcu2
+              ON tc2.constraint_name = kcu2.constraint_name
+             AND tc2.table_schema = kcu2.table_schema
+            JOIN information_schema.constraint_column_usage ccu2
+              ON tc2.constraint_name = ccu2.constraint_name
+             AND tc2.table_schema = ccu2.table_schema
+            WHERE tc2.constraint_type = 'FOREIGN KEY'
+              AND tc2.table_schema = 'public'
+              AND ccu2.table_name = 'jobs'
+              AND ccu2.column_name = 'id'
+          )
       LOOP
         EXECUTE format('UPDATE public.jobs SET %I = NULL WHERE id = $1', v_fk2.column_name)
         USING v_job.id;
@@ -132,9 +157,16 @@ BEGIN
           AND ccu.column_name = 'id'
           AND kcu.table_name <> 'jobs'  -- filhos jobs ficam (retrabalho ativo)
       LOOP
+        -- Netos bloqueantes: só os que impediriam o delete do filho
+        -- (NO ACTION/RESTRICT). SET NULL/CASCADE o banco resolve ao
+        -- deletar o pai — ex.: packaging_waste fica com task_id NULL
+        -- no livro de desperdícios em vez de ser apagado.
         FOR v_fk2 IN
           SELECT kcu.table_name, kcu.column_name, ccu.column_name AS ref_column
           FROM information_schema.table_constraints tc
+          JOIN information_schema.referential_constraints rc
+            ON tc.constraint_name = rc.constraint_name
+           AND tc.table_schema = rc.constraint_schema
           JOIN information_schema.key_column_usage kcu
             ON tc.constraint_name = kcu.constraint_name
            AND tc.table_schema = kcu.table_schema
@@ -144,6 +176,7 @@ BEGIN
           WHERE tc.constraint_type = 'FOREIGN KEY'
             AND tc.table_schema = 'public'
             AND ccu.table_name = v_fk.table_name
+            AND rc.delete_rule IN ('NO ACTION', 'RESTRICT')
         LOOP
           EXECUTE format(
             'DELETE FROM public.%I WHERE %I IN (SELECT t.%I FROM public.%I t WHERE t.%I = $1)',
