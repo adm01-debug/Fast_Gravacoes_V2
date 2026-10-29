@@ -15,6 +15,8 @@ const SEQUENCING_ERROR_CONTEXT = {
 export interface SequencingSuggestion {
   id: string;
   machineId: string;
+  /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode gerar uma sugestão por data. */
+  date: string;
   machineName: string;
   machineCode: string;
   techniqueId: string;
@@ -224,7 +226,7 @@ export function useSmartSequencingWithActions() {
 
     jobsByMachine.forEach((machineJobs, groupKey) => {
       if (machineJobs.length < 2) return;
-      const machineId = groupKey.split('|')[0];
+      const [machineId, groupDate] = groupKey.split('|');
 
       const machine = machines.find(m => m.id === machineId);
       if (!machine) return;
@@ -283,6 +285,7 @@ export function useSmartSequencingWithActions() {
         result.push({
           id: `seq-${++suggestionId}`,
           machineId,
+          date: groupDate,
           machineName: machine.name,
           machineCode: machine.code,
           techniqueId: machine.technique_id,

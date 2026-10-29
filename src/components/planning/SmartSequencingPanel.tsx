@@ -62,7 +62,7 @@ export function SmartSequencingPanel({ onExplain }: SmartSequencingPanelProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {suggestions.map((suggestion) => (
             <motion.div
-              key={suggestion.machineId}
+              key={suggestion.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="group p-4 rounded-xl border border-border/50 bg-card/30 hover:bg-card/50 transition-all cursor-pointer relative overflow-hidden"
@@ -104,6 +104,8 @@ export function SmartSequencingPanel({ onExplain }: SmartSequencingPanelProps) {
               <h3 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">{suggestion.machineName}</h3>
               <div className="flex items-center gap-2 mb-4">
                 <p className="text-xs text-muted-foreground">{suggestion.techniqueName}</p>
+                <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                <p className="text-xs text-muted-foreground">{new Date(suggestion.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</p>
                 <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                 <div className="flex items-center gap-1">
                    <Clock className="h-3 w-3 text-muted-foreground" />
