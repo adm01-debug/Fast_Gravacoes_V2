@@ -18,7 +18,7 @@ CREATE POLICY "Admins can manage maintenance schedules"
 -- então deleta — o histórico nunca se perde e FKs sem CASCADE não
 -- deixam o job meio arquivado. Um job com falha é pulado inteiro.
 CREATE OR REPLACE FUNCTION public.archive_finished_jobs(p_older_than timestamptz)
-RETURNS integer
+RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
@@ -29,6 +29,7 @@ DECLARE
   v_children jsonb;
   v_rows jsonb;
   v_archived integer := 0;
+  v_skipped integer := 0;
 BEGIN
   FOR v_job IN
     SELECT * FROM public.jobs
@@ -81,11 +82,13 @@ BEGIN
       DELETE FROM public.jobs WHERE id = v_job.id;
       v_archived := v_archived + 1;
     EXCEPTION WHEN OTHERS THEN
-      -- Falha num job não compromete o lote; ele permanece em jobs.
+      -- Falha num job não compromete o lote; ele permanece em jobs
+      -- e entra na contagem de pulados (visível no log do cron).
+      v_skipped := v_skipped + 1;
       RAISE WARNING 'archive_finished_jobs: job % pulado — %', v_job.id, SQLERRM;
     END;
   END LOOP;
-  RETURN v_archived;
+  RETURN jsonb_build_object('archived', v_archived, 'skipped', v_skipped);
 END;
 $$;
 

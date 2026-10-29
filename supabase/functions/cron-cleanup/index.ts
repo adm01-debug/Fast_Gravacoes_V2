@@ -38,13 +38,17 @@ serve(async (req) => {
     // histórico) para archived_jobs.children antes de deletar.
     let archivedJobs = 0;
     const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: archiveCount, error: archiveError } = await supabase
+    const { data: archiveResult, error: archiveError } = await supabase
       .rpc("archive_finished_jobs", { p_older_than: sixMonthsAgo });
 
     if (archiveError) {
       log.error("jobs.archive_rpc_failed", archiveError);
     } else {
-      archivedJobs = Number(archiveCount ?? 0);
+      const r = archiveResult as { archived?: number; skipped?: number } | null;
+      archivedJobs = Number(r?.archived ?? 0);
+      if (Number(r?.skipped ?? 0) > 0) {
+        log.warn("jobs.archive_skipped", { skipped: r?.skipped });
+      }
     }
 
     const totalPurged = purge.reduce((acc, r) => acc + Number(r.deleted_count), 0);
