@@ -8,6 +8,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { DemoDataBadge } from '@/components/ui/demo-data-badge';
 import { Brain, Zap, RefreshCw, AlertCircle, CheckCircle2, Target, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -59,9 +60,12 @@ export function AutonomousEventLog() {
             </div>
             Orquestração Autônoma (IA)
           </CardTitle>
-          <Badge variant="outline" className="text-[9px] font-bold border-primary/30 text-primary bg-primary/5">
-            LIVE
-          </Badge>
+          <div className="flex items-center gap-2">
+            <DemoDataBadge />
+            <Badge variant="outline" className="text-[9px] font-bold border-primary/30 text-primary bg-primary/5">
+              LIVE
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-0 flex-1 overflow-hidden">

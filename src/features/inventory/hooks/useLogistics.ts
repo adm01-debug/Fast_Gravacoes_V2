@@ -76,15 +76,19 @@ export function useLogistics() {
 
       if (error) throw error;
 
-      // Update job status if linked
+      // Update job status if linked — falha aqui deixaria shipping_status
+      // divergente entre shipments e jobs, então o erro é propagado.
       if (data.job_id) {
-        await supabase
+        const { error: jobError } = await supabase
           .from('jobs')
           .update({
             shipment_id: shipment.id,
             shipping_status: data.status
           })
           .eq('id', data.job_id);
+        if (jobError) {
+          throw new Error(`Envio criado, mas falha ao sincronizar o job ${data.job_id}: ${jobError.message}`);
+        }
       }
 
       return shipment;
@@ -95,6 +99,10 @@ export function useLogistics() {
       toast.success('Envio criado com sucesso');
     },
     onError: (error) => {
+      // Falha na sync do job ocorre DEPOIS do insert do envio: invalida
+      // para refletir o estado parcial real.
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
       showErrorToast(error, 'Erro ao criar envio');
     }
   });
@@ -112,14 +120,19 @@ export function useLogistics() {
 
       if (error) throw error;
 
-      // Sync with job if status changed
+      // Sync with job if status changed — idem: erro propagado em vez
+      // de divergência silenciosa.
       if (data.status) {
-        const { data: shipment } = await supabase.from('shipments').select('job_id').eq('id', id).single();
+        const { data: shipment, error: fetchError } = await supabase.from('shipments').select('job_id').eq('id', id).single();
+        if (fetchError) throw fetchError;
         if (shipment?.job_id) {
-          await supabase
+          const { error: jobError } = await supabase
             .from('jobs')
             .update({ shipping_status: data.status })
             .eq('id', shipment.job_id);
+          if (jobError) {
+            throw new Error(`Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message}`);
+          }
         }
       }
     },
@@ -129,6 +142,8 @@ export function useLogistics() {
       toast.success('Envio atualizado com sucesso');
     },
     onError: (error) => {
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
       showErrorToast(error, 'Erro ao atualizar envio');
     }
   });

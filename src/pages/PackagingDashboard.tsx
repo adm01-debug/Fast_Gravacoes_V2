@@ -217,8 +217,7 @@ export default function PackagingDashboard() {
             size="sm"
             className="ml-2"
             onClick={() => {
-              toast.info('Buscando impressoras térmicas na rede...');
-              setTimeout(() => toast.success('Impressora ZEBRA-GK420t encontrada e conectada.'), 1500);
+              toast.info('Nenhuma impressora térmica integrada. As etiquetas de lote podem ser impressas pelo navegador no card do item de inventário.');
             }}
           >
             <PrinterIcon className="h-4 w-4 mr-2" />
@@ -272,8 +271,47 @@ export default function PackagingDashboard() {
               onOpen={setOpenTaskId}
             />
             <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => toast.success('Manifesto de carga gerado para as tarefas concluídas hoje.')}
+              <Button
+                onClick={() => {
+                  const rows = grouped.completedToday;
+                  if (rows.length === 0) return;
+                  const headers = [
+                    'task_id','pedido','cliente','produto','recebidas','aprobadas',
+                    'rejeitadas','tipo_embalagem','pacotes','peso_kg','atribuido_a','concluido_em'
+                  ];
+                  const escape = (v: unknown) => {
+                    const s = v === null || v === undefined ? '' : String(v);
+                    return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+                  };
+                  const lines = [headers.join(';')];
+                  for (const t of rows) {
+                    lines.push([
+                      t.id,
+                      t.jobs?.order_number ?? '',
+                      t.jobs?.client ?? '',
+                      t.jobs?.product ?? '',
+                      t.received_quantity ?? 0,
+                      t.approved_quantity ?? 0,
+                      t.rejected_quantity ?? 0,
+                      t.package_type ?? '',
+                      t.packages_count ?? '',
+                      t.total_weight_kg ?? '',
+                      t.assigned_to ?? '',
+                      t.completed_at ?? '',
+                    ].map(escape).join(';'));
+                  }
+                  const csv = '\uFEFF' + lines.join('\n');
+                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `manifesto-carga-${new Date().toISOString().slice(0, 10)}.csv`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                  toast.success(`Manifesto gerado com ${rows.length} tarefa(s) concluída(s).`);
+                }}
                 disabled={grouped.completedToday.length === 0}
               >
                 <FileTextIcon className="h-4 w-4 mr-2" />
