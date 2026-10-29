@@ -76,23 +76,37 @@ export function useLogistics() {
 
       if (error) throw error;
 
-      // Update job status if linked
+      // Update job status if linked. O envio JÁ existe neste ponto: se a
+      // sincronização do job falhar, NÃO lançamos erro — isso deixaria o
+      // modal aberto e um novo envio seria inserido na nova tentativa
+      // (shipments.job_id não é único). Tratamos como sucesso parcial e
+      // avisamos o usuário para conferir o vínculo do job.
+      let jobSyncError: string | null = null;
       if (data.job_id) {
-        await supabase
+        const { error: jobError } = await supabase
           .from('jobs')
           .update({
             shipment_id: shipment.id,
             shipping_status: data.status
           })
           .eq('id', data.job_id);
+        if (jobError) {
+          jobSyncError = `Envio criado, mas falha ao vincular o job ${data.job_id}: ${jobError.message}`;
+        }
       }
 
-      return shipment;
+      return { shipment, jobSyncError };
     },
-    onSuccess: () => {
+    onSuccess: ({ jobSyncError }) => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      toast.success('Envio criado com sucesso');
+      if (jobSyncError) {
+        toast.warning(jobSyncError, {
+          description: 'Não crie o envio de novo: confira o vínculo do job na lista de envios.',
+        });
+      } else {
+        toast.success('Envio criado com sucesso');
+      }
     },
     onError: (error) => {
       showErrorToast(error, 'Erro ao criar envio');
@@ -112,14 +126,19 @@ export function useLogistics() {
 
       if (error) throw error;
 
-      // Sync with job if status changed
+      // Sync with job if status changed — idem: erro propagado em vez
+      // de divergência silenciosa.
       if (data.status) {
-        const { data: shipment } = await supabase.from('shipments').select('job_id').eq('id', id).single();
+        const { data: shipment, error: fetchError } = await supabase.from('shipments').select('job_id').eq('id', id).single();
+        if (fetchError) throw fetchError;
         if (shipment?.job_id) {
-          await supabase
+          const { error: jobError } = await supabase
             .from('jobs')
             .update({ shipping_status: data.status })
             .eq('id', shipment.job_id);
+          if (jobError) {
+            throw new Error(`Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message}`);
+          }
         }
       }
     },
@@ -129,6 +148,8 @@ export function useLogistics() {
       toast.success('Envio atualizado com sucesso');
     },
     onError: (error) => {
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
       showErrorToast(error, 'Erro ao atualizar envio');
     }
   });

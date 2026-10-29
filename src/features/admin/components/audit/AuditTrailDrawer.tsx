@@ -2,11 +2,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShieldCheckIcon } from 'lucide-react';
-import { useEntityAuditTrail } from '@/features/admin';
+import { useEntityAuditTrail } from '@/features/admin/hooks/useAuditTrail';
 import { AuditEntryCard } from './AuditEntryCard';
 import { HistoryPeriodFilter, type HistoryPeriodValue } from './HistoryPeriodFilter';
 import { useState, useCallback } from 'react';
-import { useDataExport } from '@/features/admin';
+import { useDataExport } from '@/features/admin/hooks/useDataExport';
 import type { Database } from '@/integrations/supabase/types';
 
 type PublicTable = keyof Database['public']['Tables'];

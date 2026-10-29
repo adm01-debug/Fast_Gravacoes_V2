@@ -138,6 +138,27 @@ describe('useLogistics', () => {
     expect(mocks.jobsUpdate).not.toHaveBeenCalled();
   });
 
+  it('falha ao vincular o job após criar o envio é sucesso parcial (não convida a recriar e duplicar)', async () => {
+    const { toast } = await import('sonner');
+    mockSupabaseFrom({
+      insertResult: { data: { id: 'ship-7' }, error: null },
+      jobsUpdateError: { message: 'permission denied' },
+    });
+
+    const { result } = renderHook(() => useLogistics(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.providers.isSuccess).toBe(true));
+
+    let out: { shipment: { id: string }; jobSyncError: string | null } | undefined;
+    await act(async () => {
+      out = await result.current.createShipment.mutateAsync({ job_id: 'job-1', status: 'pending' });
+    });
+
+    expect(out?.shipment.id).toBe('ship-7');
+    expect(out?.jobSyncError).toContain('job-1');
+    expect(toast.warning).toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
   it('propaga erro do Supabase ao criar um envio', async () => {
     mockSupabaseFrom({ insertResult: { data: null, error: new Error('violação de constraint') } });
 

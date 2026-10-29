@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { usePushNotifications } from '@/features/notifications';
-import { useNotificationSounds } from '@/features/notifications';
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
+import { useNotificationSounds } from '@/features/notifications/hooks/useNotificationSounds';
 import { supabase } from '@/integrations/supabase/client';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { MachinePrediction, PredictionFactor } from '@/features/analytics/hooks/useMLPredictions';

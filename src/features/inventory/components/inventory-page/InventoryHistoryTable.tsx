@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { useInventory, useInventoryMovements } from '@/features/inventory';
+import { useInventory, useInventoryMovements } from '@/features/inventory/hooks/useInventory';
 
 export function InventoryHistoryTable() {
   const [dateFilter, setDateFilter] = useState<'all' | '24h' | '7d' | '30d'>('all');

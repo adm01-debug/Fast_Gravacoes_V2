@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Bell, BellOff, BellRing, Check, X, AlertTriangle, Volume2, VolumeX } from "lucide-react";
-import { usePushNotifications } from "@/features/notifications";
-import { useNotificationSounds } from "@/features/notifications";
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
+import { useNotificationSounds } from '@/features/notifications/hooks/useNotificationSounds';
 import { cn } from "@/lib/utils";
 
 interface NotificationPreferences {

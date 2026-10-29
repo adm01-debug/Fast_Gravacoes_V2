@@ -102,19 +102,32 @@ export default function SPCDashboard() {
   const handleGenerateAIPlan = () => {
     if (!selectedParameter || !capability) return;
 
-    const context = `Parâmetro: ${selectedParameter.name}, Cp: ${capability.cp.toFixed(2)}, Cpk: ${capability.cpk.toFixed(2)}, Estabilidade: ${capability.performance}. Detectamos as seguintes violações: ${runRuleViolations.map(v => v.rule).join(', ')}.`;
+    // Plano de ação derivado dos dados reais do parâmetro (Cp/Cpk,
+    // estabilidade e violações de regras de corrida detectadas).
+    const tips: string[] = [];
+    // Recentralizar só ajuda quando a média está deslocada: Cpk bem abaixo
+    // de Cp. Processo centrado e muito variável tem Cp ≈ Cpk (< 1,33) e mover
+    // a média pioraria a capacidade.
+    if (capability.cpk < 1.33 && capability.cp - capability.cpk > 0.1) {
+      tips.push('Recentralizar o processo na meta (Cpk bem abaixo de Cp indica média deslocada)');
+    }
+    if (capability.cp < 1.33) {
+      tips.push('Reduzir a variabilidade intrínseca (Cp < 1,33: revisar setup, ferramenta e material)');
+    }
+    if (runRuleViolations.length > 0) {
+      tips.push('Investigar causas especiais de variação antes de ajustar o processo');
+    }
+    for (const v of runRuleViolations.slice(0, 3)) {
+      tips.push(`Corrigir violação detectada: ${v.rule}`);
+    }
+    if (tips.length === 0) {
+      tips.push('Processo capaz e estável — manter plano de amostragem atual');
+    }
 
-    toast.info('IA Analisando dados...', {
-      description: 'Consultando o Assistente Técnico para gerar plano de ação.'
+    toast.success(`Plano de ação — ${selectedParameter.name}`, {
+      description: tips.map((t, i) => `${i + 1}. ${t}`).join(' '),
+      duration: 12000,
     });
-
-    // We can navigate to the technical assistant or show a local dialog
-    // For now, let's simulate a sophisticated response
-    setTimeout(() => {
-      toast.success('Plano de Ação IA Gerado', {
-        description: `Recomendado: 1. Calibração de sensor de pressão. 2. Revisão do lote de tinta #${Math.floor(Math.random() * 9000)}. 3. Ajuste de velocidade de esteira para +5%.`
-      });
-    }, 2000);
   };
 
   return (
@@ -237,7 +250,7 @@ export default function SPCDashboard() {
                     ))}
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-4 italic">
-                    💡 A IA detectou padrões de variação não aleatória. Recomenda-se verificação de setup ou calibração de ferramenta.
+                    💡 Padrões de variação não aleatória detectados pelas regras de corrida. Recomenda-se verificação de setup ou calibração de ferramenta.
                   </p>
                 </CardContent>
               </Card>
@@ -262,7 +275,9 @@ export default function SPCDashboard() {
                         <div>
                           <p className="text-xs font-bold uppercase">Ajuste de Tolerância</p>
                           <p className="text-[11px] text-muted-foreground leading-tight">
-                            Com base no Cp de {(capability?.cp || 0).toFixed(2)}, você pode reduzir a tolerância em 15% sem afetar o refugo.
+                            {capability && capability.cp >= 1.33
+                              ? `Com Cp de ${capability.cp.toFixed(2)}, a tolerância pode ser reduzida em até ${Math.min(50, Math.floor((1 - 1.33 / capability.cp) * 100))}% mantendo Cp ≥ 1,33.`
+                              : `Cp de ${(capability?.cp || 0).toFixed(2)}: sem margem para reduzir tolerância — primeiro reduza a variabilidade.`}
                           </p>
                         </div>
                       </div>
@@ -272,9 +287,11 @@ export default function SPCDashboard() {
                           <FileSpreadsheet className="h-3.5 w-3.5" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold uppercase text-success">Traceabilidade de Lote</p>
+                          <p className="text-xs font-bold uppercase text-success">Dispersão do Processo</p>
                           <p className="text-[11px] text-muted-foreground leading-tight">
-                            Correlação detectada: Variação de {selectedParameter.name} aumenta 5% no final de turnos noturnos.
+                            {capability
+                              ? `Desvio padrão de ${capability.stdDev.toFixed(3)} e média em ${capability.mean.toFixed(3)} — compare com a meta de ${selectedParameter.target_value ?? '—'}.`
+                              : 'Sem dados de capacidade para este parâmetro.'}
                           </p>
                         </div>
                       </div>

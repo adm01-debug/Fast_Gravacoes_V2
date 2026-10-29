@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DbJob, type JobUpdate } from '@/features/jobs';
+import { type Job as DbJob, type JobUpdate } from '@/features/jobs/services/jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { findNextAvailableSlot } from '@/features/jobs';
+import { findNextAvailableSlot } from '@/features/jobs/services/scheduling';
 import { format, parse, isValid } from 'date-fns';
 
 interface UseDailyDragDropProps {

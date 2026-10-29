@@ -1,11 +1,6 @@
 import { useState } from 'react';
-import {
-  useBlockedIPs,
-  useBlockedIPsHistory,
-  useBlockIP,
-  useUnblockIP
-} from '@/features/admin';
-import { useRealtimeBlockedIPs } from '@/features/admin';
+import { useBlockedIPs, useBlockedIPsHistory, useBlockIP, useUnblockIP } from '@/features/admin/hooks/useRateLimitLogs';
+import { useRealtimeBlockedIPs } from '@/features/admin/hooks/useSecurityEvents';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

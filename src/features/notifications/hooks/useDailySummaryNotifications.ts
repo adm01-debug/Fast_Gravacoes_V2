@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/immutability -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { usePushNotifications } from '@/features/notifications';
-import { useNotificationSounds } from '@/features/notifications';
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
+import { useNotificationSounds } from '@/features/notifications/hooks/useNotificationSounds';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

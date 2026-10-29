@@ -36,14 +36,15 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
   const { averageUnitCost } = useABCCosts();
   const [expandedInsight, setExpandedInsight] = useState<number | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simulationResult, setSimulationResult] = useState<{ oee: number; revenue: number; risk: string } | null>(null);
+  const [simulationResult, setSimulationResult] = useState<{ oee: number; productionCost: number; risk: string } | null>(null);
 
   const runSimulation = () => {
     setIsSimulating(true);
     setTimeout(() => {
       setSimulationResult({
         oee: Math.min(98.5, oeeData.overallOEE * 1.12),
-        revenue: biMetrics.periodCompletedPieces * 3.2, // Otimização de margem
+        // custo médio ABC (custos alocados ÷ peças produzidas) × peças: é CUSTO, não receita.
+        productionCost: biMetrics.periodCompletedPieces * (averageUnitCost ?? 0),
         risk: biMetrics.periodLossRate > 5 ? 'Elevado' : 'Nominal'
       });
       setIsSimulating(false);
@@ -233,7 +234,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-primary font-bold uppercase tracking-[0.1em]">Simulador Preditivo</span>
-                  <span className="text-[8px] text-muted-foreground uppercase">Deep Learning Optimization</span>
+                  <span className="text-[8px] text-muted-foreground uppercase">Projeção heurística — estimativa</span>
                 </div>
               </div>
               {!simulationResult && (
@@ -252,8 +253,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
             {isSimulating && (
               <div className="space-y-3 p-2">
                 <div className="flex justify-between text-[9px] text-primary/80 font-mono tracking-widest">
-                  <span className="animate-pulse">PROCESSANDO VARIAÇÕES DE SETUP...</span>
-                  <span className="font-bold">SYNCING...</span>
+                  <span className="animate-pulse">CALCULANDO PROJEÇÃO...</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
                   <motion.div
@@ -293,15 +293,15 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
 
                 <div className="space-y-2 border-l border-white/10 pl-4">
                   <div className="flex items-center gap-2 text-[9px] text-primary/70 font-bold uppercase">
-                    <TrendingUp className="h-3.5 w-3.5" /> Valor Projetado
+                    <TrendingUp className="h-3.5 w-3.5" /> Custo Produzido (estimado)
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-black text-white tracking-tighter">
-                      R$ {simulationResult.revenue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                      R$ {simulationResult.productionCost.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
                     </span>
                     <div className="flex items-center text-[10px] text-success font-bold bg-success/10 px-1.5 py-0.5 rounded-md">
                       <TrendingUp className="h-2.5 w-2.5 mr-1" />
-                      +28%
+                      {averageUnitCost != null ? 'custo médio real' : 'sem custo médio'}
                     </div>
                   </div>
                 </div>
@@ -309,7 +309,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
                 <div className="col-span-2 mt-2 pt-3 border-t border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Info className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-[8px] text-muted-foreground uppercase font-mono">Confiança Algorítmica: 94.2%</span>
+                    <span className="text-[8px] text-muted-foreground uppercase font-mono">Estimativa, não medição: OEE = atual × 1,12 · custo = peças × custo médio</span>
                   </div>
                   <Badge variant="outline" className="text-[8px] border-primary/30 text-primary py-0 px-2 h-4">
                     ESTRATÉGIA AGRESSIVA

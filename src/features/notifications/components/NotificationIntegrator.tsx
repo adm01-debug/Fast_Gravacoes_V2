@@ -1,12 +1,12 @@
 import { useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { usePushNotifications } from "@/features/notifications";
-import { useNotificationSounds } from "@/features/notifications";
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
+import { useNotificationSounds } from '@/features/notifications/hooks/useNotificationSounds';
 import { useAuth } from "@/features/auth";
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
-import { useGoalAlerts } from "@/features/notifications";
+import { useGoalAlerts } from '@/features/notifications/hooks/useGoalAlerts';
 import { useOEEAlerts } from "@/features/production";
-import { useTPMNotifications } from "@/features/notifications";
+import { useTPMNotifications } from '@/features/notifications/hooks/useTPMNotifications';
 
 interface NotificationPreferences {
   delayedJobs: boolean;

@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { escapeHtml } from '@/lib/sanitize';
-import { InventoryItem } from '@/features/inventory';
+import { InventoryItem } from '@/features/inventory/hooks/useInventory';
 
 export function BatchQRLabelModal({ open, onOpenChange, items }: { open: boolean, onOpenChange: (o: boolean) => void, items: InventoryItem[] }) {
   const [size, setSize] = useState(150);

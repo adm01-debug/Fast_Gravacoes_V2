@@ -5,7 +5,7 @@ import { CheckCircle2, History } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-import type { EfficiencyAlertHistory } from '@/features/analytics';
+import type { EfficiencyAlertHistory } from '@/features/analytics/hooks/useEfficiencyAlertHistory';
 
 interface HistoryTabProps {
   resolvedAlerts: EfficiencyAlertHistory[];
