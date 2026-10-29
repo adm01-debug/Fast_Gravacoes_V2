@@ -176,12 +176,25 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
 
       if (error) throw error;
 
-      const blob = new Blob([data], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `OS_Tecnica_${record.id.substring(0, 8)}.pdf`;
-      link.click();
-      toast.success("PDF gerado com sucesso via servidor");
+      // A edge function devolve o relatório como texto UTF-8 (não PDF
+      // binário) — renderizamos para PDF real no cliente via jsPDF.
+      const text = typeof data === 'string' ? data : new TextDecoder().decode(data);
+      const { default: jsPDF } = await import('jspdf');
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      doc.setFontSize(10);
+      const lines = doc.splitTextToSize(text, 180);
+      let y = 15;
+      const pageHeight = doc.internal.pageSize.getHeight();
+      for (const line of lines as string[]) {
+        if (y > pageHeight - 15) {
+          doc.addPage();
+          y = 15;
+        }
+        doc.text(line, 15, y);
+        y += 5;
+      }
+      doc.save(`OS_Tecnica_${record.id.substring(0, 8)}.pdf`);
+      toast.success("PDF gerado com sucesso");
     } catch (e) {
 
       toast.error("Erro ao gerar PDF profissional. Usando impressão padrão...");
