@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { PermissionGate } from '@/features/auth';
 import { QRLabelModal } from '@/components/inventory/QRLabelModal';
-import { InventoryItem, InventoryMovement } from '@/features/inventory';
+import { InventoryItem, InventoryMovement } from '@/features/inventory/hooks/useInventory';
 
 export function InventoryCard({
   item,

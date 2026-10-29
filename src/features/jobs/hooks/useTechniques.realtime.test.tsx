@@ -10,7 +10,7 @@ const holder = vi.hoisted(() => ({
   realtime: null as RealtimeMock | null,
 }));
 
-vi.mock('@/features/jobs', () => ({
+vi.mock('@/features/jobs/services/techniquesService', () => ({
   techniquesService: { getAll: (...args: unknown[]) => holder.getAllMock(...args) },
 }));
 

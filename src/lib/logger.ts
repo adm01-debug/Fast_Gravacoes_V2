@@ -1,4 +1,3 @@
-import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 /**
@@ -58,6 +57,10 @@ async function flushLogs(): Promise<void> {
   // and are not double-sent.
   const batch = persistQueue.splice(0, persistQueue.length);
   try {
+    // Import dinâmico quebra o ciclo estático client → logger → client:
+    // o client instrumenta fetch via logger, então o logger não pode
+    // depender do client no grafo de imports.
+    const { supabase } = await import('@/integrations/supabase/client');
     const { error } = await supabase.from('error_logs').insert(batch);
     if (error) {
       // Do NOT route this through the logger (would recurse). Plain console only.

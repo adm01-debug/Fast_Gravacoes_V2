@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useInventory, useInventoryMovements, InventoryItem } from '@/features/inventory';
+import { useInventory, useInventoryMovements, InventoryItem } from '@/features/inventory/hooks/useInventory';
 
 type InventoryMovementRow = NonNullable<ReturnType<typeof useInventoryMovements>['data']>[number];
 

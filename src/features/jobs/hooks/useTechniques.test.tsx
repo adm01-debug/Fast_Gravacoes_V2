@@ -5,7 +5,7 @@ import React from 'react';
 
 const getAllMock = vi.fn();
 
-vi.mock('@/features/jobs', () => ({
+vi.mock('@/features/jobs/services/techniquesService', () => ({
   techniquesService: { getAll: (...args: unknown[]) => getAllMock(...args) },
 }));
 

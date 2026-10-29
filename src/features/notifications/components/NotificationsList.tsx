@@ -6,7 +6,7 @@ import { Bell, Wrench, Brain, Calendar, AlertTriangle, CheckCircle, Clock, BellO
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { useNotifications } from '@/features/notifications';
+import { useNotifications } from '@/features/notifications/hooks/useNotifications';
 
 interface NotificationItem {
   id: string;

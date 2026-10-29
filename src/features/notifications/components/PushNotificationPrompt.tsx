@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, BellOff, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { usePushNotifications } from "@/features/notifications";
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
 import { useAuth } from "@/features/auth";
 
 interface PushNotificationPromptProps {

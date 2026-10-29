@@ -23,15 +23,7 @@ import {
   Settings,
   MapPin
 } from 'lucide-react';
-import {
-  useGeoBlockingSettings,
-  useGeoBlockingRules,
-  useGeoBlockingLogs,
-  useUpdateGeoSettings,
-  useAddCountryRule,
-  useRemoveCountryRule,
-  COMMON_COUNTRIES
-} from '@/features/admin';
+import { useGeoBlockingSettings, useGeoBlockingRules, useGeoBlockingLogs, useUpdateGeoSettings, useAddCountryRule, useRemoveCountryRule, COMMON_COUNTRIES } from '@/features/admin/hooks/useGeoBlocking';
 import { useAuth } from '@/features/auth';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
