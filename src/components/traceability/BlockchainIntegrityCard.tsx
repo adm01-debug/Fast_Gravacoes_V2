@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { DemoDataBadge } from '@/components/ui/demo-data-badge';
 import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, Database, Fingerprint, Lock, Zap, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -13,6 +14,7 @@ export function BlockchainIntegrityCard() {
         <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-primary animate-pulse" />
           Blockchain Integrity Monitor (Evo 13/10)
+          <DemoDataBadge />
         </CardTitle>
         <CardDescription>Validação imutável de genealogia e registros</CardDescription>
       </CardHeader>

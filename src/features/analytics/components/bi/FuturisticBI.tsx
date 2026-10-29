@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect, Suspense } from 'react';
+import { useMemo, useState, useCallback, Suspense } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -44,16 +44,6 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
   const { operators } = useOperatorProductivity(30);
   const { stats: tpmStats } = useTPM();
   const { isExporting, handleExport: baseHandleExport } = useBIExport(biMetrics);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.8) {
-        setLastUpdated(new Date());
-      }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const jobsWithLosses = useMemo(() => {
     if (!biMetrics.periodJobsList) return [];

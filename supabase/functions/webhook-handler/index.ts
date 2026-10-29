@@ -172,7 +172,7 @@ async function processBitrix24Webhook(supabase: Supa, event: string, data: Event
     sync_type: 'webhook',
     status: 'partial',
     triggered_by: 'webhook',
-    error_message: 'logged_only: Bitrix24 → jobs mapping not yet implemented',
+    error_message: 'logged_only: endpoint legado — o mapeamento Bitrix24 → jobs roda em bitrix24-sync?action=webhook',
     details: { event, data },
     completed_at: new Date().toISOString(),
   });
@@ -185,7 +185,7 @@ async function processBitrix24Webhook(supabase: Supa, event: string, data: Event
     event,
     processed: false,
     status: 'logged_only',
-    detail: 'Bitrix24 → jobs mapping not yet implemented',
+    detail: 'endpoint legado — use bitrix24-sync?action=webhook (mapeia deals em jobs)',
     timestamp: new Date().toISOString(),
   };
 }
