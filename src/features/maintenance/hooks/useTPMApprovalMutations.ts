@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { addDays } from 'date-fns';
 import { showErrorToast } from '@/lib/errorHandling';
-import { logger } from '@/lib/logger';
 import { CheckCircle2 } from 'lucide-react';
 import { TPM_ERROR_CONTEXT } from './types';
 import type {
@@ -51,50 +50,22 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
         throw new Error('Pelo menos uma foto de evidência é obrigatória para itens que exigem foto.');
       }
 
-      const recordData = record;
-      const scheduleData = (recordData as { schedule?: { id: string; interval_days?: number } | null }).schedule ?? null;
+      const scheduleData = (record as { schedule?: { id: string; interval_days?: number } | null }).schedule ?? null;
       const nextDue = addDays(new Date(), scheduleData?.interval_days || 30).toISOString();
 
 
 
-      // Update the record to 'approved'
-      const { error: recordError } = await supabase
-        .from('maintenance_records')
-        .update({
-          status: 'approved',
-          approver_id: data.approver_id,
-          approved_at: new Date().toISOString(),
-          next_scheduled_date_after_approval: nextDue,
-        } as never)
-        .eq('id', data.record_id);
+      // RPC transacional: registro + agendamento + alertas numa só
+      // transação (migration 20261028233000). Se qualquer escrita falhar,
+      // nada é commitado — não existe estado "aprovado sem next_due_at".
+      const { error: approveError } = await supabase.rpc('approve_maintenance_record' as never, {
+        p_record_id: data.record_id,
+        p_approver_id: data.approver_id,
+        p_next_due: nextDue,
+        p_schedule_id: scheduleData?.id ?? null,
+      } as never);
 
-      if (recordError) throw recordError;
-
-      // Update the schedule
-      if (scheduleData) {
-        const { error: scheduleError } = await supabase
-          .from('maintenance_schedules')
-          .update({
-            last_completed_at: new Date().toISOString(),
-            next_due_at: nextDue,
-          })
-          .eq('id', scheduleData.id);
-
-        if (scheduleError) throw scheduleError;
-      }
-
-      // Resolve alerts — non-fatal: the record is already approved; log but
-      // do not throw so a missing schedule_id does not roll back the approval.
-      if (recordData.schedule_id) {
-        const { error: resolveError } = await supabase
-          .from('maintenance_alerts')
-          .update({ is_resolved: true, resolved_at: new Date().toISOString() })
-          .eq('schedule_id', recordData.schedule_id)
-          .eq('is_resolved', false);
-        if (resolveError) {
-          logger.error('Falha ao resolver alertas de manutenção após aprovação', resolveError, 'useTPMMutations');
-        }
-      }
+      if (approveError) throw approveError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
@@ -117,16 +88,23 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
       notes: string;
       deadline?: string;
     }) => {
-      const { error } = await (supabase
+      // Mesmo guarda atômico da aprovação: não sobrescrever um registro
+      // já aprovado/corrigido por outra decisão concorrente.
+      const { data: correctedRows, error } = await (supabase
         .from('maintenance_records')
         .update({
           status: 'correction_requested',
           correction_notes: data.notes,
           correction_deadline: data.deadline,
         } as never)
-        .eq('id', data.record_id));
+        .eq('id', data.record_id)
+        .eq('status', 'completed')
+        .select('id'));
 
       if (error) throw error;
+      if (!correctedRows || correctedRows.length === 0) {
+        throw new Error('Registro já foi processado por outra aprovação/correção');
+      }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-records'] });
@@ -180,34 +158,18 @@ export function useTPMApprovalMutations({ schedules, alerts }: UseTPMMutationsPr
 
         const nextDue = addDays(new Date(), record.schedule?.interval_days || 30).toISOString();
 
-        const { error: recordError } = await supabase
-          .from('maintenance_records')
-          .update({
-            status: 'approved',
-            approver_id: data.approver_id,
-            approved_at: new Date().toISOString(),
-            next_scheduled_date_after_approval: nextDue,
-          } as never)
-          .eq('id', id);
+        // Mesma RPC transacional da aprovação individual: registro +
+        // agendamento + alertas commitam juntos por registro.
+        const { error: approveError } = await supabase.rpc('approve_maintenance_record' as never, {
+          p_record_id: id,
+          p_approver_id: data.approver_id,
+          p_next_due: nextDue,
+          p_schedule_id: record.schedule?.id ?? null,
+        } as never);
 
-        if (recordError) {
-          failed.push({ id, reason: recordError.message });
+        if (approveError) {
+          failed.push({ id, reason: approveError.message });
           continue;
-        }
-
-        if (record.schedule) {
-          const { error: scheduleError } = await supabase
-            .from('maintenance_schedules')
-            .update({
-              last_completed_at: new Date().toISOString(),
-              next_due_at: nextDue,
-            })
-            .eq('id', record.schedule.id);
-
-          if (scheduleError) {
-            failed.push({ id, reason: scheduleError.message });
-            continue;
-          }
         }
         approved.push(id);
       }

@@ -89,22 +89,74 @@ export const QRScanner = () => {
 
   const onScanSuccess = async (decodedText: string) => {
     try {
-      const data = JSON.parse(decodedText);
-      if (data.type !== "job" || !data.id) {
-        toast.error("QR Code inválido");
-        return;
+      // JobQRCode emite a URL `${origin}/track?q=<orderNumber>&j=<jobId>`;
+      // o formato legado é JSON {"type":"job","id":...}.
+      // `j=` tem prioridade: identifica o job exato. `q=` (QRs antigos) cai
+      // na busca por order_number, que pode casar com mais de um job.
+      let jobId: string | null = null;
+      let orderNumber: string | null = null;
+      try {
+        const data = JSON.parse(decodedText);
+        if (data.type !== "job" || !data.id) {
+          toast.error("QR Code inválido");
+          return;
+        }
+        jobId = data.id;
+      } catch {
+        const jMatch = decodedText.match(/[?&]j=([^&]+)/);
+        if (jMatch) {
+          jobId = decodeURIComponent(jMatch[1]);
+        } else {
+          const match = decodedText.match(/[?&]q=([^&]+)/);
+          if (!match) {
+            toast.error("QR Code inválido");
+            return;
+          }
+          orderNumber = decodeURIComponent(match[1]);
+        }
       }
+
       await stopScanner();
       setIsLoading(true);
 
       let job;
       if (isOnline) {
-        const { data: res, error } = await supabase.from("jobs").select("*").eq("id", data.id).maybeSingle();
-        if (error) throw error;
-        job = res;
+        if (jobId) {
+          const { data: res, error } = await supabase.from("jobs").select("*").eq("id", jobId).maybeSingle();
+          if (error) throw error;
+          job = res;
+        } else {
+          // order_number não é único: dois jobs podem dividir o mesmo
+          // pedido. QR legado ambíguo é rejeitado em vez de escolher um.
+          const { data: res, error } = await supabase
+            .from("jobs")
+            .select("*")
+            .eq("order_number", orderNumber ?? "")
+            .order("created_at", { ascending: false })
+            .limit(2);
+          if (error) throw error;
+          if (res && res.length > 1) {
+            // QR legado sem `j=` é ambíguo: escolher um job arbitrário
+            // poderia levar o operador a iniciar/pausar o job errado.
+            toast.error(`Pedido ${orderNumber} tem ${res.length}+ jobs — escaneie a etiqueta da máquina (com j=) ou selecione o job manualmente`);
+            setIsLoading(false);
+            return;
+          }
+          job = res?.[0] ?? null;
+        }
       } else {
         const cached = getCachedJobs() as unknown as ScannedJob[];
-        job = cached.find(j => j.id === data.id);
+        if (jobId) {
+          job = cached.find(j => j.id === jobId);
+        } else {
+          const matches = cached.filter(j => j.order_number === orderNumber);
+          if (matches.length > 1) {
+            toast.error(`Pedido ${orderNumber} tem ${matches.length}+ jobs — sem desambiguação offline; selecione o job manualmente`);
+            setIsLoading(false);
+            return;
+          }
+          job = matches[0] ?? null;
+        }
       }
 
       if (!job) {

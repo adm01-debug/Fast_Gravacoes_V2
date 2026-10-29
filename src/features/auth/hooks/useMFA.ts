@@ -112,6 +112,16 @@ export function useMFA() {
 
   const unenroll = async (factorId: string) => {
     try {
+      // Desativar MFA é uma ação sensível: exige um challenge TOTP fresco
+      // (verify) antes do unenroll — evita que uma sessão roubada remova
+      // o segundo fator sem conhecimento do código.
+      const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
+      if (challengeError) throw challengeError;
+      const code = window.prompt('Digite o código do seu app autenticador para confirmar a desativação do MFA:');
+      if (!code) return false;
+      const { error: verifyError } = await supabase.auth.mfa.verify({ factorId, challengeId: challenge.id, code });
+      if (verifyError) throw verifyError;
+
       const { error } = await supabase.auth.mfa.unenroll({ factorId });
       if (error) throw error;
       await refreshFactors();

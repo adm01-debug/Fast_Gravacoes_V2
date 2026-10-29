@@ -96,18 +96,44 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     },
   });
 
+  // A página sintetiza ids por fonte: m- (maintenance_alerts),
+  // p- (machine_predictions), s- (daily_summaries) e push- (push_notifications).
   const markAsRead = useMutation({
     mutationFn: async (id: string) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
-      const { error } = await supabase
-        .from('push_notifications')
-        .update({ status: 'read' })
-        .eq('id', id)
-        .eq('user_id', user.id);
+      // 'push-' tem 5 caracteres — checar antes de fatiar o prefixo de 2.
+      let error;
+      let rows: unknown[] | null = null;
+      if (id.startsWith('push-')) {
+        ({ error } = await supabase
+          .from('push_notifications')
+          .update({ status: 'read' })
+          .eq('id', id.slice(5))
+          .eq('user_id', user.id));
+      } else if (id.startsWith('m-')) {
+        // .select('id') expõe falha silenciosa de RLS (update sem permissão
+        // afeta 0 linhas sem erro) — sem isso a UI fingia sucesso.
+        ({ data: rows, error } = await supabase.from('maintenance_alerts').update({ is_read: true }).eq('id', id.slice(2)).select('id'));
+      } else if (id.startsWith('p-')) {
+        ({ data: rows, error } = await supabase.from('machine_predictions').update({ acknowledged_at: new Date().toISOString(), acknowledged_by: user.id } as never).eq('id', id.slice(2)).select('id'));
+      } else if (id.startsWith('s-')) {
+        return; // resumos diários são registros imutáveis, sem estado de leitura
+      } else {
+        ({ error } = await supabase
+          .from('push_notifications')
+          .update({ status: 'read' })
+          .eq('id', id)
+          .eq('user_id', user.id));
+      }
       if (error) throw error;
+      if (rows !== null && rows.length === 0) throw new Error('Sem permissão ou registro inexistente');
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['maintenance-alerts-history'] });
+      queryClient.invalidateQueries({ queryKey: ['ml-predictions-history'] });
+    },
     onError: (error) => {
       logger.error('Erro ao marcar notificação como lida', error, 'useNotifications');
       toast.error('Erro ao marcar notificação como lida');
@@ -135,18 +161,27 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     },
   });
 
+  // "Excluir" só existe para push_notifications (registro pessoal do usuário).
+  // Alertas de manutenção e predições são operacionais e compartilhados:
+  // dispensá-los exigiria alterar is_resolved/is_active para toda a equipe —
+  // isso é decisão de quem resolve a manutenção, não de quem limpa a central.
   const deleteNotification = useMutation({
     mutationFn: async (id: string) => {
+      if (!id.startsWith('push-')) return;
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('push_notifications')
         .delete()
-        .eq('id', id)
+        .eq('id', id.slice(5))
         .eq('user_id', user.id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['maintenance-alerts-history'] });
+      queryClient.invalidateQueries({ queryKey: ['ml-predictions-history'] });
+    },
     onError: (error) => {
       logger.error('Erro ao excluir notificação', error, 'useNotifications');
       toast.error('Erro ao excluir notificação');

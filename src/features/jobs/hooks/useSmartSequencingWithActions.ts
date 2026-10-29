@@ -15,6 +15,8 @@ const SEQUENCING_ERROR_CONTEXT = {
 export interface SequencingSuggestion {
   id: string;
   machineId: string;
+  /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode gerar uma sugestão por data. */
+  date?: string;
   machineName: string;
   machineCode: string;
   techniqueId: string;
@@ -214,13 +216,17 @@ export function useSmartSequencingWithActions() {
 
       if (jobDate < today || jobDate > tomorrow) return;
 
-      const existing = jobsByMachine.get(job.machine_id) || [];
+      // Partição por máquina+dia: slots reiniciam às 07:00 por data —
+      // jobs de amanhã não podem continuar a fila de horários de hoje.
+      const groupKey = `${job.machine_id}|${jobDate.toISOString().slice(0, 10)}`;
+      const existing = jobsByMachine.get(groupKey) || [];
       existing.push(job);
-      jobsByMachine.set(job.machine_id, existing);
+      jobsByMachine.set(groupKey, existing);
     });
 
-    jobsByMachine.forEach((machineJobs, machineId) => {
+    jobsByMachine.forEach((machineJobs, groupKey) => {
       if (machineJobs.length < 2) return;
+      const [machineId, groupDate] = groupKey.split('|');
 
       const machine = machines.find(m => m.id === machineId);
       if (!machine) return;
@@ -279,6 +285,7 @@ export function useSmartSequencingWithActions() {
         result.push({
           id: `seq-${++suggestionId}`,
           machineId,
+          date: groupDate,
           machineName: machine.name,
           machineCode: machine.code,
           techniqueId: machine.technique_id,

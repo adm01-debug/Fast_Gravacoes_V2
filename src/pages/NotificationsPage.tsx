@@ -30,6 +30,7 @@ interface MaintenanceAlert {
 interface MachinePrediction {
   id: string; prediction_type: string; risk_score: number; predicted_failure_date: string | null;
   is_active: boolean; created_at: string; machine_id: string;
+  acknowledged_at: string | null;
   machines?: { name: string; code: string };
 }
 
@@ -95,7 +96,7 @@ const NotificationsPage = () => {
   const notifications = useMemo((): NotificationItem[] => {
     const items: NotificationItem[] = [];
     (maintenanceAlerts || []).forEach(a => items.push({ id: `m-${a.id}`, type: 'maintenance', title: `Manutenção ${a.alert_type === 'critical' ? 'Crítica' : a.alert_type === 'overdue' ? 'Atrasada' : 'Pendente'}`, message: `${a.machines?.name || 'Máquina'}: ${a.message}`, severity: a.alert_type === 'critical' ? 'critical' : a.alert_type === 'overdue' ? 'warning' : 'info', timestamp: a.created_at, isRead: a.is_read, isResolved: a.is_resolved }));
-    (predictions || []).forEach(p => items.push({ id: `p-${p.id}`, type: 'prediction', title: `Predição ${p.prediction_type === 'failure' ? 'de Falha' : 'de Manutenção'}`, message: `${p.machines?.name || 'Máquina'}: Risco ${p.risk_score}%${p.predicted_failure_date ? ` - Previsão: ${format(new Date(p.predicted_failure_date), 'dd/MM/yyyy')}` : ''}`, severity: p.risk_score >= 85 ? 'critical' : p.risk_score >= 70 ? 'warning' : 'info', timestamp: p.created_at, isResolved: !p.is_active }));
+    (predictions || []).forEach(p => items.push({ id: `p-${p.id}`, type: 'prediction', title: `Predição ${p.prediction_type === 'failure' ? 'de Falha' : 'de Manutenção'}`, message: `${p.machines?.name || 'Máquina'}: Risco ${p.risk_score}%${p.predicted_failure_date ? ` - Previsão: ${format(new Date(p.predicted_failure_date), 'dd/MM/yyyy')}` : ''}`, severity: p.risk_score >= 85 ? 'critical' : p.risk_score >= 70 ? 'warning' : 'info', timestamp: p.created_at, isRead: !!p.acknowledged_at, isResolved: !p.is_active }));
     (summaries || []).forEach(s => items.push({ id: `s-${s.id}`, type: 'summary', title: `Resumo Diário - ${format(new Date(s.date), "dd 'de' MMMM", { locale: ptBR })}`, message: s.data?.alerts?.has_critical ? `${s.data.alerts.total_attention_items} itens requerem atenção` : 'Nenhum item crítico', severity: s.data?.alerts?.has_critical ? 'warning' : 'success', timestamp: s.created_at }));
     return items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [maintenanceAlerts, predictions, summaries]);

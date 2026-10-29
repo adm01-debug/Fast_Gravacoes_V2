@@ -83,13 +83,18 @@ export function NotificationsList({ notifications, isLoading }: NotificationsLis
                   </p>
 
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {!notification.isRead && notification.id.startsWith('push-') && (
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary" onClick={() => markAsRead(notification.id.replace('push-', ''))}>
+                    {/* s- (daily_summaries) é registro imutável: sem ações. */}
+                    {!notification.isRead && !notification.id.startsWith('s-') && (
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary" onClick={() => markAsRead(notification.id)}>
                         <Check className="h-3.5 w-3.5" />
                       </Button>
                     )}
+                    {/* Lixeira só existe para push_notifications — alertas de
+                        manutenção e predições são registros operacionais
+                        compartilhados: "excluir" não pode marcá-los como
+                        resolvidos/inativos para toda a equipe. */}
                     {notification.id.startsWith('push-') && (
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={() => deleteNotification(notification.id.replace('push-', ''))}>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={() => deleteNotification(notification.id)}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     )}
