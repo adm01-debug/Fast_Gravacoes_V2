@@ -104,8 +104,12 @@ export function SmartSequencingPanel({ onExplain }: SmartSequencingPanelProps) {
               <h3 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">{suggestion.machineName}</h3>
               <div className="flex items-center gap-2 mb-4">
                 <p className="text-xs text-muted-foreground">{suggestion.techniqueName}</p>
-                <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                <p className="text-xs text-muted-foreground">{new Date(suggestion.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</p>
+                {suggestion.date && (
+                  <>
+                    <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                    <p className="text-xs text-muted-foreground">{new Date(suggestion.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</p>
+                  </>
+                )}
                 <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                 <div className="flex items-center gap-1">
                    <Clock className="h-3 w-3 text-muted-foreground" />

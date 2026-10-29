@@ -16,7 +16,7 @@ export interface SequencingSuggestion {
   id: string;
   machineId: string;
   /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode gerar uma sugestão por data. */
-  date: string;
+  date?: string;
   machineName: string;
   machineCode: string;
   techniqueId: string;
