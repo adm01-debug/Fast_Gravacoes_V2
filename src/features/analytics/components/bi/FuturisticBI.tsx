@@ -1,7 +1,6 @@
-import { useMemo, useState, useCallback, useEffect, Suspense } from 'react';
+import { useMemo, useState, useCallback, Suspense } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DemoDataBadge } from '@/components/ui/demo-data-badge';
 import { Badge } from '@/components/ui/badge';
 import {
   TrendingUp, Activity, Gauge, Target,
@@ -45,16 +44,6 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
   const { operators } = useOperatorProductivity(30);
   const { stats: tpmStats } = useTPM();
   const { isExporting, handleExport: baseHandleExport } = useBIExport(biMetrics);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.8) {
-        setLastUpdated(new Date());
-      }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const jobsWithLosses = useMemo(() => {
     if (!biMetrics.periodJobsList) return [];
@@ -239,7 +228,6 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
             <CardTitle className="flex items-center gap-3">
               <Activity className="h-5 w-5 text-primary" />
               <span className="text-title tracking-wider uppercase">Fluxo de Produção</span>
-              <DemoDataBadge />
             </CardTitle>
             <div className="flex items-center gap-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
               <TooltipProvider>

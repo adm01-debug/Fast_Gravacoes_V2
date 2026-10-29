@@ -33,30 +33,18 @@ serve(async (req) => {
     const purgeSummary: Record<string, number> = {};
     for (const row of purge) purgeSummary[row.table_name] = Number(row.deleted_count);
 
-    // 2) Arquivamento de jobs finalizados (> 180 dias).
+    // 2) Arquivamento de jobs finalizados (> 180 dias) — RPC
+    // transacional: copia o job e os filhos (QR scans, perdas,
+    // histórico) para archived_jobs.children antes de deletar.
     let archivedJobs = 0;
     const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: oldJobs, error: oldJobsError } = await supabase
-      .from("jobs")
-      .select("*")
-      .eq("status", "finished")
-      .lt("actual_end_time", sixMonthsAgo);
+    const { data: archiveCount, error: archiveError } = await supabase
+      .rpc("archive_finished_jobs", { p_older_than: sixMonthsAgo });
 
-    if (oldJobsError) {
-      log.error("jobs.archive_query_failed", oldJobsError);
-    } else if (oldJobs && oldJobs.length > 0) {
-      const { error: archiveError } = await supabase.from("archived_jobs").insert(oldJobs);
-      if (archiveError) {
-        log.error("jobs.archive_insert_failed", archiveError);
-      } else {
-        const ids = (oldJobs as Array<{ id: string }>).map((j) => j.id);
-        const { error: deleteError } = await supabase.from("jobs").delete().in("id", ids);
-        if (deleteError) {
-          log.error("jobs.archive_delete_failed", deleteError);
-        } else {
-          archivedJobs = oldJobs.length;
-        }
-      }
+    if (archiveError) {
+      log.error("jobs.archive_rpc_failed", archiveError);
+    } else {
+      archivedJobs = Number(archiveCount ?? 0);
     }
 
     const totalPurged = purge.reduce((acc, r) => acc + Number(r.deleted_count), 0);
