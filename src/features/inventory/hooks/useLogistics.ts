@@ -76,8 +76,12 @@ export function useLogistics() {
 
       if (error) throw error;
 
-      // Update job status if linked — falha aqui deixaria shipping_status
-      // divergente entre shipments e jobs, então o erro é propagado.
+      // Update job status if linked. O envio JÁ existe neste ponto: se a
+      // sincronização do job falhar, NÃO lançamos erro — isso deixaria o
+      // modal aberto e um novo envio seria inserido na nova tentativa
+      // (shipments.job_id não é único). Tratamos como sucesso parcial e
+      // avisamos o usuário para conferir o vínculo do job.
+      let jobSyncError: string | null = null;
       if (data.job_id) {
         const { error: jobError } = await supabase
           .from('jobs')
@@ -87,22 +91,24 @@ export function useLogistics() {
           })
           .eq('id', data.job_id);
         if (jobError) {
-          throw new Error(`Envio criado, mas falha ao sincronizar o job ${data.job_id}: ${jobError.message}`);
+          jobSyncError = `Envio criado, mas falha ao vincular o job ${data.job_id}: ${jobError.message}`;
         }
       }
 
-      return shipment;
+      return { shipment, jobSyncError };
     },
-    onSuccess: () => {
+    onSuccess: ({ jobSyncError }) => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      toast.success('Envio criado com sucesso');
+      if (jobSyncError) {
+        toast.warning(jobSyncError, {
+          description: 'Não crie o envio de novo: confira o vínculo do job na lista de envios.',
+        });
+      } else {
+        toast.success('Envio criado com sucesso');
+      }
     },
     onError: (error) => {
-      // Falha na sync do job ocorre DEPOIS do insert do envio: invalida
-      // para refletir o estado parcial real.
-      queryClient.invalidateQueries({ queryKey: ['shipments'] });
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
       showErrorToast(error, 'Erro ao criar envio');
     }
   });

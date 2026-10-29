@@ -105,8 +105,11 @@ export default function SPCDashboard() {
     // Plano de ação derivado dos dados reais do parâmetro (Cp/Cpk,
     // estabilidade e violações de regras de corrida detectadas).
     const tips: string[] = [];
-    if (capability.cpk < 1.33) {
-      tips.push('Recentralizar o processo na meta (Cpk < 1,33 indica média deslocada dos limites de especificação)');
+    // Recentralizar só ajuda quando a média está deslocada: Cpk bem abaixo
+    // de Cp. Processo centrado e muito variável tem Cp ≈ Cpk (< 1,33) e mover
+    // a média pioraria a capacidade.
+    if (capability.cpk < 1.33 && capability.cp - capability.cpk > 0.1) {
+      tips.push('Recentralizar o processo na meta (Cpk bem abaixo de Cp indica média deslocada)');
     }
     if (capability.cp < 1.33) {
       tips.push('Reduzir a variabilidade intrínseca (Cp < 1,33: revisar setup, ferramenta e material)');
@@ -273,7 +276,7 @@ export default function SPCDashboard() {
                           <p className="text-xs font-bold uppercase">Ajuste de Tolerância</p>
                           <p className="text-[11px] text-muted-foreground leading-tight">
                             {capability && capability.cp >= 1.33
-                              ? `Com Cp de ${capability.cp.toFixed(2)}, a tolerância pode ser reduzida em até ${Math.min(50, Math.round((1 - 1.33 / capability.cp) * 100))}% mantendo Cp ≥ 1,33.`
+                              ? `Com Cp de ${capability.cp.toFixed(2)}, a tolerância pode ser reduzida em até ${Math.min(50, Math.floor((1 - 1.33 / capability.cp) * 100))}% mantendo Cp ≥ 1,33.`
                               : `Cp de ${(capability?.cp || 0).toFixed(2)}: sem margem para reduzir tolerância — primeiro reduza a variabilidade.`}
                           </p>
                         </div>

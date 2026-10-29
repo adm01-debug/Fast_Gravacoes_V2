@@ -1,3 +1,4 @@
+import { sanitizeCsvCell } from '@/lib/csvSafety';
 import { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePackagingQueue } from '@/features/packaging/hooks/usePackagingQueue';
@@ -74,6 +75,11 @@ export default function PackagingDashboard() {
       completedToday: list.filter(t => t.status === 'ready_to_ship' && (t.completed_at ?? '').startsWith(today)),
     };
   }, [filteredTasks]);
+
+  const completedTodayAll = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return (allTasks ?? []).filter(t => t.status === 'ready_to_ship' && (t.completed_at ?? '').startsWith(today));
+  }, [allTasks]);
 
   return (
     <MainLayout>
@@ -273,14 +279,17 @@ export default function PackagingDashboard() {
             <div className="mt-4 flex justify-end">
               <Button
                 onClick={() => {
-                  const rows = grouped.completedToday;
+                  // Manifesto é documento operacional: usa TODAS as tarefas
+                  // concluídas hoje, não o subconjunto dos filtros de tela.
+                  const rows = completedTodayAll;
                   if (rows.length === 0) return;
                   const headers = [
-                    'task_id','pedido','cliente','produto','recebidas','aprobadas',
+                    'task_id','pedido','cliente','produto','recebidas','aprovadas',
                     'rejeitadas','tipo_embalagem','pacotes','peso_kg','atribuido_a','concluido_em'
                   ];
                   const escape = (v: unknown) => {
-                    const s = v === null || v === undefined ? '' : String(v);
+                    // sanitizeCsvCell neutraliza injeção de fórmula (= + - @).
+                    const s = sanitizeCsvCell(v === null || v === undefined ? '' : String(v));
                     return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
                   };
                   const lines = [headers.join(';')];
@@ -312,7 +321,7 @@ export default function PackagingDashboard() {
                   URL.revokeObjectURL(url);
                   toast.success(`Manifesto gerado com ${rows.length} tarefa(s) concluída(s).`);
                 }}
-                disabled={grouped.completedToday.length === 0}
+                disabled={completedTodayAll.length === 0}
               >
                 <FileTextIcon className="h-4 w-4 mr-2" />
                 Gerar Manifesto de Carga
