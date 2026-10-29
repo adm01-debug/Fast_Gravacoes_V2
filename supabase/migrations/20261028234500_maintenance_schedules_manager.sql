@@ -8,3 +8,11 @@ CREATE POLICY "Managers can manage maintenance schedules"
   ON public.maintenance_schedules FOR ALL
   USING (has_role(auth.uid(), 'manager'))
   WITH CHECK (has_role(auth.uid(), 'manager'));
+
+-- Admins bypassam o guard de rota /tpm e também podem aprovar — sem
+-- essa policy a RPC de aprovação atualizaria o agendamento filtrado a
+-- zero linhas em silêncio para eles.
+CREATE POLICY "Admins can manage maintenance schedules"
+  ON public.maintenance_schedules FOR ALL
+  USING (has_role(auth.uid(), 'admin'))
+  WITH CHECK (has_role(auth.uid(), 'admin'));

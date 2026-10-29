@@ -214,13 +214,17 @@ export function useSmartSequencingWithActions() {
 
       if (jobDate < today || jobDate > tomorrow) return;
 
-      const existing = jobsByMachine.get(job.machine_id) || [];
+      // Partição por máquina+dia: slots reiniciam às 07:00 por data —
+      // jobs de amanhã não podem continuar a fila de horários de hoje.
+      const groupKey = `${job.machine_id}|${jobDate.toISOString().slice(0, 10)}`;
+      const existing = jobsByMachine.get(groupKey) || [];
       existing.push(job);
-      jobsByMachine.set(job.machine_id, existing);
+      jobsByMachine.set(groupKey, existing);
     });
 
-    jobsByMachine.forEach((machineJobs, machineId) => {
+    jobsByMachine.forEach((machineJobs, groupKey) => {
       if (machineJobs.length < 2) return;
+      const machineId = groupKey.split('|')[0];
 
       const machine = machines.find(m => m.id === machineId);
       if (!machine) return;

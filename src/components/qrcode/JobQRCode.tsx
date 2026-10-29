@@ -23,7 +23,7 @@ export const JobQRCode = forwardRef<HTMLDivElement, JobQRCodeProps>(({
   // `j=` leva o id do job: order_number pode ser compartilhado por vários
   // jobs, então a etiqueta precisa identificar o job exato. `q=` permanece
   // para a página pública /track e para QRs antigos já impressos.
-  const qrValue = `${window.location.origin}/track?q=${orderNumber}&j=${jobId}`;
+  const qrValue = `${window.location.origin}/track?q=${encodeURIComponent(orderNumber)}&j=${encodeURIComponent(jobId)}`;
 
   const handleDownload = () => {
     const svg = document.getElementById(`qr-${jobId}`);
