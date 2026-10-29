@@ -13,7 +13,6 @@ export * from './hooks/useGoalAlerts';
 export * from './types';
 
 // Components
-export { NotificationCenter } from './components/NotificationCenter';
 export { NotificationIntegrator } from './components/NotificationIntegrator';
 export { RealtimeNotificationsProvider } from './components/RealtimeNotificationsProvider';
 export { PushNotificationManager } from './components/PushNotificationManager';

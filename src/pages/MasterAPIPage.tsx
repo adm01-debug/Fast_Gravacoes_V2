@@ -22,6 +22,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { DemoDataBadge } from '@/components/ui/demo-data-badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
@@ -53,7 +54,8 @@ export default function MasterAPIPage() {
             </h1>
             <p className="text-muted-foreground mt-1">Conecte sua fábrica a qualquer ERP, CRM ou BI Externo</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <DemoDataBadge />
              <Badge variant="outline" className="bg-success/10 text-success border-success/20 uppercase font-black px-3 py-1">
                <div className="w-1.5 h-1.5 rounded-full bg-success mr-2 animate-pulse" />
                Sistemas Operantes
