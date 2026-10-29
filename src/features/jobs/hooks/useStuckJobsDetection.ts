@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useJobs } from '@/features/jobs/hooks/useJobs';
-import { DbJob } from '@/features/jobs/services/jobsService';
+import { type Job as DbJob } from '@/features/jobs/services/jobsService';
 import { useMemo } from 'react';
 
 export interface StuckJob {

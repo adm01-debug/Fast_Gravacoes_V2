@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { DbJob, jobsService } from '@/features/jobs/services/jobsService';
+import { type Job as DbJob, jobsService } from '@/features/jobs/services/jobsService';
 import { assertTransition } from '@/features/jobs/services/jobStateMachine';
 import { JobStatus } from '@/features/jobs/types/job.schema';
 import { supabase } from '@/integrations/supabase/client';
