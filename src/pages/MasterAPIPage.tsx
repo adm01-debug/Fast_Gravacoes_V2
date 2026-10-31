@@ -27,7 +27,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 export default function MasterAPIPage() {
-  const [apiKey, setApiKey] = useState('sk_live_fast_9283749123847');
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_MASTER_API_DISPLAY_KEY ?? '');
   const [showKey, setShowKey] = useState(false);
 
   const copyToClipboard = (text: string) => {
