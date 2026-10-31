@@ -1,0 +1,56 @@
+rota,pagina,roles_permitidos,tipo,status
+/auth,AuthPage,público,public,ativo
+/reset-password,ResetPasswordPage,público,public,ativo — bloqueado para anon por RLS (PR #119 pendente)
+/install,InstallAppPage,público,public,ativo
+/track,PublicTrackingPage,público,public,ativo
+/design-system,DesignSystemPage,público,public,ativo
+/,Index (Dashboard),todos autenticados,protected,ativo
+/calendar/daily,DailyCalendar,"coordinator,manager",protected,ativo
+/calendar/weekly,WeeklyCalendar,"coordinator,manager",protected,ativo
+/calendar/monthly,MonthlyCalendar,"coordinator,manager",protected,ativo
+/pending,PendingQueue,coordinator,protected,ativo
+/alerts,AlertsDashboard,todos autenticados,protected,ativo
+/kanban,KanbanBoard,"coordinator,manager,operator",protected,ativo
+/new-job,NewJobPage,"coordinator,manager",protected,ativo
+/packaging,PackagingDashboard,"coordinator,manager,operator",protected,ativo
+/packaging/kiosk,PackagingKioskPage,"coordinator,manager,operator",protected,ativo
+/kpis,KPIDashboard,"coordinator,manager",protected,ativo
+/efficiency,EfficiencyDashboard,"coordinator,manager",protected,ativo
+/oee,OEEDashboard,"coordinator,manager",protected,ativo
+/spc,SPCDashboard,"coordinator,manager",protected,ativo — mock Math.random removido em devin/1793268046
+/executive,ExecutiveDashboard,"manager,coordinator",protected,ativo
+/bi,BIDashboard,"manager,coordinator",protected,ativo
+/report-builder,ReportBuilderPage,"manager,coordinator",protected,ativo
+/abc-costing,ABCCostingDashboard,"coordinator,manager",protected,ativo
+/tpm,TPMDashboard,"coordinator,manager",protected,ativo
+/ml-predictions,MLPredictionsDashboard,"coordinator,manager",protected,ativo
+/digital-twin,DigitalTwin,"coordinator,manager",protected,ativo
+/operator,OperatorView,todos autenticados,protected,ativo
+/operators,OperatorsPage,"coordinator,manager",protected,ativo
+/operator-productivity,OperatorProductivityPage,"coordinator,manager",protected,ativo
+/operator-history,OperatorHistoryPage,"coordinator,manager",protected,ativo
+/machines,MachinesPage,"coordinator,manager",protected,ativo
+/machines/compare,MachineComparisonPage,"coordinator,manager",protected,ativo
+/energy,EnergyDashboard,"coordinator,manager",protected,ativo
+/inventory,InventoryPage,"coordinator,manager",protected,ativo
+/traceability,TraceabilityPage,"coordinator,manager",protected,ativo
+/logistics,LogisticsPage,"coordinator,manager",protected,ativo
+/assistant,TechnicalAssistantPage,todos autenticados,protected,ativo
+/knowledge,TechnicalKnowledgeBase,todos autenticados,protected,ativo
+/documents,DocumentsPage,todos autenticados,protected,ativo
+/scanner,QRScannerPage,todos autenticados,protected,ativo
+/shift-handover,ShiftHandoverPage,todos autenticados,protected,ativo
+/gamification,GamificationPage,todos autenticados,protected,ativo
+/notifications,NotificationsPage,todos autenticados,protected,ativo
+/mfa-enrollment,MfaEnrollmentPage,todos autenticados,protected,ativo
+/integrations/bitrix24,Bitrix24ConfigPage,coordinator,protected,ativo — verify_jwt pendente (PENDENCIAS.md item 2)
+/settings,SettingsPage,"coordinator,manager",protected,ativo
+/security,SecurityDashboard,"coordinator,manager",protected,ativo
+/audit,AuditTrailPage,"coordinator,manager",protected,ativo
+/master-api,MasterAPIPage,"coordinator,manager",protected,ativo — chave hardcoded removida (PR #118)
+/code-quality,CodeQualityDashboard,"coordinator,manager",protected,ativo
+/admin/telemetria,AdminTelemetriaPage,"coordinator,manager",protected,ativo
+/admin/monitoring,SystemMonitoringPage,"coordinator,manager",protected,ativo
+/status,SystemStatusPage,todos autenticados,protected,ativo
+/simulation,SimulationDashboard,"coordinator,manager",protected,ativo
+/kiosk,KioskPage,todos autenticados,protected,ativo
