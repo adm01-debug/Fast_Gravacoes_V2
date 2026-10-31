@@ -1,0 +1,2 @@
+numero,titulo,autor,draft,base_sha,head_sha,head_branch,estado,mergeavel,checks,veredito,motivo_bloqueio
+119,fix: restaurar INSERT anon em password_reset_requests (RLS bloqueava fluxo de reset de senha),adm01-debug,false,ebe3a6b2a6655e0f0d5e44bac4a2fb1766fddcbb,955d45a014c107830f47a9ea0cd99cba5033ed49,claude/fix-password-reset-anon-rls-261031-1645,open,true (sem conflito),sem CI configurado,DECISAO_HUMANA,Ampliação de acesso anon (regra de negócio necessária) + DROP POLICY IF EXISTS na migration: exige aprovação humana conforme CLAUDE.md regra 8 e autopilot Fase 6
