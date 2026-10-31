@@ -1,0 +1,20 @@
+{
+  "data": "2026-10-31",
+  "main_sha": "ebe3a6b2",
+  "total_prs_iniciais": 1,
+  "total_branches_sem_pr": 4,
+  "analisadas": 5,
+  "vereditos": {
+    "PR_119": "DECISAO_HUMANA",
+    "divida-estrutural-2": "DECISAO_HUMANA_resgatar_parcial",
+    "audit-csp": "DECISAO_HUMANA_conflitos",
+    "migration-repair": "BLOQUEADO_workflows",
+    "db-admin-alter-role": "BLOQUEADO_workflows"
+  },
+  "merges_executados": [],
+  "baseline": {
+    "tsc": "PASS",
+    "lint": "PASS (22 warnings, 0 errors)",
+    "testes": "NAO_VERIFICADO (node indisponivel sem nvm)"
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "numero": 119,
+    "titulo": "fix: corrigir politica RLS password_reset_requests para anon",
+    "autor": "claude",
+    "branch": "claude/fix-password-reset-anon-rls-261031-1645",
+    "base": "main",
+    "sha_head": "955d45a014c107830f47a9ea0cd99cba5033ed49",
+    "draft": false,
+    "ci": "success",
+    "conflitos": false,
+    "veredito": "DECISAO_HUMANA",
+    "motivo": "Contem DROP POLICY IF EXISTS - DDL em producao. CLAUDE.md regra 8 exige aprovacao de Joaquim.",
+    "arquivos": [
+      "supabase/migrations/20261031184500_fix_password_reset_anon_policy.sql"
+    ]
+  }
+]

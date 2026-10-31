@@ -1,2 +1,51 @@
 {
-  " data\:
+  "data": "2026-10-31",
+  "main_sha": "ebe3a6b2a6655e0f0d5e44bac4a2fb1766fddcbb",
+  "branches_analisadas": [
+    {
+      "nome": "origin/devin/1793268046-divida-estrutural-2",
+      "sha": "0b4c7e245f70fd3f8c8e86b68098c63a26f42e94",
+      "commits_desde_main": 4,
+      "tem_pr": false,
+      "conflito_merge": false
+    },
+    {
+      "nome": "origin/devin/1790870081-audit-csp",
+      "sha": "0256d1c6ecabe48f42fd97ce9d145034b79e5b7d",
+      "commits_desde_main": 10,
+      "tem_pr": false,
+      "conflito_merge": true,
+      "conflitos": [
+        "supabase/functions/_shared/rateLimit.test.ts",
+        "supabase/functions/csp-report/index.ts"
+      ]
+    },
+    {
+      "nome": "origin/devin/1791372473-migration-repair",
+      "sha": "d1632a899ff54d239c0d25ca0bdd4a1737d6f6b5",
+      "commits_desde_main": 3,
+      "tem_pr": false,
+      "vetado": "altera .github/workflows"
+    },
+    {
+      "nome": "origin/devin/1791466219-db-admin-alter-role",
+      "sha": "f4f4cfa9c96908737aa3bdebbdb102bc6b2c688d",
+      "commits_desde_main": 1,
+      "tem_pr": false,
+      "vetado": "altera .github/workflows"
+    }
+  ],
+  "prs_abertas": [
+    {
+      "numero": 119,
+      "sha_head": "955d45a014c107830f47a9ea0cd99cba5033ed49",
+      "ci": "success",
+      "veredito": "DECISAO_HUMANA",
+      "motivo": "DDL com DROP POLICY em producao, CLAUDE.md regra 8"
+    }
+  ],
+  "prs_mergeadas_nesta_sessao": [
+    117,
+    118
+  ]
+}
