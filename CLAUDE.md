@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+> Regras de trabalho do dono (como trabalhar, Git, PR, comunicação): `AGENTS.md`, importado abaixo.
+
+@AGENTS.md
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project overview
