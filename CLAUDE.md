@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+> Regras de trabalho do dono (como trabalhar, Git, PR, comunicação): `AGENTS.md`, importado abaixo.
+
+@AGENTS.md
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project overview
@@ -59,7 +63,7 @@ Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committ
 ### Feature modules vs. shared layers
 There are two parallel organizational schemes — respect the existing one when extending:
 
-- `src/features/<domain>/` — self-contained domains (`auth`, `jobs`, `inventory`, `production`, `maintenance`, `analytics`, `notifications`, `admin`) with their own `components/`, `hooks/`, `services/`, `types/`, and a barrel `index.ts`. Import features through their barrel (e.g. `@/features/auth`), not deep paths. Auth, RBAC, MFA, and session management all live in `src/features/auth`.
+- `src/features/<domain>/` — self-contained domains (`auth`, `jobs`, `inventory`, `production`, `maintenance`, `analytics`, `notifications`, `admin`) with their own `components/`, `hooks/`, `services/`, `types/`, and a barrel `index.ts`. Import features through their barrel (e.g. `@/features/auth`), not deep paths. Exception: files *inside* a feature import siblings by deep path (e.g. `@/features/jobs/services/techniquesService` from `src/features/jobs/hooks`) — importing your own feature's barrel creates a module cycle. Auth, RBAC, MFA, and session management all live in `src/features/auth`.
 - `src/components/<area>/` — large catalog of UI grouped by domain area; `src/components/ui/` is the shadcn/ui primitive layer (configured via `components.json`, alias `@/components/ui`).
 - `src/hooks/`, `src/contexts/`, `src/services/`, `src/lib/`, `src/schemas/`, `src/types/` — cross-cutting shared layers.
 

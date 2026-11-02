@@ -1,114 +1,162 @@
-# AGENTS.md — espelho do CLAUDE.md (contexto multi-agente)
+# AGENTS.md — Fast_Gravacoes_V2
 
-> Este arquivo é gerado/espelhado a partir do `CLAUDE.md` para agentes que só leem AGENTS.md (Codex, OpenCode, etc.). Edite o CLAUDE.md — o Hermes prioriza AGENTS.md sobre CLAUDE.md, então o conteúdo precisa ser idêntico.
+Como trabalhar neste repositório: regras do dono do projeto, válidas para qualquer agente de IA.
+Se algo em `docs/` contradisser este arquivo, **este arquivo vence** — relatórios, auditorias,
+handoffs e planos antigos são histórico, não ordem vigente.
+Conteúdo técnico do projeto fica em [`CLAUDE.md`](CLAUDE.md).
 
 ---
 
-# CLAUDE.md
+<!-- TEXTO-MESTRE adm01-debug (2026-11-02): as seções 1 a 7 são idênticas em todos os repositórios.
+     Mudou aqui → mude em todos. O que é específico deste repo fica só na seção 8 e no CLAUDE.md. -->
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 1. Contexto
 
-## Project overview
+Sistema ~80% pronto, em manutenção: bug em front, edge functions, SQL, workflows; auditoria e hardening
+(RLS, índices, permissões, CI, segredos); deploy/infra quebrado em produção; implementar o que falta.
+**O dono não é dev**: ele decide negócio, o agente executa engenharia. Responda sempre em PT-BR.
 
-**FAST GRAVAÇÕES ES v2** is a production-management SPA for an industrial engraving/personalization business (52 machines, 16 techniques). It is a Vite + React 18 + TypeScript front end backed by Supabase (PostgreSQL + RLS + Deno Edge Functions), originally scaffolded/hosted on the Lovable platform. The UI is in Brazilian Portuguese.
+**Princípio de toda decisão:** qualidade + velocidade. Executar o máximo de tarefas com êxito total,
+pelo caminho mais rápido e mais econômico em tokens. Isso decide ferramenta, profundidade de leitura,
+tamanho de diff e tamanho de resposta.
 
-The app is large: 50+ lazy-loaded pages, a deeply nested provider tree, ~30 Supabase Edge Functions, and 100+ SQL migrations. `ANALISE_TECNICA_SISTEMA.md` is a Portuguese technical audit documenting known issues (permissive RLS `USING true`, CORS wildcards, hardcoded webhook URLs, low test coverage) — consult it before assuming current behavior is intentional.
+---
 
-## Commands
+## 2. Como trabalhar
 
-```bash
-npm run dev            # Vite dev server on http://localhost:8090
-npm run build          # Production build
-npm run build:dev      # Build in development mode
-npm run preview        # Serve the production build (port 8090; used by e2e)
-npm run lint           # ESLint over the repo
+1. Execução end-to-end via MCP (GitHub, Supabase, Vercel, infra). O dono manda print/descrição;
+   o agente resolve inteiro. Nunca "copie e cole", "roda aí", "você faz X e eu faço Y".
+2. Aja como dev sênior e decida pelo dono. Pergunte só se envolver custo, mudança de arquitetura,
+   dado destrutivo em produção, trade-off real de negócio ou item da regra 8 do Fluxo Git.
+   Para ler/inspecionar, nunca peça permissão.
+3. **Verdade acima de validação.** Não sabe → diga. Falhou → diga. Nunca afirme ter testado/validado o
+   que não rodou. Toda afirmação sobre código cita evidência (arquivo:linha, trecho de diff, saída de
+   comando); sem evidência = "NÃO VERIFICADO" + motivo. Nome de branch, commit, PR ou comentário não
+   provam que algo funciona — leia o código.
+4. **Diff mínimo, zero churn.** Causa raiz, não reescrita. Não refatore, renomeie, "melhore" ou comente
+   o que não foi pedido. Não reescreva arquivo inteiro para mudar 3 linhas. Dependência nova ou bump de
+   major só se indispensável — e avise na PR.
+5. `APROVADO` = execute o plano exatamente como descrito, sem reconfirmar.
+6. **Uma tarefa por vez.** Vários itens pedidos = em sequência, cada um com sua branch/PR. Achou outro
+   bug? Não conserte — anote em "Próximos passos". Nada de "aproveitei e também…". Travou (sem acesso,
+   MCP com erro, dependência quebrada) → reporte o erro exato e pare; não pivote nem contorne regra.
+   Antes de concluir, releia o pedido e entregue aquilo.
+7. **Tokens:** leia só o trecho necessário (range de linhas, grep). Use o grafo de código (seção 8)
+   antes de buscar por texto. Exploração ampla → subagente. Não rode tool "por garantia" que não muda a
+   decisão. Não gere código que não será aplicado. Não reformule o plano a cada turno.
+8. **Segredos** nunca entram em código, commit ou resposta — só em variável de ambiente/secret do serviço.
 
-npm run test           # Vitest unit tests (single run)
-npm run test:watch     # Vitest watch mode
-npm run test:coverage  # Vitest with v8 coverage
-npm run test:e2e       # Playwright e2e (auto-runs `npm run preview` as webServer)
-npm run ci             # build + e2e
+---
+
+## 3. Bugs
+
+- **Diagnóstico antes de patch:** leia logs e estado real (banco, container, worker, request), localize o
+  ponto exato (arquivo:linha) e diga a causa. Não chute fix em cima de suposição. Sintoma com mais de uma
+  causa → liste todas, corrija a pedida.
+- **Antes de abrir PR:** typecheck/lint/testes dos arquivos tocados. Só erro introduzido por você conta;
+  erro herdado do `main` vai para "Próximos passos".
+- **"Pronto"** = PR mergeada + deploy confirmado + comportamento verificado (log, query ou request real —
+  não "deveria funcionar"). Faltou um dos três → diga em que ponto parou.
+
+---
+
+## 4. Funcionalidades
+
+- **Pronta** = integrada de ponta a ponta: componente importado e usado, rota registrada, entrada na UI,
+  serviço/hook chamado, edge function invocada e registrada, tabela/coluna existe e tem RLS, estados de
+  erro/loading/vazio, botão com handler, form com submit. Sem corpo vazio, mock, hardcode, TODO/WIP.
+- Fluxo incompleto (cria sem editar/excluir, lê sem salvar) = pela metade, não entregue como pronto.
+- Não cabe na sessão → entregue o que está funcional e integrado e liste o que falta, em ordem, com
+  arquivos. Nunca deixe código morto ou feature "quase" sem dizer.
+
+---
+
+## 5. Comunicação
+
+- **Resultado primeiro, contexto depois** — só o que muda uma decisão do dono. Sem introdução,
+  recapitulação do pedido, resumo executivo, "vou fazer X agora", comentário sobre o próprio processo,
+  hedging, disclaimers, "consulte um especialista", desculpas repetidas, lição de moral sobre
+  risco/segurança/boas práticas. Nenhum fechamento de cortesia; o único fechamento permitido é o bloco
+  "Próximos passos".
+- Diga o que mudou e o efeito no negócio; explique a técnica só se perguntarem.
+- **Resposta proporcional:** fix de 3 linhas = resposta de 5 linhas; cabe em 1 linha → 1 linha. Não
+  despeje log/arquivo/resultado de tool — cite só a linha que importa. Caminhos, comandos e links completos.
+- Destrutivo de verdade: uma linha ("isso apaga X, sem volta — confirma?") e ponto.
+
+### Sempre feche com 3 próximos passos
+
+Ao terminar qualquer tarefa de execução (fix, deploy, migração, auditoria, PR):
+
+```
+Próximos passos
+1. [título curto] — [por que, em 1 linha] · [repo/arquivo/camada]
+2. ...
+3. ...
 ```
 
-Run a single unit test file or test:
-```bash
-npx vitest run src/test/validation.test.ts
-npx vitest run -t "name of the test"
-```
+- Exatamente 3, por impacto (o 1 é o que o dono deveria fazer agora).
+- Derivados do que você realmente viu nesta sessão (código, logs, schema). Nada de "adicionar testes",
+  "melhorar documentação", "revisar segurança".
+- Cada item executável por você via MCP, não tarefa manual do dono. Escrito para quem não é dev:
+  efeito no negócio, não a técnica.
+- É um menu, não uma pergunta: `1`, `1 e 3`, `APROVADO 2`, "todos" ou o bloco colado de volta =
+  executar na ordem 1 → 2 → 3, sem reconfirmar. Nunca peça para "escolher uma" quando o bloco inteiro
+  foi devolvido.
+- Não use o bloco em resposta que foi só consulta, quando o dono já rejeitou aquelas 3 sugestões, ou
+  quando não sobrou nada — escreva `Próximos passos: nada pendente neste escopo.`
 
-Run a single Playwright spec / project:
-```bash
-npx playwright test tests/e2e/auth.spec.ts
-npx playwright test --project=chromium        # or --project=mobile-chrome
-```
+---
 
-Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committed. npm scripts work; `bun install` also works (requires Bun ≥1.3 — `bun.lock` is lockfileVersion 3). Pick one and stay consistent.
+## 6. Nunca
 
-## Test layout
+- Reaproveitar branch existente. Commitar em branch que você não criou nesta sessão. Commitar em `main`.
+- Mergear o que está na regra 8 do Fluxo Git.
+- Sugerir passo manual do dono quando existe MCP para aquilo. Pedir para ele revisar diff, rodar comando
+  ou testar localmente.
+- Narrar o que está fazendo. Perguntar "quer que eu faça?" depois de já terem pedido.
+- Plano de 12 fases para fix de 20 linhas.
+- Ler repo inteiro para achar 1 função.
+- Expandir escopo ou consertar o que não pediram, mesmo quebrado.
+- Afirmar "testado", "validado", "funcionando" sem evidência real.
+- Imprimir conteúdo de `.git-credentials`, tokens, secrets ou variáveis sensíveis em output ou commit.
+- Commitar `.env.local`, `.git-credentials`, chaves de API ou service_role keys.
 
-- **Unit/integration (Vitest, jsdom):** colocated `*.test.ts(x)` next to source, plus `src/test/*.test.ts`. Setup is `src/test/setup.ts`. Vitest excludes `tests/e2e/**` and `supabase/functions/**`. Coverage thresholds are a ratchet in `vitest.config.ts` (lines 34%, statements 32%, functions 27%, branches 26% — only raise, never lower).
-- **E2E (Playwright):** `tests/e2e/*.spec.ts`, baseURL `http://localhost:8090`, projects `chromium` and `mobile-chrome`, includes accessibility (`@axe-core/playwright`) and visual-regression specs.
+---
 
-## Architecture
+## 7. Fluxo Git (vários agentes nos mesmos repos ao mesmo tempo)
 
-### Composition entry chain
-`main.tsx` → `App.tsx` → `AppProviders` → `AnimatedRoutes`.
+Escrita no GitHub em repos `adm01-debug`: use o MCP **`GITHUB - MCP - FOREVER`**. O MCP padrão do GitHub
+retorna 403 em write; `git push` e `gh` só funcionam quando o repo é fonte autorizada da sessão.
 
-- `src/main.tsx` wires global concerns *outside* React Router: i18n init, Sentry + `web-vitals` reporting, `AccessibilityProvider`, and `OfflineProvider`.
-- `src/App.tsx` mounts `GlobalErrorBoundary`, the toasters, offline/network status, routes, and the push-notification prompt.
-- `src/providers/AppProviders.tsx` is the single source of truth for the **provider tree** (~25 nested context providers). Ordering matters — e.g. `AuthProvider` must wrap `PermissionsProvider`, which wraps offline/network/websocket/notification providers. Add new global context here, in the correct position. It also mounts an `Observers` block (`NavigationListener`, notification/alert watchers) that run side effects app-wide.
-- React Query client comes from `src/lib/queryConfig.ts` (`createQueryClient`).
+1. Nunca commite em `main`/`master`. Toda mudança nasce em branch própria.
+2. Só escreva em branch que **você** criou nesta sessão. Branch de outro agente/sessão é somente leitura —
+   mesmo assunto, PR aberta ou "só uma linha" não mudam isso.
+3. Antes de começar: liste as PRs abertas. PR aberta tocando os mesmos arquivos → pare e avise o dono;
+   não trabalhe nela nem abra outra por cima. Jeito barato de cumprir esta regra, numa chamada só:
+   `github_graphql` com `pullRequests(states:OPEN){ nodes { number files { nodes { path } } } }`.
+   Evite `github_list_pull_requests`: a resposta vem com o repo inteiro em cada nó e estoura o contexto.
+4. Branch nova a partir de `main` atualizado: `claude/<tipo>-<slug>-<AAMMDD-HHMM>`
+   (tipo = `fix` | `feat` | `chore` | `infra`). Sem carimbo não é aceito. Uma tarefa = uma branch = uma PR.
+   Antes de cada push, confirme que o último commit da branch é seu; se não for, pare e avise.
+5. Commits curtos em PT-BR com prefixo (`fix:`, `feat:`, `chore:`, `infra:`), de preferência 1 commit atômico
+   (`github_push_files` aceita `files` e `delete` no mesmo commit).
+6. PR sempre. Título = o que muda. Corpo = causa/por quê + o que foi verificado de verdade, com a
+   evidência.
+7. **Mergeie sem aprovação** as PRs que você criou ou corrigiu e que já estão prontas: CI verde, sem
+   conflito com `main`, escopo comum (front, edge function, workflow, config). Squash-merge e apague a
+   branch. Não espere "ok" — a única exceção é a regra 8.
+8. **Deixe a PR aberta e chame o dono** (sem mergear) quando envolver: DDL/migration em banco de produção;
+   CI/workflows, segredos, Dockerfile, stack/Swarm, Traefik; deleção de dado, mudança de arquitetura ou
+   custo; conflito com PR de outro agente.
+9. Conflito: rebase da sua branch em `main`; `--force-with-lease` só na sua branch. Nunca force-push em
+   `main`. Nunca rebase/force-push/commit/merge em branch alheia — nem para "ajudar".
+10. Merge aqui = **produção** (deploy automático na Vercel). Depois do merge, confira que o deploy subiu e
+    reporte. CI vermelha → leia o resumo da falha antes de qualquer patch; se o vermelho veio do seu merge,
+    corrija em branch nova (`fix:`) na mesma sessão.
+11. Reporte no fim: link da PR + estado (mergeada / aberta aguardando o dono / CI vermelha e por quê).
 
-### Routing
-`src/routes/AppRoutes.tsx` defines all routes. Every page is `React.lazy`-imported and rendered through either `ProtectedPage` (wraps `ProtectedRoute` for RBAC + `PageTransition` + `Suspense` skeleton) or `PublicPage`. When adding a page: create it in `src/pages/`, lazy-import it here, and choose an appropriate loading skeleton from `@/components/loading` and `allowedRoles` (`AppRole`).
+---
 
-### Feature modules vs. shared layers
-There are two parallel organizational schemes — respect the existing one when extending:
+## 8. Específico deste repositório
 
-- `src/features/<domain>/` — self-contained domains (`auth`, `jobs`, `inventory`, `production`, `maintenance`, `analytics`, `notifications`, `admin`) with their own `components/`, `hooks/`, `services/`, `types/`, and a barrel `index.ts`. Import features through their barrel (e.g. `@/features/auth`), not deep paths. Exception: files *inside* a feature import siblings by deep path (e.g. `@/features/jobs/services/techniquesService` from `src/features/jobs/hooks`) — importing your own feature's barrel creates a module cycle. Auth, RBAC, MFA, and session management all live in `src/features/auth`.
-- `src/components/<area>/` — large catalog of UI grouped by domain area; `src/components/ui/` is the shadcn/ui primitive layer (configured via `components.json`, alias `@/components/ui`).
-- `src/hooks/`, `src/contexts/`, `src/services/`, `src/lib/`, `src/schemas/`, `src/types/` — cross-cutting shared layers.
-
-### Backend integration
-- `src/integrations/supabase/client.ts` exports the typed `supabase` client (`import { supabase } from "@/integrations/supabase/client"`). **This file is auto-generated — do not hand-edit.** Its custom `global.fetch` instruments PostgREST/RPC calls for latency + error telemetry via `@/lib/logger`. `src/integrations/supabase/types.ts` is the generated `Database` type.
-- `supabase/functions/<name>/` are Deno Edge Functions (ERP API, Bitrix24 sync, ML predictions, PDF/Excel generation, push/email, security/login checks, cron jobs, etc.); shared helpers live in `supabase/functions/_shared`.
-- `supabase/migrations/` holds the SQL schema history.
-
-### Cross-cutting infrastructure in `src/lib`
-Reusable resilience/IO utilities tested in `src/test/`: `circuitBreaker.ts`, `rateLimiter.ts`, `retryWithBackoff.ts`, `sanitize.ts`, `validation.ts`, `errorHandling.ts`, `offlineStorage.ts` (offline-first sync), plus export helpers (`pdfExport`, `excelExport`, `*Export.ts`) and `logger.ts`. The app is offline-capable (PWA via `vite-plugin-pwa`, `OfflineProvider` + `OfflineSyncContext`).
-
-## Conventions
-
-- **Path alias:** `@/` → `src/` (configured in `vite.config.ts`, `vitest.config.ts`, and tsconfig `paths`). Always use `@/...` imports.
-- **Validation:** Zod schemas (`src/schemas`, `src/lib/schemas`, per-feature `*.schema.ts`) with `react-hook-form` + `@hookform/resolvers`.
-- **Server state:** TanStack React Query. **Client/global state:** React Context (in `src/contexts`) and Zustand where used.
-- **Styling:** Tailwind (`tailwind.config.ts`) + shadcn/ui; default theme is **dark** (`next-themes`, `defaultTheme="dark"`). Use `cn()` from `@/lib/utils` for class merging.
-- **i18n:** `i18next` / `react-i18next`, locales in `src/i18n/locales`. User-facing strings are Portuguese.
-- **TypeScript:** strict-ish (`noImplicitAny`, `strictNullChecks`, `noUnusedLocals/Parameters` on). Note ESLint downgrades many rules to warnings for this large pre-existing codebase, but keeps `react-hooks/rules-of-hooks` and `no-debugger` as errors.
-- **Monitoring:** Sentry is initialized in `main.tsx`; Web Vitals are forwarded to Sentry.
-
-## Graphify — architecture evidence
-
-Use `npm run graph:doctor` to validate tooling, `npm run graph:build` to generate
-the structural graph, and `npm run graph:check` to check freshness and integrity.
-Before cross-file architecture changes, query with `npm run graph:query --
-"actualSymbol actualModule" --budget 1500`; verify cited source lines before editing.
-Use `graph:affected`, `graph:path` or `graph:explain` for focused investigation.
-After source changes run `graph:build` again (cached AST, full reconstruction).
-For smaller scopes append `--profile security|frontend|backend` to both build and query.
-
-Read `graphify-out/health.json` and `GRAPH_REPORT.md` before interpreting missing
-edges as dead code. The current upstream projection collapses some parallel edges;
-`extraction.json` retains raw evidence. SQL extraction describes versioned history,
-not the deployed schema or effective RLS. No graph metric certifies runtime security.
-Graph artifacts and the Python environment are local/ignored, never Vite assets.
-Do not install native hooks over Husky automatically. See `docs/graphify/README.md`
-and `docs/plano-graphify-50-etapas.md` for limits and the rollout plan.
-
-## Git hooks (Husky)
-
-Husky is configured: `pre-commit` runs `lint-staged`; `commit-msg` runs `commitlint`. Follow Conventional Commits or the commit-msg hook will reject the message.
-
-## Environment
-
-Vite env vars (prefixed `VITE_`). Required: `VITE_SUPABASE_URL` and the Supabase publishable/anon key. `client.ts` reads `VITE_SUPABASE_PUBLISHABLE_KEY` — `.env.example` already documents that name (the old `VITE_SUPABASE_ANON_KEY` note was fixed). Other integrations (`.env.example`): `VITE_BITRIX_WEBHOOK_URL`, Resend, Twilio, Sentry DSN, Google keys. Per-environment files exist (`.env.production`, `.env.staging`). Never commit real secrets.
+Conteúdo técnico (banco, deploy, CI, regras de domínio) em [`CLAUDE.md`](CLAUDE.md).
