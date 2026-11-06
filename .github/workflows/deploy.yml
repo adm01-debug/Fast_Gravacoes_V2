@@ -218,7 +218,7 @@ jobs:
           # runner (toomanyrequests, ~44000/min). O retry interno do CLI cobre
           # só ~12s, então a retentativa com backoff fica aqui no step.
           attempt=1
-          until supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"; do
+          until supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID" --yes; do
             if [ "$attempt" -ge 5 ]; then
               echo "functions deploy falhou após $attempt tentativas."
               exit 1
