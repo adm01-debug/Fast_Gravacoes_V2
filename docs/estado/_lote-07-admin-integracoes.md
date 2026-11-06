@@ -73,7 +73,7 @@ Isso implica em particular que **não é possível afirmar** que:
 | "AI Cyber Advisor" | 🟦 SUGERIDO_OU_INICIADO | `src/features/admin/components/security/AICyberAdvisor.tsx:7-31` (`const insights = [...]` fixo) montado em `src/pages/SecurityDashboard.tsx:217` | Texto fictício e não-determinístico ("bloqueou 43 tentativas de brute-force na última hora"). Nenhuma chamada a LLM/dados |
 | "Audit AI Advisor" | 🟦 SUGERIDO_OU_INICIADO | `src/features/admin/components/audit/AuditAIAdvisor.tsx:7-25` (array literal) | Idem — sem `fetch`/`invoke` no arquivo |
 | "Cyber-Resilience Index" | 🟦 SUGERIDO_OU_INICIADO | `src/features/admin/components/security/CyberResilienceScore.tsx:6-30` | Gauge SVG com valor fixo; nenhuma fonte de dados |
-| "Master API Hub" (`/master-api`) | 🟦 SUGERIDO_OU_INICIADO | `src/pages/MasterAPIPage.tsx:29` (`useState('sk_live_fast_9283749123847')`), endpoints hardcoded `:37-41`, exemplo `:205` | Página **puramente ilustrativa**: chave falsa, e os endpoints documentados (`/api/v1/jobs`, `/api/v1/inventory`, `PATCH /api/v1/machines/:id`) **não batem** com os reais da `erp-api` (`jobs\|machines\|operators\|lots\|production\|kpis`, `supabase/functions/erp-api/index.ts:122-136`). Não há UI para gerar chaves em `erp_api_keys` |
+| "Master API Hub" (`/master-api`) | 🟦 SUGERIDO_OU_INICIADO | `src/pages/MasterAPIPage.tsx:29` (`useState('sk_live_fast_XXXX')`), endpoints hardcoded `:37-41`, exemplo `:205` | Página **puramente ilustrativa**: chave falsa, e os endpoints documentados (`/api/v1/jobs`, `/api/v1/inventory`, `PATCH /api/v1/machines/:id`) **não batem** com os reais da `erp-api` (`jobs\|machines\|operators\|lots\|production\|kpis`, `supabase/functions/erp-api/index.ts:122-136`). Não há UI para gerar chaves em `erp_api_keys` |
 | Circuit breaker / retry com backoff / rate limiter (client) | ⬛ MORTO_OU_ABANDONADO | `src/lib/index.ts:13,14,15` exportam `CircuitBreaker`, `retryWithBackoff`, `RateLimiter` | `grep -rn` por todos esses símbolos em `src/`+`supabase/` retorna **apenas** os testes (`src/test/circuitBreaker.test.ts:2`, `src/test/retryWithBackoff.test.ts:2`) e o próprio barrel. Zero uso em produção |
 
 ---
@@ -229,7 +229,7 @@ exclusivamente pelo Dashboard: **NAO_VERIFICADO**.
    montados em `src/pages/SecurityDashboard.tsx:209,217`.
 
 7. **`MasterAPIPage` é uma maquete que documenta uma API que não existe.** Chave falsa em
-   `src/pages/MasterAPIPage.tsx:29` (`'sk_live_fast_9283749123847'`), badge "Sistemas Operantes" fixo `:57-60`,
+   `src/pages/MasterAPIPage.tsx:29` (`'sk_live_fast_XXXX'`), badge "Sistemas Operantes" fixo `:57-60`,
    e endpoints `:37-41` (`/api/v1/inventory`, `PATCH /api/v1/machines/:id`) que **divergem** dos reais da
    `erp-api` (`jobs|machines|operators|lots|production|kpis`, `erp-api/index.ts:122-136`). Não há tela para
    emitir chaves em `erp_api_keys`.
