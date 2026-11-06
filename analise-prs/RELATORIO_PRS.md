@@ -89,7 +89,7 @@
 
 ## Pendências registradas como backlog
 
-1. **Chave hardcoded `MasterAPIPage.tsx:29`** — `sk_live_fast_9283749123847` exposta no bundle; substituir por `VITE_FAST_API_KEY`
+1. **Chave hardcoded `MasterAPIPage.tsx:29`** — `sk_live_REDACTED` exposta no bundle; substituir por `VITE_FAST_API_KEY`
 2. **Worktree `_worktrees/Fast_Gravacoes_V2-pr116`** — pode ser removido; branch consolidada em PR #120
 3. **Bitrix24 verify_jwt** — mencionado em PENDENCIAS.md da branch pr116, não implementado
 4. **PITR/SLOs** — mencionado em PENDENCIAS.md da branch pr116, não implementado
