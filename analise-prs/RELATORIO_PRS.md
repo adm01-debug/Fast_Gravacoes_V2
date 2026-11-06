@@ -104,3 +104,17 @@
 - **Fechadas sem merge:** 0 (nenhuma fechada — as anteriores foram resgates)
 - **Escritas remotas:** 3 squash merges via MCP GitHub (GITHUB---FOREVER-FULL---MCP)
 - **Produção (Vercel):** deploy confirmado para SHAs 918828fd e 8120bef7; 8664d938 em progresso
+---
+
+## Veredito das branches vetadas (2026-11-06)
+
+Ambas foram analisadas e NAO geraram PR. Veredito: **SUPERADO**.
+
+| Branch | SHA | Conteudo | Veredito | Prova |
+|---|---|---|---|---|
+| `devin/1791372473-migration-repair` | `d1632a89` | Correcao de CI/migration-repair | SUPERADO | O ajuste de `--yes` e o guard de `SUPABASE_PROJECT_ID` vs `config.toml` ja estao em `main` em `.github/workflows/migration-repair.yml` (l.53-62, l.113, l.131-140) |
+| `devin/1791466219-db-admin-alter-role` | `f4f4cfa9` | Correcao de CI/db-admin | SUPERADO | O mesmo guard de project-ref esta em `main` em `.github/workflows/db-admin.yml` (l.81-86, l.102, l.122-127) |
+
+**Motivo do SUPERADO:** as duas branches so continham correcoes de CI/workflow. O conteudo funcional ja esta em `main`; mergea-las exigiria alterar `.github/workflows`, o que e proibido pelas regras desta sessao e nao agrega valor. Nenhuma acao pendente.
+
+**Worktree orfao `_worktrees/Fast_Gravacoes_V2-pr116`:** confirmado ausente em `git worktree list --porcelain` (2026-11-06). Nada a remover.
