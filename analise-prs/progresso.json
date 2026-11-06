@@ -58,6 +58,8 @@
   "bloco_execucao_2026-11-06": {
     "confirmar_ci_verde_main": "NAO - CI VERMELHA (causa ambiental CDN, fix d6c9c11c presente no lockfile; re-refix do hash apenas re-inverte o flake)",
     "rotacionar_chave_stripe": "BLOQUEADO_EXTERNO - chave publica em historico; rotacao exige painel Stripe (sem MCP Stripe)",
-    "merge_pr127": "BLOQUEADO - CI vermelho no head da PR (mesma oscilacao esm.sh)"
+    "merge_pr127": "BLOQUEADO - CI vermelho no head da PR (mesma oscilacao esm.sh)",
+    "rerun_2026-11-06T1805Z": "Rerun_failed_jobs nos 2 runs (attempt 2) CONCLUIDOS: ambos FAILURE. Main 42155595023 attempt2 concluiu 18:06:14Z failure (job Edge Functions Deno). PR127 42245782250 attempt2 concluiu 18:05:55Z failure (job 128062909478 step 7, exit code 10); log mostra Integrity check failed para MODULO DIFERENTE do tslib: downloads de auth-js@2.112.4, storage-js@2.7.1, zod@3.22.4, deno.land/std@0.224.0 6s antes do erro (18:05:45Z). CONCLUSAO: oscilacao de hash esm.sh afeta multiplos modulos, nao so tslib; fix lockfile-only e instavel. Merge PR #127 permanece bloqueado ate CDN estabilizar ou fix estrutural (vendor/imports).",
+    "rerun_result_ts": "2026-11-06T18:06:14Z"
   }
 }

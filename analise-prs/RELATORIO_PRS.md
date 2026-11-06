@@ -152,3 +152,34 @@ Ambas foram analisadas e NAO geraram PR. Veredito: **SUPERADO**.
 - **Fechar (proposto):** PR #128 (superada — conteudo em main d6c9c11c)
 - **Backlog:** branch infra-edge-npm-imports (sem PR)
 - **Barra de fechamento:** fechamento da PR #128 sugerido — requer decisao humana conforme regra 8 (envolve `.github/workflows`)
+
+---
+
+## CI main `d6c9c11c` e PR #127 (2026-11-06)
+
+### Main `d6c9c11c` — CI VERMELHA (causa ambiental)
+
+- **Run:** 42155595023 (2026-11-06T03:23Z), head `d6c9c11c`.
+- **Success:** lint, security, unit-tests, simulation-tests, rls-regression.
+- **Failure:** `Edge Functions (Deno)` (job 127690972677, step 7) e `Quality Gate` (job 127693884237).
+- **Causa (log, exit code 10):**
+  - `Specifier: https://esm.sh/tslib@2.8.1/denonext/tslib.mjs`
+  - `Actual: c38da5dd...` (CDN serviu o hash antigo) vs `Expected: ebce3cd5...` (lockfile de main aponta para o novo).
+- **Interpretacao:** o fix `d6c9c11c` (hash `ebce3cd5`) ESTA no `deno.lock` de main. O CDN esm.sh oscilou de volta para o hash antigo. Re-fix do hash apenas re-inverteria o flake — a solucao estavel e migrar de esm.sh para npm (branch `infra-edge-npm` no backlog) ou vendor lock.
+- **Deploy:** run 42155597785 (deploy.yml, head `d6c9c11c`) = **SUCCESS** (run 413).
+
+### PR #127 — redacao do segredo `sk_live_fast_*` em docs
+
+- **Head:** `de860ea6` (4 arquivos: 3x docs/estado + analise-prs/auditorias-anteriores.md), 9 ocorrencias redigidas.
+- **Run CI:** 42245782250 (2026-11-06T15:46Z).
+- **Success:** Unit & Integration, Simulation & Fuzz, RLS Regression, Lint & Type Check, Security Scan, Vercel Preview Comments.
+- **Failure:** `Edge Functions (Deno)` + `Quality Gate` — **mesma causa ambiental** (tslib@2.8.1, esperado `ebce3cd5`, servido `c38da5dd`, exit 10 em 2026-11-06T15:47:09Z).
+- **Skip:** E2E, Production Build, Bundle Diff vs main.
+- **Conclusao:** a falha NAO tem relacao com o conteudo da PR (redacao de docs). O merge permanece **bloqueado por CI vermelha** ate o CDN estabilizar; re-run dos jobs falhos pode reverter o flake, mas nao foi executado nesta sessao (evidencia atual = vermelho).
+
+### Reruns attempt 2 (2026-11-06T18:05Z) — CONCLUIDOS: ambos ainda FAILURE
+
+- **Main `d6c9c11c`** — run 42155595023 attempt 2: `conclusion: failure` (encerrado 2026-11-06T18:06:14Z). Job `Edge Functions (Deno)` falhou de novo; 5 jobs complementares continuaram success. Resultado via `github_get_workflow_run` (accurate state, nao cache).
+- **PR #127 `de860ea6`** — run 42245782250 attempt 2: `conclusion: failure` (encerrado 2026-11-06T18:05:55Z). Job 128062909478 falhou no step 7 (testes) com exit code 10; step 6 (types) passou.
+- **Evidencia nova no log do PR #127 attempt 2 (grep `error`, tail 30):** o `Integrity check failed` em 18:05:45Z foi precedido (desde 18:05:42Z) de downloads de **OUTROS modulos**: `auth-js@2.112.4`, `storage-js@2.7.1`, `phoenix@0.4.5`, `zod@3.22.4` (esm.sh) e `deno.land/std@0.224.0`. Ou seja, **a oscilacao de hash da CDN afeta multiplos modulos, nao so o tslib** — re-fix do `deno.lock` para um unico modulo continua instavel.
+- **Consequencia:** merge da PR #127 segue **bloqueado por CI vermelha de causa ambiental**. Seed da conclusao anterior mantido; a solucao estavel permanece a migracao esm.sh→npm (backlog `infra-edge-npm`) ou vendor lock.
