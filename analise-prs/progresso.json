@@ -32,5 +32,32 @@
     "lint": "PASS (22 warnings, 0 errors)",
     "testes": "NAO_VERIFICADO (node indisponivel sem nvm)"
   },
-  "deploy": "Vercel deploy confirmado para 8664d938 (PR #121)"
+  "deploy": "Vercel deploy confirmado para 8664d938 (PR #121)",
+  "ci_main_d6c9c11c": {
+    "data": "2026-11-06",
+    "run": "42155595023",
+    "status": "FAILURE",
+    "jobs_ok": ["lint", "security", "unit-tests", "simulation-tests", "rls-regression"],
+    "jobs_skip": ["build", "e2e"],
+    "jobs_fail": ["Edge Functions (Deno)", "Quality Gate"],
+    "causa": "esm.sh CDN oscillation: deno.lock espera hash ebce3cd5 de tslib@2.8.1/denonext/tslib.mjs, CDN serviu c38da5dd (run 42155595023, job 127690972677 step 7, exit code 10). Falha ambiental, nao relacionada a codigo.",
+    "deploy_run": "42155597785",
+    "deploy_status": "SUCCESS (run 413, head d6c9c11c)"
+  },
+  "ci_pr127_de860ea6": {
+    "data": "2026-11-06",
+    "run": "42245782250",
+    "shas": "de860ea6 (head PR #127)",
+    "status": "FAILURE",
+    "jobs_fail": ["Edge Functions (Deno)", "Quality Gate"],
+    "jobs_pass": ["Unit & Integration Tests", "Simulation & Fuzz Tests", "RLS Regression", "Lint & Type Check", "Security Scan", "Vercel Preview Comments"],
+    "jobs_skip": ["E2E Tests", "Production Build", "Bundle Diff vs main"],
+    "causa": "Mesma falha esm.sh CDN (tslib@2.8.1, esperado ebce3cd5, servido c38da5dd) no head de860ea6. NAO relacionada a redacao do segredo (4 arquivos docs).",
+    "conclusao": "Merge bloqueado: CI vermelho no head PR #127 (mesma causa ambiental do main)."
+  },
+  "bloco_execucao_2026-11-06": {
+    "confirmar_ci_verde_main": "NAO - CI VERMELHA (causa ambiental CDN, fix d6c9c11c presente no lockfile; re-refix do hash apenas re-inverte o flake)",
+    "rotacionar_chave_stripe": "BLOQUEADO_EXTERNO - chave publica em historico; rotacao exige painel Stripe (sem MCP Stripe)",
+    "merge_pr127": "BLOQUEADO - CI vermelho no head da PR (mesma oscilacao esm.sh)"
+  }
 }
