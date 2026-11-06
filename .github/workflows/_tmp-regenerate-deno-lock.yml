@@ -1,0 +1,53 @@
+name: TEMP regenerate deno.lock
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    name: Regenerate deno.lock (tslib integrity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install workspace dependencies for Deno type resolution
+        run: npm ci --legacy-peer-deps --no-fund
+
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        with:
+          deno-version: v2.9.5
+
+      - name: Regenerate lock with current CDN integrity
+        run: |
+          FILES="supabase/functions/_shared/auth.ts"
+          for d in supabase/functions/*/; do
+            [ -f "${d}index.ts" ] || continue
+            FILES="$FILES ${d}index.ts"
+          done
+          deno cache --reload $FILES 2>/dev/null || deno check $FILES
+
+      - name: Commit and push regenerated deno.lock
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add deno.lock
+          if git diff --cached --quiet; then
+            echo "deno.lock unchanged - nothing to push"
+            exit 0
+          fi
+          git commit -m "fix: regenera deno.lock (hash tslib@2.8.1 via esm.sh)"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
