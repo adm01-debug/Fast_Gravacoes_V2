@@ -60,6 +60,17 @@
     "rotacionar_chave_stripe": "BLOQUEADO_EXTERNO - chave publica em historico; rotacao exige painel Stripe (sem MCP Stripe)",
     "merge_pr127": "BLOQUEADO - CI vermelho no head da PR (mesma oscilacao esm.sh)",
     "rerun_2026-11-06T1805Z": "Rerun_failed_jobs nos 2 runs (attempt 2) CONCLUIDOS: ambos FAILURE. Main 42155595023 attempt2 concluiu 18:06:14Z failure (job Edge Functions Deno). PR127 42245782250 attempt2 concluiu 18:05:55Z failure (job 128062909478 step 7, exit code 10); log mostra Integrity check failed para MODULO DIFERENTE do tslib: downloads de auth-js@2.112.4, storage-js@2.7.1, zod@3.22.4, deno.land/std@0.224.0 6s antes do erro (18:05:45Z). CONCLUSAO: oscilacao de hash esm.sh afeta multiplos modulos, nao so tslib; fix lockfile-only e instavel. Merge PR #127 permanece bloqueado ate CDN estabilizar ou fix estrutural (vendor/imports).",
-    "rerun_result_ts": "2026-11-06T18:06:14Z"
+    "rerun_result_ts": "2026-11-06T18:06:14Z",
+    "correcao_leitura_attempt2": "Log attempt 2 do PR #127 (Specifier/Actual/Expected) mostra que o UNICO specifier que falha e tslib@2.8.1 (Expected ebce3cd5 na lock, Actual servido c38da5dd). Os 'Download' de auth-js@2.112.4/storage-js@2.7.1/zod@3.22.4/deno.land/std 6s antes sao resolucao normal do grafo em runner com cache zerado, NAO falha desses modulos. Conclusao anterior 'multiplos modulos oscilando' = leitura excessiva; fato solido = mismatch PERSISTENTE tslib (2 attempts consecutivos, mesma dupla de hashes). Step 6 (deno check --frozen) passou; step 7 (deno test --frozen) falhou no mesmo specifier => tslib entra no grafo via arquivos de teste (_shared/*.test.ts).",
+    "dimensao_fix_estrutural_2026-11-06": {
+      "imports_esm_ou_denoland": "69 imports em 49 arquivos (supabase/functions)",
+      "deno_lock_urls": "50 x esm.sh + 49 x deno.land = 99 URLs",
+      "enforcement_ci": "ci.yml deno-tests (L175-215): deno check --frozen (_shared/auth.ts + 33 index.ts) + deno test --frozen (_shared/*.test.ts)",
+      "branch_infra_edge_npm": "head 33c724ce, 2 commits, SO 2 arquivos migrados (contracts.ts zod politico + new-device-alert supabase-js/resend); padrao correto npm:specifier@versao",
+      "restantes": "~44 index.ts (serve deno.land/std + createClient esm.sh @2/@2.49.1), _shared/auth.ts:193 e _shared/cronAuth.ts:74 (import DINAMICO supabase-js), _shared/test-utils.ts (esm.sh/zod), _shared/validation.ts + _shared/validate.ts + csp-report (deno.land/x/zod@v3.22.4), testes (deno.land/std/testing)",
+      "zod_multiplicado": "3 specifiers diferentes para zod no grafo: esm.sh/zod@3.22.4, deno.land/x/zod@v3.22.4, npm:zod@3.22.4 (branch)",
+      "risco_branch_parcial": "mix de zod esm.sh (test-utils) + npm (contracts) pode duplicar instancia de zod no grafo; exigiria re-check completo em branch propria",
+      "veredito": "Migracao esm.sh->npm e viavel mas NAO trivia: 100+ linhas de import em ~49 arquivos + imports dinamicos + 3 specifiers de zod. Recomendacao: migrar 100% em 1 PR unica com re-check --frozen local e CI verde, ou vendor lock (imports locais commitados) para eliminar dependencia do CDN. Sem PR criada (regras do /goal), segue backlog."
+    }
   }
 }
