@@ -1,6 +1,6 @@
 rota,pagina,roles_permitidos,tipo,status
 /auth,AuthPage,público,public,ativo
-/reset-password,ResetPasswordPage,público,public,ativo — bloqueado para anon por RLS (PR #119 pendente)
+/reset-password,ResetPasswordPage,público,public,ativo — RLS anon corrigido (PR #119)
 /install,InstallAppPage,público,public,ativo
 /track,PublicTrackingPage,público,public,ativo
 /design-system,DesignSystemPage,público,public,ativo
@@ -17,7 +17,7 @@ rota,pagina,roles_permitidos,tipo,status
 /kpis,KPIDashboard,"coordinator,manager",protected,ativo
 /efficiency,EfficiencyDashboard,"coordinator,manager",protected,ativo
 /oee,OEEDashboard,"coordinator,manager",protected,ativo
-/spc,SPCDashboard,"coordinator,manager",protected,ativo — mock Math.random removido em devin/1793268046
+/spc,SPCDashboard,"coordinator,manager",protected,ativo — mock Math.random removido (PR #120)
 /executive,ExecutiveDashboard,"manager,coordinator",protected,ativo
 /bi,BIDashboard,"manager,coordinator",protected,ativo
 /report-builder,ReportBuilderPage,"manager,coordinator",protected,ativo
@@ -47,7 +47,7 @@ rota,pagina,roles_permitidos,tipo,status
 /settings,SettingsPage,"coordinator,manager",protected,ativo
 /security,SecurityDashboard,"coordinator,manager",protected,ativo
 /audit,AuditTrailPage,"coordinator,manager",protected,ativo
-/master-api,MasterAPIPage,"coordinator,manager",protected,ativo — chave hardcoded removida (PR #118)
+/master-api,MasterAPIPage,"coordinator,manager",protected,ativo — chave hardcoded removida (PR #118); arquivo existente com header redigido
 /code-quality,CodeQualityDashboard,"coordinator,manager",protected,ativo
 /admin/telemetria,AdminTelemetriaPage,"coordinator,manager",protected,ativo
 /admin/monitoring,SystemMonitoringPage,"coordinator,manager",protected,ativo

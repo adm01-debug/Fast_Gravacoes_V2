@@ -93,6 +93,7 @@
 2. **Worktree `_worktrees/Fast_Gravacoes_V2-pr116`** — pode ser removido; branch consolidada em PR #120
 3. **Bitrix24 verify_jwt** — mencionado em PENDENCIAS.md da branch pr116, não implementado
 4. **PITR/SLOs** — mencionado em PENDENCIAS.md da branch pr116, não implementado
+5. **Segredo real em `docs/estado/`** — 5 ocorrências de `sk_live_fast_***` ainda trackeadas em main: `_lote-07-admin-integracoes.md` (2), `_meta-02-refutacao-verdes.md` (2), `_meta-00-consolidado.md` (1). Redigir/remover via PR antes que qualquer conteúdo novo vá a público.
 
 ---
 

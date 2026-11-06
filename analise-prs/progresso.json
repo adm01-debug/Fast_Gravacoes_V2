@@ -1,20 +1,29 @@
 {
   "data": "2026-10-31",
-  "main_sha": "ebe3a6b2",
+  "main_sha_inicial": "ebe3a6b2a6655e0f0d5e44bac4a2fb1766fddcbb",
+  "main_sha_final": "8664d9381882b53d99b6cfa29caa1f17c5350e60",
   "total_prs_iniciais": 1,
   "total_branches_sem_pr": 4,
   "analisadas": 5,
   "vereditos": {
-    "PR_119": "DECISAO_HUMANA",
-    "divida-estrutural-2": "DECISAO_HUMANA_resgatar_parcial",
-    "audit-csp": "DECISAO_HUMANA_conflitos",
+    "PR_119": "MERGEADA",
+    "divida-estrutural-2": "RESGATADO_PARCIAL_VIA_PR_120",
+    "audit-csp": "MERGEADA_VIA_PR_121",
     "migration-repair": "BLOQUEADO_workflows",
     "db-admin-alter-role": "BLOQUEADO_workflows"
   },
-  "merges_executados": [],
+  "merges_executados": [117, 118, 119, 120, 121],
+  "merges_shas": {
+    "117": "anterior a ebe3a6b2",
+    "118": "ebe3a6b2",
+    "119": "918828fd",
+    "120": "8120bef7",
+    "121": "8664d938"
+  },
   "baseline": {
     "tsc": "PASS",
     "lint": "PASS (22 warnings, 0 errors)",
     "testes": "NAO_VERIFICADO (node indisponivel sem nvm)"
-  }
+  },
+  "deploy": "Vercel deploy confirmado para 8664d938 (PR #121)"
 }

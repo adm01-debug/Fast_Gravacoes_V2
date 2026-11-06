@@ -2,7 +2,8 @@
 
 **Fonte:** CLAUDE.md / AGENTS.md, AppRoutes.tsx, migrations, PRs e auditorias históricas  
 **Data:** 2026-10-31  
-**SHA main:** ebe3a6b2
+**SHA main inicial:** ebe3a6b2 (registro histórico)  
+**SHA main final:** 8664d938 (pós-consolidação)
 
 ---
 
@@ -31,18 +32,18 @@
 
 - Supabase Auth (JWT)
 - MFA disponível (/mfa-enrollment)
-- Reset de senha: fluxo via `password_reset_requests` — INSERT deve ser permitido para `anon` (PR #119 corrige bloqueio)
+- Reset de senha: fluxo via `password_reset_requests` — INSERT permitido para `anon` e `authenticated` com `status = 'pending'` (**CORRIGIDO** — PR #119, DROP + CREATE das políticas)  
 - Redirect pós-login: `/` (Index/Dashboard)
 
 ---
 
-## RLS — Regras Vigentes (estado atual main ebe3a6b2)
+## RLS — Regras Vigentes (estado atual main 8664d938)
 
 | Tabela | Situação |
 |---|---|
-| `password_reset_requests` | RLS bloqueando anon INSERT — **BUG ATIVO** (PR #119 pendente) |
+| `password_reset_requests` | **CORRIGIDO** — anon/authenticated INSERT com WITH CHECK status='pending' (PR #119 `918828fd`) |
 | Demais tabelas | USANDO true em várias (audit histórica: permissivo, risco documentado em ANALISE_TECNICA_SISTEMA.md) |
-| `csp_violation_reports` | Tabela não existe em main ainda (branch devin/audit-csp pendente) |
+| `csp_violation_reports` | Em main (migrations CSP aditivas da branch audit-csp) |
 
 ---
 
@@ -52,6 +53,7 @@
 - Chave display MasterAPI: `VITE_MASTER_API_DISPLAY_KEY` (env var) — chave hardcoded removida na PR #118
 - Supabase URL/anon key: variáveis de ambiente Vite (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)
 - Segredos nunca commitados em código
+- **BACKLOG (segurança):** `docs/estado/_lote-07-admin-integracoes.md`, `docs/estado/_meta-02-refutacao-verdes.md` e `docs/estado/_meta-00-consolidado.md` ainda contêm a chave `sk_live_fast_***` real em main — remover/redigir via PR
 
 ---
 
@@ -77,24 +79,31 @@
 
 - Features auto-contidas: `src/features/<domain>/` com barrel `index.ts`
 - Importação dentro de feature: usar deep path (não barrel — evita ciclo)
-  - Regra documentada em AGENTS.md (adicionada por devin/1793268046-divida-estrutural-2)
+  - Regra documentada em AGENTS.md (PR #120, `8120bef7`)
 - `logger.ts`: import dinâmico de `supabase` para evitar ciclo `client→logger→client`
-  - Fix em devin/1793268046-divida-estrutural-2, pendente de PR
+  - **CORRIGIDO** — PR #120 (`8120bef7`)
 
 ---
 
 ## Qualidade de Código
 
-- TypeScript estrito: tsc --noEmit = PASS em ebe3a6b2
-- ESLint: 22 warnings (nenhum error) em ebe3a6b2
+- TypeScript estrito: tsc --noEmit = PASS em 8664d938
+- ESLint: 22 warnings (nenhum error)
 - Coverage mínima (ratchet em vitest.config.ts): lines 34%, statements 32%, functions 27%, branches 26%
 - Husky pre-commit: falha no WSL sem nvm (usar --no-verify)
 
 ---
 
+## Monitoramento de Segurança (CSP)
+
+- Edge function `csp-report` rejeita `*.vercel.app` e `localhost` por padrão quando `CSP_REPORT_ALLOWED_HOSTS` vazio (**CORRIGIDO** — PR #121, `8664d938`)
+
+---
+
 ## Pendências Documentadas (PENDENCIAS.md)
 
-1. Revisão de política RLS — **parcialmente endereçado** por PR #119 (reset senha)
+1. Revisão de política RLS — **endereçado** por PR #119 (reset senha)
 2. Bitrix24 verify_jwt — **PENDENTE**
 3. ghcr.io rate-limit — **PENDENTE**
-4. (outros itens conforme PENDENCIAS.md em main)
+4. Segredo em `docs/estado/` — **PENDENTE** (remover/redigir)
+5. (outros itens conforme PENDENCIAS.md em main)
