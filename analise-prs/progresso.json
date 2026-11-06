@@ -20,6 +20,13 @@
     "120": "8120bef7",
     "121": "8664d938"
   },
+  "analise_2026-11-06": {
+    "PR_128": "FECHAR_SUPERADA",
+    "PR_127": "ABERTA_REDIGIR_SEGREDO",
+    "infra-edge-npm-imports": "BACKLOG_SEM_PR",
+    "migration-repair": "SUPERADO",
+    "db-admin-alter-role": "SUPERADO"
+  },
   "baseline": {
     "tsc": "PASS",
     "lint": "PASS (22 warnings, 0 errors)",

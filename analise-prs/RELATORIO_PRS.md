@@ -118,3 +118,37 @@ Ambas foram analisadas e NAO geraram PR. Veredito: **SUPERADO**.
 **Motivo do SUPERADO:** as duas branches so continham correcoes de CI/workflow. O conteudo funcional ja esta em `main`; mergea-las exigiria alterar `.github/workflows`, o que e proibido pelas regras desta sessao e nao agrega valor. Nenhuma acao pendente.
 
 **Worktree orfao `_worktrees/Fast_Gravacoes_V2-pr116`:** confirmado ausente em `git worktree list --porcelain` (2026-11-06). Nada a remover.
+
+---
+
+## Veredito PR #128 e branch infra-edge-npm (2026-11-06)
+
+### PR #128 — fix: regera deno.lock no runner (hash tslib@2.8.1 via esm.sh mudou)
+- **Autor:** claude (outro agente, 2026-11-06T16:24:32Z)
+- **Head:** `claude/fix-deno-lock-tslib-261106-1712` → `4a8e459e61db096c456df91330eaa178b3d3572e`
+- **Diff (100% lido):** 1 arquivo — `.github/workflows/_tmp-regenerate-deno-lock.yml` (+53, aditivo)
+- **Conteudo do workflow temp:** checkout da branch + node 24 + `npm ci` + deno 2.9.5 + `deno cache --reload` nas edge functions + commit/push do deno.lock. Push de volta para a branch da PR.
+- **Reconciliacao com main:**
+  - O fix de conteudo que a PR pretendia (hash `tslib@2.8.1` no `deno.lock`) **JA ESTA EM MAIN** no commit `d6c9c11c` — `fix: atualiza hash tslib@2.8.1 no deno.lock (esm.sh CDN update)` (2026-11-06).
+  - `PR128` (1 commit `4a8e459e`) = somente o workflow temporario *residual*; nao contem mais mudanca de `deno.lock`.
+- **CI/checks:** nao verificado apos o push do workflow (run temp pode ter pushado para a branch).
+- **Veredito:** **FECHAR (superada)** — conteudo ja em `main` (d6c9c11c); a branch residual so contem `.github/workflows/_tmp-*` e merge-la violaria a regra de nao tocar workflows. Fechamento sem merge.
+
+### Branch `claude/infra-edge-npm-imports-261106-1648` — sem PR aberta
+- **Head:** `33c724ce` (2 commits: `42aa718b` zod esm.sh→npm; `33c724ce` supabase-js/resend esm.sh→npm)
+- **Diff (100% lido):** 2 arquivos, +5/-5
+  - `supabase/functions/_shared/contracts.ts` (4 linhas)
+  - `supabase/functions/new-device-alert/index.ts` (6 linhas)
+- **Escopo:** migrar imports de edge functions de `esm.sh` para `npm:`. Reduz dependencia da CDN esm.sh (mesma classe de risco do incidente tslib que gerou a PR #128).
+- **Status:** sem PR aberta. Nao mergeada. Nao verificada em producao.
+- **Veredito:** **BACKLOG** — mudanca bem formada e de baixo risco (2 arquivos), mas sem PR aberta e fora do escopo de merges aprovados desta sessao. Exigiria PR propria + analise completa (CI deno-tests com `--frozen`, verificação de deploy das edge functions).
+
+---
+
+## Cobertura (atualizado 2026-11-06)
+
+- **PRs analisadas:** 4 nesta fase (119, 120, 121, 128) + 2 branches sem PR (divida-estrutural-2, audit-csp) + 2 branches vetadas (migration-repair, db-admin-alter-role) + 1 branch backlog (infra-edge-npm)
+- **Mergeadas:** 3 (119, 120, 121)
+- **Fechar (proposto):** PR #128 (superada — conteudo em main d6c9c11c)
+- **Backlog:** branch infra-edge-npm-imports (sem PR)
+- **Barra de fechamento:** fechamento da PR #128 sugerido — requer decisao humana conforme regra 8 (envolve `.github/workflows`)

@@ -52,5 +52,44 @@
     "arquivos": [
       "supabase/functions/csp-report/index.ts"
     ]
+  },
+  {
+    "numero": 128,
+    "titulo": "fix: regera deno.lock no runner (hash tslib@2.8.1 via esm.sh mudou)",
+    "autor": "claude",
+    "branch": "claude/fix-deno-lock-tslib-261106-1712",
+    "base": "main",
+    "sha_head": "4a8e459e61db096c456df91330eaa178b3d3572e",
+    "draft": false,
+    "ci": "nao_verificado",
+    "conflitos": false,
+    "veredito": "FECHAR_SUPERADA",
+    "merge_sha": null,
+    "meta": null,
+    "origem": null,
+    "arquivos": [
+      ".github/workflows/_tmp-regenerate-deno-lock.yml"
+    ],
+    "nota": "Conteudo original (hash tslib deno.lock) ja em main d6c9c11c. Branch residual = so workflow temporario. Merge violaria regra de workflows. Fechamento proposto."
+  },
+  {
+    "numero": null,
+    "titulo": "fix: migra imports de edge functions de esm.sh para npm",
+    "autor": "claude",
+    "branch": "claude/infra-edge-npm-imports-261106-1648",
+    "base": "main",
+    "sha_head": "33c724ce",
+    "draft": false,
+    "ci": "nao_verificado",
+    "conflitos": false,
+    "veredito": "BACKLOG_SEM_PR",
+    "merge_sha": null,
+    "meta": null,
+    "origem": null,
+    "arquivos": [
+      "supabase/functions/_shared/contracts.ts",
+      "supabase/functions/new-device-alert/index.ts"
+    ],
+    "nota": "Sem PR aberta. Migracao esm.sh->npm (zod, supabase-js, resend) nos 2 arquivos. Exigiria PR propria + analise completa."
   }
 ]
