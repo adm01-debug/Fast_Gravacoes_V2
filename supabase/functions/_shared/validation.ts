@@ -1,4 +1,4 @@
-import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { z } from "npm:zod";
 
 export const webhookPayloadSchema = z.object({
   source: z.string().min(1, "Source is required"),

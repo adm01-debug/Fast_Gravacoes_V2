@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { z } from "https://esm.sh/zod@3.22.4";
+import { z } from "npm:zod";
 
 // Define a schema for contract tests to ensure consistency
 const ContractTestResultSchema = z.object({

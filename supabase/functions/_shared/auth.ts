@@ -190,7 +190,7 @@ export async function authenticate(
   if (deps.createUserClient) {
     userClient = deps.createUserClient(supabaseUrl, supabaseAnonKey, authHeader);
   } else {
-    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.1");
+    const { createClient } = await import("npm:@supabase/supabase-js");
     userClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { autoRefreshToken: false, persistSession: false },

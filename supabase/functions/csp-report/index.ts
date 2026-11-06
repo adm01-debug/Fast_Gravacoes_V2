@@ -4,8 +4,8 @@
 // defesa é: schema zod estrito + rate limit por IP + insert via service role
 // (tabela sem policy de INSERT para anon/auth).
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { createClient } from "npm:@supabase/supabase-js";
+import { z } from "npm:zod";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 // (schema mantido local e não em _shared/validation.ts para evitar conflito
 // de merge com o PR que adiciona schemas novos no mesmo arquivo)
