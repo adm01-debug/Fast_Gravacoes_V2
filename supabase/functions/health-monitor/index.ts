@@ -4,7 +4,7 @@
 //
 // Schedule via pg_cron every 5 minutes. Secure via CRON_SECRET header.
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import { createLogger, getOrCreateRequestId } from "../_shared/logger.ts";
 import { requireCronSecret } from "../_shared/cronAuth.ts";

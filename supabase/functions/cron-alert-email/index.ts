@@ -16,7 +16,7 @@
  * endpoint de usuário.
  */
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 import { escapeHtml } from "../_shared/htmlEscape.ts";

@@ -29,9 +29,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       // As suites de contrato importam os schemas REAIS de
-      // supabase/functions/_shared/contracts.ts, que puxa o zod via URL Deno.
+            // supabase/functions/_shared/contracts.ts, que puxa o zod via npm (Deno).
       // Redireciona para o zod do package.json (mesma API, v3.x).
-      'https://esm.sh/zod@3.22.4': 'zod',
+            'npm:zod': 'zod',
     },
     // Use the forks pool to isolate large simulation suites (500+ cases).
     // (Vitest 4 removed `poolOptions`; `singleFork` defaults to false.)

@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
+import { createClient } from 'npm:@supabase/supabase-js'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkRateLimit } from '../_shared/rateLimit.ts'
 import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts'

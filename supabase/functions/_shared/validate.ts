@@ -9,7 +9,7 @@
 //   if (parsed.response) return parsed.response;
 //   const data = parsed.data;
 
-import { z, ZodTypeAny } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { z, ZodTypeAny } from "npm:zod";
 
 export interface ParseContext {
   corsHeaders: Record<string, string>;
