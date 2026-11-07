@@ -35,6 +35,8 @@ muda a forma de escrever código aqui.
 1. `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json`
    (o `tsconfig.json` raiz é solution file com `files: []` — `npx tsc --noEmit` sozinho não verifica nada) ·
    `npm run test` nos arquivos tocados (só erro seu conta).
-2. Branch `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>`; commit curto em PT-BR com prefixo
-   Conventional Commits (o hook `commit-msg` rejeita o resto).
+2. Branch `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>`; commit curto em PT-BR com tipo aceito
+   pelo commitlint (`fix`, `feat`, `chore`, `ci`, `docs`, `refactor`, `test`, `perf`, `build`, `style`,
+   `revert` — o hook `commit-msg` rejeita o resto; `infra:` NÃO é aceito: branch `infra` commita como
+   `chore:` ou `ci:`).
 3. Diff mínimo, uma tarefa por PR; corpo da PR com causa e evidência do que foi verificado.

@@ -1,8 +1,9 @@
 # Arquitetura e testes — referência para agentes
 
 Ler quando for tocar provider tree, rotas, features, `src/lib`, layout de testes ou variáveis de
-ambiente. Texto movido do antigo `CLAUDE.md` (sem alteração de conteúdo); as regras operacionais
-vigentes estão em `AGENTS.md`, que vence em caso de conflito.
+ambiente. Texto movido do antigo `CLAUDE.md`; única alteração de conteúdo: o parágrafo do gerenciador
+de pacotes, alinhado ao que o CI usa. As regras operacionais vigentes estão em `AGENTS.md`, que vence
+em caso de conflito.
 
 ## Project overview
 
@@ -38,7 +39,7 @@ npx playwright test tests/e2e/auth.spec.ts
 npx playwright test --project=chromium        # or --project=mobile-chrome
 ```
 
-Package manager: both `bun.lockb`/`bun.lock` and `package-lock.json` are committed. npm scripts work; `bun install` also works (requires Bun ≥1.3 — `bun.lock` is lockfileVersion 3). Pick one and stay consistent.
+Package manager: **npm** (`npm ci --legacy-peer-deps`, exactly what `ci.yml`, `deploy.yml` and `visual-baselines.yml` run). `bun.lock`/`bun.lockb` are still committed and `bun install` still works (Bun ≥1.3), but no workflow uses them — do not mix; the single rule is in `AGENTS.md` §8.
 
 ## Test layout
 
