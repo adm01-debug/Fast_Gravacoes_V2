@@ -80,10 +80,13 @@ def _edge_functions(root, paths):
                 'auth_guards': sorted(set(re.findall(r'\b(require(?:Auth|Role|Aal2|ElevatedAal2)|getAuthUser)\b', content))),
                 'service_role_reference': bool(re.search(r'(service[_-]?role|SUPABASE_SERVICE_ROLE)', content, re.I)),
             })
-    consumers = _matches(root, paths, r"\.functions\.invoke\(\s*['\"][A-Za-z0-9_-]+")
+    consumers = _matches(root, paths, r"\.functions\.invoke\(\s*(['\"`])[A-Za-z0-9_-]+")
     for item in consumers:
-        name = re.search(r"['\"]([A-Za-z0-9_-]+)", item['text'])
-        item['function'] = name.group(1) if name else 'unknown'
+        # Anchored no texto do invoke (não no primeiro entre aspas da linha):
+        # um prefixo de variável (ex.: invoke(coisa) ou invoke(`fn`)) vira
+        # 'unknown' em vez de crashar ou apontar o nome errado.
+        match = re.search(r"\.functions\.invoke\(\s*(['\"`])([A-Za-z0-9_-]+)", item['text'])
+        item['function'] = match.group(2) if match else 'unknown'
     return functions, consumers
 
 

@@ -14,8 +14,22 @@ def _read(path):
     return json.loads(Path(path).read_text(encoding='utf-8'))
 
 
+def _overview(out):
+    """Read overview.json with an explicit, actionable failure instead of a
+    raw FileNotFoundError/KeyError when the snapshot output is missing."""
+    path = Path(out) / 'overview.json'
+    if not path.is_file():
+        raise FileNotFoundError(
+            f'overview.json ausente em {path} — rode o build do grafo '
+            f'(npm run graph:build) antes do quality/ratchet.')
+    try:
+        return _read(path)
+    except json.JSONDecodeError as error:
+        raise ValueError(f'{path} não é JSON válido: {error}') from error
+
+
 def _metric_snapshot(out):
-    overview = _read(Path(out) / 'overview.json')
+    overview = _overview(out)
     return {name: overview.get(name, 0) for name in METRICS}
 
 
@@ -82,7 +96,7 @@ def audit(root, out):
         ('.github/workflows/graphify.yml', 'automação CI'),
     ]:
         checks.append({'check': description, 'path': relative, 'pass': (root / relative).is_file()})
-    overview = _read(Path(out) / 'overview.json')
+    overview = _overview(out)
     checks.extend([
         {'check': 'catálogo de relações preserva evidência bruta', 'path': 'relation-catalog.json',
          'pass': (Path(out) / 'relation-catalog.json').is_file()},
