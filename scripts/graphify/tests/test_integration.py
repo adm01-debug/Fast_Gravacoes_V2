@@ -184,6 +184,45 @@ class GraphifyIntegrationTests(unittest.TestCase):
         result = ratchet(self.root, out, 'report')
         self.assertTrue(result['would_fail'])
 
+    def test_quality_audit_fails_clearly_when_overview_missing(self):
+        from quality import audit, _overview
+        out = self.root / 'graphify-out'
+        out.mkdir(parents=True, exist_ok=True)
+        # Direto: arquivo ausente → FileNotFoundError com orientação, não KeyError cru.
+        with self.assertRaisesRegex(FileNotFoundError, 'overview.json ausente'):
+            _overview(out)
+        with self.assertRaisesRegex(FileNotFoundError, 'overview.json ausente'):
+            audit(self.root, out)
+        # JSON corrompido → ValueError com contexto, não rastreamento cru.
+        (out / 'overview.json').write_text('{corrompido')
+        with self.assertRaisesRegex(ValueError, 'não é JSON válido'):
+            _overview(out)
+
+    def test_quality_audit_accepts_absent_optional_artifacts(self):
+        from quality import audit
+        out = self.root / 'graphify-out'
+        out.mkdir(parents=True, exist_ok=True)
+        (out / 'overview.json').write_text(json.dumps({'static_only': True}))
+        result = audit(self.root, out)
+        self.assertTrue(any(check['check'] == 'saída declara limitação estática' and check['pass']
+                            for check in result['checks']))
+
+    def test_edge_function_consumers_via_template_or_variable_do_not_crash(self):
+        from enrich import _edge_functions
+        self.write('src/client.ts',
+                   "supabase.functions.invoke(`template-name`);\n"
+                   "const fn = 'dynamic-name'; supabase.functions.invoke(fn);\n"
+                   "supabase.functions.invoke('literal-name');\n")
+        functions, consumers = _edge_functions(self.root, [self.root / 'src/client.ts'])
+        by_line = {item['line']: item['function'] for item in consumers}
+        # Template literal com nome estático é resolvido; variável real é
+        # omitida (impossível resolver estaticamente) — nenhum dos dois crasha
+        # nem aponta nome errado.
+        self.assertEqual(by_line.get(1), 'template-name')
+        self.assertNotIn(2, by_line)
+        self.assertEqual(by_line.get(3), 'literal-name')
+        self.assertFalse(functions)
+
 
 if __name__ == '__main__':
     unittest.main()

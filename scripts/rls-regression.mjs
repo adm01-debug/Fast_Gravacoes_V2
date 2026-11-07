@@ -32,6 +32,20 @@
  * Requer, como secrets de CI: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY,
  * E2E_OPERATOR_EMAIL, E2E_OPERATOR_PASSWORD (mesmas credenciais já usadas
  * pelo teste de negação de acesso em tests/e2e/auth.spec.ts).
+ *
+ * O UUID do "usuário estrangeiro" pode ser sobrescrito por env
+ * RLS_FOREIGN_USER_ID (útil se a conta for recriada); o default abaixo é o da
+ * conta admin mais antiga do banco canônico.
+ *
+ * Por que não há um segundo teste negativo determinístico sem escrever lixo?
+ * Um teste negativo tem que provar que a RLS bloqueia "usar a conta de
+ * outro" — para isso: (a) INSERT precisa de uma tabela sem FK em user_id
+ * (senão 23503 mascararia o 42501) — só technical_conversations atende hoje;
+ * (b) SELECT-leak e UPDATE de outro usuário dependem de o FOREIGN_USER_ID ter
+ * linhas nas tabelas, o que nenhuma migration garante (resultado seria
+ * falso-positivo: "0 linhas" p'assar mesmo com a policy removida).
+ * Adicionar um segundo teste só seria correto com fixture real → escreveria
+ * linha em produção, o que o gate evita por design.
  */
 import { createClient } from '@supabase/supabase-js';
 
@@ -40,9 +54,21 @@ import { createClient } from '@supabase/supabase-js';
 // sensível quanto qualquer FK já visível via policies de leitura existentes.
 // Serve apenas como "usuário estrangeiro real" pra distinguir rejeição por
 // RLS (42501) de rejeição por FK inexistente (23503) — ver comentário acima.
-// Se esta conta for um dia removida do banco, o gate passa a falhar com a
-// mensagem "fixture not found" abaixo (falha visível, não falso-positivo).
-const FOREIGN_USER_ID = '82a51685-324b-4db1-9b27-a96590bf267a';
+// Pode ser sobrescrito por RLS_FOREIGN_USER_ID (obs.: segue numérico/hex para
+// não masquerar 23503 como 42501 em caso de typo).
+const FOREIGN_USER_ID_DEFAULT = '82a51685-324b-4db1-9b27-a96590bf267a';
+
+const FOREIGN_USER_ID = process.env.RLS_FOREIGN_USER_ID || FOREIGN_USER_ID_DEFAULT;
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function assertValidUuid(value) {
+  if (!UUID_RE.test(value.trim())) {
+    console.error(`\n# RLS regression: RLS_FOREIGN_USER_ID (ou default) não é um UUID válido: "${value}"`);
+    console.error('# A regressão só é detectável se o user_id estrangeiro for real — UUID inválido quebraria o gate.');
+    process.exit(1);
+  }
+  return value.trim();
+}
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -63,6 +89,8 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 async function main() {
+  const foreignUserId = assertValidUuid(FOREIGN_USER_ID);
+
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: operatorEmail,
     password: operatorPassword,
@@ -73,13 +101,13 @@ async function main() {
     process.exit(1);
   }
 
-  if (authData.user.id === FOREIGN_USER_ID) {
-    console.error('\n# RLS regression: fixture FOREIGN_USER_ID coincide com o próprio operador E2E — atualize o UUID no script.');
+  if (authData.user.id === foreignUserId) {
+    console.error('\n# RLS regression: fixture FOREIGN_USER_ID coincide com o próprio operador E2E — atualize RLS_FOREIGN_USER_ID no secret/CI.');
     process.exit(1);
   }
 
   const { error: insertError } = await supabase.from('technical_conversations').insert({
-    user_id: FOREIGN_USER_ID,
+    user_id: foreignUserId,
   });
 
   await supabase.auth.signOut();

@@ -25,7 +25,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**', '**/supabase/functions/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**', '**/supabase/functions/**', '**/scripts/**'],
     alias: {
       '@': path.resolve(__dirname, './src'),
       // As suites de contrato importam os schemas REAIS de

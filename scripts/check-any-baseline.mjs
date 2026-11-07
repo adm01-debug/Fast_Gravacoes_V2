@@ -15,7 +15,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const BASELINE_FILE = join(__dirname, '..', '.any-baseline.json');
+const ROOT = join(__dirname, '..');
+const SRC_DIR = join(ROOT, 'src');
+const BASELINE_FILE = join(ROOT, '.any-baseline.json');
 
 const PATTERN = String.raw`(:\s*any\b|:\s*any\[|<any>|\bas any\b|\(any\))`;
 const IGNORES = [
@@ -24,6 +26,7 @@ const IGNORES = [
   '!src/integrations/supabase/types.ts',
 ];
 
+// Contador independente de cwd: deriva src de __dirname (igual ao baseline).
 // Fallback sem dependência de `rg` (runners de CI não o instalam — antes
 // o `catch { return 0 }` mascarava isso e o gate nunca rodava lá).
 function countAnyNode() {
@@ -39,15 +42,14 @@ function countAnyNode() {
         if (entry !== 'node_modules') walk(full);
         continue;
       }
-      const rel = relative('src', full).replaceAll('\\', '/');
-      const srcRel = join('src', rel).replaceAll('\\', '/');
+      const srcRel = join('src', relative(SRC_DIR, full)).replaceAll('\\', '/');
       if (!/\.tsx?$/.test(entry) || isIgnored(srcRel)) continue;
       const text = readFileSync(full, 'utf8');
       const matches = text.match(rx);
       if (matches) total += matches.length;
     }
   };
-  walk('src');
+  walk(SRC_DIR);
   return total;
 }
 
@@ -58,7 +60,7 @@ function countAny() {
     ...IGNORES.flatMap((g) => ['-g', g]),
     '--count-matches',
     PATTERN,
-    'src',
+    SRC_DIR,
   ];
   try {
     const out = execSync(`rg ${args.map((a) => `'${a}'`).join(' ')}`, {
@@ -85,14 +87,36 @@ function countAny() {
 }
 
 const current = countAny();
-const update = process.argv.includes('--update');
+const args = process.argv.slice(2);
+const update = args.includes('--update');
+const force = args.includes('--force');
+const prevBaseline = existsSync(BASELINE_FILE)
+  ? Number(JSON.parse(readFileSync(BASELINE_FILE, 'utf8')).baseline)
+  : null;
 
-if (update || !existsSync(BASELINE_FILE)) {
+if (update) {
+  // Ratchet "só reduzir": rejeita aumento do baseline (a menos que --force).
+  if (!force && prevBaseline !== null && current > prevBaseline) {
+    console.error(
+      `❌ Recusando aumentar baseline: atual ${current} > baseline ${prevBaseline}.`,
+    );
+    console.error(`   Primeiro remova os 'any' novos, ou use --force se a redução for impossível.`);
+    process.exit(1);
+  }
   writeFileSync(
     BASELINE_FILE,
     JSON.stringify({ baseline: current, updatedAt: new Date().toISOString() }, null, 2) + '\n',
   );
-  console.log(`✅ Baseline atualizada: ${current} ocorrências de 'any'.`);
+  console.log(`✅ Baseline atualizada: ${current} ocorrências de 'any'${force && prevBaseline !== null && current > prevBaseline ? ' (--force)' : ''}.`);
+  process.exit(0);
+}
+
+if (!existsSync(BASELINE_FILE)) {
+  writeFileSync(
+    BASELINE_FILE,
+    JSON.stringify({ baseline: current, updatedAt: new Date().toISOString() }, null, 2) + '\n',
+  );
+  console.log(`✅ Baseline criada: ${current} ocorrências de 'any'.`);
   process.exit(0);
 }
 
