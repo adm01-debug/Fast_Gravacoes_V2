@@ -32,7 +32,9 @@ muda a forma de escrever código aqui.
 
 ## Antes de abrir PR
 
-1. `npm run lint` · `npx tsc --noEmit` · `npm run test` nos arquivos tocados (só erro seu conta).
+1. `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json`
+   (o `tsconfig.json` raiz é solution file com `files: []` — `npx tsc --noEmit` sozinho não verifica nada) ·
+   `npm run test` nos arquivos tocados (só erro seu conta).
 2. Branch `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>`; commit curto em PT-BR com prefixo
    Conventional Commits (o hook `commit-msg` rejeita o resto).
 3. Diff mínimo, uma tarefa por PR; corpo da PR com causa e evidência do que foi verificado.

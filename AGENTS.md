@@ -12,7 +12,7 @@ Sistema ~80% pronto, em manutenção. O dono não é dev: decide negócio, o age
 
 1. End-to-end via MCP (GitHub, Supabase, Vercel, infra). Nunca "copie e cole"/"roda aí"/"você faz X e eu faço Y".
 2. Decida como dev sênior; pergunte só com custo, mudança de arquitetura, dado destrutivo em produção, trade-off real de negócio ou item da regra 6.8. Para ler/inspecionar, nunca peça permissão.
-3. Verdade acima de validação: não sabe/falhou → diga; nunca afirme ter testado o que não rodou. Afirmação sobre código cita evidência (arquivo:linha, diff, saída) ou vira "NÃO VERIFICADO" + motivo. Branch, commit ou PR não provam nada — leia o código.
+3. Verdade acima de validação: não sabe/falhou → diga; nunca afirme ter testado o que não rodou. Afirmação sobre código cita evidência (arquivo:linha, diff, saída) ou vira "NÃO VERIFICADO" + motivo. Branch/commit/PR não provam nada — leia o código.
 4. Diff mínimo, zero churn: causa raiz, não reescrita. Não refatore, renomeie, "melhore" ou comente o que não foi pedido. Dependência nova ou bump major só se indispensável — e avise na PR.
 5. `APROVADO` = execute o plano exatamente como descrito, sem reconfirmar.
 6. Uma tarefa por vez; vários itens = em sequência, cada um com branch/PR. Outro bug? Não conserte — anote em "Próximos passos". Travou (acesso, MCP, dependência) → erro exato e pare; não pivote nem contorne regra. Antes de concluir, releia o pedido.
@@ -59,12 +59,12 @@ Escrita em repos `adm01-debug`: MCP `GITHUB - MCP - FOREVER` (o padrão dá 403;
 - Vite + React 18 + TS + Tailwind/shadcn + TanStack Query + Zod/RHF + i18next (PT-BR); Supabase: Postgres + RLS + Edge Functions Deno. Alias `@/` → `src/`. `src/integrations/supabase/client.ts` e `types.ts` são gerados — não editar.
 - Env (`.env.example`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`; `VITE_*` é público no bundle — chaves de API só em secrets de Edge Function.
 - `ANALISE_TECNICA_SISTEMA.md` lista problemas conhecidos — leia antes de assumir que o atual é intencional.
-- Ler: `docs/agentes/arquitetura.md` (providers, rotas, features, lib, testes, env), `docs/operacoes/RUNBOOK.md`, `docs/adr/`.
+- Ler: `docs/agentes/arquitetura.md` (arquitetura, testes, env), `docs/operacoes/RUNBOOK.md`, `docs/adr/`.
 
 ## 8. Comandos e CI
 
-- `npm run dev` · `npm run build` · `npm run lint` · `npx tsc --noEmit` · `npm run test` (Vitest; `npx vitest run <arquivo>`) · `npm run test:e2e` (Playwright) · `npm run quality:gate`.
-- Pacotes: npm (`npm ci --legacy-peer-deps`, como o CI); não misture com bun.
+- `npm run dev` · `npm run build` · `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json` · `npm run test` (Vitest) · `npm run test:e2e` (Playwright) · `npm run quality:gate`.
+- Pacotes: npm (`npm ci --legacy-peer-deps`, como o CI), não bun.
 - Husky: `pre-commit` = lint-staged + `scripts/check-any-baseline.mjs`; `commit-msg` = commitlint.
 - CI (`ci.yml`): lint, `any`, audit-gate, TruffleHog, unit+coverage (limiares só sobem), Deno `_shared`, fuzz, build+bundle diff. `db-admin.yml`/`migration-repair.yml` só `workflow_dispatch` (regra 6.8).
 
