@@ -1,7 +1,7 @@
 -- Fix policies permissivas de INSERT (WITH CHECK true) restantes no fim da cadeia.
 --
 -- Contexto:
---   - tpm_notification_logs ("Logs insertable by system"): já dropada em
+--   - tpm_notification_logs ("Logs insertáveis por system"): já dropada em
 --     20260712232418_e0446f80 (REPLACE + policy restrita "Users can insert own log entries").
 --   - packaging_waste ("Users can insert waste records"): tabela dropada em
 --     20261001150000_drop_dead_tables_and_functions.sql.
