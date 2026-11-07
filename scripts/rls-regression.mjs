@@ -62,12 +62,15 @@ const FOREIGN_USER_ID = process.env.RLS_FOREIGN_USER_ID || FOREIGN_USER_ID_DEFAU
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function assertValidUuid(value) {
-  if (!UUID_RE.test(value.trim())) {
+  const trimmed = value.trim();
+  if (!UUID_RE.test(trimmed)) {
     console.error(`\n# RLS regression: RLS_FOREIGN_USER_ID (ou default) não é um UUID válido: "${value}"`);
     console.error('# A regressão só é detectável se o user_id estrangeiro for real — UUID inválido quebraria o gate.');
     process.exit(1);
   }
-  return value.trim();
+  // Supabase normaliza UUIDs para minúsculas; comparar case-sensitive com
+  // uppercase enganaria a proteção de "não usar a própria conta".
+  return trimmed.toLowerCase();
 }
 
 function requireEnv(name) {
@@ -131,3 +134,4 @@ main().catch((err) => {
   console.error('\n# RLS regression: erro inesperado', err);
   process.exit(1);
 });
+

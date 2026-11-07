@@ -75,13 +75,30 @@ export function collectViolations(files, budget) {
   }
 
   for (const [route, limit] of Object.entries(entrypoints)) {
-    const key = route === '/' ? 'index' : route.replace(/^\//, '').replace(/\//g, '-');
-    // Prefix-exact match: '/'→'index' must not accidentally capture chunks like
-    // 'index-page' or 'auth-index' that merely *contain* the key substring.
-    const matched = files.filter((f) => {
-      const chunk = (f.chunk || '').toLowerCase();
-      return chunk === key.toLowerCase() || chunk.startsWith(`${key.toLowerCase()}-`);
-    });
+    // Lazy pages are chunked under the component name (AuthPage, KioskPage,
+    // OperatorView...), not the route slug — so budgets allow an explicit
+    // map route→chunk names. When present, match exact names only. Without
+    // it, fall back to prefix-exact on the derived key ('/'→'index').
+    const alias = budget?.entrypointChunks?.[route];
+    let matched;
+    if (Array.isArray(alias) && alias.length) {
+      const names = alias.map((c) => c.toLowerCase());
+      matched = files.filter((f) => names.includes((f.chunk || '').toLowerCase()));
+      if (!matched.length) {
+        violations.push(`Rota "${route}": nenhum chunk do build corresponde a ${JSON.stringify(alias)} — budget não avaliado`);
+      }
+    } else {
+      const key = route === '/' ? 'index' : route.replace(/^\//, '').replace(/\//g, '-');
+      // Prefix-exact match: '/'→'index' must not accidentally capture chunks like
+      // 'index-page' or 'auth-index' that merely *contain* the key substring.
+      matched = files.filter((f) => {
+        const chunk = (f.chunk || '').toLowerCase();
+        return chunk === key.toLowerCase() || chunk.startsWith(`${key.toLowerCase()}-`);
+      });
+      if (!matched.length) {
+        violations.push(`Rota "${route}": nenhum chunk casa com "${key}" (considere declarar entrypointChunks) — budget não avaliado`);
+      }
+    }
     const sum = +matched.reduce((s, f) => s + f.gzipKb, 0).toFixed(2);
     if (matched.length && sum > limit) {
       violations.push(`Rota "${route}" soma ${sum}KB gzip > limite ${limit}KB`);

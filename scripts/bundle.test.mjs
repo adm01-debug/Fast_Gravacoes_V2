@@ -51,19 +51,28 @@ const budget = {
 };
 
 test('violacao de chunk por nome agrupado', () => {
-  const files = [{ file: 'assets/lib-mermaid-DaoJtfZi.js', chunk: 'lib-mermaid', gzipKb: 901 }];
+  const files = [
+    { file: 'assets/lib-mermaid-DaoJtfZi.js', chunk: 'lib-mermaid', gzipKb: 901 },
+    { file: 'assets/index-x.js', chunk: 'index', gzipKb: 1 }, // entrypoint real do build
+  ];
   const v = collectViolations(files, budget);
   assert.equal(v.length, 1);
   assert.match(v[0], /lib-mermaid/);
 });
 
 test('sem violacao quando dentro do limite', () => {
-  const files = [{ file: 'assets/vendor-react-x.js', chunk: 'vendor-react', gzipKb: 100 }];
+  const files = [
+    { file: 'assets/vendor-react-x.js', chunk: 'vendor-react', gzipKb: 100 },
+    { file: 'assets/index-x.js', chunk: 'index', gzipKb: 1 },
+  ];
   assert.deepEqual(collectViolations(files, budget), []);
 });
 
 test('usa limite default (maxChunkKb) para chunk nao listado', () => {
-  const files = [{ file: 'assets/foo-bar.js', chunk: 'foo', gzipKb: 400 }];
+  const files = [
+    { file: 'assets/foo-bar.js', chunk: 'foo', gzipKb: 400 },
+    { file: 'assets/index-x.js', chunk: 'index', gzipKb: 1 },
+  ];
   const v = collectViolations(files, budget);
   assert.equal(v.length, 1);
   assert.match(v[0], /350/);
@@ -96,6 +105,58 @@ test('entrypoint soma os chunks do prefixo e viola se exceder', () => {
   const v = collectViolations(files, { defaults: {}, chunks: {}, entrypoints: { '/': 800 } });
   assert.equal(v.length, 1);
   assert.match(v[0], /900/);
+});
+
+test('entrypointChunks explicito casa nomes exatos (nao prefixo)', () => {
+  const files = [
+    { file: 'assets/AuthPage-x.js', chunk: 'AuthPage', gzipKb: 200 },
+    { file: 'assets/auth-index.js', chunk: 'auth-index', gzipKb: 300 },
+  ];
+  // /auth declara explicitamente AuthPage; auth-index deve ser ignorado
+  const v = collectViolations(files, {
+    defaults: {},
+    chunks: {},
+    entrypoints: { '/auth': 350 },
+    entrypointChunks: { '/auth': ['AuthPage'] },
+  });
+  assert.deepEqual(v, []);
+  // estourando o limite do mapa explicito
+  const v2 = collectViolations(
+    [{ file: 'assets/AuthPage-x.js', chunk: 'AuthPage', gzipKb: 400 }],
+    { defaults: {}, chunks: {}, entrypoints: { '/auth': 350 }, entrypointChunks: { '/auth': ['AuthPage'] } },
+  );
+  assert.equal(v2.length, 1);
+  assert.match(v2[0], /soma 400KB/);
+});
+
+test('alerta quando entrypointChunks nao casa nenhum chunk do build', () => {
+  const files = [{ file: 'assets/foo-x.js', chunk: 'foo', gzipKb: 10 }];
+  const v = collectViolations(files, {
+    defaults: {},
+    chunks: {},
+    entrypoints: { '/auth': 350 },
+    entrypointChunks: { '/auth': ['AuthPage'] },
+  });
+  assert.equal(v.length, 1);
+  assert.match(v[0], /nenhum chunk do build corresponde a \["AuthPage"\]/);
+});
+
+test('alerta quando fallback prefixo nao casa nenhum chunk (budget de rota inativo)', () => {
+  const files = [{ file: 'assets/foo-x.js', chunk: 'foo', gzipKb: 10 }];
+  const v = collectViolations(files, { defaults: {}, chunks: {}, entrypoints: { '/auth': 350 } });
+  assert.equal(v.length, 1);
+  assert.match(v[0], /nenhum chunk casa com "auth"/);
+});
+
+test('case-insensitive: uppercase no mapa casa chunk lowercase', () => {
+  const files = [{ file: 'assets/authpage-x.js', chunk: 'authpage', gzipKb: 10 }];
+  const v = collectViolations(files, {
+    defaults: {},
+    chunks: {},
+    entrypoints: { '/auth': 350 },
+    entrypointChunks: { '/auth': ['AuthPage'] },
+  });
+  assert.deepEqual(v, []);
 });
 
 // --- bundle-diff validateReport ---
