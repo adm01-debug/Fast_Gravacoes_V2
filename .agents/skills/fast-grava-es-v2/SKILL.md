@@ -1,96 +1,42 @@
-```markdown
-# fast-grava-es-v2 Development Patterns
+---
+name: fast-grava-es-v2
+description: Convenções do repositório Fast_Gravacoes_V2 (Vite + React + Supabase). Use ao criar ou alterar código, testes, migrations ou Edge Functions neste repo, para seguir o alias, a organização por features, o fluxo de commit e os comandos de verificação corretos.
+---
 
-> Auto-generated skill from repository analysis
+# fast-grava-es-v2 — convenções do repositório
 
-## Overview
-This skill teaches the core development patterns and conventions used in the `fast-grava-es-v2` TypeScript codebase. It covers file naming, import/export styles, commit message conventions, and testing patterns. This guide will help you contribute code that aligns with the project's established standards.
+As regras completas estão em `AGENTS.md` (vence em caso de conflito). Esta skill só resume o que
+muda a forma de escrever código aqui.
 
-## Coding Conventions
+## Código
 
-### File Naming
-- **Pattern:** PascalCase
-- **Example:**  
-  ```plaintext
-  UserService.ts
-  EventStoreHandler.ts
-  ```
+- Imports sempre com alias `@/` → `src/` (nunca caminho relativo longo).
+- Feature em `src/features/<domínio>/` com `components/`, `hooks/`, `services/`, `types/` e barrel
+  `index.ts`. De fora, importe pelo barrel (`@/features/auth`); de dentro da própria feature, por
+  caminho profundo (o barrel cria ciclo).
+- Página nova: criar em `src/pages/`, lazy-import em `src/routes/AppRoutes.tsx`, envolver em
+  `ProtectedPage` (com `allowedRoles`) ou `PublicPage`, escolher skeleton de `@/components/loading`.
+- Contexto global novo: só em `src/providers/AppProviders.tsx`, na posição correta (ordem importa).
+- `src/integrations/supabase/client.ts` e `types.ts` são gerados — não editar à mão.
+- Validação com Zod + react-hook-form; estado de servidor com TanStack Query; UI com Tailwind +
+  shadcn (`cn()` de `@/lib/utils`); strings de interface em PT-BR.
+- Edge Functions em `supabase/functions/<nome>/` (Deno), helpers em `_shared`; migrations em
+  `supabase/migrations/`. Tabela/coluna nova precisa de RLS.
+- Segredos só em env/secret do serviço; `VITE_*` é público no bundle.
 
-### Import Style
-- **Pattern:** Alias-based imports
-- **Example:**
-  ```typescript
-  import { UserService } from 'services/UserService';
-  import { EventStoreHandler } from 'handlers/EventStoreHandler';
-  ```
+## Testes
 
-### Export Style
-- **Pattern:** Mixed (both named and default exports are used)
-- **Example:**
-  ```typescript
-  // Named export
-  export function createUser() { ... }
+- Unit/integração: Vitest, `*.test.ts(x)` ao lado do código ou em `src/test/`. Um arquivo:
+  `npx vitest run <arquivo>`. Limiares de cobertura em `vitest.config.ts` só sobem.
+- E2E: Playwright em `tests/e2e/*.spec.ts` (`--project=chromium|mobile-chrome`).
 
-  // Default export
-  export default class EventStoreHandler { ... }
-  ```
+## Antes de abrir PR
 
-### Commit Messages
-- **Pattern:** Conventional commits with `fix` prefix
-- **Example:**
-  ```
-  fix: correct event stream initialization bug in EventStoreHandler
-  ```
-
-## Workflows
-
-### Adding a New Feature
-**Trigger:** When you need to add new functionality to the codebase  
-**Command:** `/add-feature`
-
-1. Create a new file using PascalCase (e.g., `NewFeature.ts`).
-2. Use alias imports for dependencies.
-3. Export your feature using named or default exports as appropriate.
-4. Write corresponding tests in a file named `NewFeature.test.ts`.
-5. Commit your changes using a conventional commit message (e.g., `fix: add support for new feature`).
-
-### Fixing a Bug
-**Trigger:** When you need to resolve a bug  
-**Command:** `/fix-bug`
-
-1. Identify the bug and locate the relevant file.
-2. Apply your fix, maintaining the code style conventions.
-3. Update or add tests in the relevant `*.test.ts` file.
-4. Commit your changes using the `fix` prefix (e.g., `fix: resolve issue with event handling`).
-
-### Writing Tests
-**Trigger:** When you add or modify features  
-**Command:** `/write-test`
-
-1. Create or update a test file matching the pattern `*.test.ts`.
-2. Write tests covering the new or changed functionality.
-3. Run your tests using the project's test runner (framework unknown; check project scripts).
-
-## Testing Patterns
-
-- **Test File Pattern:** `*.test.ts`
-- **Framework:** Unknown (check project dependencies or scripts for details)
-- **Example:**
-  ```typescript
-  import { createUser } from 'services/UserService';
-
-  describe('createUser', () => {
-    it('should create a new user', () => {
-      const user = createUser('Alice');
-      expect(user.name).toBe('Alice');
-    });
-  });
-  ```
-
-## Commands
-| Command       | Purpose                                         |
-|---------------|-------------------------------------------------|
-| /add-feature  | Guide for adding a new feature                  |
-| /fix-bug      | Steps for fixing a bug                          |
-| /write-test   | Instructions for writing and organizing tests   |
-```
+1. `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json`
+   (o `tsconfig.json` raiz é solution file com `files: []` — `npx tsc --noEmit` sozinho não verifica nada) ·
+   `npm run test` nos arquivos tocados (só erro seu conta).
+2. Branch `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>`; commit curto em PT-BR com tipo aceito
+   pelo commitlint (`fix`, `feat`, `chore`, `ci`, `docs`, `refactor`, `test`, `perf`, `build`, `style`,
+   `revert` — o hook `commit-msg` rejeita o resto; `infra:` NÃO é aceito: branch `infra` commita como
+   `chore:` ou `ci:`).
+3. Diff mínimo, uma tarefa por PR; corpo da PR com causa e evidência do que foi verificado.
