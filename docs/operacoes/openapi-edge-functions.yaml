@@ -3,13 +3,13 @@ info:
   title: FAST GRAVAÇÕES v2 — Edge Functions
   version: "1.0.0"
   description: >-
-    Contrato das 34 Deno Edge Functions do Supabase self-hosted.
+    Contrato das 34 Deno Edge Functions do Supabase Cloud (uoujzvpecohinketylud).
     Detalhe de gatilhos (quem chama o quê): supabase/functions/REGISTRY.md.
     Todas respondem JSON e exigem POST, salvo indicado
     (technical-assistant responde stream SSE; pdf-generator retorna
     text/plain; excel-export retorna text/csv).
 servers:
-  - url: https://supabase.atomicabr.com.br
+  - url: https://uoujzvpecohinketylud.supabase.co
 security:
   - bearerAuth: []
 components:
