@@ -1,0 +1,409 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 971,
+ "arestas": 4685,
+ "hubs": [
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 347
+  },
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 315
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 298
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 231
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 185
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 112
+  },
+  {
+   "arquivo": "src/features/jobs/index.ts",
+   "importado_por": 108
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 98
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 85
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 84
+  },
+  {
+   "arquivo": "src/features/auth/index.ts",
+   "importado_por": 81
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 75
+  },
+  {
+   "arquivo": "src/features/production/index.ts",
+   "importado_por": 72
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 64
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "importado_por": 62
+  },
+  {
+   "arquivo": "src/lib/errorHandling.ts",
+   "importado_por": 62
+  },
+  {
+   "arquivo": "src/lib/logger.ts",
+   "importado_por": 59
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 52
+  },
+  {
+   "arquivo": "src/components/layout/MainLayout.tsx",
+   "importado_por": 49
+  },
+  {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 49
+  },
+  {
+   "arquivo": "src/lib/recharts.ts",
+   "importado_por": 44
+  },
+  {
+   "arquivo": "src/components/ui/code-block.tsx",
+   "importado_por": 40
+  },
+  {
+   "arquivo": "src/components/navigation/Breadcrumbs.tsx",
+   "importado_por": 39
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "importado_por": 36
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/lib/dateUtils.ts",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 32
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cors.ts",
+   "importado_por": 32
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "importado_por": 26
+  },
+  {
+   "arquivo": "src/features/inventory/index.ts",
+   "importado_por": 24
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 23
+  },
+  {
+   "arquivo": "src/lib/realtimeChannel.ts",
+   "importado_por": 23
+  },
+  {
+   "arquivo": "src/features/admin/index.ts",
+   "importado_por": 21
+  },
+  {
+   "arquivo": "src/lib/queryConfig.ts",
+   "importado_por": 21
+  },
+  {
+   "arquivo": "supabase/functions/_shared/logger.ts",
+   "importado_por": 21
+  },
+  {
+   "arquivo": "src/components/ui/popover.tsx",
+   "importado_por": 20
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPM.ts",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/components/ui/alert-dialog.tsx",
+   "importado_por": 17
+  },
+  {
+   "arquivo": "src/components/ui/separator.tsx",
+   "importado_por": 17
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/types.ts",
+   "importado_por": 17
+  }
+ ],
+ "ciclos": {
+  "total": 9,
+  "maiores": [
+   {
+    "tamanho": 34,
+    "arquivos": [
+     "src/features/admin/hooks/useBIExport.ts",
+     "src/features/admin/hooks/useOrphanedDataDetection.ts",
+     "src/features/admin/index.ts",
+     "src/features/analytics/hooks/useBottleneckPrediction.ts",
+     "src/features/analytics/hooks/useLoadBalancing.ts",
+     "src/features/analytics/types/index.ts",
+     "src/features/jobs/hooks/useAutoBufferPromotion.ts",
+     "src/features/jobs/hooks/useDuplicateJob.ts",
+     "src/features/jobs/hooks/useJobs.ts",
+     "src/features/jobs/hooks/usePriorityEscalation.ts",
+     "src/features/jobs/hooks/useSchedulingConflicts.ts",
+     "src/features/jobs/hooks/useSmartSequencing.ts"
+    ]
+   },
+   {
+    "tamanho": 26,
+    "arquivos": [
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/layout/MainLayout.tsx",
+     "src/components/layout/sidebar/NavButton.tsx",
+     "src/components/layout/sidebar/NavGroupComponent.tsx",
+     "src/components/layout/sidebar/sidebarNavConfig.ts",
+     "src/lib/prefetch.ts",
+     "src/pages/AlertsDashboard.tsx",
+     "src/pages/Bitrix24ConfigPage.tsx",
+     "src/pages/DailyCalendar.tsx",
+     "src/pages/DesignSystemPage.tsx",
+     "src/pages/EfficiencyDashboard.tsx",
+     "src/pages/Index.tsx"
+    ]
+   },
+   {
+    "tamanho": 6,
+    "arquivos": [
+     "src/features/auth/hooks/useAuth.ts",
+     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+     "src/features/auth/hooks/useMFA.ts",
+     "src/features/auth/hooks/useRBAC.tsx",
+     "src/features/auth/hooks/useRolePermissions.ts",
+     "src/features/auth/index.ts"
+    ]
+   },
+   {
+    "tamanho": 3,
+    "arquivos": [
+     "src/components/inventory/QRLabelModal.tsx",
+     "src/features/inventory/components/inventory-page/InventoryCard.tsx",
+     "src/features/inventory/index.ts"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/features/jobs/services/jobStateMachine.ts",
+     "src/features/jobs/services/jobsService.ts"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/features/maintenance/components/ExecutionDetailsModal.tsx",
+     "src/features/maintenance/components/ExecutionRecordView.tsx"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+     "src/features/maintenance/components/execution/RegulagemSection.tsx"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/features/packaging/hooks/usePackagingSettings.ts",
+     "src/features/packaging/hooks/usePackagingSlaOverrides.ts"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/integrations/supabase/client.ts",
+     "src/lib/logger.ts"
+    ]
+   }
+  ]
+ },
+ "orfaos": [
+  "public/sw.js",
+  "src/components/accessibility/AccessibleIconButton.tsx",
+  "src/components/accessibility/FocusTrap.tsx",
+  "src/components/accessibility/hooks.ts",
+  "src/components/alerts/AlertCard.tsx",
+  "src/components/alerts/AlertSummaryStats.tsx",
+  "src/components/auth/AuthSignupForm.tsx",
+  "src/components/calendar/CalendarSkeleton.tsx",
+  "src/components/dashboard/QuickActions.tsx",
+  "src/components/design-system/sections/animations/index.ts",
+  "src/components/feedback/CelebrationMoment.tsx",
+  "src/components/layout/ResponsiveContainer.tsx",
+  "src/components/machines/MachineDetailsModal.tsx",
+  "src/components/mobile/PullToRefresh.tsx",
+  "src/components/navigation/GlobalSearch.tsx",
+  "src/components/operators/OperatorCardDetailed.tsx",
+  "src/components/operators/OperatorStatCard.tsx",
+  "src/components/technical-assistant/BiometricSecurity.tsx",
+  "src/components/traceability/CreateLotModal.tsx",
+  "src/components/ui/accordion.tsx",
+  "src/components/ui/aspect-ratio.tsx",
+  "src/components/ui/carousel.tsx",
+  "src/components/ui/drawer.tsx",
+  "src/components/ui/input-otp.tsx",
+  "src/components/ui/resizable.tsx",
+  "src/components/ui/responsive-table.tsx",
+  "src/components/ui/sidebar.tsx",
+  "src/components/ui/stepper.tsx",
+  "src/components/ui/toggle-group.tsx",
+  "src/constants/index.ts",
+  "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+  "src/features/jobs/hooks/useRecordDuplication.ts",
+  "src/features/maintenance/hooks/index.ts",
+  "src/features/notifications/components/NotificationCard.tsx",
+  "src/features/packaging/index.ts",
+  "src/hooks/use-dirty-state-guard.ts",
+  "src/hooks/useBulkActions.ts",
+  "src/hooks/utils/index.ts",
+  "src/lib/index.ts",
+  "src/lib/oeeExport.ts",
+  "src/schemas/index.ts",
+  "supabase/functions/external-db-bridge/validate_contract.ts",
+  "supabase/seed-users.mjs"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "lib",
+   "depende_de": 5,
+   "importado_por": 61
+  },
+  {
+   "modulo": "pages",
+   "depende_de": 56,
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/ui",
+   "depende_de": 4,
+   "importado_por": 51
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 14,
+   "importado_por": 32
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 1,
+   "importado_por": 35
+  },
+  {
+   "modulo": "features/jobs",
+   "depende_de": 8,
+   "importado_por": 24
+  },
+  {
+   "modulo": "features/auth",
+   "depende_de": 4,
+   "importado_por": 24
+  },
+  {
+   "modulo": "features/analytics",
+   "depende_de": 14,
+   "importado_por": 12
+  },
+  {
+   "modulo": "features/production",
+   "depende_de": 6,
+   "importado_por": 18
+  },
+  {
+   "modulo": "features/notifications",
+   "depende_de": 10,
+   "importado_por": 11
+  },
+  {
+   "modulo": "components/layout",
+   "depende_de": 17,
+   "importado_por": 3
+  },
+  {
+   "modulo": "contexts",
+   "depende_de": 6,
+   "importado_por": 12
+  },
+  {
+   "modulo": "features/admin",
+   "depende_de": 9,
+   "importado_por": 8
+  },
+  {
+   "modulo": "components/navigation",
+   "depende_de": 8,
+   "importado_por": 7
+  },
+  {
+   "modulo": "features/inventory",
+   "depende_de": 6,
+   "importado_por": 9
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 12,
+   "importado_por": 2
+  },
+  {
+   "modulo": "components/jobs",
+   "depende_de": 11,
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/settings",
+   "depende_de": 12,
+   "importado_por": 1
+  },
+  {
+   "modulo": "features/maintenance",
+   "depende_de": 7,
+   "importado_por": 6
+  },
+  {
+   "modulo": "components/design-system",
+   "depende_de": 8,
+   "importado_por": 2
+  }
+ ],
+ "arestas_em": "docs/contexto/codigo/grafo-arestas.json"
+}

@@ -1,0 +1,1210 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "pasta": "supabase/functions",
+ "total": 34,
+ "verify_jwt_false": [
+  "bitrix24-sync",
+  "csp-report"
+ ],
+ "shared": [
+  "supabase/functions/_shared/auth.test.ts",
+  "supabase/functions/_shared/auth.ts",
+  "supabase/functions/_shared/contracts.test.ts",
+  "supabase/functions/_shared/contracts.ts",
+  "supabase/functions/_shared/cors.test.ts",
+  "supabase/functions/_shared/cors.ts",
+  "supabase/functions/_shared/cronAuth.test.ts",
+  "supabase/functions/_shared/cronAuth.ts",
+  "supabase/functions/_shared/htmlEscape.ts",
+  "supabase/functions/_shared/logger.test.ts",
+  "supabase/functions/_shared/logger.ts",
+  "supabase/functions/_shared/rateLimit.test.ts",
+  "supabase/functions/_shared/rateLimit.ts",
+  "supabase/functions/_shared/test-utils.ts",
+  "supabase/functions/_shared/validate.ts",
+  "supabase/functions/_shared/validation.ts",
+  "supabase/functions/_shared/webpushEncrypt.test.ts",
+  "supabase/functions/_shared/webpushEncrypt.ts"
+ ],
+ "edges": [
+  {
+   "nome": "approve-password-reset",
+   "entrada": "supabase/functions/approve-password-reset/index.ts",
+   "arquivos": 1,
+   "linhas": 179,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "password_reset_requests",
+    "profiles"
+   ],
+   "rpcs": [],
+   "env": [
+    "APP_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "fastgravacoes.com.br"
+   ],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/settings/PasswordResetRequests.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "auto-promote-jobs",
+   "entrada": "supabase/functions/auto-promote-jobs/index.ts",
+   "arquivos": 1,
+   "linhas": 181,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "jobs",
+    "techniques",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "CRON_SECRET",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/jobs/hooks/useAutoBufferPromotion.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": true,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "backup-scheduler",
+   "entrada": "supabase/functions/backup-scheduler/index.ts",
+   "arquivos": 1,
+   "linhas": 107,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "backup_logs",
+    "backups"
+   ],
+   "rpcs": [],
+   "env": [
+    "BACKUP_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "bitrix24-sync",
+   "entrada": "supabase/functions/bitrix24-sync/index.ts",
+   "arquivos": 1,
+   "linhas": 1306,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "bitrix24_field_mappings",
+    "bitrix24_oauth_states",
+    "bitrix24_oauth_tokens",
+    "bitrix24_sync_history",
+    "jobs",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "BITRIX24_ACCESS_TOKEN",
+    "BITRIX24_CLIENT_ID",
+    "BITRIX24_CLIENT_SECRET",
+    "BITRIX24_DOMAIN",
+    "BITRIX24_REFRESH_TOKEN",
+    "BITRIX24_WEBHOOK_SECRET",
+    "BITRIX24_WEBHOOK_TOKEN",
+    "BITRIX24_WEBHOOK_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/admin/services/integrationsService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "calculate-inventory-intelligence",
+   "entrada": "supabase/functions/calculate-inventory-intelligence/index.ts",
+   "arquivos": 1,
+   "linhas": 111,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "inventory_items",
+    "inventory_movements",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/inventory/hooks/useInventory.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "calculate-rankings",
+   "entrada": "supabase/functions/calculate-rankings/index.ts",
+   "arquivos": 1,
+   "linhas": 386,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "jobs",
+    "operator_achievements",
+    "operator_machines",
+    "operator_rankings",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "CRON_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/hooks/useGamification.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "check-login-lockout",
+   "entrada": "supabase/functions/check-login-lockout/index.ts",
+   "arquivos": 1,
+   "linhas": 350,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "login_lockouts",
+    "security_events"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/auth/services/authService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "cleanup-security-logs",
+   "entrada": "supabase/functions/cleanup-security-logs/index.ts",
+   "arquivos": 1,
+   "linhas": 90,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "blocked_ips",
+    "login_audit",
+    "rate_limit_logs",
+    "security_events"
+   ],
+   "rpcs": [],
+   "env": [
+    "CRON_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "create-operator",
+   "entrada": "supabase/functions/create-operator/index.ts",
+   "arquivos": 1,
+   "linhas": 142,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "profiles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/operators/CreateOperatorModal.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "cron-alert-email",
+   "entrada": "supabase/functions/cron-alert-email/index.ts",
+   "arquivos": 1,
+   "linhas": 239,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "cron_health_history",
+    "push_notifications",
+    "user_notification_settings",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "RESEND_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts",
+    "htmlEscape.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "cron-cleanup",
+   "entrada": "supabase/functions/cron-cleanup/index.ts",
+   "arquivos": 1,
+   "linhas": 69,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [],
+   "rpcs": [
+    "archive_finished_jobs",
+    "purge_old_logs"
+   ],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "csp-report",
+   "entrada": "supabase/functions/csp-report/index.ts",
+   "arquivos": 1,
+   "linhas": 324,
+   "verify_jwt": false,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [
+    "insert_csp_report_dedup",
+    "rate_limit_check_and_record_pair"
+   ],
+   "env": [
+    "CSP_REPORT_ALLOWED_HOSTS",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "daily-maintenance-summary",
+   "entrada": "supabase/functions/daily-maintenance-summary/index.ts",
+   "arquivos": 1,
+   "linhas": 231,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "daily_summaries",
+    "machine_predictions",
+    "maintenance_schedules"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/notifications/hooks/useDailySummaryNotifications.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "erp-api",
+   "entrada": "supabase/functions/erp-api/index.ts",
+   "arquivos": 1,
+   "linhas": 317,
+   "verify_jwt": true,
+   "metodos": [
+    "GET",
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "erp_api_keys",
+    "jobs",
+    "machines",
+    "production_lots",
+    "profiles",
+    "spc_alerts",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contracts.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "excel-export",
+   "entrada": "supabase/functions/excel-export/index.ts",
+   "arquivos": 1,
+   "linhas": 155,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "external-db-bridge",
+   "entrada": "supabase/functions/external-db-bridge/index.ts",
+   "arquivos": 2,
+   "linhas": 422,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "query_telemetry"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "health-check",
+   "entrada": "supabase/functions/health-check/index.ts",
+   "arquivos": 1,
+   "linhas": 154,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "profiles",
+    "tpm_notification_queue"
+   ],
+   "rpcs": [],
+   "env": [
+    "APP_VERSION",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [
+    "health-monitor"
+   ],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "health-monitor",
+   "entrada": "supabase/functions/health-monitor/index.ts",
+   "arquivos": 1,
+   "linhas": 118,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "edge_health_history",
+    "security_events"
+   ],
+   "rpcs": [],
+   "env": [
+    "SENTRY_DSN",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [
+    "health-check"
+   ],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "image-optimizer",
+   "entrada": "supabase/functions/image-optimizer/index.ts",
+   "arquivos": 1,
+   "linhas": 25,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "metrics-collector",
+   "entrada": "supabase/functions/metrics-collector/index.ts",
+   "arquivos": 1,
+   "linhas": 73,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "jobs",
+    "machines",
+    "profiles",
+    "system_metrics"
+   ],
+   "rpcs": [
+    "count_active_operators_since",
+    "count_running_machines"
+   ],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "ml-predictions",
+   "entrada": "supabase/functions/ml-predictions/index.ts",
+   "arquivos": 1,
+   "linhas": 285,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "jobs",
+    "machine_predictions",
+    "machines",
+    "maintenance_records",
+    "maintenance_schedules"
+   ],
+   "rpcs": [],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "ai.gateway.lovable.dev"
+   ],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/analytics/hooks/useMLPredictions.ts",
+    "src/features/maintenance/hooks/useTPMAlertMutations.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "new-device-alert",
+   "entrada": "supabase/functions/new-device-alert/index.ts",
+   "arquivos": 1,
+   "linhas": 328,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "new_device_alerts",
+    "user_devices"
+   ],
+   "rpcs": [],
+   "env": [
+    "RESEND_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [
+    "send-push-notification"
+   ],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "htmlEscape.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/hooks/useDeviceDetection.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "pdf-generator",
+   "entrada": "supabase/functions/pdf-generator/index.ts",
+   "arquivos": 1,
+   "linhas": 187,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/maintenance/components/ExecutionDetailsModal.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "rate-limit-check",
+   "entrada": "supabase/functions/rate-limit-check/index.ts",
+   "arquivos": 1,
+   "linhas": 239,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "blocked_ips",
+    "rate_limit_logs",
+    "rate_limit_settings",
+    "security_events"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "security-alert",
+   "entrada": "supabase/functions/security-alert/index.ts",
+   "arquivos": 1,
+   "linhas": 110,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "security_events"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "send-email-report",
+   "entrada": "supabase/functions/send-email-report/index.ts",
+   "arquivos": 1,
+   "linhas": 413,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "daily_summaries",
+    "jobs"
+   ],
+   "rpcs": [],
+   "env": [
+    "RESEND_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "cronAuth.ts",
+    "htmlEscape.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "send-loss-risk-alert",
+   "entrada": "supabase/functions/send-loss-risk-alert/index.ts",
+   "arquivos": 1,
+   "linhas": 207,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "maintenance_records",
+    "tpm_executions",
+    "user_notification_settings"
+   ],
+   "rpcs": [],
+   "env": [
+    "PUBLIC_URL",
+    "RESEND_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "WEBHOOK_API_KEY"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts",
+    "htmlEscape.ts",
+    "logger.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": true,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "send-push-notification",
+   "entrada": "supabase/functions/send-push-notification/index.ts",
+   "arquivos": 1,
+   "linhas": 377,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "push_notifications",
+    "push_subscriptions",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "VAPID_PRIVATE_KEY",
+    "VAPID_PUBLIC_KEY",
+    "VAPID_SUBJECT"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "webpushEncrypt.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/features/notifications/hooks/usePushSubscription.ts",
+    "src/features/notifications/hooks/useWebPushNotifications.ts"
+   ],
+   "chamada_por_edges": [
+    "new-device-alert"
+   ],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "send-tpm-email",
+   "entrada": "supabase/functions/send-tpm-email/index.ts",
+   "arquivos": 1,
+   "linhas": 154,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "machines",
+    "user_notification_settings"
+   ],
+   "rpcs": [],
+   "env": [
+    "PUBLIC_URL",
+    "RESEND_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "WEBHOOK_API_KEY"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts",
+    "htmlEscape.ts",
+    "logger.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": true,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "technical-assistant",
+   "entrada": "supabase/functions/technical-assistant/index.ts",
+   "arquivos": 1,
+   "linhas": 549,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "ai.gateway.lovable.dev"
+   ],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "tpm-notifications",
+   "entrada": "supabase/functions/tpm-notifications/index.ts",
+   "arquivos": 1,
+   "linhas": 144,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "maintenance_records",
+    "maintenance_schedules",
+    "tpm_notification_logs",
+    "tpm_notification_queue"
+   ],
+   "rpcs": [],
+   "env": [
+    "RESEND_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "cors.ts",
+    "cronAuth.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "update-operator",
+   "entrada": "supabase/functions/update-operator/index.ts",
+   "arquivos": 1,
+   "linhas": 106,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "profiles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "auth.ts",
+    "cors.ts",
+    "logger.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/operators/EditOperatorModal.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "validate-login-ip",
+   "entrada": "supabase/functions/validate-login-ip/index.ts",
+   "arquivos": 1,
+   "linhas": 193,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "ip_allowlist",
+    "login_audit"
+   ],
+   "rpcs": [],
+   "env": [
+    "CRON_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "WEBHOOK_API_KEY"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts",
+    "validate.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "webhook-handler",
+   "entrada": "supabase/functions/webhook-handler/index.ts",
+   "arquivos": 1,
+   "linhas": 206,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "bitrix24_sync_history",
+    "webhook_logs"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contracts.ts",
+    "cors.ts",
+    "logger.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/lib/simulation.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  }
+ ],
+ "chamadas_sem_pasta": []
+}

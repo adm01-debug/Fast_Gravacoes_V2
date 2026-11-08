@@ -1,0 +1,84 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (56)"
+  ],
+  "componentes": [
+   "src/components (402)",
+   "src/features (144)",
+   "src/pages (56)"
+  ],
+  "hooks": [
+   "src/features (113)",
+   "src/hooks (53)",
+   "src/components (15)"
+  ],
+  "servicos_logica": [
+   "src/lib (41)",
+   "scripts/graphify (5)",
+   "src/integrations (3)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (75)",
+   "tests/ (21)",
+   "outro (7)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/graphify (5)",
+   "scripts/regras_negocio (3)",
+   "scripts/ai-context (2)"
+  ],
+  "docs": [
+   "(raiz) (10)",
+   "docs (7)",
+   ".github (1)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (90%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (98%)",
+  "edge_functions": "kebab-case (100%)",
+  "tabelas": "snake_case (94%)"
+ },
+ "barrels_index": 20,
+ "extensao_componentes": [
+  ".tsx (621)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "commitlint",
+  "exemplos": [
+   "feat(contexto): contexto autônomo para agentes de IA (#136)",
+   "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)",
+   "fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)",
+   "chore: instruções enxutas para agentes (#130)",
+   "chore: aprimora scripts de bundle, graphify e RLS regression (#132)"
+  ]
+ },
+ "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
+ "codeowners": null,
+ "contributing": null,
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": false,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json"
+  ]
+ }
+}

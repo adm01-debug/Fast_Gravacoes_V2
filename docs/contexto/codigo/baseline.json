@@ -1,0 +1,762 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "bce23746015acadcd8d41da9d91cfd21039acd61",
+  "branch": "main",
+  "data_commit": "2026-11-08T12:38:54-03:00",
+  "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
+  "ultimos_commits": [
+   {
+    "sha": "bce2374",
+    "data": "2026-11-08",
+    "assunto": "feat(contexto): contexto autônomo para agentes de IA (#136)"
+   },
+   {
+    "sha": "92a5fee",
+    "data": "2026-11-07",
+    "assunto": "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)"
+   },
+   {
+    "sha": "d149e29",
+    "data": "2026-11-07",
+    "assunto": "fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)"
+   },
+   {
+    "sha": "c98b362",
+    "data": "2026-11-07",
+    "assunto": "chore: instruções enxutas para agentes (#130)"
+   },
+   {
+    "sha": "5e0a121",
+    "data": "2026-11-07",
+    "assunto": "chore: aprimora scripts de bundle, graphify e RLS regression (#132)"
+   },
+   {
+    "sha": "249d814",
+    "data": "2026-11-07",
+    "assunto": "fix: remove policy INSERT permissiva e reforca verify RLS (#133)"
+   },
+   {
+    "sha": "87e85e6",
+    "data": "2026-11-07",
+    "assunto": "fix: redige sufixo de chave Stripe dos docs de estado (#131)"
+   },
+   {
+    "sha": "28215b3",
+    "data": "2026-11-06",
+    "assunto": "infra: migra imports esm.sh para npm nas edge functions (#129)"
+   },
+   {
+    "sha": "d6c9c11",
+    "data": "2026-11-05",
+    "assunto": "fix: atualiza hash tslib@2.8.1 no deno.lock (esm.sh CDN update)"
+   },
+   {
+    "sha": "ef2da88",
+    "data": "2026-11-05",
+    "assunto": "fix: adicionar --yes ao supabase db push (CI não-interativo)"
+   },
+   {
+    "sha": "6da824c",
+    "data": "2026-11-05",
+    "assunto": "fix: verificação RLS USING(true) em políticas de escrita via migration"
+   },
+   {
+    "sha": "33983fd",
+    "data": "2026-11-05",
+    "assunto": "fix: adiciona --yes no supabase functions deploy para CI não-interativo (#123)"
+   },
+   {
+    "sha": "7b98977",
+    "data": "2026-11-02",
+    "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#122)"
+   },
+   {
+    "sha": "8664d93",
+    "data": "2026-10-31",
+    "assunto": "fix(csp): rejeitar .vercel.app e localhost por padrão sem CSP_REPORT_ALLOWED_HOSTS (#121)"
+   },
+   {
+    "sha": "8120bef",
+    "data": "2026-10-31",
+    "assunto": "fix: quebrar ciclo logger, remover mock SPC e fixes TS (#120)"
+   },
+   {
+    "sha": "918828f",
+    "data": "2026-10-31",
+    "assunto": "fix: restaurar INSERT anon em password_reset_requests (RLS bloqueava reset de senha)"
+   },
+   {
+    "sha": "ebe3a6b",
+    "data": "2026-10-31",
+    "assunto": "fix: remover chave sk_live hardcoded de MasterAPIPage (#118)"
+   },
+   {
+    "sha": "c3f0227",
+    "data": "2026-10-31",
+    "assunto": "docs(analise): reconciliação de auditorias e planos anteriores (#117)"
+   },
+   {
+    "sha": "549fc32",
+    "data": "2026-10-29",
+    "assunto": "fix(arch,ui): ciclos de módulo quebrados, fabricações restantes removidas e sync logística (#116)"
+   },
+   {
+    "sha": "63e6195",
+    "data": "2026-10-29",
+    "assunto": "fix(db,ui): tabelas internas ausentes, código morto e selo demo nos painéis (#115)"
+   },
+   {
+    "sha": "0d1e837",
+    "data": "2026-10-29",
+    "assunto": "fix(sprint): bugs reais do balanço — push criptografado, QR, notificações, TPM, Kanban, MFA e Bitrix (#114)"
+   },
+   {
+    "sha": "3f2dee6",
+    "data": "2026-10-28",
+    "assunto": "docs(estado): balanço de planos × código 2026-10-28 — auditoria exaustiva dos docs (#112)"
+   },
+   {
+    "sha": "2708924",
+    "data": "2026-10-28",
+    "assunto": "fix(nav,kpis): paleta de comandos com rotas mortas e KPIs em UTC (#113)"
+   },
+   {
+    "sha": "23da9a4",
+    "data": "2026-10-28",
+    "assunto": "docs(ci): fechamento da meta — todos os workflows verdes na main (#111)"
+   },
+   {
+    "sha": "776d83b",
+    "data": "2026-10-28",
+    "assunto": "fix(validacao): snapshot da sidebar, auth de cron nas functions e gaps de UX (#110)"
+   }
+  ],
+  "arquivos_mudados_7d": 89,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "src/components/navigation",
+    "mudancas": 14
+   },
+   {
+    "pasta": "src/features/notifications",
+    "mudancas": 14
+   },
+   {
+    "pasta": "src/features/jobs",
+    "mudancas": 10
+   },
+   {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 10
+   },
+   {
+    "pasta": "PENDENCIAS.md",
+    "mudancas": 7
+   },
+   {
+    "pasta": "src/components/layout",
+    "mudancas": 7
+   },
+   {
+    "pasta": "src/features/admin",
+    "mudancas": 6
+   },
+   {
+    "pasta": "src/features/inventory",
+    "mudancas": 6
+   },
+   {
+    "pasta": "AGENTS.md",
+    "mudancas": 5
+   },
+   {
+    "pasta": "src/features/analytics",
+    "mudancas": 5
+   },
+   {
+    "pasta": ".github/workflows/db-admin.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/deploy.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": "CLAUDE.md",
+    "mudancas": 3
+   },
+   {
+    "pasta": "deno.lock",
+    "mudancas": 3
+   },
+   {
+    "pasta": "src/components/qrcode",
+    "mudancas": 3
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 15
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "deno.lock",
+    "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/db-admin.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "package.json",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "index.html",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/audit-gate.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "tests/e2e/offline.spec.ts",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "tests/e2e/visual-regression.spec.ts",
+    "mudancas": 5
+   },
+   {
+    "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/plano-50-etapas-consolidacao.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/providers/AppProviders.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/calculate-rankings/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/check-login-lockout/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/send-email-report/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/send-loss-risk-alert/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/send-push-notification/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/send-tpm-email/index.ts",
+    "mudancas": 4
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "adm01-debug",
+    "commits": 18
+   },
+   {
+    "autor": "devin-ai-integration[bot]",
+    "commits": 14
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 1452,
+  "arquivos_codigo": 1074,
+  "linhas_codigo": 170695,
+  "rotas": 58,
+  "rotas_http_backend": 12,
+  "vistas_por_id": 0,
+  "itens_menu": 83,
+  "modulos": 74,
+  "componentes": 621,
+  "hooks": 197,
+  "edge_functions": 34,
+  "tabelas": 142,
+  "migrations": 243,
+  "cron_jobs": 3,
+  "testes": 103,
+  "workflows": 7,
+  "scripts": 17,
+  "docs_md": 62
+ },
+ "por_pasta": {
+  "commitlint.config.js": {
+   "arquivos": 1,
+   "linhas": 4
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 130
+  },
+  "playwright.config.ts": {
+   "arquivos": 1,
+   "linhas": 37
+  },
+  "postcss.config.js": {
+   "arquivos": 1,
+   "linhas": 7
+  },
+  "public/sw.js": {
+   "arquivos": 1,
+   "linhas": 178
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1458
+  },
+  "scripts/audit-gate.mjs": {
+   "arquivos": 1,
+   "linhas": 216
+  },
+  "scripts/bundle-diff.mjs": {
+   "arquivos": 1,
+   "linhas": 156
+  },
+  "scripts/bundle-report.mjs": {
+   "arquivos": 1,
+   "linhas": 199
+  },
+  "scripts/bundle.test.mjs": {
+   "arquivos": 1,
+   "linhas": 211
+  },
+  "scripts/check-any-baseline.mjs": {
+   "arquivos": 1,
+   "linhas": 143
+  },
+  "scripts/graphify": {
+   "arquivos": 6,
+   "linhas": 950
+  },
+  "scripts/graphify.mjs": {
+   "arquivos": 1,
+   "linhas": 95
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/rls-regression.mjs": {
+   "arquivos": 1,
+   "linhas": 138
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "src/App.tsx": {
+   "arquivos": 1,
+   "linhas": 22
+  },
+  "src/components": {
+   "arquivos": 415,
+   "linhas": 58793
+  },
+  "src/constants": {
+   "arquivos": 2,
+   "linhas": 153
+  },
+  "src/contexts": {
+   "arquivos": 14,
+   "linhas": 1130
+  },
+  "src/features": {
+   "arquivos": 327,
+   "linhas": 45419
+  },
+  "src/hooks": {
+   "arquivos": 61,
+   "linhas": 7779
+  },
+  "src/i18n": {
+   "arquivos": 1,
+   "linhas": 75
+  },
+  "src/integrations": {
+   "arquivos": 3,
+   "linhas": 6390
+  },
+  "src/lib": {
+   "arquivos": 51,
+   "linhas": 6386
+  },
+  "src/main.tsx": {
+   "arquivos": 1,
+   "linhas": 84
+  },
+  "src/pages": {
+   "arquivos": 58,
+   "linhas": 17022
+  },
+  "src/providers": {
+   "arquivos": 2,
+   "linhas": 170
+  },
+  "src/routes": {
+   "arquivos": 1,
+   "linhas": 279
+  },
+  "src/schemas": {
+   "arquivos": 2,
+   "linhas": 23
+  },
+  "src/test": {
+   "arquivos": 27,
+   "linhas": 4271
+  },
+  "src/types": {
+   "arquivos": 2,
+   "linhas": 173
+  },
+  "supabase/functions": {
+   "arquivos": 55,
+   "linhas": 11165
+  },
+  "supabase/seed-users.mjs": {
+   "arquivos": 1,
+   "linhas": 86
+  },
+  "tailwind.config.ts": {
+   "arquivos": 1,
+   "linhas": 300
+  },
+  "tests/e2e": {
+   "arquivos": 21,
+   "linhas": 1634
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 148
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 63
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 6274
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+   "linhas": 1306
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 924
+  },
+  {
+   "arquivo": "src/hooks/useOfflineSync.ts",
+   "linhas": 656
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 639
+  },
+  {
+   "arquivo": "src/pages/AdminTelemetriaPage.tsx",
+   "linhas": 591
+  },
+  {
+   "arquivo": "src/pages/OEEDashboard.tsx",
+   "linhas": 581
+  },
+  {
+   "arquivo": "src/pages/KanbanBoard.tsx",
+   "linhas": 579
+  },
+  {
+   "arquivo": "supabase/functions/technical-assistant/index.ts",
+   "linhas": 549
+  },
+  {
+   "arquivo": "src/pages/Index.tsx",
+   "linhas": 543
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOEE.ts",
+   "linhas": 540
+  },
+  {
+   "arquivo": "src/pages/PendingQueue.tsx",
+   "linhas": 539
+  },
+  {
+   "arquivo": "src/components/loading/SkeletonLibrary.tsx",
+   "linhas": 523
+  },
+  {
+   "arquivo": "src/components/knowledge/editor/EditorBasicInfo.tsx",
+   "linhas": 521
+  },
+  {
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
+   "linhas": 520
+  },
+  {
+   "arquivo": "src/components/layout/QuickFavoritesBar.tsx",
+   "linhas": 515
+  },
+  {
+   "arquivo": "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+   "linhas": 512
+  },
+  {
+   "arquivo": "src/pages/NewJobPage.tsx",
+   "linhas": 511
+  },
+  {
+   "arquivo": "src/pages/ShiftHandoverPage.tsx",
+   "linhas": 501
+  },
+  {
+   "arquivo": "src/components/ui/empty-state.tsx",
+   "linhas": 489
+  },
+  {
+   "arquivo": "src/pages/WeeklyCalendar.tsx",
+   "linhas": 486
+  },
+  {
+   "arquivo": "src/components/operator/ProductionRegistrationModal.tsx",
+   "linhas": 483
+  },
+  {
+   "arquivo": "src/pages/TraceabilityPage.tsx",
+   "linhas": 481
+  }
+ ],
+ "qualidade": {
+  "any": 88,
+  "console_log": 110,
+  "ts_ignore": 0,
+  "eslint_disable": 1,
+  "todos": 6,
+  "arquivos_acima_500_linhas": 21
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/audit-gate.mjs",
+   "linha": 168,
+   "tipo": "TODO",
+   "texto": "`via` é um advisory conhecido (objeto com"
+  },
+  {
+   "arquivo": "src/components/design-system/sections/modals/SheetExamples.tsx",
+   "linha": 93,
+   "tipo": "XXX",
+   "texto": "\" /></div>"
+  },
+  {
+   "arquivo": "src/test/exportSimulation.test.ts",
+   "linha": 198,
+   "tipo": "TODO",
+   "texto": "quando escapamento for adicionado, validar prefixo \"'\"."
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [
+   "Abrir Filtros -> action-filter",
+   "Adicionar Coluna -> ctx-add-column",
+   "Adicionar Operador -> ctx-add-operator",
+   "Business Intelligence -> nav-bi",
+   "Calendário Diário -> nav-calendar-daily",
+   "Calendário Semanal -> nav-calendar-weekly",
+   "Central de Ajuda -> settings-help",
+   "Central de Notificações -> nav-notifications",
+   "Configurações -> nav-settings",
+   "Criar Nova Ordem -> action-new-job",
+   "Dashboard -> nav-dashboard",
+   "Documentos Técnicos -> nav-documents",
+   "Eficiência Operacional -> nav-efficiency",
+   "Exportar Dados -> action-export",
+   "Fila de Espera -> nav-queue",
+   "Gamificação -> nav-gamification",
+   "Gestão de Máquinas -> nav-machines",
+   "Gestão de Operadores -> nav-operators",
+   "Kanban Board -> nav-kanban",
+   "KPIs Dashboard -> nav-kpis",
+   "OEE Dashboard -> nav-oee",
+   "Passagem de Turno -> nav-shift",
+   "Personalizar Dashboard -> ctx-customize-dashboard",
+   "Rastreabilidade -> nav-traceability",
+   "Recolher Todas Colunas -> ctx-collapse-all",
+   "Scanner QR Code -> nav-scanner",
+   "Segurança -> nav-security",
+   "SPC Dashboard -> nav-spc",
+   "TPM Dashboard -> nav-tpm",
+   "Ver Atalhos de Teclado -> settings-shortcuts",
+   "Voltar -> #"
+  ],
+  "edges_orfas": [
+   "backup-scheduler",
+   "cleanup-security-logs",
+   "cron-alert-email",
+   "cron-cleanup",
+   "erp-api",
+   "excel-export",
+   "external-db-bridge",
+   "health-monitor",
+   "image-optimizer",
+   "metrics-collector",
+   "rate-limit-check",
+   "security-alert",
+   "send-email-report",
+   "technical-assistant",
+   "tpm-notifications",
+   "validate-login-ip"
+  ],
+  "edges_chamadas_sem_pasta": [],
+  "tabelas_sem_rls": [],
+  "tabelas_usadas_sem_definicao": [
+   "backups"
+  ],
+  "tabelas_com_drift_migration_vs_types": [
+   "business_config",
+   "jobs",
+   "operator_rankings",
+   "operator_skills",
+   "operator_status_audit",
+   "pre_production_checklists",
+   "technical_sheets",
+   "tpm_execution_supplies"
+  ],
+  "rpcs_sem_definicao": [],
+  "componentes_orfaos": [
+   "src/components/accessibility/AccessibleIconButton.tsx",
+   "src/components/accessibility/FocusTrap.tsx",
+   "src/components/alerts/AlertCard.tsx",
+   "src/components/alerts/AlertSummaryStats.tsx",
+   "src/components/auth/AuthSignupForm.tsx",
+   "src/components/calendar/CalendarSkeleton.tsx",
+   "src/components/dashboard/QuickActions.tsx",
+   "src/components/feedback/CelebrationMoment.tsx",
+   "src/components/layout/ResponsiveContainer.tsx",
+   "src/components/machines/MachineDetailsModal.tsx",
+   "src/components/mobile/PullToRefresh.tsx",
+   "src/components/navigation/GlobalSearch.tsx",
+   "src/components/operators/OperatorCardDetailed.tsx",
+   "src/components/operators/OperatorStatCard.tsx",
+   "src/components/technical-assistant/BiometricSecurity.tsx",
+   "src/components/traceability/CreateLotModal.tsx",
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/drawer.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/ui/responsive-table.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/stepper.tsx",
+   "src/components/ui/toggle-group.tsx",
+   "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+   "src/features/notifications/components/NotificationCard.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "AdjustmentParameters",
+   "DashboardSkeleton",
+   "JobQuickActions",
+   "SidebarProvider",
+   "StaggeredList",
+   "Toaster"
+  ],
+  "scripts_orfaos": [
+   "scripts/graphify/corpus.py",
+   "scripts/graphify/enrich.py",
+   "scripts/graphify/pipeline.py",
+   "scripts/graphify/quality.py"
+  ],
+  "env_usadas_nao_declaradas": [
+   "DEV",
+   "NODE_ENV",
+   "PROD",
+   "SECRET",
+   "TZ",
+   "VITE_E2E_TEST_HOOKS",
+   "VITE_VAPID_PUBLIC_KEY"
+  ],
+  "ciclos_de_import": 9,
+  "possiveis_segredos_no_codigo": [
+   "scripts/ai-context/cenarios.mjs:102"
+  ]
+ },
+ "erros_do_gerador": []
+}

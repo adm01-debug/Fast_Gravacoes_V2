@@ -1,0 +1,4999 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 197,
+ "hooks": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "hooks_exportados": [
+    "useA",
+    "useB",
+    "useC",
+    "useX"
+   ],
+   "linhas": 173,
+   "dominio": null,
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "rpcs": [
+    "r1"
+   ],
+   "edges": [
+    "inexistente",
+    "other",
+    "tick"
+   ],
+   "hooks_internos": [
+    "useFeatureFlag"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
+   "hooks_exportados": [
+    "useLiveAnnounce"
+   ],
+   "linhas": 58,
+   "dominio": "components/accessibility",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/main.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/accessibility/hooks.ts",
+   "hooks_exportados": [
+    "useAnnounce",
+    "useKeyboardNavigation",
+    "usePrefersReducedMotion"
+   ],
+   "linhas": 62,
+   "dominio": "components/accessibility",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/activity/ActivityLog.tsx",
+   "hooks_exportados": [
+    "useActivityLog"
+   ],
+   "linhas": 240,
+   "dominio": "components/activity",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/Index.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/auth/PasswordStrengthIndicator.tsx",
+   "hooks_exportados": [
+    "usePasswordStrength"
+   ],
+   "linhas": 296,
+   "dominio": "components/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useDebounce",
+    "useEffect",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/auth/AuthSignupForm.tsx",
+    "src/components/operators/CreateOperatorModal.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/feedback/CelebrationMoment.tsx",
+   "hooks_exportados": [
+    "useCelebration"
+   ],
+   "linhas": 303,
+   "dominio": "components/feedback",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useHapticFeedback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/feedback/FeedbackProvider.tsx",
+   "hooks_exportados": [
+    "useFeedback"
+   ],
+   "linhas": 188,
+   "dominio": "components/feedback",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/navigation/FavoritesManager.tsx",
+   "hooks_exportados": [
+    "useFavorites"
+   ],
+   "linhas": 213,
+   "dominio": "components/navigation",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 10,
+   "usado_por_arquivos": [
+    "src/features/analytics/components/bi/BIHeader.tsx",
+    "src/pages/EfficiencyDashboard.tsx",
+    "src/pages/EnergyDashboard.tsx",
+    "src/pages/GamificationPage.tsx",
+    "src/pages/Index.tsx",
+    "src/pages/KanbanBoard.tsx",
+    "src/pages/OperatorsPage.tsx",
+    "src/pages/SecurityDashboard.tsx",
+    "src/pages/TPMDashboard.tsx",
+    "src/pages/TraceabilityPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/navigation/useCommandEntities.tsx",
+   "hooks_exportados": [
+    "useCommandEntities"
+   ],
+   "linhas": 94,
+   "dominio": "components/navigation",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useDirtyGuard",
+    "useInventory",
+    "useMemo",
+    "useNavigate",
+    "useOperatorDashboardData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/navigation/CommandPaletteAdvanced.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/onboarding/OnboardingTour.tsx",
+   "hooks_exportados": [
+    "useOnboarding"
+   ],
+   "linhas": 253,
+   "dominio": "components/onboarding",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState",
+    "useTranslation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/design-system/ProductDesignProvider.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/shortcuts/KeyboardShortcuts.tsx",
+   "hooks_exportados": [
+    "useKeyboardShortcuts",
+    "useRegisterShortcut"
+   ],
+   "linhas": 287,
+   "dominio": "components/shortcuts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useDirtyGuard",
+    "useEffect",
+    "useMemo",
+    "useNavigate",
+    "useState",
+    "useTheme"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/design-system/ProductDesignProvider.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/celebration.tsx",
+   "hooks_exportados": [
+    "useCelebration"
+   ],
+   "linhas": 310,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useReducedMotion",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/form.tsx",
+   "hooks_exportados": [
+    "useFormField"
+   ],
+   "linhas": 130,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useFormContext",
+    "useId"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/shift/CreateHandoverModal.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/micro-interactions.tsx",
+   "hooks_exportados": [
+    "useRipple"
+   ],
+   "linhas": 365,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useReducedMotion",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/calendar/AgendaView.tsx",
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/ui/button.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "hooks_exportados": [
+    "useSidebar"
+   ],
+   "linhas": 639,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/voice/VoiceCommands.tsx",
+   "hooks_exportados": [
+    "useVoiceCommands",
+    "useVoiceFeedback"
+   ],
+   "linhas": 395,
+   "dominio": "components/voice",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 11,
+   "usado_por_arquivos": [
+    "src/pages/EfficiencyDashboard.tsx",
+    "src/pages/ExecutiveDashboard.tsx",
+    "src/pages/GamificationPage.tsx",
+    "src/pages/Index.tsx",
+    "src/pages/KPIDashboard.tsx",
+    "src/pages/MachinesPage.tsx",
+    "src/pages/OEEDashboard.tsx",
+    "src/pages/OperatorView.tsx",
+    "src/pages/SecurityDashboard.tsx",
+    "src/pages/TPMDashboard.tsx",
+    "src/pages/TraceabilityPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/BreadcrumbContext.tsx",
+   "hooks_exportados": [
+    "useBreadcrumbContext",
+    "useBreadcrumbLabel"
+   ],
+   "linhas": 60,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/navigation/Breadcrumbs.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/ConfirmationContext.tsx",
+   "hooks_exportados": [
+    "useConfirmation"
+   ],
+   "linhas": 57,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/jobs/JobDetailsModal.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/DirtyFormContext.tsx",
+   "hooks_exportados": [
+    "useDirtyForm",
+    "useDirtyGuard"
+   ],
+   "linhas": 170,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useLocation",
+    "useNavigate"
+   ],
+   "canais_realtime": [],
+   "usado_por": 16,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/QuickFavoritesBar.tsx",
+    "src/components/navigation/BackButton.tsx",
+    "src/components/navigation/Breadcrumbs.tsx",
+    "src/components/navigation/CommandPaletteAdvanced.tsx",
+    "src/components/navigation/MobileHeader.tsx",
+    "src/components/navigation/MobileNavigation.tsx",
+    "src/components/navigation/MobileQuickActions.tsx",
+    "src/components/navigation/NavigationListener.tsx",
+    "src/components/navigation/useCommandEntities.tsx",
+    "src/components/shortcuts/KeyboardShortcuts.tsx",
+    "src/hooks/use-navigation-hotkeys.ts",
+    "src/hooks/useRealtimeResetRequests.tsx",
+    "src/pages/NewJobPage.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/FeatureFlagsContext.tsx",
+   "hooks_exportados": [
+    "useFeatureFlags"
+   ],
+   "linhas": 55,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/NotificationsContext.tsx",
+   "hooks_exportados": [
+    "useNotificationsContext"
+   ],
+   "linhas": 71,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/features/jobs/hooks/usePriorityEscalation.ts",
+    "src/features/notifications/components/InAppNotificationWatcher.tsx",
+    "src/hooks/useSmartDelayAlerts.ts",
+    "src/hooks/useTechniqueCapacityAlerts.ts",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/OfflineSyncContext.tsx",
+   "hooks_exportados": [
+    "useOfflineSyncContext"
+   ],
+   "linhas": 82,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect",
+    "useOfflineSync",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 8,
+   "usado_por_arquivos": [
+    "src/components/offline/OfflineBanner.tsx",
+    "src/components/offline/OfflineReadyIndicator.tsx",
+    "src/components/offline/OfflineStatusBanner.tsx",
+    "src/components/offline/OfflineSyncIndicator.tsx",
+    "src/components/qrcode/QRScanner.tsx",
+    "src/pages/KioskPage.tsx",
+    "src/pages/OperatorView.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/PermissionsContext.tsx",
+   "hooks_exportados": [
+    "usePermissionsContext"
+   ],
+   "linhas": 25,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useContext",
+    "useRolePermissions"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/ReauthContext.tsx",
+   "hooks_exportados": [
+    "useReauth"
+   ],
+   "linhas": 234,
+   "dominio": "contexts",
+   "tabelas": [
+    "security_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/SearchContext.tsx",
+   "hooks_exportados": [
+    "useSearchContext"
+   ],
+   "linhas": 39,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/SidebarContext.tsx",
+   "hooks_exportados": [
+    "useSidebarContext"
+   ],
+   "linhas": 42,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/ThemeContext.tsx",
+   "hooks_exportados": [
+    "useThemeContext"
+   ],
+   "linhas": 37,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useNextTheme"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/TransitionConfigContext.tsx",
+   "hooks_exportados": [
+    "useTransitionConfig"
+   ],
+   "linhas": 81,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/layout/PageTransition.tsx",
+    "src/components/settings/TransitionsSettings.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/UserPreferencesContext.tsx",
+   "hooks_exportados": [
+    "useUserPreferences"
+   ],
+   "linhas": 71,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/WebSocketContext.tsx",
+   "hooks_exportados": [
+    "useWebSocketContext"
+   ],
+   "linhas": 106,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
+    "usePresenceChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useActivityLog.ts",
+   "hooks_exportados": [
+    "useActivityLog"
+   ],
+   "linhas": 61,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useAuditTrail.ts",
+   "hooks_exportados": [
+    "useAuditChainVerification",
+    "useAuditTrail",
+    "useEntityAuditTrail"
+   ],
+   "linhas": 107,
+   "dominio": "features/admin",
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [
+    "verify_audit_chain"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/features/admin/components/audit/AuditChainStatus.tsx",
+    "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useBIExport.ts",
+   "hooks_exportados": [
+    "useBIExport"
+   ],
+   "linhas": 128,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useABCCosts",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useBitrix24Sync.ts",
+   "hooks_exportados": [
+    "useBitrix24Sync"
+   ],
+   "linhas": 213,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useQueryClient",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useBusinessConfig.ts",
+   "hooks_exportados": [
+    "useBusinessConfig"
+   ],
+   "linhas": 76,
+   "dominio": "features/admin",
+   "tabelas": [
+    "business_config"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCodeQualityMetrics.ts",
+   "hooks_exportados": [
+    "useCodeQualityMetrics"
+   ],
+   "linhas": 196,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCronHealth.ts",
+   "hooks_exportados": [
+    "useCronHealth"
+   ],
+   "linhas": 52,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/CronHealthCard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCronHealthHistory.ts",
+   "hooks_exportados": [
+    "useCronHealthHistory"
+   ],
+   "linhas": 151,
+   "dominio": "features/admin",
+   "tabelas": [
+    "cron_health_history"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/CronHealthHistoryCard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCronP95Daily.ts",
+   "hooks_exportados": [
+    "useCronP95Daily"
+   ],
+   "linhas": 101,
+   "dominio": "features/admin",
+   "tabelas": [
+    "cron_p95_daily"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/CronP95TrendCard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useDashboardPresets.ts",
+   "hooks_exportados": [
+    "useDashboardPresets"
+   ],
+   "linhas": 89,
+   "dominio": "features/admin",
+   "tabelas": [
+    "dashboard_presets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useDashboardSettings.ts",
+   "hooks_exportados": [
+    "useDashboardSettings"
+   ],
+   "linhas": 26,
+   "dominio": "features/admin",
+   "tabelas": [
+    "business_config"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useDataExport.ts",
+   "hooks_exportados": [
+    "useDataExport"
+   ],
+   "linhas": 242,
+   "dominio": "features/admin",
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useDataImport.ts",
+   "hooks_exportados": [
+    "useDataImport"
+   ],
+   "linhas": 155,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useDetailedAuditTrail.ts",
+   "hooks_exportados": [
+    "useDetailedAuditTrail"
+   ],
+   "linhas": 89,
+   "dominio": "features/admin",
+   "tabelas": [
+    "job_status_audit",
+    "machine_event_audit"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useFeatureFlags.ts",
+   "hooks_exportados": [
+    "useFeatureFlags"
+   ],
+   "linhas": 45,
+   "dominio": "features/admin",
+   "tabelas": [
+    "feature_flags"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useGeoBlocking.ts",
+   "hooks_exportados": [
+    "useAddCountryRule",
+    "useGeoBlockingLogs",
+    "useGeoBlockingRules",
+    "useGeoBlockingSettings",
+    "useRemoveCountryRule",
+    "useToggleCountryRule",
+    "useUpdateGeoSettings"
+   ],
+   "linhas": 260,
+   "dominio": "features/admin",
+   "tabelas": [
+    "geo_blocking_logs",
+    "geo_blocking_rules",
+    "geo_blocking_settings"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/GeoBlockingSettings.tsx",
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useMonitoringData.ts",
+   "hooks_exportados": [
+    "useMonitoringData"
+   ],
+   "linhas": 155,
+   "dominio": "features/admin",
+   "tabelas": [
+    "error_logs",
+    "login_audit",
+    "query_telemetry",
+    "security_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/SystemMonitoringPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useOrphanedDataDetection.ts",
+   "hooks_exportados": [
+    "useOrphanedDataDetection"
+   ],
+   "linhas": 99,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useRateLimitLogs.ts",
+   "hooks_exportados": [
+    "useBlockIP",
+    "useBlockedIPs",
+    "useBlockedIPsHistory",
+    "useCreateRateLimitSetting",
+    "useDeleteRateLimitSetting",
+    "useRateLimitLogs",
+    "useRateLimitSettings",
+    "useSecurityEvents",
+    "useUnblockIP",
+    "useUpdateRateLimitSetting"
+   ],
+   "linhas": 280,
+   "dominio": "features/admin",
+   "tabelas": [
+    "blocked_ips",
+    "rate_limit_logs",
+    "rate_limit_settings",
+    "security_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/BlockedIPsPanel.tsx",
+    "src/features/admin/components/security/RateLimitSettings.tsx",
+    "src/features/admin/components/security/SecurityEventsLog.tsx",
+    "src/features/admin/hooks/useSecurityEvents.ts",
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSavedFilters.ts",
+   "hooks_exportados": [
+    "useSavedFilters"
+   ],
+   "linhas": 125,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSecurityEvents.ts",
+   "hooks_exportados": [
+    "useRealtimeBlockedIPs",
+    "useRealtimeSecurityEvents"
+   ],
+   "linhas": 61,
+   "dominio": "features/admin",
+   "tabelas": [
+    "security_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/BlockedIPsPanel.tsx",
+    "src/features/admin/components/security/SecurityEventsLog.tsx",
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSystemStatusSummary.ts",
+   "hooks_exportados": [
+    "useSystemStatusSummary"
+   ],
+   "linhas": 78,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/SystemStatusPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useVersionHistory.ts",
+   "hooks_exportados": [
+    "useVersionHistory"
+   ],
+   "linhas": 122,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useBottleneckPrediction.ts",
+   "hooks_exportados": [
+    "useBottleneckPrediction"
+   ],
+   "linhas": 192,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/settings/SettingsGeneralTab.tsx",
+    "src/features/analytics/index.ts",
+    "src/features/notifications/hooks/useEfficiencyNotifications.ts",
+    "src/pages/EfficiencyDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
+   "hooks_exportados": [
+    "useEfficiencyAlertHistory"
+   ],
+   "linhas": 142,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "efficiency_alert_history"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/dashboard/EfficiencyAlertHistoryWidget.tsx",
+    "src/components/dashboard/EfficiencyAlertStatsPanel.tsx",
+    "src/components/dashboard/EfficiencyAlertTrendChart.tsx",
+    "src/features/analytics/components/efficiency/HistoryTab.tsx",
+    "src/features/analytics/index.ts",
+    "src/features/notifications/hooks/useEfficiencyNotifications.ts",
+    "src/pages/EfficiencyDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useEnergy.ts",
+   "hooks_exportados": [
+    "useEnergy"
+   ],
+   "linhas": 300,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "energy_alerts",
+    "energy_consumption",
+    "energy_targets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/dashboard/EnergyWidget.tsx",
+    "src/features/analytics/components/energy/AIEnergyAdvisor.tsx",
+    "src/features/analytics/index.ts",
+    "src/pages/DigitalTwin.tsx",
+    "src/pages/EnergyDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useExecutiveDashboard.ts",
+   "hooks_exportados": [
+    "useExecutiveDashboard"
+   ],
+   "linhas": 332,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "jobs",
+    "machine_health_metrics",
+    "machines",
+    "maintenance_records",
+    "profiles",
+    "techniques"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/features/analytics/components/executive/ExecutiveChartsRow1.tsx",
+    "src/features/analytics/components/executive/ExecutiveChartsRow2.tsx",
+    "src/features/analytics/components/executive/ExecutiveNorthStar.tsx",
+    "src/features/analytics/index.ts",
+    "src/lib/excelExport.ts",
+    "src/lib/pdfExport.ts",
+    "src/pages/ExecutiveDashboard.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIs.ts",
+   "hooks_exportados": [
+    "useKPIs"
+   ],
+   "linhas": 428,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useABCCosts",
+    "useBusinessConfig",
+    "useMemo",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/components/digital-twin/CostSimulationCard.tsx",
+    "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
+    "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx",
+    "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
+    "src/features/analytics/index.ts",
+    "src/pages/BIDashboard.tsx",
+    "src/pages/DigitalTwin.tsx",
+    "src/pages/KPIDashboard.tsx",
+    "src/pages/NewJobPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useLoadBalancing.ts",
+   "hooks_exportados": [
+    "useLoadBalancing"
+   ],
+   "linhas": 192,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBusinessConfig",
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/kanban/KanbanMetricsBar.tsx",
+    "src/features/analytics/index.ts",
+    "src/features/notifications/hooks/useEfficiencyNotifications.ts",
+    "src/pages/EfficiencyDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
+   "hooks_exportados": [
+    "useLoadBalancingWithActions"
+   ],
+   "linhas": 267,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useMutation",
+    "useQueryClient",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/planning/PlanningEfficiencyDashboard.tsx",
+    "src/features/analytics/index.ts",
+    "src/pages/PendingQueue.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useMLPredictions.ts",
+   "hooks_exportados": [
+    "useMLPredictions"
+   ],
+   "linhas": 218,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "error_logs",
+    "machine_predictions",
+    "machines",
+    "prediction_history"
+   ],
+   "rpcs": [],
+   "edges": [
+    "ml-predictions"
+   ],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/dashboard/LiveMachineStatusPanel.tsx",
+    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
+    "src/components/ml/MLPredictionCard.tsx",
+    "src/components/ml/MLRiskDistributionChart.tsx",
+    "src/features/analytics/index.ts",
+    "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+    "src/pages/MLPredictionsDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useOEEDashboardFilters.ts",
+   "hooks_exportados": [
+    "useOEEDashboardFilters"
+   ],
+   "linhas": 89,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/analytics/index.ts",
+    "src/pages/OEEDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts",
+   "hooks_exportados": [
+    "useRealtimeConnection"
+   ],
+   "linhas": 116,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/dashboard/RealtimeIndicator.tsx",
+    "src/features/analytics/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useSPC.ts",
+   "hooks_exportados": [
+    "useSPCAlerts",
+    "useSPCCapability",
+    "useSPCMeasurements",
+    "useSPCMutations",
+    "useSPCParameters"
+   ],
+   "linhas": 411,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "spc_alerts",
+    "spc_capability_history",
+    "spc_control_parameters",
+    "spc_measurements"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/jobs/JobQualityTab.tsx",
+    "src/features/analytics/components/spc/QualityHistogram.tsx",
+    "src/features/analytics/components/spc/SPCControlChart.tsx",
+    "src/features/analytics/index.ts",
+    "src/lib/spcExport.ts",
+    "src/pages/SPCDashboard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useAuth.ts",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 11,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+   "hooks_exportados": [
+    "useAuthenticatorAssuranceLevel"
+   ],
+   "linhas": 105,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useMFA.ts",
+   "hooks_exportados": [
+    "useMFA"
+   ],
+   "linhas": 153,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useRBAC.tsx",
+   "hooks_exportados": [
+    "useRBAC"
+   ],
+   "linhas": 250,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/auth/hooks/useRolePermissions.ts",
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useRolePermissions.ts",
+   "hooks_exportados": [
+    "useRolePermissions"
+   ],
+   "linhas": 100,
+   "dominio": "features/auth",
+   "tabelas": [
+    "role_permissions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useSessionManager.tsx",
+   "hooks_exportados": [],
+   "linhas": 3,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useSessionTimeout.tsx",
+   "hooks_exportados": [
+    "useSessionTimeout"
+   ],
+   "linhas": 310,
+   "dominio": "features/auth",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useNavigate",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useInventory.ts",
+   "hooks_exportados": [
+    "useInventory",
+    "useInventoryMovements"
+   ],
+   "linhas": 219,
+   "dominio": "features/inventory",
+   "tabelas": [
+    "inventory_items",
+    "inventory_movements"
+   ],
+   "rpcs": [],
+   "edges": [
+    "calculate-inventory-intelligence"
+   ],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/knowledge/TechnicalSheetTab.tsx",
+    "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
+    "src/features/inventory/components/inventory-page/BatchQRLabelModal.tsx",
+    "src/features/inventory/components/inventory-page/InventoryCard.tsx",
+    "src/features/inventory/components/inventory-page/InventoryHistoryTable.tsx",
+    "src/features/inventory/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useLogistics.ts",
+   "hooks_exportados": [
+    "useLogistics"
+   ],
+   "linhas": 164,
+   "dominio": "features/inventory",
+   "tabelas": [
+    "jobs",
+    "shipments",
+    "shipping_providers"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/inventory/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useTraceability.ts",
+   "hooks_exportados": [
+    "useLotComponents",
+    "useLotGenealogy",
+    "useLotInspections",
+    "useLotMovements",
+    "useProductionLot",
+    "useProductionLots",
+    "useSearchLots",
+    "useTraceabilityMutations"
+   ],
+   "linhas": 350,
+   "dominio": "features/inventory",
+   "tabelas": [
+    "lot_components",
+    "lot_movements",
+    "lot_quality_inspections",
+    "production_lots"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/inventory/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useAutoBufferPromotion.ts",
+   "hooks_exportados": [
+    "useAutoBufferPromotion"
+   ],
+   "linhas": 70,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "auto-promote-jobs"
+   ],
+   "hooks_internos": [
+    "useBusinessConfig",
+    "useCallback",
+    "useMemo",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useDailyDragDrop.ts",
+   "hooks_exportados": [
+    "useDailyDragDrop"
+   ],
+   "linhas": 84,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useDuplicateJob.ts",
+   "hooks_exportados": [
+    "useDuplicateJob"
+   ],
+   "linhas": 54,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useJobInventoryCheck.ts",
+   "hooks_exportados": [
+    "useJobInventoryCheck"
+   ],
+   "linhas": 59,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "technical_sheet_materials",
+    "technical_sheets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useInventory",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useJobs.ts",
+   "hooks_exportados": [
+    "useBufferStatus",
+    "useDeleteJob",
+    "useJobs",
+    "useUpdateJob",
+    "useUpdateJobStatus"
+   ],
+   "linhas": 168,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/jobs/hooks/useStuckJobsDetection.ts",
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useJobStatusHistory.ts",
+   "hooks_exportados": [
+    "useJobStatusHistory"
+   ],
+   "linhas": 43,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "job_status_history"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useKanbanDragDrop.ts",
+   "hooks_exportados": [
+    "useKanbanDragDrop"
+   ],
+   "linhas": 155,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/usePaginatedJobs.ts",
+   "hooks_exportados": [
+    "usePaginatedJobs"
+   ],
+   "linhas": 160,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/usePriorityEscalation.ts",
+   "hooks_exportados": [
+    "usePriorityEscalation"
+   ],
+   "linhas": 118,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useNotificationsContext",
+    "useRef",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useRecordDuplication.ts",
+   "hooks_exportados": [
+    "useRecordDuplication"
+   ],
+   "linhas": 121,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSchedulingConflicts.ts",
+   "hooks_exportados": [
+    "useSchedulingConflicts"
+   ],
+   "linhas": 157,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useJobs",
+    "useMachines",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSchedulingData.ts",
+   "hooks_exportados": [
+    "useJobsData",
+    "useMachinesData",
+    "useSchedulingData",
+    "useTechniquesData"
+   ],
+   "linhas": 338,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "profiles",
+    "techniques"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useMemo",
+    "useQueries",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts",
+    "src/features/packaging/components/PackagingSlaOverridesManager.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSmartSequencing.ts",
+   "hooks_exportados": [
+    "useSmartSequencing"
+   ],
+   "linhas": 208,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+   "hooks_exportados": [
+    "useSmartSequencingWithActions"
+   ],
+   "linhas": 338,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useJobs",
+    "useMachines",
+    "useMemo",
+    "useMutation",
+    "useQueryClient",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useStuckJobsDetection.ts",
+   "hooks_exportados": [
+    "useStuckJobsDetection"
+   ],
+   "linhas": 67,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useJobs",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useTechniques.ts",
+   "hooks_exportados": [
+    "useTechniques"
+   ],
+   "linhas": 31,
+   "dominio": "features/jobs",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useWeeklyDragDrop.ts",
+   "hooks_exportados": [
+    "useWeeklyDragDrop"
+   ],
+   "linhas": 99,
+   "dominio": "features/jobs",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/jobs/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/index.ts",
+   "hooks_exportados": [
+    "useTPMData",
+    "useTPMMutations",
+    "useTPMStats"
+   ],
+   "linhas": 6,
+   "dominio": "features/maintenance",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPM.ts",
+   "hooks_exportados": [
+    "useTPM"
+   ],
+   "linhas": 67,
+   "dominio": "features/maintenance",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useTPMData",
+    "useTPMMutations",
+    "useTPMStats"
+   ],
+   "canais_realtime": [],
+   "usado_por": 18,
+   "usado_por_arquivos": [
+    "src/components/dashboard/MaintenanceAlertsWidget.tsx",
+    "src/components/digital-twin/FactoryFloorMap.tsx",
+    "src/features/analytics/components/bi/FuturisticBI.tsx",
+    "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
+    "src/features/maintenance/components/ChecklistManager.tsx",
+    "src/features/maintenance/components/CreateScheduleModal.tsx",
+    "src/features/maintenance/components/ExecutionDetailsModal.tsx",
+    "src/features/maintenance/components/MachineTPMPanel.tsx",
+    "src/features/maintenance/components/MachineTPMTimeline.tsx",
+    "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+    "src/features/maintenance/components/TPMAlertsPanel.tsx",
+    "src/features/maintenance/components/TPMCalendar.tsx",
+    "src/features/maintenance/components/TPMExecutionHistory.tsx",
+    "src/features/maintenance/components/TPMNotificationSettings.tsx",
+    "src/features/maintenance/components/TPMReports.tsx",
+    "src/features/maintenance/components/TPMScheduleList.tsx",
+    "src/pages/MachinesPage.tsx",
+    "src/pages/TPMDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMAlertMutations.ts",
+   "hooks_exportados": [
+    "useTPMAlertMutations"
+   ],
+   "linhas": 156,
+   "dominio": "features/maintenance",
+   "tabelas": [
+    "maintenance_alerts"
+   ],
+   "rpcs": [],
+   "edges": [
+    "ml-predictions"
+   ],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/useTPMMutations.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMApprovalMutations.ts",
+   "hooks_exportados": [
+    "useTPMApprovalMutations"
+   ],
+   "linhas": 201,
+   "dominio": "features/maintenance",
+   "tabelas": [
+    "maintenance_records"
+   ],
+   "rpcs": [
+    "approve_maintenance_record"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/useTPMMutations.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMData.ts",
+   "hooks_exportados": [
+    "useTPMData"
+   ],
+   "linhas": 214,
+   "dominio": "features/maintenance",
+   "tabelas": [
+    "machines",
+    "maintenance_alerts",
+    "maintenance_checklists",
+    "maintenance_item_responses",
+    "maintenance_records",
+    "maintenance_schedules",
+    "maintenance_types",
+    "technical_sheets",
+    "tpm_execution_alerts",
+    "tpm_execution_parts",
+    "tpm_execution_supplies"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/index.ts",
+    "src/features/maintenance/hooks/useTPM.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMLifecycleMutations.ts",
+   "hooks_exportados": [
+    "useTPMLifecycleMutations"
+   ],
+   "linhas": 276,
+   "dominio": "features/maintenance",
+   "tabelas": [
+    "maintenance_records",
+    "maintenance_schedules"
+   ],
+   "rpcs": [
+    "complete_maintenance_record"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/useTPMMutations.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMMutations.ts",
+   "hooks_exportados": [
+    "useTPMMutations"
+   ],
+   "linhas": 25,
+   "dominio": "features/maintenance",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useTPMAlertMutations",
+    "useTPMApprovalMutations",
+    "useTPMLifecycleMutations"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/index.ts",
+    "src/features/maintenance/hooks/useTPM.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/maintenance/hooks/useTPMStats.ts",
+   "hooks_exportados": [
+    "useTPMStats"
+   ],
+   "linhas": 43,
+   "dominio": "features/maintenance",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/maintenance/hooks/index.ts",
+    "src/features/maintenance/hooks/useTPM.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useDailySummaryNotifications.ts",
+   "hooks_exportados": [
+    "useDailySummaryNotifications"
+   ],
+   "linhas": 214,
+   "dominio": "features/notifications",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "daily-maintenance-summary"
+   ],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useNotificationSounds",
+    "usePushNotifications",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/DailySummaryCard.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useEfficiencyNotifications.ts",
+   "hooks_exportados": [
+    "useEfficiencyNotifications"
+   ],
+   "linhas": 275,
+   "dominio": "features/notifications",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBottleneckPrediction",
+    "useCallback",
+    "useEffect",
+    "useEfficiencyAlertHistory",
+    "useLoadBalancing",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/EfficiencyNotificationProvider.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useGoalAlerts.ts",
+   "hooks_exportados": [
+    "useGoalAlerts"
+   ],
+   "linhas": 204,
+   "dominio": "features/notifications",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useOperatorGoals",
+    "useOperatorProductivity",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+   "hooks_exportados": [
+    "useMLPredictionNotifications"
+   ],
+   "linhas": 245,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "machines"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useNotificationSounds",
+    "usePushNotifications",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useNotificationPreferences.ts",
+   "hooks_exportados": [
+    "useNotificationPreferences"
+   ],
+   "linhas": 198,
+   "dominio": "features/notifications",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useNotifications.ts",
+   "hooks_exportados": [
+    "useNotifications"
+   ],
+   "linhas": 216,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "machine_predictions",
+    "maintenance_alerts",
+    "push_notifications"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/EfficiencyNotificationProvider.tsx",
+    "src/features/notifications/components/NotificationsList.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useNotificationSettings.ts",
+   "hooks_exportados": [
+    "useNotificationSettings"
+   ],
+   "linhas": 84,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "user_notification_settings"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/CronEmailPreferenceCard.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useNotificationSounds.ts",
+   "hooks_exportados": [
+    "useNotificationSounds"
+   ],
+   "linhas": 189,
+   "dominio": "features/notifications",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/components/PushNotificationManager.tsx",
+    "src/features/notifications/hooks/useDailySummaryNotifications.ts",
+    "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/usePushNotifications.ts",
+   "hooks_exportados": [
+    "usePushNotifications"
+   ],
+   "linhas": 242,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "push_subscriptions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/components/PushNotificationManager.tsx",
+    "src/features/notifications/components/PushNotificationPrompt.tsx",
+    "src/features/notifications/hooks/useDailySummaryNotifications.ts",
+    "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/usePushSubscription.ts",
+   "hooks_exportados": [
+    "usePushSubscription"
+   ],
+   "linhas": 235,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "push_subscriptions"
+   ],
+   "rpcs": [],
+   "edges": [
+    "send-push-notification"
+   ],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useTPMNotifications.ts",
+   "hooks_exportados": [
+    "useTPMNotifications"
+   ],
+   "linhas": 279,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "machines",
+    "tpm_notification_logs",
+    "user_notification_settings"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useNotificationSounds",
+    "usePushNotifications",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useWebPushNotifications.ts",
+   "hooks_exportados": [
+    "useWebPushNotifications"
+   ],
+   "linhas": 221,
+   "dominio": "features/notifications",
+   "tabelas": [
+    "push_subscriptions"
+   ],
+   "rpcs": [],
+   "edges": [
+    "send-push-notification"
+   ],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/notifications/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingAssignees.ts",
+   "hooks_exportados": [
+    "usePackagingAssignees"
+   ],
+   "linhas": 60,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/BulkReassignDialog.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingAuditTimeline.ts",
+   "hooks_exportados": [
+    "usePackagingAuditTimeline"
+   ],
+   "linhas": 53,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "audit_log",
+    "packaging_defects",
+    "packaging_task_checklist"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingAuditTimeline.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingChecklist.ts",
+   "hooks_exportados": [
+    "usePackagingChecklist"
+   ],
+   "linhas": 111,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_checklist_items",
+    "packaging_task_checklist"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingChecklistPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingDelayPareto.ts",
+   "hooks_exportados": [
+    "usePackagingDelayPareto"
+   ],
+   "linhas": 55,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingDelayParetoCard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingOverdueCount.ts",
+   "hooks_exportados": [
+    "usePackagingOverdueCount"
+   ],
+   "linhas": 52,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "usePackagingSettings",
+    "usePackagingSlaOverrides"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingQuality.ts",
+   "hooks_exportados": [
+    "usePackagingQuality"
+   ],
+   "linhas": 108,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_defects",
+    "packaging_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingQualityDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingQueue.ts",
+   "hooks_exportados": [
+    "usePackagingQueue"
+   ],
+   "linhas": 17,
+   "dominio": "features/packaging",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/features/packaging/index.ts",
+    "src/pages/PackagingDashboard.tsx",
+    "src/pages/PackagingKioskPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingSettings.ts",
+   "hooks_exportados": [
+    "usePackagingSettings"
+   ],
+   "linhas": 129,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_settings"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 12,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingSlaAlerts.tsx",
+    "src/features/packaging/components/PackagingSlaHeatmap.tsx",
+    "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
+    "src/features/packaging/components/PackagingStatsCards.tsx",
+    "src/features/packaging/components/PackagingTaskCard.tsx",
+    "src/features/packaging/components/PackagingTaskDetail.tsx",
+    "src/features/packaging/components/SlaBadge.tsx",
+    "src/features/packaging/hooks/usePackagingOverdueCount.ts",
+    "src/features/packaging/hooks/usePackagingSlaHeatmap.ts",
+    "src/features/packaging/hooks/usePackagingSlaOverrides.ts",
+    "src/pages/PackagingDashboard.tsx",
+    "src/pages/PackagingKioskPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingSlaHeatmap.ts",
+   "hooks_exportados": [
+    "usePackagingSlaHeatmap"
+   ],
+   "linhas": 99,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingSlaHeatmap.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingSlaOverrides.ts",
+   "hooks_exportados": [
+    "usePackagingSlaOverrideMutations",
+    "usePackagingSlaOverrides"
+   ],
+   "linhas": 142,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_sla_overrides"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingSlaAlerts.tsx",
+    "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
+    "src/features/packaging/components/PackagingStatsCards.tsx",
+    "src/features/packaging/components/PackagingTaskCard.tsx",
+    "src/features/packaging/components/PackagingTaskDetail.tsx",
+    "src/features/packaging/hooks/usePackagingOverdueCount.ts",
+    "src/features/packaging/hooks/usePackagingSettings.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingTask.ts",
+   "hooks_exportados": [
+    "usePackagingTask"
+   ],
+   "linhas": 85,
+   "dominio": "features/packaging",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingTaskDetail.tsx",
+    "src/features/packaging/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/usePackagingThroughput.ts",
+   "hooks_exportados": [
+    "usePackagingThroughput"
+   ],
+   "linhas": 102,
+   "dominio": "features/packaging",
+   "tabelas": [
+    "packaging_tasks",
+    "profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingThroughputTable.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/packaging/hooks/useSoundFeedback.ts",
+   "hooks_exportados": [
+    "useSoundFeedback"
+   ],
+   "linhas": 78,
+   "dominio": "features/packaging",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/packaging/components/PackagingRegisterForm.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachineDowntime.ts",
+   "hooks_exportados": [
+    "useMachineDowntime"
+   ],
+   "linhas": 82,
+   "dominio": "features/production",
+   "tabelas": [
+    "machine_downtime"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachines.ts",
+   "hooks_exportados": [
+    "useMachines"
+   ],
+   "linhas": 31,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachineStatusHub.ts",
+   "hooks_exportados": [
+    "useMachineStatusHub"
+   ],
+   "linhas": 70,
+   "dominio": "features/production",
+   "tabelas": [
+    "jobs",
+    "machines"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRealtimeChannel",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachineUtilization.ts",
+   "hooks_exportados": [
+    "useMachineUtilization"
+   ],
+   "linhas": 35,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMTBFMTTR.ts",
+   "hooks_exportados": [
+    "useMTBFMTTR"
+   ],
+   "linhas": 202,
+   "dominio": "features/production",
+   "tabelas": [
+    "machines",
+    "maintenance_records"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOEE.ts",
+   "hooks_exportados": [
+    "useOEE"
+   ],
+   "linhas": 540,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBusinessConfig",
+    "useMemo",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 8,
+   "usado_por_arquivos": [
+    "src/components/machines/MachinesByTechniqueList.tsx",
+    "src/features/analytics/components/oee/OEEAuditPanel.tsx",
+    "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx",
+    "src/features/analytics/components/oee/OEEOverviewTab.tsx",
+    "src/features/analytics/components/oee/OEEStudiosTab.tsx",
+    "src/features/analytics/lib/oeeReportExport.ts",
+    "src/features/production/hooks/useOEEAlerts.ts",
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOEEAlerts.ts",
+   "hooks_exportados": [
+    "useOEEAlerts"
+   ],
+   "linhas": 143,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [
+    "check_and_notify_kpi_alert"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useBusinessConfig",
+    "useCallback",
+    "useEffect",
+    "useNotificationSounds",
+    "useOEE",
+    "usePushNotifications"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorAudit.ts",
+   "hooks_exportados": [
+    "useOperatorAudit"
+   ],
+   "linhas": 38,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_status_audit"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorDashboardData.ts",
+   "hooks_exportados": [
+    "useOperatorDashboardData"
+   ],
+   "linhas": 159,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useMemo",
+    "useOperatorMachines",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorEvolution.ts",
+   "hooks_exportados": [
+    "useOperatorEvolution"
+   ],
+   "linhas": 242,
+   "dominio": "features/production",
+   "tabelas": [
+    "jobs",
+    "operator_machines",
+    "profiles",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorGoals.ts",
+   "hooks_exportados": [
+    "useOperatorGoals"
+   ],
+   "linhas": 236,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_goals"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorMachines.ts",
+   "hooks_exportados": [
+    "useOperatorMachines"
+   ],
+   "linhas": 125,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_machines"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/production/hooks/useOperatorDashboardData.ts",
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorPresence.ts",
+   "hooks_exportados": [
+    "useOperatorPresence"
+   ],
+   "linhas": 105,
+   "dominio": "features/production",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "usePresenceChannel",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorProductivity.ts",
+   "hooks_exportados": [
+    "useOperatorProductivity"
+   ],
+   "linhas": 332,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_machines",
+    "profiles",
+    "qr_scan_history",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo",
+    "useQuery",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorRankings.ts",
+   "hooks_exportados": [
+    "useOperatorRankings"
+   ],
+   "linhas": 86,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_rankings",
+    "profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMemo",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperators.ts",
+   "hooks_exportados": [
+    "useOperators"
+   ],
+   "linhas": 183,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_machines",
+    "operator_status_audit",
+    "profiles",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useTranslation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/operators/OperatorCard.tsx",
+    "src/components/operators/OperatorDetailsDialog.tsx",
+    "src/components/operators/OperatorQRBadgeDialog.tsx",
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorSkills.ts",
+   "hooks_exportados": [
+    "useOperatorSkills"
+   ],
+   "linhas": 89,
+   "dominio": "features/production",
+   "tabelas": [
+    "operator_skills"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/usePerformanceMetrics.ts",
+   "hooks_exportados": [
+    "usePerformanceMetrics"
+   ],
+   "linhas": 99,
+   "dominio": "features/production",
+   "tabelas": [
+    "telemetry_traces"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/production/hooks/useProductionLosses.ts",
+   "hooks_exportados": [
+    "useProductionLosses"
+   ],
+   "linhas": 135,
+   "dominio": "features/production",
+   "tabelas": [
+    "jobs",
+    "production_losses"
+   ],
+   "rpcs": [
+    "increment_job_lost_pieces"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/production/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/abc/index.ts",
+   "hooks_exportados": [
+    "useABCCalculations",
+    "useABCData",
+    "useABCMutations"
+   ],
+   "linhas": 6,
+   "dominio": "hooks/abc",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useABCCosts.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/abc/useABCCalculations.ts",
+   "hooks_exportados": [
+    "useABCCalculations"
+   ],
+   "linhas": 101,
+   "dominio": "hooks/abc",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/abc/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/abc/useABCData.ts",
+   "hooks_exportados": [
+    "useABCData"
+   ],
+   "linhas": 132,
+   "dominio": "hooks/abc",
+   "tabelas": [
+    "abc_activities",
+    "abc_activity_rates",
+    "abc_cost_pools",
+    "abc_job_costs",
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useTechniques"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/abc/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/abc/useABCMutations.ts",
+   "hooks_exportados": [
+    "useABCMutations"
+   ],
+   "linhas": 182,
+   "dominio": "hooks/abc",
+   "tabelas": [
+    "abc_activity_rates",
+    "abc_cost_pools",
+    "abc_job_costs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/abc/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/shift-handover/useShiftHandoverMutations.ts",
+   "hooks_exportados": [
+    "useShiftHandoverMutations"
+   ],
+   "linhas": 128,
+   "dominio": "hooks/shift-handover",
+   "tabelas": [
+    "shift_handover_checklist",
+    "shift_handovers",
+    "shift_occurrences",
+    "shift_pending_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useShiftHandover.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/shift-handover/useShiftHandoverQueries.ts",
+   "hooks_exportados": [
+    "useChecklistTemplates",
+    "useShiftChecklist",
+    "useShiftHandover",
+    "useShiftHandovers",
+    "useShiftOccurrences",
+    "useShiftPendingTasks"
+   ],
+   "linhas": 109,
+   "dominio": "hooks/shift-handover",
+   "tabelas": [
+    "profiles",
+    "shift_checklist_templates",
+    "shift_handover_checklist",
+    "shift_handovers",
+    "shift_occurrences",
+    "shift_pending_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useShiftHandover.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
+   "hooks_exportados": [
+    "useTechnicalSheetMutations"
+   ],
+   "linhas": 276,
+   "dominio": "hooks/technical-sheets",
+   "tabelas": [
+    "technical_sheet_favorites",
+    "technical_sheet_materials",
+    "technical_sheet_steps",
+    "technical_sheet_tips",
+    "technical_sheets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useTechnicalSheets.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts",
+   "hooks_exportados": [
+    "useTechnicalSheetAudit",
+    "useTechnicalSheetDetails",
+    "useTechnicalSheetFavorites",
+    "useTechnicalSheets"
+   ],
+   "linhas": 248,
+   "dominio": "hooks/technical-sheets",
+   "tabelas": [
+    "materials",
+    "product_categories",
+    "technical_sheet_audit",
+    "technical_sheet_favorites",
+    "technical_sheet_materials",
+    "technical_sheet_steps",
+    "technical_sheet_tips",
+    "technical_sheets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
+    "src/hooks/useTechnicalSheets.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-deeplink-focus.ts",
+   "hooks_exportados": [
+    "useDeepLinkFocus"
+   ],
+   "linhas": 47,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-device.tsx",
+   "hooks_exportados": [
+    "useDevice",
+    "useIsDesktop",
+    "useIsMobile",
+    "useIsTablet",
+    "useIsTouch",
+    "useOrientation",
+    "usePrefersReducedMotion"
+   ],
+   "linhas": 202,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 12,
+   "usado_por_arquivos": [
+    "src/components/assistant/AssistantButton.tsx",
+    "src/components/calendar/AgendaView.tsx",
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/ResponsiveContainer.tsx",
+    "src/components/navigation/BackButton.tsx",
+    "src/components/navigation/MobileHeader.tsx",
+    "src/components/navigation/MobileNavigation.tsx",
+    "src/components/navigation/MobileQuickActions.tsx",
+    "src/components/ui/responsive-table.tsx",
+    "src/components/ui/sidebar.tsx",
+    "src/pages/DailyCalendar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-dirty-state-guard.ts",
+   "hooks_exportados": [
+    "useDirtyStateGuard"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-focus-trap.tsx",
+   "hooks_exportados": [
+    "useFocusTrap"
+   ],
+   "linhas": 95,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-haptic-feedback.tsx",
+   "hooks_exportados": [
+    "useHapticButton",
+    "useHapticFeedback",
+    "useHapticInteraction"
+   ],
+   "linhas": 99,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 11,
+   "usado_por_arquivos": [
+    "src/components/calendar/JobBlock.tsx",
+    "src/components/feedback/CelebrationMoment.tsx",
+    "src/components/layout/sidebar/NavButton.tsx",
+    "src/components/mobile/SwipeActions.tsx",
+    "src/components/navigation/BackButton.tsx",
+    "src/components/navigation/Breadcrumbs.tsx",
+    "src/components/navigation/MobileHeader.tsx",
+    "src/components/navigation/MobileNavigation.tsx",
+    "src/components/navigation/MobileQuickActions.tsx",
+    "src/hooks/use-navigation-hotkeys.ts",
+    "src/pages/OEEDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-modal-param.ts",
+   "hooks_exportados": [
+    "useModalParam"
+   ],
+   "linhas": 104,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useLayoutEffect",
+    "useLocation",
+    "useNavigate",
+    "useRef",
+    "useSearchParams"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/navigation/DialogHistoryGuard.tsx",
+    "src/pages/InventoryPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-navigation-hotkeys.ts",
+   "hooks_exportados": [
+    "useNavigationHotkeys"
+   ],
+   "linhas": 85,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useDirtyGuard",
+    "useEffect",
+    "useHapticFeedback",
+    "useLocation",
+    "useNavigate",
+    "useSmartBack"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-pull-to-refresh.tsx",
+   "hooks_exportados": [
+    "usePullToRefresh"
+   ],
+   "linhas": 108,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/mobile/PullToRefresh.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-scroll-direction.tsx",
+   "hooks_exportados": [
+    "useScrollDirection"
+   ],
+   "linhas": 61,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/navigation/MobileNavigation.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-smart-back.ts",
+   "hooks_exportados": [
+    "useSmartBack"
+   ],
+   "linhas": 47,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useLocation",
+    "useNavigate",
+    "useNavigationType",
+    "useSyncExternalStore"
+   ],
+   "canais_realtime": [],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/navigation/BackButton.tsx",
+    "src/components/navigation/Breadcrumbs.tsx",
+    "src/components/navigation/MobileHeader.tsx",
+    "src/components/navigation/MobileNavigation.tsx",
+    "src/hooks/use-navigation-hotkeys.ts",
+    "src/pages/NewJobPage.tsx",
+    "src/pages/NotFound.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-swipe-gesture.tsx",
+   "hooks_exportados": [
+    "useSwipeGesture"
+   ],
+   "linhas": 167,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/navigation/SwipeIndicator.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 187,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 11,
+   "usado_por_arquivos": [
+    "src/components/navigation/FavoritesManager.tsx",
+    "src/components/qrcode/ScanHistory.tsx",
+    "src/components/ui/toaster.tsx",
+    "src/components/voice/VoiceCommands.tsx",
+    "src/features/admin/hooks/useBitrix24Sync.ts",
+    "src/features/notifications/hooks/usePushNotifications.ts",
+    "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
+    "src/hooks/useDocuments.ts",
+    "src/hooks/useQuickFavorites.ts",
+    "src/pages/BIDashboard.tsx",
+    "src/pages/Bitrix24ConfigPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useABCCosts.ts",
+   "hooks_exportados": [
+    "useABCCosts"
+   ],
+   "linhas": 64,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useABCCalculations",
+    "useABCData",
+    "useABCMutations"
+   ],
+   "canais_realtime": [],
+   "usado_por": 13,
+   "usado_por_arquivos": [
+    "src/components/abc/ABCActivityRatesCard.tsx",
+    "src/components/abc/ABCCostBreakdownChart.tsx",
+    "src/components/abc/ABCCostPoolsCard.tsx",
+    "src/components/abc/ABCJobCostsTable.tsx",
+    "src/components/abc/ABCTechniqueChart.tsx",
+    "src/components/abc/AIFinancialAdvisor.tsx",
+    "src/components/jobs/JobCostsTab.tsx",
+    "src/features/admin/hooks/useBIExport.ts",
+    "src/features/analytics/components/bi/BIAIInsights.tsx",
+    "src/features/analytics/components/bi/BIPredictiveROI.tsx",
+    "src/features/analytics/components/bi/losses/LossesTable.tsx",
+    "src/features/analytics/hooks/useKPIs.ts",
+    "src/pages/ABCCostingDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAlertCount.ts",
+   "hooks_exportados": [
+    "useAlertCount"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/QuickFavoritesBar.tsx",
+    "src/components/navigation/MobileNavigation.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAutoTheme.ts",
+   "hooks_exportados": [
+    "useAutoTheme"
+   ],
+   "linhas": 69,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useTheme"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/settings/AutoThemeToggle.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBulkActions.ts",
+   "hooks_exportados": [
+    "useBulkActions"
+   ],
+   "linhas": 173,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCalendarFilters.ts",
+   "hooks_exportados": [
+    "useCalendarFilters"
+   ],
+   "linhas": 81,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/pages/DailyCalendar.tsx",
+    "src/pages/MonthlyCalendar.tsx",
+    "src/pages/WeeklyCalendar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCalendarHotkeys.ts",
+   "hooks_exportados": [
+    "useCalendarHotkeys"
+   ],
+   "linhas": 104,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useNavigate"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/pages/DailyCalendar.tsx",
+    "src/pages/MonthlyCalendar.tsx",
+    "src/pages/WeeklyCalendar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCalendarPreferences.ts",
+   "hooks_exportados": [
+    "useCalendarPreferences"
+   ],
+   "linhas": 68,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/pages/DailyCalendar.tsx",
+    "src/pages/WeeklyCalendar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClickOutside.ts",
+   "hooks_exportados": [
+    "useClickOutside"
+   ],
+   "linhas": 30,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/utils/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDashboardLayout.ts",
+   "hooks_exportados": [
+    "useDashboardLayout"
+   ],
+   "linhas": 187,
+   "dominio": "hooks",
+   "tabelas": [
+    "dashboard_layouts"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/dashboard/DashboardEditControls.tsx",
+    "src/components/dashboard/SortableWidgetSection.tsx",
+    "src/pages/Index.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDebounce.ts",
+   "hooks_exportados": [
+    "useDebounce",
+    "useDebounceWithLoading",
+    "useDebouncedCallback",
+    "useDebouncedState",
+    "useSearchDebounce"
+   ],
+   "linhas": 244,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/auth/PasswordStrengthIndicator.tsx",
+    "src/components/navigation/GlobalSearch.tsx",
+    "src/hooks/utils/index.ts",
+    "src/pages/InventoryPage.tsx",
+    "src/pages/OperatorsPage.tsx",
+    "src/pages/PackagingDashboard.tsx",
+    "src/pages/TraceabilityPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDeviceDetection.ts",
+   "hooks_exportados": [
+    "useDeviceDetection"
+   ],
+   "linhas": 135,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "new-device-alert"
+   ],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/auth/components/AuthProvider.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDocuments.ts",
+   "hooks_exportados": [
+    "useDocumentVersions",
+    "useDocuments"
+   ],
+   "linhas": 325,
+   "dominio": "hooks",
+   "tabelas": [
+    "document_versions",
+    "technical_documents"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/documents/DocumentViewer.tsx",
+    "src/components/documents/DocumentsList.tsx",
+    "src/components/jobs/JobInstructionsTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFuseSearch.ts",
+   "hooks_exportados": [
+    "useFuseSearch",
+    "useFuseSearchWithDetails"
+   ],
+   "linhas": 171,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/components/operators/OperatorAuditHistory.tsx",
+    "src/features/analytics/components/oee/OEEMachineTable.tsx",
+    "src/pages/KanbanBoard.tsx",
+    "src/pages/NotFound.tsx",
+    "src/pages/OperatorProductivityPage.tsx",
+    "src/pages/OperatorsPage.tsx",
+    "src/pages/PendingQueue.tsx",
+    "src/pages/TechnicalKnowledgeBase.tsx",
+    "src/pages/TraceabilityPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGamification.ts",
+   "hooks_exportados": [
+    "useGamification"
+   ],
+   "linhas": 354,
+   "dominio": "hooks",
+   "tabelas": [
+    "gamification_rewards",
+    "jobs",
+    "operator_achievements",
+    "operator_machines",
+    "operator_rankings",
+    "profiles",
+    "reward_redemptions"
+   ],
+   "rpcs": [],
+   "edges": [
+    "calculate-rankings"
+   ],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/dashboard/GamificationBanner.tsx",
+    "src/components/dashboard/LeaderboardWidget.tsx",
+    "src/pages/GamificationPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInfiniteScroll.ts",
+   "hooks_exportados": [
+    "useInfiniteScroll"
+   ],
+   "linhas": 107,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/utils/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLocalStorage.ts",
+   "hooks_exportados": [
+    "useLocalStorage"
+   ],
+   "linhas": 47,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/contexts/TransitionConfigContext.tsx",
+    "src/hooks/useCalendarFilters.ts",
+    "src/hooks/useCalendarPreferences.ts",
+    "src/hooks/utils/index.ts",
+    "src/pages/PackagingDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMachineSuggestion.ts",
+   "hooks_exportados": [
+    "useMachineSuggestion"
+   ],
+   "linhas": 75,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/scheduling/MachineSuggestionPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMediaQuery.ts",
+   "hooks_exportados": [
+    "useMediaQuery"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/utils/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNetworkStatus.tsx",
+   "hooks_exportados": [
+    "useNetworkStatus"
+   ],
+   "linhas": 382,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx",
+    "src/providers/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOfflineSync.ts",
+   "hooks_exportados": [
+    "useOfflineSync"
+   ],
+   "linhas": 656,
+   "dominio": "hooks",
+   "tabelas": [
+    "jobs",
+    "machines",
+    "qr_scan_history",
+    "techniques"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/contexts/OfflineSyncContext.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePageTitle.ts",
+   "hooks_exportados": [
+    "usePageTitle"
+   ],
+   "linhas": 71,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useQuickFavorites.ts",
+   "hooks_exportados": [
+    "useQuickFavorites"
+   ],
+   "linhas": 261,
+   "dominio": "hooks",
+   "tabelas": [
+    "user_favorites"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [
+    "user-favorites-${user.id}"
+   ],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/QuickFavoritesBar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRealtimeResetRequests.tsx",
+   "hooks_exportados": [
+    "useRealtimeResetRequests"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useDirtyGuard",
+    "useNavigate",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/RealtimeNotificationsProvider.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRoutePrefetch.ts",
+   "hooks_exportados": [
+    "usePrefetchRoute",
+    "useRoutePrefetch"
+   ],
+   "linhas": 120,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/routes/AppRoutes.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useShiftHandover.ts",
+   "hooks_exportados": [
+    "useChecklistTemplates",
+    "useShiftChecklist",
+    "useShiftHandover",
+    "useShiftHandoverMutations",
+    "useShiftHandovers",
+    "useShiftOccurrences",
+    "useShiftPendingTasks"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/components/dashboard/ShiftHandoverWidget.tsx",
+    "src/components/shift/ChecklistTemplatesManager.tsx",
+    "src/components/shift/CreateHandoverModal.tsx",
+    "src/components/shift/HandoverDetailsModal.tsx",
+    "src/components/shift/OccurrencesPanel.tsx",
+    "src/components/shift/PendingTasksPanel.tsx",
+    "src/components/shift/checklist-templates/TemplateCard.tsx",
+    "src/components/shift/occurrences/OccurrenceItem.tsx",
+    "src/pages/ShiftHandoverPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSmartDelayAlerts.ts",
+   "hooks_exportados": [
+    "useSmartDelayAlerts"
+   ],
+   "linhas": 84,
+   "dominio": "hooks",
+   "tabelas": [
+    "jobs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useNotificationsContext",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/notifications/components/SmartAlertsWatcher.tsx",
+    "src/pages/Index.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTechnicalConversations.ts",
+   "hooks_exportados": [
+    "useTechnicalConversations",
+    "useTechnicalMessages"
+   ],
+   "linhas": 221,
+   "dominio": "hooks",
+   "tabelas": [
+    "technical_conversations",
+    "technical_messages"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRealtimeChannel"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/technical-assistant/ChatArea.tsx",
+    "src/pages/TechnicalAssistantPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTechnicalSheets.ts",
+   "hooks_exportados": [
+    "useTechnicalSheetAudit",
+    "useTechnicalSheetDetails",
+    "useTechnicalSheetFavorites",
+    "useTechnicalSheetMutations",
+    "useTechnicalSheets"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 14,
+   "usado_por_arquivos": [
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/jobs/JobInstructionsTab.tsx",
+    "src/components/knowledge/KnowledgeBaseStats.tsx",
+    "src/components/knowledge/KnowledgeSheetList.tsx",
+    "src/components/knowledge/TechnicalSheetEditor.tsx",
+    "src/components/knowledge/TechnicalSheetViewer.tsx",
+    "src/components/knowledge/editor/EditorBasicInfo.tsx",
+    "src/components/knowledge/editor/EditorMaterialsSection.tsx",
+    "src/components/knowledge/editor/EditorStepsSection.tsx",
+    "src/components/knowledge/editor/EditorTipsSection.tsx",
+    "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+    "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
+    "src/features/maintenance/components/execution/RegulagemSection.tsx",
+    "src/pages/TechnicalKnowledgeBase.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTechniqueCapacityAlerts.ts",
+   "hooks_exportados": [
+    "useTechniqueCapacityAlerts"
+   ],
+   "linhas": 99,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useMemo",
+    "useNotificationsContext",
+    "useSchedulingData"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/scheduling/CapacityHealthPanel.tsx",
+    "src/features/notifications/components/SmartAlertsWatcher.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useThemeSound.ts",
+   "hooks_exportados": [
+    "useThemeSound"
+   ],
+   "linhas": 202,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/design-system/sections/ThemeToggleSection.tsx",
+    "src/components/layout/ThemeToggle.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useThrottle.ts",
+   "hooks_exportados": [
+    "useThrottle"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/utils/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useUserDevices.ts",
+   "hooks_exportados": [
+    "useUserDevices"
+   ],
+   "linhas": 112,
+   "dominio": "hooks",
+   "tabelas": [
+    "user_devices"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/ActiveDevicesPanel.tsx",
+    "src/features/admin/components/security/SecurityOverviewCard.tsx",
+    "src/pages/SecurityDashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/utils/index.ts",
+   "hooks_exportados": [
+    "useClickOutside",
+    "useDebounce",
+    "useInfiniteScroll",
+    "useLocalStorage",
+    "useMediaQuery",
+    "useThrottle"
+   ],
+   "linhas": 7,
+   "dominio": "hooks/utils",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/lib/realtimeChannel.ts",
+   "hooks_exportados": [
+    "usePresenceChannel",
+    "useRealtimeChannel"
+   ],
+   "linhas": 219,
+   "dominio": "lib",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 23,
+   "usado_por_arquivos": [
+    "src/components/qrcode/ScanHistory.tsx",
+    "src/contexts/WebSocketContext.tsx",
+    "src/features/admin/hooks/useSecurityEvents.ts",
+    "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
+    "src/features/jobs/hooks/useJobs.ts",
+    "src/features/jobs/hooks/useTechniques.ts",
+    "src/features/maintenance/components/TPMParameterAlerts.tsx",
+    "src/features/maintenance/hooks/useTPMData.ts",
+    "src/features/notifications/components/InAppNotificationWatcher.tsx",
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+    "src/features/notifications/hooks/useNotifications.ts",
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    "src/features/packaging/hooks/usePackagingQueue.ts",
+    "src/features/production/hooks/useMTBFMTTR.ts",
+    "src/features/production/hooks/useMachineStatusHub.ts",
+    "src/features/production/hooks/useMachines.ts",
+    "src/features/production/hooks/useOperatorGoals.ts",
+    "src/features/production/hooks/useOperatorMachines.ts",
+    "src/features/production/hooks/useOperatorPresence.ts",
+    "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts",
+    "src/hooks/useRealtimeResetRequests.tsx",
+    "src/hooks/useTechnicalConversations.ts"
+   ],
+   "coberto_por_testes": 0
+  }
+ ]
+}

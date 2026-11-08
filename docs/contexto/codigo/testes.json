@@ -1,0 +1,1281 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest",
+  "playwright"
+ ],
+ "total": 103,
+ "por_tipo": {
+  "contrato": 1,
+  "e2e": 21,
+  "pytest": 3,
+  "unit": 78
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 75
+  },
+  {
+   "padrao": "tests/",
+   "arquivos": 21
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 7
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/routes/AppRoutes.tsx"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/bundle.test.mjs",
+   "tipo": "unit",
+   "linhas": 211,
+   "testa": [
+    "scripts/bundle-diff.mjs",
+    "scripts/bundle-report.mjs"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "scripts/graphify/tests/test_integration.py",
+   "tipo": "pytest",
+   "linhas": 229,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 878,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCronHealthHistory.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "src/features/admin/hooks/useCronHealthHistory.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCronP95Daily.test.ts",
+   "tipo": "unit",
+   "linhas": 36,
+   "testa": [
+    "src/features/admin/hooks/useCronP95Daily.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSystemStatusSummary.test.ts",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/features/admin/hooks/useSystemStatusSummary.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/features/analytics/components/bi/BIStatCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "src/features/analytics/components/bi/BIStatCard.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIs.test.ts",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/features/analytics/hooks/useKPIs.ts",
+    "src/features/jobs/index.ts",
+    "src/lib/dateUtils.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useOEE.test.ts",
+   "tipo": "unit",
+   "linhas": 69,
+   "testa": [
+    "src/features/admin/index.ts",
+    "src/features/jobs/index.ts",
+    "src/features/production/index.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useRealtimeConnection.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/features/analytics/hooks/useRealtimeConnection.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/features/auth/components/AuthProvider.test.tsx",
+   "tipo": "unit",
+   "linhas": 133,
+   "testa": [
+    "src/features/auth/components/AuthProvider.tsx",
+    "src/features/auth/hooks/useAuth.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/features/auth/types/admin_bypass.test.ts",
+   "tipo": "unit",
+   "linhas": 25,
+   "testa": [
+    "src/features/auth/types/auth.types.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useInventory.test.ts",
+   "tipo": "unit",
+   "linhas": 351,
+   "testa": [
+    "src/features/auth/index.ts",
+    "src/features/inventory/hooks/useInventory.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useLogistics.test.ts",
+   "tipo": "unit",
+   "linhas": 234,
+   "testa": [
+    "src/features/inventory/hooks/useLogistics.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useTraceability.test.ts",
+   "tipo": "unit",
+   "linhas": 331,
+   "testa": [
+    "src/features/inventory/hooks/useTraceability.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 23
+  },
+  {
+   "arquivo": "src/features/inventory/services/traceabilityService.test.ts",
+   "tipo": "unit",
+   "linhas": 130,
+   "testa": [
+    "src/features/inventory/services/traceabilityService.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useJobs.realtime.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/features/jobs/hooks/useJobs.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSchedulingConflicts.test.tsx",
+   "tipo": "unit",
+   "linhas": 194,
+   "testa": [
+    "src/features/jobs/hooks/useSchedulingConflicts.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSchedulingData.test.tsx",
+   "tipo": "unit",
+   "linhas": 237,
+   "testa": [
+    "src/features/jobs/hooks/useSchedulingData.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useTechniques.realtime.test.tsx",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/features/jobs/hooks/useTechniques.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useTechniques.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/features/jobs/hooks/useTechniques.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/jobs/services/jobsService.test.ts",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/features/jobs/services/jobsService.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/features/jobs/services/jobStateMachine.test.ts",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/features/jobs/services/jobStateMachine.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/features/jobs/services/scheduling.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/features/jobs/services/scheduling.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useNotifications.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/features/notifications/hooks/useNotifications.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachines.realtime.test.tsx",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/features/production/hooks/useMachines.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/production/hooks/useMachines.test.tsx",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/features/production/hooks/useMachines.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/production/hooks/useOperatorProductivity.test.ts",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/features/jobs/index.ts",
+    "src/features/production/hooks/useOperatorProductivity.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/features/production/services/oeeCalculations.test.ts",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/features/jobs/index.ts",
+    "src/features/production/services/oeeCalculations.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/use-modal-param.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/hooks/use-modal-param.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/use-smart-back.test.tsx",
+   "tipo": "unit",
+   "linhas": 78,
+   "testa": [
+    "src/hooks/use-smart-back.ts",
+    "src/lib/navHistory.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/useOfflineSync.test.ts",
+   "tipo": "unit",
+   "linhas": 200,
+   "testa": [
+    "src/hooks/useOfflineSync.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/calendarExports.test.ts",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [
+    "src/features/jobs/index.ts",
+    "src/lib/calendarExports.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/lib/csvSafety.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "src/lib/csvSafety.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/excel.test.ts",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/lib/excel.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/lib/excelExport.test.ts",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/features/analytics/hooks/useExecutiveDashboard.ts",
+    "src/lib/excel.ts",
+    "src/lib/excelExport.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/lib/logger.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/lib/logger.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/oeeExport.test.ts",
+   "tipo": "unit",
+   "linhas": 158,
+   "testa": [
+    "src/lib/oeeExport.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/offlineStorage.test.ts",
+   "tipo": "unit",
+   "linhas": 553,
+   "testa": [
+    "src/lib/offlineStorage.ts"
+   ],
+   "casos": 33
+  },
+  {
+   "arquivo": "src/lib/pdfExport.test.ts",
+   "tipo": "unit",
+   "linhas": 267,
+   "testa": [
+    "src/features/analytics/hooks/useExecutiveDashboard.ts",
+    "src/lib/pdfExport.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/lib/spcExport.test.ts",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/features/analytics/hooks/useSPC.ts",
+    "src/lib/spcExport.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/lib/utils.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/lib/utils.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/pages/AdminTelemetriaPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/pages/AdminTelemetriaPage.tsx"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/pages/InventoryPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 180,
+   "testa": [
+    "src/features/inventory/index.ts",
+    "src/pages/InventoryPage.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/assertNonNull.ts",
+   "tipo": "unit",
+   "linhas": 12,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/authFlow.test.ts",
+   "tipo": "unit",
+   "linhas": 203,
+   "testa": [
+    "src/features/auth/services/authService.ts",
+    "src/lib/rateLimiter.ts",
+    "src/lib/validation.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/circuitBreaker.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/lib/circuitBreaker.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/circuitBreakerAdvanced.test.ts",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/lib/circuitBreaker.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/dateUtils.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/lib/dateUtils.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/erpApiContracts.test.ts",
+   "tipo": "unit",
+   "linhas": 255,
+   "testa": [
+    "supabase/functions/_shared/contracts.ts"
+   ],
+   "casos": 28
+  },
+  {
+   "arquivo": "src/test/errorHandling.test.ts",
+   "tipo": "unit",
+   "linhas": 251,
+   "testa": [
+    "src/lib/errorHandling.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/test/exportRegression.test.ts",
+   "tipo": "unit",
+   "linhas": 341,
+   "testa": [
+    "src/hooks/utils/inventoryExport.ts",
+    "src/lib/oeeExport.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/test/exportSimulation.test.ts",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [
+    "src/hooks/utils/inventoryExport.ts",
+    "src/lib/oeeExport.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/jobsService.test.ts",
+   "tipo": "unit",
+   "linhas": 241,
+   "testa": [
+    "src/features/jobs/services/jobsService.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/jobStateMachine.test.ts",
+   "tipo": "unit",
+   "linhas": 162,
+   "testa": [
+    "src/features/jobs/services/jobStateMachine.ts",
+    "src/features/jobs/services/jobsService.ts"
+   ],
+   "casos": 58
+  },
+  {
+   "arquivo": "src/test/loadStress.test.ts",
+   "tipo": "unit",
+   "linhas": 274,
+   "testa": [
+    "src/lib/circuitBreaker.ts",
+    "src/lib/rateLimiter.ts",
+    "src/lib/retryWithBackoff.ts",
+    "src/lib/sanitize.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/oeeCalculations.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/features/jobs/index.ts",
+    "src/features/production/services/oeeCalculations.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/offlineStorage.test.ts",
+   "tipo": "unit",
+   "linhas": 169,
+   "testa": [
+    "src/lib/sanitize.ts"
+   ],
+   "casos": 23
+  },
+  {
+   "arquivo": "src/test/queryConfig.test.ts",
+   "tipo": "unit",
+   "linhas": 212,
+   "testa": [
+    "src/lib/queryConfig.ts"
+   ],
+   "casos": 28
+  },
+  {
+   "arquivo": "src/test/rateLimiter.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/lib/rateLimiter.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/rateLimiterAdvanced.test.ts",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/lib/rateLimiter.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/realtimeMock.test.ts",
+   "tipo": "unit",
+   "linhas": 34,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/realtimeMock.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/retryBackoffAdvanced.test.ts",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/lib/retryWithBackoff.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/test/retryWithBackoff.test.ts",
+   "tipo": "unit",
+   "linhas": 164,
+   "testa": [
+    "src/lib/retryWithBackoff.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/sanitize.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/lib/sanitize.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/setup.ts",
+   "tipo": "unit",
+   "linhas": 2,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/utils.test.ts",
+   "tipo": "unit",
+   "linhas": 184,
+   "testa": [
+    "src/lib/dateUtils.ts",
+    "src/lib/utils.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/test/validation.test.ts",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/lib/validation.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/webhookFuzz.test.ts",
+   "tipo": "unit",
+   "linhas": 295,
+   "testa": [
+    "supabase/functions/_shared/contracts.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/test/webhookSimulation.test.ts",
+   "tipo": "unit",
+   "linhas": 279,
+   "testa": [
+    "supabase/functions/_shared/contracts.ts"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "supabase/functions/_shared/auth.test.ts",
+   "tipo": "unit",
+   "linhas": 236,
+   "testa": [
+    "supabase/functions/_shared/auth.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "supabase/functions/_shared/contracts.test.ts",
+   "tipo": "contrato",
+   "linhas": 72,
+   "testa": [
+    "supabase/functions/_shared/contracts.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cors.test.ts",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cronAuth.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "supabase/functions/_shared/cronAuth.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "supabase/functions/_shared/logger.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "supabase/functions/_shared/logger.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/_shared/rateLimit.test.ts",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "supabase/functions/_shared/rateLimit.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "supabase/functions/_shared/webpushEncrypt.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "supabase/functions/_shared/webpushEncrypt.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/external-db-bridge/index.test.ts",
+   "tipo": "unit",
+   "linhas": 629,
+   "testa": [],
+   "casos": 95
+  },
+  {
+   "arquivo": "supabase/functions/webhook-handler/index.test.ts",
+   "tipo": "unit",
+   "linhas": 78,
+   "testa": [
+    "supabase/functions/_shared/test-utils.ts",
+    "supabase/functions/webhook-handler/index.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/e2e/accessibility.spec.ts",
+   "tipo": "e2e",
+   "linhas": 95,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/admin.spec.ts",
+   "tipo": "e2e",
+   "linhas": 34,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/auth.spec.ts",
+   "tipo": "e2e",
+   "linhas": 123,
+   "testa": [],
+   "casos": 9
+  },
+  {
+   "arquivo": "tests/e2e/critical-flows.spec.ts",
+   "tipo": "e2e",
+   "linhas": 100,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/e2e/dashboard.spec.ts",
+   "tipo": "e2e",
+   "linhas": 55,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/error-states.spec.ts",
+   "tipo": "e2e",
+   "linhas": 40,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/helpers/credentials.ts",
+   "tipo": "e2e",
+   "linhas": 34,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/e2e-setup.ts",
+   "tipo": "e2e",
+   "linhas": 95,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/totp.ts",
+   "tipo": "e2e",
+   "linhas": 42,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/inventory-intelligence.spec.ts",
+   "tipo": "e2e",
+   "linhas": 84,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/inventory-stability.spec.ts",
+   "tipo": "e2e",
+   "linhas": 94,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/jobs.spec.ts",
+   "tipo": "e2e",
+   "linhas": 101,
+   "testa": [],
+   "casos": 8
+  },
+  {
+   "arquivo": "tests/e2e/logistics.spec.ts",
+   "tipo": "e2e",
+   "linhas": 42,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/maintenance.spec.ts",
+   "tipo": "e2e",
+   "linhas": 40,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 149,
+   "testa": [],
+   "casos": 10
+  },
+  {
+   "arquivo": "tests/e2e/offline.spec.ts",
+   "tipo": "e2e",
+   "linhas": 117,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "tests/e2e/packaging.spec.ts",
+   "tipo": "e2e",
+   "linhas": 114,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "tests/e2e/production.spec.ts",
+   "tipo": "e2e",
+   "linhas": 71,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/simulation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 57,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "tests/e2e/system-status.spec.ts",
+   "tipo": "e2e",
+   "linhas": 57,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/visual-regression.spec.ts",
+   "tipo": "e2e",
+   "linhas": 90,
+   "testa": [],
+   "casos": 3
+  }
+ ],
+ "sql": [],
+ "cobertura_por_arquivo": {
+  "scripts/bundle-diff.mjs": 1,
+  "scripts/bundle-report.mjs": 1,
+  "src/components/auth/ProtectedRoute.tsx": 1,
+  "src/features/admin/hooks/useCronHealthHistory.ts": 1,
+  "src/features/admin/hooks/useCronP95Daily.ts": 1,
+  "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
+  "src/features/admin/index.ts": 1,
+  "src/features/analytics/components/bi/BIStatCard.tsx": 1,
+  "src/features/analytics/hooks/useExecutiveDashboard.ts": 2,
+  "src/features/analytics/hooks/useKPIs.ts": 1,
+  "src/features/analytics/hooks/useRealtimeConnection.ts": 1,
+  "src/features/analytics/hooks/useSPC.ts": 1,
+  "src/features/auth/components/AuthProvider.tsx": 1,
+  "src/features/auth/hooks/useAuth.ts": 1,
+  "src/features/auth/index.ts": 1,
+  "src/features/auth/services/authService.ts": 1,
+  "src/features/auth/types/auth.types.ts": 1,
+  "src/features/inventory/hooks/useInventory.ts": 1,
+  "src/features/inventory/hooks/useLogistics.ts": 1,
+  "src/features/inventory/hooks/useTraceability.ts": 1,
+  "src/features/inventory/index.ts": 1,
+  "src/features/inventory/services/traceabilityService.ts": 1,
+  "src/features/jobs/hooks/useJobs.ts": 1,
+  "src/features/jobs/hooks/useSchedulingConflicts.ts": 1,
+  "src/features/jobs/hooks/useSchedulingData.ts": 1,
+  "src/features/jobs/hooks/useTechniques.ts": 2,
+  "src/features/jobs/index.ts": 6,
+  "src/features/jobs/services/jobStateMachine.ts": 2,
+  "src/features/jobs/services/jobsService.ts": 3,
+  "src/features/jobs/services/scheduling.ts": 1,
+  "src/features/notifications/hooks/useNotifications.ts": 1,
+  "src/features/production/hooks/useMachines.ts": 2,
+  "src/features/production/hooks/useOperatorProductivity.ts": 1,
+  "src/features/production/index.ts": 1,
+  "src/features/production/services/oeeCalculations.ts": 2,
+  "src/hooks/use-modal-param.ts": 1,
+  "src/hooks/use-smart-back.ts": 1,
+  "src/hooks/useOfflineSync.ts": 1,
+  "src/hooks/utils/inventoryExport.ts": 2,
+  "src/integrations/supabase/client.ts": 11,
+  "src/lib/calendarExports.ts": 1,
+  "src/lib/circuitBreaker.ts": 3,
+  "src/lib/csvSafety.ts": 1,
+  "src/lib/dateUtils.ts": 3,
+  "src/lib/errorHandling.ts": 1,
+  "src/lib/excel.ts": 2,
+  "src/lib/excelExport.ts": 1,
+  "src/lib/logger.ts": 1,
+  "src/lib/navHistory.ts": 1,
+  "src/lib/oeeExport.ts": 3,
+  "src/lib/offlineStorage.ts": 1,
+  "src/lib/pdfExport.ts": 1,
+  "src/lib/queryConfig.ts": 1,
+  "src/lib/rateLimiter.ts": 4,
+  "src/lib/retryWithBackoff.ts": 3,
+  "src/lib/sanitize.ts": 3,
+  "src/lib/spcExport.ts": 1,
+  "src/lib/utils.ts": 2,
+  "src/lib/validation.ts": 2,
+  "src/pages/AdminTelemetriaPage.tsx": 1,
+  "src/pages/InventoryPage.tsx": 1,
+  "src/routes/AppRoutes.tsx": 1,
+  "supabase/functions/_shared/auth.ts": 1,
+  "supabase/functions/_shared/contracts.ts": 4,
+  "supabase/functions/_shared/cronAuth.ts": 1,
+  "supabase/functions/_shared/logger.ts": 1,
+  "supabase/functions/_shared/rateLimit.ts": 1,
+  "supabase/functions/_shared/test-utils.ts": 1,
+  "supabase/functions/_shared/webpushEncrypt.ts": 1,
+  "supabase/functions/webhook-handler/index.ts": 1
+ },
+ "sem_teste": {
+  "telas": [
+   "src/pages/ABCCostingDashboard.tsx",
+   "src/pages/AlertsDashboard.tsx",
+   "src/pages/AuditTrailPage.tsx",
+   "src/pages/AuthPage.tsx",
+   "src/pages/BIDashboard.tsx",
+   "src/pages/Bitrix24ConfigPage.tsx",
+   "src/pages/CodeQualityDashboard.tsx",
+   "src/pages/DailyCalendar.tsx",
+   "src/pages/DesignSystemPage.tsx",
+   "src/pages/DigitalTwin.tsx",
+   "src/pages/DocumentsPage.tsx",
+   "src/pages/EfficiencyDashboard.tsx",
+   "src/pages/EnergyDashboard.tsx",
+   "src/pages/ExecutiveDashboard.tsx",
+   "src/pages/GamificationPage.tsx",
+   "src/pages/Index.tsx",
+   "src/pages/InstallAppPage.tsx",
+   "src/pages/KPIDashboard.tsx",
+   "src/pages/KanbanBoard.tsx",
+   "src/pages/KioskPage.tsx",
+   "src/pages/LogisticsPage.tsx",
+   "src/pages/MLPredictionsDashboard.tsx",
+   "src/pages/MachineComparisonPage.tsx",
+   "src/pages/MachinesPage.tsx",
+   "src/pages/MasterAPIPage.tsx",
+   "src/pages/MfaEnrollmentPage.tsx",
+   "src/pages/MonthlyCalendar.tsx",
+   "src/pages/NewJobPage.tsx",
+   "src/pages/NotFound.tsx",
+   "src/pages/NotificationsPage.tsx",
+   "src/pages/OEEDashboard.tsx",
+   "src/pages/OperatorHistoryPage.tsx",
+   "src/pages/OperatorProductivityPage.tsx",
+   "src/pages/OperatorView.tsx",
+   "src/pages/OperatorsPage.tsx",
+   "src/pages/PackagingDashboard.tsx",
+   "src/pages/PackagingKioskPage.tsx",
+   "src/pages/PendingQueue.tsx",
+   "src/pages/PublicTrackingPage.tsx",
+   "src/pages/QRScannerPage.tsx",
+   "src/pages/ReportBuilderPage.tsx",
+   "src/pages/ResetPasswordPage.tsx",
+   "src/pages/SPCDashboard.tsx",
+   "src/pages/SecurityDashboard.tsx",
+   "src/pages/SettingsPage.tsx",
+   "src/pages/ShiftHandoverPage.tsx",
+   "src/pages/SimulationDashboard.tsx",
+   "src/pages/SystemMonitoringPage.tsx",
+   "src/pages/SystemStatusPage.tsx",
+   "src/pages/TPMDashboard.tsx",
+   "src/pages/TechnicalAssistantPage.tsx",
+   "src/pages/TechnicalKnowledgeBase.tsx",
+   "src/pages/TraceabilityPage.tsx",
+   "src/pages/WeeklyCalendar.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/accessibility/AccessibilityProvider.tsx",
+   "src/components/accessibility/hooks.ts",
+   "src/components/activity/ActivityLog.tsx",
+   "src/components/auth/PasswordStrengthIndicator.tsx",
+   "src/components/feedback/CelebrationMoment.tsx",
+   "src/components/feedback/FeedbackProvider.tsx",
+   "src/components/navigation/FavoritesManager.tsx",
+   "src/components/navigation/useCommandEntities.tsx",
+   "src/components/onboarding/OnboardingTour.tsx",
+   "src/components/shortcuts/KeyboardShortcuts.tsx",
+   "src/components/ui/celebration.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/micro-interactions.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/voice/VoiceCommands.tsx",
+   "src/contexts/BreadcrumbContext.tsx",
+   "src/contexts/ConfirmationContext.tsx",
+   "src/contexts/DirtyFormContext.tsx",
+   "src/contexts/FeatureFlagsContext.tsx",
+   "src/contexts/NotificationsContext.tsx",
+   "src/contexts/OfflineSyncContext.tsx",
+   "src/contexts/PermissionsContext.tsx",
+   "src/contexts/ReauthContext.tsx",
+   "src/contexts/SearchContext.tsx",
+   "src/contexts/SidebarContext.tsx",
+   "src/contexts/ThemeContext.tsx",
+   "src/contexts/TransitionConfigContext.tsx",
+   "src/contexts/UserPreferencesContext.tsx",
+   "src/contexts/WebSocketContext.tsx",
+   "src/features/admin/hooks/useActivityLog.ts",
+   "src/features/admin/hooks/useAuditTrail.ts",
+   "src/features/admin/hooks/useBIExport.ts",
+   "src/features/admin/hooks/useBitrix24Sync.ts",
+   "src/features/admin/hooks/useBusinessConfig.ts",
+   "src/features/admin/hooks/useCodeQualityMetrics.ts",
+   "src/features/admin/hooks/useCronHealth.ts",
+   "src/features/admin/hooks/useDashboardPresets.ts",
+   "src/features/admin/hooks/useDashboardSettings.ts",
+   "src/features/admin/hooks/useDataExport.ts",
+   "src/features/admin/hooks/useDataImport.ts",
+   "src/features/admin/hooks/useDetailedAuditTrail.ts",
+   "src/features/admin/hooks/useFeatureFlags.ts",
+   "src/features/admin/hooks/useGeoBlocking.ts",
+   "src/features/admin/hooks/useMonitoringData.ts",
+   "src/features/admin/hooks/useOrphanedDataDetection.ts",
+   "src/features/admin/hooks/useRateLimitLogs.ts",
+   "src/features/admin/hooks/useSavedFilters.ts",
+   "src/features/admin/hooks/useSecurityEvents.ts",
+   "src/features/admin/hooks/useVersionHistory.ts",
+   "src/features/analytics/hooks/useBottleneckPrediction.ts",
+   "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
+   "src/features/analytics/hooks/useEnergy.ts",
+   "src/features/analytics/hooks/useLoadBalancing.ts",
+   "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
+   "src/features/analytics/hooks/useMLPredictions.ts",
+   "src/features/analytics/hooks/useOEEDashboardFilters.ts",
+   "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+   "src/features/auth/hooks/useMFA.ts",
+   "src/features/auth/hooks/useRBAC.tsx",
+   "src/features/auth/hooks/useRolePermissions.ts",
+   "src/features/auth/hooks/useSessionManager.tsx",
+   "src/features/auth/hooks/useSessionTimeout.tsx",
+   "src/features/jobs/hooks/useAutoBufferPromotion.ts",
+   "src/features/jobs/hooks/useDailyDragDrop.ts",
+   "src/features/jobs/hooks/useDuplicateJob.ts",
+   "src/features/jobs/hooks/useJobInventoryCheck.ts",
+   "src/features/jobs/hooks/useJobStatusHistory.ts",
+   "src/features/jobs/hooks/useKanbanDragDrop.ts",
+   "src/features/jobs/hooks/usePaginatedJobs.ts",
+   "src/features/jobs/hooks/usePriorityEscalation.ts",
+   "src/features/jobs/hooks/useRecordDuplication.ts",
+   "src/features/jobs/hooks/useSmartSequencing.ts",
+   "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+   "src/features/jobs/hooks/useStuckJobsDetection.ts",
+   "src/features/jobs/hooks/useWeeklyDragDrop.ts",
+   "src/features/maintenance/hooks/index.ts",
+   "src/features/maintenance/hooks/useTPM.ts",
+   "src/features/maintenance/hooks/useTPMAlertMutations.ts",
+   "src/features/maintenance/hooks/useTPMApprovalMutations.ts",
+   "src/features/maintenance/hooks/useTPMData.ts",
+   "src/features/maintenance/hooks/useTPMLifecycleMutations.ts",
+   "src/features/maintenance/hooks/useTPMMutations.ts",
+   "src/features/maintenance/hooks/useTPMStats.ts",
+   "src/features/notifications/hooks/useDailySummaryNotifications.ts",
+   "src/features/notifications/hooks/useEfficiencyNotifications.ts",
+   "src/features/notifications/hooks/useGoalAlerts.ts",
+   "src/features/notifications/hooks/useMLPredictionNotifications.ts",
+   "src/features/notifications/hooks/useNotificationPreferences.ts",
+   "src/features/notifications/hooks/useNotificationSettings.ts",
+   "src/features/notifications/hooks/useNotificationSounds.ts",
+   "src/features/notifications/hooks/usePushNotifications.ts",
+   "src/features/notifications/hooks/usePushSubscription.ts",
+   "src/features/notifications/hooks/useTPMNotifications.ts",
+   "src/features/notifications/hooks/useWebPushNotifications.ts",
+   "src/features/packaging/hooks/usePackagingAssignees.ts",
+   "src/features/packaging/hooks/usePackagingAuditTimeline.ts",
+   "src/features/packaging/hooks/usePackagingChecklist.ts",
+   "src/features/packaging/hooks/usePackagingDelayPareto.ts",
+   "src/features/packaging/hooks/usePackagingOverdueCount.ts",
+   "src/features/packaging/hooks/usePackagingQuality.ts",
+   "src/features/packaging/hooks/usePackagingQueue.ts",
+   "src/features/packaging/hooks/usePackagingSettings.ts",
+   "src/features/packaging/hooks/usePackagingSlaHeatmap.ts",
+   "src/features/packaging/hooks/usePackagingSlaOverrides.ts",
+   "src/features/packaging/hooks/usePackagingTask.ts",
+   "src/features/packaging/hooks/usePackagingThroughput.ts",
+   "src/features/packaging/hooks/useSoundFeedback.ts",
+   "src/features/production/hooks/useMachineDowntime.ts",
+   "src/features/production/hooks/useMachineStatusHub.ts",
+   "src/features/production/hooks/useMachineUtilization.ts",
+   "src/features/production/hooks/useMTBFMTTR.ts",
+   "src/features/production/hooks/useOEE.ts",
+   "src/features/production/hooks/useOEEAlerts.ts",
+   "src/features/production/hooks/useOperatorAudit.ts",
+   "src/features/production/hooks/useOperatorDashboardData.ts",
+   "src/features/production/hooks/useOperatorEvolution.ts",
+   "src/features/production/hooks/useOperatorGoals.ts",
+   "src/features/production/hooks/useOperatorMachines.ts",
+   "src/features/production/hooks/useOperatorPresence.ts",
+   "src/features/production/hooks/useOperatorRankings.ts",
+   "src/features/production/hooks/useOperators.ts",
+   "src/features/production/hooks/useOperatorSkills.ts",
+   "src/features/production/hooks/usePerformanceMetrics.ts",
+   "src/features/production/hooks/useProductionLosses.ts",
+   "src/hooks/abc/index.ts",
+   "src/hooks/abc/useABCCalculations.ts",
+   "src/hooks/abc/useABCData.ts",
+   "src/hooks/abc/useABCMutations.ts",
+   "src/hooks/shift-handover/useShiftHandoverMutations.ts",
+   "src/hooks/shift-handover/useShiftHandoverQueries.ts",
+   "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
+   "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts",
+   "src/hooks/use-deeplink-focus.ts",
+   "src/hooks/use-device.tsx",
+   "src/hooks/use-dirty-state-guard.ts",
+   "src/hooks/use-focus-trap.tsx",
+   "src/hooks/use-haptic-feedback.tsx",
+   "src/hooks/use-navigation-hotkeys.ts",
+   "src/hooks/use-pull-to-refresh.tsx",
+   "src/hooks/use-scroll-direction.tsx",
+   "src/hooks/use-swipe-gesture.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useABCCosts.ts",
+   "src/hooks/useAlertCount.ts",
+   "src/hooks/useAutoTheme.ts",
+   "src/hooks/useBulkActions.ts",
+   "src/hooks/useCalendarFilters.ts",
+   "src/hooks/useCalendarHotkeys.ts",
+   "src/hooks/useCalendarPreferences.ts",
+   "src/hooks/useClickOutside.ts",
+   "src/hooks/useDashboardLayout.ts",
+   "src/hooks/useDebounce.ts",
+   "src/hooks/useDeviceDetection.ts",
+   "src/hooks/useDocuments.ts",
+   "src/hooks/useFuseSearch.ts",
+   "src/hooks/useGamification.ts",
+   "src/hooks/useInfiniteScroll.ts",
+   "src/hooks/useLocalStorage.ts",
+   "src/hooks/useMachineSuggestion.ts",
+   "src/hooks/useMediaQuery.ts",
+   "src/hooks/useNetworkStatus.tsx",
+   "src/hooks/usePageTitle.ts",
+   "src/hooks/useQuickFavorites.ts",
+   "src/hooks/useRealtimeResetRequests.tsx",
+   "src/hooks/useRoutePrefetch.ts",
+   "src/hooks/useShiftHandover.ts",
+   "src/hooks/useSmartDelayAlerts.ts",
+   "src/hooks/useTechnicalConversations.ts",
+   "src/hooks/useTechnicalSheets.ts",
+   "src/hooks/useTechniqueCapacityAlerts.ts",
+   "src/hooks/useThemeSound.ts",
+   "src/hooks/useThrottle.ts",
+   "src/hooks/useUserDevices.ts",
+   "src/hooks/utils/index.ts",
+   "src/lib/realtimeChannel.ts"
+  ],
+  "edges": [
+   "approve-password-reset",
+   "auto-promote-jobs",
+   "backup-scheduler",
+   "bitrix24-sync",
+   "calculate-inventory-intelligence",
+   "calculate-rankings",
+   "check-login-lockout",
+   "cleanup-security-logs",
+   "create-operator",
+   "cron-alert-email",
+   "cron-cleanup",
+   "csp-report",
+   "daily-maintenance-summary",
+   "erp-api",
+   "excel-export",
+   "health-check",
+   "health-monitor",
+   "image-optimizer",
+   "metrics-collector",
+   "ml-predictions",
+   "new-device-alert",
+   "pdf-generator",
+   "rate-limit-check",
+   "security-alert",
+   "send-email-report",
+   "send-loss-risk-alert",
+   "send-push-notification",
+   "send-tpm-email",
+   "technical-assistant",
+   "tpm-notifications",
+   "update-operator",
+   "validate-login-ip"
+  ],
+  "servicos": []
+ }
+}
