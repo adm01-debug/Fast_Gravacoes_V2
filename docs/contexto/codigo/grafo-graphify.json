@@ -8,7 +8,7 @@
  "grafo_atual": true,
  "nos": 6518,
  "arestas": 20520,
- "comunidades_total": 615,
+ "comunidades_total": 614,
  "relacoes": {
   "calls": 2328,
   "cites": 6,
@@ -511,6 +511,23 @@
   },
   {
    "id": 30,
+   "nome": "parseDateOnly",
+   "nos": 52,
+   "callables": 32,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/jobs/JobInfoGrid.tsx",
+    "src/components/jobs/JobInfoRow.tsx",
+    "src/components/kanban/DragOverlayCard.tsx",
+    "src/components/kanban/DraggableJobCard.tsx",
+    "src/components/kanban/DroppableColumn.tsx",
+    "src/components/kanban/KanbanFiltersBar.tsx",
+    "src/components/scheduling/CapacityHealthPanel.tsx",
+    "src/components/traceability/TraceabilityStatsCards.tsx"
+   ]
+  },
+  {
+   "id": 31,
    "nome": "Bitrix24ConfigPage.tsx",
    "nos": 48,
    "callables": 21,
@@ -527,7 +544,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 32,
    "nome": "PendingQueue.tsx",
    "nos": 47,
    "callables": 28,
@@ -544,7 +561,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 33,
    "nome": "notifications/index.ts",
    "nos": 47,
    "callables": 34,
@@ -561,7 +578,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 34,
    "nome": "production/index.ts",
    "nos": 46,
    "callables": 36,
@@ -578,7 +595,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 35,
    "nome": "jobsService.ts",
    "nos": 46,
    "callables": 24,
@@ -592,23 +609,6 @@
     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
     "src/features/jobs/services/jobStateMachine.test.ts",
     "src/features/jobs/services/jobStateMachine.ts"
-   ]
-  },
-  {
-   "id": 35,
-   "nome": "parseDateOnly",
-   "nos": 46,
-   "callables": 28,
-   "arquivos": 13,
-   "exemplos_arquivos": [
-    "src/components/kanban/DragOverlayCard.tsx",
-    "src/components/kanban/DraggableJobCard.tsx",
-    "src/components/kanban/DroppableColumn.tsx",
-    "src/components/kanban/KanbanFiltersBar.tsx",
-    "src/components/scheduling/CapacityHealthPanel.tsx",
-    "src/components/traceability/TraceabilityStatsCards.tsx",
-    "src/features/analytics/hooks/useKPIs.test.ts",
-    "src/features/analytics/hooks/useKPIs.ts"
    ]
   },
   {
@@ -681,23 +681,6 @@
   },
   {
    "id": 40,
-   "nome": "DbJob",
-   "nos": 43,
-   "callables": 35,
-   "arquivos": 20,
-   "exemplos_arquivos": [
-    "src/components/alerts/AlertCard.tsx",
-    "src/components/alerts/AlertJobCard.tsx",
-    "src/components/calendar/DensityMinimap.tsx",
-    "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/jobs/JobInfoGrid.tsx",
-    "src/components/jobs/JobInfoRow.tsx",
-    "src/components/kanban/KanbanMetricsBar.tsx",
-    "src/components/machines/MachineDetailsModal.tsx"
-   ]
-  },
-  {
-   "id": 41,
    "nome": "ProductionRegistrationModal.tsx",
    "nos": 43,
    "callables": 33,
@@ -711,6 +694,23 @@
     "src/components/traceability/LotDetailsModal.tsx",
     "src/components/traceability/LotInspectionsTab.tsx",
     "src/components/traceability/LotMovementTimeline.tsx"
+   ]
+  },
+  {
+   "id": 41,
+   "nome": "transitions/index.ts",
+   "nos": 43,
+   "callables": 28,
+   "arquivos": 11,
+   "exemplos_arquivos": [
+    "src/components/layout/PageTransition.tsx",
+    "src/components/settings/TransitionsSettings.tsx",
+    "src/contexts/TransitionConfigContext.tsx",
+    "src/hooks/useCalendarFilters.ts",
+    "src/hooks/useClickOutside.ts",
+    "src/hooks/useInfiniteScroll.ts",
+    "src/hooks/useLocalStorage.ts",
+    "src/hooks/useMediaQuery.ts"
    ]
   },
   {
@@ -892,6 +892,23 @@
   },
   {
    "id": 53,
+   "nome": "DbJob",
+   "nos": 37,
+   "callables": 31,
+   "arquivos": 18,
+   "exemplos_arquivos": [
+    "src/components/alerts/AlertCard.tsx",
+    "src/components/alerts/AlertJobCard.tsx",
+    "src/components/calendar/DensityMinimap.tsx",
+    "src/components/jobs/JobDetailsModal.tsx",
+    "src/components/kanban/KanbanMetricsBar.tsx",
+    "src/components/machines/MachineDetailsModal.tsx",
+    "src/components/operator/OperatorProductionCard.tsx",
+    "src/components/operator/OperatorQuickHistory.tsx"
+   ]
+  },
+  {
+   "id": 54,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -901,7 +918,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 55,
    "nome": "scripts",
    "nos": 33,
    "callables": 0,
@@ -911,7 +928,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 56,
    "nome": "SPCDashboard.tsx",
    "nos": 33,
    "callables": 24,
@@ -928,7 +945,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 57,
    "nome": "OperatorGoalsCard.tsx",
    "nos": 32,
    "callables": 18,
@@ -945,7 +962,7 @@
    ]
   },
   {
-   "id": 57,
+   "id": 58,
    "nome": "useDirtyGuard",
    "nos": 32,
    "callables": 23,
@@ -959,21 +976,6 @@
     "src/components/navigation/MobileNavigation.tsx",
     "src/components/navigation/MobileQuickActions.tsx",
     "src/contexts/DirtyFormContext.tsx"
-   ]
-  },
-  {
-   "id": 58,
-   "nome": "transitions/index.ts",
-   "nos": 32,
-   "callables": 22,
-   "arquivos": 6,
-   "exemplos_arquivos": [
-    "src/components/layout/PageTransition.tsx",
-    "src/components/settings/TransitionsSettings.tsx",
-    "src/contexts/TransitionConfigContext.tsx",
-    "src/hooks/useCalendarFilters.ts",
-    "src/hooks/useLocalStorage.ts",
-    "src/lib/transitions/index.ts"
    ]
   },
   {
@@ -2316,8 +2318,8 @@
   "src/components/inventory/WarehouseMap.tsx": "TraceabilityPage.tsx",
   "src/components/jobs/JobCostsTab.tsx": "CodeQualityDashboard.tsx",
   "src/components/jobs/JobDetailsModal.tsx": "JobDetailsModal.tsx",
-  "src/components/jobs/JobInfoGrid.tsx": "DbJob",
-  "src/components/jobs/JobInfoRow.tsx": "DbJob",
+  "src/components/jobs/JobInfoGrid.tsx": "parseDateOnly",
+  "src/components/jobs/JobInfoRow.tsx": "parseDateOnly",
   "src/components/jobs/JobInstructionsTab.tsx": "card.tsx",
   "src/components/jobs/JobQualityTab.tsx": "SPCDashboard.tsx",
   "src/components/jobs/JobQuickActions.tsx": "JobDetailsModal.tsx",
@@ -2404,7 +2406,7 @@
   "src/components/operator/OperatorReadyJobCard.tsx": "OperatorView.tsx",
   "src/components/operator/PreProductionChecklist.tsx": "MaintenanceExecutionModal.tsx",
   "src/components/operator/PreProductionChecklistModal.tsx": "TraceabilityPage.tsx",
-  "src/components/operator/ProductionRegistrationModal.tsx": "DbJob",
+  "src/components/operator/ProductionRegistrationModal.tsx": "ProductionRegistrationModal.tsx",
   "src/components/operator/ProductionTimer.tsx": "DbJob",
   "src/components/operator/ShiftSummaryCard.tsx": "DbJob",
   "src/components/operators/AIWorkforceAdvisor.tsx": "AppRoutes.tsx",
@@ -2939,17 +2941,17 @@
   "src/hooks/useCalendarFilters.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarHotkeys.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarPreferences.ts": "CalendarTimeline.tsx",
-  "src/hooks/useClickOutside.ts": "utils/index.ts",
+  "src/hooks/useClickOutside.ts": "transitions/index.ts",
   "src/hooks/useDashboardLayout.ts": "KPIDashboard.tsx",
   "src/hooks/useDebounce.ts": "OperatorsPage.tsx",
   "src/hooks/useDeviceDetection.ts": "useAuth",
   "src/hooks/useDocuments.ts": "queryConfig.ts",
   "src/hooks/useFuseSearch.ts": "OperatorsPage.tsx",
   "src/hooks/useGamification.ts": "useExecutiveDashboard.ts",
-  "src/hooks/useInfiniteScroll.ts": "utils/index.ts",
+  "src/hooks/useInfiniteScroll.ts": "transitions/index.ts",
   "src/hooks/useLocalStorage.ts": "transitions/index.ts",
   "src/hooks/useMachineSuggestion.ts": "jobs/index.ts",
-  "src/hooks/useMediaQuery.ts": "utils/index.ts",
+  "src/hooks/useMediaQuery.ts": "transitions/index.ts",
   "src/hooks/useNetworkStatus.tsx": "useNetworkStatus.tsx",
   "src/hooks/useOfflineSync.test.ts": "useOfflineSync.ts",
   "src/hooks/useOfflineSync.ts": "useOfflineSync.ts",
@@ -2963,10 +2965,10 @@
   "src/hooks/useTechnicalSheets.ts": "TechnicalKnowledgeBase.tsx",
   "src/hooks/useTechniqueCapacityAlerts.ts": "jobs/index.ts",
   "src/hooks/useThemeSound.ts": "soundFeedback.ts",
-  "src/hooks/useThrottle.ts": "utils/index.ts",
+  "src/hooks/useThrottle.ts": "transitions/index.ts",
   "src/hooks/useUserDevices.ts": "Bitrix24ConfigPage.tsx",
   "src/hooks/utils/focus.ts": "use-focus-trap.tsx",
-  "src/hooks/utils/index.ts": "utils/index.ts",
+  "src/hooks/utils/index.ts": "transitions/index.ts",
   "src/hooks/utils/inventoryExport.ts": "useDataExport.ts",
   "src/i18n/index.ts": "LanguageSwitcher.tsx",
   "src/integrations/lovable/index.ts": "client.ts",
