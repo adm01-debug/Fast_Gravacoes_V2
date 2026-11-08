@@ -11,7 +11,7 @@
       "section": "api.custom_hostname"
     }
   ],
-  "gerado_em": "2026-11-08T15:59:31Z",
+  "gerado_em": "2026-11-08T16:56:50Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

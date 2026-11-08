@@ -13,7 +13,6 @@
 |---|---|---|
 | supabase_realtime | public.packaging_defects | default |
 | supabase_realtime | public.packaging_tasks | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_04 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_05 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_06 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_07 |  |
