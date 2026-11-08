@@ -608,14 +608,39 @@ def get_grants(conn):
         FROM information_schema.role_table_grants
         WHERE grantee NOT IN ({sys_roles}) AND ({excluded_sql('table_schema')} OR table_schema IN ('storage'))
         GROUP BY 1, 2, 3 ORDER BY 1, 2, 3""")
+    # information_schema.column_privileges repete o grant da TABELA em cada coluna; isolar o grant
+    # de coluna com NOT EXISTS sobre role_table_grants estoura o statement_timeout (medido no banco
+    # oficial: >90s, contra 47 ms desta forma). `attacl` só é preenchido quando houve GRANT na própria
+    # coluna — exatamente o que o NOT EXISTS buscava. O filtro contra `relacl` fica para o caso em que
+    # o mesmo privilégio existe nos dois níveis. grantee 0 = PUBLIC (pg_get_userbyid devolveria
+    # "unknown (OID=0)").
     columns = q(conn, f"""
-        SELECT table_schema AS schema, table_name AS "table", column_name AS "column", grantee,
-               string_agg(privilege_type, ', ' ORDER BY privilege_type) AS privileges
-        FROM information_schema.column_privileges cp
-        WHERE grantee NOT IN ({sys_roles}) AND {excluded_sql('table_schema')}
-          AND NOT EXISTS (SELECT 1 FROM information_schema.role_table_grants g
-                          WHERE g.table_schema = cp.table_schema AND g.table_name = cp.table_name
-                            AND g.grantee = cp.grantee AND g.privilege_type = cp.privilege_type)
+        WITH col AS (
+            SELECT n.nspname AS schema, c.relname AS tabela, a.attname AS coluna,
+                   CASE WHEN ae.grantee = 0 THEN 'PUBLIC' ELSE pg_get_userbyid(ae.grantee) END AS grantee,
+                   ae.privilege_type AS privilegio
+            FROM pg_attribute a
+            JOIN pg_class c ON c.oid = a.attrelid
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            CROSS JOIN LATERAL aclexplode(a.attacl) ae
+            WHERE a.attacl IS NOT NULL AND a.attnum > 0 AND NOT a.attisdropped
+              AND c.relkind IN ('r', 'p', 'v', 'm', 'f') AND {excluded_sql()}
+        ), tab AS (
+            SELECT n.nspname AS schema, c.relname AS tabela,
+                   CASE WHEN ae.grantee = 0 THEN 'PUBLIC' ELSE pg_get_userbyid(ae.grantee) END AS grantee,
+                   ae.privilege_type AS privilegio
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            CROSS JOIN LATERAL aclexplode(c.relacl) ae
+            WHERE c.relacl IS NOT NULL
+        )
+        SELECT col.schema AS schema, col.tabela AS "table", col.coluna AS "column", col.grantee,
+               string_agg(col.privilegio, ', ' ORDER BY col.privilegio) AS privileges
+        FROM col
+        WHERE col.grantee NOT IN ({sys_roles})
+          AND NOT EXISTS (SELECT 1 FROM tab
+                          WHERE tab.schema = col.schema AND tab.tabela = col.tabela
+                            AND tab.grantee = col.grantee AND tab.privilegio = col.privilegio)
         GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4""")
     sequences = q(conn, f"""
         SELECT n.nspname AS schema, c.relname AS sequence, r.rolname AS grantee,
