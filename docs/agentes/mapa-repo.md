@@ -14,6 +14,17 @@ código em profundidade: `docs/agentes/arquitetura.md`. Regras operacionais: `AG
    `ANALISE_TECNICA_SISTEMA.md`.
 4. **Operação** (deploy, rollback, backup, incidentes): `docs/operacoes/RUNBOOK.md`.
 
+## Sessão na nuvem
+
+`.claude/hooks/session-start.sh` (só com `CLAUDE_CODE_REMOTE=true`) instala `.venv-graphify/`
+(`npm run graph:install`) e gera `graphify-out/` (`npm run graph:build`) em segundo plano, por
+commit. `.claude/settings.json` liga o `PreToolUse` nos matchers `Bash|Grep` e `Read|Glob` ao
+`graphify hook-guard search|read` do mesmo `.venv-graphify/bin/graphify` — ele nudgeia a usar
+`graphify query/explain/path` antes de grep/Read quando `graphify-out/graph.json` existe, e falha
+aberto (sem binário ou sem grafo, não bloqueia nada). Testado isolado (venv limpa com
+`graphifyy==0.9.48`, a mesma versão pinada em `graphify.config.json`): nudge aparece com
+`graph.json` presente, silêncio sem ele.
+
 ## Mapa rápido
 
 | Preciso de… | Caminho |
