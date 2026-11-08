@@ -4,8 +4,7 @@
 #   falha: divergencia real deixa o job vermelho e abre/atualiza issue; ponto cego sai verde com aviso
 #   avisa: issue [settings-guard] (label settings-guard)
 # nao-e-bug:
-#   - ponto-cego: sem o secret SETTINGS_GUARD_TOKEN o GITHUB_TOKEN nao le branch protection (403)
-#     nem os campos de merge; isso sai como NAO VERIFICAVEL, job verde com ::warning::
+#   - ponto-cego: sem o secret SETTINGS_GUARD_TOKEN o GITHUB_TOKEN nao le branch protection (403) nem os campos de merge; sai como NAO VERIFICAVEL, job verde com ::warning::
 name: Settings Guard
 
 on:

@@ -4,8 +4,7 @@
 #   falha: o job fica vermelho e o inventario nao e atualizado
 #   avisa: PR automation/inventario-estado com o inventario novo
 # nao-e-bug:
-#   - sem-pr: "sem mudanca de conteudo" significa que nada estrutural mudou; carimbo de data e
-#     telemetria viva (24 h/7 d) de proposito nao abrem PR (ver inventario/estado/README.md)
+#   - sem-pr: "sem mudanca de conteudo" = nada estrutural mudou; carimbo de data e telemetria viva (24 h/7 d) de proposito nao abrem PR (ver inventario/estado/README.md)
 name: Inventário do estado real (semanal)
 
 # Refaz inventario/estado/ (banco, edge functions, rotas do front) a partir do banco oficial

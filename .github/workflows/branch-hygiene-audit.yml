@@ -1,13 +1,11 @@
 # docs:
 #   gatilho: agendado (segunda 07:56 UTC) e dispatch
-#   prova: issue [branch-hygiene] com branches patch-equivalentes, abandonadas, PRs paradas e
-#     comando de poda pronto; issue [kpi-actions] com o consumo de Actions da semana
+#   prova: issue [branch-hygiene] com patch-equivalentes, abandonadas, PRs paradas e comando de poda pronto; issue [kpi-actions] com o consumo de Actions da semana
 #   falha: o job fica vermelho e as issues não são atualizadas
 #   avisa: issues [branch-hygiene] e [kpi-actions] (uma de cada, atualizadas no lugar)
 # nao-e-bug:
 #   - nada-apagado: o relatório só MOSTRA o comando de poda; apagar branch é decisão do dono
-#   - poda-vazia: sem a lista de PRs abertas ou de branches protegidas o script recusa gerar
-#     comando — na dúvida a branch fica
+#   - poda-vazia: sem a lista de PRs abertas ou de protegidas o script recusa gerar comando — na dúvida a branch fica
 name: Branch Hygiene Audit
 
 # Auditoria semanal do repositório, sem tocar em nada:
