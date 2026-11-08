@@ -302,7 +302,19 @@ jobs:
       - name: Guard — nenhum segredo na saída
         if: env.SNAPSHOT_SKIPPED != '1'
         run: |
-          if grep -rIEl 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_|sb_publishable_|postgres(ql)?://[^ ]*:[^ @]+@' "$SNAPSHOT_DIR"; then
+          # Ocorrência a ocorrência (-o), não linha a linha: o snapshot.py já substitui segredo por
+          # [REDACTED…]/[YOUR-PASSWORD], e o placeholder continua casando o padrão (uma connection
+          # string redigida ainda é "postgresql://user:[REDACTED]@host"). Descartar só a ocorrência
+          # já neutralizada mantém o guard valendo para o resto da mesma linha.
+          PADRAO='eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_[A-Za-z0-9_-]{8,}|sb_publishable_[A-Za-z0-9_-]{8,}|postgres(ql)?://[^ ]*:[^ @]+@'
+          NEUTRO='\[REDACTED|\[REDIGIDO|YOUR-PASSWORD|YOUR_PASSWORD|\*\*\*|<senha>'
+          ACHADOS="$(grep -rnoIE "$PADRAO" "$SNAPSHOT_DIR" | grep -vE "$NEUTRO" || true)"
+          if [ -n "$ACHADOS" ]; then
+            # Mostra arquivo:linha com o valor mascarado: diagnóstico sem vazar o segredo no log.
+            echo "$ACHADOS" | sed -E \
+              -e 's#(postgres(ql)?://[^:]*:)[^@]*@#\1<senha>@#g' \
+              -e 's#eyJ[A-Za-z0-9_.-]+#<jwt>#g' \
+              -e 's#sb_(secret|publishable)_[A-Za-z0-9_-]+#<chave>#g'
             echo "::error::Possível segredo detectado no snapshot — publicação abortada"; exit 1
           fi
 
