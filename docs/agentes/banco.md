@@ -26,11 +26,10 @@ Diagnóstico em produção é **só leitura**. Teste que precisa escrever vai em
 A estação tem MCP de vários projetos com nome parecido: **confira o `project_id` da conexão antes de
 qualquer operação** (`supabase/ENVIRONMENTS.md:24-25`).
 
-> **Divergência aberta, não resolvida aqui:** `docs/adr/0001-supabase-self-hosted-unico.md:8-14`
-> (aceito 2026-10-01) declara `https://supabase.atomicabr.com.br` como único backend válido, enquanto o
-> código em vigor (`supabase/config.toml:1`, `deploy.yml`, `contexto.yml`) aponta para o projeto cloud
-> acima. `.env.production`/`.env.staging` só têm placeholder — a URL real vive em secret da Vercel/GitHub.
-> Trate o ADR como histórico a retificar, siga o `config.toml`, e chame o dono antes de mudar de alvo.
+> **Resolvido:** a `ADR 0001` (aceita 2026-10-01) declarava `https://supabase.atomicabr.com.br` como
+> único backend válido, contra todo o código em vigor. A
+> [ADR 0005](../adr/0005-supabase-cloud-e-o-backend-oficial.md) oficializa o projeto acima e supersede a
+> 0001, que fica como histórico.
 
 ## Estado real ≠ histórico do repo
 
