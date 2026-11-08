@@ -2487,7 +2487,7 @@
     "JobDetailsModal"
    ],
    "export_default": null,
-   "linhas": 520,
+   "linhas": 523,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useConfirmation",
@@ -3836,7 +3836,7 @@
     "PreProductionChecklistModal"
    ],
    "export_default": null,
-   "linhas": 36,
+   "linhas": 32,
    "dominio": "components/operator",
    "hooks_locais": [],
    "tabelas": [],
@@ -8578,7 +8578,7 @@
     "DefectTriageForm"
    ],
    "export_default": null,
-   "linhas": 155,
+   "linhas": 178,
    "dominio": "features/packaging",
    "hooks_locais": [],
    "tabelas": [],
@@ -8748,12 +8748,13 @@
     "PackagingSlaOverridesManager"
    ],
    "export_default": null,
-   "linhas": 330,
+   "linhas": 334,
    "dominio": "features/packaging",
    "hooks_locais": [
     "usePackagingSettings",
     "usePackagingSlaOverrideMutations",
     "usePackagingSlaOverrides",
+    "useRBAC",
     "useTechniquesData"
    ],
    "tabelas": [],
@@ -9613,7 +9614,7 @@
     "PublicTrackingPage"
    ],
    "export_default": "PublicTrackingPage",
-   "linhas": 342,
+   "linhas": 335,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [

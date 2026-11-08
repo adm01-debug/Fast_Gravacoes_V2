@@ -1,6 +1,6 @@
 # CONTEXTO PARA AGENTES DE IA — ÍNDICE ÚNICO
 
-> Gerado automaticamente por indice.py · 2026-11-08 17:30 UTC · HEAD `3720de3894` · Não edite à mão.
+> Gerado automaticamente por indice.py · 2026-11-08 20:58 UTC · HEAD `5db90ba232` · Não edite à mão.
 
 Um sistema, três fontes de verdade, três produtores independentes. **Leia este arquivo e vá direto à fonte certa.** Cada fato tem um dono: se duas fontes discordarem, vale o dono.
 
@@ -8,9 +8,9 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 
 | Preciso de… | Fonte (dona do fato) | Onde ler | Estado |
 |---|---|---|---|
-| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 1 min atrás |
-| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/README.md` | parcial · 0 min atrás · ⚠️ 1 erro(s) de coleta no manifest (erros); 1 seção(ões) com erro em errors.md |
-| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 0 min atrás |
+| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 13 min atrás |
+| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/README.md` | parcial · 17 min atrás · ⚠️ 1 erro(s) de coleta no manifest (erros); 1 seção(ões) com erro em errors.md |
+| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 16 min atrás |
 
 ## Ordem de leitura antes de qualquer tarefa ou planejamento
 
@@ -114,6 +114,7 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 
 <details><summary>Arquivos de <b>código</b> (`docs/contexto/codigo/`)</summary>
 
+- `docs/contexto/codigo/GRAPH_REPORT.md`
 - `docs/contexto/codigo/INDEX.md`
 - `docs/contexto/codigo/banco.json`
 - `docs/contexto/codigo/baseline.json`
@@ -143,5 +144,6 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 - `docs/contexto/regras/manifest.json`
 - `docs/contexto/regras/manual/README.md`
 - `docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md`
+- `docs/contexto/regras/manual/regras-implementadas-2026-11.md`
 
 </details>

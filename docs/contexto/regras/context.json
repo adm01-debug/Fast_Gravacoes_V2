@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3720de38943210c8a908fbbadc9effd19fc8b35d",
+  "sha": "5db90ba232b63f7db45fb2691bcd18e612f46754",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-08 17:29 UTC",
+  "generated_at": "2026-11-08 20:45 UTC",
   "files_total": 1450,
   "code_files": 1327,
-  "code_lines": 185462
+  "code_lines": 185488
  },
  "version": "1.3.2",
- "facts_hash": "3263e7d4c5d23a10",
+ "facts_hash": "1994626b5f141ae7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26289,7 +26289,7 @@
   {
    "module": "src/components",
    "files": 415,
-   "lines": 58793,
+   "lines": 58792,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -27358,7 +27358,7 @@
   {
    "module": "src/features/packaging",
    "files": 35,
-   "lines": 3516,
+   "lines": 3550,
    "tables": [
     "audit_log",
     "packaging_checklist_items",
@@ -27420,6 +27420,7 @@
    ],
    "imports_modules": [
     "src/components",
+    "src/features/auth",
     "src/features/jobs",
     "src/integrations",
     "src/lib"
@@ -27936,7 +27937,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 17022,
+   "lines": 17015,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -31497,7 +31498,9 @@
     "name": "defectTriageFormSchema",
     "kind": "object",
     "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), }",
-    "refines": [],
+    "refines": [
+     "Observação obrigatória ao aceitar com nota"
+    ],
     "chain": [
      "superRefine"
     ]
@@ -65470,7 +65473,6 @@
    }
   ],
   "gaps": [
-   "Nenhuma regra manual em `manual/`: prazos, limites, exceções comerciais, quem aprova o quê — só o negócio sabe.",
    "`jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`technical_sheet_steps.step_number` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`maintenance_records.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -65494,7 +65496,12 @@
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
  },
- "manual": [],
+ "manual": [
+  {
+   "file": "regras-implementadas-2026-11.md",
+   "content": "# Regras de Negócio Implementadas — Nov 2026\n\nFonte: decisão do dono, implementadas na sessão claude_05/nifty-carson-jdgnem.\n\n---\n\n## Grupo R1 — Ciclo de vida do job\n\n**R1.1 — Bloquear exclusão de job com peças produzidas ou perdidas**\nJob não pode ser excluído se `produced_quantity > 0` ou `lost_pieces > 0`, ou se `status` não for `queue`, `scheduled` ou `cancelled`.\nImpl: `src/components/jobs/JobDetailsModal.tsx` — botão Excluir desabilitado via `canDelete`.\n\n**R1.2 — Cancelamento exige motivo (DDL pendente)**\nCancelar um job requer preenchimento de `cancel_reason` (texto obrigatório). Requer migration: coluna `cancel_reason TEXT` em `jobs`.\nStatus: **aguardando dono (DDL)**.\n\n**R1.3 — finished só avança para packaging**\nTransição `finished → cancelled` não existe na state machine; job no estado `finished` só avança para `packaging`.\nImpl: já enforçado em `src/features/jobs/utils/stateMachine.ts` — sem alteração de código.\n\n**R1.4 — Cancelar job muda packaging para on_hold (DDL pendente)**\nAo cancelar um job, qualquer `packaging_task` associada deve ter status atualizado para `on_hold`.\nStatus: **aguardando dono (DDL)** — trigger ou lógica de serviço.\n\n**R1.5 — Checklist pré-produção obrigatório**\nBotão \"Pular checklist\" removido de `PreProductionChecklistModal`. Operador deve completar todos os itens.\nImpl: `src/components/operator/PreProductionChecklistModal.tsx` — prop `onSkip` removida.\n\n---\n\n## Grupo R2 — SLA\n\n**R2.1–R2.3 — Valores padrão de SLA e auto-reatribuição**\nPadrões mantidos: triagem 4h, embalagem 8h, total 24h, warning 75%.\nBreach de SLA exige razão mas não bloqueia o fluxo (UI valida mas deixa continuar).\nAuto-reatribuição de tarefas ociosas >30 min: **DDL pendente** (pg_cron job).\n\n**R2.4 — Override de SLA restrito a coordenador/gerente**\nCriar, editar e excluir overrides de SLA só permite roles `coordinator`, `manager` ou `admin`.\nImpl: `src/features/packaging/components/PackagingSlaOverridesManager.tsx` — botões Salvar e Excluir desabilitados via `canManageSla`.\n\n---\n\n## Grupo R3 — Privacidade do cliente\n\n**R3.1 — Operador vê cliente e pedido**\nMantido como está; operador autenticado tem acesso a `client` e `order`.\n\n**R3.2 — Página pública oculta nome do cliente**\nBloco com `{job.client}` removido da rota pública `/tracking`.\nImpl: `src/pages/PublicTrackingPage.tsx` — div `tracking.client` removida.\n\n**R3.3 — Caller anônimo nunca vê nome do cliente (DDL pendente)**\nRPC functions que retornam dados de job devem ter REVOKE EXECUTE de `anon`.\nStatus: **aguardando dono (DDL)**.\n\n---\n\n## Grupo R4 — Triagem de defeitos\n\n**R4.1 — Decisão minor/major é do operador**\nMantido como está; operador escolhe livremente entre minor e major.\n\n**R4.2 — Defeito crítico → tarefa on_hold + notificar coordenador**\nAo submeter triagem com `severity === 'critical'`, `packagingService.updateStatus(taskId, 'on_hold')` é chamado antes de registrar o defeito. Toast informa que o coordenador deve ser notificado.\nImpl: `src/features/packaging/components/DefectTriageForm.tsx` — `handleFormSubmit`.\n\n**R4.3 — Sem decisão padrão no formulário de defeito**\n`defaultValues.decision = 'discard'` removido; campo mostra placeholder \"Selecione uma decisão\" e é obrigatório.\nImpl: `src/features/packaging/components/DefectTriageForm.tsx`.\n\n**R4.4 — accept_with_note exige observação**\nValidação Zod adicionada: se `decision === 'accept_with_note'` e `notes` vazio → erro \"Observação obrigatória ao aceitar com nota\".\nImpl: `src/features/packaging/types/packaging.schema.ts` — `superRefine`.\n\n---\n\n## Grupo R5 — Embalagem\n\n**R5.1 — Máximo 30 kg por pacote (DDL pendente)**\nCHECK constraint em `packaging_tasks.total_weight_kg / packages_count <= 30`.\nStatus: **aguardando dono (DDL)**.\n\n**R5.2 — Máximo 500 pacotes por tarefa (DDL pendente)**\nCHECK constraint em `packaging_tasks.packages_count <= 500`.\nStatus: **aguardando dono (DDL)**.\n\n**R5.3 — Perda >5% exige razão (DDL pendente)**\nColuna `loss_reason TEXT` em `packaging_tasks`; validação de negócio quando `rejected_quantity / received_quantity > 0.05`.\nStatus: **aguardando dono (DDL)**.\n\n**R5.4 — Cadeia de retrabalho limitada a 2 níveis (DDL pendente)**\nTrigger DB impede criação de rework job se a cadeia já tem 2 níveis de profundidade.\nStatus: **aguardando dono (DDL)**.\n\n**R5.5 — Sem lógica de preço na embalagem**\nNenhuma coluna de preço adicionada; regra confirmada como não-escopo.\n"
+  }
+ ],
  "readme": "# FAST Gravações - Sistema de Gestão Industrial\n\nSistema de alta performance para gestão de produção, OEE, Kanban e automação industrial.\n\n## 📖 Documentação Técnica\n\nPara entender a arquitetura do sistema, fluxos de dados e contratos de API, consulte:\n\n👉 **[Guia de Arquitetura (ARCHITECTURE.md)](docs/ARCHITECTURE.md)**\n\n### O que você encontrará na documentação:\n- **Diagrama de Sequência:** Como os dados fluem da UI para o banco.\n- **Mapa de Pastas:** Responsabilidades de cada camada (Frontend, Edge Functions, etc).\n- **Contratos de API:** Documentação da `external-db-bridge`.\n- **Padrões de Código:** Regras obrigatórias para novos desenvolvedores.\n\n## 🚀 Desenvolvimento\n\n### Requisitos\n- Bun ou Node.js\n- Supabase CLI\n\n### Validação de Contratos\nPara validar se a Edge Function `external-db-bridge` está operando conforme documentado:\n```bash\ndeno run --allow-net --allow-env supabase/functions/external-db-bridge/validate_contract.ts\n```\n\n## Grafo de arquitetura (Graphify)\n\nO Graphify mapeia código frontend, Edge Functions, migrations e testes por extração\nlocal. O grafo ajuda a localizar dependências e avaliar impacto; não comprova\npermissões, comportamento em produção ou conclusão dos checkpoints da auditoria.\n\n```bash\nnpm run graph:install\nnpm run graph:build\nnpm run graph:query -- \"authenticate requireRole requireAal2\" --budget 1500\nnpm run graph:html\n```\n\nAbra `graphify-out/graph.html`. Há perfis `all`, `security`, `frontend` e `backend`:\nuse o mesmo `--profile` na geração e na consulta. Veja o\n[guia operacional](docs/graphify/README.md) e o\n[plano detalhado de 50 etapas](docs/plano-graphify-50-etapas.md).\n\n## 🛠️ Tecnologias utilizadas\n\n- **Frontend:** React, Vite, Tailwind CSS, Shadcn UI.\n- **Backend:** Supabase, Edge Functions (Deno).\n- **Banco de Dados:** PostgreSQL.\n- **Monitoramento:** Telemetria customizada e logs de auditoria.",
  "code_files": {
   "commitlint.config.js": {
@@ -69488,7 +69495,7 @@
   },
   "src/components/jobs/JobDetailsModal.tsx": {
    "path": "src/components/jobs/JobDetailsModal.tsx",
-   "lines": 520,
+   "lines": 523,
    "exports": [
     "function JobDetailsModal"
    ],
@@ -70792,7 +70799,7 @@
   },
   "src/components/operator/PreProductionChecklistModal.tsx": {
    "path": "src/components/operator/PreProductionChecklistModal.tsx",
-   "lines": 36,
+   "lines": 32,
    "exports": [
     "function PreProductionChecklistModal"
    ]
@@ -80159,7 +80166,7 @@
   },
   "src/features/packaging/components/DefectTriageForm.tsx": {
    "path": "src/features/packaging/components/DefectTriageForm.tsx",
-   "lines": 155,
+   "lines": 178,
    "exports": [
     "function DefectTriageForm"
    ],
@@ -80266,7 +80273,7 @@
   },
   "src/features/packaging/components/PackagingSlaOverridesManager.tsx": {
    "path": "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
-   "lines": 330,
+   "lines": 334,
    "exports": [
     "function PackagingSlaOverridesManager"
    ],
@@ -80929,7 +80936,7 @@
   },
   "src/features/packaging/types/packaging.schema.ts": {
    "path": "src/features/packaging/types/packaging.schema.ts",
-   "lines": 128,
+   "lines": 135,
    "exports": [
     "const packagingTaskStatusSchema",
     "type PackagingTaskStatus",
@@ -81001,7 +81008,9 @@
      "name": "defectTriageFormSchema",
      "kind": "object",
      "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), }",
-     "refines": [],
+     "refines": [
+      "Observação obrigatória ao aceitar com nota"
+     ],
      "chain": [
       "superRefine"
      ]
@@ -86461,7 +86470,7 @@
   },
   "src/pages/PublicTrackingPage.tsx": {
    "path": "src/pages/PublicTrackingPage.tsx",
-   "lines": 342,
+   "lines": 335,
    "exports": [
     "function PublicTrackingPage"
    ],
@@ -92096,10 +92105,25 @@
   }
  },
  "git": {
-  "sha": "3720de38943210c8a908fbbadc9effd19fc8b35d",
+  "sha": "5db90ba232b63f7db45fb2691bcd18e612f46754",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "5db90ba",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)",
+    "files": [
+     "docs/contexto/regras/manual/regras-implementadas-2026-11.md",
+     "src/components/jobs/JobDetailsModal.tsx",
+     "src/components/operator/PreProductionChecklistModal.tsx",
+     "src/features/packaging/components/DefectTriageForm.tsx",
+     "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
+     "src/features/packaging/types/packaging.schema.ts",
+     "src/pages/PublicTrackingPage.tsx"
+    ]
+   },
    {
     "sha": "3720de3",
     "date": "2026-11-08",
@@ -92529,15 +92553,6 @@
      ".github/workflows/db-admin.yml",
      "PENDENCIAS.md"
     ]
-   },
-   {
-    "sha": "0e2d348",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "ci(deploy): retry com backoff no functions deploy — rate-limit do ghcr no pull do edge-runtime (#107)",
-    "files": [
-     ".github/workflows/deploy.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -92554,12 +92569,12 @@
     3
    ],
    [
-    ".github/workflows/deploy.yml",
+    ".github/workflows/db-admin.yml",
     3
    ],
    [
-    ".github/workflows/db-admin.yml",
-    3
+    "src/pages/PublicTrackingPage.tsx",
+    2
    ],
    [
     "scripts/supabase_snapshot/snapshot.py",
@@ -92614,11 +92629,11 @@
     2
    ],
    [
-    "src/pages/MasterAPIPage.tsx",
+    ".github/workflows/deploy.yml",
     2
    ],
    [
-    "src/features/jobs/hooks/useKanbanDragDrop.ts",
+    "src/pages/MasterAPIPage.tsx",
     2
    ]
   ]

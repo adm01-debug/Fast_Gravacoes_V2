@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3720de38943210c8a908fbbadc9effd19fc8b35d",
+  "commit": "5db90ba232b63f7db45fb2691bcd18e612f46754",
   "branch": "main",
-  "data_commit": "2026-11-08T14:28:19-03:00",
+  "data_commit": "2026-11-08T17:23:21-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "5db90ba",
+    "data": "2026-11-08",
+    "assunto": "feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)"
+   },
    {
     "sha": "3720de3",
     "data": "2026-11-08",
@@ -126,14 +131,9 @@
     "sha": "3f2dee6",
     "data": "2026-10-28",
     "assunto": "docs(estado): balanço de planos × código 2026-10-28 — auditoria exaustiva dos docs (#112)"
-   },
-   {
-    "sha": "2708924",
-    "data": "2026-10-28",
-    "assunto": "fix(nav,kpis): paleta de comandos com rotas mortas e KPIs em UTC (#113)"
    }
   ],
-  "arquivos_mudados_7d": 89,
+  "arquivos_mudados_7d": 96,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/navigation",
@@ -176,6 +176,10 @@
     "mudancas": 5
    },
    {
+    "pasta": "src/features/packaging",
+    "mudancas": 4
+   },
+   {
     "pasta": ".github/workflows/db-admin.yml",
     "mudancas": 3
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "deno.lock",
-    "mudancas": 3
-   },
-   {
-    "pasta": "src/components/qrcode",
     "mudancas": 3
    }
   ],
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 20
+    "commits": 21
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1452,
+  "arquivos_total": 1453,
   "arquivos_codigo": 1074,
-  "linhas_codigo": 170720,
+  "linhas_codigo": 170746,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -327,7 +327,7 @@
   "testes": 103,
   "workflows": 7,
   "scripts": 17,
-  "docs_md": 62
+  "docs_md": 63
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -400,7 +400,7 @@
   },
   "src/components": {
    "arquivos": 415,
-   "linhas": 58793
+   "linhas": 58792
   },
   "src/constants": {
    "arquivos": 2,
@@ -412,7 +412,7 @@
   },
   "src/features": {
    "arquivos": 327,
-   "linhas": 45419
+   "linhas": 45453
   },
   "src/hooks": {
    "arquivos": 61,
@@ -436,7 +436,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 17022
+   "linhas": 17015
   },
   "src/providers": {
    "arquivos": 2,
@@ -541,16 +541,16 @@
    "linhas": 539
   },
   {
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
+   "linhas": 523
+  },
+  {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
    "linhas": 523
   },
   {
    "arquivo": "src/components/knowledge/editor/EditorBasicInfo.tsx",
    "linhas": 521
-  },
-  {
-   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
-   "linhas": 520
   },
   {
    "arquivo": "src/components/layout/QuickFavoritesBar.tsx",

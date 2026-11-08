@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3720de38943210c8a908fbbadc9effd19fc8b35d` (2026-11-08T14:28:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5db90ba232b63f7db45fb2691bcd18e612f46754` (2026-11-08T17:23:21-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1051), SQL (250), Markdown (62), JSON (19), JavaScript (15), Python (11), YAML (9), CSS (2)
+- linguagens: TypeScript (1051), SQL (250), Markdown (63), JSON (19), JavaScript (15), Python (11), YAML (9), CSS (2)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1452 |
+| arquivos_total | 1453 |
 | arquivos_codigo | 1074 |
-| linhas_codigo | 170720 |
+| linhas_codigo | 170746 |
 | rotas | 58 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 103 |
 | workflows | 7 |
 | scripts | 17 |
-| docs_md | 62 |
+| docs_md | 63 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
@@ -255,7 +255,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- não gerado neste run. uvx --from "graphifyy[sql]" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente
+- 6518 nós · 20523 arestas · 618 comunidades · grafo do commit `5db90ba2`
+- comunidades maiores: card.tsx (153), button.tsx (135), badge.tsx (112), TraceabilityPage.tsx (106), useAuth (101), analytics/index.ts (91), snapshot.py (90), cn (89), GraphifyIntegrationTests (86), gerar.mjs (82), .collect (78), scroll-area.tsx (78)
+- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), useDirtyGuard() (src/contexts/DirtyFormContext.tsx)
+- consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (15)
@@ -336,10 +339,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/plano-50-etapas-consolidacao.md` — Plano de consolidação em 50 etapas — FAST GRAVAÇÕES ES v2 (819 linhas)
 - `docs/plano-graphify-50-etapas.md` — Plano de implementação Graphify — 50 etapas (647 linhas)
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
-- subpastas de docs/: docs/estado (20), docs/adr (4), docs/agentes (3), docs/operacoes (3), docs/contexto (2), docs/graphify (2), docs/post-mortems (1)
+- subpastas de docs/: docs/estado (20), docs/adr (4), docs/agentes (3), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-08 `5db90ba` feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)
 - 2026-11-08 `3720de3` fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)
 - 2026-11-08 `c9814e8` fix(contexto): guard de segredos por ocorrência (#137)
 - 2026-11-08 `bce2374` feat(contexto): contexto autônomo para agentes de IA (#136)
@@ -354,7 +358,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `ef2da88` fix: adicionar --yes ao supabase db push (CI não-interativo)
 - 2026-11-05 `6da824c` fix: verificação RLS USING(true) em políticas de escrita via migration
 - 2026-11-05 `33983fd` fix: adiciona --yes no supabase functions deploy para CI não-interativo (#123)
-- 2026-11-02 `7b98977` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#122)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

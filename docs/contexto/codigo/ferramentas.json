@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1051)",
    "SQL (250)",
-   "Markdown (62)",
+   "Markdown (63)",
    "JSON (19)",
    "JavaScript (15)",
    "Python (11)",
@@ -538,12 +538,12 @@
    "arquivos_md": 3
   },
   {
-   "pasta": "docs/operacoes",
+   "pasta": "docs/contexto",
    "arquivos_md": 3
   },
   {
-   "pasta": "docs/contexto",
-   "arquivos_md": 2
+   "pasta": "docs/operacoes",
+   "arquivos_md": 3
   },
   {
    "pasta": "docs/graphify",
