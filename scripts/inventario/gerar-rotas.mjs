@@ -114,18 +114,25 @@ export function extrairChamadas(texto) {
 const ehTeste = (p) => /(\.test\.|\.spec\.|__tests__|\.stories\.)/.test(p);
 
 /**
- * Fecho de imports a partir do arquivo da pagina. Segue sem limite as pastas de codigo
- * compartilhado que carregam acesso a dados (hooks, features, lib, contexts, providers, schemas,
- * integrations); componentes (src/components/, menos o kit de UI) e OUTRAS paginas entram ate
- * MAX_SALTOS saltos, para o fecho nao virar o repo inteiro. Fica de fora o kit de UI e teste.
+ * Fecho de imports a partir do arquivo da pagina, limitado a MAX_SALTOS saltos: cada arquivo de
+ * `src/` alcancado conta um salto, e o kit de UI (src/components/ui/) e teste ficam de fora.
+ *
+ * Por que limitar TODO salto, inclusive hooks: neste repo src/hooks, src/lib e src/features
+ * formam um grafo conectado (hook importa hook importa servico). Seguir essas pastas sem limite
+ * fazia o fecho de CADA rota virar o repo quase inteiro -- medido: 320 arquivos, 192 hooks e 86
+ * tabelas por rota, e um rotas.json de 22 mil linhas que nao distingue uma rota da outra (e nem
+ * cabe no contexto de um agente, que e o motivo de o arquivo existir). Com 2 saltos sai 70
+ * arquivos, 33 hooks e 13 tabelas por rota -- a mesma ordem do repo de origem.
+ *
+ * Consequencia a ter em mente ao ler o arquivo: a lista e o que a pagina alcanca PERTO dela, nao
+ * o fecho transitivo completo. Uma tabela lida so no terceiro nivel de indirecao nao aparece.
  * Import local que nao resolve vira problema.
  */
 export const MAX_SALTOS = 2;
-const LIVRES = ['src/hooks', 'src/features', 'src/lib', 'src/contexts', 'src/providers', 'src/schemas', 'src/integrations'];
 export function fechoDaPagina(raiz, arquivoPaginaAbs) {
   const dentro = (abs, rel_) => abs.startsWith(path.join(raiz, rel_) + path.sep);
-  const livre = (abs) => LIVRES.some((d) => dentro(abs, d));
-  const comSalto = (abs) => (dentro(abs, 'src/components') && !dentro(abs, 'src/components/ui')) || dentro(abs, 'src/pages');
+  const livre = () => false;
+  const comSalto = (abs) => dentro(abs, 'src') && !dentro(abs, 'src/components/ui');
   const saltosVistos = new Map(); // arquivo -> menor numero de saltos com que foi visitado
   const hooks = new Map();
   const quebrados = new Set();

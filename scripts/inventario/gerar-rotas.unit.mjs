@@ -149,25 +149,46 @@ test('resolverImport entende @/, relativo, extensao implicita, index e externo',
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 
-test('fechoDaPagina segue hooks sem limite e limita componentes a MAX_SALTOS', () => {
+test(`fechoDaPagina para em MAX_SALTOS (${MAX_SALTOS}) em QUALQUER pasta, hooks inclusive`, () => {
+  // Cadeia de hooks e cadeia de componentes com a mesma profundidade: o limite tem de valer
+  // para as duas. Seguir hooks sem limite fazia o fecho de cada rota virar o repo inteiro.
   const tmp = repoFake({
     'src/pages/A.tsx': "import { useUm } from '@/hooks/useUm';\nimport { C1 } from '@/components/C1';\n",
-    'src/hooks/useUm.ts': "import { useDois } from '@/hooks/useDois';\nexport const useUm = () => supabase.from('jobs');",
-    'src/hooks/useDois.ts': "export const useDois = () => supabase.rpc('fundo');",
-    'src/components/C1.tsx': "import { C2 } from '@/components/C2';\nexport const C1 = () => supabase.from('machines');",
-    'src/components/C2.tsx': "import { C3 } from '@/components/C3';\nexport const C2 = () => supabase.from('materials');",
-    'src/components/C3.tsx': "export const C3 = () => supabase.from('longe_demais');",
+    'src/hooks/useUm.ts': "import { useDois } from '@/hooks/useDois';\nexport const useUm = () => supabase.from('h1');",
+    'src/hooks/useDois.ts': "import { useTres } from '@/hooks/useTres';\nexport const useDois = () => supabase.from('h2');",
+    'src/hooks/useTres.ts': "export const useTres = () => supabase.from('h3_longe_demais');",
+    'src/components/C1.tsx': "import { C2 } from '@/components/C2';\nexport const C1 = () => supabase.from('c1');",
+    'src/components/C2.tsx': "import { C3 } from '@/components/C3';\nexport const C2 = () => supabase.from('c2');",
+    'src/components/C3.tsx': "export const C3 = () => supabase.from('c3_longe_demais');",
     'src/components/ui/button.tsx': "export const Button = () => supabase.from('nunca');",
   });
   const f = fechoDaPagina(tmp, path.join(tmp, 'src/pages/A.tsx'));
-  assert.ok(f.tabelas.includes('jobs'), 'hook direto entra');
-  assert.ok(f.rpcs.includes('fundo'), 'hook de hook entra (pasta livre, sem limite)');
-  assert.ok(f.tabelas.includes('machines'), 'componente a 1 salto entra');
-  assert.ok(f.tabelas.includes('materials'), 'componente a 2 saltos entra');
-  assert.ok(!f.tabelas.includes('longe_demais'), `componente alem de ${MAX_SALTOS} saltos fica fora`);
+  assert.equal(MAX_SALTOS, 2, 'o resto deste teste assume 2 saltos');
+  assert.ok(f.tabelas.includes('h1'), 'hook a 1 salto entra');
+  assert.ok(f.tabelas.includes('h2'), 'hook a 2 saltos entra');
+  assert.ok(!f.tabelas.includes('h3_longe_demais'), 'hook a 3 saltos fica fora — o limite vale para hooks');
+  assert.ok(f.tabelas.includes('c1'), 'componente a 1 salto entra');
+  assert.ok(f.tabelas.includes('c2'), 'componente a 2 saltos entra');
+  assert.ok(!f.tabelas.includes('c3_longe_demais'), 'componente a 3 saltos fica fora');
   assert.ok(!f.tabelas.includes('nunca'), 'kit de UI nunca entra');
-  assert.deepEqual(f.hooks.map((h) => h.nome), ['useDois', 'useUm']);
+  assert.deepEqual(f.hooks.map((h) => h.nome), ['useDois', 'useTres', 'useUm'],
+    'o NOME do hook importado entra no indice mesmo quando o arquivo dele nao e percorrido');
   fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test('o fecho de uma rota de verdade fica proporcional, nao o repo inteiro', () => {
+  // O rotas.json existe para caber no contexto de um agente. Antes de calibrar o limite de
+  // saltos, cada rota listava ~192 hooks e ~86 tabelas — nao distinguia uma rota da outra.
+  const inv = gerarRotas(RAIZ);
+  const comArquivo = inv.urls.filter((u) => u.arquivo);
+  const media = (f) => comArquivo.reduce((s, u) => s + f(u), 0) / comArquivo.length;
+  assert.ok(media((u) => u.hooks.length) < 80, `media de hooks por rota alta: ${Math.round(media((u) => u.hooks.length))}`);
+  assert.ok(media((u) => u.tabelas.length) < 40, `media de tabelas por rota alta: ${Math.round(media((u) => u.tabelas.length))}`);
+  const publica = inv.urls.find((u) => u.caminho === '/track');
+  const painel = inv.urls.find((u) => u.caminho === '/');
+  assert.ok(publica && painel, 'rotas /track e / deveriam existir');
+  assert.ok(publica.tabelas.length < painel.tabelas.length,
+    'a pagina publica de rastreio nao pode alcancar tanto quanto o painel — se alcancar, o fecho voltou a ser o repo');
 });
 
 test('fechoDaPagina ignora arquivo de teste', () => {
