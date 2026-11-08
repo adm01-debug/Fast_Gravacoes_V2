@@ -1,0 +1,74 @@
+# docs:
+#   gatilho: agendado (diario 07:15 UTC) e dispatch
+#   prova: o perimetro do GitHub (branch protection, merge, actions, environments) contra o baseline versionado
+#   falha: divergencia real deixa o job vermelho e abre/atualiza issue; ponto cego sai verde com aviso
+#   avisa: issue [settings-guard] (label settings-guard)
+# nao-e-bug:
+#   - ponto-cego: sem o secret SETTINGS_GUARD_TOKEN o GITHUB_TOKEN nao le branch protection (403)
+#     nem os campos de merge; isso sai como NAO VERIFICAVEL, job verde com ::warning::
+name: Settings Guard
+
+on:
+  schedule:
+    - cron: '15 7 * * *' # diario 07:15 UTC (04:15 BRT)
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: settings-guard
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: Verificar o perímetro contra o baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Testar o guarda
+        run: node --test scripts/ci/github-settings-guard.unit.mjs
+
+      - name: Verificar e restaurar configurações
+        # Baseline: scripts/ci/github-settings-baseline.json (foto do perímetro, não um ideal).
+        # Divergência: restaura o que sabe restaurar (strict, allow_auto_merge) e abre/atualiza
+        # a issue [settings-guard]. Tudo OK: fecha a issue se estiver aberta.
+        run: node scripts/ci/github-settings-guard.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Opcional: PAT fine-grained (administration:read + metadata:read, só este repo) que
+          # elimina o ponto cego de branch protection. Sem o secret cai no github.token e o
+          # guard roda igual, com os campos administrativos como NÃO VERIFICÁVEL.
+          # `||` e não `??`: secret ausente chega como string vazia, não undefined.
+          ADMIN_READ_TOKEN: ${{ secrets.SETTINGS_GUARD_TOKEN || github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PERIMETER_SNAPSHOT_PATH: perimeter-snapshot.json
+
+      - name: Publicar snapshot do perímetro
+        # A próxima regressão de strict/allow_auto_merge ganha uma janela datada de comparação.
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: perimeter-snapshot-${{ github.run_id }}
+          path: perimeter-snapshot.json
+          if-no-files-found: ignore
+          retention-days: 14

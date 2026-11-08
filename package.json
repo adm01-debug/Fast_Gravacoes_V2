@@ -39,7 +39,8 @@
     "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
     "inventario:edges": "node scripts/inventario/gerar-repo.mjs",
     "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
-    "inventario:test": "node --test 'scripts/inventario/*.unit.mjs'"
+    "inventario:test": "node --test 'scripts/inventario/*.unit.mjs'",
+    "settings:guard": "node scripts/ci/github-settings-guard.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
