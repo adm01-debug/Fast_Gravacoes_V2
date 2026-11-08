@@ -126,6 +126,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   const technique = getTechniqueById(job.technique_id);
   const machine = getMachineById(job.machine_id);
+  const canDelete = !job.produced_quantity && !job.lost_pieces && ['queue', 'scheduled', 'cancelled'].includes(job.status);
 
   const handleSave = async (data: JobEditValues) => {
     try {
@@ -218,7 +219,9 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
                     variant="outline"
                     size="sm"
                     onClick={handleDelete}
-                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
+                    disabled={!canDelete}
+                    title={!canDelete ? 'Não é possível excluir: job possui peças produzidas ou está em andamento' : undefined}
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     {t('common.delete')}

@@ -275,13 +275,6 @@ export default function PublicTrackingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('tracking.client')}</p>
-                      <div className="flex items-center gap-2 text-lg font-bold">
-                        <Building className="h-5 w-5 text-primary/70" />
-                        {job.client}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('tracking.product')}</p>
                       <div className="flex items-center gap-2 text-lg font-bold">
                         <Package className="h-5 w-5 text-primary/70" />

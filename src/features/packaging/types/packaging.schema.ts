@@ -75,6 +75,13 @@ export const defectTriageFormSchema = z
             : 'Foto obrigatória quando a decisão é retrabalho',
       });
     }
+    if (data.decision === 'accept_with_note' && (!data.notes || data.notes.trim() === '')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['notes'],
+        message: 'Observação obrigatória ao aceitar com nota',
+      });
+    }
   });
 export type DefectTriageForm = z.infer<typeof defectTriageFormSchema>;
 
