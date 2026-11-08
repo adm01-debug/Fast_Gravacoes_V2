@@ -195,6 +195,9 @@ jobs:
           python3 -m pip install --quiet --break-system-packages --only-binary :all: -r scripts/supabase_snapshot/requirements.txt
           command -v psql >/dev/null || sudo apt-get install -y -qq --no-install-recommends postgresql-client
 
+      - name: Testar o coletor (inclusive a redação de segredo do command do cron)
+        run: python3 -m unittest scripts.supabase_snapshot.test_snapshot -v
+
       - name: Resolver a connection string (mesma descoberta do db-admin.yml)
         id: conn
         env:

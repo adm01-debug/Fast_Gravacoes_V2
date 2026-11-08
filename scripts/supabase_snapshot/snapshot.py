@@ -255,6 +255,20 @@ def approx(n: Any) -> str:
     return f"~{round(n, -1)}"
 
 
+_RX_FUNCAO_CHAMADA = re.compile(r"((?:public|net|cron)\.[a-z_0-9]+)\s*\(")
+
+
+def redigir_comando_cron(command: Any) -> str:
+    """O `command` de cron.job pode trazer URL e cabeçalho inteiros — neste banco, pelo menos um
+    job embute o segredo (`x-cron-secret`) em texto puro na chamada HTTP. cron.md e snapshot.json
+    são publicados numa branch do GitHub; NUNCA o command bruto sai daqui, só o nome das funções
+    chamadas (mesmo padrão do SQL de só leitura em scripts/inventario/banco.sql). Isso vale mesmo
+    que o segredo mude de nome ou de formato: a lista é sempre e só os nomes, nunca o texto livre.
+    """
+    nomes = sorted(set(_RX_FUNCAO_CHAMADA.findall(str(command or ""))))
+    return f"chama: {', '.join(nomes)}" if nomes else "(sem chamada reconhecida)"
+
+
 def slug(text: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", text).strip("_") or "_"
 
@@ -1504,8 +1518,11 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
     if not cron.get("installed"):
         write(OUT / "cron.md", "# Cron (pg_cron)\n\n_extensão pg_cron não instalada_\n")
     else:
-        write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron") + "Horários em UTC. Execuções recentes em `cron-runs.md`.\n\n" + md_table(
-            ["id", "nome", "schedule", "ativo", "database", "usuário", "comando"],
+        write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron")
+            + "Horários em UTC. Execuções recentes em `cron-runs.md`. O `command` de cada job nunca sai daqui "
+            + "(pode ter URL e cabeçalho com segredo, ex.: `x-cron-secret`) — só o nome das funções chamadas; "
+            + "ver `redigir_comando_cron()` em `scripts/supabase_snapshot/snapshot.py`.\n\n" + md_table(
+            ["id", "nome", "schedule", "ativo", "database", "usuário", "chama"],
             [[j["jobid"], j["jobname"], code(j["schedule"]), j["active"], j["database"], j["username"], code(j["command"])] for j in cron.get("jobs") or []]))
     qs = db.get("queues") or {}
     write(OUT / "queues.md", "# Queues (pgmq)\n\n" + (banner("queues") + md_table(
@@ -1755,6 +1772,17 @@ def main() -> int:
         return 1
 
     caller_sources = build_function_callers(db)
+    # Redige o command de cron.job DEPOIS do cruzamento acima (que precisa do texto bruto para
+    # achar quem chama quem) e ANTES de qualquer render ou serialização: cron.md e snapshot.json
+    # são publicados numa branch pública, e pelo menos um job deste banco embute um segredo em
+    # texto puro no command (cabeçalho x-cron-secret). Ver redigir_comando_cron().
+    # "cron" in CARRIED: a coleta falhou agora e db["cron"] é o previous_db["cron"] — já redigido
+    # na publicação anterior (mesmo código já rodou). Redigir de novo apagaria a informação:
+    # o resumo "chama: f(), g()" não tem "(" depois do nome, então não bateria no regex de novo
+    # e viraria "(sem chamada reconhecida)" numa seção que nunca teve nada de errado.
+    if "cron" not in CARRIED:
+        for job in (db.get("cron") or {}).get("jobs") or []:
+            job["command"] = redigir_comando_cron(job.get("command"))
     api_, api_stats = introspect_api((previous or {}).get("api"))
     schema_sql = run_pg_dump()
     types_ts = run_gen_types()

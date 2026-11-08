@@ -82,7 +82,7 @@ class SnapshotFixture(unittest.TestCase):
 
         self.source_files = [("src/client.ts", "supabase.rpc('demo')")]
 
-    def collect(self, *, failures=(), functions=None, migrations=None):
+    def collect(self, *, failures=(), functions=None, migrations=None, cron=None):
         snapshot = self.snapshot
         snapshot.ERRORS.clear()
         snapshot.CARRIED.clear()
@@ -92,6 +92,8 @@ class SnapshotFixture(unittest.TestCase):
             "functions": [function()] if functions is None else functions,
             "migrations": [migration()] if migrations is None else migrations,
         }
+        if cron is not None:
+            records["cron"] = cron
 
         def section(name):
             @snapshot.section(name)
@@ -453,6 +455,90 @@ class SnapshotFunctionCallerTests(SnapshotFixture):
         files["src/not_selected.ts"] = "supabase.rpc('demo')"
         self.assertEqual(self.callers(files, scan_dirs=["runtime", "scripts/operations", "supabase/migrations"]),
                          [{"file": name, "hits": 1} for name in sorted(names)])
+
+
+class SnapshotCronSecretRedactionTests(SnapshotFixture):
+    """cron.job.command pode trazer URL e cabeçalho com segredo em texto puro (achado real: pelo
+    menos um job deste banco embute x-cron-secret). cron.md e snapshot.json são publicados numa
+    branch pública — o command bruto nunca pode chegar lá."""
+
+    # Valor FALSO, só para o teste — nunca o segredo real do banco.
+    SEGREDO = "x-cron-secret", "fake00000000000000000000000000000000000000000000000000000000fake"
+    URL = "https://supabase.atomicabr.com.br/functions/v1/x"
+
+    def comando_com_segredo(self, *funcoes):
+        # net.http_post é sempre chamado: é exatamente o padrão real (job dispara webhook com
+        # segredo no cabeçalho) e também é, ele mesmo, uma chamada de função legítima — o teste
+        # tem de distinguir "o nome net.http_post pode aparecer" de "a URL/o segredo não podem".
+        chamadas = " ".join(f"{f}()" for f in funcoes)
+        header, valor = self.SEGREDO
+        return (f"select net.http_post(url := '{self.URL}', "
+                f"headers := jsonb_build_object('{header}','{valor}')); select {chamadas};")
+
+    def test_pure_function_lists_only_the_called_names(self):
+        redigir = self.snapshot.redigir_comando_cron
+        self.assertEqual(redigir(self.comando_com_segredo("public.snapshot_cron_health")),
+                          "chama: net.http_post, public.snapshot_cron_health")
+        # Duas funções: ordem estável (alfabética), sem repetir.
+        self.assertEqual(redigir(self.comando_com_segredo("cron.foo", "public.foo", "cron.foo")),
+                          "chama: cron.foo, net.http_post, public.foo")
+        self.assertEqual(redigir("select 1;"), "(sem chamada reconhecida)")
+        self.assertEqual(redigir(None), "(sem chamada reconhecida)")
+
+    def test_pure_function_never_echoes_the_url_or_the_secret_value(self):
+        redigir = self.snapshot.redigir_comando_cron
+        _, valor_do_segredo = self.SEGREDO
+        saida = redigir(self.comando_com_segredo("public.demo"))
+        self.assertNotIn(valor_do_segredo, saida)
+        self.assertNotIn(self.URL, saida)
+        self.assertIn("net.http_post", saida)  # o NOME da função é informação legítima, fica
+
+    def test_main_never_writes_the_raw_command_to_cron_md_or_snapshot_json(self):
+        _, valor_do_segredo = self.SEGREDO
+        cron = {"installed": True, "jobs": [{
+            "jobid": 1, "jobname": "cron-alert-email-every-30min", "schedule": "*/30 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        cron_md = (self.out / "cron.md").read_text(encoding="utf-8")
+        snapshot_json = (self.out / "snapshot.json").read_text(encoding="utf-8")
+        for saida in (cron_md, snapshot_json):
+            self.assertNotIn(valor_do_segredo, saida, "o segredo do command vazou para a saída publicada")
+            self.assertNotIn(self.URL, saida, "a URL do command vazou para a saída publicada")
+        self.assertIn("chama: net.http_post, public.demo", cron_md)
+
+    def test_redaction_does_not_break_the_cron_cross_reference(self):
+        # build_function_callers roda ANTES da redação: a função ainda precisa aparecer como
+        # chamada pelo job em callers["cron"], mesmo depois do command ter sido redigido.
+        cron = {"installed": True, "jobs": [{
+            "jobid": 7, "jobname": "job-de-teste", "schedule": "*/5 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        callers = self.metadata()["db"]["functions"][0]["callers"]
+        self.assertEqual(callers["cron"], ["7:job-de-teste"])
+
+    def test_carried_cron_is_not_redacted_a_second_time(self):
+        # O resumo "chama: f()" não termina em "(" — redigir de novo não bateria no regex e
+        # apagaria a informação ("(sem chamada reconhecida)") numa seção que não tem nada de
+        # errado, só está reaproveitada por falha de coleta.
+        cron = {"installed": True, "jobs": [{
+            "jobid": 1, "jobname": "job", "schedule": "*/5 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        primeira = (self.out / "cron.md").read_text(encoding="utf-8")
+        self.assertIn("chama: net.http_post, public.demo", primeira)
+
+        self.assertEqual(self.collect(cron=cron, failures=("cron",)), 0)
+        self.assertIn("cron", self.snapshot.CARRIED)
+        segunda = (self.out / "cron.md").read_text(encoding="utf-8")
+        self.assertIn("chama: net.http_post, public.demo", segunda,
+                       "a seção reaproveitada perdeu a redação já feita na publicação anterior")
+        self.assertNotIn("sem chamada reconhecida", segunda)
 
 
 class SnapshotCallerFreshnessTests(SnapshotFixture):
