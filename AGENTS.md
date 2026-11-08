@@ -60,6 +60,11 @@ Escrita em repos `adm01-debug`: MCP `GITHUB - MCP - FOREVER` (o padrão dá 403;
 - Env (`.env.example`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`; `VITE_*` é público — chaves de API só em secrets de Edge Function.
 - `ANALISE_TECNICA_SISTEMA.md`: problemas conhecidos — leia antes de assumir que o atual é intencional.
 - Ler: `docs/agentes/arquitetura.md`, `docs/operacoes/RUNBOOK.md`, `docs/adr/`.
+- **Antes de qualquer tarefa ou planejamento**: `git fetch origin contexto && git show origin/contexto:docs/contexto/00-INDEX.md`
+  — estado real de código, banco de produção e regras de negócio, regerado a cada 10 min pelo `contexto.yml`
+  (branch `contexto`, gerada: nunca edite nem abra PR dela). Como usar: `docs/agentes/contexto.md`.
+  Migration no repo é histórico, não estado: o que existe no banco está em `docs/contexto/supabase/`.
+  Regra que só o negócio sabe → `docs/contexto/regras/manual/*.md` na `main`.
 
 ## 8. Comandos e CI
 
