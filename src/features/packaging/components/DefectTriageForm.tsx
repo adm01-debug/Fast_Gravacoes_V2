@@ -33,7 +33,6 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
       quantity: 1,
       defect_type: 'other',
       severity: 'minor',
-      decision: 'discard',
       photo_url: '',
       notes: '',
     },
@@ -53,8 +52,21 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
     }
   };
 
+  const handleFormSubmit = async (values: DefectTriageForm) => {
+    if (values.severity === 'critical') {
+      try {
+        await packagingService.updateStatus(taskId, 'on_hold');
+        toast.info('Tarefa colocada em espera — notifique o coordenador');
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'Erro ao colocar tarefa em espera');
+        return;
+      }
+    }
+    await onSubmit(values);
+  };
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="quantity">Quantidade</Label>
@@ -94,16 +106,19 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
         <div>
           <Label>Decisão</Label>
           <Select
-            value={form.watch('decision')}
+            value={form.watch('decision') ?? ''}
             onValueChange={(v) => form.setValue('decision', v as PackagingDefectDecision)}
           >
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Selecione uma decisão" /></SelectTrigger>
             <SelectContent>
               {Object.entries(DECISION_LABELS).map(([k, label]) => (
                 <SelectItem key={k} value={k}>{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
+          {form.formState.errors.decision && (
+            <p className="text-xs text-destructive mt-1">{form.formState.errors.decision.message}</p>
+          )}
         </div>
       </div>
       {form.watch('decision') === 'rework' && (
@@ -145,7 +160,15 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
       <div>
         <Label htmlFor="notes">Observações</Label>
         <Textarea id="notes" rows={3} {...form.register('notes')} />
+        {form.formState.errors.notes && (
+          <p className="text-xs text-destructive mt-1">{form.formState.errors.notes.message}</p>
+        )}
       </div>
+      {form.watch('severity') === 'critical' && (
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
+          Defeito crítico: a tarefa será colocada em <strong>espera</strong> e o coordenador deve ser notificado.
+        </div>
+      )}
       <Button type="submit" disabled={submitting || uploading} className="w-full">
         {submitting ? 'Registrando…' : 'Registrar defeito'}
       </Button>

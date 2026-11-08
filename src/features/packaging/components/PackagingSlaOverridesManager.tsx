@@ -17,6 +17,7 @@ import {
 } from '../hooks/usePackagingSlaOverrides';
 import { useTechniquesData } from '@/features/jobs/hooks/useSchedulingData';
 import { usePackagingSettings } from '../hooks/usePackagingSettings';
+import { useRBAC } from '@/features/auth';
 
 const NONE_TECH = '__none__';
 
@@ -50,6 +51,8 @@ export function PackagingSlaOverridesManager() {
   const { data: techniques } = useTechniquesData();
   const { data: settings } = usePackagingSettings();
   const { save, remove } = usePackagingSlaOverrideMutations();
+  const { isCoordinator, isManager, isAdmin } = useRBAC();
+  const canManageSla = isCoordinator || isManager || isAdmin;
 
   const defaults = {
     triage: settings?.sla_triage_hours ?? 4,
@@ -238,7 +241,7 @@ export function PackagingSlaOverridesManager() {
                   Cancelar
                 </Button>
               )}
-              <Button onClick={handleSave} disabled={save.isPending}>
+              <Button onClick={handleSave} disabled={save.isPending || !canManageSla} title={!canManageSla ? 'Apenas coordenadores e gerentes podem gerenciar overrides de SLA' : undefined}>
                 <SaveIcon className="w-4 h-4 mr-2" />
                 {form.id ? 'Salvar alterações' : 'Criar override'}
               </Button>
@@ -304,6 +307,7 @@ export function PackagingSlaOverridesManager() {
                             size="icon"
                             variant="ghost"
                             aria-label="Remover"
+                            disabled={!canManageSla}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDelete(o.id);
