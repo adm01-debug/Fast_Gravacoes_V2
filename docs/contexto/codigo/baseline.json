@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c9814e81fd72c7103d6a71b15f6ed0a02427c51a",
+  "commit": "3720de38943210c8a908fbbadc9effd19fc8b35d",
   "branch": "main",
-  "data_commit": "2026-11-08T12:56:29-03:00",
+  "data_commit": "2026-11-08T14:28:19-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3720de3",
+    "data": "2026-11-08",
+    "assunto": "fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)"
+   },
    {
     "sha": "c9814e8",
     "data": "2026-11-08",
@@ -126,11 +131,6 @@
     "sha": "2708924",
     "data": "2026-10-28",
     "assunto": "fix(nav,kpis): paleta de comandos com rotas mortas e KPIs em UTC (#113)"
-   },
-   {
-    "sha": "23da9a4",
-    "data": "2026-10-28",
-    "assunto": "docs(ci): fechamento da meta — todos os workflows verdes na main (#111)"
    }
   ],
   "arquivos_mudados_7d": 89,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 19
+    "commits": 20
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1452,
   "arquivos_codigo": 1074,
-  "linhas_codigo": 170695,
+  "linhas_codigo": 170720,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -392,7 +392,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2669
+   "linhas": 2694
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -494,7 +494,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1791
+   "linhas": 1816
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
