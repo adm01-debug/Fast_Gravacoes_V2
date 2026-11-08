@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(contexto): guard de segredos por ocorrência (#137)",
    "feat(contexto): contexto autônomo para agentes de IA (#136)",
    "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)",
    "fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)",
-   "chore: instruções enxutas para agentes (#130)",
-   "chore: aprimora scripts de bundle, graphify e RLS regression (#132)"
+   "chore: instruções enxutas para agentes (#130)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

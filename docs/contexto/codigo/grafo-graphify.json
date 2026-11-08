@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "bce23746015acadcd8d41da9d91cfd21039acd61",
+ "commit_do_grafo": "c9814e81fd72c7103d6a71b15f6ed0a02427c51a",
  "grafo_atual": true,
  "nos": 6518,
  "arestas": 20520,
- "comunidades_total": 614,
+ "comunidades_total": 617,
  "relacoes": {
   "calls": 2328,
   "cites": 6,
@@ -120,9 +120,9 @@
   {
    "id": 5,
    "nome": "analytics/index.ts",
-   "nos": 98,
-   "callables": 49,
-   "arquivos": 38,
+   "nos": 91,
+   "callables": 46,
+   "arquivos": 36,
    "exemplos_arquivos": [
     "src/components/machines/MachinesByTechniqueList.tsx",
     "src/features/admin/hooks/useDashboardPresets.ts",
@@ -328,6 +328,23 @@
   },
   {
    "id": 19,
+   "nome": "BIDashboard.tsx",
+   "nos": 65,
+   "callables": 40,
+   "arquivos": 29,
+   "exemplos_arquivos": [
+    "src/components/abc/AIFinancialAdvisor.tsx",
+    "src/components/jobs/JobCostsTab.tsx",
+    "src/components/operators/ProductionRadarChart.tsx",
+    "src/constants/biConstants.ts",
+    "src/features/analytics/components/bi/AIInsights.tsx",
+    "src/features/analytics/components/bi/BIAIInsights.tsx",
+    "src/features/analytics/components/bi/BIComparisonView.tsx",
+    "src/features/analytics/components/bi/BIEmptyState.tsx"
+   ]
+  },
+  {
+   "id": 20,
    "nome": "ExecutiveDashboard.tsx",
    "nos": 65,
    "callables": 30,
@@ -344,7 +361,7 @@
    ]
   },
   {
-   "id": 20,
+   "id": 21,
    "nome": "OperatorsPage.tsx",
    "nos": 63,
    "callables": 49,
@@ -361,7 +378,7 @@
    ]
   },
   {
-   "id": 21,
+   "id": 22,
    "nome": "AppRoutes.tsx",
    "nos": 62,
    "callables": 18,
@@ -375,23 +392,6 @@
     "src/components/technical-assistant/ChatArea.tsx",
     "src/components/technical-assistant/ConversationSidebar.tsx",
     "src/features/production/hooks/useOperatorProductivity.ts"
-   ]
-  },
-  {
-   "id": 22,
-   "nome": "BIDashboard.tsx",
-   "nos": 61,
-   "callables": 36,
-   "arquivos": 27,
-   "exemplos_arquivos": [
-    "src/components/abc/AIFinancialAdvisor.tsx",
-    "src/components/jobs/JobCostsTab.tsx",
-    "src/components/operators/ProductionRadarChart.tsx",
-    "src/constants/biConstants.ts",
-    "src/features/analytics/components/bi/AIInsights.tsx",
-    "src/features/analytics/components/bi/BIAIInsights.tsx",
-    "src/features/analytics/components/bi/BIEmptyState.tsx",
-    "src/features/analytics/components/bi/BIHeader.tsx"
    ]
   },
   {
@@ -409,23 +409,6 @@
   },
   {
    "id": 24,
-   "nome": "CodeQualityDashboard.tsx",
-   "nos": 54,
-   "callables": 27,
-   "arquivos": 18,
-   "exemplos_arquivos": [
-    "src/components/abc/ABCCostBreakdownChart.tsx",
-    "src/components/abc/ABCTechniqueChart.tsx",
-    "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx",
-    "src/components/design-system/sections/code-quality/CodeQualityTestsTab.tsx",
-    "src/components/jobs/JobCostsTab.tsx",
-    "src/components/qrcode/ScanHistoryCharts.tsx",
-    "src/components/ui/kpi-tooltip.tsx",
-    "src/features/admin/hooks/useCodeQualityMetrics.ts"
-   ]
-  },
-  {
-   "id": 25,
    "nome": "errorHandling.ts",
    "nos": 54,
    "callables": 37,
@@ -442,7 +425,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 25,
    "nome": "showErrorToast",
    "nos": 54,
    "callables": 45,
@@ -459,7 +442,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 26,
    "nome": "NewJobPage.tsx",
    "nos": 53,
    "callables": 31,
@@ -476,7 +459,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 27,
    "nome": "queryConfig.ts",
    "nos": 53,
    "callables": 23,
@@ -493,7 +476,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 28,
    "nome": "jobs/index.ts",
    "nos": 52,
    "callables": 33,
@@ -510,24 +493,7 @@
    ]
   },
   {
-   "id": 30,
-   "nome": "parseDateOnly",
-   "nos": 52,
-   "callables": 32,
-   "arquivos": 15,
-   "exemplos_arquivos": [
-    "src/components/jobs/JobInfoGrid.tsx",
-    "src/components/jobs/JobInfoRow.tsx",
-    "src/components/kanban/DragOverlayCard.tsx",
-    "src/components/kanban/DraggableJobCard.tsx",
-    "src/components/kanban/DroppableColumn.tsx",
-    "src/components/kanban/KanbanFiltersBar.tsx",
-    "src/components/scheduling/CapacityHealthPanel.tsx",
-    "src/components/traceability/TraceabilityStatsCards.tsx"
-   ]
-  },
-  {
-   "id": 31,
+   "id": 29,
    "nome": "Bitrix24ConfigPage.tsx",
    "nos": 48,
    "callables": 21,
@@ -544,7 +510,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 30,
    "nome": "PendingQueue.tsx",
    "nos": 47,
    "callables": 28,
@@ -561,7 +527,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 31,
    "nome": "notifications/index.ts",
    "nos": 47,
    "callables": 34,
@@ -578,7 +544,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 32,
    "nome": "production/index.ts",
    "nos": 46,
    "callables": 36,
@@ -595,7 +561,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 33,
    "nome": "jobsService.ts",
    "nos": 46,
    "callables": 24,
@@ -612,7 +578,24 @@
    ]
   },
   {
-   "id": 36,
+   "id": 34,
+   "nome": "parseDateOnly",
+   "nos": 46,
+   "callables": 28,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/kanban/DragOverlayCard.tsx",
+    "src/components/kanban/DraggableJobCard.tsx",
+    "src/components/kanban/DroppableColumn.tsx",
+    "src/components/kanban/KanbanFiltersBar.tsx",
+    "src/components/scheduling/CapacityHealthPanel.tsx",
+    "src/components/traceability/TraceabilityStatsCards.tsx",
+    "src/features/analytics/hooks/useKPIs.test.ts",
+    "src/features/analytics/hooks/useKPIs.ts"
+   ]
+  },
+  {
+   "id": 35,
    "nome": "_shared/logger.ts",
    "nos": 46,
    "callables": 27,
@@ -629,7 +612,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 36,
    "nome": "skeleton.tsx",
    "nos": 45,
    "callables": 31,
@@ -646,7 +629,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 37,
    "nome": "MaintenanceExecutionModal.tsx",
    "nos": 45,
    "callables": 33,
@@ -663,7 +646,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 38,
    "nome": "ExecutionDetailsModal.tsx",
    "nos": 44,
    "callables": 32,
@@ -677,6 +660,23 @@
     "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
     "src/features/maintenance/components/ChecklistManager.tsx",
     "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx"
+   ]
+  },
+  {
+   "id": 39,
+   "nome": "DbJob",
+   "nos": 43,
+   "callables": 35,
+   "arquivos": 20,
+   "exemplos_arquivos": [
+    "src/components/alerts/AlertCard.tsx",
+    "src/components/alerts/AlertJobCard.tsx",
+    "src/components/calendar/DensityMinimap.tsx",
+    "src/components/jobs/JobDetailsModal.tsx",
+    "src/components/jobs/JobInfoGrid.tsx",
+    "src/components/jobs/JobInfoRow.tsx",
+    "src/components/kanban/KanbanMetricsBar.tsx",
+    "src/components/machines/MachineDetailsModal.tsx"
    ]
   },
   {
@@ -698,23 +698,6 @@
   },
   {
    "id": 41,
-   "nome": "transitions/index.ts",
-   "nos": 43,
-   "callables": 28,
-   "arquivos": 11,
-   "exemplos_arquivos": [
-    "src/components/layout/PageTransition.tsx",
-    "src/components/settings/TransitionsSettings.tsx",
-    "src/contexts/TransitionConfigContext.tsx",
-    "src/hooks/useCalendarFilters.ts",
-    "src/hooks/useClickOutside.ts",
-    "src/hooks/useInfiniteScroll.ts",
-    "src/hooks/useLocalStorage.ts",
-    "src/hooks/useMediaQuery.ts"
-   ]
-  },
-  {
-   "id": 42,
    "nome": "erp-api/index.ts",
    "nos": 43,
    "callables": 23,
@@ -729,7 +712,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 42,
    "nome": "cors.ts",
    "nos": 43,
    "callables": 20,
@@ -746,7 +729,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 43,
    "nome": "useDataExport.ts",
    "nos": 42,
    "callables": 24,
@@ -763,7 +746,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 44,
    "nome": "useEfficiencyAlertHistory.ts",
    "nos": 41,
    "callables": 28,
@@ -780,7 +763,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 45,
    "nome": "useRealtimeChannel",
    "nos": 41,
    "callables": 30,
@@ -796,7 +779,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 46,
    "nome": "chunks",
    "nos": 40,
    "callables": 0,
@@ -806,7 +789,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 47,
    "nome": "AlertsDashboard.tsx",
    "nos": 40,
    "callables": 32,
@@ -823,7 +806,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 48,
    "nome": "TwoFactorSetup.tsx",
    "nos": 40,
    "callables": 19,
@@ -840,7 +823,7 @@
    ]
   },
   {
-   "id": 50,
+   "id": 49,
    "nome": "ShiftHandoverPage.tsx",
    "nos": 40,
    "callables": 23,
@@ -857,7 +840,7 @@
    ]
   },
   {
-   "id": 51,
+   "id": 50,
    "nome": "TechnicalKnowledgeBase.tsx",
    "nos": 40,
    "callables": 31,
@@ -871,6 +854,23 @@
     "src/components/knowledge/TechnicalSheetTab.tsx",
     "src/components/knowledge/TechnicalSheetViewer.tsx",
     "src/components/knowledge/editor/EditorBasicInfo.tsx"
+   ]
+  },
+  {
+   "id": 51,
+   "nome": "CodeQualityDashboard.tsx",
+   "nos": 38,
+   "callables": 15,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/abc/ABCCostBreakdownChart.tsx",
+    "src/components/abc/ABCTechniqueChart.tsx",
+    "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx",
+    "src/components/design-system/sections/code-quality/CodeQualityTestsTab.tsx",
+    "src/components/jobs/JobCostsTab.tsx",
+    "src/components/qrcode/ScanHistoryCharts.tsx",
+    "src/components/ui/kpi-tooltip.tsx",
+    "src/features/admin/hooks/useCodeQualityMetrics.ts"
    ]
   },
   {
@@ -892,23 +892,6 @@
   },
   {
    "id": 53,
-   "nome": "DbJob",
-   "nos": 37,
-   "callables": 31,
-   "arquivos": 18,
-   "exemplos_arquivos": [
-    "src/components/alerts/AlertCard.tsx",
-    "src/components/alerts/AlertJobCard.tsx",
-    "src/components/calendar/DensityMinimap.tsx",
-    "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/kanban/KanbanMetricsBar.tsx",
-    "src/components/machines/MachineDetailsModal.tsx",
-    "src/components/operator/OperatorProductionCard.tsx",
-    "src/components/operator/OperatorQuickHistory.tsx"
-   ]
-  },
-  {
-   "id": 54,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -918,7 +901,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 54,
    "nome": "scripts",
    "nos": 33,
    "callables": 0,
@@ -928,7 +911,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 55,
    "nome": "SPCDashboard.tsx",
    "nos": 33,
    "callables": 24,
@@ -945,7 +928,7 @@
    ]
   },
   {
-   "id": 57,
+   "id": 56,
    "nome": "OperatorGoalsCard.tsx",
    "nos": 32,
    "callables": 18,
@@ -962,7 +945,7 @@
    ]
   },
   {
-   "id": 58,
+   "id": 57,
    "nome": "useDirtyGuard",
    "nos": 32,
    "callables": 23,
@@ -976,6 +959,21 @@
     "src/components/navigation/MobileNavigation.tsx",
     "src/components/navigation/MobileQuickActions.tsx",
     "src/contexts/DirtyFormContext.tsx"
+   ]
+  },
+  {
+   "id": 58,
+   "nome": "transitions/index.ts",
+   "nos": 32,
+   "callables": 22,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "src/components/layout/PageTransition.tsx",
+    "src/components/settings/TransitionsSettings.tsx",
+    "src/contexts/TransitionConfigContext.tsx",
+    "src/hooks/useCalendarFilters.ts",
+    "src/hooks/useLocalStorage.ts",
+    "src/lib/transitions/index.ts"
    ]
   },
   {
@@ -2318,8 +2316,8 @@
   "src/components/inventory/WarehouseMap.tsx": "TraceabilityPage.tsx",
   "src/components/jobs/JobCostsTab.tsx": "CodeQualityDashboard.tsx",
   "src/components/jobs/JobDetailsModal.tsx": "JobDetailsModal.tsx",
-  "src/components/jobs/JobInfoGrid.tsx": "parseDateOnly",
-  "src/components/jobs/JobInfoRow.tsx": "parseDateOnly",
+  "src/components/jobs/JobInfoGrid.tsx": "DbJob",
+  "src/components/jobs/JobInfoRow.tsx": "DbJob",
   "src/components/jobs/JobInstructionsTab.tsx": "card.tsx",
   "src/components/jobs/JobQualityTab.tsx": "SPCDashboard.tsx",
   "src/components/jobs/JobQuickActions.tsx": "JobDetailsModal.tsx",
@@ -2406,7 +2404,7 @@
   "src/components/operator/OperatorReadyJobCard.tsx": "OperatorView.tsx",
   "src/components/operator/PreProductionChecklist.tsx": "MaintenanceExecutionModal.tsx",
   "src/components/operator/PreProductionChecklistModal.tsx": "TraceabilityPage.tsx",
-  "src/components/operator/ProductionRegistrationModal.tsx": "ProductionRegistrationModal.tsx",
+  "src/components/operator/ProductionRegistrationModal.tsx": "DbJob",
   "src/components/operator/ProductionTimer.tsx": "DbJob",
   "src/components/operator/ShiftSummaryCard.tsx": "DbJob",
   "src/components/operators/AIWorkforceAdvisor.tsx": "AppRoutes.tsx",
@@ -2637,16 +2635,16 @@
   "src/features/admin/types/audit.ts": "security.ts",
   "src/features/admin/types/index.ts": "security.ts",
   "src/features/admin/types/security.ts": "security.ts",
-  "src/features/analytics/components/bi/AIInsights.tsx": "CodeQualityDashboard.tsx",
+  "src/features/analytics/components/bi/AIInsights.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIAIInsights.tsx": "badge.tsx",
   "src/features/analytics/components/bi/BIAlertsWatcher.tsx": "AppProviders.tsx",
-  "src/features/analytics/components/bi/BIComparisonView.tsx": "CodeQualityDashboard.tsx",
+  "src/features/analytics/components/bi/BIComparisonView.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIEmptyState.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIHeader.tsx": "TransitionsSettings.tsx",
   "src/features/analytics/components/bi/BILoadingSkeleton.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BINormalView.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIPeriodFilters.tsx": "button.tsx",
-  "src/features/analytics/components/bi/BIPredictiveROI.tsx": "CodeQualityDashboard.tsx",
+  "src/features/analytics/components/bi/BIPredictiveROI.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIStatCard.test.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BIStatCard.tsx": "BIDashboard.tsx",
   "src/features/analytics/components/bi/BITooltip.tsx": "BIDashboard.tsx",
@@ -2683,12 +2681,12 @@
   "src/features/analytics/components/oee/OEELossesChart.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEMachineTable.tsx": "scroll-area.tsx",
   "src/features/analytics/components/oee/OEEOverviewTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEERankingGap.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEERankingGap.tsx": "OEETechniqueComparison.tsx",
   "src/features/analytics/components/oee/OEERecommendations.tsx": "badge.tsx",
   "src/features/analytics/components/oee/OEEShiftComparison.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEESimulatorPanel.tsx": "TransitionsSettings.tsx",
   "src/features/analytics/components/oee/OEEStudiosTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "OEETechniqueComparison.tsx",
   "src/features/analytics/components/oee/OEETrendChart.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/ParetoLossesChart.tsx": "ExecutiveDashboard.tsx",
   "src/features/analytics/components/oee/PredictiveAlerts.tsx": "TwoFactorSetup.tsx",
@@ -2885,7 +2883,7 @@
   "src/features/production/hooks/useMachines.realtime.test.tsx": "useJobs.realtime.test.tsx",
   "src/features/production/hooks/useMachines.test.tsx": "queryConfig.ts",
   "src/features/production/hooks/useMachines.ts": "production/index.ts",
-  "src/features/production/hooks/useOEE.ts": "badge.tsx",
+  "src/features/production/hooks/useOEE.ts": "OEETechniqueComparison.tsx",
   "src/features/production/hooks/useOEEAlerts.ts": "notifications/index.ts",
   "src/features/production/hooks/useOperatorAudit.ts": "client.ts",
   "src/features/production/hooks/useOperatorDashboardData.ts": "useAuth",
@@ -2941,17 +2939,17 @@
   "src/hooks/useCalendarFilters.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarHotkeys.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarPreferences.ts": "CalendarTimeline.tsx",
-  "src/hooks/useClickOutside.ts": "transitions/index.ts",
+  "src/hooks/useClickOutside.ts": "utils/index.ts",
   "src/hooks/useDashboardLayout.ts": "KPIDashboard.tsx",
   "src/hooks/useDebounce.ts": "OperatorsPage.tsx",
   "src/hooks/useDeviceDetection.ts": "useAuth",
   "src/hooks/useDocuments.ts": "queryConfig.ts",
   "src/hooks/useFuseSearch.ts": "OperatorsPage.tsx",
   "src/hooks/useGamification.ts": "useExecutiveDashboard.ts",
-  "src/hooks/useInfiniteScroll.ts": "transitions/index.ts",
+  "src/hooks/useInfiniteScroll.ts": "utils/index.ts",
   "src/hooks/useLocalStorage.ts": "transitions/index.ts",
   "src/hooks/useMachineSuggestion.ts": "jobs/index.ts",
-  "src/hooks/useMediaQuery.ts": "transitions/index.ts",
+  "src/hooks/useMediaQuery.ts": "utils/index.ts",
   "src/hooks/useNetworkStatus.tsx": "useNetworkStatus.tsx",
   "src/hooks/useOfflineSync.test.ts": "useOfflineSync.ts",
   "src/hooks/useOfflineSync.ts": "useOfflineSync.ts",
@@ -2965,10 +2963,10 @@
   "src/hooks/useTechnicalSheets.ts": "TechnicalKnowledgeBase.tsx",
   "src/hooks/useTechniqueCapacityAlerts.ts": "jobs/index.ts",
   "src/hooks/useThemeSound.ts": "soundFeedback.ts",
-  "src/hooks/useThrottle.ts": "transitions/index.ts",
+  "src/hooks/useThrottle.ts": "utils/index.ts",
   "src/hooks/useUserDevices.ts": "Bitrix24ConfigPage.tsx",
   "src/hooks/utils/focus.ts": "use-focus-trap.tsx",
-  "src/hooks/utils/index.ts": "transitions/index.ts",
+  "src/hooks/utils/index.ts": "utils/index.ts",
   "src/hooks/utils/inventoryExport.ts": "useDataExport.ts",
   "src/i18n/index.ts": "LanguageSwitcher.tsx",
   "src/integrations/lovable/index.ts": "client.ts",
@@ -3016,7 +3014,7 @@
   "src/lib/sanitize.ts": "sanitize.ts",
   "src/lib/schemas/auditLog.ts": "AuditEntryCard.tsx",
   "src/lib/shiftReportPdf.ts": "DbMachine",
-  "src/lib/simulation.ts": "CodeQualityDashboard.tsx",
+  "src/lib/simulation.ts": "SimulationDashboard.tsx",
   "src/lib/soundFeedback.ts": "soundFeedback.ts",
   "src/lib/spcExport.test.ts": "SPCDashboard.tsx",
   "src/lib/spcExport.ts": "SPCDashboard.tsx",

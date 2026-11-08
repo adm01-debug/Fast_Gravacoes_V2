@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bce23746015acadcd8d41da9d91cfd21039acd61",
+  "sha": "c9814e81fd72c7103d6a71b15f6ed0a02427c51a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-08 15:40 UTC",
+  "generated_at": "2026-11-08 15:56 UTC",
   "files_total": 1450,
   "code_files": 1327,
   "code_lines": 185437
@@ -92096,10 +92096,19 @@
   }
  },
  "git": {
-  "sha": "bce23746015acadcd8d41da9d91cfd21039acd61",
+  "sha": "c9814e81fd72c7103d6a71b15f6ed0a02427c51a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c9814e8",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix(contexto): guard de segredos por ocorrência (#137)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "bce2374",
     "date": "2026-11-08",
@@ -92530,31 +92539,12 @@
      "PENDENCIAS.md",
      "supabase/migrations/20261019140000_validation_hardening.sql"
     ]
-   },
-   {
-    "sha": "6bc2f98",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(ci): destrava workflows — advisories npm, migration has_role e opt-out de som (#105)",
-    "files": [
-     "PENDENCIAS.md",
-     "RELATORIO_CI.md",
-     "bun.lock",
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "scripts/audit-gate.mjs",
-     "src/components/layout/ThemeToggle.tsx",
-     "src/hooks/useThemeSound.ts",
-     "src/lib/soundFeedback.ts",
-     "supabase/migrations/20261019140000_validation_hardening.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "PENDENCIAS.md",
-    7
+    6
    ],
    [
     "AGENTS.md",
@@ -92562,10 +92552,6 @@
    ],
    [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
-    3
-   ],
-   [
-    "deno.lock",
     3
    ],
    [
@@ -92577,6 +92563,10 @@
     3
    ],
    [
+    ".github/workflows/contexto.yml",
+    2
+   ],
+   [
     "CLAUDE.md",
     2
    ],
@@ -92585,11 +92575,7 @@
     2
    ],
    [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
+    "deno.lock",
     2
    ],
    [
@@ -92630,6 +92616,10 @@
    ],
    [
     "src/features/jobs/hooks/useKanbanDragDrop.ts",
+    2
+   ],
+   [
+    "src/features/notifications/components/NotificationsList.tsx",
     2
    ]
   ]

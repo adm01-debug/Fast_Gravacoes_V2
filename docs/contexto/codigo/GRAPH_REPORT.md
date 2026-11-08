@@ -1,16 +1,16 @@
 # Graph Report - Fast_Gravacoes_V2  (2026-11-08)
 
 ## Corpus Check
-- 1346 files · ~687,872 words
+- 1346 files · ~687,961 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6518 nodes · 20520 edges · 614 communities (412 shown, 202 thin omitted)
+- 6518 nodes · 20520 edges · 617 communities (415 shown, 202 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 123 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bce23746`
+- Built from commit: `c9814e81`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,29 +34,28 @@
 - Breadcrumbs.tsx
 - AppProviders.tsx
 - generate.py
+- BIDashboard.tsx
 - ExecutiveDashboard.tsx
 - OperatorsPage.tsx
 - AppRoutes.tsx
-- BIDashboard.tsx
 - loading/index.ts
-- CodeQualityDashboard.tsx
 - errorHandling.ts
 - showErrorToast
 - NewJobPage.tsx
 - queryConfig.ts
 - jobs/index.ts
-- parseDateOnly
 - Bitrix24ConfigPage.tsx
 - PendingQueue.tsx
 - notifications/index.ts
 - production/index.ts
 - jobsService.ts
+- parseDateOnly
 - _shared/logger.ts
 - skeleton.tsx
 - MaintenanceExecutionModal.tsx
 - ExecutionDetailsModal.tsx
+- DbJob
 - ProductionRegistrationModal.tsx
-- transitions/index.ts
 - erp-api/index.ts
 - cors.ts
 - useDataExport.ts
@@ -67,13 +66,14 @@
 - TwoFactorSetup.tsx
 - ShiftHandoverPage.tsx
 - TechnicalKnowledgeBase.tsx
+- CodeQualityDashboard.tsx
 - TransitionsSettings.tsx
-- DbJob
 - bitrix24-sync/index.ts
 - scripts
 - SPCDashboard.tsx
 - OperatorGoalsCard.tsx
 - useDirtyGuard
+- transitions/index.ts
 - _shared/validation.ts
 - e2e-setup.ts
 - devDependencies
@@ -159,6 +159,7 @@
 - ToastWithUndo.tsx
 - circuitBreaker.ts
 - CircuitBreaker
+- SimulationDashboard.tsx
 - types/scheduling.ts
 - public.handle_parameter_alert_notification
 - exists
@@ -166,6 +167,7 @@
 - useCodeQualityMetrics.ts
 - useNotificationPreferences.ts
 - PackagingSlaHeatmap.tsx
+- utils/index.ts
 - calendarExports.ts
 - compilerOptions
 - 20260512174926_9fee57af-9530-4437-9d86-70fd070cc87e.sql
@@ -211,6 +213,7 @@
 - toggle.tsx
 - BreadcrumbContext.tsx
 - ReauthContext.tsx
+- OEETechniqueComparison.tsx
 - MTBFMTTRWidget.tsx
 - use-modal-param.ts
 - Logger
@@ -302,12 +305,11 @@
 - public.process_audit_log_hashing
 - public.has_any_active_role
 - public.packaging_sla_overrides
-- @axe-core/react
 - canvas-confetti
+- class-variance-authority
 - clsx
 - cmdk
 - @commitlint/config-conventional
-- date-fns
 - date-fns-tz
 - @dnd-kit/core
 - @dnd-kit/sortable
@@ -324,6 +326,7 @@
 - husky
 - i18next-browser-languagedetector
 - input-otp
+- jsdom
 - jszip
 - lint-staged
 - @lovable.dev/cloud-auth-js
@@ -495,26 +498,26 @@
 ## Import Cycles
 - 3-file cycle: `src/components/inventory/QRLabelModal.tsx -> src/features/inventory/index.ts -> src/features/inventory/components/inventory-page/InventoryCard.tsx -> src/components/inventory/QRLabelModal.tsx`
 - 4-file cycle: `src/features/notifications/components/NotificationIntegrator.tsx -> src/features/production/index.ts -> src/features/production/hooks/useOEEAlerts.ts -> src/features/notifications/index.ts -> src/features/notifications/components/NotificationIntegrator.tsx`
-- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
-- 4-file cycle: `src/features/admin/hooks/useOrphanedDataDetection.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/admin/index.ts -> src/features/admin/hooks/useOrphanedDataDetection.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
-- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
-- 4-file cycle: `src/features/admin/hooks/useOrphanedDataDetection.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEEAlerts.ts -> src/features/admin/index.ts -> src/features/admin/hooks/useOrphanedDataDetection.ts`
 - 4-file cycle: `src/features/notifications/hooks/useGoalAlerts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEEAlerts.ts -> src/features/notifications/index.ts -> src/features/notifications/hooks/useGoalAlerts.ts`
+- 4-file cycle: `src/features/admin/hooks/useOrphanedDataDetection.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEEAlerts.ts -> src/features/admin/index.ts -> src/features/admin/hooks/useOrphanedDataDetection.ts`
+- 4-file cycle: `src/features/admin/hooks/useOrphanedDataDetection.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useAutoBufferPromotion.ts -> src/features/admin/index.ts -> src/features/admin/hooks/useOrphanedDataDetection.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
 - 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/services/oeeCalculations.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
 - 4-file cycle: `src/features/jobs/hooks/useSmartSequencing.ts -> src/features/production/index.ts -> src/features/production/services/oeeCalculations.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencing.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOEE.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorDashboardData.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
+- 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/hooks/useOperatorProductivity.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
 - 4-file cycle: `src/features/jobs/hooks/useSmartSequencingWithActions.ts -> src/features/production/index.ts -> src/features/production/services/oeeCalculations.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSmartSequencingWithActions.ts`
 
-## Communities (614 total, 202 thin omitted)
+## Communities (617 total, 202 thin omitted)
 
 ### Community 0 - "card.tsx"
 Cohesion: 0.05
@@ -538,7 +541,7 @@ Nodes (71): ProtectedRoute(), ProtectedRouteProps, ROLE_LABEL, LiveMachineStatus
 
 ### Community 5 - "analytics/index.ts"
 Cohesion: 0.03
-Nodes (86): MachinesByTechniqueListProps, DashboardPreset, BalancingTab(), BottlenecksTab(), HistoryTab(), SequencingTab(), EnergyChartTabs(), HyperInsights() (+78 more)
+Nodes (80): MachinesByTechniqueListProps, DashboardPreset, BalancingTab(), BottlenecksTab(), HistoryTab(), SequencingTab(), EnergyChartTabs(), HyperInsights() (+72 more)
 
 ### Community 6 - "snapshot.py"
 Cohesion: 0.07
@@ -592,165 +595,165 @@ Nodes (43): GlobalErrorBoundary, NetworkStatusToaster(), Toaster(), ToasterProps
 Cohesion: 0.10
 Nodes (65): analyze_code_file(), balanced(), build_access(), build_audit(), build_dataflow(), collect_existing_docs(), collect_rules(), detect_features() (+57 more)
 
-### Community 19 - "ExecutiveDashboard.tsx"
+### Community 19 - "BIDashboard.tsx"
+Cohesion: 0.05
+Nodes (53): AIFinancialAdvisor(), JobCostsTab(), ProductionRadarChart, CHART_COLORS, GRADIENTS, PIE_COLORS, STUDIO_LIST, STUDIO_MAP (+45 more)
+
+### Community 20 - "ExecutiveDashboard.tsx"
 Cohesion: 0.10
 Nodes (45): chartConfig, chartConfig, MachineReliabilityTabProps, MLPredictionCardProps, MLRiskDistributionChart(), MLRiskDistributionChartProps, EfficiencyChart, calculateLinearRegression() (+37 more)
 
-### Community 20 - "OperatorsPage.tsx"
+### Community 21 - "OperatorsPage.tsx"
 Cohesion: 0.05
 Nodes (46): checkPasswordBreach(), PasswordCriteria, PasswordStrengthIndicator(), PasswordStrengthIndicatorProps, sha1(), GlobalSearch(), CreateGoalModal(), CreateOperatorModal() (+38 more)
 
-### Community 21 - "AppRoutes.tsx"
+### Community 22 - "AppRoutes.tsx"
 Cohesion: 0.04
 Nodes (53): AIWorkforceAdvisor(), GoalAlertsWidget(), GoalsSummary(), OperatorProductivityCard(), OperatorProductivityStatCard(), ChatArea(), ConversationSidebar(), ProductivityPeriod (+45 more)
-
-### Community 22 - "BIDashboard.tsx"
-Cohesion: 0.05
-Nodes (49): AIFinancialAdvisor(), JobCostsTab(), ProductionRadarChart, CHART_COLORS, GRADIENTS, PIE_COLORS, STUDIO_LIST, STUDIO_MAP (+41 more)
 
 ### Community 23 - "loading/index.ts"
 Cohesion: 0.06
 Nodes (55): ContentTransition(), ContentTransitionProps, FadeTransition(), FadeTransitionProps, LoadingOverlay(), LoadingOverlayProps, ScaleFade(), ScaleFadeProps (+47 more)
 
-### Community 24 - "CodeQualityDashboard.tsx"
-Cohesion: 0.06
-Nodes (43): ABCCostBreakdownChart, COLORS, ABCTechniqueChart(), ABCTechniqueChartProps, COLORS, CodeQualityPerformanceTab(), CodeQualityTestsTab(), Props (+35 more)
-
-### Community 25 - "errorHandling.ts"
+### Community 24 - "errorHandling.ts"
 Cohesion: 0.06
 Nodes (44): Bitrix24SyncHistory(), JobDetailsModal(), Toaster(), ClearTokensResult, OAuthStatus, SyncResult, useBitrix24Sync(), useDashboardPresets() (+36 more)
 
-### Community 26 - "showErrorToast"
+### Community 25 - "showErrorToast"
 Cohesion: 0.06
 Nodes (46): TwoFactorSetup(), ChecklistTemplatesManager(), BlockedIPsPanel(), GeoBlockingSettings(), RateLimitSettings(), ImportColumn, ImportPreview, ImportResult (+38 more)
 
-### Community 27 - "NewJobPage.tsx"
+### Community 26 - "NewJobPage.tsx"
 Cohesion: 0.05
 Nodes (42): AlertType, EfficiencyAlertHistoryWidget(), severityColors, SeverityType, typeIcons, typeLabels, EfficiencyAlertStatsPanel(), severityColors (+34 more)
 
-### Community 28 - "queryConfig.ts"
+### Community 27 - "queryConfig.ts"
 Cohesion: 0.06
 Nodes (38): PlanningEfficiencyDashboard(), RETRY_CONFIG, SCHEDULING_ERROR_CONTEXT, useJobsData(), useMachinesData(), TECHNIQUES_ERROR_CONTEXT, getAllMock, TechniqueInsert (+30 more)
 
-### Community 29 - "jobs/index.ts"
+### Community 28 - "jobs/index.ts"
 Cohesion: 0.07
 Nodes (39): BufferPromotionStatus(), CompactTimeline(), OEELoadTrendWidget(), FactoryHeatmap(), MachineDetailsModal(), MachineSuggestionPanel(), TechniqueManagement(), AppNotification (+31 more)
 
-### Community 30 - "parseDateOnly"
-Cohesion: 0.06
-Nodes (38): JobInfoGrid(), JobInfoGridProps, InfoRow(), JobInfoRowProps, DraggableJobCard(), DraggableJobCardProps, getAgingIndicator(), getDeadlineInfo() (+30 more)
-
-### Community 31 - "Bitrix24ConfigPage.tsx"
+### Community 29 - "Bitrix24ConfigPage.tsx"
 Cohesion: 0.12
 Nodes (35): OperatorConfirmDialogs(), OperatorConfirmDialogsProps, AppRole, Profile, roleColors, roleLabels, UserManagement(), UserRole (+27 more)
 
-### Community 32 - "PendingQueue.tsx"
+### Community 30 - "PendingQueue.tsx"
 Cohesion: 0.08
 Nodes (38): BufferStatusWidgetComponent(), AISuggestionDetails(), AISuggestionDetailsProps, LoadBalancingPanel(), LoadBalancingPanelProps, PendingJobsView(), PendingJobsViewProps, PendingQueueAISelection (+30 more)
 
-### Community 33 - "notifications/index.ts"
+### Community 31 - "notifications/index.ts"
 Cohesion: 0.09
 Nodes (37): MLNotificationSettings(), TPMNotificationSettings(), DailySummaryCard(), EfficiencyAlertPayload, getPreferences(), getStatusLabel(), JobPayload, NotificationIntegrator() (+29 more)
 
-### Community 34 - "production/index.ts"
+### Community 32 - "production/index.ts"
 Cohesion: 0.09
 Nodes (38): BottleneckWidgetComponent(), KanbanAIAdvisor(), SettingsAlertsTab(), useBusinessConfig(), DataIntegrityIssue, useOrphanedDataDetection(), isValidJob(), sanitizeNumber() (+30 more)
 
-### Community 35 - "jobsService.ts"
+### Community 33 - "jobsService.ts"
 Cohesion: 0.09
 Nodes (32): BufferRowProps, UseDailyDragDropProps, BufferTechniqueStatus, JOBS_ERROR_CONTEXT, JOBS_STALE_TIME, STATIC_STALE_TIME, getStatusLabel(), JobUpdate (+24 more)
 
-### Community 36 - "_shared/logger.ts"
+### Community 34 - "parseDateOnly"
+Cohesion: 0.07
+Nodes (34): DraggableJobCard(), DraggableJobCardProps, getAgingIndicator(), getDeadlineInfo(), priorityConfig, DragOverlayCard(), DroppableColumn(), DroppableColumnProps (+26 more)
+
+### Community 35 - "_shared/logger.ts"
 Cohesion: 0.11
 Nodes (25): ALLOWED_TABLES, ALLOWED_RPCS, ALLOWED_TABLES, buildTelemetryPayload(), classifySeverity(), TelemetryPayload, CheckResult, CRITICAL_SECRETS (+17 more)
 
-### Community 37 - "skeleton.tsx"
+### Community 36 - "skeleton.tsx"
 Cohesion: 0.10
 Nodes (32): TargetArrowIcon, TargetArrowIconProps, JobHistoryTab(), MachineBulkActions(), MachineCard(), MachineCardData, MachineCardProps, MachineDetailsModalProps (+24 more)
 
-### Community 38 - "MaintenanceExecutionModal.tsx"
+### Community 37 - "MaintenanceExecutionModal.tsx"
 Cohesion: 0.08
 Nodes (34): checklistItems, ChecklistState, PreProductionChecklist(), PreProductionChecklistProps, Checkbox, AdjustmentParameters(), AdjustmentParams, AlertRiskPanel() (+26 more)
 
-### Community 39 - "ExecutionDetailsModal.tsx"
+### Community 38 - "ExecutionDetailsModal.tsx"
 Cohesion: 0.08
 Nodes (30): MaintenanceAlertsWidget(), getTipBgColor(), getTipIcon(), InventoryItems, TechnicalSheetTab(), Separator, SheetFooter(), BatchApprovalPreviewModal() (+22 more)
+
+### Community 39 - "DbJob"
+Cohesion: 0.07
+Nodes (32): AlertCardProps, AlertJobCardProps, DensityMinimap(), DensityMinimapProps, JobDetailsModalProps, JobInfoGrid(), JobInfoGridProps, InfoRow() (+24 more)
 
 ### Community 40 - "ProductionRegistrationModal.tsx"
 Cohesion: 0.08
 Nodes (34): JobTraceabilityTab(), CreateShipmentModal(), EditShipmentModal(), ALLOWED_OPERATOR_FIELDS, AllowedField, ProductionRegistrationModal(), SanitizedPayload, sanitizeOperatorPayload() (+26 more)
 
-### Community 41 - "transitions/index.ts"
-Cohesion: 0.08
-Nodes (32): PageTransition(), PageTransitionProps, TransitionsSettings(), TransitionConfigContext, TransitionConfigContextValue, TransitionConfigProvider(), useTransitionConfig(), useClickOutside() (+24 more)
-
-### Community 42 - "erp-api/index.ts"
+### Community 41 - "erp-api/index.ts"
 Cohesion: 0.08
 Nodes (30): makeJobResponse(), makeListResponse(), BAD_UUIDS, MALICIOUS_STRINGS, randomPayload(), randomString(), EVENTS, HandlerResult (+22 more)
 
-### Community 43 - "cors.ts"
+### Community 42 - "cors.ts"
 Cohesion: 0.10
 Nodes (17): RankingResult, buildHtml(), HealthRow, PurgeResult, PredictionItem, ScheduleItem, HealthResponse, safeImageUrl() (+9 more)
 
-### Community 44 - "useDataExport.ts"
+### Community 43 - "useDataExport.ts"
 Cohesion: 0.07
 Nodes (30): AuditExportFilters, AuditLogEntry, convertToCSV(), downloadFile(), ExportFormat, ExportOptions, TableName, csvField() (+22 more)
 
-### Community 45 - "useEfficiencyAlertHistory.ts"
+### Community 44 - "useEfficiencyAlertHistory.ts"
 Cohesion: 0.08
 Nodes (31): OperatorGoalsWidget(), OperatorGoalsTab(), EFFICIENCY_ALERTS_CONTEXT, useEfficiencyAlertHistory(), EfficiencyNotificationProvider(), defaultConfig, EfficiencyNotificationConfig, useEfficiencyNotifications() (+23 more)
 
-### Community 46 - "useRealtimeChannel"
+### Community 45 - "useRealtimeChannel"
 Cohesion: 0.07
 Nodes (32): ConnectionStatus, SubscribeOptions, WebSocketContext, WebSocketContextType, WebSocketProvider(), TPMParameterAlert, TPMParameterAlerts(), InAppNotificationWatcher() (+24 more)
 
-### Community 47 - "chunks"
+### Community 46 - "chunks"
 Cohesion: 0.05
 Nodes (39): chunks, lib-carousel, lib-charts, lib-confetti, lib-excel, lib-html2canvas, lib-joyride, lib-markdown (+31 more)
 
-### Community 48 - "AlertsDashboard.tsx"
+### Community 47 - "AlertsDashboard.tsx"
 Cohesion: 0.08
 Nodes (36): AlertCard(), AlertJobCard(), priorityColors, priorityLabels, BottleneckCard(), BottleneckCardProps, CriticalSummaryCard(), CriticalSummaryCardProps (+28 more)
 
-### Community 49 - "TwoFactorSetup.tsx"
+### Community 48 - "TwoFactorSetup.tsx"
 Cohesion: 0.11
 Nodes (25): Props, State, UseKPIsDemo(), UseSchedulingDataDemo(), UseLoadBalancingDemo(), UseOEEDemo(), HookDemo(), UseOperatorsDemo() (+17 more)
 
-### Community 50 - "ShiftHandoverPage.tsx"
+### Community 49 - "ShiftHandoverPage.tsx"
 Cohesion: 0.13
 Nodes (32): ShiftHandoverWidget(), TemplateCardProps, CreateHandoverModal(), HandoverDetailsModal(), Props, OCCURRENCE_TYPES, OccurrenceItem(), OccurrenceItemProps (+24 more)
 
-### Community 51 - "TechnicalKnowledgeBase.tsx"
+### Community 50 - "TechnicalKnowledgeBase.tsx"
 Cohesion: 0.13
 Nodes (32): EditorBasicInfo(), EditorBasicInfoProps, EditorMaterialsSection(), EditorMaterialsSectionProps, EditorStepsSection(), EditorStepsSectionProps, EditorTipsSection(), EditorTipsSectionProps (+24 more)
+
+### Community 51 - "CodeQualityDashboard.tsx"
+Cohesion: 0.09
+Nodes (29): ABCCostBreakdownChart, COLORS, ABCTechniqueChart(), ABCTechniqueChartProps, COLORS, CodeQualityPerformanceTab(), CodeQualityTestsTab(), Props (+21 more)
 
 ### Community 52 - "TransitionsSettings.tsx"
 Cohesion: 0.08
 Nodes (24): Bitrix24SyncPanel(), Integration, integrations, NotificationPreferences, NotificationToggleProps, restartOnboarding(), AutoThemeToggle(), AutoThemeToggleProps (+16 more)
 
-### Community 53 - "DbJob"
-Cohesion: 0.08
-Nodes (28): AlertCardProps, AlertJobCardProps, DensityMinimap(), DensityMinimapProps, JobDetailsModalProps, KanbanMetricsBar(), KanbanMetricsBarProps, MachineRealOEESection() (+20 more)
-
-### Community 54 - "bitrix24-sync/index.ts"
+### Community 53 - "bitrix24-sync/index.ts"
 Cohesion: 0.09
 Nodes (28): AuthResult, BITRIX24_ACCESS_TOKEN_ENV, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_DOMAIN, BITRIX24_REFRESH_TOKEN_ENV, BITRIX24_WEBHOOK_SECRET, BITRIX24_WEBHOOK_URL (+20 more)
 
-### Community 55 - "scripts"
+### Community 54 - "scripts"
 Cohesion: 0.06
 Nodes (33): scripts, audit:pdf, build, build:dev, bundle:diff, bundle:report, ci, dev (+25 more)
 
-### Community 56 - "SPCDashboard.tsx"
+### Community 55 - "SPCDashboard.tsx"
 Cohesion: 0.12
 Nodes (24): JobQualityTab(), JobQualityTabProps, QualityHistogram(), QualityHistogramProps, SPCControlChart(), SPCControlChartProps, SPCCreateParameterModal(), calculateCapabilityIndices() (+16 more)
 
-### Community 57 - "OperatorGoalsCard.tsx"
+### Community 56 - "OperatorGoalsCard.tsx"
 Cohesion: 0.10
 Nodes (18): CardCSSUtilities(), CardDashboardExample(), CardVariants(), CardsSection(), HoverCardsSection(), PopoversSection(), TooltipsBasicSection(), TooltipsSection() (+10 more)
 
-### Community 58 - "useDirtyGuard"
+### Community 57 - "useDirtyGuard"
 Cohesion: 0.16
 Nodes (26): AppSidebar(), BackButton, BackButton(), BackButtonProps, hasActiveDialogSentinel(), MobileHeader(), MobileHeaderProps, MobileHeaderSpacer() (+18 more)
+
+### Community 58 - "transitions/index.ts"
+Cohesion: 0.11
+Nodes (26): PageTransition(), PageTransitionProps, TransitionsSettings(), TransitionConfigContext, TransitionConfigContextValue, TransitionConfigProvider(), useTransitionConfig(), useLocalStorage() (+18 more)
 
 ### Community 59 - "_shared/validation.ts"
 Cohesion: 0.08
@@ -762,7 +765,7 @@ Nodes (6): RFC-6238, ROUTES, expectContentOrDenied(), login(), base32Decode(), g
 
 ### Community 61 - "devDependencies"
 Cohesion: 0.07
-Nodes (29): autoprefixer, @axe-core/playwright, @commitlint/cli, @eslint/js, eslint-plugin-jsx-a11y, eslint-plugin-react-hooks, jsdom, devDependencies (+21 more)
+Nodes (29): autoprefixer, @axe-core/playwright, @axe-core/react, @commitlint/cli, @eslint/js, eslint-plugin-jsx-a11y, eslint-plugin-react-hooks, devDependencies (+21 more)
 
 ### Community 62 - "hooks/types.ts"
 Cohesion: 0.18
@@ -862,7 +865,7 @@ Nodes (17): NavButton, NavButtonProps, NavItem, NavGroup, NavGroupComponent, Nav
 
 ### Community 86 - "dependencies"
 Cohesion: 0.10
-Nodes (21): class-variance-authority, file-saver, html5-qrcode, i18next, dependencies, class-variance-authority, file-saver, html5-qrcode (+13 more)
+Nodes (21): date-fns, file-saver, html5-qrcode, i18next, dependencies, date-fns, file-saver, html5-qrcode (+13 more)
 
 ### Community 87 - "KPIDashboard.tsx"
 Cohesion: 0.17
@@ -1080,439 +1083,451 @@ Nodes (10): toast, ToastContainer(), ToastContainerProps, ToastItem(), ToastMana
 Cohesion: 0.20
 Nodes (6): bitrix24Circuit, CircuitBreakerOptions, CircuitBreakerState, CircuitOpenError, CircuitState, externalApiCircuit
 
-### Community 144 - "types/scheduling.ts"
+### Community 144 - "SimulationDashboard.tsx"
+Cohesion: 0.24
+Nodes (10): generateFuzzPayload(), generateScenarios(), MutablePayload, runMassiveSimulation(), SCENARIOS, SimulationPayload, SimulationResult, SimulationScenario (+2 more)
+
+### Community 145 - "types/scheduling.ts"
 Cohesion: 0.17
 Nodes (11): DashboardStats, DaySchedule, Job, Machine, MachineOccupancy, Operator, Technique, TechniqueId (+3 more)
 
-### Community 145 - "public.handle_parameter_alert_notification"
+### Community 146 - "public.handle_parameter_alert_notification"
 Cohesion: 0.20
 Nodes (10): public.handle_maintenance_correction_notification, public.handle_parameter_alert_notification, public.handle_maintenance_correction_notification(), public.handle_parameter_alert_notification(), auth.users, machines, maintenance_records, user_notification_settings (+2 more)
 
-### Community 146 - "exists"
+### Community 147 - "exists"
 Cohesion: 0.18
 Nodes (11): aliasesFor(), componentFile(), dirOf(), edges, exists(), isAliasSpec(), isCurrentSql(), migDir (+3 more)
 
-### Community 147 - "gerar.unit.mjs"
+### Community 148 - "gerar.unit.mjs"
 Cohesion: 0.22
 Nodes (9): fixture(), GERADOR, isolatedFixture(), out, root, w(), @/components/achievements/Achievements, @/components/home/Home (+1 more)
 
-### Community 148 - "useCodeQualityMetrics.ts"
+### Community 149 - "useCodeQualityMetrics.ts"
 Cohesion: 0.18
 Nodes (10): BuildMetrics, CodeQualityMetrics, COMPONENT_METRICS, ComponentMetrics, ExcellenceMetrics, HOOKS, HOOKS_WITH_TESTS, PerformanceMetrics (+2 more)
 
-### Community 149 - "useNotificationPreferences.ts"
+### Community 150 - "useNotificationPreferences.ts"
 Cohesion: 0.18
 Nodes (9): DEFAULT_CATEGORIES, DEFAULT_DIGEST, DEFAULT_DND, DEFAULT_PREFERENCES, DigestSettings, DNDSchedule, NotificationCategory, NotificationChannel (+1 more)
 
-### Community 150 - "PackagingSlaHeatmap.tsx"
+### Community 151 - "PackagingSlaHeatmap.tsx"
 Cohesion: 0.24
 Nodes (9): PackagingSlaHeatmap(), PERIODS, PackagingSettings, HEATMAP_WEEKDAYS, HeatmapCell, SlaHeatmapData, UntypedSupabase, usePackagingSlaHeatmap() (+1 more)
 
-### Community 151 - "calendarExports.ts"
+### Community 152 - "utils/index.ts"
+Cohesion: 0.25
+Nodes (6): useClickOutside(), InfiniteScrollOptions, TableName, useInfiniteScroll(), useMediaQuery(), useThrottle()
+
+### Community 153 - "calendarExports.ts"
 Cohesion: 0.29
 Nodes (6): buildICalFeed(), downloadICalFeed(), escapeICal(), exportElementToPdf(), { html2canvasMock, jsPdfSave, jsPdfAddImage, jsPdfConstructorOptions, loggerErrorMock }, toICalDateTime()
 
-### Community 152 - "compilerOptions"
+### Community 154 - "compilerOptions"
 Cohesion: 0.18
 Nodes (10): compilerOptions, allowJs, noImplicitAny, noUnusedLocals, noUnusedParameters, paths, skipLibCheck, strictNullChecks (+2 more)
 
-### Community 153 - "20260512174926_9fee57af-9530-4437-9d86-70fd070cc87e.sql"
+### Community 155 - "20260512174926_9fee57af-9530-4437-9d86-70fd070cc87e.sql"
 Cohesion: 0.24
 Nodes (7): public.audit_profile_change, public.operator_rankings, public.operator_skills, public.operator_status_audit, auth.users, public.techniques, tr_audit_profile_change
 
-### Community 154 - "public.tpm_executions"
+### Community 156 - "public.tpm_executions"
 Cohesion: 0.24
 Nodes (8): public.handle_tpm_updated_at, public.tpm_execution_checklist, public.tpm_execution_parts, public.tpm_executions, set_tpm_executions_updated_at, auth.users, public.machines, public.maintenance_schedules
 
-### Community 155 - "20251220142711_de32cb31-3e9d-47e5-bfec-9b1746635258.sql"
+### Community 157 - "20251220142711_de32cb31-3e9d-47e5-bfec-9b1746635258.sql"
 Cohesion: 0.29
 Nodes (9): public.production_lots, public.spc_alerts, public.spc_capability_history, public.spc_control_parameters, public.spc_measurements, public.jobs, public.machines, public.update_updated_at_column (+1 more)
 
-### Community 156 - "useEnergy.ts"
+### Community 158 - "useEnergy.ts"
 Cohesion: 0.20
 Nodes (9): EnergyWidget(), AIEnergyAdvisor(), EnergyAlert, EnergyConsumption, EnergyStats, EnergyTarget, useEnergy(), DigitalTwin() (+1 more)
 
-### Community 157 - "CelebrationMoment.tsx"
+### Community 159 - "CelebrationMoment.tsx"
 Cohesion: 0.20
 Nodes (8): CelebrationConfig, CelebrationMoment(), CelebrationMomentProps, celebrations, CelebrationType, MiniCelebration(), MiniCelebrationProps, Particle()
 
-### Community 158 - "QuickFavoritesBar.tsx"
+### Community 160 - "QuickFavoritesBar.tsx"
 Cohesion: 0.24
 Nodes (8): QuickFavoritesBar, BrowserAudioWindow, DragOverlayItem, DragOverlayItemProps, iconMap, SortableFavorite, SortableFavoriteProps, QuickFavorite
 
-### Community 159 - "PackagingAuditTimeline.tsx"
+### Community 161 - "PackagingAuditTimeline.tsx"
 Cohesion: 0.31
 Nodes (8): ACTION_META, ENTITY_META, formatVal(), PackagingAuditTimeline(), Props, summarizeChange(), AuditEntry, usePackagingAuditTimeline()
 
-### Community 160 - "public.technical_sheets"
+### Community 162 - "public.technical_sheets"
 Cohesion: 0.31
 Nodes (9): public.materials, public.product_categories, public.technical_sheet_materials, public.technical_sheet_steps, public.technical_sheet_tips, public.technical_sheets, auth.users, public.machines (+1 more)
 
-### Community 161 - "public.production_lots"
+### Community 163 - "public.production_lots"
 Cohesion: 0.29
 Nodes (9): public.lot_components, public.lot_movements, public.lot_quality_inspections, public.production_lots, public, public.jobs, public.materials, public.update_updated_at_column (+1 more)
 
-### Community 162 - "20260512175348_b2547eed-9616-4252-b364-fac550a1d72b.sql"
+### Community 164 - "20260512175348_b2547eed-9616-4252-b364-fac550a1d72b.sql"
 Cohesion: 0.29
 Nodes (8): public.job_status_history, public.machine_downtime, public.production_losses, auth.users, public.audit_job_status_change, public.jobs, public.machines, tr_audit_job_status
 
-### Community 163 - "rls-regression.mjs"
+### Community 165 - "rls-regression.mjs"
 Cohesion: 0.25
 Nodes (7): assertValidUuid(), main(), operatorEmail, operatorPassword, supabase, supabaseKey, supabaseUrl
 
-### Community 164 - "index.tsx"
+### Community 166 - "index.tsx"
 Cohesion: 0.22
 Nodes (8): DEFAULT_SKIP_LINKS, LiveRegion(), LiveRegionProps, MainContent(), MainContentProps, SkipLink, SkipLinks(), SkipLinksProps
 
-### Community 165 - "PullToRefresh.tsx"
+### Community 167 - "PullToRefresh.tsx"
 Cohesion: 0.31
 Nodes (6): MobilePullToRefreshProps, PullToRefresh(), PullToRefreshProps, usePullToRefresh(), UsePullToRefreshOptions, UsePullToRefreshReturn
 
-### Community 166 - "20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
+### Community 168 - "20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
 Cohesion: 0.50
 Nodes (8): public.maintenance_alerts, public.maintenance_checklist_items, public.maintenance_checklists, public.maintenance_item_responses, public.maintenance_records, public.maintenance_schedules, public.maintenance_types, public.machines
 
-### Community 167 - "public.shift_handovers"
+### Community 169 - "public.shift_handovers"
 Cohesion: 0.42
 Nodes (8): public.shift_checklist_templates, public.shift_handover_checklist, public.shift_handovers, public.shift_occurrences, public.shift_pending_tasks, public, public.jobs, public.machines
 
-### Community 168 - "20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
+### Community 170 - "20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
 Cohesion: 0.31
 Nodes (8): public.enforce_packaging_checklist_before_ship(), public.packaging_checklist_items, public.packaging_task_checklist, auth.users, public.packaging_tasks, public.update_updated_at_column, trg_pkg_checklist_items_updated_at, trg_pkg_task_checklist_updated_at
 
-### Community 169 - "public.validate_inventory_stock"
+### Community 171 - "public.validate_inventory_stock"
 Cohesion: 0.25
 Nodes (7): NEW.quantity, public.validate_inventory_stock(), public.inventory_items, tr_validate_inventory_stock, v_current_stock, v_item_name, validate_inventory_stock
 
-### Community 170 - "20260509121606_76a3170f-ee88-4c8e-b50e-dc58317e4d7c.sql"
+### Community 172 - "20260509121606_76a3170f-ee88-4c8e-b50e-dc58317e4d7c.sql"
 Cohesion: 0.32
 Nodes (6): public.audit_technical_sheet_changes, public.technical_sheet_audit, public.technical_sheet_favorites, auth.users, public.technical_sheets, tr_audit_technical_sheets
 
-### Community 171 - "20260516172507_1193e061-8bc4-44b8-9cf5-ba855879c3bb.sql"
+### Community 173 - "20260516172507_1193e061-8bc4-44b8-9cf5-ba855879c3bb.sql"
 Cohesion: 0.29
 Nodes (6): public.log_job_status_change, public.check_and_notify_kpi_alert(), public.log_job_status_change(), public.machines, public.user_roles, trigger_log_job_status_change
 
-### Community 172 - "20260509124023_04666a2c-f77e-47dc-88f8-dd50f6615c3d.sql"
+### Community 174 - "20260509124023_04666a2c-f77e-47dc-88f8-dd50f6615c3d.sql"
 Cohesion: 0.29
 Nodes (6): public.update_inventory_stock, public.inventory_items, public.inventory_movements, auth.users, public.jobs, tr_update_inventory_stock
 
-### Community 173 - "publish.sh"
+### Community 175 - "publish.sh"
 Cohesion: 0.46
 Nodes (7): assert_no_foreign_staged_changes(), discard_generated_output_commit(), generated_commit_is_head(), generated_output_conflict_is_recoverable(), remember_generated_head(), publish.sh script, stage()
 
-### Community 174 - "use-focus-trap.tsx"
+### Community 176 - "use-focus-trap.tsx"
 Cohesion: 0.39
 Nodes (5): FocusTrap(), FocusTrapProps, FocusTrapOptions, useFocusTrap(), getFocusableElements()
 
-### Community 175 - "empty-state.tsx"
+### Community 177 - "empty-state.tsx"
 Cohesion: 0.25
 Nodes (7): EmptyState(), EmptyStateProps, EmptyStates, EmptyStateVariant, Illustrations, sizeClasses, variantConfig
 
-### Community 177 - "useCronP95Daily.ts"
+### Community 179 - "useCronP95Daily.ts"
 Cohesion: 0.39
 Nodes (6): computeDrift(), CronP95DailyRow, cronP95DailyRowSchema, CronP95DailySeries, median(), useCronP95Daily()
 
-### Community 178 - "useSessionTimeout.tsx"
+### Community 180 - "useSessionTimeout.tsx"
 Cohesion: 0.29
 Nodes (7): SessionProvider(), SessionProviderProps, SessionTimeoutConfig, SessionTimeoutDialog(), SessionTimeoutDialogProps, SessionTimeoutState, useSessionTimeout()
 
-### Community 179 - "PackagingChecklistPanel.tsx"
+### Community 181 - "PackagingChecklistPanel.tsx"
 Cohesion: 0.36
 Nodes (6): PackagingChecklistPanel(), Props, ChecklistItem, MergedChecklistItem, TaskChecklistRow, usePackagingChecklist()
 
-### Community 180 - "PackagingTaskWithJob"
+### Community 182 - "PackagingTaskWithJob"
 Cohesion: 0.29
 Nodes (7): PackagingQueueList(), Props, Props, Props, Props, PackagingTaskWithJob, PackagingTask
 
-### Community 182 - "20241231000000_saved_filters.sql"
+### Community 184 - "20241231000000_saved_filters.sql"
 Cohesion: 0.32
 Nodes (7): ensure_single_default_filter(), public.saved_filters, auth, auth.users, trigger_saved_filters_updated_at, trigger_single_default_filter, update_saved_filters_updated_at()
 
-### Community 183 - "20251212212803_e2782029-230e-4f88-9202-4824107dd660.sql"
+### Community 185 - "20251212212803_e2782029-230e-4f88-9202-4824107dd660.sql"
 Cohesion: 0.36
 Nodes (5): public.jobs, public.machines, public.techniques, public.update_updated_at_column, update_jobs_updated_at
 
-### Community 184 - "20260512173356_65d07680-ffcc-472a-964f-9081f8a186c6.sql"
+### Community 186 - "20260512173356_65d07680-ffcc-472a-964f-9081f8a186c6.sql"
 Cohesion: 0.32
 Nodes (6): public.shipments, public.shipping_providers, public.jobs, public.update_updated_at_column, update_shipments_updated_at, update_shipping_providers_updated_at
 
-### Community 185 - "20260508130112_1bb71df0-47bb-4121-9d87-b4c184c45325.sql"
+### Community 187 - "20260508130112_1bb71df0-47bb-4121-9d87-b4c184c45325.sql"
 Cohesion: 0.29
 Nodes (5): public.audit_tpm_execution_changes, public.tpm_execution_audit_logs, auth.users, public.maintenance_records, trigger_audit_tpm_execution
 
-### Community 186 - "public.technical_sheet_versions"
+### Community 188 - "public.technical_sheet_versions"
 Cohesion: 0.33
 Nodes (6): public.create_technical_sheet_version, on_technical_sheet_save, public.create_technical_sheet_version(), public.technical_sheet_versions, auth.users, public.technical_sheets
 
-### Community 187 - "20260509120259_98878e05-6d31-44ea-971c-c50d9f484741.sql"
+### Community 189 - "20260509120259_98878e05-6d31-44ea-971c-c50d9f484741.sql"
 Cohesion: 0.29
 Nodes (5): public.log_technical_sheet_change, public.technical_sheet_audit_logs, auth.users, public.technical_sheets, tr_log_technical_sheet_changes
 
-### Community 188 - "20260723150905_1ffa0b04-7991-41a3-a443-1ca9ee07ce07.sql"
+### Community 190 - "20260723150905_1ffa0b04-7991-41a3-a443-1ca9ee07ce07.sql"
 Cohesion: 0.29
 Nodes (5): public.notify_packaging_task_created, public.notify_packaging_task_created(), public.jobs, public.user_roles, trg_notify_packaging_task_created
 
-### Community 189 - "20260512180411_f99a244d-b109-4109-9787-0f907e4a9c14.sql"
+### Community 191 - "20260512180411_f99a244d-b109-4109-9787-0f907e4a9c14.sql"
 Cohesion: 0.33
 Nodes (5): public.process_audit_log_hashing, public.process_audit_log_hashing(), public.verify_audit_chain(), public.audit_log, tr_audit_log_hashing
 
-### Community 190 - "audit-gate.mjs"
+### Community 192 - "audit-gate.mjs"
 Cohesion: 0.29
 Nodes (6): ALLOWED_PACKAGES, failures, minor, rawAudit, res, skipped
 
-### Community 191 - "graphify.mjs"
+### Community 193 - "graphify.mjs"
 Cohesion: 0.33
 Nodes (5): args, interpreter(), localPython, resolveInterpreter(), root
 
-### Community 192 - "ScrollRestoration.tsx"
+### Community 194 - "ScrollRestoration.tsx"
 Cohesion: 0.62
 Nodes (6): flushWrites(), getScrollY(), readMap(), ScrollRestoration(), setScrollY(), writeMap()
 
-### Community 193 - "toggle.tsx"
+### Community 195 - "toggle.tsx"
 Cohesion: 0.43
 Nodes (5): ToggleGroup, ToggleGroupContext, ToggleGroupItem, Toggle, toggleVariants
 
-### Community 194 - "BreadcrumbContext.tsx"
+### Community 196 - "BreadcrumbContext.tsx"
 Cohesion: 0.33
 Nodes (6): BreadcrumbContext, BreadcrumbContextType, BreadcrumbItem, BreadcrumbProvider(), useBreadcrumbContext(), useBreadcrumbLabel()
 
-### Community 195 - "ReauthContext.tsx"
+### Community 197 - "ReauthContext.tsx"
 Cohesion: 0.33
 Nodes (6): ACTION_LABELS, ReauthContext, ReauthContextType, SensitiveAction, useReauth(), withReauth()
 
-### Community 196 - "MTBFMTTRWidget.tsx"
+### Community 198 - "OEETechniqueComparison.tsx"
+Cohesion: 0.33
+Nodes (6): OEERankingGapProps, OEETechniqueComparison, OEETechniqueComparisonProps, TechniqueOEE, ReferenceLine, OEETechniqueComparison
+
+### Community 199 - "MTBFMTTRWidget.tsx"
 Cohesion: 0.38
 Nodes (6): formatHours(), formatMinutes(), MTBFMTTRWidget(), reliabilityColors, reliabilityLabels, MachineReliabilityMetrics
 
-### Community 197 - "use-modal-param.ts"
+### Community 200 - "use-modal-param.ts"
 Cohesion: 0.33
 Nodes (3): MODAL_PUSHED_STATE, ModalLocationState, useModalParam()
 
-### Community 199 - "20251214172445_732b0e77-01ff-4e06-9925-dd0fcf5d319f.sql"
+### Community 202 - "20251214172445_732b0e77-01ff-4e06-9925-dd0fcf5d319f.sql"
 Cohesion: 0.48
 Nodes (6): public.abc_activities, public.abc_activity_rates, public.abc_cost_pools, public.abc_job_costs, public.jobs, public.techniques
 
-### Community 200 - "20251231115823_134f6d49-9ed4-4404-947d-31003dae8914.sql"
+### Community 203 - "20251231115823_134f6d49-9ed4-4404-947d-31003dae8914.sql"
 Cohesion: 0.48
 Nodes (6): public.blocked_ips, public.email_verification_tokens, public.rate_limit_logs, public.rate_limit_settings, public.security_events, auth.users
 
-### Community 201 - "20260516174623_70372cef-5273-4e8f-8a85-b425f24bdae6.sql"
+### Community 204 - "20260516174623_70372cef-5273-4e8f-8a85-b425f24bdae6.sql"
 Cohesion: 0.29
 Nodes (4): public.kpi_alerts, public.audit_job_status_change, public.machines, tr_audit_job_status
 
-### Community 202 - "public.count_active_operators_since"
+### Community 205 - "public.count_active_operators_since"
 Cohesion: 0.29
 Nodes (6): public.count_active_operators_since(), public.count_running_machines(), public.jobs, public.machines, public.qr_scan_history, public.user_roles
 
-### Community 203 - "public.snapshot_cron_health"
+### Community 206 - "public.snapshot_cron_health"
 Cohesion: 0.29
 Nodes (5): public.snapshot_cron_health(), cron.job, cron.job_run_details, public.push_notifications, public.user_roles
 
-### Community 204 - "public.handle_parameter_alert_notification"
+### Community 207 - "public.handle_parameter_alert_notification"
 Cohesion: 0.29
 Nodes (5): public.handle_parameter_alert_notification(), auth.users, machines, maintenance_records, user_notification_settings
 
-### Community 205 - "20260512174222_10c215dd-dab4-4535-9789-a63c68021a74.sql"
+### Community 208 - "20260512174222_10c215dd-dab4-4535-9789-a63c68021a74.sql"
 Cohesion: 0.40
 Nodes (5): public.audit_logistics_changes, audit_shipments_trigger, audit_shipping_providers_trigger, public.audit_logistics_changes(), auth.users
 
-### Community 206 - "public.on_packaging_ready_create_shipment"
+### Community 209 - "public.on_packaging_ready_create_shipment"
 Cohesion: 0.33
 Nodes (5): public.on_packaging_ready_create_shipment, public.on_packaging_ready_create_shipment(), public.jobs, public.shipments, trg_packaging_ready_create_shipment
 
-### Community 207 - "20260514211903_477568e2-65ad-42f1-ba19-c4d35bc22e9f.sql"
+### Community 210 - "20260514211903_477568e2-65ad-42f1-ba19-c4d35bc22e9f.sql"
 Cohesion: 0.33
 Nodes (4): public.validate_stock_before_movement, public.validate_stock_before_movement(), public.inventory_items, trigger_validate_stock_movement
 
-### Community 209 - "ModalsSection.tsx"
+### Community 212 - "ModalsSection.tsx"
 Cohesion: 0.33
 Nodes (5): AlertDialogExamples(), DialogExamples(), ModalUsageGuide(), SheetExamples(), ModalsSection()
 
-### Community 210 - "ChatArea.tsx"
+### Community 213 - "ChatArea.tsx"
 Cohesion: 0.47
 Nodes (4): ChatAreaProps, TechniqueSuggestion, FileAnalyzer(), TechnicalMessage
 
-### Community 211 - "security.ts"
+### Community 214 - "security.ts"
 Cohesion: 0.33
 Nodes (3): AuditEntry, BlockedIP, SecurityEvent
 
-### Community 212 - "external-db-bridge/index.test.ts"
+### Community 215 - "external-db-bridge/index.test.ts"
 Cohesion: 0.40
 Nodes (3): buildTelemetryPayload(), classifySeverity(), envText
 
-### Community 213 - "20251220150808_3771f0db-1e5e-443c-8406-7946eb7001c1.sql"
+### Community 216 - "20251220150808_3771f0db-1e5e-443c-8406-7946eb7001c1.sql"
 Cohesion: 0.40
 Nodes (5): public.document_versions, public.technical_documents, public.technical_sheets, public.update_updated_at_column, update_technical_documents_updated_at
 
-### Community 214 - "20251220151304_178cd8c4-beb9-441d-81a2-3ad69b60133d.sql"
+### Community 217 - "20251220151304_178cd8c4-beb9-441d-81a2-3ad69b60133d.sql"
 Cohesion: 0.40
 Nodes (5): public.push_notifications, public.push_subscriptions, auth.users, public.update_updated_at_column, update_push_subscriptions_updated_at
 
-### Community 215 - "public.user_notification_settings"
+### Community 218 - "public.user_notification_settings"
 Cohesion: 0.33
 Nodes (5): public.user_notification_settings, auth, auth.users, public.update_updated_at_column, update_user_notification_settings_updated_at
 
-### Community 216 - "20260508121901_9a37c909-f92a-4bb6-8d0b-ff755e3e37c1.sql"
+### Community 219 - "20260508121901_9a37c909-f92a-4bb6-8d0b-ff755e3e37c1.sql"
 Cohesion: 0.40
 Nodes (5): public.tpm_notification_logs, public.tpm_notification_templates, public.tpm_severity_configs, auth.users, public.machines
 
-### Community 217 - "public.snapshot_cron_health"
+### Community 220 - "public.snapshot_cron_health"
 Cohesion: 0.33
 Nodes (5): public.snapshot_cron_health(), cron.job, cron.job_run_details, public.push_notifications, public.user_roles
 
-### Community 218 - "20261001143000_geo_blocking_tables_reconstruct.sql"
+### Community 221 - "20261001143000_geo_blocking_tables_reconstruct.sql"
 Cohesion: 0.33
 Nodes (5): app_private.has_role(), public.geo_blocking_logs, public.geo_blocking_rules, public.geo_blocking_settings, public.user_roles
 
-### Community 220 - "20260520000001_security_rls_indexes_fixes.sql"
+### Community 223 - "20260520000001_security_rls_indexes_fixes.sql"
 Cohesion: 0.40
 Nodes (4): public.audit_logs, public.erp_api_keys, public.update_audit_hash(), auth.users
 
-### Community 221 - "20260508144832_765e2d9e-90d4-43dc-99bf-7e072423cd5f.sql"
+### Community 224 - "20260508144832_765e2d9e-90d4-43dc-99bf-7e072423cd5f.sql"
 Cohesion: 0.40
 Nodes (4): public.notify_loss_risk, secrets, on_tpm_execution_alert, public.notify_loss_risk()
 
-### Community 222 - "public.tpm_notification_queue"
+### Community 225 - "public.tpm_notification_queue"
 Cohesion: 0.40
 Nodes (3): public.tpm_notification_templates_published, public.tpm_notification_queue, public.machines
 
-### Community 223 - "AccessibleIconButton.tsx"
+### Community 226 - "AccessibleIconButton.tsx"
 Cohesion: 0.40
 Nodes (3): AccessibleIconButton, AccessibleIconButtonProps, VisuallyHiddenProps
 
-### Community 224 - "FormsSection.tsx"
+### Community 227 - "FormsSection.tsx"
 Cohesion: 0.40
 Nodes (4): FormsCompleteExample(), FormsSelectionControls(), FormsTextInputs(), FormsSection()
 
-### Community 225 - "NavigationListener.tsx"
+### Community 228 - "NavigationListener.tsx"
 Cohesion: 0.60
 Nodes (4): NavigationListener(), isNavigationEvent(), NAVIGATION_EVENT, trackNavEvent()
 
-### Community 226 - "NotificationCard.tsx"
+### Community 229 - "NotificationCard.tsx"
 Cohesion: 0.60
 Nodes (4): getSeverityIcon(), getTypeIcon(), NotificationCard(), NotificationItem
 
-### Community 228 - "20251213121106_34cc9bfc-44ff-47c7-bf36-22f9be1e01d5.sql"
+### Community 231 - "20251213121106_34cc9bfc-44ff-47c7-bf36-22f9be1e01d5.sql"
 Cohesion: 0.50
 Nodes (4): public.technical_conversations, public.technical_messages, public.update_updated_at_column, update_technical_conversations_updated_at
 
-### Community 229 - "20251214133328_e8e21d01-c1bb-43aa-9556-e91e2c43e950.sql"
+### Community 232 - "20251214133328_e8e21d01-c1bb-43aa-9556-e91e2c43e950.sql"
 Cohesion: 0.40
 Nodes (4): public.user_favorites, auth.users, public.update_updated_at_column, update_user_favorites_updated_at
 
-### Community 230 - "20251214173607_56d7abd2-222a-4c11-9fe0-b42c21db4c23.sql"
+### Community 233 - "20251214173607_56d7abd2-222a-4c11-9fe0-b42c21db4c23.sql"
 Cohesion: 0.70
 Nodes (4): public.machine_health_metrics, public.machine_predictions, public.prediction_history, public.machines
 
-### Community 231 - "20251220150157_8c97633b-2d06-40e5-9052-fe139f6adc9c.sql"
+### Community 234 - "20251220150157_8c97633b-2d06-40e5-9052-fe139f6adc9c.sql"
 Cohesion: 0.60
 Nodes (4): public.energy_alerts, public.energy_consumption, public.energy_targets, public.machines
 
-### Community 232 - "20260509134434_95255be9-46d1-4799-ba4f-027e413d4e42.sql"
+### Community 235 - "20260509134434_95255be9-46d1-4799-ba4f-027e413d4e42.sql"
 Cohesion: 0.40
 Nodes (4): public.dashboard_layouts, auth.users, public.update_updated_at_column, update_dashboard_layouts_updated_at
 
-### Community 233 - "public.audit_trigger_func"
+### Community 236 - "public.audit_trigger_func"
 Cohesion: 0.40
 Nodes (3): public.audit_trigger_func(), auth.users, public.audit_log
 
-### Community 234 - "20260512163111_469ee485-64ca-48b3-9307-d69405730121.sql"
+### Community 237 - "20260512163111_469ee485-64ca-48b3-9307-d69405730121.sql"
 Cohesion: 0.40
 Nodes (4): public.report_templates, auth.users, public.update_updated_at_column, update_report_templates_updated_at
 
-### Community 235 - "20260512171232_b9a7467b-35d8-43ae-a337-e7cb30e29ccd.sql"
+### Community 238 - "20260512171232_b9a7467b-35d8-43ae-a337-e7cb30e29ccd.sql"
 Cohesion: 0.40
 Nodes (4): public.operator_skills, auth.users, public.update_updated_at_column, update_operator_skills_updated_at
 
-### Community 237 - "20260516190619_29267167-3d52-4e50-ba9e-e3b45776ab70.sql"
+### Community 240 - "20260516190619_29267167-3d52-4e50-ba9e-e3b45776ab70.sql"
 Cohesion: 0.40
 Nodes (4): public.dashboard_presets, auth.users, public.update_updated_at_column, update_dashboard_presets_updated_at
 
-### Community 238 - "20260723150957_0a7f52ed-23ca-4f8c-acb6-da20b981f0b8.sql"
+### Community 241 - "20260723150957_0a7f52ed-23ca-4f8c-acb6-da20b981f0b8.sql"
 Cohesion: 0.60
 Nodes (4): public.audit_trigger_func, trg_audit_packaging_defects, trg_audit_packaging_task_checklist, trg_audit_packaging_tasks
 
-### Community 239 - "public.snapshot_cron_health"
+### Community 242 - "public.snapshot_cron_health"
 Cohesion: 0.40
 Nodes (4): public.cron_health_history, public.snapshot_cron_health(), cron.job, cron.job_run_details
 
-### Community 240 - "20260726161334_0dc2a73a-2f32-4855-acb2-6ce7fc124ee7.sql"
+### Community 243 - "20260726161334_0dc2a73a-2f32-4855-acb2-6ce7fc124ee7.sql"
 Cohesion: 0.40
 Nodes (3): public.cron_p95_daily, public.update_updated_at_column, update_cron_p95_daily_updated_at
 
-### Community 241 - "public.packaging_waste"
+### Community 244 - "public.packaging_waste"
 Cohesion: 0.40
 Nodes (3): public.packaging_waste, auth.users, public.packaging_tasks
 
-### Community 248 - "isSrc"
+### Community 251 - "isSrc"
 Cohesion: 0.50
 Nodes (4): appFiles, envUsadas, isSrc(), routeFiles
 
-### Community 250 - "TechnicalAssistant.tsx"
+### Community 253 - "TechnicalAssistant.tsx"
 Cohesion: 0.50
 Nodes (3): Message, TechnicalAssistantProps, techniqueSuggestions
 
-### Community 251 - "stepper.tsx"
+### Community 254 - "stepper.tsx"
 Cohesion: 0.50
 Nodes (3): Step, Stepper(), StepperProps
 
-### Community 252 - "PublicTrackingPage.tsx"
+### Community 255 - "PublicTrackingPage.tsx"
 Cohesion: 0.67
 Nodes (3): cn(), PublicTrackingPage(), TrackingJob
 
-### Community 253 - "public.entity_versions"
+### Community 256 - "public.entity_versions"
 Cohesion: 0.50
 Nodes (3): public.entity_versions, auth, auth.users
 
-### Community 254 - "public.qr_scan_history"
+### Community 257 - "public.qr_scan_history"
 Cohesion: 0.50
 Nodes (3): public.qr_scan_history, auth.users, public.jobs
 
-### Community 255 - "20251213154910_d0453ca8-9e41-41c7-9aa8-d98d15ae8f33.sql"
+### Community 258 - "20251213154910_d0453ca8-9e41-41c7-9aa8-d98d15ae8f33.sql"
 Cohesion: 0.50
 Nodes (3): public.bitrix24_oauth_tokens, public.update_updated_at_column, update_bitrix24_oauth_tokens_updated_at
 
-### Community 256 - "20251213161533_f8bdeca4-e767-44bf-b980-b5e4138b6150.sql"
+### Community 259 - "20251213161533_f8bdeca4-e767-44bf-b980-b5e4138b6150.sql"
 Cohesion: 0.50
 Nodes (3): public.bitrix24_field_mappings, public.update_updated_at_column, update_bitrix24_field_mappings_updated_at
 
-### Community 257 - "public.operator_machines"
+### Community 260 - "public.operator_machines"
 Cohesion: 0.50
 Nodes (3): public.operator_machines, auth.users, public.machines
 
-### Community 258 - "20251220144811_ddce69a0-cb8c-419d-a9d4-3d8e1536c02b.sql"
+### Community 261 - "20251220144811_ddce69a0-cb8c-419d-a9d4-3d8e1536c02b.sql"
 Cohesion: 0.50
 Nodes (3): public.gamification_settings, public.operator_achievements, public.operator_rankings
 
-### Community 259 - "20251231124514_6ce7bbb6-1f8a-4853-ba6a-e980b3841640.sql"
+### Community 262 - "20251231124514_6ce7bbb6-1f8a-4853-ba6a-e980b3841640.sql"
 Cohesion: 0.67
 Nodes (3): public.webauthn_challenges, public.webauthn_credentials, auth.users
 
-### Community 260 - "20251231132402_d92693f8-9890-49aa-948f-c1f86c816837.sql"
+### Community 263 - "20251231132402_d92693f8-9890-49aa-948f-c1f86c816837.sql"
 Cohesion: 0.50
 Nodes (3): public.login_lockouts, public.update_updated_at_column, update_login_lockouts_updated_at
 
-### Community 261 - "20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
+### Community 264 - "20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
 Cohesion: 0.50
 Nodes (3): public.chat_messages, public.pre_production_checklists, public.jobs
 
-### Community 262 - "20260508144556_5e04c24b-3397-49b5-b426-90a6b75f6450.sql"
+### Community 265 - "20260508144556_5e04c24b-3397-49b5-b426-90a6b75f6450.sql"
 Cohesion: 0.67
 Nodes (3): public.tpm_execution_alerts, public.tpm_execution_supplies, public.tpm_executions
 
-### Community 263 - "public.tpm_execution_supplies"
+### Community 266 - "public.tpm_execution_supplies"
 Cohesion: 0.50
 Nodes (3): public.tpm_execution_supplies, public.maintenance_records, public.materials
 
-### Community 264 - "public.reward_redemptions"
+### Community 267 - "public.reward_redemptions"
 Cohesion: 0.67
 Nodes (3): public.gamification_rewards, public.reward_redemptions, auth.users
 
-### Community 268 - "20261029001000_missing_internal_tables.sql"
+### Community 271 - "20261029001000_missing_internal_tables.sql"
 Cohesion: 0.50
 Nodes (3): public.archived_jobs, public.backup_logs, public.system_metrics
 
-### Community 270 - "vercel.json"
+### Community 273 - "vercel.json"
 Cohesion: 0.50
 Nodes (3): headers, rewrites, $schema
 
@@ -1524,11 +1539,11 @@ Nodes (3): headers, rewrites, $schema
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `card.tsx`, `button.tsx`, `badge.tsx`, `TraceabilityPage.tsx`, `useAuth`, `analytics/index.ts`, `scroll-area.tsx`, `Index.tsx`, `DailyCalendar.tsx`, `client.ts`, `useExecutiveDashboard.ts`, `Breadcrumbs.tsx`, `ExecutiveDashboard.tsx`, `OperatorsPage.tsx`, `AppRoutes.tsx`, `BIDashboard.tsx`, `loading/index.ts`, `CodeQualityDashboard.tsx`, `errorHandling.ts`, `NewJobPage.tsx`, `queryConfig.ts`, `jobs/index.ts`, `parseDateOnly`, `Bitrix24ConfigPage.tsx`, `PendingQueue.tsx`, `notifications/index.ts`, `production/index.ts`, `skeleton.tsx`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `ProductionRegistrationModal.tsx`, `useEfficiencyAlertHistory.ts`, `AlertsDashboard.tsx`, `TwoFactorSetup.tsx`, `ShiftHandoverPage.tsx`, `TransitionsSettings.tsx`, `DbJob`, `SPCDashboard.tsx`, `OperatorGoalsCard.tsx`, `useDirtyGuard`, `DbMachine`, `CalendarTimeline.tsx`, `SystemMonitoringPage.tsx`, `use-toast.ts`, `BreadcrumbExamples.tsx`, `AuditEntryCard.tsx`, `useDevice`, `InteractiveTables.tsx`, `AppSidebar.tsx`, `KPIDashboard.tsx`, `Bitrix24SyncHistory.tsx`, `MainLayout.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `LanguageSwitcher.tsx`, `OfflineReadyIndicator.tsx`, `ResponsiveContainer.tsx`, `MobileNavigation.tsx`, `OperatorView.tsx`, `celebration.tsx`, `lib/index.ts`, `ScanHistory.tsx`, `TPMNotificationSettings.tsx`, `micro-interactions.tsx`, `JobDetailsModal.tsx`, `CommandPaletteAdvanced.tsx`, `TechnicalSheetViewer.tsx`, `ReportBuilderPage.tsx`, `carousel.tsx`, `NotificationsPage.tsx`, `useNetworkStatus.tsx`, `FeedbackProvider.tsx`, `TechnicalArtifacts.tsx`, `form.tsx`, `CelebrationMoment.tsx`, `QuickFavoritesBar.tsx`, `index.tsx`, `empty-state.tsx`, `toggle.tsx`, `ChatArea.tsx`, `AccessibleIconButton.tsx`, `NotificationCard.tsx`, `stepper.tsx`?**
+- **Why does `cn()` connect `cn` to `card.tsx`, `button.tsx`, `badge.tsx`, `TraceabilityPage.tsx`, `useAuth`, `analytics/index.ts`, `scroll-area.tsx`, `Index.tsx`, `DailyCalendar.tsx`, `client.ts`, `useExecutiveDashboard.ts`, `Breadcrumbs.tsx`, `BIDashboard.tsx`, `ExecutiveDashboard.tsx`, `OperatorsPage.tsx`, `AppRoutes.tsx`, `loading/index.ts`, `errorHandling.ts`, `NewJobPage.tsx`, `queryConfig.ts`, `jobs/index.ts`, `Bitrix24ConfigPage.tsx`, `PendingQueue.tsx`, `notifications/index.ts`, `production/index.ts`, `parseDateOnly`, `skeleton.tsx`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `DbJob`, `ProductionRegistrationModal.tsx`, `useEfficiencyAlertHistory.ts`, `AlertsDashboard.tsx`, `TwoFactorSetup.tsx`, `ShiftHandoverPage.tsx`, `CodeQualityDashboard.tsx`, `TransitionsSettings.tsx`, `SPCDashboard.tsx`, `OperatorGoalsCard.tsx`, `useDirtyGuard`, `DbMachine`, `CalendarTimeline.tsx`, `SystemMonitoringPage.tsx`, `use-toast.ts`, `BreadcrumbExamples.tsx`, `AuditEntryCard.tsx`, `useDevice`, `InteractiveTables.tsx`, `AppSidebar.tsx`, `KPIDashboard.tsx`, `Bitrix24SyncHistory.tsx`, `MainLayout.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `LanguageSwitcher.tsx`, `OfflineReadyIndicator.tsx`, `ResponsiveContainer.tsx`, `MobileNavigation.tsx`, `OperatorView.tsx`, `celebration.tsx`, `lib/index.ts`, `ScanHistory.tsx`, `TPMNotificationSettings.tsx`, `micro-interactions.tsx`, `JobDetailsModal.tsx`, `CommandPaletteAdvanced.tsx`, `TechnicalSheetViewer.tsx`, `ReportBuilderPage.tsx`, `carousel.tsx`, `NotificationsPage.tsx`, `useNetworkStatus.tsx`, `FeedbackProvider.tsx`, `TechnicalArtifacts.tsx`, `form.tsx`, `SimulationDashboard.tsx`, `CelebrationMoment.tsx`, `QuickFavoritesBar.tsx`, `index.tsx`, `empty-state.tsx`, `toggle.tsx`, `ChatArea.tsx`, `AccessibleIconButton.tsx`, `NotificationCard.tsx`, `stepper.tsx`?**
   _High betweenness centrality (0.070) - this node is a cross-community bridge._
-- **Why does `Badge` connect `badge.tsx` to `card.tsx`, `button.tsx`, `GoalsHistoryCard.tsx`, `TraceabilityPage.tsx`, `useAuth`, `analytics/index.ts`, `NotificationsPage.tsx`, `cn`, `scroll-area.tsx`, `Index.tsx`, `DailyCalendar.tsx`, `TechnicalArtifacts.tsx`, `Breadcrumbs.tsx`, `ConflictResolutionPanel.tsx`, `ExecutiveDashboard.tsx`, `OperatorsPage.tsx`, `AppRoutes.tsx`, `BIDashboard.tsx`, `CodeQualityDashboard.tsx`, `NewJobPage.tsx`, `parseDateOnly`, `Bitrix24ConfigPage.tsx`, `PendingQueue.tsx`, `QuickFavoritesBar.tsx`, `PackagingAuditTimeline.tsx`, `skeleton.tsx`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `ProductionRegistrationModal.tsx`, `useRealtimeChannel`, `AlertsDashboard.tsx`, `TwoFactorSetup.tsx`, `ShiftHandoverPage.tsx`, `TechnicalKnowledgeBase.tsx`, `TransitionsSettings.tsx`, `DbJob`, `PackagingChecklistPanel.tsx`, `SPCDashboard.tsx`, `OperatorGoalsCard.tsx`, `DbMachine`, `MTBFMTTRWidget.tsx`, `CalendarTimeline.tsx`, `SystemMonitoringPage.tsx`, `AuditEntryCard.tsx`, `PackagingDashboard.tsx`, `ChatArea.tsx`, `DesignSystemPage.tsx`, `InteractiveTables.tsx`, `KPIDashboard.tsx`, `Bitrix24SyncHistory.tsx`, `MainLayout.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `OfflineReadyIndicator.tsx`, `NotificationCard.tsx`, `OperatorView.tsx`, `packagingService.ts`, `KeyboardShortcuts.tsx`, `ScanHistory.tsx`, `TPMNotificationSettings.tsx`, `usePackagingSettings.ts`, `ReportBuilderPage.tsx`, `OverviewCategoriesGrid.tsx`, `JobDetailsModal.tsx`, `CommandPaletteAdvanced.tsx`, `TechnicalSheetViewer.tsx`, `TechnicalAssistant.tsx`, `PublicTrackingPage.tsx`?**
+- **Why does `Badge` connect `badge.tsx` to `card.tsx`, `button.tsx`, `GoalsHistoryCard.tsx`, `TraceabilityPage.tsx`, `useAuth`, `analytics/index.ts`, `NotificationsPage.tsx`, `cn`, `scroll-area.tsx`, `Index.tsx`, `DailyCalendar.tsx`, `TechnicalArtifacts.tsx`, `Breadcrumbs.tsx`, `SimulationDashboard.tsx`, `BIDashboard.tsx`, `ExecutiveDashboard.tsx`, `ConflictResolutionPanel.tsx`, `OperatorsPage.tsx`, `AppRoutes.tsx`, `NewJobPage.tsx`, `Bitrix24ConfigPage.tsx`, `PendingQueue.tsx`, `QuickFavoritesBar.tsx`, `PackagingAuditTimeline.tsx`, `parseDateOnly`, `skeleton.tsx`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `DbJob`, `ProductionRegistrationModal.tsx`, `useRealtimeChannel`, `AlertsDashboard.tsx`, `TwoFactorSetup.tsx`, `ShiftHandoverPage.tsx`, `TechnicalKnowledgeBase.tsx`, `CodeQualityDashboard.tsx`, `TransitionsSettings.tsx`, `PackagingChecklistPanel.tsx`, `SPCDashboard.tsx`, `OperatorGoalsCard.tsx`, `DbMachine`, `CalendarTimeline.tsx`, `SystemMonitoringPage.tsx`, `OEETechniqueComparison.tsx`, `MTBFMTTRWidget.tsx`, `AuditEntryCard.tsx`, `PackagingDashboard.tsx`, `DesignSystemPage.tsx`, `InteractiveTables.tsx`, `ChatArea.tsx`, `KPIDashboard.tsx`, `Bitrix24SyncHistory.tsx`, `MainLayout.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `OfflineReadyIndicator.tsx`, `OperatorView.tsx`, `NotificationCard.tsx`, `packagingService.ts`, `KeyboardShortcuts.tsx`, `ScanHistory.tsx`, `TPMNotificationSettings.tsx`, `usePackagingSettings.ts`, `OverviewCategoriesGrid.tsx`, `JobDetailsModal.tsx`, `CommandPaletteAdvanced.tsx`, `TechnicalSheetViewer.tsx`, `ReportBuilderPage.tsx`, `TechnicalAssistant.tsx`, `PublicTrackingPage.tsx`?**
   _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `supabase` connect `client.ts` to `card.tsx`, `button.tsx`, `badge.tsx`, `TraceabilityPage.tsx`, `useAuth`, `NotificationsPage.tsx`, `scroll-area.tsx`, `Index.tsx`, `useExecutiveDashboard.ts`, `Breadcrumbs.tsx`, `ExecutiveDashboard.tsx`, `OperatorsPage.tsx`, `PackagingSlaHeatmap.tsx`, `CodeQualityDashboard.tsx`, `errorHandling.ts`, `showErrorToast`, `NewJobPage.tsx`, `useEnergy.ts`, `jobs/index.ts`, `queryConfig.ts`, `Bitrix24ConfigPage.tsx`, `PackagingAuditTimeline.tsx`, `notifications/index.ts`, `production/index.ts`, `jobsService.ts`, `parseDateOnly`, `skeleton.tsx`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `ProductionRegistrationModal.tsx`, `transitions/index.ts`, `PendingQueue.tsx`, `useDataExport.ts`, `useEfficiencyAlertHistory.ts`, `useRealtimeChannel`, `TwoFactorSetup.tsx`, `useCronP95Daily.ts`, `TechnicalKnowledgeBase.tsx`, `useSessionTimeout.tsx`, `PackagingChecklistPanel.tsx`, `ShiftHandoverPage.tsx`, `SPCDashboard.tsx`, `hooks/types.ts`, `ReauthContext.tsx`, `SystemMonitoringPage.tsx`, `useABCData.ts`, `lib/logger.ts`, `packaging.schema.ts`, `AuditEntryCard.tsx`, `PackagingDashboard.tsx`, `useOfflineSync.ts`, `Bitrix24SyncHistory.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `test/jobsService.test.ts`, `packagingService.ts`, `ScanHistory.tsx`, `usePackagingSettings.ts`, `ReportBuilderPage.tsx`, `PublicTrackingPage.tsx`?**
+- **Why does `supabase` connect `client.ts` to `card.tsx`, `button.tsx`, `badge.tsx`, `TraceabilityPage.tsx`, `useAuth`, `NotificationsPage.tsx`, `scroll-area.tsx`, `Index.tsx`, `useExecutiveDashboard.ts`, `SimulationDashboard.tsx`, `Breadcrumbs.tsx`, `ExecutiveDashboard.tsx`, `OperatorsPage.tsx`, `PackagingSlaHeatmap.tsx`, `errorHandling.ts`, `showErrorToast`, `utils/index.ts`, `queryConfig.ts`, `jobs/index.ts`, `Bitrix24ConfigPage.tsx`, `useEnergy.ts`, `notifications/index.ts`, `production/index.ts`, `jobsService.ts`, `PackagingAuditTimeline.tsx`, `NewJobPage.tsx`, `parseDateOnly`, `MaintenanceExecutionModal.tsx`, `ExecutionDetailsModal.tsx`, `skeleton.tsx`, `ProductionRegistrationModal.tsx`, `useDataExport.ts`, `useEfficiencyAlertHistory.ts`, `useRealtimeChannel`, `TwoFactorSetup.tsx`, `ShiftHandoverPage.tsx`, `TechnicalKnowledgeBase.tsx`, `useCronP95Daily.ts`, `useSessionTimeout.tsx`, `PackagingChecklistPanel.tsx`, `SPCDashboard.tsx`, `hooks/types.ts`, `ReauthContext.tsx`, `SystemMonitoringPage.tsx`, `useABCData.ts`, `lib/logger.ts`, `packaging.schema.ts`, `AuditEntryCard.tsx`, `PackagingDashboard.tsx`, `useOfflineSync.ts`, `Bitrix24SyncHistory.tsx`, `FactoryFloorMap.tsx`, `SystemStatusPage.tsx`, `test/jobsService.test.ts`, `packagingService.ts`, `ScanHistory.tsx`, `usePackagingSettings.ts`, `PendingQueue.tsx`, `ReportBuilderPage.tsx`, `PublicTrackingPage.tsx`?**
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `$schema`, `description`, `maxChunkKb` to the rest of the system?**
   _1634 weakly-connected nodes found - possible documentation gaps or missing edges._
