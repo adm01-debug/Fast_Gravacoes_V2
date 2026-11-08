@@ -10,12 +10,19 @@ Functions. Resumo das regras está em `AGENTS.md` (Serviços).
 | Domínio citado no repo | `fast-gravacoes-v2.vercel.app` (campo `homepage` do repo) e `fastgravacoes.com.br` (fallback de CORS e `CSP_REPORT_ALLOWED_HOSTS` em `db-admin.yml`) |
 | Backend | Supabase `uoujzvpecohinketylud` — migrations e Edge Functions pelo `deploy.yml` (ver `banco.md`) |
 
+O vínculo repo↔projeto está confirmado pelo comportamento observado: o app da Vercel comenta em cada PR
+deste repo com um preview do projeto `fast-gravacoes-v2` (team `juca1`) e publica os checks
+`Vercel Preview Comments` e `Vercel Agent Review`. O preview de PR sai em
+`fast-gravacoes-v2-git-<branch-truncada>-juca1.vercel.app`.
+
 > **NÃO VERIFICADO:** o token do MCP Vercel desta sessão lista projetos e teams, mas devolve 404 em
 > `get_project`/`list_project_domains` e 403 em `list_deployments`/`list_aliases`, e o CLI `vercel` não
-> está instalado. Logo: **não dá para confirmar por API** qual é o alias de produção, se o projeto está
-> ligado a `adm01-debug/Fast_Gravacoes_V2`, nem o estado do último deploy. O vínculo repo↔projeto está
-> documentado em `docs/operacoes/RUNBOOK.md:10` ("Vercel (juca1/fast-gravacoes-v2) | push na main →
-> deploy automático"), não no código. Confirmação de deploy hoje é no dashboard + smoke da página tocada.
+> está instalado. Logo **não dá para confirmar por API** qual é o alias de produção nem o estado do
+> último deploy de produção — só o preview da PR, pelo comentário do bot. Confirmação de deploy de
+> produção hoje é no dashboard + smoke da página tocada (`docs/operacoes/RUNBOOK.md:31`).
+>
+> `Vercel Agent Review` está **desligado** neste repo: todo PR recebe "Review skipped because usage
+> billing is not enabled for this team". Não bloqueia merge — e não espere revisão dele.
 
 ## Deploy
 
