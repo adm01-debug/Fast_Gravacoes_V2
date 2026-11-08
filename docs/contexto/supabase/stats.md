@@ -6,8 +6,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | métrica | valor |
 |---|---|
-| tamanho | 263.8 MB |
-| schema public | 218.1 MB |
+| tamanho | 266.6 MB |
+| schema public | 220.9 MB |
 | schema app_private | 32.0 KB |
 
 
@@ -15,41 +15,41 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | tabela | linhas (~) | total | heap | índices | linhas mortas (~) | seq scans (~) | idx scans (~) | último autovacuum |
 |---|---|---|---|---|---|---|---|---|
-| public.error_logs | ~412.2k | 198.2 MB | 174.6 MB | 23.6 MB | ~11.8k | 1 | ~380 | 2026-11-07 |
+| public.error_logs | ~412.2k | 200.9 MB | 177.0 MB | 23.8 MB | ~11.8k | 1 | ~380 | 2026-11-07 |
 | public.cron_health_history | ~34.3k | 10.5 MB | 6.0 MB | 4.5 MB | 0 | 1 | ~15.4k | 2026-11-07 |
 | public.kpi_alerts | ~7.1k | 1.3 MB | 888.0 KB | 392.0 KB | 0 | 0 | 1 |  |
-| public.telemetry_traces | ~1.2k | 1.1 MB | 408.0 KB | 696.0 KB | ~80 | 1 | ~50 | 2026-10-26 |
-| public.push_notifications | ~1.3k | 904.0 KB | 608.0 KB | 256.0 KB | 0 | ~90 | ~36.8k | 2026-10-30 |
-| public.audit_log | ~120 | 696.0 KB | 360.0 KB | 280.0 KB | ~20 | ~140 | ~155.4k | 2026-11-08 |
-| public.jobs | ~100 | 304.0 KB | 24.0 KB | 240.0 KB | ~20 | ~72.3k | ~224.3k | 2026-11-08 |
+| public.telemetry_traces | ~1.2k | 1.1 MB | 408.0 KB | 720.0 KB | 0 | 1 | ~50 | 2026-11-08 |
+| public.push_notifications | ~1.3k | 904.0 KB | 608.0 KB | 256.0 KB | 0 | ~90 | ~36.9k | 2026-10-30 |
+| public.audit_log | ~120 | 704.0 KB | 368.0 KB | 280.0 KB | ~20 | ~140 | ~156k | 2026-11-08 |
+| public.jobs | ~100 | 368.0 KB | 88.0 KB | 240.0 KB | ~20 | ~72.4k | ~225.4k | 2026-11-08 |
 | public.bitrix24_sync_history | ~500 | 240.0 KB | 128.0 KB | 80.0 KB | 0 | 1 | 1 |  |
 | public.cron_p95_daily | ~440 | 208.0 KB | 72.0 KB | 96.0 KB | ~70 | ~1.5k | ~31.5k | 2026-09-10 |
-| public.efficiency_alert_history | 1 | 192.0 KB | 16.0 KB | 136.0 KB | 0 | ~21.2k | ~10.6k |  |
+| public.efficiency_alert_history | 1 | 192.0 KB | 16.0 KB | 136.0 KB | 0 | ~21.3k | ~10.6k |  |
 | public.webhook_logs | 0 | 192.0 KB | 0 B | 88.0 KB | 0 | ~30 | ~30 | 2026-10-08 |
 | public.archived_jobs | 0 | 128.0 KB | 0 B | 120.0 KB | 0 | ~20 | 0 |  |
 | public.security_events | 1 | 112.0 KB | 8.0 KB | 96.0 KB | 0 | ~310 | 0 |  |
-| public.role_permissions | 7 | 96.0 KB | 8.0 KB | 80.0 KB | 0 | ~26.1k | 0 |  |
+| public.role_permissions | 7 | 96.0 KB | 8.0 KB | 80.0 KB | 0 | ~26.2k | 0 |  |
 | public.user_roles | 1 | 88.0 KB | 8.0 KB | 80.0 KB | 5 | ~8.2M | 4 |  |
-| public.inventory_movements | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~28.7k | 1 |  |
+| public.inventory_movements | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~28.8k | 1 |  |
 | public.job_status_audit | 0 | 80.0 KB | 8.0 KB | 48.0 KB | ~20 | 4 | 0 | 2026-11-08 |
 | public.machine_downtime | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | 1 | 2 |  |
 | public.qr_scan_history | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~430 | ~10.2k |  |
-| public.operator_machines | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~14k | ~192.1k |  |
+| public.operator_machines | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~14k | ~192.8k |  |
 | public.energy_consumption | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 1 | 0 |  |
-| public.inventory_items | ~10 | 64.0 KB | 8.0 KB | 16.0 KB | 0 | ~28.8k | ~270.3k |  |
+| public.inventory_items | ~10 | 64.0 KB | 8.0 KB | 16.0 KB | 0 | ~28.9k | ~271.4k |  |
 | public.job_status_history | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 1 | 3 |  |
 | public.login_lockouts | 2 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 1 | 0 |  |
 | public.machine_event_audit | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 1 | 3 |  |
-| public.machines | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~34k | ~340.7k |  |
+| public.machines | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~34.1k | ~341.7k |  |
 | public.maintenance_records | 0 | 64.0 KB | 0 B | 56.0 KB | 0 | ~980 | 5 |  |
 | public.production_lots | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 1 | 0 |  |
 | public.technical_sheets | 0 | 64.0 KB | 0 B | 56.0 KB | 0 | 1 | ~4.8k |  |
-| public.techniques | 6 | 64.0 KB | 8.0 KB | 16.0 KB | 0 | ~22.8k | ~670.8k |  |
+| public.techniques | 6 | 64.0 KB | 8.0 KB | 16.0 KB | 0 | ~22.9k | ~672.1k |  |
 | public.abc_activity_rates | 4 | 56.0 KB | 8.0 KB | 48.0 KB | 0 | ~420 | 0 |  |
 | public.packaging_tasks | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | 2 | ~9.2k |  |
 | public.abc_activities | 4 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~420 | 0 |  |
 | public.blocked_ips | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 1 | 6 |  |
-| public.business_config | 7 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~28.6k | 1 |  |
+| public.business_config | 7 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~28.7k | 1 |  |
 | public.daily_summaries | 8 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | 2 | 0 |  |
 | public.dashboard_layouts | 1 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~3.7k | 0 |  |
 | public.feature_flags | 3 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | 1 | 0 |  |
@@ -86,12 +86,12 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.packaging_task_checklist | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 4 | 0 |  |
 | public.prediction_history | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~10 | 0 |  |
 | public.production_losses | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~340 | 2 |  |
-| public.profiles | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 3 | ~32k | ~90.6k |  |
-| public.push_subscriptions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | ~126.9k |  |
+| public.profiles | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 3 | ~32.1k | ~91k |  |
+| public.push_subscriptions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | ~127.4k |  |
 | public.query_telemetry | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 3 | ~720 |  |
 | public.reward_redemptions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | ~7k |  |
 | public.shipments | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | 0 |  |
-| public.shipping_providers | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~150 | 0 |  |
+| public.shipping_providers | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~160 | 0 |  |
 | public.spc_alerts | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | 0 |  |
 | public.technical_sheet_audit | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | 3 |  |
 | public.technical_sheet_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 1 | 3 |  |
@@ -110,7 +110,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.machine_predictions | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | ~10 | 0 |  |
 | public.maintenance_checklist_items | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | 0 |  |
 | public.new_device_alerts | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 2 | 0 |  |
-| public.operator_goals | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | ~10.5k | 0 |  |
+| public.operator_goals | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | ~10.6k | 0 |  |
 | public.operator_rankings | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | ~3.8k |  |
 | public.operator_skills | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | 2 |  |
 | public.pre_production_checklists | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 2 | 0 |  |
@@ -133,7 +133,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.tpm_notification_templates_published | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | 0 |  |
 | public.tpm_parameter_alerts | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | ~170 | 0 |  |
 | public.tpm_severity_configs | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | 0 |  |
-| public.user_favorites | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | ~10.2k |  |
+| public.user_favorites | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 1 | ~10.3k |  |
 | public.backup_logs | 0 | 16.0 KB | 0 B | 8.0 KB | 0 | 1 | 0 |  |
 | public.bitrix24_oauth_states | 0 | 16.0 KB | 0 B | 8.0 KB | 0 | 1 | 0 |  |
 | public.bitrix24_oauth_tokens | 0 | 16.0 KB | 0 B | 8.0 KB | 0 | 1 | 1 |  |
@@ -178,32 +178,34 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~6.5k | ~5.2M | 802.09 | `select public.snapshot_cron_health()` |
-| authenticated | ~29k | ~918.8k | 31.66 | `WITH pgrst_source AS (INSERT INTO "public"."error_logs"("component_name", "message", "metadata", "stack", "url") SELECT "pgrst_body"."component_name", "pgrst_body"."message", "pgrst_body"."metadata", "pgrst_body"."stack"` |
-| authenticated | ~28.9k | ~548.6k | 18.96 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
-| authenticated | ~260 | ~457.1k | 1758.06 | `WITH pgrst_source AS ( SELECT "public"."error_logs"."id", "public"."error_logs"."created_at", "public"."error_logs"."message", "public"."error_logs"."component_name", "public"."error_logs"."url" FROM "public"."error_logs` |
-| authenticated | ~260 | ~386k | 1484.74 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM "public"."get_cron_health"() pgrst_call) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_postgrest_t), $4) AS body,` |
-| postgres | ~22.9k | ~342.3k | 14.98 | `select net.http_post(url := $1, headers := jsonb_build_object($2,$3,$4,$5), body := jsonb_build_object($6, now())) as request_id` |
-| authenticated | ~28.7k | ~325.4k | 11.33 | `WITH pgrst_source AS ( SELECT "public"."inventory_movements".*, row_to_json("inventory_movements_profiles_1".*)::jsonb AS "profiles", row_to_json("inventory_movements_inventory_items_1".*)::jsonb AS "inventory_items" FRO` |
+| postgres | ~6.5k | ~5.2M | 802.15 | `select public.snapshot_cron_health()` |
+| authenticated | ~29.2k | ~928.5k | 31.82 | `WITH pgrst_source AS (INSERT INTO "public"."error_logs"("component_name", "message", "metadata", "stack", "url") SELECT "pgrst_body"."component_name", "pgrst_body"."message", "pgrst_body"."metadata", "pgrst_body"."stack"` |
+| authenticated | ~29k | ~554.8k | 19.10 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
+| authenticated | ~260 | ~460.6k | 1764.66 | `WITH pgrst_source AS ( SELECT "public"."error_logs"."id", "public"."error_logs"."created_at", "public"."error_logs"."message", "public"."error_logs"."component_name", "public"."error_logs"."url" FROM "public"."error_logs` |
+| authenticated | ~260 | ~389.1k | 1490.98 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM "public"."get_cron_health"() pgrst_call) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_postgrest_t), $4) AS body,` |
+| postgres | ~22.9k | ~342.5k | 14.98 | `select net.http_post(url := $1, headers := jsonb_build_object($2,$3,$4,$5), body := jsonb_build_object($6, now())) as request_id` |
+| authenticated | ~28.8k | ~327.1k | 11.34 | `WITH pgrst_source AS ( SELECT "public"."inventory_movements".*, row_to_json("inventory_movements_profiles_1".*)::jsonb AS "profiles", row_to_json("inventory_movements_inventory_items_1".*)::jsonb AS "inventory_items" FRO` |
 | authenticator | ~370 | ~322.2k | 875.48 | `SELECT name FROM pg_timezone_names` |
-| authenticated | ~10.6k | ~280k | 26.41 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
-| authenticated | ~12.2k | ~239.1k | 19.67 | `WITH pgrst_source AS ( SELECT "public"."jobs".* FROM "public"."jobs" ORDER BY "public"."jobs"."created_at" DESC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, co` |
-| authenticated | ~28.6k | ~198k | 6.92 | `WITH pgrst_source AS ( SELECT "public"."business_config".* FROM "public"."business_config" LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_post` |
-| postgres | ~8.9k | ~153.8k | 17.19 | `SELECT net.http_post( url := (SELECT value FROM app_private.runtime_config WHERE key = $1) \|\| $2, headers := jsonb_build_object( $3, $4, $5, $6 \|\| coalesce((SELECT value FROM app_private.runtime_config WHERE key = $7), $` |
+| authenticated | ~10.6k | ~283.1k | 26.59 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
+| authenticated | ~12.2k | ~242k | 19.83 | `WITH pgrst_source AS ( SELECT "public"."jobs".* FROM "public"."jobs" ORDER BY "public"."jobs"."created_at" DESC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, co` |
+| authenticated | ~28.7k | ~199.2k | 6.94 | `WITH pgrst_source AS ( SELECT "public"."business_config".* FROM "public"."business_config" LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_post` |
+| postgres | ~8.9k | ~153.9k | 17.20 | `SELECT net.http_post( url := (SELECT value FROM app_private.runtime_config WHERE key = $1) \|\| $2, headers := jsonb_build_object( $3, $4, $5, $6 \|\| coalesce((SELECT value FROM app_private.runtime_config WHERE key = $7), $` |
 | postgres | ~10.3k | ~134.5k | 13.02 | `select net.http_post(url := $1, headers := jsonb_build_object($2,$3,$4,$5), body := $6::jsonb) as request_id` |
 | postgres | ~1.4k | ~129k | 95.30 | `SELECT public.rollup_cron_p95_daily($1)` |
-| authenticated | ~16k | ~122.5k | 7.66 | `WITH pgrst_source AS ( SELECT "public"."inventory_items".* FROM "public"."inventory_items" ORDER BY "public"."inventory_items"."name" ASC , "public"."inventory_items"."id" ASC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS to` |
+| authenticated | ~16.1k | ~123.6k | 7.67 | `WITH pgrst_source AS ( SELECT "public"."inventory_items".* FROM "public"."inventory_items" ORDER BY "public"."inventory_items"."name" ASC , "public"."inventory_items"."id" ASC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS to` |
 
 
 ## Conexões
 | usuário | estado | n |
 |---|---|---|
-| authenticator | idle | 2 |
-| pgbouncer | idle | 1 |
+| authenticator | idle | 11 |
+| pgbouncer | idle | 2 |
 | postgres | active | 1 |
 | postgres | idle | 1 |
-| supabase_admin | idle | 2 |
+| supabase_admin | active | 1 |
+| supabase_admin | idle | 8 |
 | supabase_admin |  | 1 |
+| supabase_storage_admin | idle | 1 |
 
 
 ## Saúde dos serviços
@@ -233,11 +235,11 @@ _nenhum_
     "healthy": true,
     "info": {
       "connected_cluster": 0,
-      "db_connected": false,
+      "db_connected": true,
       "healthy": true,
-      "node": "realtime@2600:1f1c:c90:ad01:8b5d:af42:88c4:3103",
-      "region": "us-west-1",
-      "replication_connected": false
+      "node": "realtime@2600:1f18:67fc:ac02:5429:55f:f61:b7ab",
+      "region": "us-east-1",
+      "replication_connected": true
     },
     "name": "realtime",
     "status": "ACTIVE_HEALTHY"

@@ -255,10 +255,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6518 nós · 20520 arestas · 615 comunidades · grafo do commit `3720de38`
-- comunidades maiores: card.tsx (149), button.tsx (135), badge.tsx (112), TraceabilityPage.tsx (106), useAuth (101), errorHandling.ts (100), analytics/index.ts (98), snapshot.py (90), cn (89), GraphifyIntegrationTests (86), gerar.mjs (82), client.ts (82)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), useDirtyGuard() (src/contexts/DirtyFormContext.tsx)
-- consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
+- não gerado neste run. uvx --from "graphifyy[sql]" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (15)

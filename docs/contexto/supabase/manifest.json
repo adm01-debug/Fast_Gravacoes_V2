@@ -3,15 +3,11 @@
   "entrada": "README.md",
   "erros": [
     {
-      "error": "canceling statement due to statement timeout",
-      "section": "grants"
-    },
-    {
       "error": "HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname",
       "section": "api.custom_hostname"
     }
   ],
-  "gerado_em": "2026-11-08T16:56:50Z",
+  "gerado_em": "2026-11-08T17:29:54Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
