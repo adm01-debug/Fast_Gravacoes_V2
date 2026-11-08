@@ -1,6 +1,6 @@
 # CONTEXTO PARA AGENTES DE IA — ÍNDICE ÚNICO
 
-> Gerado automaticamente por indice.py · 2026-11-08 15:57 UTC · HEAD `c9814e81fd` · Não edite à mão.
+> Gerado automaticamente por indice.py · 2026-11-08 15:59 UTC · HEAD `c9814e81fd` · Não edite à mão.
 
 Um sistema, três fontes de verdade, três produtores independentes. **Leia este arquivo e vá direto à fonte certa.** Cada fato tem um dono: se duas fontes discordarem, vale o dono.
 
@@ -8,9 +8,9 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 
 | Preciso de… | Fonte (dona do fato) | Onde ler | Estado |
 |---|---|---|---|
-| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 1 min atrás |
-| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/` (ainda não existe — o produtor não rodou) | ainda não gerado |
-| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 0 min atrás |
+| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 2 min atrás |
+| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/README.md` | parcial · 0 min atrás · ⚠️ 2 erro(s) de coleta no manifest (erros); 2 seção(ões) com erro em errors.md |
+| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 1 min atrás |
 
 ## Ordem de leitura antes de qualquer tarefa ou planejamento
 
@@ -26,9 +26,94 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 - Item listado como **NÃO VERIFICADO** ou **inconsistência** em qualquer fonte: confirme na fonte dona antes de assumir.
 - Nada aqui é editado à mão. Para registrar uma regra que só o negócio sabe, escreva em `manual/` da fonte de regras.
 
+<details><summary>Arquivos de <b>banco real</b> (`docs/contexto/supabase/`)</summary>
+
+- `docs/contexto/supabase/CHANGELOG.md`
+- `docs/contexto/supabase/README.md`
+- `docs/contexto/supabase/auth.md`
+- `docs/contexto/supabase/cron-runs.md`
+- `docs/contexto/supabase/cron.md`
+- `docs/contexto/supabase/edge-functions.md`
+- `docs/contexto/supabase/edge-functions/approve-password-reset/README.md`
+- `docs/contexto/supabase/edge-functions/auto-promote-jobs/README.md`
+- `docs/contexto/supabase/edge-functions/backup-scheduler/README.md`
+- `docs/contexto/supabase/edge-functions/bitrix24-sync/README.md`
+- `docs/contexto/supabase/edge-functions/calculate-inventory-intelligence/README.md`
+- `docs/contexto/supabase/edge-functions/calculate-rankings/README.md`
+- `docs/contexto/supabase/edge-functions/check-login-lockout/README.md`
+- `docs/contexto/supabase/edge-functions/cleanup-security-logs/README.md`
+- `docs/contexto/supabase/edge-functions/create-operator/README.md`
+- `docs/contexto/supabase/edge-functions/cron-alert-email/README.md`
+- `docs/contexto/supabase/edge-functions/cron-cleanup/README.md`
+- `docs/contexto/supabase/edge-functions/csp-report/README.md`
+- `docs/contexto/supabase/edge-functions/daily-maintenance-summary/README.md`
+- `docs/contexto/supabase/edge-functions/erp-api/README.md`
+- `docs/contexto/supabase/edge-functions/excel-export/README.md`
+- `docs/contexto/supabase/edge-functions/external-db-bridge/README.md`
+- `docs/contexto/supabase/edge-functions/health-check/README.md`
+- `docs/contexto/supabase/edge-functions/health-monitor/README.md`
+- `docs/contexto/supabase/edge-functions/image-optimizer/README.md`
+- `docs/contexto/supabase/edge-functions/metrics-collector/README.md`
+- `docs/contexto/supabase/edge-functions/ml-predictions/README.md`
+- `docs/contexto/supabase/edge-functions/new-device-alert/README.md`
+- `docs/contexto/supabase/edge-functions/pdf-generator/README.md`
+- `docs/contexto/supabase/edge-functions/rate-limit-check/README.md`
+- `docs/contexto/supabase/edge-functions/security-alert/README.md`
+- `docs/contexto/supabase/edge-functions/send-email-report/README.md`
+- `docs/contexto/supabase/edge-functions/send-loss-risk-alert/README.md`
+- `docs/contexto/supabase/edge-functions/send-push-notification/README.md`
+- `docs/contexto/supabase/edge-functions/send-tpm-email/README.md`
+- `docs/contexto/supabase/edge-functions/technical-assistant/README.md`
+- `docs/contexto/supabase/edge-functions/tpm-notifications/README.md`
+- `docs/contexto/supabase/edge-functions/update-operator/README.md`
+- `docs/contexto/supabase/edge-functions/validate-login-ip/README.md`
+- `docs/contexto/supabase/edge-functions/webhook-handler/README.md`
+- `docs/contexto/supabase/errors.md`
+- `docs/contexto/supabase/extensions.md`
+- `docs/contexto/supabase/foreign-servers.md`
+- `docs/contexto/supabase/functions.md`
+- `docs/contexto/supabase/grants.md`
+- `docs/contexto/supabase/indexes.md`
+- `docs/contexto/supabase/lints.md`
+- `docs/contexto/supabase/manifest.json`
+- `docs/contexto/supabase/migrations.md`
+- `docs/contexto/supabase/policies.md`
+- `docs/contexto/supabase/project-config.md`
+- `docs/contexto/supabase/queues.md`
+- `docs/contexto/supabase/realtime.md`
+- `docs/contexto/supabase/relationships.md`
+- `docs/contexto/supabase/roles.md`
+- `docs/contexto/supabase/schemas.md`
+- `docs/contexto/supabase/sequences.md`
+- `docs/contexto/supabase/snapshot.json`
+- `docs/contexto/supabase/stats.json`
+- `docs/contexto/supabase/stats.md`
+- `docs/contexto/supabase/storage.md`
+- `docs/contexto/supabase/tables.md`
+- `docs/contexto/supabase/tables/_supabase_internal_triggers.md`
+- `docs/contexto/supabase/tables/app_private/runtime_config.md`
+- `docs/contexto/supabase/tables/public/abc_activities.md`
+- `docs/contexto/supabase/tables/public/abc_activity_rates.md`
+- `docs/contexto/supabase/tables/public/abc_cost_pools.md`
+- `docs/contexto/supabase/tables/public/abc_job_costs.md`
+- `docs/contexto/supabase/tables/public/archived_jobs.md`
+- `docs/contexto/supabase/tables/public/audit_log.md`
+- `docs/contexto/supabase/tables/public/backup_logs.md`
+- `docs/contexto/supabase/tables/public/bitrix24_field_mappings.md`
+- `docs/contexto/supabase/tables/public/bitrix24_oauth_states.md`
+- `docs/contexto/supabase/tables/public/bitrix24_oauth_tokens.md`
+- `docs/contexto/supabase/tables/public/bitrix24_sync_history.md`
+- `docs/contexto/supabase/tables/public/blocked_ips.md`
+- `docs/contexto/supabase/tables/public/business_config.md`
+- `docs/contexto/supabase/tables/public/chat_messages.md`
+- `docs/contexto/supabase/tables/public/cron_health_history.md`
+- `docs/contexto/supabase/tables/public/cron_p95_daily.md`
+- … +119
+
+</details>
+
 <details><summary>Arquivos de <b>código</b> (`docs/contexto/codigo/`)</summary>
 
-- `docs/contexto/codigo/GRAPH_REPORT.md`
 - `docs/contexto/codigo/INDEX.md`
 - `docs/contexto/codigo/banco.json`
 - `docs/contexto/codigo/baseline.json`
