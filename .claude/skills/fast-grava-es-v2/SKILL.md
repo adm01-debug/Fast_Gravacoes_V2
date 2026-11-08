@@ -5,8 +5,9 @@ description: Convenções do repositório Fast_Gravacoes_V2 (Vite + React + Supa
 
 # fast-grava-es-v2 — convenções do repositório
 
-As regras completas estão em `AGENTS.md` (vence em caso de conflito). Esta skill só resume o que
-muda a forma de escrever código aqui.
+As regras de trabalho (banco, fluxo Git, PR, comunicação) estão em `AGENTS.md`, que vence em caso de
+conflito; detalhe por tema em `docs/agentes/`. Esta skill só resume o que muda a forma de escrever
+código aqui.
 
 ## Código
 
@@ -30,13 +31,12 @@ muda a forma de escrever código aqui.
   `npx vitest run <arquivo>`. Limiares de cobertura em `vitest.config.ts` só sobem.
 - E2E: Playwright em `tests/e2e/*.spec.ts` (`--project=chromium|mobile-chrome`).
 
-## Antes de abrir PR
+## Verificação antes do commit
 
-1. `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json`
-   (o `tsconfig.json` raiz é solution file com `files: []` — `npx tsc --noEmit` sozinho não verifica nada) ·
-   `npm run test` nos arquivos tocados (só erro seu conta).
-2. Branch `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>`; commit curto em PT-BR com tipo aceito
-   pelo commitlint (`fix`, `feat`, `chore`, `ci`, `docs`, `refactor`, `test`, `perf`, `build`, `style`,
-   `revert` — o hook `commit-msg` rejeita o resto; `infra:` NÃO é aceito: branch `infra` commita como
-   `chore:` ou `ci:`).
-3. Diff mínimo, uma tarefa por PR; corpo da PR com causa e evidência do que foi verificado.
+- `npm run lint` · `npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json`
+  (o `tsconfig.json` raiz é solution file com `files: []` — `npx tsc --noEmit` sozinho não verifica nada)
+  · `npm run test` nos arquivos tocados (só erro seu conta).
+- Mensagem de commit: `<tipo>(<escopo>): <assunto>` em PT-BR, tipos do `@commitlint/config-conventional`
+  (`fix`, `feat`, `chore`, `ci`, `docs`, `refactor`, `test`, `perf`, `build`, `style`, `revert`);
+  `infra:` não existe no enum — branch `infra` commita como `chore:` ou `ci:`.
+- Branch, PR, merge e comunicação: `AGENTS.md` (Fluxo Git). Esta skill não repete essas regras.

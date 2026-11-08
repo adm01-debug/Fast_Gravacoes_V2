@@ -28,7 +28,7 @@ renova o frescor sem inventar uma alteração estrutural no `CHANGELOG.md`.
 
 Neste repo `schema.sql` e `types.ts` estão desligados (`PGDUMP=false`, `GEN_TYPES=false` no workflow):
 o `pg_dump` do runner pode ser mais antigo que o servidor e `src/integrations/supabase/types.ts` é gerado
-pelo fluxo do Supabase (AGENTS.md §7: não editar à mão).
+pelo fluxo do Supabase (AGENTS.md, seção "Banco": não editar à mão).
 
 ## Credenciais neste repo
 

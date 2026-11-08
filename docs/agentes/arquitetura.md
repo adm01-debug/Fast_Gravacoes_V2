@@ -39,7 +39,7 @@ npx playwright test tests/e2e/auth.spec.ts
 npx playwright test --project=chromium        # or --project=mobile-chrome
 ```
 
-Package manager: **npm** (`npm ci --legacy-peer-deps`, exactly what `ci.yml`, `deploy.yml` and `visual-baselines.yml` run). `bun.lock`/`bun.lockb` are still committed and `bun install` still works (Bun ≥1.3), but no workflow uses them — do not mix; the single rule is in `AGENTS.md` §8.
+Package manager: **npm** (`npm ci --legacy-peer-deps`, exactly what `ci.yml`, `deploy.yml` and `visual-baselines.yml` run). `bun.lock`/`bun.lockb` are still committed and `bun install` still works (Bun ≥1.3), but no workflow uses them — do not mix; the single rule is in `AGENTS.md`, section "Stack e comandos".
 
 ## Test layout
 
