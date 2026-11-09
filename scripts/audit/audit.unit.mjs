@@ -63,3 +63,11 @@ test('arquivo com acento no nome é analisado (git sem escapar o caminho)', () =
   assert.equal(f.arquivo, 'src/ação.ts');
 });
 
+
+test('DISABLE ROW LEVEL SECURITY depois do ENABLE volta a acusar a tabela', () => {
+  const root = repo({
+    'supabase/migrations/001.sql': 'create table public.c (id int);\nalter table public.c enable row level security;\n',
+    'supabase/migrations/002.sql': 'alter table public.c disable row level security;\n',
+  });
+  assert.ok(auditar(root).findings.some((f) => f.check === 'tabela-sem-rls' && /Tabela c /.test(f.titulo)));
+});
