@@ -71,3 +71,8 @@ test('REMOVE !x e -1 (sem código do usuário)', () => {
   const { texto } = aplicar('export function q(v: unknown) { const a = !v; const b = -1; return 2; }\n');
   assert.ok(!texto.includes('!v') && !texto.includes('-1'));
 });
+
+test('com --desestruturacao, chave computada por identificador (coerção) continua preservada', () => {
+  const src = 'export function r(k: { toString(): string }) { const { [k as unknown as string]: a, b } = { x: 1, b: 2 } as Record<string, number>; return b; }\n';
+  assert.ok(aplicar(src, { desestruturacao: true }).texto.includes('[k as unknown as string]: a'));
+});
