@@ -8,6 +8,7 @@
  *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção (branch autofix/AAAA-MM-DD)
  *   node scripts/autofix/run.mjs --apply --tests    # + vitest completo no fim
  *   node scripts/autofix/run.mjs --only=unused      # unused | eslint
+ *   node scripts/autofix/run.mjs --desestruturacao  # (opt-in) também remove itens de desestruturação não usados
  *
  * Regras de segurança:
  *  - nunca toca arquivo com alteração local não commitada;
@@ -26,6 +27,7 @@ const args = process.argv.slice(2);
 const APPLY = args.includes('--apply');
 const COMMIT = args.includes('--commit');
 const TESTS = args.includes('--tests');
+const DESESTRUTURACAO = args.includes('--desestruturacao'); // opt-in: assume que ler propriedade não tem getter
 const only = (args.find((a) => a.startsWith('--only=')) || '').split('=')[1]?.split(',');
 
 const sh = (cmd, a, opts = {}) =>
@@ -77,8 +79,16 @@ function anyBaseline() {
   return sh(process.execPath, ['scripts/check-any-baseline.mjs']).status === 0;
 }
 
+/** Desfaz arquivos gravando de volta o conteúdo de ANTES deste fixer (preserva correções já validadas de fixers anteriores). */
+function restaurar(files, originals) {
+  for (const f of files) {
+    if (originals[f] !== undefined) writeFileSync(join(ROOT, f), originals[f]);
+    else git('checkout', '--', f); // sem snapshot: último recurso
+  }
+}
+
 /** Roda os gates; reverte só os arquivos que quebraram; repete até 3 vezes. */
-function validateAndPrune(changed) {
+function validateAndPrune(changed, originals) {
   let keep = [...changed];
   const reverted = [];
   for (let round = 1; round <= 3; round++) {
@@ -90,17 +100,17 @@ function validateAndPrune(changed) {
     if (a.ok && b.ok && anyBaseline()) return { ok: true, keep, reverted };
     if (!bad.size) {
       // quebrou mas não sei em qual arquivo → desfaz tudo desta correção
-      git('checkout', '--', ...keep);
+      restaurar(keep, originals);
       reverted.push(...keep);
       return { ok: false, keep: [], reverted, why: 'gate falhou sem arquivo identificável' };
     }
     log(`gate falhou em ${bad.size} arquivo(s); revertendo e revalidando (rodada ${round})`);
-    git('checkout', '--', ...bad);
+    restaurar([...bad], originals);
     reverted.push(...bad);
     keep = keep.filter((f) => !bad.has(f));
     if (!keep.length) return { ok: true, keep, reverted };
   }
-  git('checkout', '--', ...keep);
+  restaurar(keep, originals);
   return { ok: false, keep: [], reverted: [...reverted, ...keep], why: 'gate não estabilizou em 3 rodadas' };
 }
 
@@ -146,7 +156,7 @@ const fixers = [
     id: 'unused',
     titulo: 'Remover código não usado (imports, desestruturação, variáveis puras)',
     msg: 'chore(autofix): remove imports e declarações não usados',
-    run: (skip) => runUnused({ root: ROOT, skipFiles: skip, apply: APPLY }),
+    run: (skip) => runUnused({ root: ROOT, skipFiles: skip, apply: APPLY, desestruturacao: DESESTRUTURACAO }),
   },
   {
     id: 'eslint',
@@ -162,9 +172,11 @@ const fixers = [
       let results = [];
       try { results = JSON.parse(r.stdout); } catch { /* ignora */ }
       const changed = results.filter((f) => typeof f.output === 'string');
+      const originals = Object.fromEntries(changed.map((f) => [f.filePath.replace(ROOT + '/', ''), readFileSync(f.filePath, 'utf8')]));
       if (APPLY) for (const f of changed) writeFileSync(f.filePath, f.output);
       return {
         changedFiles: changed.map((f) => f.filePath.replace(ROOT + '/', '')),
+        originals,
         fixedByKind: { 'arquivos com correção': changed.length },
         manual: [],
       };
@@ -213,7 +225,7 @@ for (const fx of fixers) {
   const res = fx.run(dirty);
   const entry = { id: fx.id, titulo: fx.titulo, arquivosPropostos: res.changedFiles.length, porTipo: res.fixedByKind, manual: res.manual };
   if (APPLY && res.changedFiles.length) {
-    const v = validateAndPrune(res.changedFiles);
+    const v = validateAndPrune(res.changedFiles, res.originals || {});
     entry.arquivosMantidos = v.keep.length;
     entry.arquivosRevertidos = v.reverted;
     entry.ok = v.ok;

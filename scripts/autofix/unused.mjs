@@ -4,7 +4,7 @@
  *
  * O que remove (só o que é seguro por construção):
  *  - imports não usados (o bundler já os elimina, então zero efeito em runtime);
- *  - elementos de desestruturação não usados (`const { a, b } = x()` → o `x()` continua);
+ *  - (opt-in --desestruturacao) elementos de desestruturação não usados — assume que ler a propriedade não tem efeito (getter);
  *  - `const/let` não usados cujo inicializador é puro (literal, identificador, função…);
  *  - funções / types / interfaces locais não usados.
  *
@@ -12,6 +12,7 @@
  *  - parâmetros (mudar assinatura pode quebrar chamadores posicionais);
  *  - variável com inicializador que pode ter efeito colateral (chamada, hook, new…);
  *  - desestruturação em que TODOS os elementos são não usados (apagaria a chamada);
+ *  - desestruturação sem o opt-in (um getter pode rodar ao ler a propriedade);
  *  - desestruturação com `...rest` (remover o irmão mudaria o conteúdo do rest).
  */
 import ts from 'typescript';
@@ -42,9 +43,11 @@ function isPure(n) {
     ts.isSatisfiesExpression(n) || ts.isTypeAssertionExpression(n)
   ) return isPure(n.expression);
   if (ts.isPrefixUnaryExpression(n)) {
-    // ++x e --x ALTERAM estado: nunca são puros
-    const ok = [K.ExclamationToken, K.MinusToken, K.PlusToken, K.TildeToken];
-    return ok.includes(n.operator) && isPure(n.operand);
+    // `!x` só faz ToBoolean (não roda código do usuário). `-`/`+` só sobre número literal: em objeto
+    // rodariam valueOf/Symbol.toPrimitive. `~`, `++` e `--` nunca.
+    if (n.operator === K.ExclamationToken) return isPure(n.operand);
+    if (n.operator === K.MinusToken || n.operator === K.PlusToken) return ts.isNumericLiteral(n.operand) || ts.isBigIntLiteral(n.operand);
+    return false;
   }
   if (ts.isArrayLiteralExpression(n)) return n.elements.every(isPure);
   if (ts.isObjectLiteralExpression(n)) {
@@ -52,7 +55,7 @@ function isPure(n) {
       (p) =>
         ts.isShorthandPropertyAssignment(p) ||
         (ts.isPropertyAssignment(p) && !ts.isComputedPropertyName(p.name) && isPure(p.initializer)) ||
-        ts.isMethodDeclaration(p),
+        (ts.isMethodDeclaration(p) && !ts.isComputedPropertyName(p.name)), // a chave computada é avaliada na criação do objeto
     );
   }
   return false;
@@ -70,12 +73,14 @@ function nodeAt(sf, pos) {
 }
 
 /** Decide se a diagnóstico pode ser corrigido sozinho. Retorna {ok, kind, why}. */
-function decide(sf, d) {
+function decide(sf, d, { desestruturacao }) {
   const node = nodeAt(sf, d.start);
   for (let p = node; p; p = p.parent) {
     if (ts.isImportDeclaration(p)) return { ok: true, kind: 'import' };
     if (ts.isParameter(p)) return { ok: false, kind: 'param', why: 'parâmetro: mudar assinatura exige revisão' };
     if (ts.isBindingElement(p)) {
+      // Ler uma propriedade pode executar um getter, e isso não dá para provar estaticamente: só com opt-in.
+      if (!desestruturacao) return { ok: false, kind: 'destructure', why: 'ler propriedade pode executar getter (use --desestruturacao se aceitar o risco)' };
       if (d.code === 6198) return { ok: false, kind: 'destructure', why: 'todos os itens não usados: apagar removeria a chamada' };
       // valor padrão (`a = f()`) e chave computada (`[k()]: a`) podem ter efeito colateral
       if (p.initializer && !isPure(p.initializer)) return { ok: false, kind: 'destructure', why: 'valor padrão pode ter efeito colateral' };
@@ -100,10 +105,10 @@ function decide(sf, d) {
 }
 
 /**
- * @param {{ root: string, tsconfig?: string, skipFiles?: Set<string>, apply: boolean }} opts
+ * @param {{ root: string, tsconfig?: string, skipFiles?: Set<string>, apply: boolean, desestruturacao?: boolean }} opts
  * @returns resultado com arquivos alterados, contagem por tipo e a fila manual.
  */
-export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = new Set(), apply }) {
+export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = new Set(), apply, desestruturacao = false }) {
   const cfgPath = resolve(root, tsconfig);
   const cfg = ts.getParsedCommandLineOfConfigFile(
     cfgPath,
@@ -164,7 +169,7 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
 
       const edits = []; // {start, end, newText, kind}
       for (const d of diags) {
-        const dec = decide(sf, d);
+        const dec = decide(sf, d, { desestruturacao });
         const { line } = sf.getLineAndCharacterOfPosition(d.start);
         const name = text.get(file).slice(d.start, d.start + d.length).slice(0, 60);
         if (!dec.ok) {
@@ -219,6 +224,8 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
   }
   return {
     changedFiles: changedFiles.map((f) => relative(root, f)),
+    // conteúdo de ANTES, para o orquestrador desfazer sem depender do git
+    originals: Object.fromEntries(changedFiles.map((f) => [relative(root, f), original.get(f)])),
     fixedByKind,
     manual,
   };
@@ -227,6 +234,6 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
 // Execução direta: node scripts/autofix/unused.mjs [--apply]
 if (import.meta.url === `file://${process.argv[1]}`) {
   const apply = process.argv.includes('--apply');
-  const r = runUnused({ root: process.cwd(), apply });
+  const r = runUnused({ root: process.cwd(), apply, desestruturacao: process.argv.includes('--desestruturacao') });
   console.log(JSON.stringify({ apply, arquivos: r.changedFiles.length, porTipo: r.fixedByKind, manual: r.manual.length }, null, 2));
 }

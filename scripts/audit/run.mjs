@@ -334,7 +334,8 @@ defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 
           try {
             const role = JSON.parse(Buffer.from(m[0].split('.')[1], 'base64url').toString()).role;
             extra = ` role=${role}`;
-            sev = role === 'service_role' ? 'critica' : 'baixa'; // anon/publishable é público por desenho
+            // só `anon` é público por desenho; sessão (authenticated) ou papel desconhecido age como um usuário
+            sev = role === 'service_role' ? 'critica' : role === 'anon' ? 'baixa' : 'alta';
           } catch { /* não é JWT de verdade */ continue; }
         }
         add('segredo-exposto', sev, `${nome} versionado${extra}`, f, lineOf(t, m.index), redact(m[0]), sev === 'baixa' ? 'Chave pública por desenho; preferir variável de ambiente.' : 'Rotacionar a credencial AGORA e mover para secret do serviço.');
