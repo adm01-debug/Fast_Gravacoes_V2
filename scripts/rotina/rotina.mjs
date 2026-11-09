@@ -93,10 +93,19 @@ try {
 } catch { nota('audit não gerou findings.json'); }
 
 // ---------- 3. correção automática (só se não houver branch automática pendente) ----------
-const pendentes = git('branch', '--list', 'autofix/auto-*', '--no-merged', 'origin/main').stdout.split('\n').map((s) => s.replace(/^[*+\s]+/, '')).filter(Boolean);
+// Branch automática "pendente" = tem alteração que o origin/main ainda NÃO tem. O repo faz squash, então
+// `--no-merged` sozinho nunca vê a branch como incorporada: comparo o conteúdo dos arquivos que ela mexeu.
+const jaIncorporada = (b) => {
+  const base = git('merge-base', 'origin/main', b).stdout.trim();
+  const arquivos = git('diff', '-z', '--name-only', base, b).stdout.split('\0').filter(Boolean);
+  return arquivos.length === 0 || git('diff', '--quiet', 'origin/main', b, '--', ...arquivos).status === 0;
+};
+const pendentes = git('branch', '--list', 'autofix/auto-*', '--no-merged', 'origin/main').stdout
+  .split('\n').map((s) => s.replace(/^[*+\s]+/, '')).filter(Boolean)
+  .filter((b) => !jaIncorporada(b));
 let autofixResumo;
 if (pendentes.length) {
-  autofixResumo = `NÃO aplicado: já existe branch automática sem merge (${pendentes.join(', ')}). Revise/mescle ou apague para a rotina voltar a corrigir.`;
+  autofixResumo = `NÃO aplicado: já existe branch automática com alterações que o main ainda não tem (${pendentes.join(', ')}). Revise/mescle ou apague a branch para a rotina voltar a corrigir.`;
 } else {
   const fx = run(NODE, ['scripts/autofix/run.mjs', '--apply', '--commit', '--tests', '--only=unused'], {
     cwd: WT, env: { ...process.env, AUTOFIX_BRANCH: `autofix/auto-${HOJE}` },

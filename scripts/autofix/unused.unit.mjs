@@ -76,3 +76,10 @@ test('com --desestruturacao, chave computada por identificador (coerção) conti
   const src = 'export function r(k: { toString(): string }) { const { [k as unknown as string]: a, b } = { x: 1, b: 2 } as Record<string, number>; return b; }\n';
   assert.ok(aplicar(src, { desestruturacao: true }).texto.includes('[k as unknown as string]: a'));
 });
+
+test('import que só ficou sem uso após remover uma variável é PRESERVADO (inicialização do módulo)', () => {
+  const src = "import { valor } from './registro.js';\nexport function t() { const naoUsada = valor; return 1; }\n";
+  const { texto } = aplicar(src);
+  assert.ok(texto.includes("import { valor }"), 'o import tem de ficar');
+  assert.ok(!texto.includes('naoUsada'), 'a variável pura pode sair');
+});

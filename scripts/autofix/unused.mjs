@@ -3,7 +3,8 @@
  * language service do próprio TypeScript (mesmos code-fixes do VS Code).
  *
  * O que remove (só o que é seguro por construção):
- *  - imports não usados (o bundler já os elimina, então zero efeito em runtime);
+ *  - imports que JÁ eram não usados no código original (o bundler já os elimina, então zero efeito em runtime).
+ *    Import que só ficou sem uso depois de outra remoção NÃO é removido: o original inicializava o módulo.
  *  - (opt-in --desestruturacao) elementos de desestruturação não usados — assume que ler a propriedade não tem efeito (getter);
  *  - `const/let` não usados cujo inicializador é puro (literal, identificador, função…);
  *  - funções / types / interfaces locais não usados.
@@ -72,11 +73,32 @@ function nodeAt(sf, pos) {
   return found;
 }
 
+/** Nomes locais que um import declara (default, namespace, nomeados). */
+function importNames(decl) {
+  const c = decl.importClause;
+  const out = [];
+  if (!c) return out;
+  if (c.name) out.push(c.name.text);
+  const nb = c.namedBindings;
+  if (nb) {
+    if (ts.isNamespaceImport(nb)) out.push(nb.name.text);
+    else for (const e of nb.elements) out.push(e.name.text);
+  }
+  return out;
+}
+
 /** Decide se a diagnóstico pode ser corrigido sozinho. Retorna {ok, kind, why}. */
-function decide(sf, d, { desestruturacao }) {
+function decide(sf, d, { desestruturacao, origImports, pass }) {
   const node = nodeAt(sf, d.start);
   for (let p = node; p; p = p.parent) {
-    if (ts.isImportDeclaration(p)) return { ok: true, kind: 'import' };
+    if (ts.isImportDeclaration(p)) {
+      // Import que só ficou sem uso DEPOIS de apagarmos outro código (cascata) era "usado" no programa
+      // original: tirá-lo elimina a inicialização do módulo. Só remove o que já era não usado na 1ª passada.
+      const alvo = d.code === 6192 ? importNames(p) : [sf.text.slice(d.start, d.start + d.length)];
+      if (pass > 1 && !alvo.every((n) => origImports.get(sf.fileName)?.has(n)))
+        return { ok: false, kind: 'import', why: 'ficou sem uso só após outra remoção: tirar eliminaria a inicialização do módulo' };
+      return { ok: true, kind: 'import' };
+    }
     if (ts.isParameter(p)) return { ok: false, kind: 'param', why: 'parâmetro: mudar assinatura exige revisão' };
     if (ts.isBindingElement(p)) {
       // Ler uma propriedade pode executar um getter, e isso não dá para provar estaticamente: só com opt-in.
@@ -160,6 +182,7 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
 
   const fixedByKind = {};
   let manual = [];
+  const origImports = new Map(); // arquivo -> nomes de import que JÁ eram não usados no código original
 
   for (let pass = 1; pass <= MAX_PASSES; pass++) {
     let changedThisPass = 0;
@@ -172,9 +195,20 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
         .filter((d) => UNUSED_CODES.has(d.code) && d.start !== undefined);
       if (!diags.length) continue;
 
+      if (pass === 1) {
+        const nomes = new Set();
+        for (const d of diags) {
+          const n = nodeAt(sf, d.start);
+          for (let p = n; p; p = p.parent) {
+            if (ts.isImportDeclaration(p)) { for (const x of d.code === 6192 ? importNames(p) : [sf.text.slice(d.start, d.start + d.length)]) nomes.add(x); break; }
+          }
+        }
+        origImports.set(file, nomes);
+      }
+
       const edits = []; // {start, end, newText, kind}
       for (const d of diags) {
-        const dec = decide(sf, d, { desestruturacao });
+        const dec = decide(sf, d, { desestruturacao, origImports, pass });
         const { line } = sf.getLineAndCharacterOfPosition(d.start);
         const name = text.get(file).slice(d.start, d.start + d.length).slice(0, 60);
         if (!dec.ok) {

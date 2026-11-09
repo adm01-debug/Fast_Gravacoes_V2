@@ -138,12 +138,13 @@ defCheck('tabela-sem-rls', 'Tabelas em public criadas sem ENABLE ROW LEVEL SECUR
       if (raw.includes('.') && !/^public\./i.test(raw)) continue;
       ev.push({ i: m.index, t: 'create', tab: normTable(m[1]), line: lineOf(text, m.index) });
     }
-    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+enable\s+row\s+level\s+security/gi)) ev.push({ i: m.index, t: 'rls', tab: normTable(m[1]) });
+    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+(enable|disable)\s+row\s+level\s+security/gi)) ev.push({ i: m.index, t: m[2].toLowerCase() === 'enable' ? 'rls' : 'norls', tab: normTable(m[1]) });
     for (const m of text.matchAll(/drop\s+table\s+(?:if\s+exists\s+)?([\w."]+)/gi)) ev.push({ i: m.index, t: 'drop', tab: normTable(m[1]) });
     ev.sort((a, b) => a.i - b.i);
     for (const e of ev) {
       if (e.t === 'create') { if (!estado.has(e.tab)) estado.set(e.tab, { f, line: e.line, rls: false }); }
       else if (e.t === 'rls') { const st = estado.get(e.tab); if (st) st.rls = true; }
+      else if (e.t === 'norls') { const st = estado.get(e.tab); if (st) st.rls = false; } // DISABLE desfaz o ENABLE
       else estado.delete(e.tab); // tabela apagada: descarta o estado (uma recriação começa sem RLS)
     }
   }
