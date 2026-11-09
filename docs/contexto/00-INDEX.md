@@ -1,6 +1,6 @@
 # CONTEXTO PARA AGENTES DE IA — ÍNDICE ÚNICO
 
-> Gerado automaticamente por indice.py · 2026-11-09 10:57 UTC · HEAD `d61122af8d` · Não edite à mão.
+> Gerado automaticamente por indice.py · 2026-11-09 11:18 UTC · HEAD `d61122af8d` · Não edite à mão.
 
 Um sistema, três fontes de verdade, três produtores independentes. **Leia este arquivo e vá direto à fonte certa.** Cada fato tem um dono: se duas fontes discordarem, vale o dono.
 
@@ -8,9 +8,9 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 
 | Preciso de… | Fonte (dona do fato) | Onde ler | Estado |
 |---|---|---|---|
-| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 54 min atrás |
-| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/README.md` | parcial · 0 min atrás · ⚠️ 4 erro(s) de coleta no manifest (erros); 4 seção(ões) com erro em errors.md |
-| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 53 min atrás |
+| Regras que não podem ser quebradas: RLS por operação, estados e transições, validações, fórmulas, prazos, erros de negócio, testes como especificação, inconsistências código×schema (NÃO VERIFICADO) e regras humanas (`manual/`) | **regras de negócio** | `docs/contexto/regras/07-REGRAS-DE-NEGOCIO.md` | ok · 75 min atrás |
+| Tabelas, colunas, RLS/políticas, funções, triggers, cron, storage, lints — **como está em produção agora** | **banco real** | `docs/contexto/supabase/README.md` | parcial · 2 min atrás · ⚠️ 1 erro(s) de coleta no manifest (erros); 1 seção(ões) com erro em errors.md |
+| Rotas, telas, módulos, hooks, edge functions, grafo de dependências, testes, scripts, convenções | **código** | `docs/contexto/codigo/INDEX.md` | ok · 74 min atrás |
 
 ## Ordem de leitura antes de qualquer tarefa ou planejamento
 
@@ -34,6 +34,40 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 - `docs/contexto/supabase/cron-runs.md`
 - `docs/contexto/supabase/cron.md`
 - `docs/contexto/supabase/edge-functions.md`
+- `docs/contexto/supabase/edge-functions/approve-password-reset/README.md`
+- `docs/contexto/supabase/edge-functions/auto-promote-jobs/README.md`
+- `docs/contexto/supabase/edge-functions/backup-scheduler/README.md`
+- `docs/contexto/supabase/edge-functions/bitrix24-sync/README.md`
+- `docs/contexto/supabase/edge-functions/calculate-inventory-intelligence/README.md`
+- `docs/contexto/supabase/edge-functions/calculate-rankings/README.md`
+- `docs/contexto/supabase/edge-functions/check-login-lockout/README.md`
+- `docs/contexto/supabase/edge-functions/cleanup-security-logs/README.md`
+- `docs/contexto/supabase/edge-functions/create-operator/README.md`
+- `docs/contexto/supabase/edge-functions/cron-alert-email/README.md`
+- `docs/contexto/supabase/edge-functions/cron-cleanup/README.md`
+- `docs/contexto/supabase/edge-functions/csp-report/README.md`
+- `docs/contexto/supabase/edge-functions/daily-maintenance-summary/README.md`
+- `docs/contexto/supabase/edge-functions/erp-api/README.md`
+- `docs/contexto/supabase/edge-functions/excel-export/README.md`
+- `docs/contexto/supabase/edge-functions/external-db-bridge/README.md`
+- `docs/contexto/supabase/edge-functions/health-check/README.md`
+- `docs/contexto/supabase/edge-functions/health-monitor/README.md`
+- `docs/contexto/supabase/edge-functions/image-optimizer/README.md`
+- `docs/contexto/supabase/edge-functions/metrics-collector/README.md`
+- `docs/contexto/supabase/edge-functions/ml-predictions/README.md`
+- `docs/contexto/supabase/edge-functions/new-device-alert/README.md`
+- `docs/contexto/supabase/edge-functions/pdf-generator/README.md`
+- `docs/contexto/supabase/edge-functions/rate-limit-check/README.md`
+- `docs/contexto/supabase/edge-functions/security-alert/README.md`
+- `docs/contexto/supabase/edge-functions/send-email-report/README.md`
+- `docs/contexto/supabase/edge-functions/send-loss-risk-alert/README.md`
+- `docs/contexto/supabase/edge-functions/send-push-notification/README.md`
+- `docs/contexto/supabase/edge-functions/send-tpm-email/README.md`
+- `docs/contexto/supabase/edge-functions/technical-assistant/README.md`
+- `docs/contexto/supabase/edge-functions/tpm-notifications/README.md`
+- `docs/contexto/supabase/edge-functions/update-operator/README.md`
+- `docs/contexto/supabase/edge-functions/validate-login-ip/README.md`
+- `docs/contexto/supabase/edge-functions/webhook-handler/README.md`
 - `docs/contexto/supabase/errors.md`
 - `docs/contexto/supabase/extensions.md`
 - `docs/contexto/supabase/foreign-servers.md`
@@ -74,41 +108,7 @@ Um sistema, três fontes de verdade, três produtores independentes. **Leia este
 - `docs/contexto/supabase/tables/public/chat_messages.md`
 - `docs/contexto/supabase/tables/public/cron_health_history.md`
 - `docs/contexto/supabase/tables/public/cron_p95_daily.md`
-- `docs/contexto/supabase/tables/public/csp_violation_reports.md`
-- `docs/contexto/supabase/tables/public/daily_summaries.md`
-- `docs/contexto/supabase/tables/public/dashboard_layouts.md`
-- `docs/contexto/supabase/tables/public/dashboard_presets.md`
-- `docs/contexto/supabase/tables/public/document_versions.md`
-- `docs/contexto/supabase/tables/public/edge_health_history.md`
-- `docs/contexto/supabase/tables/public/efficiency_alert_history.md`
-- `docs/contexto/supabase/tables/public/energy_alerts.md`
-- `docs/contexto/supabase/tables/public/energy_consumption.md`
-- `docs/contexto/supabase/tables/public/energy_targets.md`
-- `docs/contexto/supabase/tables/public/error_logs.md`
-- `docs/contexto/supabase/tables/public/feature_flags.md`
-- `docs/contexto/supabase/tables/public/gamification_rewards.md`
-- `docs/contexto/supabase/tables/public/geo_blocking_logs.md`
-- `docs/contexto/supabase/tables/public/geo_blocking_rules.md`
-- `docs/contexto/supabase/tables/public/geo_blocking_settings.md`
-- `docs/contexto/supabase/tables/public/inventory_items.md`
-- `docs/contexto/supabase/tables/public/inventory_movements.md`
-- `docs/contexto/supabase/tables/public/ip_allowlist.md`
-- `docs/contexto/supabase/tables/public/job_status_audit.md`
-- `docs/contexto/supabase/tables/public/job_status_history.md`
-- `docs/contexto/supabase/tables/public/jobs.md`
-- `docs/contexto/supabase/tables/public/kpi_alerts.md`
-- `docs/contexto/supabase/tables/public/login_audit.md`
-- `docs/contexto/supabase/tables/public/login_lockouts.md`
-- `docs/contexto/supabase/tables/public/lot_components.md`
-- `docs/contexto/supabase/tables/public/lot_movements.md`
-- `docs/contexto/supabase/tables/public/lot_quality_inspections.md`
-- `docs/contexto/supabase/tables/public/machine_downtime.md`
-- `docs/contexto/supabase/tables/public/machine_event_audit.md`
-- `docs/contexto/supabase/tables/public/machine_health_metrics.md`
-- `docs/contexto/supabase/tables/public/machine_predictions.md`
-- `docs/contexto/supabase/tables/public/machines.md`
-- `docs/contexto/supabase/tables/public/maintenance_alerts.md`
-- … +85
+- … +119
 
 </details>
 

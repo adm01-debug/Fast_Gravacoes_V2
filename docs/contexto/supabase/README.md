@@ -32,7 +32,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | filas pgmq | 0 |
 | migrations | 244 |
 | buckets | 0 |
-| edge functions | 0 |
+| edge functions | 34 |
 | webhooks | 0 |
 | lints ALTA | 5 |
 | lints total | 91 |
@@ -93,7 +93,4 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 
 | seção | erro |
 |---|---|
-| api.edge_functions | HTTP 401 em /projects/uoujzvpecohinketylud/functions |
-| api.secrets | HTTP 500 em /projects/uoujzvpecohinketylud/secrets |
-| api.auth_config | HTTP 401 em /projects/uoujzvpecohinketylud/config/auth |
 | api.custom_hostname | HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname |
