@@ -33,6 +33,8 @@ const only = (args.find((a) => a.startsWith('--only=')) || '').split('=')[1]?.sp
 const sh = (cmd, a, opts = {}) =>
   spawnSync(cmd, a, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, ...opts });
 const git = (...a) => sh('git', a);
+// -z: separa por NUL e não escapa nomes com acento/espaço (core.quotePath não interfere)
+const gitList = (sub, ...rest) => git(sub, '-z', ...rest).stdout.split('\0').filter(Boolean);
 
 const ROOT = git('rev-parse', '--show-toplevel').stdout.trim();
 process.chdir(ROOT);
@@ -163,8 +165,7 @@ const fixers = [
     titulo: 'eslint --fix (regras auto-corrigíveis)',
     msg: 'chore(autofix): aplica eslint --fix',
     run: (skip) => {
-      const targets = git('ls-files', 'src', 'supabase/functions', 'tests')
-        .stdout.split('\n')
+      const targets = gitList('ls-files', 'src', 'supabase/functions', 'tests')
         .filter((f) => /\.(ts|tsx)$/.test(f) && !skip.has(f));
       // --fix-dry-run devolve o texto corrigido por arquivo (campo `output`), sem gravar:
       // assim sei exatamente quais arquivos mudariam, mesmo que outro fixer já os tenha tocado.
@@ -199,8 +200,8 @@ function eslintResidue() {
 log(APPLY ? 'modo APLICAR' : 'modo SIMULAÇÃO (use --apply para gravar)');
 
 const dirty = new Set(
-  [...git('diff', '--name-only').stdout.split('\n'), ...git('diff', '--name-only', '--cached').stdout.split('\n'),
-    ...git('ls-files', '--others', '--exclude-standard').stdout.split('\n')].filter(Boolean),
+  [...gitList('diff', '--name-only'), ...gitList('diff', '--name-only', '--cached'),
+    ...gitList('ls-files', '--others', '--exclude-standard')],
 );
 if (dirty.size) log(`${dirty.size} arquivo(s) com alteração local serão IGNORADOS`);
 

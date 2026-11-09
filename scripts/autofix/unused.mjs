@@ -84,7 +84,12 @@ function decide(sf, d, { desestruturacao }) {
       if (d.code === 6198) return { ok: false, kind: 'destructure', why: 'todos os itens não usados: apagar removeria a chamada' };
       // valor padrão (`a = f()`) e chave computada (`[k()]: a`) podem ter efeito colateral
       if (p.initializer && !isPure(p.initializer)) return { ok: false, kind: 'destructure', why: 'valor padrão pode ter efeito colateral' };
-      if (p.propertyName && ts.isComputedPropertyName(p.propertyName) && !isPure(p.propertyName.expression)) return { ok: false, kind: 'destructure', why: 'chave computada pode ter efeito colateral' };
+      // chave computada é coagida a string (toString/valueOf pode rodar): só passa literal primitivo
+      if (p.propertyName && ts.isComputedPropertyName(p.propertyName)) {
+        const e = p.propertyName.expression;
+        if (!(ts.isStringLiteral(e) || ts.isNumericLiteral(e) || ts.isNoSubstitutionTemplateLiteral(e)))
+          return { ok: false, kind: 'destructure', why: 'chave computada pode ser coagida (toString/valueOf)' };
+      }
       const pattern = p.parent;
       const hasRest = pattern.elements.some((e) => e.dotDotDotToken);
       if (hasRest) return { ok: false, kind: 'destructure', why: 'tem ...rest: remover irmão muda o rest' };

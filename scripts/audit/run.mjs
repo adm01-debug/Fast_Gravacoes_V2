@@ -30,7 +30,8 @@ mkdirSync(OUT, { recursive: true });
 const BASELINE = process.env.AUDIT_BASELINE || join(ROOT, 'scripts/audit/baseline.json');
 
 // ---------- utilidades ----------
-const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter(Boolean);
+// -z: nomes com acento/espaço não vêm escapados pelo git
+const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\0').filter(Boolean);
 const cache = new Map();
 const read = (f) => {
   if (!cache.has(f)) cache.set(f, existsSync(f) ? readFileSync(f, 'utf8') : '');
@@ -128,24 +129,26 @@ defCheck(
 
 // ---------- 2. Tabelas criadas sem RLS ----------
 defCheck('tabela-sem-rls', 'Tabelas em public criadas sem ENABLE ROW LEVEL SECURITY', 'Não vê RLS ativado por SQL dinâmico/loop.', () => {
-  const created = new Map();
-  const rls = new Set();
-  const dropped = new Set();
+  const estado = new Map(); // tabela -> { f, line, rls }
   for (const f of migrations) {
     const text = stripSql(read(f));
+    const ev = [];
     for (const m of text.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([\w."]+)/gi)) {
       const raw = m[1].replace(/"/g, '');
       if (raw.includes('.') && !/^public\./i.test(raw)) continue;
-      const t = normTable(m[1]);
-      if (!created.has(t)) created.set(t, { f, line: lineOf(text, m.index) });
-      dropped.delete(t);
+      ev.push({ i: m.index, t: 'create', tab: normTable(m[1]), line: lineOf(text, m.index) });
     }
-    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+enable\s+row\s+level\s+security/gi)) rls.add(normTable(m[1]));
-    for (const m of text.matchAll(/drop\s+table\s+(?:if\s+exists\s+)?([\w."]+)/gi)) dropped.add(normTable(m[1]));
+    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+enable\s+row\s+level\s+security/gi)) ev.push({ i: m.index, t: 'rls', tab: normTable(m[1]) });
+    for (const m of text.matchAll(/drop\s+table\s+(?:if\s+exists\s+)?([\w."]+)/gi)) ev.push({ i: m.index, t: 'drop', tab: normTable(m[1]) });
+    ev.sort((a, b) => a.i - b.i);
+    for (const e of ev) {
+      if (e.t === 'create') { if (!estado.has(e.tab)) estado.set(e.tab, { f, line: e.line, rls: false }); }
+      else if (e.t === 'rls') { const st = estado.get(e.tab); if (st) st.rls = true; }
+      else estado.delete(e.tab); // tabela apagada: descarta o estado (uma recriação começa sem RLS)
+    }
   }
-  for (const [t, { f, line }] of created)
-    if (!rls.has(t) && !dropped.has(t))
-      add('tabela-sem-rls', 'alta', `Tabela ${t} sem ENABLE ROW LEVEL SECURITY nas migrations`, f, line, `create table ${t}`, `Adicionar ALTER TABLE public.${t} ENABLE ROW LEVEL SECURITY e políticas.`);
+  for (const [t, { f, line, rls }] of estado)
+    if (!rls) add('tabela-sem-rls', 'alta', `Tabela ${t} sem ENABLE ROW LEVEL SECURITY nas migrations`, f, line, `create table ${t}`, `Adicionar ALTER TABLE public.${t} ENABLE ROW LEVEL SECURITY e políticas.`);
 });
 
 // ---------- 3. Edge functions ----------
@@ -380,6 +383,14 @@ findings.sort((a, b) => ORDEM[a.sev] - ORDEM[b.sev] || a.check.localeCompare(b.c
 if (args.includes('--baseline')) {
   writeFileSync(BASELINE, JSON.stringify({ gerado: new Date().toISOString(), total: findings.length, fps: findings.map((x) => x.fp) }, null, 1));
   console.log(`[audit] baseline gravado com ${findings.length} achados em scripts/audit/baseline.json`);
+}
+if (process.env.AUDIT_BASELINE && !existsSync(BASELINE) && !args.includes('--baseline')) {
+  console.error(`[audit] ERRO: AUDIT_BASELINE aponta para um arquivo que não existe: ${BASELINE}`);
+  process.exit(2);
+}
+if (args.includes('--estrito') && !existsSync(BASELINE)) {
+  console.error('[audit] ERRO: --estrito exige baseline (rode com --baseline antes); sem ele não há como saber o que é novo.');
+  process.exit(2);
 }
 const base = existsSync(BASELINE) ? new Set(JSON.parse(read(BASELINE)).fps) : null;
 const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
