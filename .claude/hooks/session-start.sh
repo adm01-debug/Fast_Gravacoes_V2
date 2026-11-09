@@ -17,7 +17,9 @@ fi
 
 echo '{"async": true, "asyncTimeout": 900000}'
 
-cd "${CLAUDE_PROJECT_DIR:-.}"
+# Sem CLAUDE_PROJECT_DIR, a raiz é a do próprio hook (.claude/hooks/ → ../..), nunca o cwd:
+# rodando de src/ o hook criava src/graphify-out/ e refazia install+build toda vez.
+cd "${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 mkdir -p graphify-out
 LOG=graphify-out/.session-start.log
 MARCA=graphify-out/.session-built-commit
@@ -27,14 +29,23 @@ echo "== $(date -u +%FT%TZ) session-start (npm run graph:install / graph:build)"
 
 # O hook também dispara em resume/clear/compact, que podem cair no meio de um build de
 # minutos: só um por vez neste clone. O segundo sai na hora; o primeiro termina e carimba.
+# Sem `flock` no PATH segue sem lock (o build tem o próprio lock): antes o "command not found"
+# era lido como "outro rodando" e o grafo nunca era gerado.
 exec 9>graphify-out/.session-start.lock
-if ! flock -n 9; then
-  echo "outro session-start já está rodando neste clone — saindo"
-  exit 0
+if command -v flock >/dev/null 2>&1; then
+  if ! flock -n 9; then
+    echo "outro session-start já está rodando neste clone — saindo"
+    exit 0
+  fi
+else
+  echo "flock indisponível — seguindo sem lock de sessão"
 fi
 
 head_sha="$(git rev-parse HEAD)"
-if [ -f graphify-out/graph.json ] && [ -f graphify-out/GRAPH_REPORT.md ] && [ "$(cat "$MARCA" 2>/dev/null)" = "$head_sha" ]; then
+# A marca vale só com a árvore limpa: com edição não commitada o grafo do commit está
+# desatualizado (graph:query recusa) e o build incremental abaixo custa poucos segundos.
+if [ -f graphify-out/graph.json ] && [ -f graphify-out/GRAPH_REPORT.md ] && [ "$(cat "$MARCA" 2>/dev/null)" = "$head_sha" ] \
+  && [ -z "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]; then
   echo "grafo já está no commit $head_sha — nada a fazer"
   exit 0
 fi

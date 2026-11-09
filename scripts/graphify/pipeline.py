@@ -10,6 +10,11 @@ import sys
 import tempfile
 import time
 
+try:
+    import fcntl
+except ImportError:  # Windows: sem flock, vale só o arquivo criado com O_EXCL.
+    fcntl = None
+
 from graphify.analyze import god_nodes, surprising_connections, suggest_questions
 from graphify.build import build_from_json
 from graphify.cluster import cluster, score_all
@@ -26,16 +31,33 @@ from enrich import enrich
 def build_lock(out):
     out.mkdir(parents=True, exist_ok=True)
     lock = out / '.build.lock'
+    if fcntl is None:
+        try:
+            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        except FileExistsError as exc:
+            raise ValueError(f'Build já em andamento ou lock abandonado: {lock}') from exc
+    else:
+        # flock pertence ao processo: o kernel solta se ele morrer (SIGTERM/SIGKILL/OOM), então
+        # um arquivo que sobrou de build interrompido não trava os próximos. O arquivo só guarda
+        # o PID para diagnóstico; quem decide é o flock, nunca um palpite sobre PID vivo.
+        handle = os.open(lock, os.O_CREAT | os.O_RDWR, 0o600)
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            try:
+                owner = os.read(handle, 32).decode('ascii', 'replace').strip() or 'desconhecido'
+            finally:
+                os.close(handle)
+            raise ValueError(f'Build já em andamento (PID {owner}): {lock}') from exc
+        os.ftruncate(handle, 0)
     try:
-        handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-    except FileExistsError as exc:
-        raise ValueError(f'Build já em andamento ou lock abandonado: {lock}') from exc
-    try:
-        with os.fdopen(handle, 'w') as stream:
-            stream.write(str(os.getpid()))
+        os.write(handle, str(os.getpid()).encode())
         yield
     finally:
+        # Remove ANTES de fechar: quem abrir depois cria arquivo novo; quem abriu antes ainda
+        # encontra o flock preso e é rejeitado — nunca dois builds com o lock.
         lock.unlink(missing_ok=True)
+        os.close(handle)
 
 
 def write_json(path, data):
@@ -93,7 +115,7 @@ def build(root, config, profile, rebuild=False):
             validate_graph(json.loads((stage / 'graph.json').read_text(encoding='utf-8')))
             # Retain raw evidence: upstream DiGraph may collapse parallel relations or omit unresolved endpoints.
             write_json(stage / 'extraction.json', result)
-            overview = enrich(root, files, result, graph, stage)
+            overview = enrich(root, files, result, graph, stage, profile)
             selected_detection = {
                 'total_files': len(files),
                 'total_words': sum(len(p.read_text(encoding='utf-8', errors='replace').split()) for p in files),

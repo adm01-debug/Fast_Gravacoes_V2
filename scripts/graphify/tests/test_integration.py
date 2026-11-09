@@ -1,9 +1,14 @@
 """Exercise failure modes and actual AST behavior in disposable repositories."""
 import contextlib
 from collections import Counter
+import importlib.metadata
 import io
 import json
+import os
 from pathlib import Path
+import shutil
+import signal
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -222,6 +227,262 @@ class GraphifyIntegrationTests(unittest.TestCase):
         self.assertNotIn(2, by_line)
         self.assertEqual(by_line.get(3), 'literal-name')
         self.assertFalse(functions)
+
+    # ── regressões da auditoria de scripts ──────────────────────────────────────────────
+
+    def test_leftover_lock_file_from_dead_process_does_not_block(self):
+        # Arquivo de lock que sobrou de um build morto (sem flock preso) não trava o próximo.
+        out = self.root / 'graphify-out'
+        out.mkdir(parents=True, exist_ok=True)
+        (out / '.build.lock').write_text('999999999')
+        self.assertGreater(self.build()['nodes'], 0)
+        self.assertFalse((out / '.build.lock').exists())
+
+    def test_lock_is_released_when_holder_is_killed(self):
+        out = self.root / 'graphify-out'
+        code = ("import sys, time; sys.path.insert(0, sys.argv[1]); from pathlib import Path; "
+                "from pipeline import build_lock\n"
+                "with build_lock(Path(sys.argv[2])):\n    print('locked', flush=True); time.sleep(60)\n")
+        holder = subprocess.Popen([sys.executable, '-c', code, str(Path(__file__).resolve().parents[1]), str(out)],
+                                  stdout=subprocess.PIPE, text=True)
+        try:
+            self.assertEqual(holder.stdout.readline().strip(), 'locked')
+            # Enquanto o dono vive, outro processo é rejeitado e a mensagem traz o PID dele.
+            with self.assertRaisesRegex(ValueError, f'andamento \\(PID {holder.pid}\\)'):
+                with build_lock(out):
+                    pass
+            holder.send_signal(signal.SIGKILL)
+            holder.wait(timeout=10)
+            with build_lock(out):
+                pass
+        finally:
+            if holder.poll() is None:
+                holder.kill()
+            holder.stdout.close()
+        self.assertFalse((out / '.build.lock').exists())
+
+    def test_reexport_and_dynamic_import_are_not_dead_code(self):
+        import networkx as nx
+        from enrich import _dead_code_candidates
+        graph = nx.DiGraph()
+        names = ['src/barrel/index.ts', 'src/barrel/Spinner.ts', 'src/lazy/Page.ts', 'src/orphan.ts', 'src/app.ts',
+                 'src/old/a.ts', 'src/old/b.ts']
+        for name in names:
+            graph.add_node(name, source_file=name)
+        graph.add_edge('src/barrel/index.ts', 'src/barrel/Spinner.ts', relation='re_exports')
+        graph.add_edge('src/app.ts', 'src/lazy/Page.ts', relation='dynamic_import')
+        graph.add_edge('src/app.ts', 'src/barrel/index.ts', relation='imports_from')
+        graph.add_edge('src/app.ts', 'src/old/a.ts', relation='reexports')
+        graph.add_edge('src/app.ts', 'src/old/b.ts', relation='dynamic_imports')
+        graph.add_edge('src/app.ts', 'src/orphan.ts', relation='calls')  # não é importação
+        paths = [self.write(name, 'export const x = 1;\n') for name in names]
+        candidates = {item['file'] for item in _dead_code_candidates(self.root, graph, paths)['candidates']}
+        self.assertEqual(candidates, {'src/orphan.ts', 'src/app.ts'})
+
+    def test_benchmark_scopes_questions_to_profile_and_rejects_vacuous_pass(self):
+        import networkx as nx
+        from enrich import _benchmark
+        graph = nx.DiGraph()
+        graph.add_node('auth_guard', label='requireAuth', source_file='supabase/functions/_shared/auth.ts')
+        self.write('graphify-benchmark.json', json.dumps({'questions': [
+            {'id': 'sec', 'profile': 'security', 'expected_terms': ['auth.ts']},
+            {'id': 'front', 'profile': 'frontend', 'expected_terms': ['ProtectedRoute']},
+            {'id': 'vazia', 'profile': 'security', 'expected_terms': []},
+        ]}))
+        full = _benchmark(self.root, graph)
+        self.assertEqual((full['passed'], full['total'], full['skipped']), (1, 3, 0))
+        self.assertEqual({q['id']: q['pass'] for q in full['questions']}, {'sec': True, 'front': False, 'vazia': False})
+        scoped = _benchmark(self.root, graph, 'security')
+        self.assertEqual((scoped['passed'], scoped['total'], scoped['skipped']), (1, 2, 1))
+        self.assertIsNone(next(q for q in scoped['questions'] if q['id'] == 'front')['pass'])
+
+    def ratchet_with(self, baseline):
+        out = self.root / 'graphify-out'
+        out.mkdir(parents=True, exist_ok=True)
+        (out / 'overview.json').write_text(json.dumps({'unresolved_relations': 10, 'parallel_relation_groups': 10}))
+        self.write('graphify-baseline.json', baseline if isinstance(baseline, str) else json.dumps(baseline))
+        return ratchet(self.root, out, 'enforce')
+
+    def test_ratchet_rejects_malformed_baseline_instead_of_passing(self):
+        for baseline, pattern in [
+            ({'metric': {'unresolved_relations': 1}}, 'objeto "metrics"'),
+            ({'metrics': {}}, 'objeto "metrics"'),
+            ({'metrics': []}, 'objeto "metrics"'),
+            ([], 'objeto "metrics"'),
+            ({'metrics': {'unresolved_relation': 1}}, 'desconhecida'),
+            ({'metrics': {'unresolved_relations': '1'}}, 'inteiro'),
+            ({'metrics': {'unresolved_relations': True}}, 'inteiro'),
+            ({'metrics': {'unresolved_relations': 1}, 'exceptions': {}}, 'lista'),
+            ('{quebrado', 'JSON válido'),
+        ]:
+            with self.assertRaisesRegex(ValueError, pattern, msg=str(baseline)):
+                self.ratchet_with(baseline)
+        (self.root / 'graphify-baseline.json').unlink()
+        with self.assertRaisesRegex(ValueError, 'ausente'):
+            ratchet(self.root, self.root / 'graphify-out', 'enforce')
+
+    def test_ratchet_exception_dates_are_real_dates(self):
+        def exc(expires):
+            return {'metrics': {'unresolved_relations': 1, 'parallel_relation_groups': 99},
+                    'exceptions': [{'metric': 'unresolved_relations', 'reason': 'r', 'responsible': 'x', 'expires_on': expires}]}
+        self.assertFalse(self.ratchet_with(exc('2999-12-31'))['would_fail'])
+        self.assertTrue(self.ratchet_with(exc('2020-12-31'))['would_fail'])
+        # Não-ISO: como string, "31/12/2020" >= "2026-…" valia para sempre.
+        for bad in ['31/12/2020', '2026-13-45', 'nunca', '12-31-2030']:
+            with self.assertRaisesRegex(ValueError, 'ISO-8601', msg=str(bad)):
+                self.ratchet_with(exc(bad))
+
+    def test_ratchet_reports_regression_and_unchecked_metrics(self):
+        result = self.ratchet_with({'metrics': {'parallel_relation_groups': 9}, 'exceptions': []})
+        self.assertTrue(result['would_fail'])
+        self.assertEqual([r['metric'] for r in result['regressions']], ['parallel_relation_groups'])
+        self.assertEqual(result['unchecked_metrics'], ['unresolved_relations'])
+        ok = self.ratchet_with({'metrics': {'unresolved_relations': 10, 'parallel_relation_groups': 10}})
+        self.assertFalse(ok['would_fail'])
+        self.assertEqual(ok['unchecked_metrics'], [])
+
+    def test_diff_rejects_non_graph_and_tolerates_edges_without_endpoints(self):
+        self.build()
+        current = self.root / 'graphify-out/graph.json'
+        for content in ['{}', '[]', 'null', '{"nodes": []}', '{quebrado']:
+            bad = self.write('bad.json', content)
+            with self.assertRaises(ValueError, msg=content):
+                graph_diff(bad, current)
+        with self.assertRaisesRegex(ValueError, 'não encontrado'):
+            graph_diff(self.root / 'nao-existe.json', current)
+        loose = self.write('loose.json', json.dumps({'nodes': [{'id': 'a'}, {'id': 1}],
+                                                     'links': [{'source': 'a'}, {'source': 'a', 'target': 'b', 'relation': 'calls'}]}))
+        result = graph_diff(loose, current)
+        self.assertIn('a', result['nodes']['removed'])
+        self.assertIn(['a', 'None', 'unknown'], [list(edge) for edge in result['edges']['removed']])
+
+    def test_check_snapshot_explains_missing_or_malformed_manifest(self):
+        out = self.root / 'graphify-out'
+        with self.assertRaisesRegex(ValueError, 'graph:build'):
+            check_snapshot(out)
+        self.build()
+        good = (out / 'manifest.json').read_text()
+        for content in ['[]', 'null', '{}', '{"artifacts": []}', '{"artifacts": {}}', '{quebrado']:
+            (out / 'manifest.json').write_text(content)
+            with self.assertRaisesRegex(ValueError, 'graph:build', msg=content):
+                check_snapshot(out)
+        # Build por cima de manifest inválido se cura.
+        self.assertGreater(self.build()['nodes'], 0)
+        check_snapshot(out)
+        (out / 'manifest.json').write_text(good)
+        (out / 'overview.json').unlink()
+        with self.assertRaisesRegex(ValueError, 'inconsistente: overview.json'):
+            check_snapshot(out)
+
+
+class GraphifyCliTests(unittest.TestCase):
+    """run.py ponta a ponta numa cópia isolada (a raiz é derivada da localização do script)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix='fast graphify cli-')  # espaço de propósito
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        source = Path(__file__).resolve().parents[1]
+        shutil.copytree(source, self.root / 'scripts/graphify', ignore=shutil.ignore_patterns('__pycache__', 'tests'))
+        self.write('graphify.config.json', json.dumps({
+            'version': importlib.metadata.version('graphifyy'), 'maxWorkers': 1, 'warnFiles': 500, 'htmlNodeLimit': 5000,
+            'extensions': ['.ts'], 'profiles': {'all': ['src'], 'security': ['src/auth']}}))
+        self.write('.graphifyignore', 'graphify-out/\n')
+        self.write('src/math.ts', 'export function double(n: number) { return n * 2; }\n')
+        self.write('src/auth/guard.ts', "import { double } from '../math';\nexport function requireAuth() { return double(1); }\n")
+        self.write('graphify-benchmark.json', json.dumps({'questions': [
+            {'id': 'guard', 'profile': 'security', 'expected_terms': ['requireAuth']},
+            {'id': 'math', 'profile': 'frontend', 'expected_terms': ['math.ts']}]}))
+        self.write('graphify-baseline.json', json.dumps({'metrics': {'unresolved_relations': 999, 'parallel_relation_groups': 999}, 'exceptions': []}))
+        self.write('docs/graphify/README.md', 'guia\n')
+        self.write('.github/workflows/graphify.yml', 'name: graph\n')
+
+    def write(self, name, text):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding='utf-8')
+        return path
+
+    def run_cli(self, *args):
+        env = {**os.environ, 'PYTHONHASHSEED': '0'}
+        result = subprocess.run([sys.executable, str(self.root / 'scripts/graphify/run.py'), *args],
+                                capture_output=True, text=True, cwd=tempfile.gettempdir(), env=env)
+        return result.returncode, result.stdout + result.stderr
+
+    def test_audit_benchmark_and_ratchet_exit_codes(self):
+        code, out = self.run_cli('build')
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.run_cli('check')[0], 0)
+        self.assertEqual(self.run_cli('audit')[0], 0)
+        self.assertEqual(self.run_cli('benchmark')[0], 0)
+        self.assertEqual(self.run_cli('ratchet', '--mode', 'enforce')[0], 0)
+
+        # Controle versionado removido → audit reprova (antes: 6/8 e exit 0). O README não entra
+        # na assinatura do snapshot, então o grafo continua atual.
+        (self.root / 'docs/graphify/README.md').unlink()
+        code, out = self.run_cli('audit')
+        self.assertEqual(code, 1, out)
+        self.assertIn('docs/graphify/README.md', out)
+        self.write('docs/graphify/README.md', 'guia\n')
+
+        # Pergunta de regressão que deixa de ser respondida → benchmark reprova (antes: exit 0).
+        self.write('graphify-benchmark.json', json.dumps({'questions': [
+            {'id': 'sumiu', 'profile': 'security', 'expected_terms': ['termo-que-nao-existe']}]}))
+        self.assertEqual(self.run_cli('build')[0], 0)
+        code, out = self.run_cli('benchmark')
+        self.assertEqual(code, 1, out)
+        self.assertIn('sumiu', out)
+
+        # Métrica acima da baseline → enforce reprova, report não.
+        self.write('graphify-baseline.json', json.dumps({'metrics': {'unresolved_relations': -1}, 'exceptions': []}))
+        self.assertEqual(self.run_cli('build')[0], 0)
+        self.assertEqual(self.run_cli('ratchet', '--mode', 'report')[0], 0)
+        self.assertEqual(self.run_cli('ratchet', '--mode', 'enforce')[0], 1)
+
+    def test_profile_benchmark_only_counts_its_own_questions(self):
+        self.assertEqual(self.run_cli('build', '--profile', 'security')[0], 0)
+        code, out = self.run_cli('benchmark', '--profile', 'security')
+        self.assertEqual(code, 0, out)
+        result = json.loads(out)
+        self.assertEqual((result['passed'], result['total'], result['skipped']), (1, 1, 1))
+        code, out = self.run_cli('ratchet', '--profile', 'security')
+        self.assertEqual(code, 1, out)
+        self.assertIn('perfil all', out)
+
+    def test_missing_or_malformed_snapshot_gives_actionable_error(self):
+        code, out = self.run_cli('check')
+        self.assertEqual(code, 1, out)
+        self.assertIn('graph:build', out)
+        self.assertNotIn('Traceback', out)
+        self.assertEqual(self.run_cli('build')[0], 0)
+        for content in ['[]', 'null']:
+            (self.root / 'graphify-out/manifest.json').write_text(content)
+            code, out = self.run_cli('check')
+            self.assertEqual(code, 1, out)
+            self.assertNotIn('Traceback', out)
+        code, out = self.run_cli('build')
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.run_cli('check')[0], 0)
+
+    def test_sigterm_during_build_releases_lock_and_stage(self):
+        code = ("import sys, time; sys.path.insert(0, sys.argv[1]); import run, pipeline\n"
+                "def slow(*a, **k):\n    print('extracting', flush=True); time.sleep(60)\n"
+                "pipeline.extract = slow\nsys.argv = ['run.py', 'build']\nrun.main()\n")
+        proc = subprocess.Popen([sys.executable, '-c', code, str(self.root / 'scripts/graphify')],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            self.assertEqual(proc.stdout.readline().strip(), 'extracting')
+            self.assertTrue((self.root / 'graphify-out/.build.lock').exists())
+            proc.send_signal(signal.SIGTERM)
+            self.assertEqual(proc.wait(timeout=15), 128 + signal.SIGTERM)
+        finally:
+            if proc.poll() is None:
+                proc.kill()
+            proc.stdout.close()
+            proc.stderr.close()
+        self.assertFalse((self.root / 'graphify-out/.build.lock').exists())
+        code, out = self.run_cli('build')
+        self.assertEqual(code, 0, out)
 
 
 if __name__ == '__main__':
