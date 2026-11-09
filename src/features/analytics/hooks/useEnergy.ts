@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
-import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 
 export interface EnergyConsumption {

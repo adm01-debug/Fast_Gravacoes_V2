@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Calendar, Clock, CheckCircle2, ChevronRight } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
 import { SchedulingConflict } from '@/features/jobs';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface ConflictResolutionPanelProps {
   conflicts: SchedulingConflict[];

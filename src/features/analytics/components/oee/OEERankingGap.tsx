@@ -1,8 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, TrendingDown, Target, ArrowUpRight, ArrowDownRight, Minus, AlertTriangle } from 'lucide-react';
+import { Trophy, TrendingDown, Target, ArrowUpRight, ArrowDownRight, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MachineOEE, TechniqueOEE } from '@/features/production';
 

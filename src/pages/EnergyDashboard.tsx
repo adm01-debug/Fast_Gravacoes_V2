@@ -14,11 +14,10 @@ import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { useEnergy } from '@/features/analytics/hooks/useEnergy';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { BatteryCharging, Zap, TrendingUp, TrendingDown, AlertTriangle, DollarSign, Gauge, Plus, CheckCircle, Command, Leaf, Factory } from 'lucide-react';
+import { BatteryCharging, Zap, TrendingUp, TrendingDown, DollarSign, Gauge, Plus, Command, Leaf, Factory } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { EnergyChartTabs } from '@/features/analytics/components/energy/EnergyChartTabs';
 import { AIEnergyAdvisor } from '@/features/analytics/components/energy/AIEnergyAdvisor';
 
 
@@ -28,7 +27,7 @@ export default function EnergyDashboard() {
   const [isAddingConsumption, setIsAddingConsumption] = useState(false);
   const [newConsumption, setNewConsumption] = useState({ machine_id: '', consumption_kwh: '', power_factor: '', peak_demand_kw: '' });
 
-  const { consumption, alerts, stats, isLoading, addConsumption, resolveAlert } = useEnergy(dateRange);
+  const { consumption, stats, isLoading, addConsumption } = useEnergy(dateRange);
 
   const { data: machines } = useQuery({
     queryKey: ['machines-active'],

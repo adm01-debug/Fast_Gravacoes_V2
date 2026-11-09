@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
 import { History } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { useTechnicalSheetAudit } from '@/hooks/technical-sheets/useTechnicalSheetsQueries';
 

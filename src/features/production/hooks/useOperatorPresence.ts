@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth';
 import { createAppError } from '@/lib/errorHandling';
 import { usePresenceChannel } from '@/lib/realtimeChannel';

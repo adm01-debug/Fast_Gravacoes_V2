@@ -3,7 +3,6 @@ import { Database } from "@/integrations/supabase/types";
 export type JobStatus = 'queue' | 'ready' | 'scheduled' | 'production' | 'finished' | 'paused' | 'cancelled' | 'delayed' | 'rework' | 'buffer' | 'packaging';
 export type JobPriority = 'low' | 'medium' | 'high' | 'urgent';
 
-type DbRow = Database['public']['Tables']['jobs']['Row'];
 
 // Making all DB fields nullable/optional in the interface to support both strict DB rows and BI views
 export interface Job {

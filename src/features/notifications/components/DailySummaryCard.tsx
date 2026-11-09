@@ -1,10 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Bell, BellOff, Calendar, AlertTriangle, TrendingUp, CheckCircle } from 'lucide-react';
 import { useDailySummaryNotifications } from '@/features/notifications/hooks/useDailySummaryNotifications';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function DailySummaryCard() {

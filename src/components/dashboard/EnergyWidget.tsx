@@ -1,7 +1,7 @@
 import { useEnergy } from '@/features/analytics/hooks/useEnergy';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Zap, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   AreaChart,

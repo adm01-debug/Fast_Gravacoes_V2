@@ -28,11 +28,6 @@ function concurrently<T>(count: number, fn: (i: number) => T): T[] {
   return Array.from({ length: count }, (_, i) => fn(i));
 }
 
-async function measureMs(fn: () => Promise<void>): Promise<number> {
-  const start = performance.now();
-  await fn();
-  return performance.now() - start;
-}
 
 // ── RateLimiter under load ────────────────────────────────────────────────
 describe('Load — RateLimiter (10 000 requests)', () => {

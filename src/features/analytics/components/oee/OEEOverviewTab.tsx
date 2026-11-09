@@ -13,7 +13,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ChartSkeleton } from '@/components/loading';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import type { BenchmarkConfig } from '@/features/analytics/constants/oee';
@@ -32,7 +31,7 @@ interface OEEOverviewTabProps {
   currentBenchmark: BenchmarkConfig;
 }
 
-export function OEEOverviewTab({ data, machineId, currentBenchmark }: OEEOverviewTabProps) {
+export function OEEOverviewTab({ data, currentBenchmark }: OEEOverviewTabProps) {
   const { t } = useTranslation();
   return (
     <>

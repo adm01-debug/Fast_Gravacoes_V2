@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { DELAY_CATEGORIES, type DelayCategory } from '../types/packaging.schema';
+import { DELAY_CATEGORIES } from '../types/packaging.schema';
 
 const LABEL_MAP: Record<string, string> = Object.fromEntries(
   DELAY_CATEGORIES.map((c) => [c.value, c.label]),

@@ -1,7 +1,6 @@
 import { ReactNode, Suspense, useEffect } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useLocation, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import { AppSidebar } from './AppSidebar';
 import { ThemeToggle } from './ThemeToggle';
@@ -53,7 +52,7 @@ interface MainLayoutProps {
 const EmptyFallback = null;
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const { isMobile, prefersReducedMotion } = useDevice();
+  const { isMobile } = useDevice();
   const location = useLocation();
   const { unreadCount } = useNotifications();
   const { canGoBack: hasInternalEntry, goBack } = useSmartBack();
@@ -125,7 +124,6 @@ export function MainLayout({ children }: MainLayoutProps) {
 
 
 
-  const shouldAnimate = !prefersReducedMotion;
 
   return (
     <SessionProvider>

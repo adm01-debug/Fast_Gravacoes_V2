@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { RateLimiter, apiLimiter, searchLimiter, authLimiter } from '@/lib/rateLimiter';
+import { RateLimiter, apiLimiter, searchLimiter } from '@/lib/rateLimiter';
 
 describe('RateLimiter — advanced scenarios', () => {
   beforeEach(() => { vi.useFakeTimers(); });

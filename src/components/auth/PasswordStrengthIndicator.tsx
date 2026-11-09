@@ -3,9 +3,8 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import { useMemo, useState, useEffect, useCallback } from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Check, X, AlertCircle, Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { Check, X, Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDebounce } from '@/hooks/useDebounce';
 

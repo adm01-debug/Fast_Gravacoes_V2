@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { KioskMode } from "@/components/kiosk/KioskMode";
 import { useSchedulingData } from "@/features/jobs";
-import { useUpdateJobStatus } from "@/features/jobs";
 import { notifyStatusChange } from "@/features/notifications";
 import { logger } from "@/lib/logger";
 import { useAuth } from "@/features/auth";
@@ -20,7 +19,7 @@ export default function KioskPage() {
   const { jobs, refetchAll, isLoading, getTechniqueById, getMachineById } = useSchedulingData();
   const { isOnline, isSyncing, updateJobOffline, cacheData } = useOfflineSyncContext();
 
-  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
+  const [selectedMachineId] = useState<string | null>(null);
   const [productionJobId, setProductionJobId] = useState<string | null>(null);
   const [isProductionModalOpen, setIsProductionModalOpen] = useState(false);
 

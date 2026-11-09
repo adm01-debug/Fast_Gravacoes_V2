@@ -1,53 +1,38 @@
-import { useState, useMemo, useCallback } from 'react';
-import { DbMachine, DbTechnique } from '@/features/jobs';
+import { useState, useMemo } from 'react';
+import { DbMachine } from '@/features/jobs';
 import type { MaintenanceSchedule } from '@/features/maintenance/hooks/types';
 
 
 import { MainLayout } from '@/components/layout/MainLayout';
-import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  CheckCircle2, XCircle, Settings, History,
-  Activity, AlertTriangle, Map as MapIcon, Zap, Search, FileDown
+  
+  Map as MapIcon, Search, FileDown
 } from 'lucide-react';
 import { TargetArrowIcon } from '@/components/icons/TargetArrowIcon';
 import { useSchedulingData } from '@/features/jobs';
 import { Skeleton } from '@/components/ui/skeleton';
 // Breadcrumbs removed - handled by MainLayout
 import { VoiceButton } from '@/components/voice/VoiceCommands';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEntityAuditTrail } from '@/features/admin';
-import { AuditEntryCard } from '@/features/admin/components/audit/AuditEntryCard';
-import { HistoryPeriodFilter, type HistoryPeriodValue } from '@/features/admin/components/audit/HistoryPeriodFilter';
-import { MachineTPMPanel } from '@/features/maintenance/components/MachineTPMPanel';
+import { AnimatePresence } from 'framer-motion';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { MaintenanceExecutionModal } from '@/features/maintenance/components/MaintenanceExecutionModal';
 import { CreateScheduleModal } from '@/features/maintenance/components/CreateScheduleModal';
 import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
-import { MachineReliabilityTab } from '@/components/machines/MachineReliabilityTab';
 import { useMTBFMTTR } from '@/features/production';
 import { useDataExport } from '@/features/admin';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { MachineCard } from '@/components/machines/MachineCard';
 import { MachineStatsCards } from '@/components/machines/MachineStatsCards';
 import { MachinesByTechniqueList } from '@/components/machines/MachinesByTechniqueList';
 import { MachineQRDialog } from '@/components/machines/MachineQRDialog';
 import { MachineProfileDialog } from '@/components/machines/MachineProfileDialog';
-import { MachineHistoryTab } from '@/components/machines/MachineHistoryTab';
 import { FactoryHeatmap } from '@/components/machines/FactoryHeatmap';
 import { MachineBulkActions } from '@/components/machines/MachineBulkActions';
 import { useOEE } from '@/features/production';
-import { QrCode as QrCodeIcon, Download, Trash2, Power } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 
 export default function MachinesPage() {
   const { machines, techniques, isLoadingMachines, getTechniqueById } = useSchedulingData();

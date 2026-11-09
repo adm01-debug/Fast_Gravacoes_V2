@@ -7,57 +7,37 @@ import { useState, useMemo, useRef } from 'react';
 import { parseDateOnly } from "@/lib/dateUtils";
 import { useFuseSearch } from "@/hooks/useFuseSearch";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
   Search,
   Filter,
-  Clock,
   AlertTriangle,
-  Calendar,
   Package,
-  ArrowUpDown,
-  ChevronUp,
-  ChevronDown,
   RotateCcw,
-  Sparkles,
   Download,
   Play,
   Trash2,
-  BrainCircuit,
   Zap,
-  TrendingDown,
   LayoutGrid,
-  List,
-  History,
-  Info,
-  ExternalLink,
-  Settings2
-} from "lucide-react";
+  List} from "lucide-react";
 import { useSchedulingData } from "@/features/jobs";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { DbJob, DbTechnique, DbMachine } from "@/features/jobs";
+import { DbJob } from "@/features/jobs";
 import { JobStatus } from "@/types/scheduling";
 import { canTransition } from "@/features/jobs/services/jobStateMachine";
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
-import { SmartSequencingPanel } from "@/components/planning/SmartSequencingPanel";
-import { LoadBalancingPanel } from "@/components/planning/LoadBalancingPanel";
 import { PendingQueueStats } from "@/components/planning/PendingQueueStats";
 import { AISuggestionDetails } from "@/components/planning/AISuggestionDetails";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useDataExport } from "@/features/admin";
 import { useSmartSequencingWithActions } from "@/features/jobs";
 import type { SequencingSuggestion } from "@/features/jobs";
@@ -65,8 +45,7 @@ import { useLoadBalancingWithActions } from "@/features/analytics/hooks/useLoadB
 import type { LoadBalancingSuggestion } from "@/features/analytics";
 import { useAutoBufferPromotion } from "@/features/jobs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatDistanceToNow, isAfter, subHours } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { isAfter, subHours } from "date-fns";
 
 
 
@@ -125,10 +104,7 @@ export default function PendingQueue() {
     jobs,
     techniques,
     isLoading: isLoadingJobs,
-    isLoadingTechniques,
-    getTechniqueById,
-    getMachineById
-  } = useSchedulingData();
+    isLoadingTechniques  } = useSchedulingData();
 
   // Pre-filter by status first
   const pendingJobs = useMemo(() => {

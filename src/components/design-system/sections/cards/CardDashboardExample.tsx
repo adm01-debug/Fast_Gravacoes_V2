@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { CodeBlock } from '@/components/ui/code-block';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { TrendingUp, DollarSign, Package, Activity, Users, Target, Gauge, Coins, Trophy, Sparkles } from 'lucide-react';
+import { TrendingUp, DollarSign, Package, Users, Target, Gauge, Coins, Trophy, Sparkles } from 'lucide-react';
 
 export function CardDashboardExample() {
   return (

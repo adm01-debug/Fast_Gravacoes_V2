@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CodeBlock } from '@/components/ui/code-block';
-import { Trophy, Check, X, Target, Star, Plus, Trash2, Sparkles, Zap } from 'lucide-react';
+import { Trophy, Check, X, Target, Star, Plus, Trash2, Zap } from 'lucide-react';
 
 export function ButtonsSection() {
   return (

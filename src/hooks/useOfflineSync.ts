@@ -18,7 +18,6 @@ import type {
   CachedData,
   FailedAction,
   PendingAction,
-  ReplayResult,
 } from '@/lib/offline/offlineQueue';
 
 export function useOfflineSync() {

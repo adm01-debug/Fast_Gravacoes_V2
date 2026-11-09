@@ -4,7 +4,6 @@ import { fetchAllRowsByCursor } from '@/lib/fetchAllRows';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import type { Database } from '@/integrations/supabase/types';
 import { sanitizeCsvCell } from '@/lib/csvSafety';
 

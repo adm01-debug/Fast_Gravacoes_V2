@@ -28,8 +28,7 @@ interface ComparisonViewProps {
 
 export function BIComparisonView({
   biMetrics, biMetrics2, getPeriodLabel, periodFilter2, customRange2,
-  getComparisonDelta, ComparisonKPICard
-}: ComparisonViewProps) {
+  getComparisonDelta}: ComparisonViewProps) {
   return (
     <>
       {/* Comparison Header */}

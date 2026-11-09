@@ -10,15 +10,12 @@ import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { OperatorConfirmDialogs } from '@/components/operators/OperatorConfirmDialogs';
 import { OperatorsStats } from '@/components/operators/OperatorsStats';
-import { Users, UserCheck, Phone, Calendar, Settings2, Search, X, UserPlus, Pencil, Clock, Trash2, UserX, Power, Command, Eye, TrendingUp, Trophy, QrCode as QrCodeIcon, Printer } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { Users, Search, X, UserPlus, Command } from 'lucide-react';
 import { useOperators, OperatorWithProfile } from '@/features/production';
 import { useOperatorPresence } from '@/features/production';
 import { useOperatorMachines } from '@/features/production';
@@ -30,18 +27,12 @@ import { OperatorAuditHistory } from '@/components/operators/OperatorAuditHistor
 import { Skeleton } from '@/components/ui/skeleton';
 import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/FavoritesManager';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
-import { format, formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { OperatorPerformanceTab } from '@/components/operators/OperatorPerformanceTab';
-import { OperatorGoalsTab } from '@/components/operators/OperatorGoalsTab';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SkillsMatrix } from '@/components/operators/SkillsMatrix';
 import { OperatorSkillsModal } from '@/components/operators/OperatorSkillsModal';
 import { OperatorCard } from '@/components/operators/OperatorCard';
 import { OperatorQRBadgeDialog } from '@/components/operators/OperatorQRBadgeDialog';
 import { OperatorDetailsDialog } from '@/components/operators/OperatorDetailsDialog';
-import { ShieldCheck, Trophy as TrophyIcon } from 'lucide-react';
 import { OperatorLeaderboard } from '@/components/operators/OperatorLeaderboard';
 
 export default function OperatorsPage() {
@@ -49,7 +40,7 @@ export default function OperatorsPage() {
   const { data: operators = [], isLoading, removeOperator, isRemoving, toggleActive, isToggling } = useOperators();
   const { assignments } = useOperatorMachines();
   const { machines } = useSchedulingData();
-  const { isOnline, onlineCount, getLastSeen } = useOperatorPresence();
+  const { isOnline, getLastSeen } = useOperatorPresence();
   const [selectedOperator, setSelectedOperator] = useState<OperatorWithProfile | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   escapeHtml,
   stripTags,
-  sanitizeText,
   sanitizeUrl,
   sanitizeControlChars,
   sanitizeInput,

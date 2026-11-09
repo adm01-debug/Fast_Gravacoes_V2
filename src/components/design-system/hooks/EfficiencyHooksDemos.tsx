@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Loader2, CheckCircle, Activity, Gauge } from "lucide-react";
 import { HookDemo } from "./HookDemo";
 

@@ -5,11 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { ClipboardList, Plus, Trash2, Save, FileText, Camera, PenTool, CheckCircle, Download, FileSpreadsheet, File, Archive, Eye, Activity, AlertTriangle, Clock, User, Calendar, CheckCircle2, Wrench, Package, Zap, MoveHorizontal, Thermometer, Info, CheckSquare } from 'lucide-react';
-import { MaintenanceRecord } from '@/features/maintenance/hooks/types';
+import { CheckCircle, Download, FileSpreadsheet, Archive, Clock, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
@@ -17,8 +14,6 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
-import { AdjustmentParameters } from './ExecutionAdjustmentParameters';
-import { ExecutionSupplies } from './ExecutionSupplies';
 import { ExecutionRecordView } from '@/features/maintenance/components/ExecutionRecordView';
 
 interface ExecutionDetailsModalProps {
@@ -322,6 +317,3 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
   );
 }
 
-const Label = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <label className={`block font-medium ${className}`}>{children}</label>
-);
