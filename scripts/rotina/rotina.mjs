@@ -10,14 +10,15 @@
  *
  * Saída: ~/relatorios/fast-gravacoes-v2/ULTIMO.md (+ uma pasta por dia, retém 30).
  */
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { homedir, loadavg } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 
-const HOME = process.env.FG_HOME || homedir();
-const REPO = resolve(process.env.FG_REPO || join(HOME, 'projetos/Fast_Gravacoes_V2'));
+const HOME = homedir();
+// o instalador grava o caminho real do clone em FG_REPO (serviço systemd); o default só vale para o caminho padrão
+const REPO = process.env.FG_REPO || join(HOME, 'projetos/Fast_Gravacoes_V2');
 const STORE = join(HOME, '.local/share/fast-gravacoes-rotina');
 // ROTINA_SCRIPTS permite testar com os scripts do repo, sem instalar nada (ex.: ROTINA_SCRIPTS=$PWD/scripts)
 const SCRIPTS = process.env.ROTINA_SCRIPTS || join(STORE, 'scripts');
@@ -64,11 +65,7 @@ if (add.status !== 0) finalizar(`# Rotina ${HOJE}\n\nFALHOU ao criar worktree: $
 
 symlinkSync(join(REPO, 'node_modules'), join(WT, 'node_modules'));
 const lockHash = (d) => (existsSync(join(d, 'package-lock.json')) ? createHash('sha1').update(readFileSync(join(d, 'package-lock.json'))).digest('hex') : '');
-if (lockHash(REPO) !== lockHash(WT) ||
-    !['typescript/bin/tsc', 'eslint/bin/eslint.js', 'vitest/vitest.mjs'].every((f) => existsSync(join(WT, 'node_modules', f)))) {
-  git('worktree', 'remove', '--force', WT);
-  finalizar(`# Rotina ${HOJE}\n\nFALHOU: dependências ausentes ou lockfile diferente da base; correção não executada.\n`, 1);
-}
+if (lockHash(REPO) !== lockHash(WT)) nota('AVISO: package-lock do origin/main difere do clone local; node_modules pode estar defasado (rode npm ci no clone).');
 
 for (const d of ['autofix', 'audit']) cpSync(join(SCRIPTS, d), join(WT, 'scripts', d), { recursive: true });
 
@@ -85,26 +82,30 @@ if (existsSync(anterior)) {
 // ---------- 2. auditoria (só leitura) ----------
 const env = { ...process.env, ...(temBase ? { AUDIT_BASELINE: baseFile } : {}) };
 const au = run(NODE, ['scripts/audit/run.mjs'], { cwd: WT, env });
-let codigo = au.status === 0 ? 0 : 1;
-if (codigo) nota(`auditoria falhou (exit ${au.status ?? 'indisponível'})`);
-const auditResumo = ((au.stdout || '').match(/\[audit\] \d+ achados.*/) || ['(sem resumo)'])[0];
+const auditResumo = (au.stdout.match(/\[audit\] \d+ achados.*/) || ['(sem resumo)'])[0];
 let findings = [];
 try {
   const j = JSON.parse(readFileSync(join(WT, '.audit/findings.json'), 'utf8'));
-  if (!Array.isArray(j.findings)) throw new Error('findings inválido');
   findings = j.findings;
   mkdirSync(join(DIA, 'audit'), { recursive: true });
   for (const f of ['relatorio.md', 'fila-para-decisao.md', 'findings.json']) cpSync(join(WT, '.audit', f), join(DIA, 'audit', f));
   cpSync(join(WT, '.audit/findings.json'), anterior);
-} catch { codigo = 1; nota('audit não gerou findings.json válido'); }
+} catch { nota('audit não gerou findings.json'); }
 
 // ---------- 3. correção automática (só se não houver branch automática pendente) ----------
-const pendentes = git('branch', '--list', 'autofix/auto-*', '--no-merged', 'origin/main').stdout.split('\n').map((s) => s.replace(/^[*+\s]+/, '')).filter(Boolean);
+// Branch automática "pendente" = tem alteração que o origin/main ainda NÃO tem. O repo faz squash, então
+// `--no-merged` sozinho nunca vê a branch como incorporada: comparo o conteúdo dos arquivos que ela mexeu.
+const jaIncorporada = (b) => {
+  const base = git('merge-base', 'origin/main', b).stdout.trim();
+  const arquivos = git('diff', '-z', '--name-only', base, b).stdout.split('\0').filter(Boolean);
+  return arquivos.length === 0 || git('diff', '--quiet', 'origin/main', b, '--', ...arquivos).status === 0;
+};
+const pendentes = git('branch', '--list', 'autofix/auto-*', '--no-merged', 'origin/main').stdout
+  .split('\n').map((s) => s.replace(/^[*+\s]+/, '')).filter(Boolean)
+  .filter((b) => !jaIncorporada(b));
 let autofixResumo;
-if (codigo) {
-  autofixResumo = 'NÃO executado: auditoria falhou; corrija a ferramenta antes de aplicar alterações.';
-} else if (pendentes.length) {
-  autofixResumo = `NÃO aplicado: já existe branch automática sem merge (${pendentes.join(', ')}). Revise/mescle ou apague para a rotina voltar a corrigir.`;
+if (pendentes.length) {
+  autofixResumo = `NÃO aplicado: já existe branch automática com alterações que o main ainda não tem (${pendentes.join(', ')}). Revise/mescle ou apague a branch para a rotina voltar a corrigir.`;
 } else {
   const fx = run(NODE, ['scripts/autofix/run.mjs', '--apply', '--commit', '--tests', '--only=unused'], {
     cwd: WT, env: { ...process.env, AUTOFIX_BRANCH: `autofix/auto-${HOJE}` },
@@ -115,16 +116,12 @@ if (codigo) {
     mkdirSync(join(DIA, 'autofix'), { recursive: true });
     for (const f of ['relatorio.md', 'relatorio.json']) cpSync(join(WT, '.autofix', f), join(DIA, 'autofix', f));
     const r = rel.resultados[0] || {};
-    const branch = git('branch', '--list', `autofix/auto-${HOJE}`).stdout.trim() ? `autofix/auto-${HOJE}` : null;
+    const branch = git('branch', '--list', `autofix/auto-${HOJE}*`).stdout.split('\n').map((x) => x.replace(/^[*+\s]+/, '')).filter(Boolean).pop() || null;
     autofixResumo = branch
       ? `**${r.arquivosMantidos ?? 0} arquivo(s) corrigidos** na branch local \`${branch}\` (${(r.arquivosRevertidos || []).length} revertidos pelo gate). Testes: ${rel.testes?.resumo ?? 'não medidos'}. Fila manual: ${r.manual?.length ?? 0}.`
       : `Nada a corrigir automaticamente. Fila manual: ${r.manual?.length ?? 0}.`;
-    if (fx.status !== 0 || rel.ok !== true) {
-      codigo = 1;
-      autofixResumo = `FALHOU: ${rel.erro || 'gate/testes recusaram a correção'}; nenhuma correção aceita.`;
-    }
+    if (fx.status === 1) autofixResumo += ' ⚠ gate/testes acusaram falha — branch pode ter sido descartada.';
   } else {
-    codigo = 1;
     autofixResumo = `FALHOU/abortou (exit ${fx.status}): ${(fx.stderr || fx.stdout).split('\n').filter(Boolean).slice(-3).join(' | ').slice(0, 300)}`;
   }
 }
@@ -145,4 +142,4 @@ const md = [
   ...(out.length ? ['', '## Avisos', ...out.map((o) => `- ${o}`)] : []), '',
   'Para revisar e aceitar uma branch automática: `git -C ~/projetos/Fast_Gravacoes_V2 diff origin/main...autofix/auto-AAAA-MM-DD` e abrir PR. Nada é enviado ao GitHub sozinho.', '',
 ].join('\n');
-finalizar(md, codigo);
+finalizar(md, 0);

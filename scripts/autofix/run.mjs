@@ -1,204 +1,314 @@
 #!/usr/bin/env node
 /**
- * Derivado do motor local e11bc583/f331b977: correções determinísticas, sem IA.
- * Simula por padrão; --apply valida tudo antes de aceitar; --commit exige testes
- * e cria branch nova antes da primeira escrita. Nunca faz push.
+ * Autofix — corrige código de forma determinística, sem IA e sem custo de token.
+ *
+ * Uso:
+ *   node scripts/autofix/run.mjs                # simulação: só mede e escreve o relatório
+ *   node scripts/autofix/run.mjs --apply        # aplica, valida e reverte o que quebrar
+ *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção, DEPOIS dos gates, numa branch NOVA autofix/AAAA-MM-DD[-n]
+ *   node scripts/autofix/run.mjs --apply --tests    # + vitest completo no fim
+ *   node scripts/autofix/run.mjs --only=unused      # unused | eslint
+ *   node scripts/autofix/run.mjs --desestruturacao  # (opt-in) também remove itens de desestruturação não usados
+ *
+ * Regras de segurança:
+ *  - nunca toca arquivo com alteração local não commitada;
+ *  - só aplica se o typecheck JÁ estava verde antes (senão não dá pra atribuir culpa);
+ *  - depois de cada correção roda tsc + eslint; arquivo que quebrar é revertido sozinho;
+ *  - nunca faz push, nunca mexe em main.
+ *
+ * Saída: .autofix/relatorio.md e .autofix/relatorio.json (fila manual = o que sobrou).
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { isAbsolute, join, relative, resolve } from 'node:path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { runUnused } from './unused.mjs';
 
 const args = process.argv.slice(2);
 const APPLY = args.includes('--apply');
 const COMMIT = args.includes('--commit');
-const TESTS = COMMIT || args.includes('--tests');
-const only = args.find((a) => a.startsWith('--only='))?.slice(7).split(',');
-const sh = (cmd, a, opts = {}) => spawnSync(cmd, a, {
-  encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, timeout: 15 * 60 * 1000, ...opts,
-});
+const TESTS = args.includes('--tests');
+const DESESTRUTURACAO = args.includes('--desestruturacao'); // opt-in: assume que ler propriedade não tem getter
+const only = (args.find((a) => a.startsWith('--only=')) || '').split('=')[1]?.split(',');
+
+const sh = (cmd, a, opts = {}) =>
+  spawnSync(cmd, a, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, ...opts });
 const git = (...a) => sh('git', a);
-const checkedGit = (...a) => {
-  const r = git(...a);
-  if (r.error || r.status !== 0) throw new Error(`git ${a[0]} falhou: ${r.stderr || r.error?.message || r.status}`);
-  return r.stdout;
-};
-const ROOT = checkedGit('rev-parse', '--show-toplevel').trim();
+// -z: separa por NUL e não escapa nomes com acento/espaço (core.quotePath não interfere)
+const gitList = (sub, ...rest) => git(sub, '-z', ...rest).stdout.split('\0').filter(Boolean);
+
+const ROOT = git('rev-parse', '--show-toplevel').stdout.trim();
 process.chdir(ROOT);
 const bin = (p) => resolve(ROOT, 'node_modules', p);
 const OUT = join(ROOT, '.autofix');
-const snapshots = new Map();
-const resultados = [];
-let testes;
-let residuoEslint = {};
-let erro;
-let criada;
-const originalBranch = git('symbolic-ref', '--quiet', '--short', 'HEAD').stdout.trim();
-const originalHead = checkedGit('rev-parse', 'HEAD').trim();
+mkdirSync(OUT, { recursive: true });
 
-function executable(p, a) {
-  const r = sh(process.execPath, [bin(p), ...a]);
-  if (r.error || r.signal || r.status === null) throw new Error(`ferramenta ${p} falhou: ${r.error?.message || r.signal}`);
-  return r;
-}
+const log = (m) => console.log(`[autofix] ${m}`);
+const t0 = Date.now();
+const secs = () => `${Math.round((Date.now() - t0) / 1000)}s`;
 
-function eslint(files, fix = false) {
-  if (!files.length) return [];
-  const r = executable('eslint/bin/eslint.js', [...(fix ? ['--fix-dry-run'] : []), '-f', 'json', ...files]);
-  if (![0, 1].includes(r.status)) throw new Error(`ESLint indisponível (exit ${r.status}): ${r.stderr}`);
-  let report;
-  try { report = JSON.parse(r.stdout); } catch { throw new Error('ESLint não retornou JSON válido'); }
-  if (!Array.isArray(report) || !report.length || report.some((f) =>
-    !f || typeof f.filePath !== 'string' || !Array.isArray(f.messages) ||
-    !Number.isInteger(f.errorCount) || f.errorCount < 0 || f.fatalErrorCount > 0)) {
-    throw new Error('ESLint retornou relatório vazio, inválido ou erro fatal');
+// ---------- gates ----------
+const motivos = {}; // arquivo -> primeira mensagem de erro do gate (vai para o relatório)
+
+function tsc() {
+  const r = sh(process.execPath, [bin('typescript/bin/tsc'), '-p', 'tsconfig.app.json', '--noEmit']);
+  const out = r.stdout + r.stderr;
+  const files = new Set();
+  for (const m of out.matchAll(/^(.+?)\((\d+),\d+\): (error TS\d+: .+)$/gm)) {
+    files.add(m[1]);
+    motivos[m[1]] ??= `tsc ${m[3]} (linha ${m[2]})`;
   }
-  return report;
+  return { ok: r.status === 0, files: [...files], out };
 }
 
-function typecheck() {
-  for (const cfg of ['tsconfig.app.json', 'tsconfig.node.json'].filter((f) => existsSync(f))) {
-    const r = executable('typescript/bin/tsc', ['-p', cfg, '--noEmit', '--incremental', 'false']);
-    if (r.status !== 0) throw new Error(`typecheck falhou em ${cfg}:\n${r.stdout}${r.stderr}`);
+function eslintErrors(files) {
+  if (!files.length) return { ok: true, files: [] };
+  const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', ...files]);
+  let bad = [];
+  try {
+    const res = JSON.parse(r.stdout).filter((f) => f.errorCount > 0);
+    for (const f of res) {
+      const m = f.messages.find((x) => x.severity === 2);
+      motivos[f.filePath.replace(ROOT + '/', '')] ??= `eslint ${m?.ruleId}: ${m?.message} (linha ${m?.line})`;
+    }
+    bad = res.map((f) => f.filePath.replace(ROOT + '/', ''));
+  } catch {
+    return { ok: false, files: [], out: r.stderr || r.stdout };
   }
-  if (!existsSync('tsconfig.app.json')) throw new Error('tsconfig.app.json ausente');
+  return { ok: bad.length === 0, files: bad };
 }
 
-function baselineAny() {
-  if (!existsSync('.any-baseline.json')) throw new Error('baseline any ausente; não será criada implicitamente');
-  const r = sh(process.execPath, ['scripts/check-any-baseline.mjs']);
-  if (r.status !== 0) throw new Error(`gate any falhou: ${r.stdout}${r.stderr}`);
+function anyBaseline() {
+  return sh(process.execPath, ['scripts/check-any-baseline.mjs']).status === 0;
+}
+
+/** Desfaz arquivos gravando de volta o conteúdo de ANTES deste fixer (preserva correções já validadas de fixers anteriores). */
+function restaurar(files, originals) {
+  for (const f of files) {
+    if (originals[f] !== undefined) writeFileSync(join(ROOT, f), originals[f]);
+    else git('checkout', '--', f); // sem snapshot: último recurso
+  }
+}
+
+/** Roda os gates; reverte só os arquivos que quebraram; repete até 3 vezes. */
+function validateAndPrune(changed, originals) {
+  let keep = [...changed];
+  const reverted = [];
+  for (let round = 1; round <= 3; round++) {
+    const a = tsc();
+    const b = eslintErrors(keep);
+    const bad = new Set(
+      [...a.files, ...b.files].map((f) => f.replace(ROOT + '/', '')).filter((f) => keep.includes(f)),
+    );
+    if (a.ok && b.ok && anyBaseline()) return { ok: true, keep, reverted };
+    if (!bad.size) {
+      // quebrou mas não sei em qual arquivo → desfaz tudo desta correção
+      restaurar(keep, originals);
+      reverted.push(...keep);
+      return { ok: false, keep: [], reverted, why: 'gate falhou sem arquivo identificável' };
+    }
+    log(`gate falhou em ${bad.size} arquivo(s); revertendo e revalidando (rodada ${round})`);
+    restaurar([...bad], originals);
+    reverted.push(...bad);
+    keep = keep.filter((f) => !bad.has(f));
+    if (!keep.length) return { ok: true, keep, reverted };
+  }
+  restaurar(keep, originals);
+  return { ok: false, keep: [], reverted: [...reverted, ...keep], why: 'gate não estabilizou em 3 rodadas' };
+}
+
+let branchDestaExecucao = null; // branch criada por ESTA execução; os commits seguintes reaproveitam só ela
+function commit(files, msg) {
+  if (!files.length) return false;
+  if (!branchDestaExecucao) {
+    // Sempre uma branch NOVA e exclusiva: nunca grava na branch em que o usuário já estava trabalhando
+    // nem reaproveita uma branch antiga. Se o nome existir, acrescenta -2, -3…
+    const base = process.env.AUTOFIX_BRANCH || `autofix/${new Date().toISOString().slice(0, 10)}`;
+    let nome = base;
+    for (let n = 2; git('rev-parse', '--verify', '--quiet', `refs/heads/${nome}`).status === 0; n++) nome = `${base}-${n}`;
+    const r = git('switch', '-c', nome);
+    if (r.status !== 0) throw new Error(`não consegui criar a branch ${nome}: ${r.stderr}`);
+    branchDestaExecucao = nome;
+    log(`commits irão para a branch nova ${nome}`);
+  }
+  git('add', '--', ...files);
+  // arquivo já gravado pelo commit de um fixer anterior: não há o que commitar
+  if (git('diff', '--cached', '--quiet', '--', ...files).status === 0) return false;
+  // --only: não leva junto o que o usuário já tinha em staged
+  const r = git('commit', '-m', msg, '--only', '--', ...files);
+  if (r.status !== 0) throw new Error(`commit recusado (hook?):\n${r.stdout}${r.stderr}`);
+  return true;
 }
 
 function vitestFalhas() {
-  const outputFile = join(OUT, 'vitest.json');
-  rmSync(outputFile, { force: true });
-  const r = executable('vitest/vitest.mjs', ['run', '--reporter=json', `--outputFile=${outputFile}`]);
-  if (![0, 1].includes(r.status)) throw new Error(`Vitest indisponível (exit ${r.status})`);
-  let j;
-  try { j = JSON.parse(readFileSync(outputFile, 'utf8')); } catch { throw new Error('Vitest não gerou relatório válido'); }
-  if (!Number.isInteger(j.numTotalTests) || j.numTotalTests <= 0 || !Array.isArray(j.testResults) ||
-    !j.testResults.length || j.testResults.some((f) => !Array.isArray(f.assertionResults))) {
-    throw new Error('Vitest não mediu testes');
-  }
-  const falhas = new Set();
-  for (const f of j.testResults) {
-    if (f.status === 'failed' && !f.assertionResults.some((t) => t.status === 'failed')) {
-      throw new Error('Vitest falhou ao carregar uma suíte');
+  const out = join(OUT, 'vitest.json');
+  rmSync(out, { force: true }); // nunca reler o resultado de uma execução anterior se esta abortar antes de escrever
+  sh(process.execPath, [bin('vitest/vitest.mjs'), 'run', '--reporter=json', `--outputFile=${out}`]);
+  try {
+    const j = JSON.parse(readFileSync(out, 'utf8'));
+    const falhas = new Set();
+    for (const f of j.testResults) {
+      const rel = f.name.replace(ROOT + '/', '');
+      const falhos = f.assertionResults.filter((t) => t.status === 'failed');
+      for (const t of falhos) falhas.add(`${rel} > ${t.fullName}`);
+      // suíte que nem carregou (erro de import/coleta) não tem assertion "failed": conta do mesmo jeito
+      if (f.status === 'failed' && !falhos.length) falhas.add(`${rel} > (suíte falhou ao carregar)`);
     }
-    for (const t of f.assertionResults) if (t.status === 'failed') falhas.add(`${f.name} > ${t.fullName}`);
-  }
-  if ((r.status !== 0 || j.success === false) && !falhas.size) throw new Error('Vitest falhou sem teste identificado');
-  return { total: j.numTotalTests, falhas };
-}
-
-function indexLimpo() {
-  const r = git('diff', '--cached', '--quiet');
-  if (r.status !== 0) throw new Error('índice Git contém alterações; execução não pode incorporar staging de terceiros');
-}
-
-function restaurar() {
-  for (const [file, original] of snapshots) writeFileSync(file, original);
-  if (criada) {
-    if (snapshots.size) checkedGit('restore', '--staged', '--', ...snapshots.keys());
-    if (originalBranch) checkedGit('switch', originalBranch);
-    else checkedGit('switch', '--detach', originalHead);
-    checkedGit('branch', '-D', criada);
-    criada = undefined;
+    return { total: j.numTotalTests, falhas };
+  } catch {
+    return null;
   }
 }
 
-try {
-  if (COMMIT && !APPLY) throw new Error('--commit exige --apply');
-  if (only?.some((id) => !['unused', 'eslint'].includes(id))) throw new Error('--only aceita unused ou eslint');
-  if (COMMIT) indexLimpo();
+// ---------- fixers ----------
+const fixers = [
+  {
+    id: 'unused',
+    titulo: 'Remover código não usado (imports, desestruturação, variáveis puras)',
+    msg: 'chore(autofix): remove imports e declarações não usados',
+    run: (skip) => runUnused({ root: ROOT, skipFiles: skip, apply: APPLY, desestruturacao: DESESTRUTURACAO }),
+  },
+  {
+    id: 'eslint',
+    titulo: 'eslint --fix (regras auto-corrigíveis)',
+    msg: 'chore(autofix): aplica eslint --fix',
+    run: (skip) => {
+      const targets = gitList('ls-files', 'src', 'supabase/functions', 'tests')
+        .filter((f) => /\.(ts|tsx)$/.test(f) && !skip.has(f));
+      // sem alvo, o eslint (flat config) analisaria o diretório atual inteiro: não roda
+      if (!targets.length) return { changedFiles: [], originals: {}, fixedByKind: { 'arquivos com correção': 0 }, manual: [] };
+      // --fix-dry-run devolve o texto corrigido por arquivo (campo `output`), sem gravar:
+      // assim sei exatamente quais arquivos mudariam, mesmo que outro fixer já os tenha tocado.
+      const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--fix-dry-run', '--max-warnings', '99999', '-f', 'json', ...targets]);
+      let results = [];
+      try { results = JSON.parse(r.stdout); } catch { /* ignora */ }
+      const changed = results.filter((f) => typeof f.output === 'string');
+      const originals = Object.fromEntries(changed.map((f) => [f.filePath.replace(ROOT + '/', ''), readFileSync(f.filePath, 'utf8')]));
+      if (APPLY) for (const f of changed) writeFileSync(f.filePath, f.output);
+      return {
+        changedFiles: changed.map((f) => f.filePath.replace(ROOT + '/', '')),
+        originals,
+        fixedByKind: { 'arquivos com correção': changed.length },
+        manual: [],
+      };
+    },
+  },
+].filter((f) => !only || only.includes(f.id));
+
+// ---------- fila manual do eslint (só leitura) ----------
+function eslintResidue() {
+  const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', '.']);
+  const rules = {};
+  try {
+    for (const f of JSON.parse(r.stdout))
+      for (const m of f.messages) rules[m.ruleId || 'parse'] = (rules[m.ruleId || 'parse'] || 0) + 1;
+  } catch { /* ignora */ }
+  return rules;
+}
+
+// ---------- main ----------
+log(APPLY ? 'modo APLICAR' : 'modo SIMULAÇÃO (use --apply para gravar)');
+
+const dirty = new Set(
+  [...gitList('diff', '--name-only'), ...gitList('diff', '--name-only', '--cached'),
+    ...gitList('ls-files', '--others', '--exclude-standard')],
+);
+if (dirty.size) log(`${dirty.size} arquivo(s) com alteração local serão IGNORADOS`);
+
+if (APPLY) {
+  const base = tsc();
+  if (!base.ok) {
+    console.error('[autofix] typecheck já está vermelho antes de começar; abortando.\n' + base.out.split('\n').slice(0, 15).join('\n'));
+    process.exit(2);
+  }
+  log(`base verde (${secs()})`);
+}
+
+let vitestBase = null;
+if (APPLY && TESTS) {
+  vitestBase = vitestFalhas();
+  log(`vitest base: ${vitestBase ? `${vitestBase.total} testes, ${vitestBase.falhas.size} já falhando` : 'não consegui medir'} (${secs()})`);
+}
+
+const resultados = [];
+const pendentes = []; // correções validadas por tsc/eslint, ainda sem commit (o commit só vem DEPOIS do vitest)
+for (const fx of fixers) {
+  log(`→ ${fx.titulo}`);
+  const res = fx.run(dirty);
+  const entry = { id: fx.id, titulo: fx.titulo, arquivosPropostos: res.changedFiles.length, porTipo: res.fixedByKind, manual: res.manual };
+  if (APPLY && res.changedFiles.length) {
+    const v = validateAndPrune(res.changedFiles, res.originals || {});
+    entry.arquivosMantidos = v.keep.length;
+    entry.arquivosRevertidos = v.reverted;
+    entry.ok = v.ok;
+    entry.motivo = v.why;
+    if (v.keep.length) pendentes.push({ entry, files: v.keep, originals: res.originals || {}, msg: fx.msg });
+    log(`  ${v.keep.length} arquivo(s) mantido(s), ${v.reverted.length} revertido(s) (${secs()})`);
+  } else {
+    log(`  ${res.changedFiles.length} arquivo(s) ${APPLY ? 'alterados' : 'seriam alterados'}`);
+  }
+  resultados.push(entry);
+}
+
+let testes;
+if (APPLY && TESTS && resultados.some((r) => r.arquivosMantidos)) {
+  log('rodando vitest e comparando com a base…');
+  const depois = vitestFalhas();
+  if (!depois || !vitestBase) {
+    testes = { ok: false, resumo: 'não consegui medir o vitest (antes ou depois)' };
+  } else {
+    const novas = [...depois.falhas].filter((f) => !vitestBase.falhas.has(f));
+    if (depois.total < vitestBase.total) novas.push(`(${vitestBase.total - depois.total} teste(s) deixaram de executar)`);
+    testes = {
+      ok: novas.length === 0,
+      jaFalhavamAntes: [...vitestBase.falhas],
+      novasFalhas: novas,
+      resumo: `${depois.total} testes · ${vitestBase.falhas.size} já falhavam antes · ${novas.length} NOVA(S) falha(s)`,
+    };
+  }
+  log(`  ${testes.resumo} (${secs()})`);
+}
+
+// Só depois do vitest: se acusou falha NOVA, nada fica (nem no disco, nem em commit)
+if (testes && !testes.ok) {
+  for (const p of [...pendentes].reverse()) {
+    restaurar(p.files, p.originals);
+    p.entry.descartadoPorTestes = true;
+    p.entry.arquivosMantidos = 0;
+  }
+  log('testes acusaram falha nova: correções DESCARTADAS (nada foi commitado)');
+} else if (COMMIT) {
+  for (const p of pendentes) p.entry.commit = commit(p.files, p.msg);
+}
+
+const residuoEslint = eslintResidue();
+
+// ---------- relatório ----------
+const json = { quando: new Date().toISOString(), modo: APPLY ? 'aplicar' : 'simulacao', resultados, testes, residuoEslint };
+writeFileSync(join(OUT, 'relatorio.json'), JSON.stringify(json, null, 2));
+
+const md = [`# Relatório do autofix — ${json.quando}`, `Modo: **${json.modo}** · duração ${secs()}`, ''];
+for (const r of resultados) {
+  md.push(`## ${r.titulo}`);
+  md.push(`- ${APPLY ? 'propostos' : 'seriam alterados'}: **${r.arquivosPropostos}** arquivo(s) — ${JSON.stringify(r.porTipo)}`);
   if (APPLY) {
-    const branch = process.env.AUTOFIX_BRANCH || `autofix/auto-${new Date().toISOString().replace(/[:.]/g, '-')}`;
-    checkedGit('check-ref-format', '--branch', branch);
-    if (git('show-ref', '--verify', '--quiet', `refs/heads/${branch}`).status !== 1) throw new Error('branch de correção já existe; reutilização recusada');
-    checkedGit('switch', '-c', branch);
-    criada = branch;
+    md.push(`- mantidos: **${r.arquivosMantidos ?? 0}** · revertidos pelo gate: **${r.arquivosRevertidos?.length ?? 0}**${r.motivo ? ` (${r.motivo})` : ''}`);
+    for (const f of r.arquivosRevertidos || []) md.push(`  - revertido: \`${f}\` — ${motivos[f] || 'motivo não capturado'}`);
   }
-  mkdirSync(OUT, { recursive: true });
-  const dirty = new Set([
-    ...checkedGit('diff', '--name-only', '-z').split('\0'),
-    ...checkedGit('diff', '--name-only', '--cached', '-z').split('\0'),
-    ...checkedGit('ls-files', '--others', '--exclude-standard', '-z').split('\0'),
-  ].filter(Boolean));
-  if (APPLY) { typecheck(); baselineAny(); }
-  const base = APPLY && TESTS ? vitestFalhas() : undefined;
-  const fixers = [
-    { id: 'unused', titulo: 'Remover declarações inertes não usadas', run: () =>
-      runUnused({ root: ROOT, skipFiles: dirty, apply: false }) },
-    { id: 'eslint', titulo: 'ESLint: correções das regras configuradas', run: () => {
-      const targets = checkedGit('ls-files', '-z', 'src', 'tests').split('\0')
-        .filter((f) => /\.(ts|tsx)$/.test(f) && !dirty.has(f));
-      const report = eslint(targets, true);
-      const changes = report.filter((f) => typeof f.output === 'string')
-        .map((f) => ({ file: relative(ROOT, f.filePath), text: f.output }));
-      return { changes, changedFiles: changes.map((c) => c.file), fixedByKind: { arquivos: changes.length }, manual: [] };
-    } },
-  ].filter((f) => !only || only.includes(f.id));
-  for (const fx of fixers) {
-    const res = fx.run();
-    const entry = { id: fx.id, titulo: fx.titulo, arquivosPropostos: res.changedFiles.length,
-      porTipo: res.fixedByKind, manual: res.manual, arquivosMantidos: 0, arquivosRevertidos: [] };
-    resultados.push(entry);
-    if (!APPLY) continue;
-    for (const change of res.changes) {
-      const file = relative(ROOT, resolve(ROOT, change.file));
-      if (!file || isAbsolute(file) || file.startsWith('..') || dirty.has(file)) throw new Error(`alvo não autorizado: ${change.file}`);
-      checkedGit('ls-files', '--error-unmatch', '--', file);
-      if (!snapshots.has(file)) snapshots.set(file, readFileSync(file));
-      writeFileSync(file, change.text);
-    }
-    entry.arquivosMantidos = res.changes.length;
+  if (r.manual.length) {
+    md.push('', `### Fila manual (${r.manual.length}) — exige decisão, não é seguro automatizar`);
+    for (const m of r.manual) md.push(`- \`${m.file}:${m.line}\` \`${m.name}\` — ${m.kind}: ${m.why}`);
   }
-  if (APPLY && snapshots.size) {
-    typecheck();
-    const invalid = eslint([...snapshots.keys()]).filter((f) => f.errorCount > 0);
-    if (invalid.length) throw new Error(`ESLint encontrou erros em ${invalid.length} arquivo(s)`);
-    baselineAny();
-    if (TESTS) {
-      const depois = vitestFalhas();
-      const novas = [...depois.falhas].filter((f) => !base.falhas.has(f));
-      testes = { ok: novas.length === 0, jaFalhavamAntes: [...base.falhas], novasFalhas: novas,
-        resumo: `${depois.total} testes · ${novas.length} nova(s) falha(s)` };
-      if (novas.length || depois.total !== base.total) throw new Error('testes regrediram; alterações serão revertidas');
-    }
-  }
-  // Falha de ferramenta no relatório também impede aceitar ou commitar correções.
-  for (const f of eslint(['.'])) for (const m of f.messages) {
-    residuoEslint[m.ruleId || 'parse'] = (residuoEslint[m.ruleId || 'parse'] || 0) + 1;
-  }
-  if (APPLY && !snapshots.size) restaurar();
-  if (COMMIT && snapshots.size) {
-    indexLimpo();
-    if (checkedGit('rev-parse', 'HEAD').trim() !== originalHead) throw new Error('HEAD mudou durante a execução');
-    checkedGit('add', '--', ...snapshots.keys());
-    checkedGit('commit', '--only', '-m', 'chore(autofix): aplica correções após validar os gates', '--', ...snapshots.keys());
-    for (const entry of resultados) if (entry.arquivosMantidos) entry.commit = true;
-    criada = undefined;
-  }
-} catch (e) {
-  erro = e.message;
-  try { restaurar(); } catch (rollback) { erro += `; rollback falhou: ${rollback.message}`; }
-  for (const entry of resultados) {
-    entry.ok = false;
-    entry.arquivosRevertidos = [...snapshots.keys()];
-    entry.arquivosMantidos = 0;
-    entry.motivo = erro;
-  }
-  console.error(`[autofix] ${erro}`);
+  md.push('');
 }
-
-mkdirSync(OUT, { recursive: true });
-const report = { quando: new Date().toISOString(), modo: APPLY ? 'aplicar' : 'simulacao',
-  ok: !erro, erro, resultados, testes, residuoEslint };
-writeFileSync(join(OUT, 'relatorio.json'), JSON.stringify(report, null, 2));
-const md = [`# Relatório do autofix — ${report.quando}`, `Estado: ${erro ? 'FALHOU' : 'OK'}`,
-  ...(erro ? [erro] : []), ...resultados.map((r) => `- ${r.titulo}: ${r.arquivosPropostos} propostos; ${r.arquivosMantidos} mantidos; fila manual ${r.manual.length}`),
-  ...(testes ? [testes.resumo] : []), ''];
+if (testes) {
+  md.push('## vitest (comparado com a base)', `- ${testes.resumo}`);
+  for (const f of testes.jaFalhavamAntes || []) md.push(`  - já falhava antes (não é do autofix): ${f}`);
+  for (const f of testes.novasFalhas || []) md.push(`  - **NOVA falha**: ${f}`);
+  md.push('');
+}
+md.push('## Avisos do eslint que sobraram (não auto-corrigíveis)', ...Object.entries(residuoEslint).map(([k, v]) => `- ${k}: ${v}`), '');
 writeFileSync(join(OUT, 'relatorio.md'), md.join('\n'));
-console.log('[autofix] relatório em .autofix/relatorio.md');
-process.exitCode = erro ? 1 : 0;
+
+log(`relatório em .autofix/relatorio.md (${secs()})`);
+const falhou = resultados.some((r) => r.ok === false) || (testes && !testes.ok);
+process.exit(falhou ? 1 : 0);

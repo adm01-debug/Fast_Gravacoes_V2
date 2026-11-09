@@ -2,9 +2,20 @@
  * Fixer "unused" — remove código não usado SEM mudar comportamento, usando o
  * language service do próprio TypeScript (mesmos code-fixes do VS Code).
  *
- * Remove tipos, funções locais e variáveis com inicializador comprovadamente inerte.
- * Imports de valor, desestruturações e expressões com coerção/avaliação desconhecida
- * ficam na fila manual: getters, iteradores, módulos e operadores podem ter efeitos.
+ * O que remove (só o que é seguro por construção):
+ *  - imports que JÁ eram não usados no código original (o bundler já os elimina, então zero efeito em runtime).
+ *    Import que só ficou sem uso depois de outra remoção NÃO é removido: o original inicializava o módulo.
+ *  - (opt-in --desestruturacao) elementos de desestruturação não usados — assume que ler a propriedade não tem efeito (getter);
+ *  - `const` não usados cujo inicializador é puro (literal, identificador, função…); `let/var` ficam de fora
+ *    (o code-fix do TS remove também as atribuições posteriores, que podem ter efeito colateral);
+ *  - funções / types / interfaces locais não usados.
+ *
+ * O que NÃO toca (vai para a fila manual do relatório):
+ *  - parâmetros (mudar assinatura pode quebrar chamadores posicionais);
+ *  - variável com inicializador que pode ter efeito colateral (chamada, hook, new…);
+ *  - desestruturação em que TODOS os elementos são não usados (apagaria a chamada);
+ *  - desestruturação sem o opt-in (um getter pode rodar ao ler a propriedade);
+ *  - desestruturação com `...rest` (remover o irmão mudaria o conteúdo do rest).
  */
 import ts from 'typescript';
 import { writeFileSync } from 'node:fs';
@@ -23,7 +34,7 @@ const K = ts.SyntaxKind;
 const LITERAL_KINDS = new Set([
   K.StringLiteral, K.NumericLiteral, K.BigIntLiteral, K.TrueKeyword, K.FalseKeyword,
   K.NullKeyword, K.NoSubstitutionTemplateLiteral, K.RegularExpressionLiteral,
-  K.ArrowFunction, K.FunctionExpression,
+  K.Identifier, K.ThisKeyword, K.ArrowFunction, K.FunctionExpression,
 ]);
 
 function isPure(n) {
@@ -33,12 +44,20 @@ function isPure(n) {
     ts.isParenthesizedExpression(n) || ts.isAsExpression(n) || ts.isNonNullExpression(n) ||
     ts.isSatisfiesExpression(n) || ts.isTypeAssertionExpression(n)
   ) return isPure(n.expression);
+  if (ts.isPrefixUnaryExpression(n)) {
+    // `!x` só faz ToBoolean (não roda código do usuário). `-`/`+` só sobre número literal: em objeto
+    // rodariam valueOf/Symbol.toPrimitive. `~`, `++` e `--` nunca.
+    if (n.operator === K.ExclamationToken) return isPure(n.operand);
+    if (n.operator === K.MinusToken || n.operator === K.PlusToken) return ts.isNumericLiteral(n.operand) || ts.isBigIntLiteral(n.operand);
+    return false;
+  }
   if (ts.isArrayLiteralExpression(n)) return n.elements.every(isPure);
   if (ts.isObjectLiteralExpression(n)) {
     return n.properties.every(
       (p) =>
+        ts.isShorthandPropertyAssignment(p) ||
         (ts.isPropertyAssignment(p) && !ts.isComputedPropertyName(p.name) && isPure(p.initializer)) ||
-        (ts.isMethodDeclaration(p) && !ts.isComputedPropertyName(p.name)),
+        (ts.isMethodDeclaration(p) && !ts.isComputedPropertyName(p.name)), // a chave computada é avaliada na criação do objeto
     );
   }
   return false;
@@ -55,25 +74,60 @@ function nodeAt(sf, pos) {
   return found;
 }
 
+/** Nomes locais que um import declara (default, namespace, nomeados). */
+function importNames(decl) {
+  const c = decl.importClause;
+  const out = [];
+  if (!c) return out;
+  if (c.name) out.push(c.name.text);
+  const nb = c.namedBindings;
+  if (nb) {
+    if (ts.isNamespaceImport(nb)) out.push(nb.name.text);
+    else for (const e of nb.elements) out.push(e.name.text);
+  }
+  return out;
+}
+
 /** Decide se a diagnóstico pode ser corrigido sozinho. Retorna {ok, kind, why}. */
-function decide(sf, d) {
+function decide(sf, d, { desestruturacao, origImports, pass }) {
   const node = nodeAt(sf, d.start);
   for (let p = node; p; p = p.parent) {
     if (ts.isImportDeclaration(p)) {
-      const clause = p.importClause;
-      const typeOnly = clause?.isTypeOnly || (!clause?.name && clause?.namedBindings &&
-        ts.isNamedImports(clause.namedBindings) && clause.namedBindings.elements.every((e) => e.isTypeOnly));
-      return typeOnly ? { ok: true, kind: 'import' } :
-        { ok: false, kind: 'import', why: 'import de valor: remover pode eliminar efeitos do módulo' };
+      // Import que só ficou sem uso DEPOIS de apagarmos outro código (cascata) era "usado" no programa
+      // original: tirá-lo elimina a inicialização do módulo. Só remove o que já era não usado na 1ª passada.
+      const alvo = d.code === 6192 ? importNames(p) : [sf.text.slice(d.start, d.start + d.length)];
+      if (pass > 1 && !alvo.every((n) => origImports.get(sf.fileName)?.has(n)))
+        return { ok: false, kind: 'import', why: 'ficou sem uso só após outra remoção: tirar eliminaria a inicialização do módulo' };
+      return { ok: true, kind: 'import' };
     }
     if (ts.isParameter(p)) return { ok: false, kind: 'param', why: 'parâmetro: mudar assinatura exige revisão' };
     if (ts.isBindingElement(p)) {
-      return { ok: false, kind: 'destructure', why: 'desestruturação pode executar getter, iterador ou valor padrão' };
+      // Ler uma propriedade pode executar um getter, e isso não dá para provar estaticamente: só com opt-in.
+      if (!desestruturacao) return { ok: false, kind: 'destructure', why: 'ler propriedade pode executar getter (use --desestruturacao se aceitar o risco)' };
+      // desestruturação de ARRAY consome o iterador (gerador com efeito colateral): remover o elemento muda o consumo
+      if (ts.isArrayBindingPattern(p.parent)) return { ok: false, kind: 'destructure', why: 'array: remover elemento muda o consumo do iterador' };
+      if (d.code === 6198) return { ok: false, kind: 'destructure', why: 'todos os itens não usados: apagar removeria a chamada' };
+      // valor padrão (`a = f()`) e chave computada (`[k()]: a`) podem ter efeito colateral
+      if (p.initializer && !isPure(p.initializer)) return { ok: false, kind: 'destructure', why: 'valor padrão pode ter efeito colateral' };
+      // chave computada é coagida a string (toString/valueOf pode rodar): só passa literal primitivo
+      if (p.propertyName && ts.isComputedPropertyName(p.propertyName)) {
+        const e = p.propertyName.expression;
+        if (!(ts.isStringLiteral(e) || ts.isNumericLiteral(e) || ts.isNoSubstitutionTemplateLiteral(e)))
+          return { ok: false, kind: 'destructure', why: 'chave computada pode ser coagida (toString/valueOf)' };
+      }
+      const pattern = p.parent;
+      const hasRest = pattern.elements.some((e) => e.dotDotDotToken);
+      if (hasRest) return { ok: false, kind: 'destructure', why: 'tem ...rest: remover irmão muda o rest' };
+      return { ok: true, kind: 'destructure' };
     }
     if (ts.isVariableDeclaration(p)) {
       const list = p.parent;
       const stmt = list?.parent;
       if (!stmt || !ts.isVariableStatement(stmt)) return { ok: false, kind: 'var', why: 'declaração em for/catch' };
+      // `using`/`await using` registram Symbol.dispose/asyncDispose ao sair do escopo: não são const comum
+      if (list.flags & ts.NodeFlags.Using) return { ok: false, kind: 'var', why: 'declaração using/await using registra dispose' };
+      // let/var aceitam atribuições posteriores (`x = efeito()`), e o code-fix do TS as remove junto: só const é seguro
+      if (!(list.flags & ts.NodeFlags.Const)) return { ok: false, kind: 'var', why: 'let/var: atribuições posteriores podem ter efeito colateral' };
       if (!ts.isIdentifier(p.name)) return { ok: false, kind: 'var', why: 'padrão de desestruturação' };
       if (!isPure(p.initializer)) return { ok: false, kind: 'var', why: 'inicializador pode ter efeito colateral (chamada/hook/new)' };
       return { ok: true, kind: 'var' };
@@ -85,10 +139,10 @@ function decide(sf, d) {
 }
 
 /**
- * @param {{ root: string, tsconfig?: string, skipFiles?: Set<string>, apply: boolean }} opts
+ * @param {{ root: string, tsconfig?: string, skipFiles?: Set<string>, apply: boolean, desestruturacao?: boolean }} opts
  * @returns resultado com arquivos alterados, contagem por tipo e a fila manual.
  */
-export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = new Set(), apply }) {
+export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = new Set(), apply, desestruturacao = false }) {
   const cfgPath = resolve(root, tsconfig);
   const cfg = ts.getParsedCommandLineOfConfigFile(
     cfgPath,
@@ -135,6 +189,7 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
 
   const fixedByKind = {};
   let manual = [];
+  const origImports = new Map(); // arquivo -> nomes de import que JÁ eram não usados no código original
 
   for (let pass = 1; pass <= MAX_PASSES; pass++) {
     let changedThisPass = 0;
@@ -147,9 +202,20 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
         .filter((d) => UNUSED_CODES.has(d.code) && d.start !== undefined);
       if (!diags.length) continue;
 
+      if (pass === 1) {
+        const nomes = new Set();
+        for (const d of diags) {
+          const n = nodeAt(sf, d.start);
+          for (let p = n; p; p = p.parent) {
+            if (ts.isImportDeclaration(p)) { for (const x of d.code === 6192 ? importNames(p) : [sf.text.slice(d.start, d.start + d.length)]) nomes.add(x); break; }
+          }
+        }
+        origImports.set(file, nomes);
+      }
+
       const edits = []; // {start, end, newText, kind}
       for (const d of diags) {
-        const dec = decide(sf, d);
+        const dec = decide(sf, d, { desestruturacao, origImports, pass });
         const { line } = sf.getLineAndCharacterOfPosition(d.start);
         const name = text.get(file).slice(d.start, d.start + d.length).slice(0, 60);
         if (!dec.ok) {
@@ -198,22 +264,22 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
     return true;
   });
 
-  ls.dispose();
   const changedFiles = [...text.keys()].filter((f) => text.get(f) !== original.get(f));
   if (apply) {
     for (const f of changedFiles) writeFileSync(f, text.get(f));
   }
   return {
     changedFiles: changedFiles.map((f) => relative(root, f)),
+    // conteúdo de ANTES, para o orquestrador desfazer sem depender do git
+    originals: Object.fromEntries(changedFiles.map((f) => [relative(root, f), original.get(f)])),
     fixedByKind,
     manual,
-    changes: changedFiles.map((f) => ({ file: relative(root, f), text: text.get(f) })),
   };
 }
 
 // Execução direta: node scripts/autofix/unused.mjs [--apply]
 if (import.meta.url === `file://${process.argv[1]}`) {
   const apply = process.argv.includes('--apply');
-  const r = runUnused({ root: process.cwd(), apply });
+  const r = runUnused({ root: process.cwd(), apply, desestruturacao: process.argv.includes('--desestruturacao') });
   console.log(JSON.stringify({ apply, arquivos: r.changedFiles.length, porTipo: r.fixedByKind, manual: r.manual.length }, null, 2));
 }
