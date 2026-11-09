@@ -61,7 +61,7 @@ Respeite o esquema do módulo que você está tocando.
 |---|---|
 | `audit-gate.mjs` | `npm audit` com allowlist por advisory; roda no CI e no deploy |
 | `check-any-baseline.mjs` | Ratchet de `any` (`npm run quality:any`, hook `pre-commit`) |
-| `bundle-report.mjs` · `bundle-diff.mjs` · `bundle.test.mjs` | Relatório/diff de bundle e budgets (o `.test.mjs` não roda em CI) |
+| `bundle-report.mjs` · `bundle-diff.mjs` · `bundle.test.mjs` | Relatório/diff de bundle e budgets (`npm run test:scripts`; não roda em CI) |
 | `rls-regression.mjs` | Teste negativo de RLS contra produção (job do CI) |
 | `graphify.mjs` + `graphify/` | Todos os `npm run graph:*` (frontend Node + pipeline Python) |
 | `ci/check-claude-md-integrity.mjs` | Garante que `AGENTS.md` + `docs/agentes/` não foram apagados ou esvaziados |

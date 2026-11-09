@@ -11,8 +11,16 @@
  * Na base o conjunto e o que existir la (na main antiga, CLAUDE.md + AGENTS.md).
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { execSync } from 'node:child_process';
-import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// Caminhos abaixo sao relativos a raiz do repo: nao depender do cwd de quem chama.
+process.chdir(join(dirname(fileURLToPath(import.meta.url)), '..', '..'));
+
+// git sem shell: ref e caminho vao como argumentos (nome com espaco/acento, ref vinda de env).
+const git = (...args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+const ehMd = (f) => f.toLowerCase().endsWith('.md');
 
 const AGENTS = 'AGENTS.md';
 const DOCS_DIR = 'docs/agentes';
@@ -40,7 +48,11 @@ try {
   process.exit();
 }
 
-const missing = REQUIRED_SECTIONS.filter((s) => !content.includes(s));
+// Cabecalho de verdade: no inicio da linha e terminando ali ou seguido de separador
+// ("## Banco — ler ..."). `includes` aceitava "## Bancos de dados" e a secao citada no meio de um paragrafo.
+const temSecao = (s) =>
+  new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?=$|[^\\p{L}\\p{N}])`, 'mu').test(content);
+const missing = REQUIRED_SECTIONS.filter((s) => !temSecao(s));
 if (missing.length > 0) {
   for (const s of missing) console.error(`::error::${AGENTS}: secao obrigatoria ausente: ${s}`);
   process.exitCode = 1;
@@ -50,13 +62,17 @@ if (missing.length > 0) {
 function bytesAtuais() {
   let total = 0;
   for (const f of CONJUNTO_RAIZ) {
-    if (existsSync(f)) total += Buffer.byteLength(readFileSync(f, 'utf8'));
+    if (existsSync(f)) total += Buffer.byteLength(readFileSync(f));
   }
-  if (existsSync(DOCS_DIR)) {
-    for (const f of readdirSync(DOCS_DIR)) {
-      if (f.endsWith('.md')) total += Buffer.byteLength(readFileSync(join(DOCS_DIR, f), 'utf8'));
+  // Recursivo, como o `ls-tree -r` da base: subpasta nao pode virar "encolheu".
+  const somar = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) somar(full);
+      else if (ehMd(e.name)) total += Buffer.byteLength(readFileSync(full));
     }
-  }
+  };
+  if (existsSync(DOCS_DIR)) somar(DOCS_DIR);
   return total;
 }
 
@@ -66,8 +82,7 @@ function bytesNaBase(base) {
   const porArquivo = new Map();
   const tamanho = (path) => {
     try {
-      const out = execSync(`git cat-file -s ${base}:${path}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-      porArquivo.set(path, Number.parseInt(out.trim(), 10) || 0);
+      porArquivo.set(path, Number.parseInt(git('cat-file', '-s', `${base}:${path}`).trim(), 10) || 0);
     } catch {
       /* nao existe na base */
     }
@@ -75,11 +90,11 @@ function bytesNaBase(base) {
   for (const f of CONJUNTO_RAIZ) tamanho(f);
   let lista = '';
   try {
-    lista = execSync(`git ls-tree -r --name-only ${base} -- ${DOCS_DIR}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    lista = git('ls-tree', '-r', '-z', '--name-only', base, '--', DOCS_DIR);
   } catch {
     lista = '';
   }
-  for (const path of lista.split('\n').map((l) => l.trim()).filter((l) => l.endsWith('.md'))) tamanho(path);
+  for (const path of lista.split('\0').filter((l) => l && ehMd(l))) tamanho(path);
   if (porArquivo.size === 0) return null;
   let total = 0;
   for (const n of porArquivo.values()) total += n;
@@ -87,6 +102,17 @@ function bytesNaBase(base) {
 }
 
 const BASE = process.env.CLAUDE_MD_BASE || 'HEAD';
+// Base pedida explicitamente e que nao resolve (typo, fetch que falhou) nao pode virar
+// "sem base, tudo certo": era exatamente o caminho pelo qual um wipe passava verde.
+if (process.env.CLAUDE_MD_BASE) {
+  try {
+    git('rev-parse', '--verify', '--quiet', '--end-of-options', `${BASE}^{commit}`);
+  } catch {
+    console.error(`::error::CLAUDE_MD_BASE="${BASE}" nao resolve para um commit — a comparacao com a base nao rodou.`);
+    process.exitCode = 1;
+    process.exit();
+  }
+}
 const atual = bytesAtuais();
 const base = bytesNaBase(BASE);
 
@@ -107,7 +133,7 @@ if (base) {
       falhas += 1;
       continue;
     }
-    const agora = Buffer.byteLength(readFileSync(path, 'utf8'));
+    const agora = Buffer.byteLength(readFileSync(path));
     if (agora < naBase * FILE_SHRINK_THRESHOLD) {
       console.error(`::error::${path} encolheu ${Math.round((1 - agora / naBase) * 100)}% vs ${BASE} (atual: ${agora} bytes, base: ${naBase} bytes); limite por arquivo e ${Math.round(FILE_SHRINK_THRESHOLD * 100)}%.`);
       falhas += 1;
