@@ -18,6 +18,7 @@ cat > "$UNITS/fast-gravacoes-rotina.service" <<UNIT
 Description=Rotina diaria Fast_Gravacoes_V2 (audit + autofix, sem IA)
 [Service]
 Type=oneshot
+Environment=FG_REPO=$REPO
 ExecStart=/usr/bin/flock -n /tmp/fast-gravacoes-rotina.lock $NODE $STORE/rotina.mjs
 Nice=15
 IOSchedulingClass=idle

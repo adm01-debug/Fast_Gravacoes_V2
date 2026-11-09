@@ -46,7 +46,7 @@ const secs = () => `${Math.round((Date.now() - t0) / 1000)}s`;
 const motivos = {}; // arquivo -> primeira mensagem de erro do gate (vai para o relatório)
 
 function tsc() {
-  const r = sh('node', [bin('typescript/bin/tsc'), '-p', 'tsconfig.app.json', '--noEmit']);
+  const r = sh(process.execPath, [bin('typescript/bin/tsc'), '-p', 'tsconfig.app.json', '--noEmit']);
   const out = r.stdout + r.stderr;
   const files = new Set();
   for (const m of out.matchAll(/^(.+?)\((\d+),\d+\): (error TS\d+: .+)$/gm)) {
@@ -58,7 +58,7 @@ function tsc() {
 
 function eslintErrors(files) {
   if (!files.length) return { ok: true, files: [] };
-  const r = sh('node', [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', ...files]);
+  const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', ...files]);
   let bad = [];
   try {
     const res = JSON.parse(r.stdout).filter((f) => f.errorCount > 0);
@@ -74,7 +74,7 @@ function eslintErrors(files) {
 }
 
 function anyBaseline() {
-  return sh('node', ['scripts/check-any-baseline.mjs']).status === 0;
+  return sh(process.execPath, ['scripts/check-any-baseline.mjs']).status === 0;
 }
 
 /** Roda os gates; reverte só os arquivos que quebraram; repete até 3 vezes. */
@@ -115,19 +115,25 @@ function commit(files, msg) {
     log(`commits irão para a branch ${name}`);
   }
   git('add', '--', ...files);
-  const r = git('commit', '-m', msg);
+  // --only: não leva junto o que o usuário já tinha em staged
+  const r = git('commit', '-m', msg, '--only', '--', ...files);
   if (r.status !== 0) throw new Error(`commit recusado (hook?):\n${r.stdout}${r.stderr}`);
   return true;
 }
 
 function vitestFalhas() {
   const out = join(OUT, 'vitest.json');
-  sh('node', [bin('vitest/vitest.mjs'), 'run', '--reporter=json', `--outputFile=${out}`]);
+  sh(process.execPath, [bin('vitest/vitest.mjs'), 'run', '--reporter=json', `--outputFile=${out}`]);
   try {
     const j = JSON.parse(readFileSync(out, 'utf8'));
     const falhas = new Set();
-    for (const f of j.testResults)
-      for (const t of f.assertionResults) if (t.status === 'failed') falhas.add(`${f.name.replace(ROOT + '/', '')} > ${t.fullName}`);
+    for (const f of j.testResults) {
+      const rel = f.name.replace(ROOT + '/', '');
+      const falhos = f.assertionResults.filter((t) => t.status === 'failed');
+      for (const t of falhos) falhas.add(`${rel} > ${t.fullName}`);
+      // suíte que nem carregou (erro de import/coleta) não tem assertion "failed": conta do mesmo jeito
+      if (f.status === 'failed' && !falhos.length) falhas.add(`${rel} > (suíte falhou ao carregar)`);
+    }
     return { total: j.numTotalTests, falhas };
   } catch {
     return null;
@@ -152,7 +158,7 @@ const fixers = [
         .filter((f) => /\.(ts|tsx)$/.test(f) && !skip.has(f));
       // --fix-dry-run devolve o texto corrigido por arquivo (campo `output`), sem gravar:
       // assim sei exatamente quais arquivos mudariam, mesmo que outro fixer já os tenha tocado.
-      const r = sh('node', [bin('eslint/bin/eslint.js'), '--fix-dry-run', '--max-warnings', '99999', '-f', 'json', ...targets]);
+      const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--fix-dry-run', '--max-warnings', '99999', '-f', 'json', ...targets]);
       let results = [];
       try { results = JSON.parse(r.stdout); } catch { /* ignora */ }
       const changed = results.filter((f) => typeof f.output === 'string');
@@ -168,7 +174,7 @@ const fixers = [
 
 // ---------- fila manual do eslint (só leitura) ----------
 function eslintResidue() {
-  const r = sh('node', [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', '.']);
+  const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', '.']);
   const rules = {};
   try {
     for (const f of JSON.parse(r.stdout))
@@ -228,6 +234,7 @@ if (APPLY && TESTS && resultados.some((r) => r.arquivosMantidos)) {
     testes = { ok: false, resumo: 'não consegui medir o vitest (antes ou depois)' };
   } else {
     const novas = [...depois.falhas].filter((f) => !vitestBase.falhas.has(f));
+    if (depois.total < vitestBase.total) novas.push(`(${vitestBase.total - depois.total} teste(s) deixaram de executar)`);
     testes = {
       ok: novas.length === 0,
       jaFalhavamAntes: [...vitestBase.falhas],
