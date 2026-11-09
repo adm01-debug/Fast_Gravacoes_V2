@@ -5,7 +5,7 @@
  * Uso:
  *   node scripts/autofix/run.mjs                # simulação: só mede e escreve o relatório
  *   node scripts/autofix/run.mjs --apply        # aplica, valida e reverte o que quebrar
- *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção (branch autofix/AAAA-MM-DD)
+ *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção, DEPOIS dos gates (branch autofix/AAAA-MM-DD)
  *   node scripts/autofix/run.mjs --apply --tests    # + vitest completo no fim
  *   node scripts/autofix/run.mjs --only=unused      # unused | eslint
  *   node scripts/autofix/run.mjs --desestruturacao  # (opt-in) também remove itens de desestruturação não usados
@@ -221,6 +221,7 @@ if (APPLY && TESTS) {
 }
 
 const resultados = [];
+const pendentes = []; // correções validadas por tsc/eslint, ainda sem commit (o commit só vem DEPOIS do vitest)
 for (const fx of fixers) {
   log(`→ ${fx.titulo}`);
   const res = fx.run(dirty);
@@ -231,7 +232,7 @@ for (const fx of fixers) {
     entry.arquivosRevertidos = v.reverted;
     entry.ok = v.ok;
     entry.motivo = v.why;
-    if (COMMIT && v.keep.length) entry.commit = commit(v.keep, fx.msg);
+    if (v.keep.length) pendentes.push({ entry, files: v.keep, originals: res.originals || {}, msg: fx.msg });
     log(`  ${v.keep.length} arquivo(s) mantido(s), ${v.reverted.length} revertido(s) (${secs()})`);
   } else {
     log(`  ${res.changedFiles.length} arquivo(s) ${APPLY ? 'alterados' : 'seriam alterados'}`);
@@ -256,6 +257,18 @@ if (APPLY && TESTS && resultados.some((r) => r.arquivosMantidos)) {
     };
   }
   log(`  ${testes.resumo} (${secs()})`);
+}
+
+// Só depois do vitest: se acusou falha NOVA, nada fica (nem no disco, nem em commit)
+if (testes && !testes.ok) {
+  for (const p of pendentes) {
+    restaurar(p.files, p.originals);
+    p.entry.descartadoPorTestes = true;
+    p.entry.arquivosMantidos = 0;
+  }
+  log('testes acusaram falha nova: correções DESCARTADAS (nada foi commitado)');
+} else if (COMMIT) {
+  for (const p of pendentes) p.entry.commit = commit(p.files, p.msg);
 }
 
 const residuoEslint = eslintResidue();
