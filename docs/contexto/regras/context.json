@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a376146b905798e3593e6fcad1b1adaa1efe2fa9",
+  "sha": "dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-09 03:33 UTC",
-  "files_total": 1451,
-  "code_files": 1328,
-  "code_lines": 185652
+  "generated_at": "2026-11-09 05:22 UTC",
+  "files_total": 1459,
+  "code_files": 1329,
+  "code_lines": 185775
  },
  "version": "1.3.2",
- "facts_hash": "cb093115359045eb",
+ "facts_hash": "7b5a63b684995d98",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -217,7 +217,7 @@
    ".tsx": 656,
    ".ts": 395,
    ".sql": 251,
-   ".mjs": 11,
+   ".mjs": 12,
    ".py": 11,
    ".js": 4
   },
@@ -26302,8 +26302,8 @@
   },
   {
    "module": "scripts",
-   "files": 21,
-   "lines": 8799,
+   "files": 22,
+   "lines": 8922,
    "tables": [
     "a",
     "contacts",
@@ -26391,6 +26391,7 @@
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/graphify/corpus.py",
     "scripts/graphify/enrich.py",
     "scripts/graphify/pipeline.py",
@@ -30734,6 +30735,9 @@
    ],
    "CI": [
     "playwright.config.ts"
+   ],
+   "CLAUDE_MD_BASE": [
+    "scripts/ci/check-claude-md-integrity.mjs"
    ],
    "CODE_SCAN_DIRS": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -66455,6 +66459,40 @@
    ],
    "uses_service_role": true
   },
+  "scripts/ci/check-claude-md-integrity.mjs": {
+   "path": "scripts/ci/check-claude-md-integrity.mjs",
+   "lines": 123,
+   "env": [
+    "CLAUDE_MD_BASE"
+   ],
+   "params": [
+    {
+     "name": "AGENTS",
+     "value": "'AGENTS.md'"
+    },
+    {
+     "name": "DOCS_DIR",
+     "value": "'docs/agentes'"
+    },
+    {
+     "name": "SHRINK_THRESHOLD",
+     "value": "0.30"
+    },
+    {
+     "name": "FILE_SHRINK_THRESHOLD",
+     "value": "0.50"
+    }
+   ],
+   "rule_comments": [
+    "100)}% vs ${BASE} (atual: ${agora} bytes, base: ${naBase} bytes); limite por arquivo e ${Math.round(FILE_SHRINK_THRESHOLD * 100)}%.`);"
+   ],
+   "doc": "!/usr/bin/env node",
+   "percents": [
+    "* AGENTS.md + CLAUDE.md + docs/agentes/*.md nao encolheu >30% em bytes vs a base, e cada arquivo",
+    "* vigiado (AGENTS.md e cada docs/agentes/*.md que exista na base) continua existindo com >=50% do",
+    "// com >= 50% do tamanho de la. CLAUDE.md fica de fora: e so `@AGENTS.md` por design."
+   ]
+  },
   "scripts/graphify/corpus.py": {
    "path": "scripts/graphify/corpus.py",
    "lines": 77,
@@ -92412,10 +92450,59 @@
   }
  },
  "git": {
-  "sha": "a376146b905798e3593e6fcad1b1adaa1efe2fa9",
+  "sha": "dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "dcdf3a3",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)",
+    "files": [
+     "docs/operacoes/openapi-edge-functions.yaml",
+     "index.html",
+     "vercel.json"
+    ]
+   },
+   {
+    "sha": "961751a",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)",
+    "files": [
+     "docs/adr/0001-supabase-self-hosted-unico.md",
+     "docs/adr/0005-supabase-cloud-e-o-backend-oficial.md"
+    ]
+   },
+   {
+    "sha": "45a5eb9",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)",
+    "files": [
+     ".claude/hooks/session-start.sh",
+     ".claude/settings.json"
+    ]
+   },
+   {
+    "sha": "94c39a5",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "chore(agentes): padrão enxuto de instruções com referência por tema (#141)",
+    "files": [
+     ".agents/skills/fast-grava-es-v2/SKILL.md",
+     ".claude/skills/fast-grava-es-v2/SKILL.md",
+     "AGENTS.md",
+     "docs/agentes/arquitetura.md",
+     "docs/agentes/banco.md",
+     "docs/agentes/github-ci.md",
+     "docs/agentes/mapa-repo.md",
+     "docs/agentes/vercel-deploy.md",
+     "scripts/ci/check-claude-md-integrity.mjs",
+     "scripts/supabase_snapshot/README.md"
+    ]
+   },
    {
     "sha": "a376146",
     "date": "2026-11-08",
@@ -92806,73 +92893,32 @@
      "PENDENCIAS.md",
      "docs/estado/BALANCO-DOCS-2026-10-28.md"
     ]
-   },
-   {
-    "sha": "2708924",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(nav,kpis): paleta de comandos com rotas mortas e KPIs em UTC (#113)",
-    "files": [
-     "src/components/navigation/CommandPaletteCommands.tsx",
-     "src/features/analytics/hooks/useKPIs.test.ts",
-     "src/features/analytics/hooks/useKPIs.ts",
-     "src/lib/dateUtils.ts",
-     "src/test/dateUtils.test.ts"
-    ]
-   },
-   {
-    "sha": "23da9a4",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "docs(ci): fechamento da meta — todos os workflows verdes na main (#111)",
-    "files": [
-     "PENDENCIAS.md",
-     "RELATORIO_CI.md"
-    ]
-   },
-   {
-    "sha": "776d83b",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(validacao): snapshot da sidebar, auth de cron nas functions e gaps de UX (#110)",
-    "files": [
-     ".github/workflows/ci.yml",
-     ".github/workflows/db-admin.yml",
-     "PENDENCIAS.md",
-     "src/components/layout/AppSidebar.tsx",
-     "src/components/qrcode/scanHistorySounds.ts",
-     "src/features/notifications/hooks/useNotificationSounds.ts",
-     "src/features/packaging/hooks/useSoundFeedback.ts",
-     "supabase/functions/_shared/cronAuth.test.ts",
-     "supabase/functions/calculate-rankings/index.ts",
-     "supabase/functions/send-email-report/index.ts",
-     "supabase/functions/validate-login-ip/index.ts",
-     "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-expanded-chromium-linux.png"
-    ]
-   },
-   {
-    "sha": "1951d27",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "ci(db-admin): apply enrola fator TOTP verificado da conta E2E (#109)",
-    "files": [
-     ".github/workflows/db-admin.yml",
-     "PENDENCIAS.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "AGENTS.md",
-    4
-   ],
-   [
-    "PENDENCIAS.md",
-    4
+    5
    ],
    [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
+   ],
+   [
+    ".agents/skills/fast-grava-es-v2/SKILL.md",
+    2
+   ],
+   [
+    ".claude/skills/fast-grava-es-v2/SKILL.md",
+    2
+   ],
+   [
+    "docs/agentes/arquitetura.md",
+    2
+   ],
+   [
+    "scripts/supabase_snapshot/README.md",
+    2
    ],
    [
     "src/pages/PublicTrackingPage.tsx",
@@ -92903,10 +92949,6 @@
     2
    ],
    [
-    "supabase/functions/calculate-rankings/index.ts",
-    2
-   ],
-   [
     "supabase/functions/cron-cleanup/index.ts",
     2
    ],
@@ -92915,15 +92957,7 @@
     2
    ],
    [
-    "supabase/functions/send-email-report/index.ts",
-    2
-   ],
-   [
     "supabase/functions/send-push-notification/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/validate-login-ip/index.ts",
     2
    ],
    [

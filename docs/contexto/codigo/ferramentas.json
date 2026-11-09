@@ -5,9 +5,9 @@
   "linguagens": [
    "TypeScript (1051)",
    "SQL (251)",
-   "Markdown (63)",
-   "JSON (19)",
-   "JavaScript (15)",
+   "Markdown (68)",
+   "JSON (20)",
+   "JavaScript (16)",
    "Python (11)",
    "YAML (9)",
    "CSS (2)"
@@ -440,8 +440,8 @@
   },
   {
    "arquivo": "AGENTS.md",
-   "titulo": "AGENTS.md",
-   "linhas": 79
+   "titulo": "AGENTS.md — Fast Gravações V2",
+   "linhas": 139
   },
   {
    "arquivo": "ANALISE_TECNICA_SISTEMA.md",
@@ -530,12 +530,12 @@
    "arquivos_md": 20
   },
   {
-   "pasta": "docs/adr",
-   "arquivos_md": 4
+   "pasta": "docs/agentes",
+   "arquivos_md": 7
   },
   {
-   "pasta": "docs/agentes",
-   "arquivos_md": 3
+   "pasta": "docs/adr",
+   "arquivos_md": 5
   },
   {
    "pasta": "docs/contexto",

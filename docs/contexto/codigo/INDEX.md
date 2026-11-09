@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a376146b905798e3593e6fcad1b1adaa1efe2fa9` (2026-11-08T19:41:53-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3` (2026-11-08T22:01:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1051), SQL (251), Markdown (63), JSON (19), JavaScript (15), Python (11), YAML (9), CSS (2)
+- linguagens: TypeScript (1051), SQL (251), Markdown (68), JSON (20), JavaScript (16), Python (11), YAML (9), CSS (2)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1454 |
-| arquivos_codigo | 1074 |
-| linhas_codigo | 170746 |
+| arquivos_total | 1462 |
+| arquivos_codigo | 1075 |
+| linhas_codigo | 170869 |
 | rotas | 58 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -50,8 +50,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | cron_jobs | 4 |
 | testes | 103 |
 | workflows | 7 |
-| scripts | 17 |
-| docs_md | 63 |
+| scripts | 18 |
+| docs_md | 68 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
@@ -256,23 +256,23 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6532 nós · 20534 arestas · 606 comunidades · grafo do commit `a376146b`
-- comunidades maiores: card.tsx (226), Button (200), client.ts (141), MainLayout.tsx (131), utils.ts (122), dialog.tsx (121), cn (116), ExecutiveDashboard.tsx (100), DailyCalendar.tsx (95), snapshot.py (90), GraphifyIntegrationTests (86), notifications/index.ts (86)
+- 6542 nós · 20542 arestas · 607 comunidades · grafo do commit `dcdf3a3e`
+- comunidades maiores: card.tsx (170), KPIDashboard.tsx (166), input.tsx (131), Button (110), badge.tsx (110), showErrorToast (99), production/index.ts (97), cn (96), analytics/index.ts (92), snapshot.py (90), useAuth (89), GraphifyIntegrationTests (86)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), useDirtyGuard() (src/contexts/DirtyFormContext.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (15)
-- AGENTS.md (9)
+- AGENTS.md (10)
 - package-lock.json (9)
 - deno.lock (8)
 - .github/workflows/db-admin.yml (7)
 - PENDENCIAS.md (7)
 - CLAUDE.md (6)
+- index.html (6)
 - package.json (6)
 - supabase/config.toml (6)
 - .github/workflows/deploy.yml (5)
-- index.html (5)
 - scripts/audit-gate.mjs (5)
 - tests/e2e/offline.spec.ts (5)
 - tests/e2e/visual-regression.spec.ts (5)
@@ -323,7 +323,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Documentos (raiz e docs/)
 - `.github/PULL_REQUEST_TEMPLATE.md` (18 linhas)
-- `AGENTS.md` — AGENTS.md (79 linhas)
+- `AGENTS.md` — AGENTS.md — Fast Gravações V2 (139 linhas)
 - `ANALISE_TECNICA_SISTEMA.md` — Relatório de Análise Técnica — FAST GRAVAÇÕES ES v2 (837 linhas)
 - `AUDITORIA_CORRECOES_2026-05-29.md` — Auditoria Técnica — Correções Aplicadas (159 linhas)
 - `AUDITORIA_EXAUSTIVA_2026-07-18.md` — Auditoria Exaustiva & Remediação — FAST GRAVAÇÕES ES v2 (178 linhas)
@@ -340,10 +340,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/plano-50-etapas-consolidacao.md` — Plano de consolidação em 50 etapas — FAST GRAVAÇÕES ES v2 (819 linhas)
 - `docs/plano-graphify-50-etapas.md` — Plano de implementação Graphify — 50 etapas (647 linhas)
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
-- subpastas de docs/: docs/estado (20), docs/adr (4), docs/agentes (3), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/post-mortems (1)
+- subpastas de docs/: docs/estado (20), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-08 `dcdf3a3` fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)
+- 2026-11-08 `961751a` docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)
+- 2026-11-08 `45a5eb9` feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)
+- 2026-11-08 `94c39a5` chore(agentes): padrão enxuto de instruções com referência por tema (#141)
 - 2026-11-08 `a376146` feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4
 - 2026-11-08 `5db90ba` feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)
 - 2026-11-08 `3720de3` fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)
@@ -355,10 +359,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `5e0a121` chore: aprimora scripts de bundle, graphify e RLS regression (#132)
 - 2026-11-07 `249d814` fix: remove policy INSERT permissiva e reforca verify RLS (#133)
 - 2026-11-07 `87e85e6` fix: redige sufixo de chave Stripe dos docs de estado (#131)
-- 2026-11-06 `28215b3` infra: migra imports esm.sh para npm nas edge functions (#129)
-- 2026-11-05 `d6c9c11` fix: atualiza hash tslib@2.8.1 no deno.lock (esm.sh CDN update)
-- 2026-11-05 `ef2da88` fix: adicionar --yes ao supabase db push (CI não-interativo)
-- 2026-11-05 `6da824c` fix: verificação RLS USING(true) em políticas de escrita via migration
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 17,
+ "total": 18,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -87,6 +87,17 @@
     "quality:any",
     "quality:any:update"
    ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
+   "descricao": "* Garante que as instrucoes para agentes nao foram apagadas ou esvaziadas por outra sessao.",
+   "linhas": 123,
+   "env": [
+    "CLAUDE_MD_BASE"
+   ],
+   "npm_scripts": [],
    "workflows": [],
    "orfao": false
   },
