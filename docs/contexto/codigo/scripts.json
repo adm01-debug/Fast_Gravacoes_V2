@@ -98,7 +98,9 @@
     "CLAUDE_MD_BASE"
    ],
    "npm_scripts": [],
-   "workflows": [],
+   "workflows": [
+    "ci.yml"
+   ],
    "orfao": false
   },
   {

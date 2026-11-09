@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3` (2026-11-08T22:01:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d61122af8d5d5b6e30640923f427b881be71998d` (2026-11-09T07:02:38-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -256,13 +256,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6542 nós · 20542 arestas · 607 comunidades · grafo do commit `dcdf3a3e`
-- comunidades maiores: card.tsx (170), KPIDashboard.tsx (166), input.tsx (131), Button (110), badge.tsx (110), showErrorToast (99), production/index.ts (97), cn (96), analytics/index.ts (92), snapshot.py (90), useAuth (89), GraphifyIntegrationTests (86)
+- 6542 nós · 20542 arestas · 607 comunidades · grafo do commit `d61122af`
+- comunidades maiores: card.tsx (170), KPIDashboard.tsx (166), input.tsx (125), badge.tsx (110), Button (109), showErrorToast (99), production/index.ts (97), cn (96), analytics/index.ts (92), snapshot.py (90), useAuth (89), GraphifyIntegrationTests (86)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), useDirtyGuard() (src/contexts/DirtyFormContext.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/ci.yml (15)
+- .github/workflows/ci.yml (16)
 - AGENTS.md (10)
 - package-lock.json (9)
 - deno.lock (8)
@@ -344,6 +344,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-09 `d61122a` ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)
 - 2026-11-08 `dcdf3a3` fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)
 - 2026-11-08 `961751a` docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)
 - 2026-11-08 `45a5eb9` feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)
@@ -358,7 +359,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `c98b362` chore: instruções enxutas para agentes (#130)
 - 2026-11-07 `5e0a121` chore: aprimora scripts de bundle, graphify e RLS regression (#132)
 - 2026-11-07 `249d814` fix: remove policy INSERT permissiva e reforca verify RLS (#133)
-- 2026-11-07 `87e85e6` fix: redige sufixo de chave Stripe dos docs de estado (#131)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

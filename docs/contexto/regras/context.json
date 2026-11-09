@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3",
+  "sha": "d61122af8d5d5b6e30640923f427b881be71998d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-09 05:22 UTC",
+  "generated_at": "2026-11-09 10:03 UTC",
   "files_total": 1459,
   "code_files": 1329,
   "code_lines": 185775
@@ -92450,10 +92450,19 @@
   }
  },
  "git": {
-  "sha": "dcdf3a3e60b5ce7d92d2265b0334b3981913bbd3",
+  "sha": "d61122af8d5d5b6e30640923f427b881be71998d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d61122a",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "dcdf3a3",
     "date": "2026-11-08",
@@ -92882,16 +92891,6 @@
      "supabase/migrations/20261028223000_bitrix_oauth_states.sql",
      "supabase/migrations/20261028233000_approve_maintenance_atomic.sql",
      "supabase/migrations/20261028234500_maintenance_schedules_manager.sql"
-    ]
-   },
-   {
-    "sha": "3f2dee6",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "docs(estado): balanço de planos × código 2026-10-28 — auditoria exaustiva dos docs (#112)",
-    "files": [
-     "PENDENCIAS.md",
-     "docs/estado/BALANCO-DOCS-2026-10-28.md"
     ]
    }
   ],

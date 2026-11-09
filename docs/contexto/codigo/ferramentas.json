@@ -169,6 +169,7 @@
    "scripts_usados": [
     "scripts/audit-gate.mjs",
     "scripts/bundle-diff.mjs",
+    "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/rls-regression.mjs"
    ],
    "npm_scripts": [
