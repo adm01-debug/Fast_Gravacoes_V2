@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { DemoDataBadge } from '@/components/ui/demo-data-badge';
 import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, Database, Fingerprint, Lock, Zap, Search } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export function BlockchainIntegrityCard() {
   return (

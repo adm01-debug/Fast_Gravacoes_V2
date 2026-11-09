@@ -2,7 +2,7 @@ import { useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown, Target, Zap, ShieldCheck, Gauge } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface OEEGaugeCardProps {
   title: string;

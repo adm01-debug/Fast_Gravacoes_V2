@@ -4,33 +4,31 @@
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
 import * as React from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
   BrainCircuit, ArrowRight, Zap, AlertTriangle,
-  CheckCircle2, Sparkles, ChevronRight, Bell, Settings,
-  Clock, Info, LayoutList, Split, TrendingUp, ShieldCheck
-} from 'lucide-react';
+  Sparkles, ChevronRight, Bell, Settings,
+  Clock, Info, LayoutList, Split, TrendingUp} from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog';
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
-  SheetDescription, SheetFooter, SheetTrigger
-} from '@/components/ui/sheet';
+  SheetDescription, SheetFooter} from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { SequencingSuggestion, useSmartSequencingWithActions } from '@/features/jobs';
-import { useLoadBalancingWithActions, useBottleneckPrediction, LoadBalancingSuggestion } from '@/features/analytics';
+import { useSmartSequencingWithActions } from '@/features/jobs';
+import { useLoadBalancingWithActions, useBottleneckPrediction } from '@/features/analytics';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export function KanbanAIAdvisor() {
   const { suggestions: sequenceSuggestions, totalSavings, applySequencing, isApplying: isApplyingSequencing } = useSmartSequencingWithActions();

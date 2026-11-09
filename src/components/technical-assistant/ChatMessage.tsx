@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Bot, User, Copy, Check, ThumbsUp, ThumbsDown, Zap, ShieldCheck, Share2, FileJson, AlertTriangle } from "lucide-react";
+import { Bot, User, Copy, Check, ThumbsUp, ThumbsDown, Zap, ShieldCheck, Share2, FileJson } from "lucide-react";
 import { SafetyAlert } from './SafetyAlert';
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";

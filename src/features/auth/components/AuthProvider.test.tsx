@@ -57,7 +57,6 @@ describe('AuthContext', () => {
 
     // Default chainable mock for supabase.from()
     const chainable: Record<string, unknown> = {};
-    const chain = () => chainable;
     ['select','insert','update','delete','upsert','eq','neq','gt','lt','gte','lte','in','is','order','limit','single','maybeSingle','range'].forEach(m => {
       chainable[m] = vi.fn(() => Promise.resolve({ data: [], error: null, count: 0 }));
       (chainable[m] as ReturnType<typeof vi.fn>).mockReturnValue(chainable);

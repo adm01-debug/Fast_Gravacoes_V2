@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   Activity,
   ArrowRight,
-  Clock,
   User,
   Edit,
   Trash2,

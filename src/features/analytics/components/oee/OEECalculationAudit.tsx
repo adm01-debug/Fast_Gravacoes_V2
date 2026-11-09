@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calculator, Info, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
+import { Calculator, Info, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MachineOEE } from '@/features/production';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,6 @@ export const OEECalculationAudit = memo(function OEECalculationAudit({ machine, 
     actualOperatingMinutes,
     idealCycleMinutes,
     totalPiecesProduced,
-    goodPieces,
     lostPieces
   } = machine;
 

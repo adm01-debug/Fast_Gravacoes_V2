@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { useAuth } from '@/features/auth';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';

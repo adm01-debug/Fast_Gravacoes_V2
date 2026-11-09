@@ -8,7 +8,7 @@ import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
-import { showErrorToast, createAppError } from '@/lib/errorHandling';
+import { createAppError } from '@/lib/errorHandling';
 
 const FAVORITES_ERROR_CONTEXT = {
   fetch: { entity: 'user_favorites', operation: 'fetch' },
@@ -51,7 +51,7 @@ export function useQuickFavorites() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [hasMigrated, setHasMigrated] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncing] = useState(false);
 
   // Fetch favorites from database
   const { data: dbFavorites, isLoading, isFetched } = useQuery({

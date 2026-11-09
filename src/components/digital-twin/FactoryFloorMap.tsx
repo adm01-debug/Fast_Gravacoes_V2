@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { Activity, Zap, Thermometer, Box, Layers, MousePointer2 } from 'lucide-react';
+import { Activity, Zap, Thermometer, Layers, MousePointer2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth";
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
-import { showErrorToast, createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
+import { createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 

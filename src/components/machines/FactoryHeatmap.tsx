@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Map as MapIcon } from 'lucide-react';
 import { useSchedulingData, type DbMachine, type DbTechnique } from '@/features/jobs';
 
-export function FactoryHeatmap({ machines, techniques }: { machines: DbMachine[]; techniques: DbTechnique[] }) {
+export function FactoryHeatmap({ machines }: { machines: DbMachine[]; techniques: DbTechnique[] }) {
   const { jobs } = useSchedulingData();
 
   const getHeatColor = (machine: DbMachine) => {

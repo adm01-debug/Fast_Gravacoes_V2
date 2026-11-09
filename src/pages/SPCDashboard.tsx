@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
-import { Activity, Plus, AlertTriangle, CheckCircle, TrendingUp, Target, Settings, Zap, History, LayoutPanelTop, BrainCircuit, Sparkles, ArrowRightLeft, FileSpreadsheet } from 'lucide-react';
+import { Activity, Plus, AlertTriangle, CheckCircle, TrendingUp, Target, Settings, BrainCircuit, Sparkles, ArrowRightLeft, FileSpreadsheet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

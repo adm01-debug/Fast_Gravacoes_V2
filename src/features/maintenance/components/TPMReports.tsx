@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileDown, FileText, Table as TableIcon, Calendar, Filter, Activity, Archive } from 'lucide-react';
+import { FileDown, FileText, Table as TableIcon, Calendar, Filter, Archive } from 'lucide-react';
 import JSZip from 'jszip';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { useMTBFMTTR } from '@/features/production';

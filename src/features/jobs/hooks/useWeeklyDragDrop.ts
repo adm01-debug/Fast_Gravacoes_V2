@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { type Job as DbJob, type JobUpdate } from '@/features/jobs/services/jobsService';
 import { supabase } from '@/integrations/supabase/client';

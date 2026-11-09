@@ -1,6 +1,5 @@
 import { memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

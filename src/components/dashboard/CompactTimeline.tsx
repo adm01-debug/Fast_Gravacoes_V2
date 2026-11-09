@@ -4,8 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock } from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { cn } from '@/lib/utils';
-import { format, parseISO, isToday } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { parseISO, isToday } from 'date-fns';
 
 export function CompactTimeline() {
   const { jobs } = useSchedulingData();

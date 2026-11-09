@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useInventory } from '@/features/inventory';
 import { useOperatorDashboardData } from '@/features/production';
-import { Package, Printer, FileText, Hash } from 'lucide-react';
+import { Package, Printer, Hash } from 'lucide-react';
 import { CommandItemType } from './CommandPaletteCommands';
 import { useNavigate } from 'react-router-dom';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';

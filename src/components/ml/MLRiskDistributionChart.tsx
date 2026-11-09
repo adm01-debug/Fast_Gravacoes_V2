@@ -1,6 +1,6 @@
 import { Brain, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from '@/lib/recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from '@/lib/recharts';
 import { MachinePrediction } from '@/features/analytics/hooks/useMLPredictions';
 
 interface MLRiskDistributionChartProps {

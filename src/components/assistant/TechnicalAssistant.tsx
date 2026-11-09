@@ -19,7 +19,6 @@ import {
   Scissors,
   X
 } from "lucide-react";
-import { toast } from "sonner";
 import { showErrorToast } from "@/lib/errorHandling";
 import { edgeFunctionFetch } from "@/lib/edgeFunctionFetch";
 

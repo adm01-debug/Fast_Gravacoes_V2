@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { useSchedulingData } from '@/features/jobs';
 import { useOEE } from '@/features/production';
@@ -23,7 +22,7 @@ import {
   Tooltip,
   Legend,
 } from '@/lib/recharts';
-import { Cpu, ArrowLeftRight, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function MachineComparisonPage() {

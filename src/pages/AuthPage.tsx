@@ -27,7 +27,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BrandLogo } from '@/components/ui/BrandLogo';
 
 
-const ORANGE = '#FF5A1F';
 
 export default function AuthPage() {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, TrendingUp, TrendingDown, AlertCircle, Lightbulb } from 'lucide-react';
 import { BIMetrics } from '@/features/analytics/types';

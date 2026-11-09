@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
 import { showErrorToast, createAppError } from '@/lib/errorHandling';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { useAuth } from '@/features/auth';

@@ -11,12 +11,9 @@ import {
   Key,
   Activity,
   Server,
-  Zap,
-  ShieldCheck,
   Globe,
   Database,
   Lock,
-  ChevronRight,
   ExternalLink
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,7 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 export default function MasterAPIPage() {
-  const [apiKey, setApiKey] = useState(import.meta.env.VITE_MASTER_API_DISPLAY_KEY ?? '');
+  const [apiKey] = useState(import.meta.env.VITE_MASTER_API_DISPLAY_KEY ?? '');
   const [showKey, setShowKey] = useState(false);
 
   const copyToClipboard = (text: string) => {

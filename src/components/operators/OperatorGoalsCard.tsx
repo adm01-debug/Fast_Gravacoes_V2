@@ -11,8 +11,6 @@ import {
 } from '@/features/production';
 import { OperatorProductivityMetrics } from '@/features/production';
 import { Target, Trophy, TrendingUp, TrendingDown, Minus, CheckCircle2, Package, AlertTriangle, Gauge } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface OperatorGoalsCardProps {
   goals: OperatorGoal[];
@@ -31,12 +29,6 @@ const GoalTypeIcon = ({ type }: { type: string }) => {
 };
 
 function GoalProgressItem({ goal, compact }: { goal: GoalWithProgress; compact?: boolean }) {
-  const getProgressColor = () => {
-    if (goal.is_achieved) return 'bg-success';
-    if (goal.progress_percentage >= 75) return 'bg-success';
-    if (goal.progress_percentage >= 50) return 'bg-warning';
-    return 'bg-destructive';
-  };
 
   const getProgressTextColor = () => {
     if (goal.is_achieved) return 'text-success';

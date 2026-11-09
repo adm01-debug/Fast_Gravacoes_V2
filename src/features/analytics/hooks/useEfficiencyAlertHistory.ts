@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
-import { showErrorToast, createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
+import { createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 
 const EFFICIENCY_ALERTS_CONTEXT = {

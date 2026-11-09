@@ -1,9 +1,5 @@
-import { useState, useMemo } from 'react';
-import { BIJob as BIJobLegacy } from '@/features/analytics/types';
+import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { useKPIs, formatDuration, KPIPeriod, KPITargets } from '@/features/analytics/hooks/useKPIs';
@@ -11,35 +7,16 @@ import { useOperatorProductivity } from '@/features/production';
 import { useGoalAlerts } from '@/features/notifications';
 import { useBIExport } from '@/features/admin';
 import {
-  TrendingUp,
-  TrendingDown,
-  Package,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
   History as HistoryIcon,
-  Percent,
-  Factory,
-  Target,
-  Users,
   Cpu,
   Settings2,
   Calendar,
-  Search,
-  ArrowUpRight,
-  Download,
-  Filter,
-  BrainCircuit,
-  Sparkles,
-  Zap
-} from 'lucide-react';
+  Download} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,13 +40,12 @@ import { KPIMachinesTab } from '@/features/analytics/components/bi/executive/KPI
 import { KPIOperatorsTab } from '@/features/analytics/components/bi/executive/KPIOperatorsTab';
 import { KPIAlertsTab } from '@/features/analytics/components/bi/executive/KPIAlertsTab';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, 
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-  ResponsiveContainer, Legend
-} from '@/lib/recharts';
+  ResponsiveContainer} from '@/lib/recharts';
 
 export default function KPIDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [, setActiveTab] = useState('overview');
   const [period, setPeriod] = useState<KPIPeriod>('all');
   const [customTargets, setCustomTargets] = useState<Partial<KPITargets>>({});
 
