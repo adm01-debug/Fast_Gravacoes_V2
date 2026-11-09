@@ -134,6 +134,22 @@ class SnapshotSQLRecoveryTests(SnapshotFixture):
         self.assertEqual(self.collect(), 0)
         self.assertEqual(marker.read_text(encoding="utf-8"), self.snapshot.OUTPUT_MARKER_CONTENT)
 
+    def test_old_format_version_snapshot_is_recognized_as_ours_not_unowned(self):
+        # valid_previous_snapshot() só confere a FORMA, não a versão: um snapshot.json de uma
+        # versão mais antiga do script (sem marcador — o marcador nunca é commitado em git, cada
+        # run do Actions começa num runner novo) ainda é reconhecido como NOSSO. Exigir a versão
+        # exata aqui faria prepare_output_directory() recusar a própria pasta a cada bump de
+        # FORMAT_VERSION, travando o job para sempre (nenhum run geraria o marcador novo, então
+        # nenhum run subsequente passaria). Quem decide se o dado é REAPROVEITÁVEL é main(), não
+        # esta função — e main() continua exigindo a versão exata para isso (ver test_snapshot
+        # desta mesma classe e SnapshotCronSecretRedactionTests).
+        self.out.mkdir()
+        (self.out / "snapshot.json").write_text(
+            json.dumps({"format_version": self.snapshot.FORMAT_VERSION - 1, "db": {}, "api": {}}),
+            encoding="utf-8",
+        )
+        self.assertEqual(self.collect(), 0, "pasta com snapshot de versão antiga não pode travar o job")
+
     def test_unowned_nonempty_output_is_rejected_before_collection(self):
         unowned = pathlib.Path(self.temp.name) / "unowned"
         unowned.mkdir()
@@ -539,6 +555,46 @@ class SnapshotCronSecretRedactionTests(SnapshotFixture):
         self.assertIn("chama: net.http_post, public.demo", segunda,
                        "a seção reaproveitada perdeu a redação já feita na publicação anterior")
         self.assertNotIn("sem chamada reconhecida", segunda)
+
+    def test_pre_fix_snapshot_on_disk_is_not_trusted_even_if_cron_fails_right_after_deploy(self):
+        # Achado por auditoria adversarial (não visto em produção): um snapshot.json em disco
+        # ESCRITO POR UMA VERSAO ANTERIOR do script (format_version velho, sem a redação) ainda
+        # tem o command cru com o segredo. Se a coleta de "cron" falhar no primeiro run DEPOIS do
+        # deploy deste fix, introspect_db reaproveitaria esse previous_db["cron"] cru, e o guard
+        # "cron" not in CARRIED pularia a redação — pensado pra não redigir de novo um resumo já
+        # seguro, mas aqui reaproveitaria um dado que NUNCA foi redigido. O bump de FORMAT_VERSION
+        # é o que impede isto: um snapshot de versão antiga nunca é aceito como `previous`.
+        _, valor_do_segredo = self.SEGREDO
+        pre_fix = {
+            "format_version": 2,  # versao anterior a este fix (FORMAT_VERSION atual é 3)
+            "db": {"cron": {"installed": True, "jobs": [{
+                "jobid": 1, "jobname": "job-antigo", "schedule": "*/5 * * * *",
+                "command": self.comando_com_segredo("public.demo"),  # CRU: nunca foi redigido
+                "database": "postgres", "username": "postgres", "active": True,
+            }]}},
+            "api": {}, "errors": [], "carried": [],
+        }
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "snapshot.json").write_text(json.dumps(pre_fix), encoding="utf-8")
+
+        # A coleta de cron falha logo nesse primeiro run pós-deploy — justo o cenário que faria
+        # o código vazar o dado reaproveitado, se o format_version não tivesse sido invalidado.
+        # collect()==0 (não 2) também prova que prepare_output_directory() não travou o job só
+        # por achar a pasta não-vazia com um snapshot.json de versão antiga e sem marcador —
+        # achado colateral do mesmo bump: exigir a versão EXATA ali faria o job recusar a própria
+        # pasta pra sempre (nenhum run geraria o marcador novo, então nenhum run subsequente
+        # passaria). valid_previous_snapshot() agora só confere a forma, não a versão.
+        self.assertEqual(self.collect(failures=("cron",)), 0)
+
+        self.assertNotIn("cron", self.snapshot.CARRIED,
+                          "snapshot pre-fix nao pode ser aceito como `previous` para carry-over")
+        self.assertEqual(self.metadata()["format_version"], self.snapshot.FORMAT_VERSION)
+        cron_md = (self.out / "cron.md").read_text(encoding="utf-8")
+        snapshot_json = (self.out / "snapshot.json").read_text(encoding="utf-8")
+        for saida in (cron_md, snapshot_json):
+            self.assertNotIn(valor_do_segredo, saida, "o segredo do snapshot pre-fix vazou pelo carry-over")
+            self.assertNotIn(self.URL, saida, "a URL do snapshot pre-fix vazou pelo carry-over")
+            self.assertNotIn("job-antigo", saida, "o job antigo nao deveria ter sobrevivido ao reset de versao")
 
 
 class SnapshotCallerFreshnessTests(SnapshotFixture):

@@ -283,14 +283,18 @@ jobs:
           output = pathlib.Path(sys.argv[1])
           snapshot = output / "snapshot.json"
           data = json.loads(snapshot.read_text(encoding="utf-8"))
+          # So confere a FORMA (e' nosso, seguro de apagar), nao a versao exata -- mesmo motivo
+          # de valid_previous_snapshot() em snapshot.py: exigir a versao atual aqui recusaria um
+          # --force logo depois de um bump de FORMAT_VERSION, bem quando ele seria mais util.
           if not (
               isinstance(data, dict)
-              and data.get("format_version") == 2
+              and isinstance(data.get("format_version"), int)
               and isinstance(data.get("db"), dict)
               and isinstance(data.get("api"), dict)
           ):
               raise SystemExit("snapshot anterior inválido; regeneração forçada recusada")
-          (output / ".supabase-snapshot-output").write_text("supabase-snapshot-v2\n", encoding="utf-8")
+          # v3 = FORMAT_VERSION atual de snapshot.py; mantenha os dois em sincronia.
+          (output / ".supabase-snapshot-output").write_text("supabase-snapshot-v3\n", encoding="utf-8")
           snapshot.unlink()
           PY
           fi
