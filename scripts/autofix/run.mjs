@@ -127,6 +127,8 @@ function commit(files, msg) {
     log(`commits irão para a branch ${name}`);
   }
   git('add', '--', ...files);
+  // arquivo já gravado pelo commit de um fixer anterior: não há o que commitar
+  if (git('diff', '--cached', '--quiet', '--', ...files).status === 0) return false;
   // --only: não leva junto o que o usuário já tinha em staged
   const r = git('commit', '-m', msg, '--only', '--', ...files);
   if (r.status !== 0) throw new Error(`commit recusado (hook?):\n${r.stdout}${r.stderr}`);
@@ -261,7 +263,7 @@ if (APPLY && TESTS && resultados.some((r) => r.arquivosMantidos)) {
 
 // Só depois do vitest: se acusou falha NOVA, nada fica (nem no disco, nem em commit)
 if (testes && !testes.ok) {
-  for (const p of pendentes) {
+  for (const p of [...pendentes].reverse()) {
     restaurar(p.files, p.originals);
     p.entry.descartadoPorTestes = true;
     p.entry.arquivosMantidos = 0;

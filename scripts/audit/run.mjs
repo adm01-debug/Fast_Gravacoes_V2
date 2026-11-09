@@ -45,17 +45,31 @@ const redact = (s) => (s.length > 10 ? `${s.slice(0, 6)}…[${s.length} chars]` 
 const globRx = (g) =>
   new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
 
+// Padrões de credencial: usados pela checagem de segredos E para limpar qualquer evidência/trecho de outras checagens.
+const SEGREDOS = [
+  ['JWT', /\beyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/g],
+  ['sk_live', /\bsk_live_[0-9a-zA-Z]{16,}/g],
+  ['Resend', /\bre_[A-Za-z0-9]{24,}/g],
+  ['Twilio SID', /\bAC[a-f0-9]{32}\b/g],
+  ['chave privada', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g],
+  ['URL de banco com senha', /postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]{4,}@/g],
+  ['webhook Bitrix com token', /https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]{8,}/gi],
+];
+const scrub = (t) => SEGREDOS.reduce((acc, [, rx]) => acc.replace(rx, (m) => redact(m)), String(t ?? ''));
+
 const findings = [];
 const checks = []; // {id, titulo, limite, total}
 function add(check, sev, titulo, arquivo, linha, evidencia, sugestao, extra = {}) {
-  findings.push({ check, sev, titulo, arquivo, linha, evidencia, sugestao, ...extra });
+  findings.push({ check, sev, titulo: scrub(titulo), arquivo, linha, evidencia: scrub(evidencia), sugestao, ...extra });
 }
+let checagensComErro = 0;
 function defCheck(id, titulo, limite, fn) {
   const before = findings.length;
   try {
     fn();
   } catch (e) {
-    add(id, 'baixa', `A checagem "${id}" falhou ao rodar`, '-', 0, String(e.message || e), 'Corrigir o script de auditoria');
+    checagensComErro++;
+    add(id, 'alta', `A checagem "${id}" falhou ao rodar`, '-', 0, String(e.message || e), 'Corrigir o script de auditoria (checagem quebrada = auditoria cega nesse ponto)');
   }
   checks.push({ id, titulo, limite, total: findings.length - before });
 }
@@ -316,15 +330,7 @@ defCheck('escape-de-tipos', '@ts-ignore / @ts-nocheck em código de produção',
 defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 'Padrões conhecidos (JWT, sk_live, Resend, Twilio, chave privada, URL de banco, webhook Bitrix). O valor NUNCA é impresso.', () => {
   const skip = /(^|\/)(scripts\/ai-context|node_modules|dist|coverage|graphify-out|\.venv-graphify|playwright-report|test-results)\//;
   const files = tracked.filter((f) => !skip.test(f) && !/\.(png|jpe?g|gif|ico|webp|woff2?|ttf|lockb?|pdf|zip|svg|mp3|mp4)$/i.test(f) && !/(package-lock\.json|bun\.lock|deno\.lock)$/.test(f) && !isTest(f));
-  const pats = [
-    ['JWT', /\beyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/g],
-    ['sk_live', /\bsk_live_[0-9a-zA-Z]{16,}/g],
-    ['Resend', /\bre_[A-Za-z0-9]{24,}/g],
-    ['Twilio SID', /\bAC[a-f0-9]{32}\b/g],
-    ['chave privada', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g],
-    ['URL de banco com senha', /postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]{4,}@/g],
-    ['webhook Bitrix com token', /https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]{8,}/gi],
-  ];
+  const pats = SEGREDOS;
   for (const f of files) {
     const t = read(f);
     if (t.length > 2_000_000) continue;
@@ -356,6 +362,7 @@ defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 
 defCheck('regra-de-negocio', 'Regras declaradas em scripts/audit/regras.json', 'Só verifica texto (presença/ausência). Prova que a proteção continua escrita, não que está correta.', () => {
   const { regras } = JSON.parse(read('scripts/audit/regras.json'));
   for (const r of regras) {
+   try {
     const rx = globRx(r.arquivo);
     const files = tracked.filter((f) => rx.test(f));
     if (!files.length) {
@@ -372,6 +379,10 @@ defCheck('regra-de-negocio', 'Regras declaradas em scripts/audit/regras.json', '
         add('regra-de-negocio', r.severidade, `[${r.id}] ${r.titulo}: contém /${p}/`, f, lineOf(read(f), new RegExp(p).exec(read(f)).index), `padrão proibido: ${p}`, r.por_que);
       }
     }
+   } catch (e) {
+    checagensComErro++;
+    add('regra-de-negocio', 'alta', `[${r.id}] regra inválida (${e.message})`, 'scripts/audit/regras.json', 1, String(e.message).slice(0, 160), 'Corrigir a expressão regular da regra.');
+   }
   }
 });
 
@@ -399,7 +410,7 @@ const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
 const sevCount = (sev) => findings.filter((x) => x.sev === sev).length;
 const excerpt = (f, line) => {
   const ls = read(f).split('\n');
-  return ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n');
+  return scrub(ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n'));
 };
 
 const md = [`# Auditoria — ${new Date().toISOString()}`, '',
@@ -431,4 +442,4 @@ writeFileSync(join(OUT, 'fila-para-decisao.md'), fila.join('\n'));
 console.log(`[audit] ${findings.length} achados (crítica ${sevCount('critica')}, alta ${sevCount('alta')}, média ${sevCount('media')}, baixa ${sevCount('baixa')})${base ? ` — ${novos.length} novo(s) vs baseline` : ''}`);
 for (const c of checks) console.log(`  ${String(c.total).padStart(4)}  ${c.id}`);
 console.log('[audit] relatório em .audit/relatorio.md e .audit/fila-para-decisao.md');
-if (args.includes('--estrito') && novos.some((x) => x.sev === 'critica' || x.sev === 'alta')) process.exit(1);
+if (args.includes('--estrito') && (checagensComErro > 0 || novos.some((x) => x.sev === 'critica' || x.sev === 'alta'))) process.exit(1);
