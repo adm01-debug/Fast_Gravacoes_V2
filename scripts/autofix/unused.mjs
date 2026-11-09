@@ -104,6 +104,8 @@ function decide(sf, d, { desestruturacao, origImports, pass }) {
     if (ts.isBindingElement(p)) {
       // Ler uma propriedade pode executar um getter, e isso não dá para provar estaticamente: só com opt-in.
       if (!desestruturacao) return { ok: false, kind: 'destructure', why: 'ler propriedade pode executar getter (use --desestruturacao se aceitar o risco)' };
+      // desestruturação de ARRAY consome o iterador (gerador com efeito colateral): remover o elemento muda o consumo
+      if (ts.isArrayBindingPattern(p.parent)) return { ok: false, kind: 'destructure', why: 'array: remover elemento muda o consumo do iterador' };
       if (d.code === 6198) return { ok: false, kind: 'destructure', why: 'todos os itens não usados: apagar removeria a chamada' };
       // valor padrão (`a = f()`) e chave computada (`[k()]: a`) podem ter efeito colateral
       if (p.initializer && !isPure(p.initializer)) return { ok: false, kind: 'destructure', why: 'valor padrão pode ter efeito colateral' };
