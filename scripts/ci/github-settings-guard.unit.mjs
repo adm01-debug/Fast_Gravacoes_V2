@@ -104,6 +104,21 @@ test('assinaturaDe muda com o valor encontrado, com a causa e com o conjunto de 
   assert.notEqual(assinaturaDe(base, []), assinaturaDe(base, [{ nome: 'branch protection', campos: ['403'] }]));
 });
 
+test('assinaturaDe distingue valores que String() colapsaria (achado por auditoria adversarial)', () => {
+  const de = (encontrado) => [{ campo: 'actions.enabled', encontrado }];
+  // String(0) === String('0') === '0'; String(null) === String('null') === 'null';
+  // String(undefined) === String('undefined') === 'undefined'. Com String() no lugar de
+  // JSON.stringify(), um campo cujo `encontrado` mudasse de tipo entre duas execucoes (ex.: a
+  // API passar a devolver '0' em vez de 0) nao mudaria a assinatura, e o dedupe suprimiria o
+  // comentario da divergencia nova por engano.
+  assert.notEqual(assinaturaDe(de(0), []), assinaturaDe(de('0'), []));
+  assert.notEqual(assinaturaDe(de(null), []), assinaturaDe(de('null'), []));
+  assert.notEqual(assinaturaDe(de(undefined), []), assinaturaDe(de('undefined'), []));
+  // false nao e' um caso de colisao (String(false) !== String(0)), mas confirma que o fix nao
+  // criou uma colisao nova entre booleano e os textos correspondentes.
+  assert.notEqual(assinaturaDe(de(false), []), assinaturaDe(de('false'), []));
+});
+
 test('assinaturaDe nao depende de prosa de erro, run id nem timestamp', () => {
   const cego = (motivo) => [{ nome: 'branch protection', motivo, campos: ['403'] }];
   assert.equal(assinaturaDe([], cego('403 em /x: texto A')), assinaturaDe([], cego('403 em /x: texto B')));

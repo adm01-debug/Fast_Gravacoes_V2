@@ -376,7 +376,12 @@ async function findIssue() {
  * Nunca entra: prosa de erro, timestamp, numero de run.
  */
 export function assinaturaDe(divergencias, naoVerificaveis) {
-  const div = [...divergencias].map((d) => `${d.campo}=${String(d.encontrado)}`).sort(porCodigo);
+  // JSON.stringify, nao String: String(0) === String('0') === '0' e String(null) === 'null' ===
+  // String('null') colapsam valores DIFERENTES na mesma assinatura (achado por auditoria
+  // adversarial) -- se `encontrado` mudar de tipo entre duas execucoes para o mesmo campo, o
+  // dedupe (ate 7 dias por causa) trataria como "mesma causa ja registrada" e nao atualizaria a
+  // issue. JSON.stringify distingue 0/'0', null/'null', undefined/'undefined'.
+  const div = [...divergencias].map((d) => `${d.campo}=${JSON.stringify(d.encontrado)}`).sort(porCodigo);
   const cegos = [...naoVerificaveis]
     .map((n) => `${n.nome}:${[...(n.campos ?? [])].sort(porCodigo).join('|')}`)
     .sort(porCodigo);
