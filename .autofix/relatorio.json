@@ -1,0 +1,793 @@
+{
+  "quando": "2026-11-09T14:33:58.820Z",
+  "modo": "aplicar",
+  "resultados": [
+    {
+      "id": "unused",
+      "titulo": "Remover código não usado (imports, desestruturação, variáveis puras)",
+      "arquivosPropostos": 251,
+      "porTipo": {
+        "import": 915,
+        "destructure": 108,
+        "var": 18,
+        "type": 10,
+        "function": 3
+      },
+      "manual": [
+        {
+          "file": "src/components/calendar/ConflictResolutionPanel.tsx",
+          "line": 24,
+          "code": 6133,
+          "kind": "param",
+          "name": "idx",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/dashboard/OEELoadTrendWidget.tsx",
+          "line": 20,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ jobs }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/components/dashboard/QuickActions.tsx",
+          "line": 21,
+          "code": 6133,
+          "kind": "param",
+          "name": "index",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/jobs/JobCostsTab.tsx",
+          "line": 49,
+          "code": 6133,
+          "kind": "param",
+          "name": "index",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/jobs/JobCostsTab.tsx",
+          "line": 106,
+          "code": 6133,
+          "kind": "param",
+          "name": "entry",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/knowledge/KnowledgeBaseStats.tsx",
+          "line": 15,
+          "code": 6133,
+          "kind": "var",
+          "name": "withSteps",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/components/layout/LanguageSwitcher.tsx",
+          "line": 14,
+          "code": 6133,
+          "kind": "param",
+          "name": "props",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/layout/LanguageSwitcher.tsx",
+          "line": 14,
+          "code": 6133,
+          "kind": "param",
+          "name": "ref",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/layout/ResponsiveContainer.tsx",
+          "line": 41,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ isMobile }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/components/layout/sidebar/NavButton.tsx",
+          "line": 25,
+          "code": 6133,
+          "kind": "param",
+          "name": "ref",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/mobile/SwipeActions.tsx",
+          "line": 39,
+          "code": 6133,
+          "kind": "param",
+          "name": "event",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/mobile/SwipeActions.tsx",
+          "line": 64,
+          "code": 6133,
+          "kind": "param",
+          "name": "event",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/navigation/Breadcrumbs.tsx",
+          "line": 112,
+          "code": 6133,
+          "kind": "var",
+          "name": "handleBack",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/components/navigation/Breadcrumbs.tsx",
+          "line": 160,
+          "code": 6133,
+          "kind": "var",
+          "name": "firstItem",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/components/navigation/MobileNavigation.tsx",
+          "line": 283,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ t }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/components/onboarding/OnboardingTour.tsx",
+          "line": 57,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ t }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/components/operators/OperatorProductivityCard.tsx",
+          "line": 23,
+          "code": 6133,
+          "kind": "var",
+          "name": "isAbovePB",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/components/planning/PlanningEfficiencyDashboard.tsx",
+          "line": 293,
+          "code": 6133,
+          "kind": "param",
+          "name": "idx",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/planning/SmartSequencingPanel.tsx",
+          "line": 26,
+          "code": 6133,
+          "kind": "var",
+          "name": "queryClient",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/components/settings/TwoFactorSetup.tsx",
+          "line": 20,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ t }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/components/settings/UserManagement.tsx",
+          "line": 114,
+          "code": 6133,
+          "kind": "param",
+          "name": "error",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/settings/UserManagement.tsx",
+          "line": 137,
+          "code": 6133,
+          "kind": "param",
+          "name": "error",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/settings/UserManagement.tsx",
+          "line": 159,
+          "code": 6133,
+          "kind": "param",
+          "name": "error",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/ui/calendar.tsx",
+          "line": 45,
+          "code": 6133,
+          "kind": "param",
+          "name": "{ ..._props }",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/ui/calendar.tsx",
+          "line": 46,
+          "code": 6133,
+          "kind": "param",
+          "name": "{ ..._props }",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/components/voice/VoiceCommands.tsx",
+          "line": 155,
+          "code": 6133,
+          "kind": "param",
+          "name": "ref",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/analytics/components/bi/FuturisticBI.tsx",
+          "line": 39,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ operators }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/features/analytics/components/bi/FuturisticBI.tsx",
+          "line": 40,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ stats: tpmStats }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEEGaugeCard.tsx",
+          "line": 30,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ t }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEEHeatmap.tsx",
+          "line": 30,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ t }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEELossDrilldown.tsx",
+          "line": 60,
+          "code": 6133,
+          "kind": "var",
+          "name": "currentLevel",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEELossesChart.tsx",
+          "line": 104,
+          "code": 6133,
+          "kind": "param",
+          "name": "index",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEETrendChart.tsx",
+          "line": 59,
+          "code": 6133,
+          "kind": "var",
+          "name": "qualityDiff",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEETrendChart.tsx",
+          "line": 61,
+          "code": 6133,
+          "kind": "var",
+          "name": "isPositive",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/analytics/components/oee/OEETrendChart.tsx",
+          "line": 62,
+          "code": 6133,
+          "kind": "var",
+          "name": "isNegative",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/analytics/hooks/useRealtimeConnection.ts",
+          "line": 54,
+          "code": 6133,
+          "kind": "param",
+          "name": "err",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/auth/hooks/useSessionTimeout.tsx",
+          "line": 296,
+          "code": 6133,
+          "kind": "param",
+          "name": "event",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/inventory/hooks/useLogistics.test.ts",
+          "line": 42,
+          "code": 6133,
+          "kind": "var",
+          "name": "shipmentsListSelect",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/jobs/hooks/useSchedulingData.ts",
+          "line": 36,
+          "code": 6133,
+          "kind": "var",
+          "name": "queryClient",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+          "line": 280,
+          "code": 6133,
+          "kind": "var",
+          "name": "highT",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/maintenance/components/ExecutionRecordView.tsx",
+          "line": 231,
+          "code": 6133,
+          "kind": "var",
+          "name": "sheet",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/maintenance/components/TPMSeverityConfigs.tsx",
+          "line": 93,
+          "code": 6133,
+          "kind": "param",
+          "name": "index",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/maintenance/hooks/useTPMApprovalMutations.ts",
+          "line": 19,
+          "code": 6198,
+          "kind": "param",
+          "name": "{ schedules, alerts }",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/maintenance/hooks/useTPMLifecycleMutations.ts",
+          "line": 20,
+          "code": 6198,
+          "kind": "param",
+          "name": "{ schedules, alerts }",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/notifications/components/NotificationIntegrator.tsx",
+          "line": 72,
+          "code": 6133,
+          "kind": "var",
+          "name": "previousJobsRef",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/notifications/hooks/useNotificationSettings.ts",
+          "line": 72,
+          "code": 6133,
+          "kind": "param",
+          "name": "error",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/features/notifications/hooks/usePushNotifications.ts",
+          "line": 111,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/notifications/hooks/usePushNotifications.ts",
+          "line": 147,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/notifications/hooks/usePushNotifications.ts",
+          "line": 219,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/production/hooks/useMTBFMTTR.ts",
+          "line": 79,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/production/hooks/useMTBFMTTR.ts",
+          "line": 105,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/production/hooks/useOperatorMachines.ts",
+          "line": 43,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/production/hooks/useOperatorMachines.ts",
+          "line": 73,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/features/production/hooks/useOperatorMachines.ts",
+          "line": 97,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useGamification.ts",
+          "line": 145,
+          "code": 6133,
+          "kind": "param",
+          "name": "error",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/hooks/useQuickFavorites.ts",
+          "line": 70,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useQuickFavorites.ts",
+          "line": 81,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 53,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 84,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 108,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 128,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 165,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/useTechnicalConversations.ts",
+          "line": 204,
+          "code": 6133,
+          "kind": "var",
+          "name": "appError",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/hooks/abc/useABCMutations.ts",
+          "line": 28,
+          "code": 6133,
+          "kind": "var",
+          "name": "technique",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/BIDashboard.tsx",
+          "line": 30,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ toast }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/pages/BIDashboard.tsx",
+          "line": 212,
+          "code": 6133,
+          "kind": "param",
+          "name": "format",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/pages/EfficiencyDashboard.tsx",
+          "line": 42,
+          "code": 6133,
+          "kind": "var",
+          "name": "avgOccupancy",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/GamificationPage.tsx",
+          "line": 79,
+          "code": 6133,
+          "kind": "var",
+          "name": "restRankings",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/Index.tsx",
+          "line": 36,
+          "code": 6133,
+          "kind": "var",
+          "name": "MaintenanceAlertsWidget",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/Index.tsx",
+          "line": 37,
+          "code": 6133,
+          "kind": "var",
+          "name": "EnergyWidget",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/Index.tsx",
+          "line": 120,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ metrics }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/pages/InventoryPage.tsx",
+          "line": 44,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ hasPermission }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/pages/KanbanBoard.tsx",
+          "line": 336,
+          "code": 6133,
+          "kind": "param",
+          "name": "jobsForColumns",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/pages/OEEDashboard.tsx",
+          "line": 55,
+          "code": 6133,
+          "kind": "var",
+          "name": "OEEGaugeCard",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/OEEDashboard.tsx",
+          "line": 78,
+          "code": 6133,
+          "kind": "var",
+          "name": "StudioEfficiencyGrid",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/OEEDashboard.tsx",
+          "line": 79,
+          "code": 6133,
+          "kind": "var",
+          "name": "MaterialEfficiencyChart",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/OEEDashboard.tsx",
+          "line": 80,
+          "code": 6133,
+          "kind": "var",
+          "name": "StudioHealthMonitor",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/OperatorHistoryPage.tsx",
+          "line": 210,
+          "code": 6133,
+          "kind": "param",
+          "name": "i",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/pages/OperatorView.tsx",
+          "line": 37,
+          "code": 6133,
+          "kind": "var",
+          "name": "{ user }",
+          "why": "padrão de desestruturação"
+        },
+        {
+          "file": "src/pages/OperatorView.tsx",
+          "line": 145,
+          "code": 6133,
+          "kind": "var",
+          "name": "technique",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/pages/PublicTrackingPage.tsx",
+          "line": 252,
+          "code": 6133,
+          "kind": "param",
+          "name": "index",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 6,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockSelect",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 7,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockEq",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 8,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockOrder",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 9,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockSingle",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 10,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockInsert",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 11,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockUpdate",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 12,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockDelete",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 13,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockOr",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 14,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockGte",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 15,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockLte",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/jobsService.test.ts",
+          "line": 16,
+          "code": 6133,
+          "kind": "var",
+          "name": "mockMaybeSingle",
+          "why": "inicializador pode ter efeito colateral (chamada/hook/new)"
+        },
+        {
+          "file": "src/test/retryWithBackoff.test.ts",
+          "line": 116,
+          "code": 6133,
+          "kind": "param",
+          "name": "attempt",
+          "why": "parâmetro: mudar assinatura exige revisão"
+        }
+      ],
+      "arquivosMantidos": 246,
+      "arquivosRevertidos": [
+        "src/features/maintenance/hooks/useTPMData.ts",
+        "src/components/operators/CreateOperatorModal.tsx",
+        "src/pages/OEEDashboard.tsx",
+        "src/pages/OperatorHistoryPage.tsx",
+        "src/pages/ReportBuilderPage.tsx"
+      ],
+      "ok": true,
+      "commit": true
+    }
+  ],
+  "testes": {
+    "ok": true,
+    "jaFalhavamAntes": [
+      "src/lib/spcExport.test.ts > spcExport renders parameter details, capability indices and measurement history when capability is provided"
+    ],
+    "novasFalhas": [],
+    "resumo": "922 testes · 1 já falhavam antes · 0 NOVA(S) falha(s)"
+  },
+  "residuoEslint": {
+    "react-refresh/only-export-components": 1,
+    "no-console": 2,
+    "react-hooks/set-state-in-effect": 3,
+    "no-useless-catch": 1,
+    "react-hooks/incompatible-library": 2,
+    "@typescript-eslint/no-non-null-assertion": 5,
+    "react-hooks/exhaustive-deps": 4,
+    "no-useless-escape": 3,
+    "jsx-a11y/no-noninteractive-tabindex": 1
+  }
+}
