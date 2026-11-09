@@ -121,6 +121,8 @@ function decide(sf, d, { desestruturacao, origImports, pass }) {
       const list = p.parent;
       const stmt = list?.parent;
       if (!stmt || !ts.isVariableStatement(stmt)) return { ok: false, kind: 'var', why: 'declaração em for/catch' };
+      // `using`/`await using` registram Symbol.dispose/asyncDispose ao sair do escopo: não são const comum
+      if (list.flags & ts.NodeFlags.Using) return { ok: false, kind: 'var', why: 'declaração using/await using registra dispose' };
       if (!ts.isIdentifier(p.name)) return { ok: false, kind: 'var', why: 'padrão de desestruturação' };
       if (!isPure(p.initializer)) return { ok: false, kind: 'var', why: 'inicializador pode ter efeito colateral (chamada/hook/new)' };
       return { ok: true, kind: 'var' };

@@ -116,7 +116,7 @@ if (pendentes.length) {
     mkdirSync(join(DIA, 'autofix'), { recursive: true });
     for (const f of ['relatorio.md', 'relatorio.json']) cpSync(join(WT, '.autofix', f), join(DIA, 'autofix', f));
     const r = rel.resultados[0] || {};
-    const branch = git('branch', '--list', `autofix/auto-${HOJE}`).stdout.trim() ? `autofix/auto-${HOJE}` : null;
+    const branch = git('branch', '--list', `autofix/auto-${HOJE}*`).stdout.split('\n').map((x) => x.replace(/^[*+\s]+/, '')).filter(Boolean).pop() || null;
     autofixResumo = branch
       ? `**${r.arquivosMantidos ?? 0} arquivo(s) corrigidos** na branch local \`${branch}\` (${(r.arquivosRevertidos || []).length} revertidos pelo gate). Testes: ${rel.testes?.resumo ?? 'não medidos'}. Fila manual: ${r.manual?.length ?? 0}.`
       : `Nada a corrigir automaticamente. Fila manual: ${r.manual?.length ?? 0}.`;

@@ -83,3 +83,8 @@ test('import que só ficou sem uso após remover uma variável é PRESERVADO (in
   assert.ok(texto.includes("import { valor }"), 'o import tem de ficar');
   assert.ok(!texto.includes('naoUsada'), 'a variável pura pode sair');
 });
+
+test('NÃO remove declaração using (registra Symbol.dispose ao sair do escopo)', () => {
+  const src = 'declare const recurso: { [Symbol.dispose](): void };\nexport function w() { using naoUsada = recurso; return 1; }\n';
+  assert.ok(aplicar(src).texto.includes('using naoUsada'));
+});
