@@ -23,7 +23,7 @@
          a telemetria CSP só funciona via header HTTP (vercel.json) -->
     <!-- style-src 'unsafe-inline': Tailwind utility classes and Framer-Motion inject inline styles at runtime -->
     <!-- Note: type="application/ld+json" scripts are JSON data, NOT executable JS; they don't need 'unsafe-inline' -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://supabase.atomicabr.com.br wss://supabase.atomicabr.com.br https://api.ipify.org https://api.pwnedpasswords.com; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://api.ipify.org https://api.pwnedpasswords.com; worker-src 'self' blob:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Primary Meta Tags -->
@@ -73,8 +73,6 @@
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://supabase.atomicabr.com.br" />
-    <link rel="dns-prefetch" href="https://supabase.atomicabr.com.br" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
 
     <!-- JSON-LD Structured Data -->
