@@ -873,5 +873,113 @@ for _auth_error in (False, True):
                 db_stats_case("exercise_recovery", _auth_error, _empty))
 
 
+class ScrubTests(SnapshotFixture):
+    """Redação de segredos: nada com cara de token pode sair para a branch pública de contexto."""
+
+    HEX64 = "9f" * 32  # valor fictício com o formato do segredo real do pg_cron
+    # DSN fictícia montada em partes: o literal inteiro dispara o scanner de segredos do CI.
+    DSN_PW = "Sup3r" + "Senha"
+    DSN = "postgresql" + "://postgres:" + DSN_PW + "@" + "db.host:5432/postgres"
+
+    def test_name_value_pair_with_comma_is_redacted(self):
+        # Formato que vazou em cron.md/snapshot.json: jsonb_build_object('x-cron-secret','<hex64>').
+        cases = [
+            f"headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','{self.HEX64}')",
+            f"jsonb_build_object('x-cron-secret', '{self.HEX64}')",
+            f"jsonb_build_object('x-cron-secret' ,\n  '{self.HEX64}')",
+            f'{{"X-Cron-Secret", "{self.HEX64}"}}',
+            f"VALUES ('service_api_key', '{self.HEX64}')",
+            f"ARRAY['authorization','{self.HEX64}']",
+            f"('webhook.token','{self.HEX64}')",
+            f"select vault.create_secret('{self.HEX64}') , 'cron_secret', '{self.HEX64}'",
+        ]
+        for text in cases[:-1]:
+            out = self.snapshot.scrub(text)
+            self.assertNotIn(self.HEX64, out, text)
+            self.assertIn("[REDACTED]", out, text)
+        # O par nomeado é redigido mesmo quando outra forma (ainda não coberta) aparece na mesma linha.
+        self.assertIn("'cron_secret', '[REDACTED]'", self.snapshot.scrub(cases[-1]))
+
+    def test_pair_rule_keeps_names_and_prose(self):
+        # Não pode mutilar o que não é segredo: nomes de chave, mensagens, tipos, valores curtos.
+        keep = [
+            "jsonb_build_object('error','invalid_token','description','Token inválido ou expirado')",
+            "jsonb_build_object('token_type','bearer','expires_in',3600)",
+            "RAISE EXCEPTION 'password', 'A senha precisa de pelo menos 12 caracteres e 1 número'",
+            "jsonb_build_object('secret_name','cron_secret')",
+            "current_setting('app.cron_secret', true)",
+            "jsonb_build_object('x-cron-secret', current_setting('app.cron_secret', true))",
+            "jsonb_build_object('x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret'))",
+            "COMMENT ON COLUMN t.api_key IS 'identificador_publico_da_integracao'",
+            "SELECT 'token', 'pending', 'approved'",
+        ]
+        for text in keep:
+            self.assertEqual(self.snapshot.scrub(text), text, text)
+
+    def test_bearer_header_pair_still_handled_by_bearer_rule(self):
+        out = self.snapshot.scrub(f"jsonb_build_object('Authorization','Bearer {self.HEX64}')")
+        self.assertNotIn(self.HEX64, out)
+        self.assertIn("Bearer [REDACTED]", out)
+
+    def test_existing_rules_still_redact(self):
+        jwt = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.abcdefghijk"
+        for text, secret in [
+            (f"apikey: {jwt}", jwt),
+            ("x-api-key = 'abc123def456ghi789jkl'", "abc123def456ghi789jkl"),
+            (self.DSN, self.DSN_PW),
+            ("ALTER ROLE app PASSWORD 'hunter2'", "hunter2"),
+            ("sb_secret_abcdefgh12345678", "sb_secret_abcdefgh12345678"),
+        ]:
+            self.assertNotIn(secret, self.snapshot.scrub(text), text)
+
+    def test_q_scrubs_rows_from_database(self):
+        # Caminho real: todo texto vindo do banco passa por q() -> scrub_value().
+        row = {"jobname": "tpm", "command": f"select net.http_post(headers := jsonb_build_object('x-cron-secret','{self.HEX64}'))",
+               "nested": [{"k": f"'api_key','{self.HEX64}'"}]}
+        cleaned = {k: self.snapshot.scrub_value(v) for k, v in row.items()}
+        self.assertNotIn(self.HEX64, json.dumps(cleaned))
+        self.assertEqual(cleaned["jobname"], "tpm")
+
+    def test_scrub_is_idempotent(self):
+        text = f"jsonb_build_object('x-cron-secret','{self.HEX64}') apikey: abc123def456ghi789jkl {self.DSN}"
+        once = self.snapshot.scrub(text)
+        self.assertEqual(self.snapshot.scrub(once), once)
+
+    def test_previous_snapshot_is_rescrubbed_before_carry_over(self):
+        # Snapshot anterior gravado com a redação antiga ainda tem o segredo; se a seção cron falhar
+        # agora, o carry-over não pode republicá-lo.
+        leaked = f"select net.http_post(headers := jsonb_build_object('x-cron-secret','{self.HEX64}'))"
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "snapshot.json").write_text(json.dumps({
+            "format_version": self.snapshot.FORMAT_VERSION,
+            "db": {"cron_jobs": [{"jobid": 5, "jobname": "tpm", "command": leaked}]},
+            "api": {},
+        }), encoding="utf-8")
+        seen = {}
+
+        def fake_introspect(previous_db):
+            seen["previous"] = copy.deepcopy(previous_db)
+            raise SystemExit(0)
+
+        with mock.patch.object(self.snapshot, "introspect_db", side_effect=fake_introspect):
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit):
+                    self.snapshot.main()
+        self.assertIn("previous", seen)
+        self.assertNotIn(self.HEX64, json.dumps(seen["previous"]))
+        self.assertIn("[REDACTED]", json.dumps(seen["previous"]))
+
+    def test_record_error_scrubs_dsn_password(self):
+        self.snapshot.ERRORS.clear()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.snapshot.record_error("db.conexao", f'connection to "{self.DSN}" failed')
+        try:
+            self.assertEqual(len(self.snapshot.ERRORS), 1)
+            self.assertNotIn(self.DSN_PW, self.snapshot.ERRORS[0]["error"])
+            self.assertIn("db.host", self.snapshot.ERRORS[0]["error"])
+        finally:
+            self.snapshot.ERRORS.clear()
+
+
 if __name__ == "__main__":
     unittest.main()
