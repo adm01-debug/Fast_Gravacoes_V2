@@ -19,8 +19,16 @@ const localPython = join(root, '.venv-graphify', process.platform === 'win32' ? 
 const args = process.argv.slice(2);
 
 function run(command, argv) {
-  const result = spawnSync(command, argv, { cwd: root, stdio: 'inherit', shell: false });
+  // PYTHONHASHSEED fixo: a ordem de iteração de sets muda entre processos e fazia dois builds
+  // do mesmo commit darem comunidades (e graph.json/GRAPH_REPORT.md) diferentes.
+  const result = spawnSync(command, argv, {
+    cwd: root,
+    stdio: 'inherit',
+    shell: false,
+    env: { ...process.env, PYTHONHASHSEED: process.env.PYTHONHASHSEED ?? '0' },
+  });
   if (result.error) throw result.error;
+  // status null = filho morto por sinal: nunca sair 0.
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
@@ -83,7 +91,7 @@ try {
 Comandos disponíveis: ${['doctor', 'detect', 'build', 'check', 'query', 'path', 'explain', 'affected', 'html', 'test', 'audit', 'ratchet', 'diff', 'benchmark'].join(', ')}
 Instalação: npm run graph:install
 Diagnóstico: npm run graph:doctor
-Versão: npm run graph:doctor -- --version (ou use node scripts/graphify.mjs --version)`);
+Versão: node scripts/graphify.mjs --version`);
   } else {
     run(interpreter(), [join(root, 'scripts/graphify/run.py'), ...args]);
   }
