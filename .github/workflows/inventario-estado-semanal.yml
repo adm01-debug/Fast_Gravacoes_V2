@@ -1,5 +1,5 @@
 # docs:
-#   gatilho: agendado (seg 10:23 UTC) e dispatch
+#   gatilho: agendado (seg 10:27 UTC) e dispatch
 #   prova: inventario/estado (banco, rotas, edges) regerado do banco oficial e do codigo
 #   falha: o job fica vermelho e o inventario nao e atualizado
 #   avisa: PR automation/inventario-estado com o inventario novo
@@ -18,7 +18,9 @@ name: Inventário do estado real (semanal)
 
 on:
   schedule:
-    - cron: '23 10 * * 1' # segunda 10:23 UTC (07:23 BRT); minuto fora do 0 para não cair na fila do GitHub
+    - cron: '27 10 * * 1' # segunda 10:27 UTC (07:27 BRT); minuto fora do 0 e fora de :03/:13/:23/:33/:43/:53
+                           # (contexto.yml dispara nesses minutos TODA hora — achado por auditoria adversarial:
+                           # o "fora do 0" original comparava só contra crons fixos, não contra o */10 recorrente)
   workflow_dispatch:
 
 concurrency:

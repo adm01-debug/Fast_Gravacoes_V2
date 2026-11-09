@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|---|---|
 | Branch Hygiene Audit | [`branch-hygiene-audit.yml`](../../.github/workflows/branch-hygiene-audit.yml) | agendado (segunda 07:56 UTC) e dispatch | issue [branch-hygiene] com patch-equivalentes, abandonadas, PRs paradas e comando de poda pronto; issue [kpi-actions] com o consumo de Actions da semana | o job fica vermelho e as issues não são atualizadas | issues [branch-hygiene] e [kpi-actions] (uma de cada, atualizadas no lugar) | — | — |
 | Contexto para agentes de IA (10 min) | [`contexto.yml`](../../.github/workflows/contexto.yml) | push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada 10 min (minuto 3); dispatch | branch contexto com docs/contexto/{codigo,supabase,regras}/ regerados das três fontes de verdade (código em main, banco oficial, código+migrations+manual/) e docs/contexto/00-INDEX.md montado a partir dos manifests | falha fatal de produtor reprova o workflow; fontes com artefato publicam e as demais mantêm a última versão; erro de download impede a publicação | ninguém (a branch contexto é a prova; errors.md em supabase/ e erros_do_gerador em codigo/ listam seções com falha) | — | — |
-| Inventário do estado real (semanal) | [`inventario-estado-semanal.yml`](../../.github/workflows/inventario-estado-semanal.yml) | agendado (seg 10:23 UTC) e dispatch | inventario/estado (banco, rotas, edges) regerado do banco oficial e do codigo | o job fica vermelho e o inventario nao e atualizado | PR automation/inventario-estado com o inventario novo | — | — |
+| Inventário do estado real (semanal) | [`inventario-estado-semanal.yml`](../../.github/workflows/inventario-estado-semanal.yml) | agendado (seg 10:27 UTC) e dispatch | inventario/estado (banco, rotas, edges) regerado do banco oficial e do codigo | o job fica vermelho e o inventario nao e atualizado | PR automation/inventario-estado com o inventario novo | — | — |
 | Settings Guard | [`settings-guard.yml`](../../.github/workflows/settings-guard.yml) | agendado (diario 07:15 UTC) e dispatch | o perimetro do GitHub (branch protection, merge, actions, environments) contra o baseline versionado | divergencia real deixa o job vermelho e abre/atualiza issue; ponto cego sai verde com aviso | issue [settings-guard] (label settings-guard) | — | — |
 
 ## Detalhe
@@ -31,7 +31,7 @@
 
 ### Inventário do estado real (semanal) (`inventario-estado-semanal.yml`)
 
-- **Gatilho:** agendado (seg 10:23 UTC) e dispatch
+- **Gatilho:** agendado (seg 10:27 UTC) e dispatch
 - **O que prova:** inventario/estado (banco, rotas, edges) regerado do banco oficial e do codigo
 - **Quando falha:** o job fica vermelho e o inventario nao e atualizado
 - **Quem é avisado:** PR automation/inventario-estado com o inventario novo
