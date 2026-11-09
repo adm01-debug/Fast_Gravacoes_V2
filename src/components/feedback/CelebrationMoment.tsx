@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Sparkles,
   PartyPopper,
-  Medal,
   Target
 } from 'lucide-react';
 import { cn } from '@/lib/utils';

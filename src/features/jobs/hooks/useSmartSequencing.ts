@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useJobs, useTechniques, DbJob, DbMachine, DbTechnique } from '../index';
+import { useJobs, useTechniques, DbJob, DbMachine } from '../index';
 import { useMachines } from '@/features/production';
 import { parseDateOnly } from '@/lib/dateUtils';
 

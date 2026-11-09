@@ -2,7 +2,7 @@ import { useMLPredictions } from '@/features/analytics/hooks/useMLPredictions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, AlertCircle, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
+import { BrainCircuit, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';

@@ -1,6 +1,5 @@
 import { useGamification, OperatorRanking } from '@/hooks/useGamification';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Trophy, Medal, Crown, TrendingUp, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, Package, AlertTriangle, Clock, TrendingUp, Zap } from 'lucide-react';
+import { CheckCircle2, Package, AlertTriangle, Clock } from 'lucide-react';
 import { DbJob } from '@/features/jobs';
 
 interface ShiftSummaryCardProps {

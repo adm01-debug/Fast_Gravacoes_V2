@@ -28,10 +28,8 @@ import { SwipeActions } from '@/components/mobile/SwipeActions';
 import { EmptyState } from '@/components/ui/empty-state';
 import { SoundFeedback } from '@/lib/soundFeedback';
 import { User, Play, Pause, Package, Maximize, Eye, EyeOff, Timer, ArrowRightLeft, Gauge } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function OperatorView() {
@@ -46,7 +44,7 @@ export default function OperatorView() {
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
 
-  const { jobs, techniques, machines, isLoading, getTechniqueById, getMachineById, refetchAll, assignedMachineIds } = useOperatorDashboardData();
+  const { jobs, machines, isLoading, getTechniqueById, getMachineById, assignedMachineIds } = useOperatorDashboardData();
   const updateStatus = useUpdateJobStatus();
   const { isOnline, cacheData } = useOfflineSyncContext();
 

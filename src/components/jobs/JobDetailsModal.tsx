@@ -12,20 +12,10 @@ import { Button, LoadingButton } from "@/components/ui/button";
 import { safeParseInt } from "@/lib/utils";
 
 import {
-  Calendar,
-  Clock,
-  User,
   Package,
-  Palette,
-  Play,
-  Pause,
-  CheckCircle,
-  AlertTriangle,
-  RotateCcw,
   FileText,
   Hash,
   Building,
-  QrCode,
   Copy,
   History,
   DollarSign,
@@ -38,7 +28,6 @@ import {
 } from "lucide-react";
 import { useSchedulingData } from "@/features/jobs";
 import { DbJob, useUpdateJob, useDeleteJob } from "@/features/jobs";
-import { JobPriority, JobStatus } from "@/features/jobs";
 import { JobQRCode } from "@/components/qrcode/JobQRCode";
 import { useDuplicateJob } from "@/features/jobs";
 import { useEntityAuditTrail } from "@/features/admin";

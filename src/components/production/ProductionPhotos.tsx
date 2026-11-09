@@ -2,8 +2,6 @@ import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -14,9 +12,7 @@ import {
   ChevronRight,
   Maximize2,
   Image as ImageIcon,
-  Clock,
-  User
-} from 'lucide-react';
+  Clock} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

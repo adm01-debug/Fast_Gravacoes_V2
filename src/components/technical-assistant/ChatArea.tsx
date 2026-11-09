@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Bot, Send, User, Loader2, Sparkles, Plus, Search, ChevronUp, ChevronDown, X, Keyboard, Mic, Copy, Download, Paperclip, Activity, ShieldCheck } from "lucide-react";
+import { Bot, Send, Loader2, Sparkles, Plus, Search, Keyboard, Mic, Copy, Download, Paperclip, Activity, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileAnalyzer } from "./FileAnalyzer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -43,7 +42,7 @@ export function ChatArea({
 }: ChatAreaProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const [messageSearchActive, setMessageSearchActive] = useState(false);
+  const [, setMessageSearchActive] = useState(false);
   const [messageSearchQuery, setMessageSearchQuery] = useState("");
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const [diagnosticMode, setDiagnosticMode] = useState(false);

@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Cpu, Info, Sparkles, AlertTriangle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { CheckCircle2, Info, Sparkles, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MachineSuggestionPanelProps {

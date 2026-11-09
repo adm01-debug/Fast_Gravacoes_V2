@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
-import { Edit2, Plus, Trash2, Hammer, Clock, Zap, Printer, Activity } from 'lucide-react';
+import { Edit2, Plus, Trash2, Hammer, Clock, Printer, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useSchedulingData } from '@/features/jobs';
 

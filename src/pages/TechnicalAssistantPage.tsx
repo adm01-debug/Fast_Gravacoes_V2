@@ -5,7 +5,7 @@
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Zap, Printer, Sun, Flame, Sparkles, Scissors, BookOpen, Settings, LayoutPanelLeft } from "lucide-react";
+import { Zap, Printer, Sun, Flame, Sparkles, Scissors, LayoutPanelLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

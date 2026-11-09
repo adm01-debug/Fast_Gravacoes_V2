@@ -6,7 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Download, Printer, Tag, Copy } from 'lucide-react';
+import { Download, Printer, Tag } from 'lucide-react';
 import { ProductionLot } from '@/features/inventory';
 import { format } from 'date-fns';
 import { parseDateOnly } from '@/lib/dateUtils';

@@ -13,9 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Activity, AlertTriangle, Clock, Database, RefreshCw, Zap,
-  Trash2, Download, FileText, CalendarIcon, Layout, Monitor, Bug
+  Trash2, CalendarIcon, Layout, Monitor, Bug
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { TelemetryCharts } from "@/features/admin/components/telemetry/TelemetryCharts";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -122,7 +121,7 @@ export default function AdminTelemetriaPage() {
     return { from: new Date(now.getTime() - offset).toISOString(), to };
   };
 
-  const { data: queryRows = [], isLoading: isLoadingQueries, refetch: refetchQueries } = useQuery<TelemetryRow[]>({
+  const { data: queryRows = [], refetch: refetchQueries } = useQuery<TelemetryRow[]>({
     queryKey: ["query-telemetry", severityFilter, timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
@@ -148,7 +147,7 @@ export default function AdminTelemetriaPage() {
     refetchInterval: realtimeEnabled ? 10000 : false, // Auto-refresh every 10s if realtime is enabled
   });
 
-  const { data: performanceRows = [], isLoading: isLoadingPerf, refetch: refetchPerf } = useQuery<PerformanceTrace[]>({
+  const { data: performanceRows = [], refetch: refetchPerf } = useQuery<PerformanceTrace[]>({
     queryKey: ["performance-telemetry", timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
@@ -169,7 +168,7 @@ export default function AdminTelemetriaPage() {
     enabled: activeTab === "performance",
   });
 
-  const { data: errorRows = [], isLoading: isLoadingErrors, refetch: refetchErrors } = useQuery<ErrorLog[]>({
+  const { data: errorRows = [], refetch: refetchErrors } = useQuery<ErrorLog[]>({
     queryKey: ["error-logs", timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
     queryFn: async () => {
       const { from, to } = getTimeThreshold();

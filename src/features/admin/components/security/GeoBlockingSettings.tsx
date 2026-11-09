@@ -10,17 +10,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Globe,
   Plus,
   Trash2,
-  Shield,
   ShieldCheck,
-  ShieldX,
   AlertTriangle,
   History,
-  Settings,
   MapPin
 } from 'lucide-react';
 import { useGeoBlockingSettings, useGeoBlockingRules, useGeoBlockingLogs, useUpdateGeoSettings, useAddCountryRule, useRemoveCountryRule, COMMON_COUNTRIES } from '@/features/admin/hooks/useGeoBlocking';

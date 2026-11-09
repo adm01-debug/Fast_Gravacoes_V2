@@ -28,9 +28,7 @@ import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/Favor
 // Breadcrumbs removed - handled by MainLayout
 import {
   Clock, Package, Calendar, Play, CheckCircle2,
-  AlertTriangle, RotateCcw, Pause, Command, Trash2, ArrowRight,
-  Sparkles
-} from 'lucide-react';
+  AlertTriangle, RotateCcw, Pause, Command, Trash2} from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob } from '@/features/jobs';
 import { JobStatus, assertTransition, canTransition } from '@/features/jobs';

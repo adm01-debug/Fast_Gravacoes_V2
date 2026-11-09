@@ -4,13 +4,12 @@
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useLocation } from "react-router-dom";
-import { ChevronLeft, ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, useCallback } from "react";
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback";
 import { useDevice } from "@/hooks/use-device";
-import { motion, AnimatePresence } from "framer-motion";
 import { SoundFeedback } from "@/lib/soundFeedback";
 import { useSmartBack } from "@/hooks/use-smart-back";
 import { useDirtyGuard } from "@/contexts/DirtyFormContext";

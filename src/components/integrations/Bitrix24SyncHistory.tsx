@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { History, CheckCircle2, AlertCircle, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, Webhook, Filter, BarChart3, Clock, TrendingUp, Activity } from 'lucide-react';
+import { History, CheckCircle2, AlertCircle, ArrowDownToLine, ArrowUpFromLine, Webhook, Filter, BarChart3, Clock, TrendingUp, Activity } from 'lucide-react';
 import { formatDistanceToNow, format, subDays, parseISO, startOfDay, differenceInSeconds } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from '@/lib/recharts';
@@ -130,18 +130,6 @@ export const Bitrix24SyncHistory = () => {
     return secs > 0 ? `${minutes}m ${secs}s` : `${minutes}m`;
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'success':
-        return <CheckCircle2 className="h-4 w-4 text-green-400" />;
-      case 'partial':
-        return <AlertTriangle className="h-4 w-4 text-yellow-400" />;
-      case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-400" />;
-      default:
-        return null;
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {

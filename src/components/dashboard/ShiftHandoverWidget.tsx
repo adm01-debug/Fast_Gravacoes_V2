@@ -1,4 +1,4 @@
-import { useShiftHandovers, useShiftPendingTasks, SHIFT_TYPE_LABELS, ShiftHandover, ShiftPendingTask } from '@/hooks/useShiftHandover';
+import { useShiftHandovers, useShiftPendingTasks, SHIFT_TYPE_LABELS, ShiftPendingTask } from '@/hooks/useShiftHandover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';

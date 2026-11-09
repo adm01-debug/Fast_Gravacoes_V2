@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { categorizeError } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
-import { ABCActivity, ABCCostPool, ABCActivityRate, ABCJobCost, ABC_ERROR_CONTEXT } from './types';
+import { ABCActivity, ABCCostPool, ABCActivityRate, ABCJobCost } from './types';
 import { useTechniques } from '@/features/jobs';
 
 export function useABCData() {

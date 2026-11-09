@@ -28,7 +28,7 @@ export function SwipeActions({
 }: SwipeActionsProps) {
   const x = useMotionValue(0);
   const { trigger } = useHapticFeedback();
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [, setIsDragging] = React.useState(false);
   const [actionTriggered, setActionTriggered] = React.useState<string | null>(null);
 
   const leftOpacity = useTransform(x, [0, threshold], [0, 1]);

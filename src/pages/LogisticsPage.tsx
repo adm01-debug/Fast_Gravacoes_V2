@@ -8,13 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Truck,
-  Package,
   Search,
   Plus,
   Clock,
   CheckCircle2,
   AlertTriangle,
-  ArrowRight,
   ExternalLink,
   Filter,
   MoreVertical,

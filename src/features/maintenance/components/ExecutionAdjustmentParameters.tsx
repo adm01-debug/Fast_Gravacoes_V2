@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { AlertTriangle, MoveHorizontal, Thermometer } from 'lucide-react';
 

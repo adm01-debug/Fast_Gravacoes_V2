@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from "@/components/ui/card";
-import { Copy, Check, BarChart3, Settings2 } from "lucide-react";
+import { Copy, Check, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { logger } from "@/lib/logger";

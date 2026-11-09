@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
 import { useNotificationSounds } from '@/features/notifications/hooks/useNotificationSounds';
 import { supabase } from '@/integrations/supabase/client';

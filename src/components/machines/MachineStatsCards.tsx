@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TargetArrowIcon } from '@/components/icons/TargetArrowIcon';

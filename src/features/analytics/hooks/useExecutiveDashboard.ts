@@ -10,9 +10,7 @@ import {
   format,
   differenceInMinutes,
   subDays,
-  differenceInDays,
-  isSameDay
-} from 'date-fns';
+  differenceInDays} from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
 
 type Job = Database['public']['Tables']['jobs']['Row'];
@@ -79,7 +77,7 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
       // Fetch previous period data for comparison
       const prevData = await fetchPeriodData(prevStartDate, prevEndDate, filters);
 
-      const { jobs, machines, techniques, maintenance, healthMetrics, profiles } = currentData;
+      const { jobs, machines, techniques, healthMetrics, profiles } = currentData;
       const prevJobs = prevData.jobs;
 
       // Calculate Current KPIs
