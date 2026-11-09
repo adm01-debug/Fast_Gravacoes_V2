@@ -19,7 +19,12 @@ import { writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
 const UNUSED_CODES = new Set([6133, 6192, 6196, 6198]);
-const OK_FIX_IDS = new Set(['unusedIdentifier_delete', 'unusedIdentifier_deleteImports']);
+// Correções individuais vêm com fixId indefinido; só queremos as de REMOVER (não prefixar com _ nem inferir tipo).
+const isRemoveFix = (f) =>
+  f.fixName === 'unusedIdentifier' &&
+  f.fixId !== 'unusedIdentifier_prefix' &&
+  f.fixId !== 'unusedIdentifier_infer' &&
+  /^Remove /.test(f.description);
 const MAX_PASSES = 8;
 
 const K = ts.SyntaxKind;
@@ -161,7 +166,7 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
         }
         const fixes = ls
           .getCodeFixesAtPosition(file, d.start, d.start + d.length, [d.code], fmt, {})
-          .filter((f) => OK_FIX_IDS.has(f.fixId));
+          .filter(isRemoveFix);
         const fix = fixes[0];
         if (!fix || fix.changes.some((c) => c.fileName !== file)) {
           manual.push({ file: relative(root, file), line: line + 1, code: d.code, kind: dec.kind, name, why: 'TypeScript não ofereceu correção segura' });
