@@ -58,3 +58,6 @@ supabase/.temp/cli-latest
 
 # Claude Code agent worktree checkouts (local scratch, never part of the repo).
 .claude/worktrees/
+
+# Relatórios do autofix (gerados)
+.autofix/
