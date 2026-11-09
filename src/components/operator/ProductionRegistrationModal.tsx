@@ -20,7 +20,6 @@ import { safeParseInt, safeParseFloat } from '@/lib/utils';
 import {
   Camera,
   Upload,
-  X,
   CheckCircle2,
   AlertTriangle,
   Package,
@@ -29,16 +28,7 @@ import {
 } from 'lucide-react';
 
 // Campos que operadores podem atualizar (conforme RLS policy)
-const ALLOWED_OPERATOR_FIELDS = [
-  'produced_quantity',
-  'lost_pieces',
-  'actual_start_time',
-  'actual_end_time',
-  'production_photos',
-  'notes'
-] as const;
 
-type AllowedField = typeof ALLOWED_OPERATOR_FIELDS[number];
 
 // Tipo para o payload sanitizado
 interface SanitizedPayload {

@@ -9,9 +9,9 @@ import { Helmet } from 'react-helmet-async';
 import { format, differenceInDays } from 'date-fns';
 import { parseDateOnly } from '@/lib/dateUtils';
 import {
-  Package, Search, Plus, Eye, GitBranch, AlertTriangle,
-  FileText, Command, QrCode, Download, CheckSquare,
-  ArrowUpDown, Calendar, Filter, X, Tag
+  Package, Search, Plus, Eye, GitBranch, 
+  FileText, QrCode, Download, CheckSquare,
+  ArrowUpDown, X, Tag
 } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,11 +28,9 @@ import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
 import { useProductionLots, useTraceabilityMutations, ProductionLot } from '@/features/inventory';
 import { useJobs } from '@/features/jobs';
@@ -40,7 +38,6 @@ import LotDetailsModal from '@/components/traceability/LotDetailsModal';
 import LotGenealogyView from '@/components/traceability/LotGenealogyView';
 import { TraceabilityStatsCards } from '@/components/traceability/TraceabilityStatsCards';
 import { LotQRCode } from '@/components/traceability/LotQRCode';
-import { LotLabelPrint } from '@/components/traceability/LotLabelPrint';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
 import { BlockchainIntegrityCard } from '@/components/traceability/BlockchainIntegrityCard';
 import { ElectronicSignatureDialog } from '@/components/traceability/ElectronicSignatureDialog';
@@ -70,13 +67,13 @@ export default function TraceabilityPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom] = useState('');
+  const [dateTo] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedLot, setSelectedLot] = useState<ProductionLot | null>(null);
   const [showGenealogyView, setShowGenealogyView] = useState(false);
   const [qrLot, setQrLot] = useState<ProductionLot | null>(null);
-  const [labelLots, setLabelLots] = useState<ProductionLot[]>([]);
+  const [, setLabelLots] = useState<ProductionLot[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sortField, setSortField] = useState<SortField>('production_date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -90,7 +87,7 @@ export default function TraceabilityPage() {
   });
 
 
-  const { data: lots, isLoading } = useProductionLots();
+  const { data: lots } = useProductionLots();
   const { data: jobs } = useJobs();
   const { createLot, updateLot } = useTraceabilityMutations();
 
@@ -469,7 +466,7 @@ interface SortableHeadProps {
   onSort: (field: SortField) => void;
 }
 
-function SortableHead({ label, field, current, dir, onSort }: SortableHeadProps) {
+function SortableHead({ label, field, current, onSort }: SortableHeadProps) {
   return (
     <TableHead>
       <Button variant="ghost" size="sm" className="h-auto p-0 font-black uppercase text-[10px] tracking-widest hover:bg-transparent" onClick={() => onSort(field)}>

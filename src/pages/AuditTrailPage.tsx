@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ShieldCheckIcon, LayoutDashboard, History, AlertTriangle, UserCheck, Settings2, Fingerprint, Lock, ShieldAlert } from 'lucide-react';
+import { ShieldCheckIcon, LayoutDashboard, History, AlertTriangle, UserCheck, Settings2, Fingerprint, Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuditTrail } from '@/features/admin';
@@ -13,7 +13,6 @@ import { AuditAIAdvisor } from '@/features/admin/components/audit/AuditAIAdvisor
 
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import type { AuditFilters as AuditFiltersType } from '@/lib/schemas/auditLog';
-import { motion } from 'framer-motion';
 
 export default function AuditTrailPage() {
   const [filters, setFilters] = useState<AuditFiltersType>({ limit: 100 });

@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ChartSkeleton } from '@/components/loading';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
 import { getOEEColor } from '@/features/production';
@@ -34,7 +33,7 @@ interface OEEStudiosTabProps {
   activeMachinesCount: number;
 }
 
-export function OEEStudiosTab({ data, machineId, machinesAtWorldClass, machinesBelowTarget, activeMachinesCount }: OEEStudiosTabProps) {
+export function OEEStudiosTab({ data, machinesAtWorldClass, machinesBelowTarget, activeMachinesCount }: OEEStudiosTabProps) {
   return (
     <>
 

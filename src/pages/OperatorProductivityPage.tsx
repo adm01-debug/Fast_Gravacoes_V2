@@ -10,10 +10,10 @@ import { useOperatorProductivity, OperatorProductivityMetrics, ProductivityPerio
 import { useOperatorEvolution } from '@/features/production';
 import { useOperatorGoals } from '@/features/production';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarDays, Download, Plus, Users, Gauge, CheckCircle2, AlertTriangle, Trophy, Search, Target } from 'lucide-react';
+import { CalendarDays, Download, Plus, Users, Gauge, CheckCircle2, AlertTriangle, Trophy, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CreateGoalModal } from '@/components/operators/CreateGoalModal';
-import { OperatorGoalsCard, GoalsSummary } from '@/components/operators/OperatorGoalsCard';
+import { GoalsSummary } from '@/components/operators/OperatorGoalsCard';
 import { GoalsHistoryCard } from '@/components/operators/GoalsHistoryCard';
 import { GoalAlertsWidget } from '@/components/operators/GoalAlertsWidget';
 import { generateProductivityReport } from '@/lib/productivityReport';

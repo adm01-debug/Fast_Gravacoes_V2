@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Sparkles, DollarSign, Target, ArrowRight, BrainCircuit } from 'lucide-react';
+import { Sparkles, Target, ArrowRight, BrainCircuit } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BIMetrics } from '@/features/analytics/types';
 import { useABCCosts } from '@/hooks/useABCCosts';

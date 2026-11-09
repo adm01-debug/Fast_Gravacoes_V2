@@ -1,17 +1,12 @@
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { logger } from '@/lib/logger';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useKPIs } from '@/features/analytics/hooks/useKPIs';
 import { useOEE } from '@/features/production';
 import { useSchedulingData } from '@/features/jobs';
 import { useOperators } from '@/features/production';
 import { useOperatorMachines } from '@/features/production';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
-import { BIStatCard } from '@/features/analytics/components/bi/BIStatCard';
 import { BILoadingSkeleton } from '@/features/analytics/components/bi/BILoadingSkeleton';
 import { BIPeriodFilters } from '@/features/analytics/components/bi/BIPeriodFilters';
 import { BIHeader } from '@/features/analytics/components/bi/BIHeader';
@@ -20,58 +15,15 @@ import { BINormalView } from '@/features/analytics/components/bi/BINormalView';
 import { DrillDownDialog } from '@/features/analytics/components/bi/drilldown/DrillDownDialog';
 import { BIJob, BIMetrics as BIMetricsTyped } from '@/features/analytics/components/bi/types';
 import { useToast } from '@/hooks/use-toast';
-import {
-  TrendingUp, AlertTriangle, Printer, CheckCircle, Clock, Target,
-  BarChart3, PieChart, LineChart, ArrowUp, ArrowDown, Minus,
-  Gauge, Activity, ArrowRight, Package, Layout
-} from 'lucide-react';
-import {
-  AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
-  LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend
-} from '@/lib/recharts';
 import { format, subDays, startOfDay, endOfDay, isWithinInterval, parseISO, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DelaysAnalysis } from '@/features/analytics/components/bi/delays/DelaysAnalysis';
-import { LossesTable } from '@/features/analytics/components/bi/losses/LossesTable';
-import { AIInsights } from '@/features/analytics/components/bi/AIInsights';
 
-import { BIMetrics as BIMetricsLegacy, BIJob as BIJobLegacy } from '@/features/analytics/types';
 type PeriodFilter = '7d' | '30d' | '90d' | 'custom';
 interface DateRange { from: Date; to: Date; }
 
-import { CHART_COLORS, PIE_COLORS, STUDIO_MAP, STUDIO_LIST } from '@/constants/biConstants';
+import { PIE_COLORS } from '@/constants/biConstants';
 
-function getComparisonDelta(current: number, previous: number) {
-  if (previous === 0) return { delta: 0, trend: 'neutral' as const };
-  const delta = ((current - previous) / previous) * 100;
-  return { delta: Math.abs(delta), trend: delta > 0 ? 'up' as const : delta < 0 ? 'down' as const : 'neutral' as const };
-}
 
-function ComparisonKPICard({ title, value1, value2, icon: Icon, format: formatFn = (v: number) => v.toLocaleString(), higherIsBetter = true }: { title: string; value1: number; value2: number; icon: React.ElementType; format?: (v: number) => string; higherIsBetter?: boolean }) {
-  const { delta, trend } = getComparisonDelta(value1, value2);
-  const isPositive = higherIsBetter ? trend === 'up' : trend === 'down';
-  return (
-    <Card className="card-interactive overflow-hidden group hover:shadow-glow-primary transition-all duration-300">
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between mb-4">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-all"><Icon className="h-5 w-5 text-primary" /></div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div><p className="text-xs text-muted-foreground">Período 1</p><p className="text-2xl font-bold gradient-text">{formatFn(value1)}</p></div>
-          <div><p className="text-xs text-muted-foreground">Período 2</p><p className="text-2xl font-bold text-muted-foreground">{formatFn(value2)}</p></div>
-        </div>
-        <div className={cn("mt-4 flex items-center gap-2 text-sm font-medium", isPositive ? "text-success" : trend === 'neutral' ? "text-muted-foreground" : "text-primary")}>
-          {trend === 'up' ? <ArrowUp className="h-4 w-4" /> : trend === 'down' ? <ArrowDown className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
-          <span>{delta.toFixed(1)}% {trend === 'up' ? 'maior' : trend === 'down' ? 'menor' : 'igual'}</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function BIDashboard() {
   const navigate = useNavigate();
@@ -83,7 +35,7 @@ export default function BIDashboard() {
   const [periodFilter2, setPeriodFilter2] = useState<PeriodFilter>('30d');
   const [customRange2, setCustomRange2] = useState<DateRange>({ from: subDays(new Date(), 60), to: subDays(new Date(), 31) });
   const [isCalendarOpen2, setIsCalendarOpen2] = useState(false);
-  const [viewMode, setViewMode] = useState<'futuristic' | 'classic'>('futuristic');
+  const [viewMode] = useState<'futuristic' | 'classic'>('futuristic');
   const [studioFilter, setStudioFilter] = useState<string>('all');
   const [collaboratorFilter, setCollaboratorFilter] = useState<string>('all');
   const [machineFilter, setMachineFilter] = useState<string>('all');

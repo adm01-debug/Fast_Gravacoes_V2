@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   TrendingUp, Activity, AlertTriangle, Gauge, Package, Target,
-  CheckCircle, Clock, BarChart3, PieChart, LineChart, Printer, Download, ArrowUp, ArrowDown, Minus
+  Clock, BarChart3, PieChart, LineChart, Printer, Download, ArrowUp, ArrowDown, Minus
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
@@ -13,7 +13,6 @@ import {
 } from '@/lib/recharts';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
-import { BITooltip } from './BITooltip';
 import { BIEmptyState } from './BIEmptyState';
 import { cn } from '@/lib/utils';
 

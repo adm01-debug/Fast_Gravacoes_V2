@@ -12,7 +12,6 @@ import {
   RefreshCw,
   Clock,
   Package,
-  AlertTriangle,
   Wifi,
   WifiOff,
   Maximize,

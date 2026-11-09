@@ -9,7 +9,7 @@ import { useInventory, useInventoryMovements, InventoryItem } from '@/features/i
 
 type InventoryMovementRow = NonNullable<ReturnType<typeof useInventoryMovements>['data']>[number];
 
-export function AIPredictionValidationModal({ open, onOpenChange, items, movements }: { open: boolean, onOpenChange: (o: boolean) => void, items: InventoryItem[], movements: InventoryMovementRow[] }) {
+export function AIPredictionValidationModal({ open, onOpenChange, movements }: { open: boolean, onOpenChange: (o: boolean) => void, items: InventoryItem[], movements: InventoryMovementRow[] }) {
   const { calculateAI, isCalculatingAI } = useInventory();
   const [calibratedAccuracy, setCalibratedAccuracy] = useState<number | null>(null);
 

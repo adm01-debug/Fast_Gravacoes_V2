@@ -126,7 +126,6 @@ describe('authLimiter', () => {
 
 // ── Validation — Zod schemas ───────────────────────────────
 
-import { z } from 'zod';
 import { safeParse, uuidSchema, paginationSchema, dateRangeSchema } from '@/lib/validation';
 
 describe('validation schemas', () => {

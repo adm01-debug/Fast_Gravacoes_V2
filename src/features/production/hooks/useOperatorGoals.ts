@@ -5,7 +5,7 @@ import { useAuth } from '@/features/auth';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
 import { toast } from 'sonner';
 import { format, isWithinInterval, parseISO, startOfMonth, endOfMonth } from 'date-fns';
-import { showErrorToast, categorizeError } from '@/lib/errorHandling';
+import { showErrorToast } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 
 // Error context for debugging

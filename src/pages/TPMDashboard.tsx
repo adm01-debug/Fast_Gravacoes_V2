@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { Wrench, AlertTriangle, CheckCircle, Clock, CalendarCheck, RefreshCw, Settings, Command, Zap, BrainCircuit, Activity } from 'lucide-react';
+import { Wrench, AlertTriangle, CheckCircle, Clock, CalendarCheck, RefreshCw, Settings, Command, BrainCircuit, Activity } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

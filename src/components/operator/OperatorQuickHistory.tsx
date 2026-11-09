@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Clock } from 'lucide-react';
 import { DbJob } from '@/features/jobs';
 import { format } from 'date-fns';
@@ -11,7 +10,7 @@ interface OperatorQuickHistoryProps {
   getTechniqueName: (id: string) => string | undefined;
 }
 
-export function OperatorQuickHistory({ jobs, getTechniqueName }: OperatorQuickHistoryProps) {
+export function OperatorQuickHistory({ jobs }: OperatorQuickHistoryProps) {
   const recentFinished = useMemo(() => {
     return jobs
       .filter(j => j.status === 'finished' && j.actual_end_time)

@@ -1,7 +1,7 @@
 import {
   Calendar, CalendarDays, CalendarRange, LayoutGrid, List, AlertTriangle, Settings, Users, Home,
   BarChart3, Gauge, Coins, Wrench, Brain, Code2, Zap, Bot, QrCode, RefreshCw,
-  BookOpen, Palette, Download, Bell, ArrowRightLeft, Package, Activity, FileDown,
+  BookOpen, Palette, Download, Bell, ArrowRightLeft, Package, Activity, 
   Trophy, BatteryCharging, FileText, Cog, TrendingUp, Cpu, UserCircle, ShieldCheck,
   Factory, PackageCheck
 } from 'lucide-react';

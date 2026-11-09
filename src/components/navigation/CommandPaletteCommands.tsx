@@ -1,10 +1,9 @@
 import * as React from "react";
 import {
   LayoutDashboard, Calendar, Kanban, BarChart3, Users, Settings, Clock, FileText,
-  Zap, Shield, Factory, ScanLine, Bell, Gauge, TrendingUp, Sparkles,
+  Shield, Factory, ScanLine, Bell, Gauge, TrendingUp, Sparkles,
   Moon, Sun, LogOut, Plus, RefreshCw, Download, Filter,
-  ArrowRight, Keyboard, HelpCircle, Activity, Package, Layers, History
-} from "lucide-react";
+  Keyboard, HelpCircle, Activity, Package, Layers} from "lucide-react";
 
 export type CommandCategory = "navigation" | "actions" | "settings" | "recent" | "contextual" | "jobs" | "search";
 

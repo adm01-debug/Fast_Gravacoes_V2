@@ -1,9 +1,8 @@
 import { useInventory } from '@/features/inventory';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Package, AlertTriangle, ArrowRight } from 'lucide-react';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 export function InventoryAlertsWidget() {

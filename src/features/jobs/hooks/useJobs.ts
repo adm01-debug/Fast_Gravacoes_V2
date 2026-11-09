@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
 import { QUERY_KEYS, STALE_TIMES } from '@/lib/queryConfig';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';

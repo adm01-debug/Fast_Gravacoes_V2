@@ -16,7 +16,6 @@ const CalendarFilters = lazyWithRetry(() => import('@/components/calendar/Calend
 const CalendarToolbar = lazyWithRetry(() => import('@/components/calendar/CalendarToolbar').then(m => ({ default: m.CalendarToolbar })));
 import { JobQuickActions } from '@/components/calendar/JobQuickActions';
 import { CalendarLegend } from '@/components/calendar/CalendarLegend';
-import { CalendarEmptyState } from '@/components/calendar/CalendarEmptyState';
 import { MobileFAB } from '@/components/calendar/MobileFAB';
 import { statusColorsSolid, statusLabels } from '@/components/calendar/types';
 import { cn } from '@/lib/utils';

@@ -1,28 +1,23 @@
 import { useMemo, useState, useCallback, Suspense } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  TrendingUp, Activity, Gauge, Target,
-  CheckCircle, PieChart, LineChart, Printer,
-  Users, Wrench, ShieldAlert, Zap, Download, FileText, FileSpreadsheet, Package, Timer, ArrowUpRight, RefreshCcw, Clock, TrendingDown
-} from 'lucide-react';
+  TrendingUp, Activity, Gauge, 
+  PieChart, 
+  ShieldAlert, Zap, Package, RefreshCcw} from 'lucide-react';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell,
+  AreaChart, Area, PieChart as RechartsPieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend
 } from '@/lib/recharts';
 
-import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useOperatorProductivity } from '@/features/production';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { DrillDownDialog } from './drilldown/DrillDownDialog';
 import { LossesTable } from './losses/LossesTable';
-import { DelaysAnalysis } from './delays/DelaysAnalysis';
 import { FuturisticStatCard } from './FuturisticStatCard';
 import { useBIExport } from '@/features/admin';
 import { BITooltip } from './BITooltip';
@@ -43,7 +38,7 @@ export function FuturisticBI({ biMetrics, kpis, oeeData, isLoading }: BIProps) {
   const navigate = useNavigate();
   const { operators } = useOperatorProductivity(30);
   const { stats: tpmStats } = useTPM();
-  const { isExporting, handleExport: baseHandleExport } = useBIExport(biMetrics);
+  const { handleExport: baseHandleExport } = useBIExport(biMetrics);
 
   const jobsWithLosses = useMemo(() => {
     if (!biMetrics.periodJobsList) return [];

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from '@/lib/recharts';
-import { Activity, Thermometer, Gauge, Zap, TrendingUp, AlertTriangle, CheckCircle2, Cpu, Database, Network } from 'lucide-react';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from '@/lib/recharts';
+import { Activity, Thermometer, Gauge, TrendingUp, AlertTriangle, CheckCircle2, Cpu, Database, Network } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';

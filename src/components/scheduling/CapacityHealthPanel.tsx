@@ -2,7 +2,7 @@ import { useTechniqueCapacityAlerts, type CapacityMetric } from '@/hooks/useTech
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, BarChart3, TrendingUp, Zap } from 'lucide-react';
+import { BarChart3, TrendingUp, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 

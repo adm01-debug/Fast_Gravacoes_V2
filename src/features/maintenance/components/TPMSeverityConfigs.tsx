@@ -9,7 +9,6 @@ import { AlertCircle, Clock, Calendar, AlertTriangle, Plus, Trash2, Zap } from '
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 
 interface SeverityConfig {
   id: string;

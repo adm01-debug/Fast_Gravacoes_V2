@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Upload, FileText, Image as ImageIcon, X } from 'lucide-react';
+import { useState } from 'react';
+import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export function FileAnalyzer({ onFileProcessed }: { onFileProcessed: (file: File) => void }) {
-  const [dragActive, setDragActive] = useState(false);
+  const [dragActive] = useState(false);
 
   const handleFile = (file: File) => {
     onFileProcessed(file);
