@@ -14,8 +14,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { Globe, Plus, Trash2, Loader2, Shield, User, AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface IPEntry {
   id: string;
@@ -37,7 +35,7 @@ export function IPAllowlist() {
   const [isGlobal, setIsGlobal] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
 
-  const { data: ipList = [], isLoading } = useQuery({
+  const { data: ipList = [] } = useQuery({
     queryKey: ['ip-allowlist'],
     queryFn: async () => {
       const { data, error } = await supabase

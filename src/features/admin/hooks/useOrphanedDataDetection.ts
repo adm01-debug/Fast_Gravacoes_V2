@@ -3,7 +3,7 @@
    infinitos, invalidação excessiva de cache ou recomputação em cada
    render. Callbacks/valores externos são estáveis por contrato. */
 import { useMemo } from 'react';
-import { useJobs, useTechniques, DbJob, DbTechnique, DbMachine } from '@/features/jobs';
+import { useJobs, useTechniques, DbTechnique } from '@/features/jobs';
 import { useMachines } from '@/features/production';
 
 export interface OrphanedTechnique {

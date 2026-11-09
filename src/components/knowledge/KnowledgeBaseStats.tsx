@@ -7,7 +7,7 @@ interface KnowledgeBaseStatsProps {
   techniques: Array<{ id: string; name: string; color: string }>;
 }
 
-export const KnowledgeBaseStats = ({ sheets, techniques }: KnowledgeBaseStatsProps) => {
+export const KnowledgeBaseStats = ({ sheets }: KnowledgeBaseStatsProps) => {
   const totalSheets = sheets.length;
   const avgTime = sheets.reduce((sum, s) => sum + (s.estimated_time_minutes || 0), 0) / (totalSheets || 1);
   const techniquesUsed = new Set(sheets.map(s => s.technique_id)).size;

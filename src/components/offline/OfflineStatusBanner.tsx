@@ -32,9 +32,7 @@ export function OfflineStatusBanner({
     pendingActionsCount,
     lastSyncedAt,
     forceSync,
-    cacheData,
-    hasCachedData
-  } = useOfflineSyncContext();
+    cacheData  } = useOfflineSyncContext();
 
   const [storageInfo, setStorageInfo] = useState<{ usage: number; quota: number; percentUsed: number } | null>(null);
   const [isCaching, setIsCaching] = useState(false);

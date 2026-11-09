@@ -1,7 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { MoveHorizontal, PenTool, Zap, Thermometer, LucideIcon } from 'lucide-react';
-import { AdjustmentParameters as IAdjustmentParameters } from '../../hooks/types';
 import { TechnicalSheet } from '@/hooks/useTechnicalSheets';
 
 export interface AdjustmentParams {

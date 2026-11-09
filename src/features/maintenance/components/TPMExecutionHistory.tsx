@@ -6,13 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  History, Search, Filter, FileSpreadsheet, Download,
+  History, Search, Filter, FileSpreadsheet, 
   Eye, Calendar, Wrench, CheckCircle, Clock, AlertTriangle,
-  CheckSquare, XSquare
-} from 'lucide-react';
+  CheckSquare} from 'lucide-react';
 import { useAuth } from '@/features/auth';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

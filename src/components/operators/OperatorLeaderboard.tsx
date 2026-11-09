@@ -2,7 +2,7 @@ import { useOperatorRankings } from '@/features/production';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, Medal, Star, TrendingUp, Package, Gauge, ShieldCheck } from 'lucide-react';
+import { Trophy, Medal, Package, Gauge, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';

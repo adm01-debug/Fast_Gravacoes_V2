@@ -1,13 +1,12 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/FavoritesManager';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
-import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';
+import { KPITooltip } from '@/components/ui/kpi-tooltip';
 import { Layers, Scale, AlertTriangle, TrendingUp, Timer, BarChart3, History, Command, Users } from 'lucide-react';
 import { useSmartSequencing } from '@/features/jobs';
 import { useLoadBalancing } from '@/features/analytics/hooks/useLoadBalancing';
@@ -28,8 +27,8 @@ import { VoiceButton } from '@/components/voice/VoiceCommands';
 export default function EfficiencyDashboard() {
   const navigate = useNavigate();
   const { suggestions: sequencingSuggestions, totalSavings } = useSmartSequencing();
-  const { byTechnique, suggestions: balancingSuggestions, isLoading: loadBalancingLoading } = useLoadBalancing();
-  const { alerts, capacityByDate, isLoading: bottleneckLoading, criticalCount } = useBottleneckPrediction();
+  const { byTechnique, suggestions: balancingSuggestions } = useLoadBalancing();
+  const { alerts, capacityByDate, criticalCount } = useBottleneckPrediction();
   const { alerts: allAlertHistory, resolvedAlerts, isLoading: historyLoading } = useEfficiencyAlertHistory();
   const { data: oeeData } = useOEE(30);
 

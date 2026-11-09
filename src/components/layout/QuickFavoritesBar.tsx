@@ -49,21 +49,7 @@ import { useQuickFavorites, QuickFavorite } from '@/hooks/useQuickFavorites';
 import { useDirtyGuard } from '@/contexts/DirtyFormContext';
 import { useAlertCount } from '@/hooks/useAlertCount';
 
-type BrowserAudioWindow = Window & {
-  AudioContext?: typeof AudioContext;
-  webkitAudioContext?: typeof AudioContext;
-};
 
-const createBrowserAudioContext = (): AudioContext => {
-  const audioWindow = window as BrowserAudioWindow;
-  const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
-
-  if (!AudioContextConstructor) {
-    throw new Error('AudioContext não suportado neste navegador.');
-  }
-
-  return new AudioContextConstructor();
-};
 
 const iconMap: Record<string, React.ElementType> = {
   Home, Calendar, CalendarDays, LayoutGrid, List, Zap, BarChart3,

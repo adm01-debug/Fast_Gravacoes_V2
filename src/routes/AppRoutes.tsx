@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Routes, Route, useLocation, Navigate, useNavigationType } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";

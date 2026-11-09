@@ -7,11 +7,9 @@ import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertTriangle, Clock, AlertCircle, RotateCcw, Zap, Bell, RefreshCw } from "lucide-react";
 import { useSchedulingData, DbJob, StuckJob } from "@/features/jobs";
-import { Job } from "@/types/scheduling";
 import { useBottleneckPrediction, useLoadBalancing, BottleneckAlert, LoadBalancingSuggestion } from "@/features/analytics";
 
 import { useEfficiencyNotifications } from "@/features/notifications";
-import { EfficiencyAlertHistoryWidget } from "@/components/dashboard/EfficiencyAlertHistoryWidget";
 import { useStuckJobsDetection } from "@/features/jobs";
 
 import { useOrphanedDataDetection } from "@/features/admin";

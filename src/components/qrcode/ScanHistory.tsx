@@ -15,7 +15,6 @@ import { History, Filter, Volume2, VolumeX, BarChart3, List, LayoutGrid } from "
 import { startOfDay, endOfDay, isWithinInterval, subDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
-import { useToast } from "@/hooks/use-toast";
 import { playNotificationSound } from "./scanHistorySounds";
 import { ScanHistoryFilters } from "./ScanHistoryFilters";
 import { ScanHistoryCharts } from "./ScanHistoryCharts";

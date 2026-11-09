@@ -7,12 +7,12 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BrandLogo } from '@/components/ui/BrandLogo';
-import { ChevronLeft, ChevronRight, Printer, Plus, LogOut, ArrowLeft, Settings, Shield, Menu } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, LogOut, Shield, Menu } from 'lucide-react';
 
 import { SoundFeedback } from '@/lib/soundFeedback';
 import { cn } from '@/lib/utils';
@@ -34,7 +34,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { NavButton } from './sidebar/NavButton';
 import { NavGroupComponent } from './sidebar/NavGroupComponent';
 import { navGroups, adminNavItems } from './sidebar/sidebarNavConfig';
-import { StaggeredList, useRipple } from '../ui/micro-interactions';
+import { StaggeredList } from '../ui/micro-interactions';
 
 export function AppSidebar() {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ export function AppSidebar() {
   const [openGroups, setOpenGroups] = useState<string[]>(['home', 'planning']);
   const location = useLocation();
   const navigate = useNavigate();
-  const { profile, role, signOut, isCoordinator, isAdmin, user } = useAuth();
+  const { profile, role, signOut, user } = useAuth();
   const { isMobile } = useDevice();
   const alertCount = useAlertCount();
   const { unreadCount: notificationCount } = useNotifications();

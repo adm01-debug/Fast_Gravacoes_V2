@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Helmet } from 'react-helmet-async';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardSkeleton } from '@/components/ui/DashboardSkeleton';
-import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { useExecutiveDashboard, getDateRangePresets, DateRange } from '@/features/analytics/hooks/useExecutiveDashboard';
 import { exportExecutiveDashboardPDF } from '@/lib/pdfExport';
@@ -16,58 +15,20 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTechniques } from '@/features/jobs';
 import {
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area
-} from '@/lib/recharts';
-import {
   FileDown,
-  TrendingUp,
-  TrendingDown,
   Factory,
   Package,
-  Wrench,
-  Users,
   Target,
   AlertTriangle,
   CheckCircle2,
-  Clock,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Activity,
-  Zap,
-  Lightbulb,
-  BrainCircuit,
   ShieldCheck,
-  Sparkles,
-  ShieldAlert,
   FileSpreadsheet,
   Settings2
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
-import { AutonomousEventLog } from '@/components/autonomous/AutonomousEventLog';
 import { ExecutiveKPICardsGrid } from '@/features/analytics/components/bi/executive/ExecutiveKPICards';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ExecutiveNorthStar } from '@/features/analytics/components/executive/ExecutiveNorthStar';
 import { ExecutiveChartsRow1 } from '@/features/analytics/components/executive/ExecutiveChartsRow1';

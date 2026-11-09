@@ -89,10 +89,10 @@ export default function ShiftHandoverPage() {
   });
 
   // Fetch all pending tasks
-  const { data: pendingTasks, isLoading: loadingTasks } = useShiftPendingTasks(undefined, false);
+  const { data: pendingTasks } = useShiftPendingTasks(undefined, false);
 
   // Fetch recent occurrences
-  const { data: occurrences, isLoading: loadingOccurrences } = useShiftOccurrences(undefined, {
+  const { data: occurrences } = useShiftOccurrences(undefined, {
     startDate: format(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')
   });
 

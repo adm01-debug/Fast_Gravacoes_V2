@@ -1,6 +1,6 @@
 import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from '@/lib/recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from '@/lib/recharts';
 import { TechniqueCostSummary } from '@/hooks/useABCCosts';
 
 interface ABCTechniqueChartProps {

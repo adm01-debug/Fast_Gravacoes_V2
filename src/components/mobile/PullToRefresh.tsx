@@ -22,18 +22,8 @@ export function PullToRefresh({
     hapticFeedback: true,
   });
 
-  const [refreshState, setRefreshState] = React.useState<"idle" | "success" | "error">("idle");
+  const [refreshState] = React.useState<"idle" | "success" | "error">("idle");
 
-  const handleRefresh = async () => {
-    try {
-      await onRefresh();
-      setRefreshState("success");
-    } catch {
-      setRefreshState("error");
-    } finally {
-      setTimeout(() => setRefreshState("idle"), 1500);
-    }
-  };
 
   const showIndicator = pulling || refreshing || pullDistance > 0;
 

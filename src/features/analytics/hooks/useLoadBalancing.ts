@@ -1,6 +1,6 @@
  
 import { useMemo } from 'react';
-import { useJobs, useTechniques, DbJob, DbMachine, DbTechnique } from '@/features/jobs';
+import { useJobs, useTechniques, DbJob, DbMachine } from '@/features/jobs';
 import { useMachines } from '@/features/production';
 import { useBusinessConfig } from '@/features/admin';
 import { format } from 'date-fns';

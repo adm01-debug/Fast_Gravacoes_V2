@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, Home, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronRight, Home, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';

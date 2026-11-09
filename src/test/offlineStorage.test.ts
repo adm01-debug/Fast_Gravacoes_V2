@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // ── IndexedDB mock ─────────────────────────────────────────
 // jsdom doesn't ship IndexedDB, so we provide a minimal in-memory shim.

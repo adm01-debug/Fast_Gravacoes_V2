@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useJobs, useTechniques, DbJob, DbMachine, DbTechnique } from '../index';
+import { useJobs, useTechniques, DbJob } from '../index';
 import { useMachines } from '@/features/production';
 import { parseDateOnly } from '@/lib/dateUtils';
 import { toast } from 'sonner';

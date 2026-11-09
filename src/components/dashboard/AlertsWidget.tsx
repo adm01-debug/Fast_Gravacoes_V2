@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { parseDateOnly } from '@/lib/dateUtils';
-import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useSchedulingData } from '@/features/jobs';
 import { AlertScheduleModal } from './AlertScheduleModal';

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ interface KPIAlertsTabProps {
 const KPIAlertsTabComponent = ({
   goalAlerts, kpis
 }: KPIAlertsTabProps) => {
-  const { jobAudits, machineAudits, isLoading: isLoadingAudit } = useDetailedAuditTrail();
+  const { jobAudits, machineAudits } = useDetailedAuditTrail();
 
   return (
     <div className="space-y-6">

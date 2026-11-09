@@ -5,7 +5,7 @@ import { useOperatorSkills, type SkillLevel } from '@/features/production';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Check, X, Shield, Star, Award } from 'lucide-react';
+import { X, Shield, Star, Award } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function SkillsMatrix() {

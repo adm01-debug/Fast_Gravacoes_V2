@@ -5,26 +5,15 @@
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Wrench, CheckCircle2, AlertTriangle, Clock, Plus, Trash2, PenTool, Zap, MoveHorizontal, Thermometer, Info, CheckSquare, Package, Camera } from 'lucide-react';
-import { MaintenanceSchedule, MaintenanceChecklist, MaintenanceChecklistItem, ChecklistSnapshot, AdjustmentParameters as IAdjustmentParameters, QualityChecklistResult } from '@/features/maintenance/hooks/types';
+import { Wrench, CheckCircle2 } from 'lucide-react';
+import { MaintenanceSchedule, ChecklistSnapshot, AdjustmentParameters as IAdjustmentParameters } from '@/features/maintenance/hooks/types';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { useTechnicalSheets } from '@/hooks/useTechnicalSheets';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { ChecklistItem } from './execution/ChecklistItem';
 import { AlertRiskPanel } from './execution/AlertRiskPanel';
-import { SupplyList } from './execution/SupplyList';
-import { AdjustmentParameters } from './execution/AdjustmentParameters';
-import { ReplacementParts } from './execution/ReplacementParts';
 import { ChecklistSection } from '@/features/maintenance/components/execution/ChecklistSection';
 import { RegulagemSection } from '@/features/maintenance/components/execution/RegulagemSection';
 import { GeneralInfoSection } from '@/features/maintenance/components/execution/GeneralInfoSection';
@@ -88,7 +77,6 @@ export function MaintenanceExecutionModal({
   isOpen,
   onClose,
   schedule,
-  recordId,
   onComplete,
   isSubmitting = false,
 }: MaintenanceExecutionModalProps) {
