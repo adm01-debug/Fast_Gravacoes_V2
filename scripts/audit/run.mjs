@@ -30,7 +30,8 @@ mkdirSync(OUT, { recursive: true });
 const BASELINE = process.env.AUDIT_BASELINE || join(ROOT, 'scripts/audit/baseline.json');
 
 // ---------- utilidades ----------
-const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter(Boolean);
+// -z: nomes com acento/espaço não vêm escapados pelo git
+const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\0').filter(Boolean);
 const cache = new Map();
 const read = (f) => {
   if (!cache.has(f)) cache.set(f, existsSync(f) ? readFileSync(f, 'utf8') : '');
@@ -40,36 +41,37 @@ const isTest = (f) => /\.(test|spec)\.[tj]sx?$/.test(f) || /(^|\/)(test|tests|__
 const srcFiles = tracked.filter((f) => /^src\/.*\.(ts|tsx)$/.test(f) && !isTest(f) && !f.endsWith('.d.ts'));
 const lineOf = (text, idx) => text.slice(0, idx).split('\n').length;
 const lineText = (text, line) => (text.split('\n')[line - 1] || '').trim().slice(0, 160);
-const redact = () => '[SEGREDO REDIGIDO]';
-// A redação vale para todas as checagens e trechos, mesmo se a evidência já
-// truncou a linha. Não conserve prefixos de credenciais nem corpos de PEM.
-const redactEvidence = (text) => text
-  .replace(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|$)/g, redact)
-  .replace(/\b(?:sk_live_|re_)[A-Za-z0-9]*/g, redact)
-  .replace(/\bAC[a-f0-9]{16,}\b/g, redact)
-  .replace(/\beyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]*){0,2}/g, redact)
-  .replace(/postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]+@?/g, redact)
-  .replace(/https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]*/gi, redact);
-
+const redact = (s) => (s.length > 10 ? `${s.slice(0, 6)}…[${s.length} chars]` : '***');
 const globRx = (g) =>
   new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
+
+// Padrões de credencial: usados pela checagem de segredos E para limpar qualquer evidência/trecho de outras checagens.
+const SEGREDOS = [
+  ['JWT', /\beyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/g],
+  ['sk_live', /\bsk_live_[0-9a-zA-Z]{16,}/g],
+  ['Resend', /\bre_[A-Za-z0-9]{24,}/g],
+  ['Twilio SID', /\bAC[a-f0-9]{32}\b/g],
+  ['chave privada', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g],
+  ['URL de banco com senha', /postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]{4,}@/g],
+  ['webhook Bitrix com token', /https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]{8,}/gi],
+];
+const scrub = (t) => SEGREDOS.reduce((acc, [, rx]) => acc.replace(rx, (m) => redact(m)), String(t ?? ''));
 
 const findings = [];
 const checks = []; // {id, titulo, limite, total}
 function add(check, sev, titulo, arquivo, linha, evidencia, sugestao, extra = {}) {
-  findings.push(JSON.parse(JSON.stringify({ check, sev, titulo, arquivo, linha, evidencia, sugestao, ...extra },
-    (_key, value) => typeof value === 'string' ? redactEvidence(value) : value)));
+  findings.push({ check, sev, titulo: scrub(titulo), arquivo, linha, evidencia: scrub(evidencia), sugestao, ...extra });
 }
+let checagensComErro = 0;
 function defCheck(id, titulo, limite, fn) {
   const before = findings.length;
-  let ok = true;
   try {
     fn();
   } catch (e) {
-    ok = false;
-    add(id, 'baixa', `A checagem "${id}" falhou ao rodar`, '-', 0, String(e.message || e), 'Corrigir o script de auditoria');
+    checagensComErro++;
+    add(id, 'alta', `A checagem "${id}" falhou ao rodar`, '-', 0, String(e.message || e), 'Corrigir o script de auditoria (checagem quebrada = auditoria cega nesse ponto)');
   }
-  checks.push({ id, titulo, limite, total: findings.length - before, ok });
+  checks.push({ id, titulo, limite, total: findings.length - before });
 }
 
 // ---------- 1. RLS: políticas de escrita permissivas (estado final das migrations) ----------
@@ -141,24 +143,27 @@ defCheck(
 
 // ---------- 2. Tabelas criadas sem RLS ----------
 defCheck('tabela-sem-rls', 'Tabelas em public criadas sem ENABLE ROW LEVEL SECURITY', 'Não vê RLS ativado por SQL dinâmico/loop.', () => {
-  const created = new Map();
-  const rls = new Set();
-  const dropped = new Set();
+  const estado = new Map(); // tabela -> { f, line, rls }
   for (const f of migrations) {
     const text = stripSql(read(f));
+    const ev = [];
     for (const m of text.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([\w."]+)/gi)) {
       const raw = m[1].replace(/"/g, '');
       if (raw.includes('.') && !/^public\./i.test(raw)) continue;
-      const t = normTable(m[1]);
-      if (!created.has(t)) created.set(t, { f, line: lineOf(text, m.index) });
-      dropped.delete(t);
+      ev.push({ i: m.index, t: 'create', tab: normTable(m[1]), line: lineOf(text, m.index) });
     }
-    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+enable\s+row\s+level\s+security/gi)) rls.add(normTable(m[1]));
-    for (const m of text.matchAll(/drop\s+table\s+(?:if\s+exists\s+)?([\w."]+)/gi)) dropped.add(normTable(m[1]));
+    for (const m of text.matchAll(/alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?([\w."]+)\s+(enable|disable)\s+row\s+level\s+security/gi)) ev.push({ i: m.index, t: m[2].toLowerCase() === 'enable' ? 'rls' : 'norls', tab: normTable(m[1]) });
+    for (const m of text.matchAll(/drop\s+table\s+(?:if\s+exists\s+)?([\w."]+)/gi)) ev.push({ i: m.index, t: 'drop', tab: normTable(m[1]) });
+    ev.sort((a, b) => a.i - b.i);
+    for (const e of ev) {
+      if (e.t === 'create') { if (!estado.has(e.tab)) estado.set(e.tab, { f, line: e.line, rls: false }); }
+      else if (e.t === 'rls') { const st = estado.get(e.tab); if (st) st.rls = true; }
+      else if (e.t === 'norls') { const st = estado.get(e.tab); if (st) st.rls = false; } // DISABLE desfaz o ENABLE
+      else estado.delete(e.tab); // tabela apagada: descarta o estado (uma recriação começa sem RLS)
+    }
   }
-  for (const [t, { f, line }] of created)
-    if (!rls.has(t) && !dropped.has(t))
-      add('tabela-sem-rls', 'alta', `Tabela ${t} sem ENABLE ROW LEVEL SECURITY nas migrations`, f, line, `create table ${t}`, `Adicionar ALTER TABLE public.${t} ENABLE ROW LEVEL SECURITY e políticas.`);
+  for (const [t, { f, line, rls }] of estado)
+    if (!rls) add('tabela-sem-rls', 'alta', `Tabela ${t} sem ENABLE ROW LEVEL SECURITY nas migrations`, f, line, `create table ${t}`, `Adicionar ALTER TABLE public.${t} ENABLE ROW LEVEL SECURITY e políticas.`);
 });
 
 // ---------- 3. Edge functions ----------
@@ -325,15 +330,7 @@ defCheck('escape-de-tipos', '@ts-ignore / @ts-nocheck em código de produção',
 defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 'Padrões conhecidos (JWT, sk_live, Resend, Twilio, chave privada, URL de banco, webhook Bitrix). O valor NUNCA é impresso.', () => {
   const skip = /(^|\/)(scripts\/ai-context|node_modules|dist|coverage|graphify-out|\.venv-graphify|playwright-report|test-results)\//;
   const files = tracked.filter((f) => !skip.test(f) && !/\.(png|jpe?g|gif|ico|webp|woff2?|ttf|lockb?|pdf|zip|svg|mp3|mp4)$/i.test(f) && !/(package-lock\.json|bun\.lock|deno\.lock)$/.test(f) && !isTest(f));
-  const pats = [
-    ['JWT', /\beyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/g],
-    ['sk_live', /\bsk_live_[0-9a-zA-Z]{16,}/g],
-    ['Resend', /\bre_[A-Za-z0-9]{24,}/g],
-    ['Twilio SID', /\bAC[a-f0-9]{32}\b/g],
-    ['chave privada', /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g],
-    ['URL de banco com senha', /postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]{4,}@/g],
-    ['webhook Bitrix com token', /https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]{8,}/gi],
-  ];
+  const pats = SEGREDOS;
   for (const f of files) {
     const t = read(f);
     if (t.length > 2_000_000) continue;
@@ -347,7 +344,8 @@ defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 
           try {
             const role = JSON.parse(Buffer.from(m[0].split('.')[1], 'base64url').toString()).role;
             extra = ` role=${role}`;
-            sev = role === 'service_role' ? 'critica' : 'baixa'; // anon/publishable é público por desenho
+            // só `anon` é público por desenho; sessão (authenticated) ou papel desconhecido age como um usuário
+            sev = role === 'service_role' ? 'critica' : role === 'anon' ? 'baixa' : 'alta';
           } catch { /* não é JWT de verdade */ continue; }
         }
         add('segredo-exposto', sev, `${nome} versionado${extra}`, f, lineOf(t, m.index), redact(m[0]), sev === 'baixa' ? 'Chave pública por desenho; preferir variável de ambiente.' : 'Rotacionar a credencial AGORA e mover para secret do serviço.');
@@ -364,6 +362,7 @@ defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 
 defCheck('regra-de-negocio', 'Regras declaradas em scripts/audit/regras.json', 'Só verifica texto (presença/ausência). Prova que a proteção continua escrita, não que está correta.', () => {
   const { regras } = JSON.parse(read('scripts/audit/regras.json'));
   for (const r of regras) {
+   try {
     const rx = globRx(r.arquivo);
     const files = tracked.filter((f) => rx.test(f));
     if (!files.length) {
@@ -380,6 +379,10 @@ defCheck('regra-de-negocio', 'Regras declaradas em scripts/audit/regras.json', '
         add('regra-de-negocio', r.severidade, `[${r.id}] ${r.titulo}: contém /${p}/`, f, lineOf(read(f), new RegExp(p).exec(read(f)).index), `padrão proibido: ${p}`, r.por_que);
       }
     }
+   } catch (e) {
+    checagensComErro++;
+    add('regra-de-negocio', 'alta', `[${r.id}] regra inválida (${e.message})`, 'scripts/audit/regras.json', 1, String(e.message).slice(0, 160), 'Corrigir a expressão regular da regra.');
+   }
   }
 });
 
@@ -393,13 +396,21 @@ if (args.includes('--baseline')) {
   writeFileSync(BASELINE, JSON.stringify({ gerado: new Date().toISOString(), total: findings.length, fps: findings.map((x) => x.fp) }, null, 1));
   console.log(`[audit] baseline gravado com ${findings.length} achados em scripts/audit/baseline.json`);
 }
+if (process.env.AUDIT_BASELINE && !existsSync(BASELINE) && !args.includes('--baseline')) {
+  console.error(`[audit] ERRO: AUDIT_BASELINE aponta para um arquivo que não existe: ${BASELINE}`);
+  process.exit(2);
+}
+if (args.includes('--estrito') && !existsSync(BASELINE)) {
+  console.error('[audit] ERRO: --estrito exige baseline (rode com --baseline antes); sem ele não há como saber o que é novo.');
+  process.exit(2);
+}
 const base = existsSync(BASELINE) ? new Set(JSON.parse(read(BASELINE)).fps) : null;
 const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
 
 const sevCount = (sev) => findings.filter((x) => x.sev === sev).length;
 const excerpt = (f, line) => {
-  const ls = redactEvidence(read(f)).split('\n');
-  return ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n');
+  const ls = read(f).split('\n');
+  return scrub(ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n'));
 };
 
 const md = [`# Auditoria — ${new Date().toISOString()}`, '',
@@ -431,7 +442,4 @@ writeFileSync(join(OUT, 'fila-para-decisao.md'), fila.join('\n'));
 console.log(`[audit] ${findings.length} achados (crítica ${sevCount('critica')}, alta ${sevCount('alta')}, média ${sevCount('media')}, baixa ${sevCount('baixa')})${base ? ` — ${novos.length} novo(s) vs baseline` : ''}`);
 for (const c of checks) console.log(`  ${String(c.total).padStart(4)}  ${c.id}`);
 console.log('[audit] relatório em .audit/relatorio.md e .audit/fila-para-decisao.md');
-if (args.includes('--estrito') && novos.some((x) => x.sev === 'critica' || x.sev === 'alta')) process.exit(1);
-
-// Uma checagem quebrada não é evidência de auditoria concluída.
-if (checks.some((c) => !c.ok)) process.exitCode = 1;
+if (args.includes('--estrito') && (checagensComErro > 0 || novos.some((x) => x.sev === 'critica' || x.sev === 'alta'))) process.exit(1);

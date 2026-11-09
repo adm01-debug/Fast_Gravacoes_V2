@@ -65,10 +65,6 @@ docs/contexto/*
 docs/contexto/regras/*
 !docs/contexto/regras/manual/
 
-# Relatórios locais dos motores determinísticos
+# Relatórios gerados pelos scripts autofix/audit
 .autofix/
 .audit/
-
-# Estado local privado dos novos adaptadores de automação
-/.tools/repo-automation/
-/.tools/graphify/local-state/
