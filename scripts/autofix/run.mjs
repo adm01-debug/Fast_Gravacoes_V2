@@ -5,7 +5,7 @@
  * Uso:
  *   node scripts/autofix/run.mjs                # simulação: só mede e escreve o relatório
  *   node scripts/autofix/run.mjs --apply        # aplica, valida e reverte o que quebrar
- *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção, DEPOIS dos gates (branch autofix/AAAA-MM-DD)
+ *   node scripts/autofix/run.mjs --apply --commit   # + um commit por correção, DEPOIS dos gates, numa branch NOVA autofix/AAAA-MM-DD[-n]
  *   node scripts/autofix/run.mjs --apply --tests    # + vitest completo no fim
  *   node scripts/autofix/run.mjs --only=unused      # unused | eslint
  *   node scripts/autofix/run.mjs --desestruturacao  # (opt-in) também remove itens de desestruturação não usados
@@ -116,15 +116,19 @@ function validateAndPrune(changed, originals) {
   return { ok: false, keep: [], reverted: [...reverted, ...keep], why: 'gate não estabilizou em 3 rodadas' };
 }
 
+let branchDestaExecucao = null; // branch criada por ESTA execução; os commits seguintes reaproveitam só ela
 function commit(files, msg) {
   if (!files.length) return false;
-  const branch = git('branch', '--show-current').stdout.trim();
-  if (!branch || ['main', 'master', 'dia'].includes(branch) || /^dia-/.test(branch)) {
-    const name = process.env.AUTOFIX_BRANCH || `autofix/${new Date().toISOString().slice(0, 10)}`;
-    const exists = git('rev-parse', '--verify', '--quiet', name).status === 0;
-    const r = exists ? git('switch', name) : git('switch', '-c', name);
-    if (r.status !== 0) throw new Error(`não consegui criar/usar a branch ${name}: ${r.stderr}`);
-    log(`commits irão para a branch ${name}`);
+  if (!branchDestaExecucao) {
+    // Sempre uma branch NOVA e exclusiva: nunca grava na branch em que o usuário já estava trabalhando
+    // nem reaproveita uma branch antiga. Se o nome existir, acrescenta -2, -3…
+    const base = process.env.AUTOFIX_BRANCH || `autofix/${new Date().toISOString().slice(0, 10)}`;
+    let nome = base;
+    for (let n = 2; git('rev-parse', '--verify', '--quiet', `refs/heads/${nome}`).status === 0; n++) nome = `${base}-${n}`;
+    const r = git('switch', '-c', nome);
+    if (r.status !== 0) throw new Error(`não consegui criar a branch ${nome}: ${r.stderr}`);
+    branchDestaExecucao = nome;
+    log(`commits irão para a branch nova ${nome}`);
   }
   git('add', '--', ...files);
   // arquivo já gravado pelo commit de um fixer anterior: não há o que commitar
