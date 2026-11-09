@@ -27,7 +27,7 @@ const ROOT = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: '
 process.chdir(ROOT);
 const OUT = join(ROOT, '.audit');
 mkdirSync(OUT, { recursive: true });
-const BASELINE = join(ROOT, 'scripts/audit/baseline.json');
+const BASELINE = process.env.AUDIT_BASELINE || join(ROOT, 'scripts/audit/baseline.json');
 
 // ---------- utilidades ----------
 const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter(Boolean);

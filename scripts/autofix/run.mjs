@@ -108,7 +108,7 @@ function commit(files, msg) {
   if (!files.length) return false;
   const branch = git('branch', '--show-current').stdout.trim();
   if (!branch || ['main', 'master', 'dia'].includes(branch) || /^dia-/.test(branch)) {
-    const name = `autofix/${new Date().toISOString().slice(0, 10)}`;
+    const name = process.env.AUTOFIX_BRANCH || `autofix/${new Date().toISOString().slice(0, 10)}`;
     const exists = git('rev-parse', '--verify', '--quiet', name).status === 0;
     const r = exists ? git('switch', name) : git('switch', '-c', name);
     if (r.status !== 0) throw new Error(`não consegui criar/usar a branch ${name}: ${r.stderr}`);
