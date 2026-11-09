@@ -19,7 +19,7 @@
  * Saída: .autofix/relatorio.md e .autofix/relatorio.json (fila manual = o que sobrou).
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { runUnused } from './unused.mjs';
 
@@ -141,6 +141,7 @@ function commit(files, msg) {
 
 function vitestFalhas() {
   const out = join(OUT, 'vitest.json');
+  rmSync(out, { force: true }); // nunca reler o resultado de uma execução anterior se esta abortar antes de escrever
   sh(process.execPath, [bin('vitest/vitest.mjs'), 'run', '--reporter=json', `--outputFile=${out}`]);
   try {
     const j = JSON.parse(readFileSync(out, 'utf8'));
@@ -173,6 +174,8 @@ const fixers = [
     run: (skip) => {
       const targets = gitList('ls-files', 'src', 'supabase/functions', 'tests')
         .filter((f) => /\.(ts|tsx)$/.test(f) && !skip.has(f));
+      // sem alvo, o eslint (flat config) analisaria o diretório atual inteiro: não roda
+      if (!targets.length) return { changedFiles: [], originals: {}, fixedByKind: { 'arquivos com correção': 0 }, manual: [] };
       // --fix-dry-run devolve o texto corrigido por arquivo (campo `output`), sem gravar:
       // assim sei exatamente quais arquivos mudariam, mesmo que outro fixer já os tenha tocado.
       const r = sh(process.execPath, [bin('eslint/bin/eslint.js'), '--fix-dry-run', '--max-warnings', '99999', '-f', 'json', ...targets]);
