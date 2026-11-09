@@ -1,26 +1,59 @@
-import { useState } from 'react';
-import { Json } from '@/integrations/supabase/types';
+import { useState, useMemo } from 'react';
+import { Database, Json } from '@/integrations/supabase/types';
 
 import { ReportSourcePanel } from '@/components/reports/ReportSourcePanel';
 import { ReportConfigPanel } from '@/components/reports/ReportConfigPanel';
-import { TABLE_FILTER_FIELDS, STATUS_OPTIONS, TABLE_COLUMNS, type PublicTables } from '@/lib/reportBuilder';
+import { REPORT_TABLES, TABLE_FILTER_FIELDS, STATUS_OPTIONS, TABLE_COLUMNS, type PublicTables } from '@/lib/reportBuilder';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
+  FileText,
   Download,
+  Settings2,
+  Table2,
+  CheckCircle2,
+  ChevronRight,
+  Filter,
+  BarChart3,
+  LayoutDashboard,
   FileDown,
-  Clock} from 'lucide-react';
+  Clock,
+  Search,
+  Calendar,
+  Save,
+  Trash2,
+  Share2,
+  FileCheck,
+  Zap,
+  Info,
+  Mail,
+  ListRestart
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { format, subDays, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMutation } from '@tanstack/react-query';
+import { Input } from '@/components/ui/input';
 import { downloadWorkbook, objectsToRows } from '@/lib/excel';
 
+interface ReportFilters {
+  status: string;
+  dateRange?: DateRange;
+}
 
 
 export default function ReportBuilderPage() {
@@ -34,7 +67,7 @@ export default function ReportBuilderPage() {
   });
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [templateName, setTemplateName] = useState('');
-  const [] = useState(false);
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: reportData, isLoading } = useQuery({

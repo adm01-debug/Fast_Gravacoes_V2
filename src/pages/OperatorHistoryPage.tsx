@@ -6,10 +6,12 @@ import { useState, useMemo } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { useSchedulingData } from '@/features/jobs';
+import { useAuth } from '@/features/auth';
 import {
   History,
   Play,
@@ -19,6 +21,8 @@ import {
   RotateCcw,
   Clock,
   Package,
+  User,
+  Filter,
 } from 'lucide-react';
 import { format, subDays, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -39,7 +43,7 @@ interface ActionEntry {
 export default function OperatorHistoryPage() {
   const { jobs, machines, getOperatorById } = useSchedulingData();
   const [periodDays, setPeriodDays] = useState('7');
-  const [] = useState<string>('all');
+  const [selectedOperator, setSelectedOperator] = useState<string>('all');
 
   // Build action timeline from job data
   const actions = useMemo((): ActionEntry[] => {

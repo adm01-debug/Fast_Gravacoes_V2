@@ -81,7 +81,7 @@ export function CreateOperatorModal({ open, onOpenChange }: CreateOperatorModalP
     setIsLoading(true);
 
     try {
-      const { } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
 
       const response = await supabase.functions.invoke('create-operator', {
         body: formData,

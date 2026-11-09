@@ -146,7 +146,7 @@ export function useTPMData() {
 
       if (alertsError) throw alertsError;
 
-      const { data: technicalSheet } = record.technical_sheet_id
+      const { data: technicalSheet, error: sheetError } = record.technical_sheet_id
         ? await supabase.from('technical_sheets').select('*, techniques(*), product_categories(*), machines(*)').eq('id', record.technical_sheet_id).single()
         : { data: null, error: null };
 
