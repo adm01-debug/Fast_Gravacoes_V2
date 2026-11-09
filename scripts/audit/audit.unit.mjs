@@ -71,3 +71,20 @@ test('DISABLE ROW LEVEL SECURITY depois do ENABLE volta a acusar a tabela', () =
   });
   assert.ok(auditar(root).findings.some((f) => f.check === 'tabela-sem-rls' && /Tabela c /.test(f.titulo)));
 });
+
+test('segredo na mesma linha de OUTRO achado não vaza no relatório', () => {
+  const chave = 're_abcdefghijklmnopqrstuvwxyz123456';
+  const root = repo({ 'src/a.ts': `export const fakeData = [{ k: '${chave}' }];\n` });
+  auditar(root);
+  const todo = ['.audit/findings.json', '.audit/relatorio.md', '.audit/fila-para-decisao.md'].map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
+  assert.ok(!todo.includes(chave), 'a credencial não pode aparecer em nenhum arquivo de saída');
+});
+
+test('--estrito reprova quando uma checagem quebra (regra com regex inválida)', () => {
+  const root = repo({ 'src/x.ts': 'export const x = 1;\n' });
+  writeFileSync(join(root, 'scripts/audit/regras.json'), JSON.stringify({ regras: [{ id: 'quebrada', titulo: 't', severidade: 'alta', arquivo: 'src/x.ts', deve_conter: ['['], por_que: 'x' }] }));
+  auditar(root, ['--baseline']);
+  const r = auditar(root, ['--estrito']);
+  assert.equal(r.status, 1);
+  assert.ok(r.findings.some((f) => f.check === 'regra-de-negocio' && /regra inválida/.test(f.titulo)));
+});
