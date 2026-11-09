@@ -6,11 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/features/auth';
 import { logger } from '@/lib/logger';
 
-const OPERATORS_ERROR_CONTEXT = {
-  fetch: { entity: 'operators', operation: 'fetch' },
-  remove: { entity: 'operators', operation: 'remove' },
-  toggleActive: { entity: 'operators', operation: 'toggle_active' },
-};
 
 export interface OperatorWithProfile {
   id: string;

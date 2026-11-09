@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Play, RotateCcw, AlertTriangle, CheckCircle2, Activity, ShieldCheck, Zap } from 'lucide-react';
+import { Play, RotateCcw, AlertTriangle, CheckCircle2, Activity, Zap } from 'lucide-react';
 import { runMassiveSimulation as runSimulation, SimulationResult, generateScenarios } from '@/lib/simulation';
 const SCENARIOS = generateScenarios();
 import { 

@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, GripVertical, AlertCircle, ArrowUp, ArrowDown, Minus, Clock, Play, Pause, CheckCircle2, MessageSquare, ChevronRight } from 'lucide-react';
+import { Calendar, GripVertical, AlertCircle, ArrowUp, ArrowDown, Minus, Play, Pause, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseDateOnly } from '@/lib/dateUtils';
 import { DbJob, DbTechnique, DbMachine } from '@/features/jobs';
@@ -51,7 +51,7 @@ function getDeadlineInfo(job: DbJob): { label: string; isOverdue: boolean; color
 }
 
 export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 'expanded', isSelected, onSelect, onQuickAction }: DraggableJobCardProps) {
-  const { isAvailable, lowStockItems, outOfStockItems } = useJobInventoryCheck(job.technique_id);
+  const { lowStockItems, outOfStockItems } = useJobInventoryCheck(job.technique_id);
 
   const {
     attributes,

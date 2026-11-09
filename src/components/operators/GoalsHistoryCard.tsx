@@ -1,11 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   OperatorGoal,
   calculateGoalProgress,
@@ -19,14 +17,11 @@ import {
   Target,
   TrendingUp,
   TrendingDown,
-  Minus,
   Calendar,
   ChevronDown,
   ChevronUp,
-  BarChart3,
-  ArrowRight
-} from 'lucide-react';
-import { format, parseISO, isBefore, isAfter, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+  BarChart3} from 'lucide-react';
+import { format, parseISO, isBefore, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   BarChart,
@@ -36,7 +31,6 @@ import {
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  Cell,
   Legend,
 } from '@/lib/recharts';
 

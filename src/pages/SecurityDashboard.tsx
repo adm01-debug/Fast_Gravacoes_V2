@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/FavoritesManager';
 import {
-  Shield,
-  ShieldCheck,
   ShieldAlert,
   Activity,
   Users,

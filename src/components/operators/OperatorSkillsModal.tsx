@@ -7,7 +7,6 @@ import { useOperatorSkills, type SkillLevel } from '@/features/production';
 import { useSchedulingData } from '@/features/jobs';
 import type { OperatorWithProfile } from '@/features/production';
 import { Loader2, ShieldCheck, Award, Star, X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface OperatorSkillsModalProps {

@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 import { useModalParam } from '@/hooks/use-modal-param';
 
 export default function InventoryPage() {
-  const { items, isLoading, recordMovement, stats, transferItems, deleteMovement, calculateAI, isCalculatingAI } = useInventory();
+  const { items, isLoading, recordMovement, stats } = useInventory();
   const { data: movements } = useInventoryMovements();
   const { hasPermission } = useRBAC();
   // Filtros persistidos na URL: sobrevivem a voltar/recarregar/compartilhar.

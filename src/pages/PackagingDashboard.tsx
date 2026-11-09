@@ -11,7 +11,7 @@ import { PackagingThroughputTable } from '@/features/packaging/components/Packag
 import { PackagingSlaAlerts } from '@/features/packaging/components/PackagingSlaAlerts';
 import { PackagingSlaOverridesManager } from '@/features/packaging/components/PackagingSlaOverridesManager';
 import { PackagingLeaderboard } from '@/features/packaging/components/PackagingLeaderboard';
-import { Package as PackageIcon, Monitor, TimerOff as OverdueIcon, Download as DownloadIcon, Users as UsersIcon, User as UserIcon, Search as SearchIcon, X as XIcon, FileText as FileTextIcon, Printer as PrinterIcon, Volume2 as VolumeIcon } from 'lucide-react';
+import { Package as PackageIcon, Monitor, TimerOff as OverdueIcon, Download as DownloadIcon, Users as UsersIcon, User as UserIcon, Search as SearchIcon, X as XIcon, FileText as FileTextIcon, Printer as PrinterIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';

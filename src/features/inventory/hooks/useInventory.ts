@@ -5,15 +5,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllRows } from '@/lib/fetchAllRows';
-import { Database } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { subDays, isAfter, parseISO } from 'date-fns';
 import { useMemo } from 'react';
 import { useAuth } from '@/features/auth';
 
-type DbInventoryItem = Database['public']['Tables']['inventory_items']['Row'];
-type DbInventoryMovement = Database['public']['Tables']['inventory_movements']['Row'];
 
 export type InventoryCategory = 'ink' | 'screen' | 'solvent' | 'consumable' | 'other' | string;
 

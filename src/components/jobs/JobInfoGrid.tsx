@@ -1,4 +1,3 @@
-import React from "react";
 import { InfoRow } from "./JobInfoRow";
 import { parseDateOnly } from "@/lib/dateUtils";
 import { Calendar, Clock, User, Package, Palette, Building } from "lucide-react";

@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { Layers, ClipboardCheck } from 'lucide-react';
 import { ProductionLot, useLotComponents, useLotMovements, useLotInspections, useTraceabilityMutations } from '@/features/inventory';
 import { QualityDashboardCards } from './QualityDashboardCards';

@@ -4,7 +4,7 @@
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useState, useEffect } from 'react';
-import { Bell, BellOff, Volume2, VolumeX, Clock, AlertTriangle, AlertCircle, Calendar, Mail, MessageCircle, Settings, Check, Send, History, Layout, Users, ShieldCheck, X, ListTodo, Activity } from 'lucide-react';
+import { Bell, Clock, AlertTriangle, AlertCircle, Calendar, Mail, MessageCircle, Settings, Check, Send, History, Layout, Users, ShieldCheck, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,6 @@ import { useTPMNotifications } from '@/features/notifications';
 import { useNotificationSettings } from '@/features/notifications';
 import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { toast } from 'sonner';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TPMNotificationTemplates } from './TPMNotificationTemplates';
@@ -37,7 +35,7 @@ interface ValidationData {
 type TestChannel = 'email' | 'whatsapp' | 'push';
 
 export function TPMNotificationSettings() {
-  const { permission, isSupported, requestPermission, sendTestNotification } = useTPMNotifications();
+  const { permission, requestPermission, sendTestNotification } = useTPMNotifications();
   const { settings, isLoading, updateSettings } = useNotificationSettings();
   const { machines } = useTPM();
   const [whatsappNumber, setWhatsappNumber] = useState('');

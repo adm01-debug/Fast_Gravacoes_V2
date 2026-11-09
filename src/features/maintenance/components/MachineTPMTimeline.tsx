@@ -5,10 +5,9 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   CheckCircle2, Clock, Wrench, Package,
-  Camera, User, ArrowRight, AlertTriangle, Eye
+  User, AlertTriangle, Eye
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { ExecutionDetailsModal } from './ExecutionDetailsModal';
 

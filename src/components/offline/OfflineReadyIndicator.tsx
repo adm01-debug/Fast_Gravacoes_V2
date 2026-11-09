@@ -31,9 +31,7 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
     pendingActionsCount,
     lastSyncedAt,
     forceSync,
-    cacheData,
-    hasCachedData
-  } = useOfflineSyncContext();
+    cacheData  } = useOfflineSyncContext();
 
   const [cachedCounts, setCachedCounts] = useState<{
     jobs: number;
@@ -42,7 +40,7 @@ export function OfflineReadyIndicator({ className }: OfflineReadyIndicatorProps)
   }>({ jobs: 0, machines: 0, techniques: 0 });
 
   const [isCaching, setIsCaching] = useState(false);
-  const [isStorageReady, setIsStorageReady] = useState(false);
+  const [, setIsStorageReady] = useState(false);
 
   useEffect(() => {
     const loadCounts = async () => {

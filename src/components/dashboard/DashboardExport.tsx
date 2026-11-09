@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDown, Loader2, FileText, Image as ImageIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';

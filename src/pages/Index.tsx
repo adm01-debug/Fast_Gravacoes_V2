@@ -1,4 +1,4 @@
-import { Suspense, useMemo, ComponentType, useState, useEffect, useCallback } from 'react';
+import { Suspense, useMemo, ComponentType, useState, useCallback } from 'react';
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,6 @@ import {
   Clock,
   Cpu,
   MessageCircle,
-  FileText,
   Brain,
   Users,
   ShieldCheck,
@@ -190,7 +189,7 @@ const Index = () => {
   }, [reorderWidgets]);
 
   // Activity log for tracking
-  const { entries: activityEntries, addEntry: addActivityEntry } = useActivityLog();
+  const { entries: activityEntries } = useActivityLog();
   const navigate = useNavigate();
 
   // State for active tab
