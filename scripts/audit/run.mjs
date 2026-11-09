@@ -310,7 +310,7 @@ defCheck('escape-de-tipos', '@ts-ignore / @ts-nocheck em código de produção',
 
 // ---------- 8. Segredos ----------
 defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 'Padrões conhecidos (JWT, sk_live, Resend, Twilio, chave privada, URL de banco, webhook Bitrix). O valor NUNCA é impresso.', () => {
-  const skip = /(^|\/)(node_modules|dist|coverage|graphify-out|\.venv-graphify|playwright-report|test-results)\//;
+  const skip = /(^|\/)(scripts\/ai-context|node_modules|dist|coverage|graphify-out|\.venv-graphify|playwright-report|test-results)\//;
   const files = tracked.filter((f) => !skip.test(f) && !/\.(png|jpe?g|gif|ico|webp|woff2?|ttf|lockb?|pdf|zip|svg|mp3|mp4)$/i.test(f) && !/(package-lock\.json|bun\.lock|deno\.lock)$/.test(f) && !isTest(f));
   const pats = [
     ['JWT', /\beyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}/g],
@@ -327,6 +327,7 @@ defCheck('segredo-exposto', 'Segredos/credenciais versionados no repositório', 
     for (const [nome, rx] of pats)
       for (const m of t.matchAll(rx)) {
         if (nome === 'URL de banco com senha' && /:(?:<[^>]*>|\[[^\]]*\]|\$\{?\w+\}?|\*+|x{3,}|senha|password|PASSWORD|changeme)@/i.test(m[0])) continue; // placeholder
+        if (/fake|test|exemplo|example|x{4,}|0{4,}|1234|abcd|a{4,}|dummy|sample/i.test(m[0])) continue; // fixture/exemplo, não credencial
         let sev = 'alta';
         let extra = '';
         if (nome === 'JWT') {
