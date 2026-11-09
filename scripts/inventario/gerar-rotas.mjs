@@ -180,7 +180,16 @@ export function lerUrls(raiz) {
   // `const X = lazyWithRetry(() => import("@/pages/X"))` e tambem o React.lazy padrao.
   const lazy = Object.fromEntries([...texto.matchAll(/const\s+(\w+)\s*=\s*lazy\w*\(\s*\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\)/g)]
     .map((m) => [m[1], m[2]]));
-  const corpo = texto.slice(texto.indexOf('<Routes'), texto.lastIndexOf('</Routes>'));
+  const inicio = texto.indexOf('<Routes');
+  const fim = texto.lastIndexOf('</Routes>');
+  // `</Routes>` ausente faz lastIndexOf devolver -1; slice(inicio, -1) absorveria o RESTO do
+  // arquivo (menos o ultimo caractere) como se fosse corpo de <Routes>, inclusive <Route> de
+  // codigo morto ou de outra funcao -- corrompe rotas.json em silencio, sem erro nem aviso
+  // (achado por auditoria adversarial). Falha alto em vez disso.
+  if (inicio === -1 || fim === -1 || fim <= inicio) {
+    throw new Error(`${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca.`);
+  }
+  const corpo = texto.slice(inicio, fim);
   return corpo.split(/<Route\b/).slice(1).map((pedaco) => {
     const caminho = (pedaco.match(/path(?:=|:\s*)["']([^"']+)["']/) || [])[1];
     const redireciona = (pedaco.match(/<Navigate\s+to=["']([^"']+)["']/) || [])[1] ?? null;

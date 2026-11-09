@@ -74,6 +74,58 @@ test('tabelasDosTypes le o bloco Tables de types.ts e para antes de Views/Functi
   assert.equal(new Set(tabelas).size, tabelas.length, 'nomes repetidos: o recorte do bloco Tables vazou');
 });
 
+/** types.ts minimo, com a indentacao de `espacos` espacos nas entradas de tabela. */
+function typesComIndentacao(espacos) {
+  const tab = ' '.repeat(espacos);
+  return [
+    'export type Database = {',
+    '  public: {',
+    '    Tables: {',
+    `${tab}jobs: {`,
+    '        Row: { id: string }',
+    '      }',
+    '    }',
+    '    Views: {',
+    '    }',
+    '  }',
+    '}',
+  ].join('\n');
+}
+
+function repoComTypes(conteudo) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'inv-types-'));
+  const dir = path.join(tmp, 'src/integrations/supabase');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'types.ts'), conteudo);
+  return tmp;
+}
+
+test('tabelasDosTypes detecta a indentacao em vez de exigir 6 espacos fixos', () => {
+  // Achado por auditoria adversarial: indentacao fixa fazia a funcao devolver [] em SILENCIO
+  // (nao throw) se o `supabase gen types`/um formatador gravasse com outra indentacao, e o erro
+  // que acabava saindo mais tarde (via conferirOrigem) culpava o projeto/credencial errado.
+  for (const espacos of [2, 4, 6, 8, 10]) {
+    const tmp = repoComTypes(typesComIndentacao(espacos));
+    assert.deepEqual(tabelasDosTypes(tmp), ['jobs'], `falhou com indentacao de ${espacos} espacos`);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('tabelasDosTypes lanca erro claro quando o bloco Tables existe mas nao tem nenhuma entrada reconhecivel', () => {
+  const tmp = repoComTypes([
+    'export type Database = {',
+    '  public: {',
+    '    Tables: {',
+    '    }',
+    '    Views: {',
+    '    }',
+    '  }',
+    '}',
+  ].join('\n'));
+  assert.throws(() => tabelasDosTypes(tmp), /sem nenhuma tabela reconhecida/);
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
 test('conferirOrigem aceita resposta do banco oficial e recusa banco irmao', () => {
   const dado = respostaBase();
   const conhecidas = ['jobs', 'machines'];

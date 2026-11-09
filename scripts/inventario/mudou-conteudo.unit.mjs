@@ -58,6 +58,16 @@ test('telemetria da operacao (jobs_7d, latencia, leituras) nao conta; status con
   assert.equal(antesDepois(op(5, 100, 'pass'), op(5, 100, 'fail')), true, 'health check virando fail e mudanca de verdade');
 });
 
+test('tamanho do banco inteiro (resumo.tamanho_bytes) oscilando sozinho nao conta como mudanca', () => {
+  // pg_database_size cresce/flutua toda semana so por autovacuum/WAL, sem nenhuma mudanca
+  // estrutural (achado por auditoria adversarial) -- sem isto, qualquer rodada abriria PR de
+  // ruido so por esse numero ter mudado.
+  const tam = (bytes) => ({ resumo: { tamanho_bytes: bytes, tabelas_public: 42 } });
+  assert.equal(antesDepois(tam(1_000_000), tam(1_234_567)), false);
+  assert.equal(antesDepois(tam(1_000_000), { resumo: { tamanho_bytes: 1_234_567, tabelas_public: 43 } }),
+    true, 'mudanca estrutural real (tabelas_public) continua contando');
+});
+
 test('porcentagem dentro do texto do alerta cron_falhando e normalizada', () => {
   const alerta = (txt) => ({ alertas: [{ tipo: 'cron_falhando', detalhe: [txt] }] });
   assert.equal(antesDepois(alerta('job-a (9.0% em 7d)'), alerta('job-a (12.5% em 7d)')), false);

@@ -64,6 +64,29 @@ export function AnimatedRoutes() {
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 
+test('lerUrls falha alto quando </Routes> esta ausente, em vez de absorver o resto do arquivo', () => {
+  // Achado por auditoria adversarial: sem isto, lastIndexOf('</Routes>') devolve -1 e
+  // slice(inicio, -1) engole o resto do arquivo como se fosse corpo de <Routes> -- um <Route>
+  // de codigo morto fora do bloco real vira rota "de verdade" em rotas.json, sem erro nem aviso.
+  const tmp = repoFake({
+    'src/routes/AppRoutes.tsx': `
+const Index = lazyWithRetry(() => import("@/pages/Index"));
+export function AnimatedRoutes() {
+  return (<Routes location={location}>
+    <Route path="/auth" element={<PublicPage fallback={<AuthPageSkeleton />}><Index /></PublicPage>} />
+  // falta a tag de fechamento do Routes aqui -- de proposito, nao e erro de digitacao
+}
+
+// codigo morto que NUNCA deveria contar como rota
+function funcaoAbandonada() {
+  return <Route path="/rota-fantasma-que-nao-devia-contar" element={<Index />} />;
+}`,
+    'src/pages/Index.tsx': 'export default function Index() { return null; }',
+  });
+  assert.throws(() => lerUrls(tmp), /Routes.*bem formado/);
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
 test('gerarRotas acusa URL cujo lazy nao resolve e import quebrado', () => {
   const tmp = repoFake({
     'src/routes/AppRoutes.tsx': `

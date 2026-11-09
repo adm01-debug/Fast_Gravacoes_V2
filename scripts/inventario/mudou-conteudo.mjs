@@ -28,6 +28,10 @@ const TELEMETRIA = new Set([
   'falhas_em_sequencia', 'ultimo_status',
   // operacao
   'jobs_7d', 'jobs_por_status', 'leituras_7d', 'avisos_7d', 'latencia_ms',
+  // resumo: tamanho do banco inteiro (pg_database_size) oscila toda semana so por autovacuum/WAL,
+  // sem nenhuma mudanca estrutural (achado por auditoria adversarial) -- mesmo padrao de ruido
+  // que os campos de cima, so que no nivel do banco em vez de por tabela/job.
+  'tamanho_bytes',
 ]);
 const IGNORADOS = new Set([...CARIMBOS, ...TELEMETRIA]);
 // `historico.linhas`/`historico.bytes` tambem rolam todo dia com a retencao do purge-old-logs,

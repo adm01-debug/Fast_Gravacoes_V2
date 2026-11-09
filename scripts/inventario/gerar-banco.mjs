@@ -106,7 +106,18 @@ export function tabelasDosTypes(raiz) {
   const depois = texto.slice(inicio + 1);
   const fim = depois.search(/\n {4}(Views|Functions|Enums|CompositeTypes): \{/);
   const bloco = fim === -1 ? depois : depois.slice(0, fim);
-  return [...bloco.matchAll(/^ {6}([a-z][A-Za-z0-9_]*): \{$/gm)].map((m) => m[1]);
+  // A indentacao das entradas NAO e fixada em 6 espacos: detecta pela primeira entrada real do
+  // bloco. Indentacao fixa fazia o regex nao bater se o `supabase gen types`/um formatador
+  // gravasse com outra indentacao (achado por auditoria adversarial): a funcao devolvia [] em
+  // SILENCIO, e o erro que acabava saindo (via conferirOrigem, 0% de cobertura) culpava o
+  // projeto/credencial errado em vez da formatacao do arquivo.
+  const primeiraEntrada = bloco.match(/^( +)[a-z][A-Za-z0-9_]*: \{$/m);
+  if (!primeiraEntrada) {
+    throw new Error('src/integrations/supabase/types.ts: bloco "Tables: {" encontrado mas sem nenhuma tabela reconhecida (indentacao inesperada?)');
+  }
+  const indentacao = primeiraEntrada[1].length;
+  const re = new RegExp(`^ {${indentacao}}([a-z][A-Za-z0-9_]*): \\{$`, 'gm');
+  return [...bloco.matchAll(re)].map((m) => m[1]);
 }
 
 /**
