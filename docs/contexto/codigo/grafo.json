@@ -2,119 +2,119 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 972,
- "arestas": 4686,
+ "arestas": 4529,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 347
+   "importado_por": 341
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 315
+   "importado_por": 307
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 298
+   "importado_por": 278
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 231
+   "importado_por": 220
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 185
-  },
-  {
-   "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 112
+   "importado_por": 182
   },
   {
    "arquivo": "src/features/jobs/index.ts",
    "importado_por": 108
   },
   {
-   "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 98
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 107
   },
   {
-   "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 85
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 94
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 84
+   "importado_por": 82
   },
   {
    "arquivo": "src/features/auth/index.ts",
    "importado_por": 82
   },
   {
-   "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 75
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 81
   },
   {
    "arquivo": "src/features/production/index.ts",
    "importado_por": 72
   },
   {
-   "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 64
-  },
-  {
-   "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 62
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 71
   },
   {
    "arquivo": "src/lib/errorHandling.ts",
    "importado_por": 62
   },
   {
-   "arquivo": "src/lib/logger.ts",
+   "arquivo": "src/components/ui/scroll-area.tsx",
    "importado_por": 59
   },
   {
-   "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 52
+   "arquivo": "src/lib/logger.ts",
+   "importado_por": 58
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 57
   },
   {
    "arquivo": "src/components/layout/MainLayout.tsx",
    "importado_por": 49
   },
   {
-   "arquivo": "src/components/ui/tooltip.tsx",
+   "arquivo": "src/components/ui/tabs.tsx",
    "importado_por": 49
   },
   {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 45
+  },
+  {
    "arquivo": "src/lib/recharts.ts",
-   "importado_por": 44
+   "importado_por": 42
   },
   {
    "arquivo": "src/components/ui/code-block.tsx",
-   "importado_por": 40
-  },
-  {
-   "arquivo": "src/components/navigation/Breadcrumbs.tsx",
    "importado_por": 39
   },
   {
-   "arquivo": "src/integrations/supabase/types.ts",
-   "importado_por": 36
+   "arquivo": "src/components/navigation/Breadcrumbs.tsx",
+   "importado_por": 37
   },
   {
-   "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 33
+   "arquivo": "src/integrations/supabase/types.ts",
+   "importado_por": 35
   },
   {
    "arquivo": "src/lib/dateUtils.ts",
    "importado_por": 33
   },
   {
-   "arquivo": "src/components/ui/table.tsx",
+   "arquivo": "supabase/functions/_shared/cors.ts",
    "importado_por": 32
   },
   {
-   "arquivo": "supabase/functions/_shared/cors.ts",
-   "importado_por": 32
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 30
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
@@ -125,12 +125,12 @@
    "importado_por": 24
   },
   {
-   "arquivo": "src/components/ui/checkbox.tsx",
+   "arquivo": "src/lib/realtimeChannel.ts",
    "importado_por": 23
   },
   {
-   "arquivo": "src/lib/realtimeChannel.ts",
-   "importado_por": 23
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 21
   },
   {
    "arquivo": "src/features/admin/index.ts",
@@ -146,23 +146,23 @@
   },
   {
    "arquivo": "src/components/ui/popover.tsx",
-   "importado_por": 20
+   "importado_por": 19
   },
   {
    "arquivo": "src/features/maintenance/hooks/useTPM.ts",
    "importado_por": 18
   },
   {
-   "arquivo": "src/components/ui/alert-dialog.tsx",
-   "importado_por": 17
+   "arquivo": "src/contexts/DirtyFormContext.tsx",
+   "importado_por": 16
   },
   {
-   "arquivo": "src/components/ui/separator.tsx",
-   "importado_por": 17
+   "arquivo": "src/features/notifications/index.ts",
+   "importado_por": 16
   },
   {
-   "arquivo": "src/features/maintenance/hooks/types.ts",
-   "importado_por": 17
+   "arquivo": "supabase/functions/_shared/cronAuth.ts",
+   "importado_por": 16
   }
  ],
  "ciclos": {
@@ -278,6 +278,7 @@
   "src/components/operators/OperatorStatCard.tsx",
   "src/components/technical-assistant/BiometricSecurity.tsx",
   "src/components/traceability/CreateLotModal.tsx",
+  "src/components/traceability/LotLabelPrint.tsx",
   "src/components/ui/accordion.tsx",
   "src/components/ui/aspect-ratio.tsx",
   "src/components/ui/carousel.tsx",
@@ -290,6 +291,8 @@
   "src/components/ui/toggle-group.tsx",
   "src/constants/index.ts",
   "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+  "src/features/analytics/components/bi/AIInsights.tsx",
+  "src/features/analytics/components/bi/delays/DelaysAnalysis.tsx",
   "src/features/jobs/hooks/useRecordDuplication.ts",
   "src/features/maintenance/hooks/index.ts",
   "src/features/notifications/components/NotificationCard.tsx",
@@ -311,7 +314,7 @@
   },
   {
    "modulo": "pages",
-   "depende_de": 56,
+   "depende_de": 55,
    "importado_por": 3
   },
   {
@@ -322,7 +325,7 @@
   {
    "modulo": "hooks",
    "depende_de": 14,
-   "importado_por": 32
+   "importado_por": 31
   },
   {
    "modulo": "integrations/supabase",

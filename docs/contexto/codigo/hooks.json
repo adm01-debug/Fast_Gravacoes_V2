@@ -87,7 +87,7 @@
    "hooks_exportados": [
     "useActivityLog"
    ],
-   "linhas": 240,
+   "linhas": 239,
    "dominio": "components/activity",
    "tabelas": [],
    "rpcs": [],
@@ -108,7 +108,7 @@
    "hooks_exportados": [
     "usePasswordStrength"
    ],
-   "linhas": 296,
+   "linhas": 295,
    "dominio": "components/auth",
    "tabelas": [],
    "rpcs": [],
@@ -131,7 +131,7 @@
    "hooks_exportados": [
     "useCelebration"
    ],
-   "linhas": 303,
+   "linhas": 302,
    "dominio": "components/feedback",
    "tabelas": [],
    "rpcs": [],
@@ -595,7 +595,7 @@
    "hooks_exportados": [
     "useReauth"
    ],
-   "linhas": 234,
+   "linhas": 233,
    "dominio": "contexts",
    "tabelas": [
     "security_events"
@@ -998,7 +998,7 @@
    "hooks_exportados": [
     "useDataExport"
    ],
-   "linhas": 242,
+   "linhas": 241,
    "dominio": "features/admin",
    "tabelas": [
     "audit_log"
@@ -1351,7 +1351,7 @@
    "hooks_exportados": [
     "useEnergy"
    ],
-   "linhas": 300,
+   "linhas": 299,
    "dominio": "features/analytics",
    "tabelas": [
     "energy_alerts",
@@ -1381,7 +1381,7 @@
    "hooks_exportados": [
     "useExecutiveDashboard"
    ],
-   "linhas": 332,
+   "linhas": 330,
    "dominio": "features/analytics",
    "tabelas": [
     "jobs",
@@ -1769,7 +1769,7 @@
     "useInventory",
     "useInventoryMovements"
    ],
-   "linhas": 219,
+   "linhas": 216,
    "dominio": "features/inventory",
    "tabelas": [
     "inventory_items",
@@ -1889,7 +1889,7 @@
    "hooks_exportados": [
     "useDailyDragDrop"
    ],
-   "linhas": 84,
+   "linhas": 83,
    "dominio": "features/jobs",
    "tabelas": [
     "jobs"
@@ -2225,7 +2225,7 @@
    "hooks_exportados": [
     "useTechniques"
    ],
-   "linhas": 31,
+   "linhas": 30,
    "dominio": "features/jobs",
    "tabelas": [],
    "rpcs": [],
@@ -2661,7 +2661,7 @@
    "hooks_exportados": [
     "useNotificationSounds"
    ],
-   "linhas": 189,
+   "linhas": 179,
    "dominio": "features/notifications",
    "tabelas": [],
    "rpcs": [],
@@ -3128,7 +3128,7 @@
    "hooks_exportados": [
     "useMachines"
    ],
-   "linhas": 31,
+   "linhas": 30,
    "dominio": "features/production",
    "tabelas": [],
    "rpcs": [],
@@ -3378,7 +3378,7 @@
    "hooks_exportados": [
     "useOperatorMachines"
    ],
-   "linhas": 125,
+   "linhas": 124,
    "dominio": "features/production",
    "tabelas": [
     "operator_machines"
@@ -3405,7 +3405,7 @@
    "hooks_exportados": [
     "useOperatorPresence"
    ],
-   "linhas": 105,
+   "linhas": 104,
    "dominio": "features/production",
    "tabelas": [],
    "rpcs": [],
@@ -3482,7 +3482,7 @@
    "hooks_exportados": [
     "useOperators"
    ],
-   "linhas": 183,
+   "linhas": 178,
    "dominio": "features/production",
    "tabelas": [
     "operator_machines",
@@ -4096,10 +4096,9 @@
     "useEffect"
    ],
    "canais_realtime": [],
-   "usado_por": 11,
+   "usado_por": 10,
    "usado_por_arquivos": [
     "src/components/navigation/FavoritesManager.tsx",
-    "src/components/qrcode/ScanHistory.tsx",
     "src/components/ui/toaster.tsx",
     "src/components/voice/VoiceCommands.tsx",
     "src/features/admin/hooks/useBitrix24Sync.ts",
@@ -4591,7 +4590,7 @@
    "hooks_exportados": [
     "useOfflineSync"
    ],
-   "linhas": 656,
+   "linhas": 655,
    "dominio": "hooks",
    "tabelas": [
     "jobs",
@@ -4863,7 +4862,7 @@
    "hooks_exportados": [
     "useThemeSound"
    ],
-   "linhas": 202,
+   "linhas": 192,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],

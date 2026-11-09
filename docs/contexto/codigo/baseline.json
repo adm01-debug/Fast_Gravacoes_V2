@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d61122af8d5d5b6e30640923f427b881be71998d",
+  "commit": "6c96376b1d88ab7baf87a769144be1cd5606972d",
   "branch": "main",
-  "data_commit": "2026-11-09T07:02:38-03:00",
+  "data_commit": "2026-11-09T11:38:17-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6c96376",
+    "data": "2026-11-09",
+    "assunto": "chore(src): remove imports e declarações não usados (#149)"
+   },
    {
     "sha": "d61122a",
     "data": "2026-11-09",
@@ -126,74 +131,69 @@
     "sha": "8120bef",
     "data": "2026-10-31",
     "assunto": "fix: quebrar ciclo logger, remover mock SPC e fixes TS (#120)"
-   },
-   {
-    "sha": "918828f",
-    "data": "2026-10-31",
-    "assunto": "fix: restaurar INSERT anon em password_reset_requests (RLS bloqueava reset de senha)"
    }
   ],
-  "arquivos_mudados_7d": 110,
+  "arquivos_mudados_7d": 354,
   "pastas_mais_mudadas_30d": [
    {
+    "pasta": "src/features/analytics",
+    "mudancas": 38
+   },
+   {
     "pasta": "src/components/navigation",
-    "mudancas": 14
+    "mudancas": 20
+   },
+   {
+    "pasta": "src/features/maintenance",
+    "mudancas": 19
    },
    {
     "pasta": "src/features/notifications",
-    "mudancas": 14
+    "mudancas": 19
    },
    {
     "pasta": "src/features/jobs",
-    "mudancas": 10
+    "mudancas": 18
+   },
+   {
+    "pasta": "src/components/dashboard",
+    "mudancas": 14
+   },
+   {
+    "pasta": "src/features/admin",
+    "mudancas": 13
+   },
+   {
+    "pasta": "src/components/layout",
+    "mudancas": 11
    },
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 10
    },
    {
+    "pasta": "src/components/design-system",
+    "mudancas": 8
+   },
+   {
+    "pasta": "src/components/jobs",
+    "mudancas": 8
+   },
+   {
+    "pasta": "src/features/inventory",
+    "mudancas": 8
+   },
+   {
     "pasta": "PENDENCIAS.md",
     "mudancas": 7
    },
    {
-    "pasta": "src/components/layout",
+    "pasta": "src/components/technical-assistant",
     "mudancas": 7
    },
    {
-    "pasta": "AGENTS.md",
-    "mudancas": 6
-   },
-   {
-    "pasta": "src/features/admin",
-    "mudancas": 6
-   },
-   {
-    "pasta": "src/features/inventory",
-    "mudancas": 6
-   },
-   {
-    "pasta": "src/features/analytics",
-    "mudancas": 5
-   },
-   {
-    "pasta": "src/features/packaging",
-    "mudancas": 4
-   },
-   {
-    "pasta": ".github/workflows/ci.yml",
-    "mudancas": 3
-   },
-   {
-    "pasta": ".github/workflows/db-admin.yml",
-    "mudancas": 3
-   },
-   {
-    "pasta": ".github/workflows/deploy.yml",
-    "mudancas": 3
-   },
-   {
-    "pasta": "CLAUDE.md",
-    "mudancas": 3
+    "pasta": "src/components/ui",
+    "mudancas": 7
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -246,6 +246,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 5
    },
@@ -266,7 +270,19 @@
     "mudancas": 4
    },
    {
-    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "arquivo": "src/features/analytics/components/bi/FuturisticBI.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/useOfflineSync.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/InventoryPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/PublicTrackingPage.tsx",
     "mudancas": 4
    },
    {
@@ -274,34 +290,18 @@
     "mudancas": 4
    },
    {
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 4
+   },
+   {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/calculate-rankings/index.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/check-login-lockout/index.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/send-email-report/index.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/send-loss-risk-alert/index.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/send-push-notification/index.ts",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 27
+    "commits": 28
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1462,
   "arquivos_codigo": 1075,
-  "linhas_codigo": 170869,
+  "linhas_codigo": 170294,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -404,7 +404,7 @@
   },
   "src/components": {
    "arquivos": 415,
-   "linhas": 58792
+   "linhas": 58548
   },
   "src/constants": {
    "arquivos": 2,
@@ -412,15 +412,15 @@
   },
   "src/contexts": {
    "arquivos": 14,
-   "linhas": 1130
+   "linhas": 1129
   },
   "src/features": {
    "arquivos": 327,
-   "linhas": 45453
+   "linhas": 45340
   },
   "src/hooks": {
    "arquivos": 61,
-   "linhas": 7779
+   "linhas": 7768
   },
   "src/i18n": {
    "arquivos": 1,
@@ -432,7 +432,7 @@
   },
   "src/lib": {
    "arquivos": 51,
-   "linhas": 6386
+   "linhas": 6377
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -440,7 +440,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 17015
+   "linhas": 16826
   },
   "src/providers": {
    "arquivos": 2,
@@ -456,11 +456,11 @@
   },
   "src/test": {
    "arquivos": 27,
-   "linhas": 4271
+   "linhas": 4264
   },
   "src/types": {
    "arquivos": 2,
-   "linhas": 173
+   "linhas": 172
   },
   "supabase/functions": {
    "arquivos": 55,
@@ -510,7 +510,7 @@
   },
   {
    "arquivo": "src/hooks/useOfflineSync.ts",
-   "linhas": 656
+   "linhas": 655
   },
   {
    "arquivo": "src/components/ui/sidebar.tsx",
@@ -518,7 +518,7 @@
   },
   {
    "arquivo": "src/pages/AdminTelemetriaPage.tsx",
-   "linhas": 591
+   "linhas": 590
   },
   {
    "arquivo": "src/pages/OEEDashboard.tsx",
@@ -526,7 +526,7 @@
   },
   {
    "arquivo": "src/pages/KanbanBoard.tsx",
-   "linhas": 579
+   "linhas": 577
   },
   {
    "arquivo": "supabase/functions/technical-assistant/index.ts",
@@ -534,19 +534,11 @@
   },
   {
    "arquivo": "src/pages/Index.tsx",
-   "linhas": 543
+   "linhas": 542
   },
   {
    "arquivo": "src/features/production/hooks/useOEE.ts",
    "linhas": 540
-  },
-  {
-   "arquivo": "src/pages/PendingQueue.tsx",
-   "linhas": 539
-  },
-  {
-   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
-   "linhas": 523
   },
   {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
@@ -557,11 +549,11 @@
    "linhas": 521
   },
   {
-   "arquivo": "src/components/layout/QuickFavoritesBar.tsx",
+   "arquivo": "src/pages/PendingQueue.tsx",
    "linhas": 515
   },
   {
-   "arquivo": "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
    "linhas": 512
   },
   {
@@ -569,24 +561,32 @@
    "linhas": 511
   },
   {
+   "arquivo": "src/components/layout/QuickFavoritesBar.tsx",
+   "linhas": 501
+  },
+  {
    "arquivo": "src/pages/ShiftHandoverPage.tsx",
    "linhas": 501
   },
   {
+   "arquivo": "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+   "linhas": 500
+  },
+  {
    "arquivo": "src/components/ui/empty-state.tsx",
-   "linhas": 489
+   "linhas": 487
   },
   {
    "arquivo": "src/pages/WeeklyCalendar.tsx",
-   "linhas": 486
-  },
-  {
-   "arquivo": "src/components/operator/ProductionRegistrationModal.tsx",
-   "linhas": 483
+   "linhas": 485
   },
   {
    "arquivo": "src/pages/TraceabilityPage.tsx",
-   "linhas": 481
+   "linhas": 478
+  },
+  {
+   "arquivo": "src/components/operator/ProductionRegistrationModal.tsx",
+   "linhas": 473
   }
  ],
  "qualidade": {
@@ -595,7 +595,7 @@
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 6,
-  "arquivos_acima_500_linhas": 21
+  "arquivos_acima_500_linhas": 20
  },
  "todos": [
   {
@@ -723,6 +723,7 @@
    "src/components/operators/OperatorStatCard.tsx",
    "src/components/technical-assistant/BiometricSecurity.tsx",
    "src/components/traceability/CreateLotModal.tsx",
+   "src/components/traceability/LotLabelPrint.tsx",
    "src/components/ui/accordion.tsx",
    "src/components/ui/carousel.tsx",
    "src/components/ui/drawer.tsx",
@@ -733,6 +734,8 @@
    "src/components/ui/stepper.tsx",
    "src/components/ui/toggle-group.tsx",
    "src/features/admin/components/audit/AuditTrailDrawer.tsx",
+   "src/features/analytics/components/bi/AIInsights.tsx",
+   "src/features/analytics/components/bi/delays/DelaysAnalysis.tsx",
    "src/features/notifications/components/NotificationCard.tsx"
   ],
   "componentes_com_nome_duplicado": [

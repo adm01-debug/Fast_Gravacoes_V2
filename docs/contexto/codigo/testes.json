@@ -139,7 +139,7 @@
   {
    "arquivo": "src/features/auth/components/AuthProvider.test.tsx",
    "tipo": "unit",
-   "linhas": 133,
+   "linhas": 132,
    "testa": [
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
@@ -472,7 +472,7 @@
   {
    "arquivo": "src/test/authFlow.test.ts",
    "tipo": "unit",
-   "linhas": 203,
+   "linhas": 202,
    "testa": [
     "src/features/auth/services/authService.ts",
     "src/lib/rateLimiter.ts",
@@ -568,7 +568,7 @@
   {
    "arquivo": "src/test/loadStress.test.ts",
    "tipo": "unit",
-   "linhas": 274,
+   "linhas": 269,
    "testa": [
     "src/lib/circuitBreaker.ts",
     "src/lib/rateLimiter.ts",
@@ -658,7 +658,7 @@
   {
    "arquivo": "src/test/sanitize.test.ts",
    "tipo": "unit",
-   "linhas": 104,
+   "linhas": 103,
    "testa": [
     "src/lib/sanitize.ts"
    ],

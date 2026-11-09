@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(src): remove imports e declarações não usados (#149)",
    "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)",
    "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)",
    "docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)",
-   "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)",
-   "chore(agentes): padrão enxuto de instruções com referência por tema (#141)"
+   "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

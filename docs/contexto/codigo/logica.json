@@ -440,7 +440,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 174,
+   "usado_por": 171,
    "usado_por_modulos": [
     "components/auth",
     "components/calendar",
@@ -502,14 +502,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 36,
+   "usado_por": 35,
    "usado_por_modulos": [
     "components/digital-twin",
     "components/reports",
     "components/shift",
     "features/admin",
     "features/analytics",
-    "features/inventory",
     "features/jobs",
     "features/maintenance",
     "features/notifications",
@@ -990,7 +989,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 58,
+   "usado_por": 57,
    "usado_por_modulos": [
     "components/auth",
     "components/chat",
@@ -1208,7 +1207,7 @@
     "requestPersistentStorage"
    ],
    "export_default": null,
-   "linhas": 299,
+   "linhas": 290,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1496,7 +1495,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 44,
+   "usado_por": 42,
    "usado_por_modulos": [
     "components/abc",
     "components/dashboard",
@@ -1816,7 +1815,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 229,
+   "usado_por": 218,
    "usado_por_modulos": [
     "components/accessibility",
     "components/activity",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d61122af8d` · branch `main` · 2026-11-09 10:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6c96376b1d` · branch `main` · 2026-11-09 14:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1707,8 +1707,6 @@ _nenhum item encontrado_
 | `{bottlenecks.length} máquina(s) operando acima de 85% de capacidade. Risco de atraso em cascata.` | `src/components/calendar/OptimizationAssistant.tsx` |
 | `O horário sugerido ({suggestion.time}) reduz o tempo de ociosidade entre turnos em 20%.` | `src/components/dashboard/AlertScheduleModal.tsx` |
 | `} else if (data.totalTime > data.limit * 0.7) {` | `src/components/dashboard/AlertsWidget.tsx` |
-| `borderLeft: `${size * 0.5}px solid transparent`,` | `src/components/design-system/sections/BackToOverviewButton.tsx` |
-| `borderRight: `${size * 0.5}px solid transparent`,` | `src/components/design-system/sections/BackToOverviewButton.tsx` |
 | `<TableCell>10-20%</TableCell>` | `src/components/design-system/sections/ColorsSection.tsx` |
 | `<TableCell>100%</TableCell>` | `src/components/design-system/sections/ColorsSection.tsx` |
 | `<TableCell>120%</TableCell>` | `src/components/design-system/sections/ColorsSection.tsx` |
@@ -1893,7 +1891,6 @@ _nenhum item encontrado_
 | `MAX_PAGE_SIZE` | `200` | `src/lib/queryConfig.ts` |
 | `MAX_RETRIES` | `3` | `src/lib/offline/offlineQueue.ts` |
 | `RETRY_BACKOFF_BASE_MS` | `3000` | `src/lib/offline/offlineQueue.ts` |
-| `ORANGE` | `'#FF5A1F'` | `src/pages/AuthPage.tsx` |
 | `START_HOUR` | `7` | `src/pages/DailyCalendar.tsx` |
 | `END_HOUR` | `21` | `src/pages/DailyCalendar.tsx` |
 | `DEFAULT_ALLOWED_METHODS` | `"GET, POST, PATCH, PUT, DELETE, OPTIONS"` | `supabase/functions/_shared/cors.ts` |
@@ -1932,7 +1929,6 @@ _nenhum item encontrado_
 | `const simulateLoading = () => { setIsLoading(true); setTimeout(() => setIsLoading(false), 2000); };` | `src/components/design-system/sections/loading/ButtonLoadingSection.tsx` |
 | `setTimeout(() => setConfetti(prev => prev.filter(p => p.id < id \|\| p.id >= id + 40)), 1600);` | `src/components/design-system/sections/overview/OverviewStatCard.tsx` |
 | `const date = startOfDay(subDays(new Date(), 13 - i));` | `src/components/integrations/Bitrix24SyncHistory.tsx` |
-| `setTimeout(() => setRefreshState("idle"), 1500);` | `src/components/mobile/PullToRefresh.tsx` |
 | `const timer = setTimeout(() => setShowTour(true), 1000);` | `src/components/onboarding/OnboardingTour.tsx` |
 | `const timer = setTimeout(() => setRun(true), 2000);` | `src/components/onboarding/SystemOnboarding.tsx` |
 | `end = endOfMonth(addMonths(now, 1));` | `src/components/operators/CreateGoalModal.tsx` |
@@ -2180,10 +2176,8 @@ _nenhum item encontrado_
 | Erro ao resolver | `src/components/dashboard/EfficiencyAlertHistoryWidget.tsx` |
 | ; import { AlertCircle, Wrench, Users } from  | `src/components/design-system/hooks/MaintenanceOperatorDemos.tsx` |
 | ; import { AlertCircle, Brain, Loader2, RefreshCw, Play, CheckCircle } from  | `src/components/design-system/hooks/PredictionHooksDemos.tsx` |
-| ; import { Skeleton } from  | `src/components/design-system/sections/ChangelogSection.tsx` |
 | ; import { Skeleton } from  | `src/components/design-system/sections/FeedbackSection.tsx` |
 | Atenção! | `src/components/design-system/sections/FeedbackSection.tsx` |
-| ; import { useState, useEffect } from  | `src/components/design-system/sections/IconsSection.tsx` |
 | useFeedback must be used within a FeedbackProvider | `src/components/feedback/FeedbackProvider.tsx` |
 | ; import { sanitizeUrl } from  | `src/components/integrations/Bitrix24SyncPanel.tsx` |
 | Localização inválida. Use o formato Corredor (A-D) + Nível (1-4). Ex: A2 | `src/components/inventory/WarehouseMap.tsx` |
@@ -2191,7 +2185,6 @@ _nenhum item encontrado_
 | O destino não pode ser igual à origem | `src/components/inventory/WarehouseMap.tsx` |
 | Preencha a técnica e o título | `src/components/knowledge/TechnicalSheetEditor.tsx` |
 | Erro ao gerar PDF | `src/components/knowledge/TechnicalSheetViewer.tsx` |
-| AudioContext não suportado neste navegador. | `src/components/layout/QuickFavoritesBar.tsx` |
 | , icon: AlertTriangle, label:  | `src/components/navigation/MobileQuickActions.tsx` |
 | Você está offline | `src/components/offline/NetworkStatusToaster.tsx` |
 | Erro ao salvar checklist | `src/components/operator/PreProductionChecklist.tsx` |
@@ -2252,7 +2245,7 @@ _nenhum item encontrado_
 | useUserPreferences must be used within UserPreferencesProvider | `src/contexts/UserPreferencesContext.tsx` |
 | useWebSocketContext must be used within WebSocketProvider | `src/contexts/WebSocketContext.tsx` |
 | ; import { Skeleton } from  | `src/features/admin/components/monitoring/CronHealthCard.tsx` |
-| ; import { Tabs, TabsContent, TabsList, TabsTrigger } from  | `src/features/admin/components/security/GeoBlockingSettings.tsx` |
+| ; import {   Globe,   Plus,   Trash2,   ShieldCheck,   AlertTriangle,   History,   MapPin } from  | `src/features/admin/components/security/GeoBlockingSettings.tsx` |
 | O código deve ter 6 dígitos | `src/features/admin/components/security/MFAEnroll.tsx` |
 | Falha ao gerar exportação. | `src/features/admin/hooks/useBIExport.ts` |
 | Nenhum dado encontrado para exportar. | `src/features/admin/hooks/useBIExport.ts` |
@@ -2346,7 +2339,6 @@ _nenhum item encontrado_
 | Erro ao atualizar configurações | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | User not authenticated | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | ), [playSound]);    const setEnabled = useCallback((enabled: boolean) => {     isEnabledRef.current = enabled;     localStorage.setItem( | `src/features/notifications/hooks/useNotificationSounds.ts` |
-| AudioContext não suportado neste navegador. | `src/features/notifications/hooks/useNotificationSounds.ts` |
 | Erro ao excluir notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao marcar notificação como lida | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao marcar notificações como lidas | `src/features/notifications/hooks/useNotifications.ts` |
@@ -2408,7 +2400,6 @@ _nenhum item encontrado_
 | Conversa não encontrada | `src/hooks/useTechnicalConversations.ts` |
 | No conversation selected | `src/hooks/useTechnicalConversations.ts` |
 | User not authenticated | `src/hooks/useTechnicalConversations.ts` |
-| AudioContext não suportado neste navegador. | `src/hooks/useThemeSound.ts` |
 | Erro ao atualizar dispositivo | `src/hooks/useUserDevices.ts` |
 | Erro ao marcar dispositivo como confiável | `src/hooks/useUserDevices.ts` |
 | Erro ao remover dispositivo | `src/hooks/useUserDevices.ts` |
@@ -2430,7 +2421,12 @@ _nenhum item encontrado_
 | Not authenticated | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Circuit breaker [${this.options.name}] is OPEN. Service unavailable. | `src/lib/circuitBreaker.ts` |
 | Database not initialized | `src/lib/offlineStorage.ts` |
-| … +166 linhas — lista completa em `context.json` | |
+| Erro ao limpar telemetria | `src/pages/AdminTelemetriaPage.tsx` |
+| Novo erro detectado: ${payload.new.message.substring(0, 50)}... | `src/pages/AdminTelemetriaPage.tsx` |
+| Performance Crítica: ${payload.new.operation} em ${payload.new.table_name \|\|  | `src/pages/AdminTelemetriaPage.tsx` |
+| Conta Bloqueada | `src/pages/AuthPage.tsx` |
+| Erro ao conectar com Google | `src/pages/AuthPage.tsx` |
+| … +161 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d61122af8d5d5b6e30640923f427b881be71998d",
+  "sha": "6c96376b1d88ab7baf87a769144be1cd5606972d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-09 10:03 UTC",
+  "generated_at": "2026-11-09 14:45 UTC",
   "files_total": 1459,
   "code_files": 1329,
-  "code_lines": 185775
+  "code_lines": 185200
  },
  "version": "1.3.2",
- "facts_hash": "7b5a63b684995d98",
+ "facts_hash": "94d6088a35ad60d3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -20700,7 +20700,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 87
+    "deps_count": 86
    },
    {
     "path": "",
@@ -20837,7 +20837,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 309
+    "deps_count": 303
    },
    {
     "path": "",
@@ -21018,7 +21018,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 233
+    "deps_count": 229
    },
    {
     "path": "",
@@ -21518,7 +21518,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 116
+    "deps_count": 113
    },
    {
     "path": "",
@@ -21988,7 +21988,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 303
+    "deps_count": 302
    },
    {
     "path": "",
@@ -22250,7 +22250,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 187
+    "deps_count": 186
    },
    {
     "path": "",
@@ -22346,7 +22346,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 244
+    "deps_count": 241
    },
    {
     "path": "",
@@ -22727,7 +22727,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 270
+    "deps_count": 269
    },
    {
     "path": "",
@@ -22974,7 +22974,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 242
+    "deps_count": 240
    },
    {
     "path": "",
@@ -23215,7 +23215,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 309
+    "deps_count": 308
    },
    {
     "path": "",
@@ -23259,7 +23259,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 123
+    "deps_count": 122
    },
    {
     "path": "",
@@ -23721,7 +23721,7 @@
      "complete_maintenance_record",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 215
+    "deps_count": 214
    },
    {
     "path": "",
@@ -23844,7 +23844,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 220
+    "deps_count": 219
    },
    {
     "path": "",
@@ -23925,7 +23925,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 219
+    "deps_count": 218
    },
    {
     "path": "",
@@ -24018,7 +24018,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 233
+    "deps_count": 232
    }
   ],
   "edge_functions": [
@@ -26441,7 +26441,7 @@
   {
    "module": "src/components",
    "files": 415,
-   "lines": 58792,
+   "lines": 58548,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -26659,7 +26659,7 @@
   {
    "module": "src/contexts",
    "files": 14,
-   "lines": 1130,
+   "lines": 1129,
    "tables": [
     "security_events"
    ],
@@ -26715,7 +26715,7 @@
   {
    "module": "src/features/admin",
    "files": 55,
-   "lines": 7032,
+   "lines": 6997,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -26873,7 +26873,7 @@
   {
    "module": "src/features/analytics",
    "files": 78,
-   "lines": 11937,
+   "lines": 11916,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -27048,7 +27048,7 @@
   {
    "module": "src/features/auth",
    "files": 13,
-   "lines": 1609,
+   "lines": 1608,
    "tables": [
     "profiles",
     "role_permissions",
@@ -27107,7 +27107,7 @@
   {
    "module": "src/features/inventory",
    "files": 13,
-   "lines": 2413,
+   "lines": 2410,
    "tables": [
     "inventory_items",
     "inventory_movements",
@@ -27167,7 +27167,7 @@
   {
    "module": "src/features/jobs",
    "files": 34,
-   "lines": 3642,
+   "lines": 3640,
    "tables": [
     "job_status_history",
     "jobs",
@@ -27271,7 +27271,7 @@
   {
    "module": "src/features/maintenance",
    "files": 41,
-   "lines": 7364,
+   "lines": 7333,
    "tables": [
     "machine_predictions",
     "machines",
@@ -27411,7 +27411,7 @@
   {
    "module": "src/features/notifications",
    "files": 27,
-   "lines": 4347,
+   "lines": 4335,
    "tables": [
     "machine_predictions",
     "machines",
@@ -27618,7 +27618,7 @@
   {
    "module": "src/features/production",
    "files": 31,
-   "lines": 3559,
+   "lines": 3551,
    "tables": [
     "jobs",
     "machine_downtime",
@@ -27728,7 +27728,7 @@
   {
    "module": "src/hooks",
    "files": 61,
-   "lines": 7779,
+   "lines": 7768,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -27948,7 +27948,7 @@
   {
    "module": "src/lib",
    "files": 51,
-   "lines": 6386,
+   "lines": 6377,
    "tables": [
     "audit_log",
     "error_logs",
@@ -28089,7 +28089,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 17015,
+   "lines": 16826,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -28164,7 +28164,6 @@
     "framer-motion",
     "lucide-react",
     "next-themes",
-    "qrcode.react",
     "react",
     "react-day-picker",
     "react-helmet-async",
@@ -28335,7 +28334,7 @@
   {
    "module": "src/test",
    "files": 28,
-   "lines": 4278,
+   "lines": 4271,
    "tables": [
     "jobs"
    ],
@@ -28399,7 +28398,7 @@
   {
    "module": "src/types",
    "files": 3,
-   "lines": 177,
+   "lines": 176,
    "tables": [],
    "exports": [
     "job.ts: JobStatus, JobPriority, Job, JobInsert, JobUpdate, JobWithRelations",
@@ -32622,20 +32621,12 @@
     "msg": ";\nimport { AlertCircle, Brain, Loader2, RefreshCw, Play, CheckCircle } from "
    },
    {
-    "file": "src/components/design-system/sections/ChangelogSection.tsx",
-    "msg": ";\nimport { Skeleton } from "
-   },
-   {
     "file": "src/components/design-system/sections/FeedbackSection.tsx",
     "msg": ";\nimport { Skeleton } from "
    },
    {
     "file": "src/components/design-system/sections/FeedbackSection.tsx",
     "msg": "Atenção!"
-   },
-   {
-    "file": "src/components/design-system/sections/IconsSection.tsx",
-    "msg": ";\nimport { useState, useEffect } from "
    },
    {
     "file": "src/components/feedback/FeedbackProvider.tsx",
@@ -32664,10 +32655,6 @@
    {
     "file": "src/components/knowledge/TechnicalSheetViewer.tsx",
     "msg": "Erro ao gerar PDF"
-   },
-   {
-    "file": "src/components/layout/QuickFavoritesBar.tsx",
-    "msg": "AudioContext não suportado neste navegador."
    },
    {
     "file": "src/components/navigation/MobileQuickActions.tsx",
@@ -32911,7 +32898,7 @@
    },
    {
     "file": "src/features/admin/components/security/GeoBlockingSettings.tsx",
-    "msg": ";\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from "
+    "msg": ";\nimport {\n  Globe,\n  Plus,\n  Trash2,\n  ShieldCheck,\n  AlertTriangle,\n  History,\n  MapPin\n} from "
    },
    {
     "file": "src/features/admin/components/security/MFAEnroll.tsx",
@@ -33286,10 +33273,6 @@
     "msg": "), [playSound]);\n\n  const setEnabled = useCallback((enabled: boolean) => {\n    isEnabledRef.current = enabled;\n    localStorage.setItem("
    },
    {
-    "file": "src/features/notifications/hooks/useNotificationSounds.ts",
-    "msg": "AudioContext não suportado neste navegador."
-   },
-   {
     "file": "src/features/notifications/hooks/useNotifications.ts",
     "msg": "Erro ao excluir notificação"
    },
@@ -33532,10 +33515,6 @@
    {
     "file": "src/hooks/useTechnicalConversations.ts",
     "msg": "User not authenticated"
-   },
-   {
-    "file": "src/hooks/useThemeSound.ts",
-    "msg": "AudioContext não suportado neste navegador."
    },
    {
     "file": "src/hooks/useUserDevices.ts",
@@ -40584,11 +40563,6 @@
     "value": "3000"
    },
    {
-    "file": "src/pages/AuthPage.tsx",
-    "name": "ORANGE",
-    "value": "'#FF5A1F'"
-   },
-   {
     "file": "src/pages/DailyCalendar.tsx",
     "name": "START_HOUR",
     "value": "7"
@@ -41964,24 +41938,6 @@
     "field": "status",
     "value": "success",
     "kind": "escreve"
-   },
-   {
-    "file": "src/components/integrations/Bitrix24SyncHistory.tsx",
-    "field": "status",
-    "value": "success",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/integrations/Bitrix24SyncHistory.tsx",
-    "field": "status",
-    "value": "partial",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/integrations/Bitrix24SyncHistory.tsx",
-    "field": "status",
-    "value": "error",
-    "kind": "compara"
    },
    {
     "file": "src/components/integrations/Bitrix24SyncHistory.tsx",
@@ -47394,10 +47350,6 @@
     "line": "const date = startOfDay(subDays(new Date(), 13 - i));"
    },
    {
-    "file": "src/components/mobile/PullToRefresh.tsx",
-    "line": "setTimeout(() => setRefreshState(\"idle\"), 1500);"
-   },
-   {
     "file": "src/components/onboarding/OnboardingTour.tsx",
     "line": "const timer = setTimeout(() => setShowTour(true), 1000);"
    },
@@ -47970,14 +47922,6 @@
    {
     "file": "src/components/dashboard/AlertsWidget.tsx",
     "line": "} else if (data.totalTime > data.limit * 0.7) {"
-   },
-   {
-    "file": "src/components/design-system/sections/BackToOverviewButton.tsx",
-    "line": "borderLeft: `${size * 0.5}px solid transparent`,"
-   },
-   {
-    "file": "src/components/design-system/sections/BackToOverviewButton.tsx",
-    "line": "borderRight: `${size * 0.5}px solid transparent`,"
    },
    {
     "file": "src/components/design-system/sections/ColorsSection.tsx",
@@ -67103,7 +67047,7 @@
   },
   "src/components/activity/ActivityLog.tsx": {
    "path": "src/components/activity/ActivityLog.tsx",
-   "lines": 240,
+   "lines": 239,
    "exports": [
     "function ActivityLog"
    ],
@@ -67153,7 +67097,7 @@
   },
   "src/components/alerts/AlertViewAllModals.tsx": {
    "path": "src/components/alerts/AlertViewAllModals.tsx",
-   "lines": 177,
+   "lines": 176,
    "exports": [
     "function JobsViewAll",
     "function BottleneckViewAll",
@@ -67170,7 +67114,7 @@
   },
   "src/components/assistant/TechnicalAssistant.tsx": {
    "path": "src/components/assistant/TechnicalAssistant.tsx",
-   "lines": 281,
+   "lines": 280,
    "exports": [
     "const TechnicalAssistant"
    ],
@@ -67254,7 +67198,7 @@
   },
   "src/components/auth/AuthLoginForm.tsx": {
    "path": "src/components/auth/AuthLoginForm.tsx",
-   "lines": 62,
+   "lines": 61,
    "exports": [
     "function AuthLoginForm"
    ],
@@ -67296,7 +67240,7 @@
   },
   "src/components/auth/PasswordStrengthIndicator.tsx": {
    "path": "src/components/auth/PasswordStrengthIndicator.tsx",
-   "lines": 296,
+   "lines": 295,
    "exports": [
     "function PasswordStrengthIndicator",
     "function usePasswordStrength"
@@ -67366,7 +67310,7 @@
   },
   "src/components/autonomous/AutonomousEventLog.tsx": {
    "path": "src/components/autonomous/AutonomousEventLog.tsx",
-   "lines": 131,
+   "lines": 130,
    "exports": [
     "function AutonomousEventLog"
    ],
@@ -67414,7 +67358,7 @@
   },
   "src/components/calendar/AgendaView.tsx": {
    "path": "src/components/calendar/AgendaView.tsx",
-   "lines": 301,
+   "lines": 300,
    "exports": [
     "const AgendaView"
    ],
@@ -67443,7 +67387,7 @@
   },
   "src/components/calendar/CalendarFilters.tsx": {
    "path": "src/components/calendar/CalendarFilters.tsx",
-   "lines": 216,
+   "lines": 215,
    "exports": [
     "function CalendarFilters"
    ]
@@ -67530,7 +67474,7 @@
   },
   "src/components/calendar/ConflictResolutionPanel.tsx": {
    "path": "src/components/calendar/ConflictResolutionPanel.tsx",
-   "lines": 83,
+   "lines": 81,
    "exports": [
     "function ConflictResolutionPanel"
    ]
@@ -67708,7 +67652,7 @@
   },
   "src/components/dashboard/AlertScheduleModal.tsx": {
    "path": "src/components/dashboard/AlertScheduleModal.tsx",
-   "lines": 333,
+   "lines": 331,
    "exports": [
     "function AlertScheduleModal"
    ],
@@ -67761,7 +67705,7 @@
   },
   "src/components/dashboard/AlertsWidget.tsx": {
    "path": "src/components/dashboard/AlertsWidget.tsx",
-   "lines": 188,
+   "lines": 187,
    "exports": [
     "function AlertsWidget"
    ],
@@ -67862,7 +67806,7 @@
   },
   "src/components/dashboard/CompactTimeline.tsx": {
    "path": "src/components/dashboard/CompactTimeline.tsx",
-   "lines": 68,
+   "lines": 67,
    "exports": [
     "function CompactTimeline"
    ]
@@ -67943,7 +67887,7 @@
   },
   "src/components/dashboard/InventoryAlertsWidget.tsx": {
    "path": "src/components/dashboard/InventoryAlertsWidget.tsx",
-   "lines": 57,
+   "lines": 56,
    "exports": [
     "function InventoryAlertsWidget"
    ],
@@ -67953,7 +67897,7 @@
   },
   "src/components/dashboard/LeaderboardWidget.tsx": {
    "path": "src/components/dashboard/LeaderboardWidget.tsx",
-   "lines": 121,
+   "lines": 120,
    "exports": [
     "function LeaderboardWidget"
    ]
@@ -68180,7 +68124,7 @@
   },
   "src/components/design-system/hooks/EfficiencyHooksDemos.tsx": {
    "path": "src/components/design-system/hooks/EfficiencyHooksDemos.tsx",
-   "lines": 129,
+   "lines": 128,
    "exports": [
     "const UseLoadBalancingDemo",
     "const UseOEEDemo"
@@ -68344,13 +68288,9 @@
   },
   "src/components/design-system/sections/BackToOverviewButton.tsx": {
    "path": "src/components/design-system/sections/BackToOverviewButton.tsx",
-   "lines": 81,
+   "lines": 22,
    "exports": [
     "function BackToOverviewButton"
-   ],
-   "percents": [
-    "borderLeft: `${size * 0.5}px solid transparent`,",
-    "borderRight: `${size * 0.5}px solid transparent`,"
    ]
   },
   "src/components/design-system/sections/BadgesSection.tsx": {
@@ -68376,12 +68316,9 @@
   },
   "src/components/design-system/sections/ChangelogSection.tsx": {
    "path": "src/components/design-system/sections/ChangelogSection.tsx",
-   "lines": 372,
+   "lines": 357,
    "exports": [
     "function ChangelogSection"
-   ],
-   "errors": [
-    ";\nimport { Skeleton } from "
    ],
    "status_values": [
     {
@@ -68790,7 +68727,7 @@
   },
   "src/components/design-system/sections/FeedbackSection.tsx": {
    "path": "src/components/design-system/sections/FeedbackSection.tsx",
-   "lines": 348,
+   "lines": 347,
    "exports": [
     "function FeedbackSection"
    ],
@@ -68818,12 +68755,9 @@
   },
   "src/components/design-system/sections/IconsSection.tsx": {
    "path": "src/components/design-system/sections/IconsSection.tsx",
-   "lines": 429,
+   "lines": 427,
    "exports": [
     "function IconsSection"
-   ],
-   "errors": [
-    ";\nimport { useState, useEffect } from "
    ]
   },
   "src/components/design-system/sections/LoadingSection.tsx": {
@@ -69297,7 +69231,7 @@
   },
   "src/components/design-system/sections/tables/InteractiveTables.tsx": {
    "path": "src/components/design-system/sections/tables/InteractiveTables.tsx",
-   "lines": 126,
+   "lines": 124,
    "exports": [
     "function BadgeTable",
     "function ActionTable",
@@ -69410,7 +69344,7 @@
   },
   "src/components/digital-twin/FactoryFloorMap.tsx": {
    "path": "src/components/digital-twin/FactoryFloorMap.tsx",
-   "lines": 236,
+   "lines": 235,
    "exports": [
     "function FactoryFloorMap"
    ],
@@ -69533,7 +69467,7 @@
   },
   "src/components/feedback/CelebrationMoment.tsx": {
    "path": "src/components/feedback/CelebrationMoment.tsx",
-   "lines": 303,
+   "lines": 302,
    "exports": [
     "function CelebrationMoment",
     "function useCelebration",
@@ -69637,7 +69571,7 @@
   },
   "src/components/integrations/Bitrix24SyncHistory.tsx": {
    "path": "src/components/integrations/Bitrix24SyncHistory.tsx",
-   "lines": 375,
+   "lines": 363,
    "exports": [
     "const Bitrix24SyncHistory"
    ],
@@ -69646,21 +69580,6 @@
      "field": "status",
      "value": "success",
      "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "success",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "partial",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "error",
-     "kind": "compara"
     },
     {
      "field": "status",
@@ -69826,14 +69745,14 @@
   },
   "src/components/jobs/JobCostsTab.tsx": {
    "path": "src/components/jobs/JobCostsTab.tsx",
-   "lines": 155,
+   "lines": 152,
    "exports": [
     "function JobCostsTab"
    ]
   },
   "src/components/jobs/JobDetailsModal.tsx": {
    "path": "src/components/jobs/JobDetailsModal.tsx",
-   "lines": 523,
+   "lines": 512,
    "exports": [
     "function JobDetailsModal"
    ],
@@ -69849,7 +69768,7 @@
   },
   "src/components/jobs/JobInfoGrid.tsx": {
    "path": "src/components/jobs/JobInfoGrid.tsx",
-   "lines": 68,
+   "lines": 67,
    "exports": [
     "function JobInfoGrid"
    ]
@@ -69863,21 +69782,21 @@
   },
   "src/components/jobs/JobInstructionsTab.tsx": {
    "path": "src/components/jobs/JobInstructionsTab.tsx",
-   "lines": 230,
+   "lines": 225,
    "exports": [
     "function JobInstructionsTab"
    ]
   },
   "src/components/jobs/JobQualityTab.tsx": {
    "path": "src/components/jobs/JobQualityTab.tsx",
-   "lines": 230,
+   "lines": 227,
    "exports": [
     "function JobQualityTab"
    ]
   },
   "src/components/jobs/JobQuickActions.tsx": {
    "path": "src/components/jobs/JobQuickActions.tsx",
-   "lines": 74,
+   "lines": 73,
    "exports": [
     "function JobQuickActions"
    ],
@@ -70017,7 +69936,7 @@
   },
   "src/components/kanban/KanbanAIAdvisor.tsx": {
    "path": "src/components/kanban/KanbanAIAdvisor.tsx",
-   "lines": 433,
+   "lines": 431,
    "exports": [
     "function KanbanAIAdvisor"
    ],
@@ -70035,7 +69954,7 @@
   },
   "src/components/kanban/KanbanFiltersBar.tsx": {
    "path": "src/components/kanban/KanbanFiltersBar.tsx",
-   "lines": 194,
+   "lines": 193,
    "exports": [
     "type ViewMode",
     "type SwimlanesMode",
@@ -70057,7 +69976,7 @@
   },
   "src/components/kanban/KanbanMetricsBar.tsx": {
    "path": "src/components/kanban/KanbanMetricsBar.tsx",
-   "lines": 157,
+   "lines": 156,
    "exports": [
     "function KanbanMetricsBar"
    ],
@@ -70087,7 +70006,7 @@
   },
   "src/components/kiosk/KioskMode.tsx": {
    "path": "src/components/kiosk/KioskMode.tsx",
-   "lines": 391,
+   "lines": 390,
    "exports": [
     "function KioskMode",
     "function KioskModeButton"
@@ -70196,7 +70115,7 @@
   },
   "src/components/knowledge/TechnicalSheetHistoryTab.tsx": {
    "path": "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
-   "lines": 76,
+   "lines": 75,
    "exports": [
     "function TechnicalSheetHistoryTab"
    ]
@@ -70239,7 +70158,7 @@
   },
   "src/components/knowledge/TechnicalSheetViewer.tsx": {
    "path": "src/components/knowledge/TechnicalSheetViewer.tsx",
-   "lines": 265,
+   "lines": 242,
    "exports": [
     "const TechnicalSheetViewer"
    ],
@@ -70351,7 +70270,7 @@
   },
   "src/components/layout/MainLayout.tsx": {
    "path": "src/components/layout/MainLayout.tsx",
-   "lines": 296,
+   "lines": 294,
    "exports": [
     "function MainLayout"
    ],
@@ -70406,12 +70325,9 @@
   },
   "src/components/layout/QuickFavoritesBar.tsx": {
    "path": "src/components/layout/QuickFavoritesBar.tsx",
-   "lines": 515,
+   "lines": 501,
    "exports": [
     "const QuickFavoritesBar"
-   ],
-   "errors": [
-    "AudioContext não suportado neste navegador."
    ],
    "status_values": [
     {
@@ -70725,7 +70641,7 @@
   },
   "src/components/mobile/PullToRefresh.tsx": {
    "path": "src/components/mobile/PullToRefresh.tsx",
-   "lines": 177,
+   "lines": 167,
    "exports": [
     "function PullToRefresh",
     "function MobilePullToRefresh"
@@ -70741,9 +70657,6 @@
      "value": "spring",
      "kind": "escreve"
     }
-   ],
-   "temporal": [
-    "setTimeout(() => setRefreshState(\"idle\"), 1500);"
    ]
   },
   "src/components/mobile/SwipeActions.tsx": {
@@ -70756,7 +70669,7 @@
   },
   "src/components/navigation/BackButton.tsx": {
    "path": "src/components/navigation/BackButton.tsx",
-   "lines": 108,
+   "lines": 107,
    "exports": [
     "function BackButton"
    ],
@@ -70764,7 +70677,7 @@
   },
   "src/components/navigation/Breadcrumbs.tsx": {
    "path": "src/components/navigation/Breadcrumbs.tsx",
-   "lines": 289,
+   "lines": 288,
    "exports": [
     "function Breadcrumbs"
    ],
@@ -70785,7 +70698,7 @@
   },
   "src/components/navigation/CommandPaletteAdvanced.tsx": {
    "path": "src/components/navigation/CommandPaletteAdvanced.tsx",
-   "lines": 218,
+   "lines": 217,
    "exports": [
     "function CommandPaletteAdvanced",
     "function CommandPaletteTriggerAdvanced"
@@ -70794,7 +70707,7 @@
   },
   "src/components/navigation/CommandPaletteCommands.tsx": {
    "path": "src/components/navigation/CommandPaletteCommands.tsx",
-   "lines": 117,
+   "lines": 116,
    "exports": [
     "type CommandCategory",
     "interface CommandItemType",
@@ -71024,14 +70937,14 @@
   },
   "src/components/offline/OfflineReadyIndicator.tsx": {
    "path": "src/components/offline/OfflineReadyIndicator.tsx",
-   "lines": 240,
+   "lines": 238,
    "exports": [
     "function OfflineReadyIndicator"
    ]
   },
   "src/components/offline/OfflineStatusBanner.tsx": {
    "path": "src/components/offline/OfflineStatusBanner.tsx",
-   "lines": 203,
+   "lines": 201,
    "exports": [
     "function OfflineStatusBanner"
    ]
@@ -71090,7 +71003,7 @@
   },
   "src/components/operator/OperatorQuickHistory.tsx": {
    "path": "src/components/operator/OperatorQuickHistory.tsx",
-   "lines": 52,
+   "lines": 51,
    "exports": [
     "function OperatorQuickHistory"
    ],
@@ -71144,7 +71057,7 @@
   },
   "src/components/operator/ProductionRegistrationModal.tsx": {
    "path": "src/components/operator/ProductionRegistrationModal.tsx",
-   "lines": 483,
+   "lines": 473,
    "exports": [
     "function ProductionRegistrationModal"
    ],
@@ -71433,7 +71346,7 @@
   },
   "src/components/operators/GoalsHistoryCard.tsx": {
    "path": "src/components/operators/GoalsHistoryCard.tsx",
-   "lines": 456,
+   "lines": 450,
    "exports": [
     "function GoalsHistoryCard"
    ],
@@ -71499,7 +71412,7 @@
   },
   "src/components/operators/OperatorGoalsCard.tsx": {
    "path": "src/components/operators/OperatorGoalsCard.tsx",
-   "lines": 272,
+   "lines": 264,
    "exports": [
     "function OperatorGoalsCard",
     "function GoalsSummary"
@@ -71613,7 +71526,7 @@
   },
   "src/components/operators/OperatorSkillsModal.tsx": {
    "path": "src/components/operators/OperatorSkillsModal.tsx",
-   "lines": 158,
+   "lines": 157,
    "exports": [
     "function OperatorSkillsModal"
    ]
@@ -71735,7 +71648,7 @@
   },
   "src/components/planning/PlanningEfficiencyDashboard.tsx": {
    "path": "src/components/planning/PlanningEfficiencyDashboard.tsx",
-   "lines": 363,
+   "lines": 362,
    "exports": [
     "function PlanningEfficiencyDashboard"
    ],
@@ -71762,7 +71675,7 @@
   },
   "src/components/planning/SmartSequencingPanel.tsx": {
    "path": "src/components/planning/SmartSequencingPanel.tsx",
-   "lines": 320,
+   "lines": 318,
    "exports": [
     "function SmartSequencingPanel"
    ]
@@ -71806,7 +71719,7 @@
   },
   "src/components/production/ProductionPhotos.tsx": {
    "path": "src/components/production/ProductionPhotos.tsx",
-   "lines": 161,
+   "lines": 157,
    "exports": [
     "function ProductionPhotos",
     "function PhotosCountBadge"
@@ -71898,7 +71811,7 @@
   },
   "src/components/qrcode/ScanHistory.tsx": {
    "path": "src/components/qrcode/ScanHistory.tsx",
-   "lines": 228,
+   "lines": 227,
    "exports": [
     "const ScanHistory"
    ],
@@ -72102,7 +72015,7 @@
   },
   "src/components/scheduling/MachineSuggestionPanel.tsx": {
    "path": "src/components/scheduling/MachineSuggestionPanel.tsx",
-   "lines": 134,
+   "lines": 133,
    "exports": [
     "function MachineSuggestionPanel"
    ]
@@ -72119,7 +72032,7 @@
   },
   "src/components/scheduling/UtilizationHeatmap.tsx": {
    "path": "src/components/scheduling/UtilizationHeatmap.tsx",
-   "lines": 87,
+   "lines": 85,
    "exports": [
     "function UtilizationHeatmap"
    ]
@@ -72133,7 +72046,7 @@
   },
   "src/components/settings/IPAllowlist.tsx": {
    "path": "src/components/settings/IPAllowlist.tsx",
-   "lines": 318,
+   "lines": 316,
    "exports": [
     "function IPAllowlist"
    ],
@@ -72597,7 +72510,7 @@
   },
   "src/components/shift/OccurrencesPanel.tsx": {
    "path": "src/components/shift/OccurrencesPanel.tsx",
-   "lines": 244,
+   "lines": 243,
    "exports": [
     "function OccurrencesPanel"
    ],
@@ -72759,14 +72672,14 @@
   },
   "src/components/technical-assistant/BiometricSecurity.tsx": {
    "path": "src/components/technical-assistant/BiometricSecurity.tsx",
-   "lines": 27,
+   "lines": 26,
    "exports": [
     "const BiometricSecurity"
    ]
   },
   "src/components/technical-assistant/ChatArea.tsx": {
    "path": "src/components/technical-assistant/ChatArea.tsx",
-   "lines": 341,
+   "lines": 340,
    "exports": [
     "function ChatArea"
    ],
@@ -72865,7 +72778,7 @@
   },
   "src/components/technical-assistant/SafetyAlert.tsx": {
    "path": "src/components/technical-assistant/SafetyAlert.tsx",
-   "lines": 60,
+   "lines": 59,
    "exports": [
     "function SafetyAlert"
    ]
@@ -72903,7 +72816,7 @@
   },
   "src/components/traceability/BlockchainIntegrityCard.tsx": {
    "path": "src/components/traceability/BlockchainIntegrityCard.tsx",
-   "lines": 70,
+   "lines": 69,
    "exports": [
     "function BlockchainIntegrityCard"
    ],
@@ -73104,7 +73017,7 @@
   },
   "src/components/ui/DashboardSkeleton.tsx": {
    "path": "src/components/ui/DashboardSkeleton.tsx",
-   "lines": 127,
+   "lines": 126,
    "exports": [
     "function DashboardSkeleton"
    ]
@@ -73281,7 +73194,7 @@
   },
   "src/components/ui/empty-state.tsx": {
    "path": "src/components/ui/empty-state.tsx",
-   "lines": 489,
+   "lines": 487,
    "exports": [
     "function EmptyState",
     "const EmptyStates"
@@ -73757,7 +73670,7 @@
   },
   "src/contexts/ReauthContext.tsx": {
    "path": "src/contexts/ReauthContext.tsx",
-   "lines": 234,
+   "lines": 233,
    "exports": [
     "function ReauthProvider",
     "function useReauth",
@@ -74032,7 +73945,7 @@
   },
   "src/features/admin/components/security/ActiveDevicesPanel.tsx": {
    "path": "src/features/admin/components/security/ActiveDevicesPanel.tsx",
-   "lines": 260,
+   "lines": 240,
    "exports": [
     "function ActiveDevicesPanel"
    ],
@@ -74059,12 +73972,12 @@
   },
   "src/features/admin/components/security/GeoBlockingSettings.tsx": {
    "path": "src/features/admin/components/security/GeoBlockingSettings.tsx",
-   "lines": 370,
+   "lines": 366,
    "exports": [
     "function GeoBlockingSettings"
    ],
    "errors": [
-    ";\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from "
+    ";\nimport {\n  Globe,\n  Plus,\n  Trash2,\n  ShieldCheck,\n  AlertTriangle,\n  History,\n  MapPin\n} from "
    ]
   },
   "src/features/admin/components/security/MFAEnroll.tsx": {
@@ -74093,7 +74006,7 @@
   },
   "src/features/admin/components/security/PermissionManager.tsx": {
    "path": "src/features/admin/components/security/PermissionManager.tsx",
-   "lines": 249,
+   "lines": 240,
    "exports": [
     "function PermissionManager"
    ],
@@ -74148,7 +74061,7 @@
   },
   "src/features/admin/components/security/SecurityAlertsPanel.tsx": {
    "path": "src/features/admin/components/security/SecurityAlertsPanel.tsx",
-   "lines": 216,
+   "lines": 215,
    "exports": [
     "function SecurityAlertsPanel"
    ],
@@ -74663,7 +74576,7 @@
   },
   "src/features/admin/hooks/useDataExport.ts": {
    "path": "src/features/admin/hooks/useDataExport.ts",
-   "lines": 242,
+   "lines": 241,
    "exports": [
     "type ExportFormat",
     "interface ExportOptions",
@@ -75311,7 +75224,7 @@
   },
   "src/features/analytics/components/bi/BIAIInsights.tsx": {
    "path": "src/features/analytics/components/bi/BIAIInsights.tsx",
-   "lines": 335,
+   "lines": 334,
    "exports": [
     "function BIAIInsights"
    ],
@@ -75365,7 +75278,7 @@
   },
   "src/features/analytics/components/bi/BIComparisonView.tsx": {
    "path": "src/features/analytics/components/bi/BIComparisonView.tsx",
-   "lines": 168,
+   "lines": 167,
    "exports": [
     "function BIComparisonView"
    ]
@@ -75393,7 +75306,7 @@
   },
   "src/features/analytics/components/bi/BINormalView.tsx": {
    "path": "src/features/analytics/components/bi/BINormalView.tsx",
-   "lines": 436,
+   "lines": 435,
    "exports": [
     "function BINormalView"
    ],
@@ -75466,14 +75379,14 @@
   },
   "src/features/analytics/components/bi/BITooltip.tsx": {
    "path": "src/features/analytics/components/bi/BITooltip.tsx",
-   "lines": 62,
+   "lines": 61,
    "exports": [
     "function BITooltip"
    ]
   },
   "src/features/analytics/components/bi/FuturisticBI.tsx": {
    "path": "src/features/analytics/components/bi/FuturisticBI.tsx",
-   "lines": 395,
+   "lines": 390,
    "exports": [
     "function FuturisticBI"
    ],
@@ -75713,7 +75626,7 @@
   },
   "src/features/analytics/components/energy/EnergyChartTabs.tsx": {
    "path": "src/features/analytics/components/energy/EnergyChartTabs.tsx",
-   "lines": 166,
+   "lines": 165,
    "exports": [
     "function EnergyChartTabs"
    ]
@@ -75777,7 +75690,7 @@
   },
   "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx": {
    "path": "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
-   "lines": 126,
+   "lines": 125,
    "exports": [
     "function MaterialEfficiencyChart"
    ]
@@ -75798,7 +75711,7 @@
   },
   "src/features/analytics/components/oee/OEECalculationAudit.tsx": {
    "path": "src/features/analytics/components/oee/OEECalculationAudit.tsx",
-   "lines": 113,
+   "lines": 112,
    "exports": [
     "const OEECalculationAudit"
    ]
@@ -75812,14 +75725,14 @@
   },
   "src/features/analytics/components/oee/OEEHeatmap.tsx": {
    "path": "src/features/analytics/components/oee/OEEHeatmap.tsx",
-   "lines": 132,
+   "lines": 131,
    "exports": [
     "const OEEHeatmap"
    ]
   },
   "src/features/analytics/components/oee/OEELossDrilldown.tsx": {
    "path": "src/features/analytics/components/oee/OEELossDrilldown.tsx",
-   "lines": 286,
+   "lines": 285,
    "exports": [
     "const OEELossDrilldown"
    ],
@@ -75897,14 +75810,14 @@
   },
   "src/features/analytics/components/oee/OEEOverviewTab.tsx": {
    "path": "src/features/analytics/components/oee/OEEOverviewTab.tsx",
-   "lines": 182,
+   "lines": 181,
    "exports": [
     "function OEEOverviewTab"
    ]
   },
   "src/features/analytics/components/oee/OEERankingGap.tsx": {
    "path": "src/features/analytics/components/oee/OEERankingGap.tsx",
-   "lines": 177,
+   "lines": 176,
    "exports": [
     "const OEERankingGap"
    ],
@@ -75982,7 +75895,7 @@
   },
   "src/features/analytics/components/oee/OEEStudiosTab.tsx": {
    "path": "src/features/analytics/components/oee/OEEStudiosTab.tsx",
-   "lines": 206,
+   "lines": 205,
    "exports": [
     "function OEEStudiosTab"
    ]
@@ -76027,7 +75940,7 @@
   },
   "src/features/analytics/components/oee/StudioEfficiencyGrid.tsx": {
    "path": "src/features/analytics/components/oee/StudioEfficiencyGrid.tsx",
-   "lines": 70,
+   "lines": 69,
    "exports": [
     "function StudioEfficiencyGrid"
    ]
@@ -76145,7 +76058,7 @@
   },
   "src/features/analytics/hooks/useEnergy.ts": {
    "path": "src/features/analytics/hooks/useEnergy.ts",
-   "lines": 300,
+   "lines": 299,
    "exports": [
     "interface EnergyConsumption",
     "interface EnergyAlert",
@@ -76213,7 +76126,7 @@
   },
   "src/features/analytics/hooks/useExecutiveDashboard.ts": {
    "path": "src/features/analytics/hooks/useExecutiveDashboard.ts",
-   "lines": 332,
+   "lines": 330,
    "exports": [
     "interface ExecutiveKPIs",
     "interface DateRange",
@@ -76767,7 +76680,7 @@
   },
   "src/features/auth/components/AuthProvider.test.tsx": {
    "path": "src/features/auth/components/AuthProvider.test.tsx",
-   "lines": 133,
+   "lines": 132,
    "is_test": true,
    "tests": [
     "AuthContext",
@@ -77199,7 +77112,7 @@
   },
   "src/features/inventory/hooks/useInventory.ts": {
    "path": "src/features/inventory/hooks/useInventory.ts",
-   "lines": 219,
+   "lines": 216,
    "exports": [
     "type InventoryCategory",
     "interface InventoryItem",
@@ -77607,7 +77520,7 @@
   },
   "src/features/jobs/hooks/useDailyDragDrop.ts": {
    "path": "src/features/jobs/hooks/useDailyDragDrop.ts",
-   "lines": 84,
+   "lines": 83,
    "exports": [
     "function useDailyDragDrop"
    ],
@@ -78161,7 +78074,7 @@
   },
   "src/features/jobs/hooks/useTechniques.ts": {
    "path": "src/features/jobs/hooks/useTechniques.ts",
-   "lines": 31,
+   "lines": 30,
    "exports": [
     "function useTechniques"
    ],
@@ -78594,14 +78507,14 @@
   },
   "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx": {
    "path": "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx",
-   "lines": 87,
+   "lines": 86,
    "exports": [
     "function AdjustmentParameters"
    ]
   },
   "src/features/maintenance/components/ExecutionDetailsModal.tsx": {
    "path": "src/features/maintenance/components/ExecutionDetailsModal.tsx",
-   "lines": 328,
+   "lines": 320,
    "exports": [
     "type ExecutionRecord",
     "type ExecutionRow",
@@ -78688,7 +78601,7 @@
   },
   "src/features/maintenance/components/ExecutionSupplies.tsx": {
    "path": "src/features/maintenance/components/ExecutionSupplies.tsx",
-   "lines": 58,
+   "lines": 57,
    "exports": [
     "function ExecutionSupplies"
    ]
@@ -78719,7 +78632,7 @@
   },
   "src/features/maintenance/components/MachineTPMTimeline.tsx": {
    "path": "src/features/maintenance/components/MachineTPMTimeline.tsx",
-   "lines": 130,
+   "lines": 129,
    "exports": [
     "function MachineTPMTimeline"
    ],
@@ -78748,7 +78661,7 @@
   },
   "src/features/maintenance/components/MaintenanceExecutionModal.tsx": {
    "path": "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
-   "lines": 512,
+   "lines": 500,
    "exports": [
     "interface ExecutionAlert",
     "function MaintenanceExecutionModal"
@@ -78820,7 +78733,7 @@
   },
   "src/features/maintenance/components/TPMExecutionHistory.tsx": {
    "path": "src/features/maintenance/components/TPMExecutionHistory.tsx",
-   "lines": 293,
+   "lines": 291,
    "exports": [
     "function TPMExecutionHistory"
    ],
@@ -78949,7 +78862,7 @@
   },
   "src/features/maintenance/components/TPMNotificationSettings.tsx": {
    "path": "src/features/maintenance/components/TPMNotificationSettings.tsx",
-   "lines": 448,
+   "lines": 446,
    "exports": [
     "function TPMNotificationSettings"
    ],
@@ -78963,7 +78876,7 @@
   },
   "src/features/maintenance/components/TPMNotificationTemplates.tsx": {
    "path": "src/features/maintenance/components/TPMNotificationTemplates.tsx",
-   "lines": 192,
+   "lines": 191,
    "exports": [
     "function TPMNotificationTemplates"
    ],
@@ -79113,7 +79026,7 @@
   },
   "src/features/maintenance/components/TPMSeverityConfigs.tsx": {
    "path": "src/features/maintenance/components/TPMSeverityConfigs.tsx",
-   "lines": 166,
+   "lines": 165,
    "exports": [
     "function TPMSeverityConfigs"
    ],
@@ -79150,7 +79063,7 @@
   },
   "src/features/maintenance/components/execution/AdjustmentParameters.tsx": {
    "path": "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
-   "lines": 74,
+   "lines": 73,
    "exports": [
     "interface AdjustmentParams",
     "function AdjustmentParameters"
@@ -79197,7 +79110,7 @@
   },
   "src/features/maintenance/components/execution/ReplacementParts.tsx": {
    "path": "src/features/maintenance/components/execution/ReplacementParts.tsx",
-   "lines": 57,
+   "lines": 56,
    "exports": [
     "function ReplacementParts"
    ]
@@ -79532,7 +79445,7 @@
   },
   "src/features/notifications/components/DailySummaryCard.tsx": {
    "path": "src/features/notifications/components/DailySummaryCard.tsx",
-   "lines": 141,
+   "lines": 140,
    "exports": [
     "function DailySummaryCard"
    ],
@@ -79549,7 +79462,7 @@
   },
   "src/features/notifications/components/InAppNotificationWatcher.tsx": {
    "path": "src/features/notifications/components/InAppNotificationWatcher.tsx",
-   "lines": 119,
+   "lines": 118,
    "exports": [
     "function InAppNotificationWatcher"
    ],
@@ -80047,13 +79960,12 @@
   },
   "src/features/notifications/hooks/useNotificationSounds.ts": {
    "path": "src/features/notifications/hooks/useNotificationSounds.ts",
-   "lines": 189,
+   "lines": 179,
    "exports": [
     "const useNotificationSounds"
    ],
    "errors": [
-    "), [playSound]);\n\n  const setEnabled = useCallback((enabled: boolean) => {\n    isEnabledRef.current = enabled;\n    localStorage.setItem(",
-    "AudioContext não suportado neste navegador."
+    "), [playSound]);\n\n  const setEnabled = useCallback((enabled: boolean) => {\n    isEnabledRef.current = enabled;\n    localStorage.setItem("
    ],
    "status_values": [
     {
@@ -81545,7 +81457,7 @@
   },
   "src/features/production/hooks/useMachines.ts": {
    "path": "src/features/production/hooks/useMachines.ts",
-   "lines": 31,
+   "lines": 30,
    "exports": [
     "function useMachines"
    ],
@@ -81846,7 +81758,7 @@
   },
   "src/features/production/hooks/useOperatorMachines.ts": {
    "path": "src/features/production/hooks/useOperatorMachines.ts",
-   "lines": 125,
+   "lines": 124,
    "exports": [
     "interface OperatorMachine",
     "function useOperatorMachines"
@@ -81880,7 +81792,7 @@
   },
   "src/features/production/hooks/useOperatorPresence.ts": {
    "path": "src/features/production/hooks/useOperatorPresence.ts",
-   "lines": 105,
+   "lines": 104,
    "exports": [
     "function useOperatorPresence"
    ],
@@ -82048,7 +81960,7 @@
   },
   "src/features/production/hooks/useOperators.ts": {
    "path": "src/features/production/hooks/useOperators.ts",
-   "lines": 183,
+   "lines": 178,
    "exports": [
     "interface OperatorWithProfile",
     "function useOperators"
@@ -83282,7 +83194,7 @@
   },
   "src/hooks/useOfflineSync.ts": {
    "path": "src/hooks/useOfflineSync.ts",
-   "lines": 656,
+   "lines": 655,
    "exports": [
     "function useOfflineSync"
    ],
@@ -83629,12 +83541,9 @@
   },
   "src/hooks/useThemeSound.ts": {
    "path": "src/hooks/useThemeSound.ts",
-   "lines": 202,
+   "lines": 192,
    "exports": [
     "function useThemeSound"
-   ],
-   "errors": [
-    "AudioContext não suportado neste navegador."
    ],
    "status_values": [
     {
@@ -84856,7 +84765,7 @@
   },
   "src/lib/offlineStorage.ts": {
    "path": "src/lib/offlineStorage.ts",
-   "lines": 299,
+   "lines": 290,
    "exports": [
     "interface PendingAction",
     "interface SyncMetadata",
@@ -85544,7 +85453,7 @@
   },
   "src/pages/AdminTelemetriaPage.tsx": {
    "path": "src/pages/AdminTelemetriaPage.tsx",
-   "lines": 591,
+   "lines": 590,
    "exports": [
     "function AdminTelemetriaPage"
    ],
@@ -85596,7 +85505,7 @@
   },
   "src/pages/AlertsDashboard.tsx": {
    "path": "src/pages/AlertsDashboard.tsx",
-   "lines": 159,
+   "lines": 157,
    "exports": [
     "function AlertsDashboard"
    ],
@@ -85675,14 +85584,14 @@
   },
   "src/pages/AuditTrailPage.tsx": {
    "path": "src/pages/AuditTrailPage.tsx",
-   "lines": 174,
+   "lines": 173,
    "exports": [
     "function AuditTrailPage"
    ]
   },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 276,
+   "lines": 275,
    "exports": [
     "function AuthPage"
    ],
@@ -85716,12 +85625,6 @@
      "rules": "type=email"
     }
    ],
-   "params": [
-    {
-     "name": "ORANGE",
-     "value": "'#FF5A1F'"
-    }
-   ],
    "status_values": [
     {
      "field": "status",
@@ -85738,7 +85641,7 @@
   },
   "src/pages/BIDashboard.tsx": {
    "path": "src/pages/BIDashboard.tsx",
-   "lines": 331,
+   "lines": 283,
    "exports": [
     "function BIDashboard"
    ],
@@ -85936,14 +85839,14 @@
   },
   "src/pages/EfficiencyDashboard.tsx": {
    "path": "src/pages/EfficiencyDashboard.tsx",
-   "lines": 138,
+   "lines": 137,
    "exports": [
     "function EfficiencyDashboard"
    ]
   },
   "src/pages/EnergyDashboard.tsx": {
    "path": "src/pages/EnergyDashboard.tsx",
-   "lines": 176,
+   "lines": 175,
    "exports": [
     "function EnergyDashboard"
    ],
@@ -85970,7 +85873,7 @@
   },
   "src/pages/ExecutiveDashboard.tsx": {
    "path": "src/pages/ExecutiveDashboard.tsx",
-   "lines": 371,
+   "lines": 332,
    "exports": [
     "function ExecutiveDashboard"
    ],
@@ -85999,7 +85902,7 @@
   },
   "src/pages/GamificationPage.tsx": {
    "path": "src/pages/GamificationPage.tsx",
-   "lines": 430,
+   "lines": 429,
    "exports": [
     "function GamificationPage"
    ],
@@ -86028,7 +85931,7 @@
   },
   "src/pages/Index.tsx": {
    "path": "src/pages/Index.tsx",
-   "lines": 543,
+   "lines": 542,
    "exports": [
     "default Index"
    ],
@@ -86071,7 +85974,7 @@
   },
   "src/pages/KPIDashboard.tsx": {
    "path": "src/pages/KPIDashboard.tsx",
-   "lines": 435,
+   "lines": 411,
    "exports": [
     "function KPIDashboard"
    ],
@@ -86119,7 +86022,7 @@
   },
   "src/pages/KanbanBoard.tsx": {
    "path": "src/pages/KanbanBoard.tsx",
-   "lines": 579,
+   "lines": 577,
    "exports": [
     "function KanbanBoard"
    ],
@@ -86254,7 +86157,7 @@
   },
   "src/pages/KioskPage.tsx": {
    "path": "src/pages/KioskPage.tsx",
-   "lines": 168,
+   "lines": 167,
    "exports": [
     "function KioskPage"
    ],
@@ -86284,7 +86187,7 @@
   },
   "src/pages/LogisticsPage.tsx": {
    "path": "src/pages/LogisticsPage.tsx",
-   "lines": 434,
+   "lines": 432,
    "exports": [
     "function LogisticsPage"
    ],
@@ -86339,7 +86242,7 @@
   },
   "src/pages/MachineComparisonPage.tsx": {
    "path": "src/pages/MachineComparisonPage.tsx",
-   "lines": 282,
+   "lines": 281,
    "exports": [
     "function MachineComparisonPage"
    ],
@@ -86353,7 +86256,7 @@
   },
   "src/pages/MachinesPage.tsx": {
    "path": "src/pages/MachinesPage.tsx",
-   "lines": 306,
+   "lines": 291,
    "exports": [
     "function MachinesPage"
    ],
@@ -86375,7 +86278,7 @@
   },
   "src/pages/MasterAPIPage.tsx": {
    "path": "src/pages/MasterAPIPage.tsx",
-   "lines": 237,
+   "lines": 234,
    "exports": [
     "function MasterAPIPage"
    ],
@@ -86624,7 +86527,7 @@
   },
   "src/pages/OperatorView.tsx": {
    "path": "src/pages/OperatorView.tsx",
-   "lines": 190,
+   "lines": 188,
    "exports": [
     "function OperatorView"
    ],
@@ -86662,7 +86565,7 @@
   },
   "src/pages/OperatorsPage.tsx": {
    "path": "src/pages/OperatorsPage.tsx",
-   "lines": 374,
+   "lines": 365,
    "exports": [
     "function OperatorsPage"
    ],
@@ -86751,7 +86654,7 @@
   },
   "src/pages/PendingQueue.tsx": {
    "path": "src/pages/PendingQueue.tsx",
-   "lines": 539,
+   "lines": 515,
    "exports": [
     "function PendingQueue"
    ],
@@ -86808,7 +86711,7 @@
   },
   "src/pages/PublicTrackingPage.tsx": {
    "path": "src/pages/PublicTrackingPage.tsx",
-   "lines": 335,
+   "lines": 333,
    "exports": [
     "function PublicTrackingPage"
    ],
@@ -86941,14 +86844,14 @@
   },
   "src/pages/SecurityDashboard.tsx": {
    "path": "src/pages/SecurityDashboard.tsx",
-   "lines": 264,
+   "lines": 262,
    "exports": [
     "function SecurityDashboard"
    ]
   },
   "src/pages/SettingsPage.tsx": {
    "path": "src/pages/SettingsPage.tsx",
-   "lines": 135,
+   "lines": 133,
    "exports": [
     "function SettingsPage"
    ],
@@ -87209,7 +87112,7 @@
   },
   "src/pages/TraceabilityPage.tsx": {
    "path": "src/pages/TraceabilityPage.tsx",
-   "lines": 481,
+   "lines": 478,
    "exports": [
     "function TraceabilityPage"
    ],
@@ -87242,7 +87145,7 @@
   },
   "src/pages/WeeklyCalendar.tsx": {
    "path": "src/pages/WeeklyCalendar.tsx",
-   "lines": 486,
+   "lines": 485,
    "exports": [
     "function WeeklyCalendar"
    ],
@@ -87330,7 +87233,7 @@
   },
   "src/test/authFlow.test.ts": {
    "path": "src/test/authFlow.test.ts",
-   "lines": 203,
+   "lines": 202,
    "is_test": true,
    "rule_comments": [
     "── Validation — Zod schemas ───────────────────────────────"
@@ -87706,7 +87609,7 @@
   },
   "src/test/loadStress.test.ts": {
    "path": "src/test/loadStress.test.ts",
-   "lines": 274,
+   "lines": 269,
    "is_test": true,
    "errors": [
     "Should have failed",
@@ -87952,7 +87855,7 @@
   },
   "src/test/sanitize.test.ts": {
    "path": "src/test/sanitize.test.ts",
-   "lines": 104,
+   "lines": 103,
    "is_test": true,
    "tests": [
     "escapeHtml",
@@ -88146,7 +88049,7 @@
   },
   "src/types/job.ts": {
    "path": "src/types/job.ts",
-   "lines": 51,
+   "lines": 50,
    "exports": [
     "type JobStatus",
     "type JobPriority",
@@ -92450,10 +92353,264 @@
   }
  },
  "git": {
-  "sha": "d61122af8d5d5b6e30640923f427b881be71998d",
+  "sha": "6c96376b1d88ab7baf87a769144be1cd5606972d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6c96376",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "chore(src): remove imports e declarações não usados (#149)",
+    "files": [
+     "src/components/abc/ABCTechniqueChart.tsx",
+     "src/components/activity/ActivityLog.tsx",
+     "src/components/alerts/AlertViewAllModals.tsx",
+     "src/components/assistant/TechnicalAssistant.tsx",
+     "src/components/auth/AuthErrorBoundary.tsx",
+     "src/components/auth/AuthLoginForm.tsx",
+     "src/components/auth/PasswordStrengthIndicator.tsx",
+     "src/components/autonomous/AutonomousEventLog.tsx",
+     "src/components/calendar/AgendaView.tsx",
+     "src/components/calendar/CalendarFilters.tsx",
+     "src/components/calendar/ConflictResolutionPanel.tsx",
+     "src/components/calendar/OptimizationAssistant.tsx",
+     "src/components/dashboard/AlertScheduleModal.tsx",
+     "src/components/dashboard/AlertsWidget.tsx",
+     "src/components/dashboard/BottleneckWidget.tsx",
+     "src/components/dashboard/BufferPromotionStatus.tsx",
+     "src/components/dashboard/CompactTimeline.tsx",
+     "src/components/dashboard/DashboardExport.tsx",
+     "src/components/dashboard/EnergyWidget.tsx",
+     "src/components/dashboard/InventoryAlertsWidget.tsx",
+     "src/components/dashboard/LeaderboardWidget.tsx",
+     "src/components/dashboard/LiveMachineStatusPanel.tsx",
+     "src/components/dashboard/LoadBalancingWidget.tsx",
+     "src/components/dashboard/OEELoadTrendWidget.tsx",
+     "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
+     "src/components/dashboard/ShiftHandoverWidget.tsx",
+     "src/components/design-system/hooks/EfficiencyHooksDemos.tsx",
+     "src/components/design-system/sections/BackToOverviewButton.tsx",
+     "src/components/design-system/sections/ButtonsSection.tsx",
+     "src/components/design-system/sections/ChangelogSection.tsx",
+     "src/components/design-system/sections/FeedbackSection.tsx",
+     "src/components/design-system/sections/IconsSection.tsx",
+     "src/components/design-system/sections/cards/CardDashboardExample.tsx",
+     "src/components/design-system/sections/tables/InteractiveTables.tsx",
+     "src/components/digital-twin/CostSimulationCard.tsx",
+     "src/components/digital-twin/FactoryFloorMap.tsx",
+     "src/components/error/GlobalErrorBoundary.tsx",
+     "src/components/feedback/CelebrationMoment.tsx",
+     "src/components/integrations/Bitrix24SyncHistory.tsx",
+     "src/components/jobs/JobCostsTab.tsx",
+     "src/components/jobs/JobDetailsModal.tsx",
+     "src/components/jobs/JobInfoGrid.tsx",
+     "src/components/jobs/JobInstructionsTab.tsx",
+     "src/components/jobs/JobQualityTab.tsx",
+     "src/components/jobs/JobQuickActions.tsx",
+     "src/components/jobs/JobTraceabilityTab.tsx",
+     "src/components/kanban/DraggableJobCard.tsx",
+     "src/components/kanban/KanbanAIAdvisor.tsx",
+     "src/components/kanban/KanbanFiltersBar.tsx",
+     "src/components/kanban/KanbanMetricsBar.tsx",
+     "src/components/kiosk/KioskMode.tsx",
+     "src/components/knowledge/KnowledgeBaseStats.tsx",
+     "src/components/knowledge/KnowledgeSheetList.tsx",
+     "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
+     "src/components/knowledge/TechnicalSheetViewer.tsx",
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/layout/MainLayout.tsx",
+     "src/components/layout/QuickFavoritesBar.tsx",
+     "src/components/layout/sidebar/sidebarNavConfig.ts",
+     "src/components/machines/FactoryHeatmap.tsx",
+     "src/components/machines/MachineBulkActions.tsx",
+     "src/components/machines/MachineReliabilityTab.tsx",
+     "src/components/machines/MachineStatsCards.tsx",
+     "src/components/ml/MLRiskDistributionChart.tsx",
+     "src/components/mobile/PullToRefresh.tsx",
+     "src/components/mobile/SwipeActions.tsx",
+     "src/components/navigation/BackButton.tsx",
+     "src/components/navigation/Breadcrumbs.tsx",
+     "src/components/navigation/CommandPaletteAdvanced.tsx",
+     "src/components/navigation/CommandPaletteCommands.tsx",
+     "src/components/navigation/SwipeIndicator.tsx",
+     "src/components/navigation/useCommandEntities.tsx",
+     "src/components/offline/OfflineReadyIndicator.tsx",
+     "src/components/offline/OfflineStatusBanner.tsx",
+     "src/components/operator/OperatorProductionCard.tsx",
+     "src/components/operator/OperatorQuickHistory.tsx",
+     "src/components/operator/ProductionRegistrationModal.tsx",
+     "src/components/operator/ShiftSummaryCard.tsx",
+     "src/components/operators/GoalsHistoryCard.tsx",
+     "src/components/operators/OperatorGoalsCard.tsx",
+     "src/components/operators/OperatorLeaderboard.tsx",
+     "src/components/operators/OperatorSkillsModal.tsx",
+     "src/components/operators/SkillsMatrix.tsx",
+     "src/components/planning/LoadBalancingPanel.tsx",
+     "src/components/planning/PlanningEfficiencyDashboard.tsx",
+     "src/components/planning/SmartSequencingPanel.tsx",
+     "src/components/production/ProductionPhotos.tsx",
+     "src/components/qrcode/ScanHistory.tsx",
+     "src/components/qrcode/ScanStatsChart.tsx",
+     "src/components/scheduling/CapacityHealthPanel.tsx",
+     "src/components/scheduling/MachineSuggestionPanel.tsx",
+     "src/components/scheduling/StuckJobsPanel.tsx",
+     "src/components/scheduling/UtilizationHeatmap.tsx",
+     "src/components/settings/IPAllowlist.tsx",
+     "src/components/settings/TechniqueManagement.tsx",
+     "src/components/shift/OccurrencesPanel.tsx",
+     "src/components/shift/occurrences/OccurrenceItem.tsx",
+     "src/components/technical-assistant/BiometricSecurity.tsx",
+     "src/components/technical-assistant/ChatArea.tsx",
+     "src/components/technical-assistant/ChatMessage.tsx",
+     "src/components/technical-assistant/FileAnalyzer.tsx",
+     "src/components/technical-assistant/SafetyAlert.tsx",
+     "src/components/technical-assistant/TechnicalArtifacts.tsx",
+     "src/components/technical-assistant/TechnicalTelemetryPanel.tsx",
+     "src/components/traceability/BlockchainIntegrityCard.tsx",
+     "src/components/traceability/ElectronicSignatureDialog.tsx",
+     "src/components/traceability/LotDetailsModal.tsx",
+     "src/components/traceability/LotLabelPrint.tsx",
+     "src/components/ui/DashboardSkeleton.tsx",
+     "src/components/ui/button.tsx",
+     "src/components/ui/empty-state.tsx",
+     "src/components/ui/error-boundary.tsx",
+     "src/components/ui/section-error-boundary.tsx",
+     "src/components/ui/stepper.tsx",
+     "src/contexts/ReauthContext.tsx",
+     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
+     "src/features/admin/components/security/GeoBlockingSettings.tsx",
+     "src/features/admin/components/security/PermissionManager.tsx",
+     "src/features/admin/components/security/SecurityAlertsPanel.tsx",
+     "src/features/admin/components/security/SecurityOverviewCard.tsx",
+     "src/features/admin/hooks/useDataExport.ts",
+     "src/features/admin/hooks/useOrphanedDataDetection.ts",
+     "src/features/analytics/components/bi/AIInsights.tsx",
+     "src/features/analytics/components/bi/BIAIInsights.tsx",
+     "src/features/analytics/components/bi/BIComparisonView.tsx",
+     "src/features/analytics/components/bi/BINormalView.tsx",
+     "src/features/analytics/components/bi/BIPredictiveROI.tsx",
+     "src/features/analytics/components/bi/BITooltip.tsx",
+     "src/features/analytics/components/bi/FuturisticBI.tsx",
+     "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
+     "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx",
+     "src/features/analytics/components/bi/executive/KPIOperatorsTab.tsx",
+     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
+     "src/features/analytics/components/efficiency/BottlenecksTab.tsx",
+     "src/features/analytics/components/energy/EnergyChartTabs.tsx",
+     "src/features/analytics/components/oee/HyperInsights.tsx",
+     "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
+     "src/features/analytics/components/oee/OEECalculationAudit.tsx",
+     "src/features/analytics/components/oee/OEEGaugeCard.tsx",
+     "src/features/analytics/components/oee/OEEHeatmap.tsx",
+     "src/features/analytics/components/oee/OEELossDrilldown.tsx",
+     "src/features/analytics/components/oee/OEEMachineTable.tsx",
+     "src/features/analytics/components/oee/OEEOverviewTab.tsx",
+     "src/features/analytics/components/oee/OEERankingGap.tsx",
+     "src/features/analytics/components/oee/OEERecommendations.tsx",
+     "src/features/analytics/components/oee/OEEStudiosTab.tsx",
+     "src/features/analytics/components/oee/PredictiveAlerts.tsx",
+     "src/features/analytics/components/oee/StudioEfficiencyGrid.tsx",
+     "src/features/analytics/components/spc/SPCControlChart.tsx",
+     "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
+     "src/features/analytics/hooks/useEnergy.ts",
+     "src/features/analytics/hooks/useExecutiveDashboard.ts",
+     "src/features/analytics/hooks/useLoadBalancing.ts",
+     "src/features/analytics/hooks/useMLPredictions.ts",
+     "src/features/analytics/hooks/useRealtimeConnection.test.ts",
+     "src/features/auth/components/AuthProvider.test.tsx",
+     "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
+     "src/features/inventory/hooks/useInventory.ts",
+     "src/features/jobs/hooks/useDailyDragDrop.ts",
+     "src/features/jobs/hooks/useJobs.ts",
+     "src/features/jobs/hooks/usePaginatedJobs.ts",
+     "src/features/jobs/hooks/useSchedulingData.ts",
+     "src/features/jobs/hooks/useSmartSequencing.ts",
+     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+     "src/features/jobs/hooks/useTechniques.ts",
+     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
+     "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
+     "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx",
+     "src/features/maintenance/components/ExecutionDetailsModal.tsx",
+     "src/features/maintenance/components/ExecutionSupplies.tsx",
+     "src/features/maintenance/components/MachineTPMTimeline.tsx",
+     "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+     "src/features/maintenance/components/TPMExecutionHistory.tsx",
+     "src/features/maintenance/components/TPMNotificationLogs.tsx",
+     "src/features/maintenance/components/TPMNotificationQueue.tsx",
+     "src/features/maintenance/components/TPMNotificationSettings.tsx",
+     "src/features/maintenance/components/TPMNotificationTemplates.tsx",
+     "src/features/maintenance/components/TPMReports.tsx",
+     "src/features/maintenance/components/TPMScheduleList.tsx",
+     "src/features/maintenance/components/TPMSeverityConfigs.tsx",
+     "src/features/maintenance/components/VirtualSensorPanel.tsx",
+     "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
+     "src/features/maintenance/components/execution/ReplacementParts.tsx",
+     "src/features/notifications/components/DailySummaryCard.tsx",
+     "src/features/notifications/components/InAppNotificationWatcher.tsx",
+     "src/features/notifications/hooks/useGoalAlerts.ts",
+     "src/features/notifications/hooks/useNotificationSounds.ts",
+     "src/features/notifications/hooks/useTPMNotifications.ts",
+     "src/features/packaging/components/PackagingLeaderboard.tsx",
+     "src/features/packaging/hooks/usePackagingDelayPareto.ts",
+     "src/features/production/hooks/useMachines.ts",
+     "src/features/production/hooks/useOperatorGoals.ts",
+     "src/features/production/hooks/useOperatorMachines.ts",
+     "src/features/production/hooks/useOperatorPresence.ts",
+     "src/features/production/hooks/useOperatorProductivity.ts",
+     "src/features/production/hooks/useOperators.ts",
+     "src/features/production/services/oeeCalculations.ts",
+     "src/hooks/abc/useABCData.ts",
+     "src/hooks/abc/useABCMutations.ts",
+     "src/hooks/useOfflineSync.ts",
+     "src/hooks/useQuickFavorites.ts",
+     "src/hooks/useTechnicalConversations.ts",
+     "src/hooks/useThemeSound.ts",
+     "src/lib/offlineStorage.ts",
+     "src/lib/pdfExport.ts",
+     "src/pages/AdminTelemetriaPage.tsx",
+     "src/pages/AlertsDashboard.tsx",
+     "src/pages/AuditTrailPage.tsx",
+     "src/pages/AuthPage.tsx",
+     "src/pages/BIDashboard.tsx",
+     "src/pages/EfficiencyDashboard.tsx",
+     "src/pages/EnergyDashboard.tsx",
+     "src/pages/ExecutiveDashboard.tsx",
+     "src/pages/GamificationPage.tsx",
+     "src/pages/Index.tsx",
+     "src/pages/InventoryPage.tsx",
+     "src/pages/KPIDashboard.tsx",
+     "src/pages/KanbanBoard.tsx",
+     "src/pages/KioskPage.tsx",
+     "src/pages/LogisticsPage.tsx",
+     "src/pages/MachineComparisonPage.tsx",
+     "src/pages/MachinesPage.tsx",
+     "src/pages/MasterAPIPage.tsx",
+     "src/pages/NotificationsPage.tsx",
+     "src/pages/OperatorProductivityPage.tsx",
+     "src/pages/OperatorView.tsx",
+     "src/pages/OperatorsPage.tsx",
+     "src/pages/PackagingDashboard.tsx",
+     "src/pages/PendingQueue.tsx",
+     "src/pages/PublicTrackingPage.tsx",
+     "src/pages/SPCDashboard.tsx",
+     "src/pages/SecurityDashboard.tsx",
+     "src/pages/SettingsPage.tsx",
+     "src/pages/ShiftHandoverPage.tsx",
+     "src/pages/SimulationDashboard.tsx",
+     "src/pages/TPMDashboard.tsx",
+     "src/pages/TechnicalAssistantPage.tsx",
+     "src/pages/TraceabilityPage.tsx",
+     "src/pages/WeeklyCalendar.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/test/authFlow.test.ts",
+     "src/test/loadStress.test.ts",
+     "src/test/offlineStorage.test.ts",
+     "src/test/rateLimiterAdvanced.test.ts",
+     "src/test/sanitize.test.ts",
+     "src/types/job.ts"
+    ]
+   },
    {
     "sha": "d61122a",
     "date": "2026-11-09",
@@ -92861,37 +93018,6 @@
      "supabase/migrations/20261029001000_missing_internal_tables.sql",
      "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
     ]
-   },
-   {
-    "sha": "0d1e837",
-    "date": "2026-10-29",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(sprint): bugs reais do balanço — push criptografado, QR, notificações, TPM, Kanban, MFA e Bitrix (#114)",
-    "files": [
-     "src/components/kanban/KanbanAIAdvisor.tsx",
-     "src/components/machines/MachineQRDialog.tsx",
-     "src/components/planning/SmartSequencingPanel.tsx",
-     "src/components/qrcode/JobQRCode.tsx",
-     "src/components/qrcode/QRScanner.tsx",
-     "src/features/auth/hooks/useMFA.ts",
-     "src/features/jobs/hooks/useKanbanDragDrop.ts",
-     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
-     "src/features/jobs/services/jobsService.ts",
-     "src/features/maintenance/hooks/useTPMApprovalMutations.ts",
-     "src/features/notifications/components/NotificationsList.tsx",
-     "src/features/notifications/hooks/useNotifications.ts",
-     "src/pages/InventoryPage.tsx",
-     "src/pages/NotificationsPage.tsx",
-     "src/pages/PublicTrackingPage.tsx",
-     "supabase/config.toml",
-     "supabase/functions/_shared/webpushEncrypt.test.ts",
-     "supabase/functions/_shared/webpushEncrypt.ts",
-     "supabase/functions/bitrix24-sync/index.ts",
-     "supabase/functions/send-push-notification/index.ts",
-     "supabase/migrations/20261028223000_bitrix_oauth_states.sql",
-     "supabase/migrations/20261028233000_approve_maintenance_atomic.sql",
-     "supabase/migrations/20261028234500_maintenance_schedules_manager.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -92900,23 +93026,67 @@
     5
    ],
    [
+    "src/pages/MasterAPIPage.tsx",
+    3
+   ],
+   [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
    ],
    [
-    ".agents/skills/fast-grava-es-v2/SKILL.md",
+    "src/components/autonomous/AutonomousEventLog.tsx",
     2
    ],
    [
-    ".claude/skills/fast-grava-es-v2/SKILL.md",
+    "src/components/jobs/JobDetailsModal.tsx",
     2
    ],
    [
-    "docs/agentes/arquitetura.md",
+    "src/components/traceability/BlockchainIntegrityCard.tsx",
     2
    ],
    [
-    "scripts/supabase_snapshot/README.md",
+    "src/features/admin/components/security/GeoBlockingSettings.tsx",
+    2
+   ],
+   [
+    "src/features/analytics/components/bi/BIAIInsights.tsx",
+    2
+   ],
+   [
+    "src/features/analytics/components/bi/FuturisticBI.tsx",
+    2
+   ],
+   [
+    "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
+    2
+   ],
+   [
+    "src/features/jobs/hooks/useDailyDragDrop.ts",
+    2
+   ],
+   [
+    "src/features/jobs/hooks/useTechniques.ts",
+    2
+   ],
+   [
+    "src/features/jobs/hooks/useWeeklyDragDrop.ts",
+    2
+   ],
+   [
+    "src/features/maintenance/components/ExecutionDetailsModal.tsx",
+    2
+   ],
+   [
+    "src/features/notifications/components/DailySummaryCard.tsx",
+    2
+   ],
+   [
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    2
+   ],
+   [
+    "src/pages/PackagingDashboard.tsx",
     2
    ],
    [
@@ -92924,55 +93094,11 @@
     2
    ],
    [
-    "scripts/supabase_snapshot/snapshot.py",
+    "src/pages/SPCDashboard.tsx",
     2
    ],
    [
-    ".github/workflows/contexto.yml",
-    2
-   ],
-   [
-    "CLAUDE.md",
-    2
-   ],
-   [
-    "vitest.config.ts",
-    2
-   ],
-   [
-    "deno.lock",
-    2
-   ],
-   [
-    "supabase/functions/bitrix24-sync/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/cron-cleanup/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/csp-report/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/send-push-notification/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/webhook-handler/index.ts",
-    2
-   ],
-   [
-    ".github/workflows/deploy.yml",
-    2
-   ],
-   [
-    "src/pages/MasterAPIPage.tsx",
-    2
-   ],
-   [
-    "src/features/jobs/hooks/useKanbanDragDrop.ts",
+    ".agents/skills/fast-grava-es-v2/SKILL.md",
     2
    ]
   ]

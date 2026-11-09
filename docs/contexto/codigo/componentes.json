@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "total": 621,
- "orfaos": 27,
+ "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
    "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
@@ -197,7 +197,7 @@
     "ActivityLog"
    ],
    "export_default": null,
-   "linhas": 240,
+   "linhas": 239,
    "dominio": "components/activity",
    "hooks_locais": [],
    "tabelas": [],
@@ -288,7 +288,7 @@
     "StuckJobsViewAll"
    ],
    "export_default": null,
-   "linhas": 177,
+   "linhas": 176,
    "dominio": "components/alerts",
    "hooks_locais": [],
    "tabelas": [],
@@ -318,7 +318,7 @@
     "TechnicalAssistant"
    ],
    "export_default": null,
-   "linhas": 281,
+   "linhas": 280,
    "dominio": "components/assistant",
    "hooks_locais": [],
    "tabelas": [],
@@ -348,7 +348,7 @@
     "AuthLoginForm"
    ],
    "export_default": null,
-   "linhas": 62,
+   "linhas": 61,
    "dominio": "components/auth",
    "hooks_locais": [],
    "tabelas": [],
@@ -390,7 +390,7 @@
     "PasswordStrengthIndicator"
    ],
    "export_default": null,
-   "linhas": 296,
+   "linhas": 295,
    "dominio": "components/auth",
    "hooks_locais": [
     "useDebounce",
@@ -424,12 +424,12 @@
     "AutonomousEventLog"
    ],
    "export_default": null,
-   "linhas": 131,
+   "linhas": 130,
    "dominio": "components/autonomous",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -438,7 +438,7 @@
     "AgendaView"
    ],
    "export_default": null,
-   "linhas": 301,
+   "linhas": 300,
    "dominio": "components/calendar",
    "hooks_locais": [
     "useIsMobile"
@@ -459,7 +459,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -468,7 +468,7 @@
     "CalendarFilters"
    ],
    "export_default": null,
-   "linhas": 216,
+   "linhas": 215,
    "dominio": "components/calendar",
    "hooks_locais": [],
    "tabelas": [],
@@ -569,7 +569,7 @@
     "ConflictResolutionPanel"
    ],
    "export_default": null,
-   "linhas": 83,
+   "linhas": 81,
    "dominio": "components/calendar",
    "hooks_locais": [],
    "tabelas": [],
@@ -704,7 +704,7 @@
     "AlertScheduleModal"
    ],
    "export_default": null,
-   "linhas": 333,
+   "linhas": 331,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [
@@ -720,7 +720,7 @@
     "AlertsWidget"
    ],
    "export_default": null,
-   "linhas": 188,
+   "linhas": 187,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useOEE",
@@ -788,7 +788,7 @@
     "CompactTimeline"
    ],
    "export_default": null,
-   "linhas": 68,
+   "linhas": 67,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useSchedulingData"
@@ -869,7 +869,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -939,7 +939,7 @@
     "InventoryAlertsWidget"
    ],
    "export_default": null,
-   "linhas": 57,
+   "linhas": 56,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useInventory"
@@ -955,7 +955,7 @@
     "LeaderboardWidget"
    ],
    "export_default": null,
-   "linhas": 121,
+   "linhas": 120,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useGamification"
@@ -1219,7 +1219,7 @@
     "UseOEEDemo"
    ],
    "export_default": null,
-   "linhas": 129,
+   "linhas": 128,
    "dominio": "components/design-system",
    "hooks_locais": [
     "useLoadBalancingWithActions",
@@ -1415,7 +1415,7 @@
     "BackToOverviewButton"
    ],
    "export_default": null,
-   "linhas": 81,
+   "linhas": 22,
    "dominio": "components/design-system",
    "hooks_locais": [],
    "tabelas": [],
@@ -1513,7 +1513,7 @@
     "ChangelogSection"
    ],
    "export_default": null,
-   "linhas": 372,
+   "linhas": 357,
    "dominio": "components/design-system",
    "hooks_locais": [],
    "tabelas": [],
@@ -1695,7 +1695,7 @@
     "FeedbackSection"
    ],
    "export_default": null,
-   "linhas": 348,
+   "linhas": 347,
    "dominio": "components/design-system",
    "hooks_locais": [],
    "tabelas": [],
@@ -1765,7 +1765,7 @@
     "IconsSection"
    ],
    "export_default": null,
-   "linhas": 429,
+   "linhas": 427,
    "dominio": "components/design-system",
    "hooks_locais": [],
    "tabelas": [],
@@ -2093,7 +2093,7 @@
     "TableUsageGuide"
    ],
    "export_default": null,
-   "linhas": 126,
+   "linhas": 124,
    "dominio": "components/design-system",
    "hooks_locais": [],
    "tabelas": [],
@@ -2223,7 +2223,7 @@
     "FactoryFloorMap"
    ],
    "export_default": null,
-   "linhas": 236,
+   "linhas": 235,
    "dominio": "components/digital-twin",
    "hooks_locais": [
     "useTPM"
@@ -2322,7 +2322,7 @@
     "MiniCelebration"
    ],
    "export_default": null,
-   "linhas": 303,
+   "linhas": 302,
    "dominio": "components/feedback",
    "hooks_locais": [
     "useCelebration",
@@ -2369,7 +2369,7 @@
     "Bitrix24SyncHistory"
    ],
    "export_default": null,
-   "linhas": 375,
+   "linhas": 363,
    "dominio": "components/integrations",
    "hooks_locais": [],
    "tabelas": [],
@@ -2471,7 +2471,7 @@
     "JobCostsTab"
    ],
    "export_default": null,
-   "linhas": 155,
+   "linhas": 152,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useABCCosts"
@@ -2487,7 +2487,7 @@
     "JobDetailsModal"
    ],
    "export_default": null,
-   "linhas": 523,
+   "linhas": 512,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useConfirmation",
@@ -2509,7 +2509,7 @@
     "JobInfoGrid"
    ],
    "export_default": null,
-   "linhas": 68,
+   "linhas": 67,
    "dominio": "components/jobs",
    "hooks_locais": [],
    "tabelas": [],
@@ -2537,7 +2537,7 @@
     "JobInstructionsTab"
    ],
    "export_default": null,
-   "linhas": 230,
+   "linhas": 225,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useDocuments",
@@ -2554,7 +2554,7 @@
     "JobQualityTab"
    ],
    "export_default": null,
-   "linhas": 230,
+   "linhas": 227,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useSPCMeasurements",
@@ -2572,7 +2572,7 @@
     "JobQuickActions"
    ],
    "export_default": null,
-   "linhas": 74,
+   "linhas": 73,
    "dominio": "components/jobs",
    "hooks_locais": [],
    "tabelas": [],
@@ -2651,7 +2651,7 @@
     "KanbanAIAdvisor"
    ],
    "export_default": null,
-   "linhas": 433,
+   "linhas": 431,
    "dominio": "components/kanban",
    "hooks_locais": [
     "useBottleneckPrediction",
@@ -2671,7 +2671,7 @@
     "ViewMode"
    ],
    "export_default": null,
-   "linhas": 194,
+   "linhas": 193,
    "dominio": "components/kanban",
    "hooks_locais": [
     "useSmartSequencing"
@@ -2687,7 +2687,7 @@
     "KanbanMetricsBar"
    ],
    "export_default": null,
-   "linhas": 157,
+   "linhas": 156,
    "dominio": "components/kanban",
    "hooks_locais": [
     "useLoadBalancing",
@@ -2705,7 +2705,7 @@
     "KioskModeButton"
    ],
    "export_default": null,
-   "linhas": 391,
+   "linhas": 390,
    "dominio": "components/kiosk",
    "hooks_locais": [],
    "tabelas": [],
@@ -2826,7 +2826,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -2868,7 +2868,7 @@
     "TechnicalSheetHistoryTab"
    ],
    "export_default": null,
-   "linhas": 76,
+   "linhas": 75,
    "dominio": "components/knowledge",
    "hooks_locais": [],
    "tabelas": [],
@@ -2887,7 +2887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -2910,7 +2910,7 @@
     "TechnicalSheetViewer"
    ],
    "export_default": null,
-   "linhas": 265,
+   "linhas": 242,
    "dominio": "components/knowledge",
    "hooks_locais": [
     "useInventory",
@@ -2935,7 +2935,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -2980,7 +2980,7 @@
     "MainLayout"
    ],
    "export_default": null,
-   "linhas": 296,
+   "linhas": 294,
    "dominio": "components/layout",
    "hooks_locais": [
     "useDeepLinkFocus",
@@ -3053,7 +3053,7 @@
     "QuickFavoritesBar"
    ],
    "export_default": null,
-   "linhas": 515,
+   "linhas": 501,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAlertCount",
@@ -3133,7 +3133,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -3288,7 +3288,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -3323,7 +3323,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -3367,7 +3367,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -3449,7 +3449,7 @@
     "PullToRefresh"
    ],
    "export_default": null,
-   "linhas": 177,
+   "linhas": 167,
    "dominio": "components/mobile",
    "hooks_locais": [
     "usePullToRefresh"
@@ -3482,7 +3482,7 @@
     "BackButton"
    ],
    "export_default": null,
-   "linhas": 108,
+   "linhas": 107,
    "dominio": "components/navigation",
    "hooks_locais": [
     "useDevice",
@@ -3501,7 +3501,7 @@
     "Breadcrumbs"
    ],
    "export_default": null,
-   "linhas": 289,
+   "linhas": 288,
    "dominio": "components/navigation",
    "hooks_locais": [
     "useBreadcrumbContext",
@@ -3511,7 +3511,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 39,
+   "usado_por": 37,
    "orfao": false
   },
   {
@@ -3521,7 +3521,7 @@
     "CommandPaletteTriggerAdvanced"
    ],
    "export_default": null,
-   "linhas": 218,
+   "linhas": 217,
    "dominio": "components/navigation",
    "hooks_locais": [
     "useAuth",
@@ -3540,7 +3540,7 @@
     "CommandItemType"
    ],
    "export_default": null,
-   "linhas": 117,
+   "linhas": 116,
    "dominio": "components/navigation",
    "hooks_locais": [],
    "tabelas": [],
@@ -3712,7 +3712,7 @@
     "OfflineReadyIndicator"
    ],
    "export_default": null,
-   "linhas": 240,
+   "linhas": 238,
    "dominio": "components/offline",
    "hooks_locais": [
     "useOfflineSyncContext"
@@ -3728,7 +3728,7 @@
     "OfflineStatusBanner"
    ],
    "export_default": null,
-   "linhas": 203,
+   "linhas": 201,
    "dominio": "components/offline",
    "hooks_locais": [
     "useOfflineSyncContext"
@@ -3790,7 +3790,7 @@
     "OperatorQuickHistory"
    ],
    "export_default": null,
-   "linhas": 52,
+   "linhas": 51,
    "dominio": "components/operator",
    "hooks_locais": [],
    "tabelas": [],
@@ -3850,7 +3850,7 @@
     "ProductionRegistrationModal"
    ],
    "export_default": null,
-   "linhas": 483,
+   "linhas": 473,
    "dominio": "components/operator",
    "hooks_locais": [],
    "tabelas": [
@@ -4001,7 +4001,7 @@
     "GoalsHistoryCard"
    ],
    "export_default": null,
-   "linhas": 456,
+   "linhas": 450,
    "dominio": "components/operators",
    "hooks_locais": [],
    "tabelas": [],
@@ -4106,7 +4106,7 @@
     "OperatorGoalsCard"
    ],
    "export_default": null,
-   "linhas": 272,
+   "linhas": 264,
    "dominio": "components/operators",
    "hooks_locais": [],
    "tabelas": [],
@@ -4128,7 +4128,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -4160,7 +4160,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -4211,7 +4211,7 @@
     "OperatorSkillsModal"
    ],
    "export_default": null,
-   "linhas": 158,
+   "linhas": 157,
    "dominio": "components/operators",
    "hooks_locais": [
     "useOperatorSkills",
@@ -4312,7 +4312,7 @@
     "jobs"
    ],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -4366,7 +4366,7 @@
     "PlanningEfficiencyDashboard"
    ],
    "export_default": null,
-   "linhas": 363,
+   "linhas": 362,
    "dominio": "components/planning",
    "hooks_locais": [
     "useLoadBalancingWithActions",
@@ -4386,14 +4386,14 @@
     "SmartSequencingPanel"
    ],
    "export_default": null,
-   "linhas": 320,
+   "linhas": 318,
    "dominio": "components/planning",
    "hooks_locais": [
     "useSmartSequencing"
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -4403,7 +4403,7 @@
     "ProductionPhotos"
    ],
    "export_default": null,
-   "linhas": 161,
+   "linhas": 157,
    "dominio": "components/production",
    "hooks_locais": [],
    "tabelas": [],
@@ -4450,7 +4450,7 @@
     "ScanHistory"
    ],
    "export_default": null,
-   "linhas": 228,
+   "linhas": 227,
    "dominio": "components/qrcode",
    "hooks_locais": [
     "useRealtimeChannel"
@@ -4600,7 +4600,7 @@
     "MachineSuggestionPanel"
    ],
    "export_default": null,
-   "linhas": 134,
+   "linhas": 133,
    "dominio": "components/scheduling",
    "hooks_locais": [
     "useMachineSuggestion",
@@ -4633,7 +4633,7 @@
     "UtilizationHeatmap"
    ],
    "export_default": null,
-   "linhas": 87,
+   "linhas": 85,
    "dominio": "components/scheduling",
    "hooks_locais": [
     "useMachineUtilization",
@@ -4666,7 +4666,7 @@
     "IPAllowlist"
    ],
    "export_default": null,
-   "linhas": 318,
+   "linhas": 316,
    "dominio": "components/settings",
    "hooks_locais": [
     "useAuth"
@@ -4981,7 +4981,7 @@
     "OccurrencesPanel"
    ],
    "export_default": "OccurrencesPanel",
-   "linhas": 244,
+   "linhas": 243,
    "dominio": "components/shift",
    "hooks_locais": [
     "useShiftHandoverMutations",
@@ -5036,7 +5036,7 @@
     "BiometricSecurity"
    ],
    "export_default": null,
-   "linhas": 27,
+   "linhas": 26,
    "dominio": "components/technical-assistant",
    "hooks_locais": [],
    "tabelas": [],
@@ -5050,7 +5050,7 @@
     "ChatArea"
    ],
    "export_default": null,
-   "linhas": 341,
+   "linhas": 340,
    "dominio": "components/technical-assistant",
    "hooks_locais": [],
    "tabelas": [],
@@ -5106,7 +5106,7 @@
     "SafetyAlert"
    ],
    "export_default": null,
-   "linhas": 60,
+   "linhas": 59,
    "dominio": "components/technical-assistant",
    "hooks_locais": [],
    "tabelas": [],
@@ -5149,7 +5149,7 @@
     "BlockchainIntegrityCard"
    ],
    "export_default": null,
-   "linhas": 70,
+   "linhas": 69,
    "dominio": "components/traceability",
    "hooks_locais": [],
    "tabelas": [],
@@ -5266,8 +5266,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
-   "orfao": false
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/traceability/LotMovementsTab.tsx",
@@ -5379,7 +5379,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -5395,7 +5395,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 11,
    "orfao": false
   },
   {
@@ -5411,7 +5411,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -5426,7 +5426,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 298,
+   "usado_por": 278,
    "orfao": false
   },
   {
@@ -5460,7 +5460,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -5481,7 +5481,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 315,
+   "usado_por": 307,
    "orfao": false
   },
   {
@@ -5496,7 +5496,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -5516,7 +5516,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 347,
+   "usado_por": 341,
    "orfao": false
   },
   {
@@ -5588,7 +5588,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 23,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -5603,7 +5603,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 40,
+   "usado_por": 39,
    "orfao": false
   },
   {
@@ -5619,7 +5619,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -5641,7 +5641,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -5650,7 +5650,7 @@
     "DashboardSkeleton"
    ],
    "export_default": null,
-   "linhas": 127,
+   "linhas": 126,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -5707,7 +5707,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 75,
+   "usado_por": 71,
    "orfao": false
   },
   {
@@ -5768,7 +5768,7 @@
     "EmptyStates"
    ],
    "export_default": null,
-   "linhas": 489,
+   "linhas": 487,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -5858,7 +5858,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 112,
+   "usado_por": 107,
    "orfao": false
   },
   {
@@ -5873,7 +5873,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -5887,7 +5887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 98,
+   "usado_por": 94,
    "orfao": false
   },
   {
@@ -5982,7 +5982,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -5996,7 +5996,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 64,
+   "usado_por": 57,
    "orfao": false
   },
   {
@@ -6058,7 +6058,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 62,
+   "usado_por": 59,
    "orfao": false
   },
   {
@@ -6095,7 +6095,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 84,
+   "usado_por": 82,
    "orfao": false
   },
   {
@@ -6109,7 +6109,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -6132,7 +6132,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -6185,7 +6185,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 85,
+   "usado_por": 81,
    "orfao": false
   },
   {
@@ -6227,7 +6227,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -6277,7 +6277,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 32,
+   "usado_por": 31,
    "orfao": false
   },
   {
@@ -6294,7 +6294,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 52,
+   "usado_por": 49,
    "orfao": false
   },
   {
@@ -6309,7 +6309,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 33,
+   "usado_por": 30,
    "orfao": false
   },
   {
@@ -6391,7 +6391,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 49,
+   "usado_por": 45,
    "orfao": false
   },
   {
@@ -6537,7 +6537,7 @@
     "ReauthProvider"
    ],
    "export_default": null,
-   "linhas": 234,
+   "linhas": 233,
    "dominio": "contexts",
    "hooks_locais": [
     "useReauth"
@@ -6687,7 +6687,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -6734,7 +6734,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -6807,7 +6807,7 @@
     "ActiveDevicesPanel"
    ],
    "export_default": null,
-   "linhas": 260,
+   "linhas": 240,
    "dominio": "features/admin",
    "hooks_locais": [
     "useUserDevices"
@@ -6843,7 +6843,7 @@
     "GeoBlockingSettings"
    ],
    "export_default": null,
-   "linhas": 370,
+   "linhas": 366,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAddCountryRule",
@@ -6897,7 +6897,7 @@
     "PermissionManager"
    ],
    "export_default": null,
-   "linhas": 249,
+   "linhas": 240,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAuth",
@@ -6963,7 +6963,7 @@
     "SecurityAlertsPanel"
    ],
    "export_default": null,
-   "linhas": 216,
+   "linhas": 215,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAuth"
@@ -7034,8 +7034,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
-   "orfao": false
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/features/analytics/components/bi/BIAIInsights.tsx",
@@ -7043,7 +7043,7 @@
     "BIAIInsights"
    ],
    "export_default": null,
-   "linhas": 335,
+   "linhas": 334,
    "dominio": "features/analytics",
    "hooks_locais": [
     "useABCCosts",
@@ -7060,7 +7060,7 @@
     "BIComparisonView"
    ],
    "export_default": null,
-   "linhas": 168,
+   "linhas": 167,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7116,7 +7116,7 @@
     "BINormalView"
    ],
    "export_default": null,
-   "linhas": 436,
+   "linhas": 435,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7165,7 +7165,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7174,12 +7174,12 @@
     "BITooltip"
    ],
    "export_default": null,
-   "linhas": 62,
+   "linhas": 61,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7193,8 +7193,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
-   "orfao": false
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/features/analytics/components/bi/drilldown/DrillDownDialog.tsx",
@@ -7289,7 +7289,7 @@
     "FuturisticBI"
    ],
    "export_default": null,
-   "linhas": 395,
+   "linhas": 390,
    "dominio": "features/analytics",
    "hooks_locais": [
     "useBIExport",
@@ -7328,7 +7328,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7423,12 +7423,12 @@
     "EnergyChartTabs"
    ],
    "export_default": null,
-   "linhas": 166,
+   "linhas": 165,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7507,7 +7507,7 @@
     "MaterialEfficiencyChart"
    ],
    "export_default": null,
-   "linhas": 126,
+   "linhas": 125,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7549,7 +7549,7 @@
     "OEECalculationAudit"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 112,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7577,7 +7577,7 @@
     "OEEHeatmap"
    ],
    "export_default": null,
-   "linhas": 132,
+   "linhas": 131,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7591,7 +7591,7 @@
     "OEELossDrilldown"
    ],
    "export_default": null,
-   "linhas": 286,
+   "linhas": 285,
    "dominio": "features/analytics",
    "hooks_locais": [
     "useProductionLosses"
@@ -7639,7 +7639,7 @@
     "OEEOverviewTab"
    ],
    "export_default": null,
-   "linhas": 182,
+   "linhas": 181,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7653,7 +7653,7 @@
     "OEERankingGap"
    ],
    "export_default": null,
-   "linhas": 177,
+   "linhas": 176,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7710,7 +7710,7 @@
     "OEEStudiosTab"
    ],
    "export_default": null,
-   "linhas": 206,
+   "linhas": 205,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7780,7 +7780,7 @@
     "StudioEfficiencyGrid"
    ],
    "export_default": null,
-   "linhas": 70,
+   "linhas": 69,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -7999,12 +7999,12 @@
     "AdjustmentParams"
    ],
    "export_default": null,
-   "linhas": 74,
+   "linhas": 73,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8036,7 +8036,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8087,12 +8087,12 @@
     "ReplacementParts"
    ],
    "export_default": null,
-   "linhas": 57,
+   "linhas": 56,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8107,7 +8107,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8116,12 +8116,12 @@
     "AdjustmentParameters"
    ],
    "export_default": null,
-   "linhas": 87,
+   "linhas": 86,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8132,7 +8132,7 @@
     "ExecutionRow"
    ],
    "export_default": null,
-   "linhas": 328,
+   "linhas": 320,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useAuth",
@@ -8165,12 +8165,12 @@
     "ExecutionSupplies"
    ],
    "export_default": null,
-   "linhas": 58,
+   "linhas": 57,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8186,7 +8186,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -8195,7 +8195,7 @@
     "MachineTPMTimeline"
    ],
    "export_default": null,
-   "linhas": 130,
+   "linhas": 129,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useTPM"
@@ -8212,7 +8212,7 @@
     "MaintenanceExecutionModal"
    ],
    "export_default": null,
-   "linhas": 512,
+   "linhas": 500,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useTPM",
@@ -8289,7 +8289,7 @@
     "TPMExecutionHistory"
    ],
    "export_default": null,
-   "linhas": 293,
+   "linhas": 291,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useAuth",
@@ -8338,7 +8338,7 @@
     "TPMNotificationSettings"
    ],
    "export_default": null,
-   "linhas": 448,
+   "linhas": 446,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useNotificationSettings",
@@ -8356,7 +8356,7 @@
     "TPMNotificationTemplates"
    ],
    "export_default": null,
-   "linhas": 192,
+   "linhas": 191,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [
@@ -8422,7 +8422,7 @@
     "TPMSeverityConfigs"
    ],
    "export_default": null,
-   "linhas": 166,
+   "linhas": 165,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [
@@ -8452,7 +8452,7 @@
     "DailySummaryCard"
    ],
    "export_default": null,
-   "linhas": 141,
+   "linhas": 140,
    "dominio": "features/notifications",
    "hooks_locais": [
     "useDailySummaryNotifications"
@@ -8899,7 +8899,7 @@
     "AdminTelemetriaPage"
    ],
    "export_default": "AdminTelemetriaPage",
-   "linhas": 591,
+   "linhas": 590,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [
@@ -8917,7 +8917,7 @@
     "AlertsDashboard"
    ],
    "export_default": "AlertsDashboard",
-   "linhas": 159,
+   "linhas": 157,
    "dominio": "pages",
    "hooks_locais": [
     "useBottleneckPrediction",
@@ -8938,7 +8938,7 @@
     "AuditTrailPage"
    ],
    "export_default": "AuditTrailPage",
-   "linhas": 174,
+   "linhas": 173,
    "dominio": "pages",
    "hooks_locais": [
     "useAuditTrail"
@@ -8954,7 +8954,7 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 276,
+   "linhas": 275,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"
@@ -8972,7 +8972,7 @@
     "BIDashboard"
    ],
    "export_default": "BIDashboard",
-   "linhas": 331,
+   "linhas": 283,
    "dominio": "pages",
    "hooks_locais": [
     "useKPIs",
@@ -9092,7 +9092,7 @@
     "EfficiencyDashboard"
    ],
    "export_default": "EfficiencyDashboard",
-   "linhas": 138,
+   "linhas": 137,
    "dominio": "pages",
    "hooks_locais": [
     "useBottleneckPrediction",
@@ -9112,7 +9112,7 @@
     "EnergyDashboard"
    ],
    "export_default": "EnergyDashboard",
-   "linhas": 176,
+   "linhas": 175,
    "dominio": "pages",
    "hooks_locais": [
     "useEnergy"
@@ -9130,7 +9130,7 @@
     "ExecutiveDashboard"
    ],
    "export_default": "ExecutiveDashboard",
-   "linhas": 371,
+   "linhas": 332,
    "dominio": "pages",
    "hooks_locais": [
     "useExecutiveDashboard",
@@ -9149,7 +9149,7 @@
     "GamificationPage"
    ],
    "export_default": "GamificationPage",
-   "linhas": 430,
+   "linhas": 429,
    "dominio": "pages",
    "hooks_locais": [
     "useGamification"
@@ -9165,7 +9165,7 @@
     "Index"
    ],
    "export_default": "Index",
-   "linhas": 543,
+   "linhas": 542,
    "dominio": "pages",
    "hooks_locais": [
     "useActivityLog",
@@ -9220,7 +9220,7 @@
     "KanbanBoard"
    ],
    "export_default": "KanbanBoard",
-   "linhas": 579,
+   "linhas": 577,
    "dominio": "pages",
    "hooks_locais": [
     "useFuseSearch",
@@ -9240,7 +9240,7 @@
     "KioskPage"
    ],
    "export_default": "KioskPage",
-   "linhas": 168,
+   "linhas": 167,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9258,7 +9258,7 @@
     "KPIDashboard"
    ],
    "export_default": "KPIDashboard",
-   "linhas": 435,
+   "linhas": 411,
    "dominio": "pages",
    "hooks_locais": [
     "useBIExport",
@@ -9278,7 +9278,7 @@
     "LogisticsPage"
    ],
    "export_default": "LogisticsPage",
-   "linhas": 434,
+   "linhas": 432,
    "dominio": "pages",
    "hooks_locais": [
     "useLogistics"
@@ -9294,7 +9294,7 @@
     "MachineComparisonPage"
    ],
    "export_default": "MachineComparisonPage",
-   "linhas": 282,
+   "linhas": 281,
    "dominio": "pages",
    "hooks_locais": [
     "useOEE",
@@ -9311,7 +9311,7 @@
     "MachinesPage"
    ],
    "export_default": "MachinesPage",
-   "linhas": 306,
+   "linhas": 291,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9334,7 +9334,7 @@
     "MasterAPIPage"
    ],
    "export_default": "MasterAPIPage",
-   "linhas": 237,
+   "linhas": 234,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],
@@ -9515,7 +9515,7 @@
     "OperatorsPage"
    ],
    "export_default": "OperatorsPage",
-   "linhas": 374,
+   "linhas": 365,
    "dominio": "pages",
    "hooks_locais": [
     "useDebounce",
@@ -9536,7 +9536,7 @@
     "OperatorView"
    ],
    "export_default": "OperatorView",
-   "linhas": 190,
+   "linhas": 188,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9591,7 +9591,7 @@
     "PendingQueue"
    ],
    "export_default": "PendingQueue",
-   "linhas": 539,
+   "linhas": 515,
    "dominio": "pages",
    "hooks_locais": [
     "useAutoBufferPromotion",
@@ -9614,7 +9614,7 @@
     "PublicTrackingPage"
    ],
    "export_default": "PublicTrackingPage",
-   "linhas": 335,
+   "linhas": 333,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [
@@ -9674,7 +9674,7 @@
     "SecurityDashboard"
    ],
    "export_default": "SecurityDashboard",
-   "linhas": 264,
+   "linhas": 262,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9695,7 +9695,7 @@
     "SettingsPage"
    ],
    "export_default": "SettingsPage",
-   "linhas": 135,
+   "linhas": 133,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"
@@ -9859,7 +9859,7 @@
     "TraceabilityPage"
    ],
    "export_default": "TraceabilityPage",
-   "linhas": 481,
+   "linhas": 478,
    "dominio": "pages",
    "hooks_locais": [
     "useDebounce",
@@ -9879,7 +9879,7 @@
     "WeeklyCalendar"
    ],
    "export_default": "WeeklyCalendar",
-   "linhas": 486,
+   "linhas": 485,
    "dominio": "pages",
    "hooks_locais": [
     "useCalendarFilters",

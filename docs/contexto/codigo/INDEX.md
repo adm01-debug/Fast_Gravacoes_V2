@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d61122af8d5d5b6e30640923f427b881be71998d` (2026-11-09T07:02:38-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6c96376b1d88ab7baf87a769144be1cd5606972d` (2026-11-09T11:38:17-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1462 |
 | arquivos_codigo | 1075 |
-| linhas_codigo | 170869 |
+| linhas_codigo | 170294 |
 | rotas | 58 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -75,7 +75,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/auth | 0 | 0 | 6 | 12 | 2 | 4 |
 | components/calendar | 0 | 0 | 17 | 132 | 8 | 58 |
 | components/dashboard | 0 | 0 | 32 | 155 | 10 | 89 |
-| components/design-system | 0 | 0 | 71 | 137 | 8 | 58 |
+| components/design-system | 0 | 0 | 71 | 131 | 8 | 58 |
 | components/jobs | 0 | 0 | 8 | 131 | 8 | 70 |
 | components/kanban | 0 | 0 | 6 | 142 | 9 | 72 |
 | components/knowledge | 0 | 0 | 15 | 26 | 3 | 22 |
@@ -86,7 +86,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/operator | 0 | 0 | 8 | 125 | 8 | 59 |
 | components/operators | 0 | 0 | 27 | 128 | 10 | 58 |
 | components/planning | 0 | 0 | 7 | 142 | 9 | 72 |
-| components/qrcode | 0 | 0 | 10 | 13 | 2 | 8 |
+| components/qrcode | 0 | 0 | 10 | 12 | 2 | 8 |
 | components/settings | 0 | 0 | 12 | 125 | 9 | 62 |
 | components/shift | 0 | 0 | 10 | 131 | 8 | 63 |
 | components/technical-assistant | 0 | 0 | 8 | 10 | 2 | 6 |
@@ -248,7 +248,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - tabelas_usadas_sem_definicao: 1 — ex.: backups
 - tabelas_com_drift_migration_vs_types: 9 — ex.: business_config, jobs, operator_rankings
 - rpcs_sem_definicao: 0
-- componentes_orfaos: 27 — ex.: src/components/accessibility/AccessibleIconButton.tsx, src/components/accessibility/FocusTrap.tsx, src/components/alerts/AlertCard.tsx
+- componentes_orfaos: 30 — ex.: src/components/accessibility/AccessibleIconButton.tsx, src/components/accessibility/FocusTrap.tsx, src/components/alerts/AlertCard.tsx
 - componentes_com_nome_duplicado: 6 — ex.: AdjustmentParameters, DashboardSkeleton, JobQuickActions
 - scripts_orfaos: 4 — ex.: scripts/graphify/corpus.py, scripts/graphify/enrich.py, scripts/graphify/pipeline.py
 - env_usadas_nao_declaradas: 7 — ex.: DEV, NODE_ENV, PROD
@@ -256,8 +256,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6542 nós · 20542 arestas · 607 comunidades · grafo do commit `d61122af`
-- comunidades maiores: card.tsx (170), KPIDashboard.tsx (166), input.tsx (125), badge.tsx (110), Button (109), showErrorToast (99), production/index.ts (97), cn (96), analytics/index.ts (92), snapshot.py (90), useAuth (89), GraphifyIntegrationTests (86)
+- 6521 nós · 19991 arestas · 619 comunidades · grafo do commit `6c96376b`
+- comunidades maiores: card.tsx (142), client.ts (111), skeleton.tsx (100), button.tsx (95), DbJob (92), useAuth (92), snapshot.py (90), cn (90), badge.tsx (88), GraphifyIntegrationTests (86), OEEMachineTable.tsx (86), Index.tsx (83)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), useDirtyGuard() (src/contexts/DirtyFormContext.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -274,9 +274,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/config.toml (6)
 - .github/workflows/deploy.yml (5)
 - scripts/audit-gate.mjs (5)
+- src/components/layout/AppSidebar.tsx (5)
 - tests/e2e/offline.spec.ts (5)
 - tests/e2e/visual-regression.spec.ts (5)
-- .github/workflows/graphify.yml (4)
 
 ## Workflows
 - `ci.yml` — CI — Quality Gates (pull_request, push, workflow_dispatch)
@@ -344,6 +344,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-09 `6c96376` chore(src): remove imports e declarações não usados (#149)
 - 2026-11-09 `d61122a` ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)
 - 2026-11-08 `dcdf3a3` fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)
 - 2026-11-08 `961751a` docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)
@@ -358,7 +359,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `d149e29` fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)
 - 2026-11-07 `c98b362` chore: instruções enxutas para agentes (#130)
 - 2026-11-07 `5e0a121` chore: aprimora scripts de bundle, graphify e RLS regression (#132)
-- 2026-11-07 `249d814` fix: remove policy INSERT permissiva e reforca verify RLS (#133)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
