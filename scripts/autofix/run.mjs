@@ -18,7 +18,7 @@
  * Saída: .autofix/relatorio.md e .autofix/relatorio.json (fila manual = o que sobrou).
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { runUnused } from './unused.mjs';
 
@@ -43,11 +43,16 @@ const t0 = Date.now();
 const secs = () => `${Math.round((Date.now() - t0) / 1000)}s`;
 
 // ---------- gates ----------
+const motivos = {}; // arquivo -> primeira mensagem de erro do gate (vai para o relatório)
+
 function tsc() {
   const r = sh('node', [bin('typescript/bin/tsc'), '-p', 'tsconfig.app.json', '--noEmit']);
   const out = r.stdout + r.stderr;
   const files = new Set();
-  for (const m of out.matchAll(/^(.+?)\(\d+,\d+\): error TS\d+/gm)) files.add(m[1]);
+  for (const m of out.matchAll(/^(.+?)\((\d+),\d+\): (error TS\d+: .+)$/gm)) {
+    files.add(m[1]);
+    motivos[m[1]] ??= `tsc ${m[3]} (linha ${m[2]})`;
+  }
   return { ok: r.status === 0, files: [...files], out };
 }
 
@@ -56,7 +61,12 @@ function eslintErrors(files) {
   const r = sh('node', [bin('eslint/bin/eslint.js'), '--max-warnings', '99999', '-f', 'json', ...files]);
   let bad = [];
   try {
-    bad = JSON.parse(r.stdout).filter((f) => f.errorCount > 0).map((f) => f.filePath.replace(ROOT + '/', ''));
+    const res = JSON.parse(r.stdout).filter((f) => f.errorCount > 0);
+    for (const f of res) {
+      const m = f.messages.find((x) => x.severity === 2);
+      motivos[f.filePath.replace(ROOT + '/', '')] ??= `eslint ${m?.ruleId}: ${m?.message} (linha ${m?.line})`;
+    }
+    bad = res.map((f) => f.filePath.replace(ROOT + '/', ''));
   } catch {
     return { ok: false, files: [], out: r.stderr || r.stdout };
   }
@@ -108,6 +118,20 @@ function commit(files, msg) {
   const r = git('commit', '-m', msg);
   if (r.status !== 0) throw new Error(`commit recusado (hook?):\n${r.stdout}${r.stderr}`);
   return true;
+}
+
+function vitestFalhas() {
+  const out = join(OUT, 'vitest.json');
+  sh('node', [bin('vitest/vitest.mjs'), 'run', '--reporter=json', `--outputFile=${out}`]);
+  try {
+    const j = JSON.parse(readFileSync(out, 'utf8'));
+    const falhas = new Set();
+    for (const f of j.testResults)
+      for (const t of f.assertionResults) if (t.status === 'failed') falhas.add(`${f.name.replace(ROOT + '/', '')} > ${t.fullName}`);
+    return { total: j.numTotalTests, falhas };
+  } catch {
+    return null;
+  }
 }
 
 // ---------- fixers ----------
@@ -171,6 +195,12 @@ if (APPLY) {
   log(`base verde (${secs()})`);
 }
 
+let vitestBase = null;
+if (APPLY && TESTS) {
+  vitestBase = vitestFalhas();
+  log(`vitest base: ${vitestBase ? `${vitestBase.total} testes, ${vitestBase.falhas.size} já falhando` : 'não consegui medir'} (${secs()})`);
+}
+
 const resultados = [];
 for (const fx of fixers) {
   log(`→ ${fx.titulo}`);
@@ -192,10 +222,20 @@ for (const fx of fixers) {
 
 let testes;
 if (APPLY && TESTS && resultados.some((r) => r.arquivosMantidos)) {
-  log('rodando vitest completo…');
-  const r = sh('node', [bin('vitest/vitest.mjs'), 'run']);
-  testes = { ok: r.status === 0, resumo: (r.stdout + r.stderr).split('\n').slice(-12).join('\n') };
-  log(`  vitest ${testes.ok ? 'verde' : 'VERMELHO'} (${secs()})`);
+  log('rodando vitest e comparando com a base…');
+  const depois = vitestFalhas();
+  if (!depois || !vitestBase) {
+    testes = { ok: false, resumo: 'não consegui medir o vitest (antes ou depois)' };
+  } else {
+    const novas = [...depois.falhas].filter((f) => !vitestBase.falhas.has(f));
+    testes = {
+      ok: novas.length === 0,
+      jaFalhavamAntes: [...vitestBase.falhas],
+      novasFalhas: novas,
+      resumo: `${depois.total} testes · ${vitestBase.falhas.size} já falhavam antes · ${novas.length} NOVA(S) falha(s)`,
+    };
+  }
+  log(`  ${testes.resumo} (${secs()})`);
 }
 
 const residuoEslint = eslintResidue();
@@ -210,7 +250,7 @@ for (const r of resultados) {
   md.push(`- ${APPLY ? 'propostos' : 'seriam alterados'}: **${r.arquivosPropostos}** arquivo(s) — ${JSON.stringify(r.porTipo)}`);
   if (APPLY) {
     md.push(`- mantidos: **${r.arquivosMantidos ?? 0}** · revertidos pelo gate: **${r.arquivosRevertidos?.length ?? 0}**${r.motivo ? ` (${r.motivo})` : ''}`);
-    for (const f of r.arquivosRevertidos || []) md.push(`  - revertido: \`${f}\``);
+    for (const f of r.arquivosRevertidos || []) md.push(`  - revertido: \`${f}\` — ${motivos[f] || 'motivo não capturado'}`);
   }
   if (r.manual.length) {
     md.push('', `### Fila manual (${r.manual.length}) — exige decisão, não é seguro automatizar`);
@@ -218,7 +258,12 @@ for (const r of resultados) {
   }
   md.push('');
 }
-if (testes) md.push('## vitest', testes.ok ? 'verde' : '```\n' + testes.resumo + '\n```', '');
+if (testes) {
+  md.push('## vitest (comparado com a base)', `- ${testes.resumo}`);
+  for (const f of testes.jaFalhavamAntes || []) md.push(`  - já falhava antes (não é do autofix): ${f}`);
+  for (const f of testes.novasFalhas || []) md.push(`  - **NOVA falha**: ${f}`);
+  md.push('');
+}
 md.push('## Avisos do eslint que sobraram (não auto-corrigíveis)', ...Object.entries(residuoEslint).map(([k, v]) => `- ${k}: ${v}`), '');
 writeFileSync(join(OUT, 'relatorio.md'), md.join('\n'));
 
