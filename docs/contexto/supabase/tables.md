@@ -42,7 +42,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ip_allowlist](tables/public/ip_allowlist.md) | table | sim | 2 | 9 | não |  |
 | [public.job_status_audit](tables/public/job_status_audit.md) | table | sim | 2 | 10 | não |  |
 | [public.job_status_history](tables/public/job_status_history.md) | table | sim | 1 | 6 | não |  |
-| [public.jobs](tables/public/jobs.md) | table | sim | 5 | 31 | não |  |
+| [public.jobs](tables/public/jobs.md) | table | sim | 5 | 32 | não |  |
 | [public.kpi_alerts](tables/public/kpi_alerts.md) | table | sim | 1 | 8 | não |  |
 | [public.login_audit](tables/public/login_audit.md) | table | sim | 3 | 8 | não |  |
 | [public.login_lockouts](tables/public/login_lockouts.md) | table | sim | 1 | 9 | não |  |
@@ -74,7 +74,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.packaging_settings](tables/public/packaging_settings.md) | table | sim | 2 | 10 | não |  |
 | [public.packaging_sla_overrides](tables/public/packaging_sla_overrides.md) | table | sim | 4 | 12 | não |  |
 | [public.packaging_task_checklist](tables/public/packaging_task_checklist.md) | table | sim | 2 | 9 | não |  |
-| [public.packaging_tasks](tables/public/packaging_tasks.md) | table | sim | 3 | 18 | sim |  |
+| [public.packaging_tasks](tables/public/packaging_tasks.md) | table | sim | 3 | 19 | sim |  |
 | [public.password_reset_requests](tables/public/password_reset_requests.md) | table | sim | 4 | 10 | não |  |
 | [public.pre_production_checklists](tables/public/pre_production_checklists.md) | table | sim | 3 | 17 | não |  |
 | [public.prediction_history](tables/public/prediction_history.md) | table | sim | 2 | 10 | não |  |

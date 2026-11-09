@@ -34,6 +34,7 @@
 | 16 | `delay_reason` | `text` | sim |  |  |  |
 | 17 | `delay_category` | `text` | sim |  |  |  |
 | 18 | `was_overdue_on_complete` | `boolean` | não | `false` |  |  |
+| 19 | `loss_reason` | `text` | sim |  |  |  |
 
 
 ## Constraints
@@ -44,13 +45,14 @@
 | packaging_tasks_assigned_to_fkey | FOREIGN KEY | `FOREIGN KEY (assigned_to) REFERENCES auth.users(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | packaging_tasks_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | packaging_tasks_job_id_key | UNIQUE | `UNIQUE (job_id)` |  |  | sim |
-| packaging_tasks_packages_count_check | CHECK | `CHECK (packages_count IS NULL OR packages_count >= 0)` |  |  | sim |
+| packaging_tasks_packages_count_check | CHECK | `CHECK (packages_count IS NULL OR packages_count >= 0 AND packages_count <= 500)` |  |  | sim |
 | packaging_tasks_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | packaging_tasks_qty_sum | CHECK | `CHECK ((approved_quantity + rejected_quantity) <= received_quantity)` |  |  | sim |
 | packaging_tasks_received_quantity_check | CHECK | `CHECK (received_quantity >= 0)` |  |  | sim |
 | packaging_tasks_rejected_quantity_check | CHECK | `CHECK (rejected_quantity >= 0)` |  |  | sim |
 | packaging_tasks_status_check | CHECK | `CHECK (status = ANY (ARRAY['pending'::text, 'in_triage'::text, 'packaging'::text, 'ready_to_ship'::text, 'on_hold'::text]))` |  |  | sim |
 | packaging_tasks_total_weight_kg_check | CHECK | `CHECK (total_weight_kg IS NULL OR total_weight_kg >= 0::numeric)` |  |  | sim |
+| packaging_tasks_weight_per_package_check | CHECK | `CHECK (total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count::numeric) <= 30::numeric)` |  |  | sim |
 
 
 ## Referenciada por (FKs de outras tabelas)
@@ -115,6 +117,7 @@
 | trg_notify_packaging_task_created | AFTER | INSERT | ROW | enabled | public.notify_packaging_task_created |
 | trg_packaging_ready_create_shipment | AFTER | UPDATE | ROW | enabled | public.on_packaging_ready_create_shipment |
 | trg_packaging_tasks_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
+| trg_validate_packaging_loss_reason | BEFORE | INSERT OR UPDATE | ROW | enabled | public.validate_packaging_loss_reason |
 
 
 ## Grants

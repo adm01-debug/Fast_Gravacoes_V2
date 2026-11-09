@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 243,
+ "migrations": 244,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -87,6 +87,7 @@
   "notify_packaging_defect_critical",
   "notify_packaging_task_created",
   "notify_tpm_email",
+  "on_job_cancelled_hold_packaging",
   "on_job_finished_create_packaging_task",
   "on_packaging_defect_create_rework_job",
   "on_packaging_ready_create_shipment",
@@ -107,6 +108,9 @@
   "update_inventory_stock",
   "update_updated_at_column",
   "validate_inventory_stock",
+  "validate_job_cancel_reason",
+  "validate_job_rework_depth",
+  "validate_packaging_loss_reason",
   "validate_stock_before_movement",
   "verify_audit_chain"
  ],
@@ -280,11 +284,25 @@
    "funcao": "audit_job_status_change"
   },
   {
+   "nome": "trg_job_cancelled_hold_packaging",
+   "quando": "after",
+   "evento": "update of status",
+   "tabela": "jobs",
+   "funcao": "on_job_cancelled_hold_packaging"
+  },
+  {
    "nome": "trg_on_job_finished_create_packaging_task",
    "quando": "after",
    "evento": "update",
    "tabela": "jobs",
    "funcao": "on_job_finished_create_packaging_task"
+  },
+  {
+   "nome": "trg_validate_job_rework_depth",
+   "quando": "before",
+   "evento": "insert or update of parent_job_id",
+   "tabela": "jobs",
+   "funcao": "validate_job_rework_depth"
   },
   {
    "nome": "trigger_check_job_overlap",
@@ -713,6 +731,11 @@
    "agenda": "*/5 * * * *",
    "migration": "20260512110942_cb61b4fe-9a86-40b9-9d12-24764f730f0e.sql",
    "chama_edge": "auto-promote-jobs"
+  },
+  {
+   "nome": "auto-reassign-packaging-30min",
+   "agenda": "*/5 * * * *",
+   "migration": "20261108000001_business_rules_ddl.sql"
   },
   {
    "nome": "purge-old-logs-daily",
@@ -4982,6 +5005,13 @@
      "default": null,
      "ref": null
     },
+    "cancel_reason": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "client": {
      "tipo": "text",
      "nn": true,
@@ -5326,7 +5356,9 @@
     "updated_at": "string"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "cancel_reason"
+    ],
     "so_no_types": [
      "delay_reason",
      "loss_category",
@@ -5349,7 +5381,9 @@
     "on_job_finished_promote",
     "tr_audit_job_changes",
     "tr_audit_job_status",
+    "trg_job_cancelled_hold_packaging",
     "trg_on_job_finished_create_packaging_task",
+    "trg_validate_job_rework_depth",
     "trigger_check_job_overlap",
     "trigger_log_job_status_change",
     "update_jobs_updated_at"
@@ -9527,6 +9561,13 @@
      "default": null,
      "ref": "jobs"
     },
+    "loss_reason": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "notes": {
      "tipo": "text",
      "nn": false,
@@ -9667,7 +9708,9 @@
     "was_overdue_on_complete": "boolean"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "loss_reason"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 6,

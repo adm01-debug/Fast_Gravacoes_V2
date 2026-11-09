@@ -13,13 +13,13 @@
 |---|---|---|
 | supabase_realtime | public.packaging_defects | default |
 | supabase_realtime | public.packaging_tasks | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_05 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_06 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_07 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_08 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_09 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_10 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_11 |  |
+| supabase_realtime_messages_publication | realtime.messages_2026_11_12 |  |
 
 ## Broadcast / Presence (policies em realtime.messages)
 

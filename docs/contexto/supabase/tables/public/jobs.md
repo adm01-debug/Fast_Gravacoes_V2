@@ -47,6 +47,7 @@
 | 29 | `shipment_id` | `uuid` | sim |  |  |  |
 | 30 | `shipping_status` | `text` | sim |  |  |  |
 | 31 | `parent_job_id` | `uuid` | sim |  |  |  |
+| 32 | `cancel_reason` | `text` | sim |  |  |  |
 
 
 ## Constraints
@@ -174,7 +175,10 @@
 | on_job_finished_promote | AFTER | UPDATE | ROW | enabled | public.trigger_auto_promotion |
 | tr_audit_job_changes | AFTER | UPDATE | ROW | enabled | public.audit_job_changes |
 | tr_audit_job_status | AFTER | UPDATE | ROW | enabled | public.audit_job_status_change |
+| trg_job_cancelled_hold_packaging | AFTER | UPDATE | ROW | enabled | public.on_job_cancelled_hold_packaging |
 | trg_on_job_finished_create_packaging_task | AFTER | UPDATE | ROW | enabled | public.on_job_finished_create_packaging_task |
+| trg_validate_job_cancel_reason | BEFORE | INSERT OR UPDATE | ROW | enabled | public.validate_job_cancel_reason |
+| trg_validate_job_rework_depth | BEFORE | INSERT OR UPDATE | ROW | enabled | public.validate_job_rework_depth |
 | trigger_check_job_overlap | BEFORE | INSERT OR UPDATE | ROW | enabled | public.check_job_overlap |
 | trigger_log_job_status_change | AFTER | UPDATE | ROW | enabled | public.log_job_status_change |
 | update_jobs_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5db90ba232` · branch `main` · 2026-11-08 20:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a376146b90` · branch `main` · 2026-11-09 03:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -715,7 +715,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `shift_handover_checklist` | `item_order` | default 0 |
 | `shift_handover_checklist` | `created_at` | default now() |
 | `shift_handover_checklist` | `(tabela)` | checked_at TIMESTAMP WITH TIME ZONE |
-| … +715 linhas — lista completa em `context.json` | | |
+| … +717 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -805,6 +805,8 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | trg_audit_packaging_task_checklist | AFTER INSERT OR UPDATE OR DELETE | `packaging_task_checklist` | `audit_trigger_func` |  |
 | trg_packaging_sla_overrides_updated_at | BEFORE UPDATE | `packaging_sla_overrides` | `update_updated_at_column` |  |
 | update_cron_p95_daily_updated_at | BEFORE UPDATE | `cron_p95_daily` | `update_updated_at_column` |  |
+| trg_job_cancelled_hold_packaging | AFTER UPDATE OF STATUS | `jobs` | `on_job_cancelled_hold_packaging` |  |
+| trg_validate_job_rework_depth | BEFORE INSERT OR UPDATE OF PARENT_JOB_ID | `jobs` | `validate_job_rework_depth` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -821,6 +823,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `complete_maintenance_record` | record_id ausente no payload | `supabase/migrations/20261019140000_validation_hardening.sql` |
 | `complete_maintenance_record` | Registro de manutenção não encontrado, já concluído ou já aprovado. | `supabase/migrations/20261019140000_validation_hardening.sql` |
 | `approve_maintenance_record` | Registro já foi processado por outra aprovação/correção | `supabase/migrations/20261028233000_approve_maintenance_atomic.sql` |
+| `validate_job_cancel_reason` | cancel_reason é obrigatório ao cancelar um job | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
+| `validate_packaging_loss_reason` | loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
+| `validate_job_rework_depth` | Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai) | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -2063,6 +2068,7 @@ _nenhum item encontrado_
 | `expires_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() + interval '5 minutes'),` | `supabase/migrations/20251231124514_6ce7bbb6-1f8a-4853-ba6a-e980b3841640.sql` |
 | `(started_at < now() - interval '2 hours' AND completed_at IS NULL)` | `supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql` |
 | `(updated_at < now() - interval '30 minutes')` | `supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql` |
+| `AND updated_at < now() - interval '30 minutes';` | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
 
 ### H.3 Limites de paginação
 

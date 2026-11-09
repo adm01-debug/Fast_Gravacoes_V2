@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5db90ba232b63f7db45fb2691bcd18e612f46754",
+  "sha": "a376146b905798e3593e6fcad1b1adaa1efe2fa9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-08 20:45 UTC",
-  "files_total": 1450,
-  "code_files": 1327,
-  "code_lines": 185488
+  "generated_at": "2026-11-09 03:33 UTC",
+  "files_total": 1451,
+  "code_files": 1328,
+  "code_lines": 185652
  },
  "version": "1.3.2",
- "facts_hash": "1994626b5f141ae7",
+ "facts_hash": "cb093115359045eb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -216,7 +216,7 @@
   "languages": {
    ".tsx": 656,
    ".ts": 395,
-   ".sql": 250,
+   ".sql": 251,
    ".mjs": 11,
    ".py": 11,
    ".js": 4
@@ -524,6 +524,13 @@
       "fk": "jobs.id ON DELETE SET NULL",
       "generated": "",
       "src": "supabase/migrations/20260723144856_828c56c4-a76a-4a58-9198-d195c6597699.sql"
+     },
+     {
+      "name": "cancel_reason",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
      },
      {
       "name": "delay_reason",
@@ -9346,6 +9353,13 @@
       "src": "supabase/migrations/20260723153059_357ce603-2efb-4466-b86a-b874266bb192.sql"
      },
      {
+      "name": "loss_reason",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+     },
+     {
       "name": "delay_category",
       "type": "string | null",
       "fk": "",
@@ -9361,7 +9375,9 @@
      }
     ],
     "constraints": [
-     "CONSTRAINT packaging_tasks_qty_sum CHECK (approved_quantity + rejected_quantity <= received_quantity)"
+     "CONSTRAINT packaging_tasks_qty_sum CHECK (approved_quantity + rejected_quantity <= received_quantity)",
+     "constraint packaging_tasks_weight_per_package_check CHECK ( total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count) <= 30 )",
+     "constraint packaging_tasks_packages_count_check CHECK (packages_count IS NULL OR (packages_count >= 0 AND packages_count <= 500))"
     ],
     "src": "supabase/migrations/20260723125433_314d8f93-3261-4e54-88c8-c5111249a8dd.sql",
     "comment": "",
@@ -15269,6 +15285,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260726161334_0dc2a73a-2f32-4855-acb2-6ce7fc124ee7.sql"
+   },
+   {
+    "name": "trg_job_cancelled_hold_packaging",
+    "when": "AFTER UPDATE OF STATUS",
+    "table": "jobs",
+    "function": "on_job_cancelled_hold_packaging",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "name": "trg_validate_job_rework_depth",
+    "when": "BEFORE INSERT OR UPDATE OF PARENT_JOB_ID",
+    "table": "jobs",
+    "function": "validate_job_rework_depth",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "functions": {
@@ -16173,10 +16207,10 @@
     "args": "",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
     "security_definer": true,
-    "search_path": true,
-    "body": "BEGIN UPDATE public.packaging_tasks SET assigned_to = NULL, status = 'pending', notes = concat(notes, '\\n[AUTO] Reatribuído por inatividade em ', now()) WHERE status IN ('packaging', 'in_triage') AND ( (updated_at < now() - interval '30 minutes') OR (started_at < now() - interval '2 hours' AND completed_at IS NULL) ); END;",
+    "search_path": false,
+    "body": "BEGIN UPDATE public.packaging_tasks SET assigned_to = NULL, updated_at = now() WHERE status IN ('pending', 'in_triage') AND assigned_to IS NOT NULL AND updated_at < now() - interval '30 minutes'; END;",
     "raises": [],
     "tables": [
      "packaging_tasks"
@@ -16296,6 +16330,61 @@
      "jobs",
      "public",
      "v_rows"
+    ]
+   },
+   "validate_job_cancel_reason": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.status = 'cancelled' AND (NEW.cancel_reason IS NULL OR trim(NEW.cancel_reason) = '') THEN RAISE EXCEPTION 'cancel_reason é obrigatório ao cancelar um job'; END IF; RETURN NEW; END;",
+    "raises": [
+     "cancel_reason é obrigatório ao cancelar um job"
+    ],
+    "tables": []
+   },
+   "on_job_cancelled_hold_packaging": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.status = 'cancelled' AND OLD.status <> 'cancelled' THEN UPDATE public.packaging_tasks SET status = 'on_hold', updated_at = now() WHERE job_id = NEW.id AND status NOT IN ('ready_to_ship'); END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "packaging_tasks"
+    ]
+   },
+   "validate_packaging_loss_reason": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.received_quantity > 0 AND NEW.rejected_quantity IS NOT NULL AND NEW.rejected_quantity::numeric / NEW.received_quantity::numeric > 0.05 AND (NEW.loss_reason IS NULL OR trim(NEW.loss_reason) = '') THEN RAISE EXCEPTION 'loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida'; END IF; RETURN NEW; END;",
+    "raises": [
+     "loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida"
+    ],
+    "tables": []
+   },
+   "validate_job_rework_depth": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "DECLARE parent_parent_id UUID; BEGIN IF NEW.parent_job_id IS NOT NULL THEN SELECT parent_job_id INTO parent_parent_id FROM public.jobs WHERE id = NEW.parent_job_id; IF parent_parent_id IS NOT NULL THEN RAISE EXCEPTION 'Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)'; END IF; END IF; RETURN NEW; END;",
+    "raises": [
+     "Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)"
+    ],
+    "tables": [
+     "jobs",
+     "parent_parent_id"
     ]
    },
    "Args": {
@@ -18498,6 +18587,12 @@
     "schedule": "15 3 * * *",
     "body": "SELECT public.purge_old_logs()",
     "src": "supabase/migrations/20261002130000_csp_reports_retention.sql"
+   },
+   {
+    "job": "auto-reassign-packaging-30min",
+    "schedule": "*/5 * * * *",
+    "body": "SELECT public.auto_reassign_stale_packaging_tasks()",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "views": {},
@@ -18751,6 +18846,7 @@
    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
    "supabase/migrations/20261107000000_fix_permissive_insert_policies.sql",
    "supabase/migrations/20261107010000_verify_no_using_true_write_policies.sql",
+   "supabase/migrations/20261108000001_business_rules_ddl.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -20339,6 +20435,46 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_packaging_manifest",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_packaging_leaderboard",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_system_status_summary",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_cron_health",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "auto_reassign_stale_packaging_tasks",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "raises": [
@@ -20396,6 +20532,21 @@
     "function": "approve_maintenance_record",
     "msg": "Registro já foi processado por outra aprovação/correção",
     "src": "supabase/migrations/20261028233000_approve_maintenance_atomic.sql"
+   },
+   {
+    "function": "validate_job_cancel_reason",
+    "msg": "cancel_reason é obrigatório ao cancelar um job",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "function": "validate_packaging_loss_reason",
+    "msg": "loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "function": "validate_job_rework_depth",
+    "msg": "Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "seed": [
@@ -28430,8 +28581,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 243,
-   "lines": 14286,
+   "files": 244,
+   "lines": 14450,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -39422,6 +39573,16 @@
     "rule": "CONSTRAINT packaging_tasks_qty_sum CHECK (approved_quantity + rejected_quantity <= received_quantity)"
    },
    {
+    "table": "packaging_tasks",
+    "column": "(tabela)",
+    "rule": "constraint packaging_tasks_weight_per_package_check CHECK ( total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count) <= 30 )"
+   },
+   {
+    "table": "packaging_tasks",
+    "column": "(tabela)",
+    "rule": "constraint packaging_tasks_packages_count_check CHECK (packages_count IS NULL OR (packages_count >= 0 AND packages_count <= 500))"
+   },
+   {
     "table": "packaging_defects",
     "column": "id",
     "rule": "PK; default gen_random_uuid()"
@@ -47771,6 +47932,10 @@
    {
     "file": "supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql",
     "line": "(updated_at < now() - interval '30 minutes')"
+   },
+   {
+    "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "line": "AND updated_at < now() - interval '30 minutes';"
    }
   ],
   "percents": [
@@ -57445,6 +57610,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260726161334_0dc2a73a-2f32-4855-acb2-6ce7fc124ee7.sql"
+   },
+   {
+    "name": "trg_job_cancelled_hold_packaging",
+    "when": "AFTER UPDATE OF STATUS",
+    "table": "jobs",
+    "function": "on_job_cancelled_hold_packaging",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "name": "trg_validate_job_rework_depth",
+    "when": "BEFORE INSERT OR UPDATE OF PARENT_JOB_ID",
+    "table": "jobs",
+    "function": "validate_job_rework_depth",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "db_functions": {
@@ -58349,10 +58532,10 @@
     "args": "",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
     "security_definer": true,
-    "search_path": true,
-    "body": "BEGIN UPDATE public.packaging_tasks SET assigned_to = NULL, status = 'pending', notes = concat(notes, '\\n[AUTO] Reatribuído por inatividade em ', now()) WHERE status IN ('packaging', 'in_triage') AND ( (updated_at < now() - interval '30 minutes') OR (started_at < now() - interval '2 hours' AND completed_at IS NULL) ); END;",
+    "search_path": false,
+    "body": "BEGIN UPDATE public.packaging_tasks SET assigned_to = NULL, updated_at = now() WHERE status IN ('pending', 'in_triage') AND assigned_to IS NOT NULL AND updated_at < now() - interval '30 minutes'; END;",
     "raises": [],
     "tables": [
      "packaging_tasks"
@@ -58474,6 +58657,61 @@
      "v_rows"
     ]
    },
+   "validate_job_cancel_reason": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.status = 'cancelled' AND (NEW.cancel_reason IS NULL OR trim(NEW.cancel_reason) = '') THEN RAISE EXCEPTION 'cancel_reason é obrigatório ao cancelar um job'; END IF; RETURN NEW; END;",
+    "raises": [
+     "cancel_reason é obrigatório ao cancelar um job"
+    ],
+    "tables": []
+   },
+   "on_job_cancelled_hold_packaging": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.status = 'cancelled' AND OLD.status <> 'cancelled' THEN UPDATE public.packaging_tasks SET status = 'on_hold', updated_at = now() WHERE job_id = NEW.id AND status NOT IN ('ready_to_ship'); END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "packaging_tasks"
+    ]
+   },
+   "validate_packaging_loss_reason": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "BEGIN IF NEW.received_quantity > 0 AND NEW.rejected_quantity IS NOT NULL AND NEW.rejected_quantity::numeric / NEW.received_quantity::numeric > 0.05 AND (NEW.loss_reason IS NULL OR trim(NEW.loss_reason) = '') THEN RAISE EXCEPTION 'loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida'; END IF; RETURN NEW; END;",
+    "raises": [
+     "loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida"
+    ],
+    "tables": []
+   },
+   "validate_job_rework_depth": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+    "security_definer": false,
+    "search_path": false,
+    "body": "DECLARE parent_parent_id UUID; BEGIN IF NEW.parent_job_id IS NOT NULL THEN SELECT parent_job_id INTO parent_parent_id FROM public.jobs WHERE id = NEW.parent_job_id; IF parent_parent_id IS NOT NULL THEN RAISE EXCEPTION 'Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)'; END IF; END IF; RETURN NEW; END;",
+    "raises": [
+     "Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)"
+    ],
+    "tables": [
+     "jobs",
+     "parent_parent_id"
+    ]
+   },
    "Args": {
     "args": "",
     "returns": "?",
@@ -58581,6 +58819,21 @@
     "function": "approve_maintenance_record",
     "msg": "Registro já foi processado por outra aprovação/correção",
     "src": "supabase/migrations/20261028233000_approve_maintenance_atomic.sql"
+   },
+   {
+    "function": "validate_job_cancel_reason",
+    "msg": "cancel_reason é obrigatório ao cancelar um job",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "function": "validate_packaging_loss_reason",
+    "msg": "loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "function": "validate_job_rework_depth",
+    "msg": "Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai)",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "db_generated": [
@@ -63947,6 +64200,46 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_packaging_manifest",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_packaging_leaderboard",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_system_status_summary",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_cron_health",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "auto_reassign_stale_packaging_tasks",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
    }
   ],
   "guards": [
@@ -65455,6 +65748,13 @@
     "msg": "função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
     "where": [
      "supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql"
+    ]
+   },
+   {
+    "kind": "segurança",
+    "msg": "função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
+    "where": [
+     "supabase/migrations/20261108000001_business_rules_ddl.sql"
     ]
    },
    {
@@ -91667,6 +91967,13 @@
    "path": "supabase/migrations/20261107010000_verify_no_using_true_write_policies.sql",
    "lines": 34
   },
+  "supabase/migrations/20261108000001_business_rules_ddl.sql": {
+   "path": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+   "lines": 164,
+   "temporal": [
+    "AND updated_at < now() - interval '30 minutes';"
+   ]
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -92105,10 +92412,19 @@
   }
  },
  "git": {
-  "sha": "5db90ba232b63f7db45fb2691bcd18e612f46754",
+  "sha": "a376146b905798e3593e6fcad1b1adaa1efe2fa9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a376146",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4",
+    "files": [
+     "supabase/migrations/20261108000001_business_rules_ddl.sql"
+    ]
+   },
    {
     "sha": "5db90ba",
     "date": "2026-11-08",
@@ -92543,33 +92859,19 @@
      ".github/workflows/db-admin.yml",
      "PENDENCIAS.md"
     ]
-   },
-   {
-    "sha": "ad90ff4",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "ci(db-admin): diagnostico RLS no inspect + apply reprovisiona papeis E2E (#108)",
-    "files": [
-     ".github/workflows/db-admin.yml",
-     "PENDENCIAS.md"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "PENDENCIAS.md",
-    5
-   ],
    [
     "AGENTS.md",
     4
    ],
    [
-    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
-    3
+    "PENDENCIAS.md",
+    4
    ],
    [
-    ".github/workflows/db-admin.yml",
+    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
    ],
    [
@@ -92634,6 +92936,10 @@
    ],
    [
     "src/pages/MasterAPIPage.tsx",
+    2
+   ],
+   [
+    "src/features/jobs/hooks/useKanbanDragDrop.ts",
     2
    ]
   ]

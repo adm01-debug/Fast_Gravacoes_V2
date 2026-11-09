@@ -5798,6 +5798,19 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "cancel_reason",
+        "nullable": true,
+        "position": 32,
+        "schema": "public",
+        "table": "jobs",
+        "type": "text"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -10111,6 +10124,19 @@
         "schema": "public",
         "table": "packaging_tasks",
         "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "loss_reason",
+        "nullable": true,
+        "position": 19,
+        "schema": "public",
+        "table": "packaging_tasks",
+        "type": "text"
       },
       {
         "comment": null,
@@ -21441,7 +21467,7 @@
           "packages_count"
         ],
         "deferrable": false,
-        "definition": "CHECK (packages_count IS NULL OR packages_count >= 0)",
+        "definition": "CHECK (packages_count IS NULL OR packages_count >= 0 AND packages_count <= 500)",
         "name": "packaging_tasks_packages_count_check",
         "on_delete": null,
         "on_update": null,
@@ -21547,6 +21573,24 @@
         "deferrable": false,
         "definition": "CHECK (total_weight_kg IS NULL OR total_weight_kg >= 0::numeric)",
         "name": "packaging_tasks_total_weight_kg_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "packaging_tasks",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "total_weight_kg",
+          "packages_count"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count::numeric) <= 30::numeric)",
+        "name": "packaging_tasks_weight_per_package_check",
         "on_delete": null,
         "on_update": null,
         "ref_columns": [],
@@ -24527,6 +24571,15 @@
           "jobname": "auto-promote-jobs-fallback",
           "schedule": "*/5 * * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "SELECT public.auto_reassign_stale_packaging_tasks()",
+          "database": "postgres",
+          "jobid": 12,
+          "jobname": "auto-reassign-packaging-30min",
+          "schedule": "*/5 * * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -25260,19 +25313,24 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
-          "cron": [],
+          "code": [
+            {
+              "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [
+            "12:auto-reassign-packaging-30min"
+          ],
           "db": [],
           "triggers": [],
           "views": []
         },
         "comment": null,
-        "config": [
-          "search_path=public"
-        ],
+        "config": null,
         "definition": null,
-        "definition_sha": "478d9806a0f56250",
+        "definition_sha": "65e68f7fb7ca16f4",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": false,
@@ -26819,6 +26877,41 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.jobs.trg_job_cancelled_hold_packaging"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "f01ef68b021e9b3d",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "on_job_cancelled_hold_packaging",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260723125433_314d8f93-3261-4e54-88c8-c5111249a8dd.sql",
               "hits": 1
             }
@@ -27717,6 +27810,111 @@
         "returns": "trigger",
         "schema": "public",
         "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.jobs.trg_validate_job_cancel_reason"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "239aaf7d8a9c5992",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "validate_job_cancel_reason",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.jobs.trg_validate_job_rework_depth"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "a2cf4cfb7115be38",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "validate_job_rework_depth",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.packaging_tasks.trg_validate_packaging_loss_reason"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "ebd8e56a8aa5324e",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "validate_packaging_loss_reason",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
         "strict": false,
         "volatility": "volatile"
       },
@@ -35944,6 +36142,12 @@
       {
         "code": "secdef_mutable_search_path",
         "detail": "SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path.",
+        "object": "public.auto_reassign_stale_packaging_tasks()",
+        "severity": "ALTA"
+      },
+      {
+        "code": "secdef_mutable_search_path",
+        "detail": "SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path.",
         "object": "public.notify_loss_risk()",
         "severity": "ALTA"
       },
@@ -37933,6 +38137,12 @@
         "statements": 1,
         "statements_sha": "828a54238ffc2060",
         "version": "20261107010000"
+      },
+      {
+        "name": "business_rules_ddl",
+        "statements": 25,
+        "statements_sha": "d41311cc2c449211",
+        "version": "20261108000001"
       }
     ],
     "policies": [
@@ -41684,11 +41894,6 @@
         {
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
-          "table": "messages_2026_11_05"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
           "table": "messages_2026_11_06"
         },
         {
@@ -41715,6 +41920,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_11"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_12"
         }
       ]
     },
@@ -44233,6 +44443,17 @@
         "timing": "AFTER"
       },
       {
+        "definition": "CREATE TRIGGER trg_job_cancelled_hold_packaging AFTER UPDATE OF status ON jobs FOR EACH ROW EXECUTE FUNCTION on_job_cancelled_hold_packaging()",
+        "events": "UPDATE",
+        "function": "public.on_job_cancelled_hold_packaging",
+        "level": "ROW",
+        "name": "trg_job_cancelled_hold_packaging",
+        "schema": "public",
+        "status": "enabled",
+        "table": "jobs",
+        "timing": "AFTER"
+      },
+      {
         "definition": "CREATE TRIGGER trg_on_job_finished_create_packaging_task AFTER UPDATE ON jobs FOR EACH ROW EXECUTE FUNCTION on_job_finished_create_packaging_task()",
         "events": "UPDATE",
         "function": "public.on_job_finished_create_packaging_task",
@@ -44242,6 +44463,28 @@
         "status": "enabled",
         "table": "jobs",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_validate_job_cancel_reason BEFORE INSERT OR UPDATE OF status, cancel_reason ON jobs FOR EACH ROW EXECUTE FUNCTION validate_job_cancel_reason()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.validate_job_cancel_reason",
+        "level": "ROW",
+        "name": "trg_validate_job_cancel_reason",
+        "schema": "public",
+        "status": "enabled",
+        "table": "jobs",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_validate_job_rework_depth BEFORE INSERT OR UPDATE OF parent_job_id ON jobs FOR EACH ROW EXECUTE FUNCTION validate_job_rework_depth()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.validate_job_rework_depth",
+        "level": "ROW",
+        "name": "trg_validate_job_rework_depth",
+        "schema": "public",
+        "status": "enabled",
+        "table": "jobs",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER trigger_check_job_overlap BEFORE INSERT OR UPDATE ON jobs FOR EACH ROW EXECUTE FUNCTION check_job_overlap()",
@@ -44568,6 +44811,17 @@
         "function": "public.update_updated_at_column",
         "level": "ROW",
         "name": "trg_packaging_tasks_updated_at",
+        "schema": "public",
+        "status": "enabled",
+        "table": "packaging_tasks",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_validate_packaging_loss_reason BEFORE INSERT OR UPDATE OF rejected_quantity, received_quantity, loss_reason ON packaging_tasks FOR EACH ROW EXECUTE FUNCTION validate_packaging_loss_reason()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.validate_packaging_loss_reason",
+        "level": "ROW",
+        "name": "trg_validate_packaging_loss_reason",
         "schema": "public",
         "status": "enabled",
         "table": "packaging_tasks",

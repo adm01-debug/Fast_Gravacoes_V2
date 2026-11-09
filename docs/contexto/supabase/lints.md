@@ -5,6 +5,7 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | severidade | código | objeto | detalhe |
 |---|---|---|---|
 | ALTA | secdef_mutable_search_path | app_private.runtime_config_get(p_key text) | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
+| ALTA | secdef_mutable_search_path | public.auto_reassign_stale_packaging_tasks() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
 | ALTA | secdef_mutable_search_path | public.notify_loss_risk() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
 | ALTA | secdef_mutable_search_path | public.trigger_auto_promotion() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
 | ALTA | secdef_mutable_search_path | public.trigger_send_tpm_email() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |

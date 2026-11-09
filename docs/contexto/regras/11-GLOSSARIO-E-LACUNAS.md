@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5db90ba232` · branch `main` · 2026-11-08 20:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a376146b90` · branch `main` · 2026-11-09 03:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -48,7 +48,7 @@
 | `ip_allowlist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `job_status_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `job_status_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 31 colunas | migration |
+| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 32 colunas | migration |
 | `kpi_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `login_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `login_lockouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
@@ -81,7 +81,7 @@
 | `packaging_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `packaging_sla_overrides` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `packaging_task_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `packaging_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
+| `packaging_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `packaging_waste` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | types.ts |
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `pre_production_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
@@ -319,6 +319,7 @@
 | segurança | função `audit_machine_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516180359_c5765536-5948-4b13-8df3-c01302f21cf6.sql` |
 | segurança | função `update_audit_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260520000001_security_rls_indexes_fixes.sql` |
 | segurança | função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql` |
+| segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
 | segurança | função `runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
 | webhook | edge function `external-db-bridge` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/external-db-bridge/index.ts` |
 

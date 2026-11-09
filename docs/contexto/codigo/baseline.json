@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5db90ba232b63f7db45fb2691bcd18e612f46754",
+  "commit": "a376146b905798e3593e6fcad1b1adaa1efe2fa9",
   "branch": "main",
-  "data_commit": "2026-11-08T17:23:21-03:00",
+  "data_commit": "2026-11-08T19:41:53-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a376146",
+    "data": "2026-11-08",
+    "assunto": "feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4"
+   },
    {
     "sha": "5db90ba",
     "data": "2026-11-08",
@@ -126,14 +131,9 @@
     "sha": "0d1e837",
     "data": "2026-10-29",
     "assunto": "fix(sprint): bugs reais do balanço — push criptografado, QR, notificações, TPM, Kanban, MFA e Bitrix (#114)"
-   },
-   {
-    "sha": "3f2dee6",
-    "data": "2026-10-28",
-    "assunto": "docs(estado): balanço de planos × código 2026-10-28 — auditoria exaustiva dos docs (#112)"
    }
   ],
-  "arquivos_mudados_7d": 96,
+  "arquivos_mudados_7d": 97,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/navigation",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 21
+    "commits": 22
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1453,
+  "arquivos_total": 1454,
   "arquivos_codigo": 1074,
   "linhas_codigo": 170746,
   "rotas": 58,
@@ -322,8 +322,8 @@
   "hooks": 197,
   "edge_functions": 34,
   "tabelas": 142,
-  "migrations": 243,
-  "cron_jobs": 3,
+  "migrations": 244,
+  "cron_jobs": 4,
   "testes": 103,
   "workflows": 7,
   "scripts": 17,
@@ -696,6 +696,7 @@
    "operator_rankings",
    "operator_skills",
    "operator_status_audit",
+   "packaging_tasks",
    "pre_production_checklists",
    "technical_sheets",
    "tpm_execution_supplies"

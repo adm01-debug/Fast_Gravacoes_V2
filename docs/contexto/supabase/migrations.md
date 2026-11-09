@@ -247,3 +247,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261106011000 | [verify_no_using_true_write_policies](migrations/20261106011000_verify_no_using_true_write_policies.sql) | 1 |
 | 20261107000000 | [fix_permissive_insert_policies](migrations/20261107000000_fix_permissive_insert_policies.sql) | 1 |
 | 20261107010000 | [verify_no_using_true_write_policies](migrations/20261107010000_verify_no_using_true_write_policies.sql) | 1 |
+| 20261108000001 | [business_rules_ddl](migrations/20261108000001_business_rules_ddl.sql) | 25 |

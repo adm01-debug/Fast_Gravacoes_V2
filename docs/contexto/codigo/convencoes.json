@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4",
    "feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)",
    "fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)",
    "fix(contexto): guard de segredos por ocorrência (#137)",
-   "feat(contexto): contexto autônomo para agentes de IA (#136)",
-   "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)"
+   "feat(contexto): contexto autônomo para agentes de IA (#136)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
