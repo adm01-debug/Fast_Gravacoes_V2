@@ -14,9 +14,9 @@ function projeto(codigo) {
   writeFileSync(join(root, 'src/a.ts'), codigo);
   return root;
 }
-const aplicar = (codigo) => {
+const aplicar = (codigo, opts = {}) => {
   const root = projeto(codigo);
-  const r = runUnused({ root, apply: true });
+  const r = runUnused({ root, apply: true, ...opts });
   return { texto: readFileSync(join(root, 'src/a.ts'), 'utf8'), r };
 };
 
@@ -27,12 +27,12 @@ test('NÃO remove variável não usada com ++/-- (muda estado)', () => {
 
 test('NÃO remove item de desestruturação com valor padrão impuro', () => {
   const src = 'export function g() { let n = 0; const { a = ++n, b } = { a: undefined, b: 1 }; return [n, b]; }\n';
-  assert.equal(aplicar(src).texto, src);
+  assert.equal(aplicar(src, { desestruturacao: true }).texto, src);
 });
 
 test('NÃO remove desestruturação com chave computada impura', () => {
   const src = 'let n = 0;\nconst k = () => `x${++n}`;\nexport function h() { const { [k()]: a, b } = { x1: 1, b: 2 } as Record<string, number>; return b; }\n';
-  assert.ok(aplicar(src).texto.includes('[k()]: a'));
+  assert.ok(aplicar(src, { desestruturacao: true }).texto.includes('[k()]: a'));
 });
 
 test('NÃO remove variável cujo inicializador é chamada', () => {
@@ -46,8 +46,28 @@ test('REMOVE import não usado', () => {
 });
 
 test('REMOVE variável pura e item de desestruturação com padrão puro', () => {
-  const { texto } = aplicar('export function j() { const pura = 5; const { a = 1, b } = { a: undefined, b: 2 }; return b; }\n');
+  const { texto } = aplicar('export function j() { const pura = 5; const { a = 1, b } = { a: undefined, b: 2 }; return b; }\n', { desestruturacao: true });
   assert.ok(!texto.includes('pura'));
   assert.ok(!/\ba = 1/.test(texto));
   assert.ok(texto.includes('b'));
+});
+
+test('por padrão NÃO remove item de desestruturação (um getter pode executar ao ler)', () => {
+  const src = 'export function k() { let n = 0; const { a, b } = { get a() { n++; return 1; }, b: 1 }; return [n, b]; }\n';
+  assert.equal(aplicar(src).texto, src);
+});
+
+test('NÃO remove objeto com método de chave computada impura', () => {
+  const src = 'export function m() { let n = 0; const unused = { [++n]() {} }; return n; }\n';
+  assert.equal(aplicar(src).texto, src);
+});
+
+test('NÃO remove +x/~x sobre objeto (coerção roda valueOf)', () => {
+  const src = 'export function o() { let n = 0; const value = { valueOf() { n++; return 1; } }; const unused = +value; return n; }\n';
+  assert.ok(aplicar(src).texto.includes('+value'));
+});
+
+test('REMOVE !x e -1 (sem código do usuário)', () => {
+  const { texto } = aplicar('export function q(v: unknown) { const a = !v; const b = -1; return 2; }\n');
+  assert.ok(!texto.includes('!v') && !texto.includes('-1'));
 });
