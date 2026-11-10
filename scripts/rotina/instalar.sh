@@ -7,7 +7,7 @@ REPO="$(git rev-parse --show-toplevel)"
 STORE="$HOME/.local/share/fast-gravacoes-rotina"
 UNITS="$HOME/.config/systemd/user"
 NODE="$(command -v node)"
-mkdir -p "$STORE/scripts" "$UNITS" "$HOME/relatorios/fast-gravacoes-v2"
+mkdir -p "$HOME/.cache" "$STORE/scripts" "$UNITS" "$HOME/relatorios/fast-gravacoes-v2"
 rm -rf "$STORE/scripts/autofix" "$STORE/scripts/audit"
 cp -r "$REPO/scripts/autofix" "$REPO/scripts/audit" "$STORE/scripts/"
 rm -f "$STORE/scripts/audit/baseline.json"   # a rotina compara com o dia anterior, não com este arquivo
@@ -18,7 +18,7 @@ cat > "$UNITS/fast-gravacoes-rotina.service" <<UNIT
 Description=Rotina diaria Fast_Gravacoes_V2 (audit + autofix, sem IA)
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flock -n /tmp/fast-gravacoes-rotina.lock $NODE $STORE/rotina.mjs
+ExecStart=/usr/bin/flock -n $HOME/.cache/fast-gravacoes-git.lock $NODE $STORE/rotina.mjs
 Nice=15
 IOSchedulingClass=idle
 TimeoutStartSec=40min

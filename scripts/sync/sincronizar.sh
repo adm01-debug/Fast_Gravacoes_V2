@@ -8,8 +8,8 @@
 #   3. para cada branch local cujo upstream tem O MESMO NOME no GitHub, deixa a branch IGUAL ao GitHub:
 #        - atrasada            -> avança (fast-forward)
 #        - adiantada/divergida -> SALVA o estado local em refs/backup/sync/<branch>/<data> e iguala ao GitHub
-#      Branch aberta no clone principal: só mexe nos arquivos se não houver alteração local (reset --hard
-#      numa árvore limpa = igual ao GitHub). Se houver alteração local, espera ficar limpa e avisa no log.
+#      Branch aberta no clone principal: só mexe nos arquivos se não houver alteração local (reset --keep
+#      numa árvore limpa = igual ao GitHub; conflito recusa a atualização). Se houver alteração local, espera ficar limpa e avisa no log.
 #
 # Por que o backup: "igual ao GitHub" descarta commits que só existem aqui. Eles ficam recuperáveis:
 #   git branch recuperada refs/backup/sync/<branch>/<data>      (backups com mais de 30 dias são apagados)
@@ -19,7 +19,7 @@
 # ou configuração de upstream errada: só avisa), fazer push.
 #
 # Log: ~/relatorios/fast-gravacoes-v2/sync.log   Repo: $FG_REPO (padrão ~/projetos/Fast_Gravacoes_V2)
-set -u
+set -euo pipefail
 REPO="${FG_REPO:-$HOME/projetos/Fast_Gravacoes_V2}"
 LOGDIR="$HOME/relatorios/fast-gravacoes-v2"
 LOG="$LOGDIR/sync.log"
@@ -32,7 +32,7 @@ export GIT_TERMINAL_PROMPT=0   # nunca pedir senha: sem credencial, falha e segu
 
 if ! ERR=$(timeout 180 git fetch origin --prune --prune-tags --tags --quiet 2>&1); then
   log "fetch falhou (rede/credencial?): $(echo "$ERR" | head -1 | cut -c1-160)"
-  exit 0
+  exit 1
 fi
 
 # branch principal do GitHub (main) existe localmente e acompanha origin/main
@@ -85,7 +85,7 @@ while IFS='|' read -r b up track; do
   fi
   if [ -n "$dir" ]; then
     if em_andamento "$dir"; then puladas+=("$b: merge/rebase em andamento"); continue; fi
-    if [ -n "$(git -C "$dir" status --porcelain --untracked-files=no)" ]; then
+    if [ -n "$(git -C "$dir" status --porcelain --untracked-files=all)" ]; then
       puladas+=("$b: alterações locais não commitadas (espera ficar limpa)"); continue
     fi
   fi
@@ -100,7 +100,7 @@ while IFS='|' read -r b up track; do
   fi
 
   if [ -n "$dir" ]; then
-    git -C "$dir" reset --hard --quiet "$up_sha" 2>/dev/null || { puladas+=("$b: reset recusado pelo git"); continue; }
+    git -C "$dir" reset --keep --quiet "$up_sha" 2>/dev/null || { puladas+=("$b: reset recusado pelo git"); continue; }
   else
     git update-ref -m "sync: igualar a $up" "refs/heads/$b" "$up_sha" "$local_sha" || { puladas+=("$b: update-ref recusado"); continue; }
   fi

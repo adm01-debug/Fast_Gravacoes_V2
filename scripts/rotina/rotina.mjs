@@ -10,7 +10,7 @@
  *
  * Saída: ~/relatorios/fast-gravacoes-v2/ULTIMO.md (+ uma pasta por dia, retém 30).
  */
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { homedir, loadavg } from 'node:os';
@@ -64,7 +64,11 @@ if (add.status !== 0) finalizar(`# Rotina ${HOJE}\n\nFALHOU ao criar worktree: $
 
 symlinkSync(join(REPO, 'node_modules'), join(WT, 'node_modules'));
 const lockHash = (d) => (existsSync(join(d, 'package-lock.json')) ? createHash('sha1').update(readFileSync(join(d, 'package-lock.json'))).digest('hex') : '');
-if (lockHash(REPO) !== lockHash(WT)) nota('AVISO: package-lock do origin/main difere do clone local; node_modules pode estar defasado (rode npm ci no clone).');
+if (lockHash(REPO) !== lockHash(WT) ||
+    !['typescript/bin/tsc', 'eslint/bin/eslint.js', 'vitest/vitest.mjs'].every((f) => existsSync(join(WT, 'node_modules', f)))) {
+  git('worktree', 'remove', '--force', WT);
+  finalizar(`# Rotina ${HOJE}\n\nFALHOU: dependências ausentes ou lockfile diferente da base; correção não executada.\n`, 1);
+}
 
 for (const d of ['autofix', 'audit']) cpSync(join(SCRIPTS, d), join(WT, 'scripts', d), { recursive: true });
 
@@ -81,20 +85,25 @@ if (existsSync(anterior)) {
 // ---------- 2. auditoria (só leitura) ----------
 const env = { ...process.env, ...(temBase ? { AUDIT_BASELINE: baseFile } : {}) };
 const au = run(NODE, ['scripts/audit/run.mjs'], { cwd: WT, env });
-const auditResumo = (au.stdout.match(/\[audit\] \d+ achados.*/) || ['(sem resumo)'])[0];
+let codigo = au.status === 0 ? 0 : 1;
+if (codigo) nota(`auditoria falhou (exit ${au.status ?? 'indisponível'})`);
+const auditResumo = ((au.stdout || '').match(/\[audit\] \d+ achados.*/) || ['(sem resumo)'])[0];
 let findings = [];
 try {
   const j = JSON.parse(readFileSync(join(WT, '.audit/findings.json'), 'utf8'));
+  if (!Array.isArray(j.findings)) throw new Error('findings inválido');
   findings = j.findings;
   mkdirSync(join(DIA, 'audit'), { recursive: true });
   for (const f of ['relatorio.md', 'fila-para-decisao.md', 'findings.json']) cpSync(join(WT, '.audit', f), join(DIA, 'audit', f));
   cpSync(join(WT, '.audit/findings.json'), anterior);
-} catch { nota('audit não gerou findings.json'); }
+} catch { codigo = 1; nota('audit não gerou findings.json válido'); }
 
 // ---------- 3. correção automática (só se não houver branch automática pendente) ----------
 const pendentes = git('branch', '--list', 'autofix/auto-*', '--no-merged', 'origin/main').stdout.split('\n').map((s) => s.replace(/^[*+\s]+/, '')).filter(Boolean);
 let autofixResumo;
-if (pendentes.length) {
+if (codigo) {
+  autofixResumo = 'NÃO executado: auditoria falhou; corrija a ferramenta antes de aplicar alterações.';
+} else if (pendentes.length) {
   autofixResumo = `NÃO aplicado: já existe branch automática sem merge (${pendentes.join(', ')}). Revise/mescle ou apague para a rotina voltar a corrigir.`;
 } else {
   const fx = run(NODE, ['scripts/autofix/run.mjs', '--apply', '--commit', '--tests', '--only=unused'], {
@@ -110,8 +119,12 @@ if (pendentes.length) {
     autofixResumo = branch
       ? `**${r.arquivosMantidos ?? 0} arquivo(s) corrigidos** na branch local \`${branch}\` (${(r.arquivosRevertidos || []).length} revertidos pelo gate). Testes: ${rel.testes?.resumo ?? 'não medidos'}. Fila manual: ${r.manual?.length ?? 0}.`
       : `Nada a corrigir automaticamente. Fila manual: ${r.manual?.length ?? 0}.`;
-    if (fx.status === 1) autofixResumo += ' ⚠ gate/testes acusaram falha — branch pode ter sido descartada.';
+    if (fx.status !== 0 || rel.ok !== true) {
+      codigo = 1;
+      autofixResumo = `FALHOU: ${rel.erro || 'gate/testes recusaram a correção'}; nenhuma correção aceita.`;
+    }
   } else {
+    codigo = 1;
     autofixResumo = `FALHOU/abortou (exit ${fx.status}): ${(fx.stderr || fx.stdout).split('\n').filter(Boolean).slice(-3).join(' | ').slice(0, 300)}`;
   }
 }
@@ -132,4 +145,4 @@ const md = [
   ...(out.length ? ['', '## Avisos', ...out.map((o) => `- ${o}`)] : []), '',
   'Para revisar e aceitar uma branch automática: `git -C ~/projetos/Fast_Gravacoes_V2 diff origin/main...autofix/auto-AAAA-MM-DD` e abrir PR. Nada é enviado ao GitHub sozinho.', '',
 ].join('\n');
-finalizar(md, 0);
+finalizar(md, codigo);

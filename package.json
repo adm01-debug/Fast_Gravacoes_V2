@@ -36,7 +36,11 @@
     "graph:diff": "node scripts/graphify.mjs diff",
     "graph:benchmark": "node scripts/graphify.mjs benchmark",
     "graph:test": "node scripts/graphify.mjs test",
-    "ci": "npm run quality:any && npm run build && npm run test:e2e"
+    "ci": "npm run quality:any && npm run build && npm run test:e2e",
+    "autofix": "node scripts/autofix/run.mjs",
+    "autofix:apply": "node scripts/autofix/run.mjs --apply",
+    "autofix:test": "node --test scripts/autofix.test.mjs",
+    "audit": "node scripts/audit/run.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
