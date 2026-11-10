@@ -9,6 +9,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   renameSync,
   rmSync,
   statSync,
@@ -16,7 +17,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   appendExclude,
@@ -470,6 +471,49 @@ test('ponte compartilhada usa raiz e staging da worktree que disparou o hook', (
   assert.equal(text(join(f.root, 'src/source.txt')), 'base\n');
   assert.ok(existsSync(join(worktree, '.tools/graph-state/dirty.json')));
   assert.equal(f.git('show', 'HEAD:src/source.txt'), 'base');
+});
+
+test('ponte compartilhada sobrevive à remoção da worktree e permite desinstalar do main', (t) => {
+  const f = fixture(t);
+  f.install();
+  const worktree = mkdtempSync(join(tmpdir(), 'repo-automation-linked-'));
+  t.after(() => {
+    if (existsSync(join(worktree, '.git'))) {
+      f.run('git', ['-C', f.root, 'worktree', 'remove', '--force', worktree]);
+      rmSync(worktree, { recursive: true, force: true });
+    }
+  });
+  f.run('git', ['-C', f.root, 'worktree', 'add', '--detach', worktree, 'HEAD']);
+  writeFileSync(join(worktree, 'src/source.txt'), 'via worktree\n');
+  f.run('git', ['-C', worktree, 'add', 'src/source.txt']);
+  // Hook instalado no main dispara dentro da worktree e grava na raiz dela.
+  const commit = f.run('git', ['-C', worktree, 'commit', '-m', 'worktree commit']);
+  assert.equal(commit.status, 0, commit.stderr);
+  assert.ok(existsSync(join(worktree, '.tools/graph-state/dirty.json')));
+  // Estado e ponte vivem no diretório Git comum (do main), fora da worktree.
+  const common = realpathSync(
+    join(f.root, f.git('rev-parse', '--git-common-dir'))
+  );
+  const base = join(resolve(common, '..'), '.tools/repo-automation');
+  assert.ok(existsSync(join(base, 'state.json')), 'estado fora da worktree');
+  assert.ok(existsSync(join(base, 'hooks/pre-commit')), 'hooks fora da worktree');
+  // Remover a worktree e desinstalar via main continua funcionando porque o
+  // estado foi lido do diretório Git comum, não da worktree removida.
+  const remove = f.run('git', ['-C', f.root, 'worktree', 'remove', worktree]);
+  assert.equal(remove.status, 0, remove.stderr);
+  rmSync(worktree, { recursive: true, force: true });
+  assert.equal(
+    f.cli('doctor').status,
+    0,
+    'doctor do main após remoção da worktree'
+  );
+  assert.equal(
+    f.cli('uninstall-hooks').status,
+    0,
+    'desinstalação via main após remoção da worktree'
+  );
+  assert.equal(f.git('config', 'core.hooksPath'), '.original-hooks');
+  assert.equal(f.cli('uninstall-hooks').status, 0);
 });
 
 test('snapshot aprovado atende pré-merge sem afirmar source/CI integrados', (t) => {
