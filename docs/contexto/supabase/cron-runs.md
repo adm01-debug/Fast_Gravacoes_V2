@@ -7,27 +7,27 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-10 06:45:00 | succeeded | 1.99 | 1 row |
-| 2026-11-10 06:30:00 | succeeded | 2.19 | 1 row |
-| 2026-11-10 06:15:00 | succeeded | 2.13 | 1 row |
+| 2026-11-10 08:15:00 | succeeded | 2.74 | 1 row |
+| 2026-11-10 08:00:00 | succeeded | 0.64 | 1 row |
+| 2026-11-10 07:45:00 | succeeded | 0.29 | 1 row |
 
 
 ## 5 · cron-alert-email-every-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-10 06:30:00 | succeeded | 0.03 | 1 row |
-| 2026-11-10 06:00:00 | succeeded | 0.04 | 1 row |
-| 2026-11-10 05:30:00 | succeeded | 0.01 | 1 row |
+| 2026-11-10 08:00:00 | succeeded | 0.03 | 1 row |
+| 2026-11-10 07:30:00 | succeeded | 0.03 | 1 row |
+| 2026-11-10 07:00:00 | succeeded | 0.04 | 1 row |
 
 
 ## 6 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-10 06:50:00 | succeeded | 0.02 | 1 row |
-| 2026-11-10 06:45:00 | succeeded | 0.06 | 1 row |
-| 2026-11-10 06:40:00 | succeeded | 0.03 | 1 row |
+| 2026-11-10 08:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-10 08:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-10 08:05:00 | succeeded | 0.04 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -52,15 +52,15 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-10 06:50:00 | succeeded | 0.03 | 1 row |
-| 2026-11-10 06:45:00 | succeeded | 0.05 | 1 row |
-| 2026-11-10 06:40:00 | succeeded | 0.03 | 1 row |
+| 2026-11-10 08:15:00 | succeeded | 0.06 | 1 row |
+| 2026-11-10 08:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-10 08:05:00 | succeeded | 0.03 | 1 row |
 
 
 ## 12 · auto-reassign-packaging-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-10 06:50:00 | succeeded | 0.01 | 1 row |
-| 2026-11-10 06:45:00 | succeeded | 0.04 | 1 row |
-| 2026-11-10 06:40:00 | succeeded | 0.01 | 1 row |
+| 2026-11-10 08:15:00 | succeeded | 0.07 | 1 row |
+| 2026-11-10 08:10:00 | succeeded | 0.01 | 1 row |
+| 2026-11-10 08:05:00 | succeeded | 0.05 | 1 row |
