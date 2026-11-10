@@ -550,9 +550,9 @@
         "name": "new-device-alert",
         "slug": "new-device-alert",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794339430683,
         "verify_jwt": true,
-        "version": 29
+        "version": 30
       },
       {
         "created_at": 1791379393997,

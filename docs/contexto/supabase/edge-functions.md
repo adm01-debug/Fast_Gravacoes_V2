@@ -25,7 +25,7 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | image-optimizer | image-optimizer | ACTIVE | 21 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts |
 | metrics-collector | metrics-collector | ACTIVE | 23 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts |
 | ml-predictions | ml-predictions | ACTIVE | 24 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/ml-predictions/index.ts |
-| new-device-alert | new-device-alert | ACTIVE | 29 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/new-device-alert/index.ts |
+| new-device-alert | new-device-alert | ACTIVE | 30 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/new-device-alert/index.ts |
 | pdf-generator | pdf-generator | ACTIVE | 22 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/pdf-generator/index.ts |
 | rate-limit-check | rate-limit-check | ACTIVE | 23 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/rate-limit-check/index.ts |
 | security-alert | security-alert | ACTIVE | 23 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/security-alert/index.ts |
