@@ -358,3 +358,381 @@ supabase.rpc('dashboard_rpc'); supabase.functions.invoke('dashboard-edge');`);
   assert.deepEqual(orphan.chamada_pelo_front, []);
   assert.deepEqual(orphan.chamada_por_edges, []);
 });
+
+// ---------------------------------------------------------------------------------------------
+// Regressões da auditoria: cada teste abaixo trava um valor que já saiu errado no contexto publicado
+// ou um mutante que sobrevivia às duas suítes. Asserts de VALOR — "não quebrou" não basta.
+// ---------------------------------------------------------------------------------------------
+import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+const sha16 = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
+const cli = (args, opts = {}) => spawnSync(process.execPath, [GERADOR, ...args], { encoding: 'utf8', ...opts });
+
+test('fixture base: contagens, rotas públicas, lista do INDEX, hashes do manifest, sem_teste, telas do módulo, nao_usada', () => {
+  const r = J('rotas.json'); const b = J('baseline.json'); const m = J('manifest.json'); const f = J('ferramentas.json');
+  const idx = fs.readFileSync(path.join(out, 'INDEX.md'), 'utf8');
+  assert.equal(r.urls.length, 7);
+  assert.equal(b.contagens.rotas, 7); assert.equal(m.contagens.rotas, 7); assert.match(idx, /\| rotas \| 7 \|/);
+  assert.equal(r.resumo.urls, 7);
+  const prot = Object.fromEntries(r.urls.map((u) => [u.caminho + (u.indice ? '#index' : ''), u.protegida]));
+  assert.deepEqual(prot, { '/access-denied': false, '/admin': false, '/app': true, '/app#index': true, '/app/contacts/:id': true, '/login': false, '/old': false });
+  assert.deepEqual(f.permissoes.rotas_publicas, ['/access-denied', '/admin', '/login']);
+  assert.equal(f.permissoes.rotas_protegidas, 3);
+  assert.ok(idx.includes('- `/login` [tela] → src/pages/Login.tsx\n'), 'INDEX lista a rota pública sem "(protegida)"');
+  assert.ok(idx.includes('- `/app/contacts/:id` [tela] → src/components/contacts/ContactPage.tsx (protegida)\n'), 'INDEX lista a rota protegida');
+  assert.match(idx, /públicas: \/access-denied, \/admin, \/login/);
+  assert.deepEqual(Object.keys(m.arquivos).sort(), fs.readdirSync(out).filter((x) => x !== 'manifest.json').sort());
+  for (const [nome, hash] of Object.entries(m.arquivos)) assert.equal(hash, sha16(fs.readFileSync(path.join(out, nome), 'utf8')), `hash de ${nome}`);
+  const e = Object.fromEntries(J('edge-functions.json').edges.map((x) => [x.nome, x]));
+  assert.deepEqual(e['send-email'].tabelas, ['emails']); assert.deepEqual(e['stripe-webhook'].tabelas, ['payments']);
+  const t = J('testes.json');
+  assert.deepEqual(t.sem_teste.edges, ['orphan-fn', 'send-email', 'stripe-webhook']);
+  assert.deepEqual(t.sem_teste.hooks, []);
+  assert.ok(t.sem_teste.telas.includes('src/pages/Login.tsx') && t.sem_teste.telas.includes('src/components/contacts/ContactPage.tsx'));
+  assert.deepEqual(t.cobertura_por_arquivo, { 'src/hooks/useContacts.ts': 1 });
+  assert.equal(t.total, 1); assert.equal(t.suporte_total, 0);
+  const mod = Object.fromEntries(J('modulos.json').modulos.map((x) => [x.modulo, x]));
+  assert.deepEqual(mod['components/contacts'].telas, ['/app/contacts/:id']);
+  assert.deepEqual(mod['components/layout'].telas, ['/app']);
+  const tb = J('banco.json').tabelas;
+  assert.equal(tb.contacts.nao_usada, false, 'usada no front'); assert.equal(tb.contacts.usada_no_front, 1);
+  assert.equal(tb.payments.nao_usada, false, 'usada só em edge'); assert.deepEqual(tb.payments.usada_em_edges, ['stripe-webhook']);
+  assert.deepEqual(m.avisos, []); assert.deepEqual(b.avisos_do_gerador, []);
+  assert.deepEqual(b.alertas.rotas_nao_interpretadas, []); assert.deepEqual(b.alertas.tabelas_so_no_types, []);
+});
+
+test('determinismo: todos os arquivos idênticos entre duas execuções (só manifest.gerado_em muda)', () => {
+  const ler = () => Object.fromEntries(fs.readdirSync(out).sort().map((n) => [n, fs.readFileSync(path.join(out, n), 'utf8')]));
+  execFileSync(process.execPath, [GERADOR, '--quiet'], { cwd: root }); const a = ler();
+  execFileSync(process.execPath, [GERADOR, '--quiet'], { cwd: root }); const b = ler();
+  assert.deepEqual(Object.keys(a), Object.keys(b)); assert.equal(Object.keys(a).length, 17);
+  for (const n of Object.keys(a)) {
+    if (n !== 'manifest.json') { assert.equal(b[n], a[n], `${n} mudou entre execuções`); continue; }
+    const ma = JSON.parse(a[n]), mb = JSON.parse(b[n]); delete ma.gerado_em; delete mb.gerado_em; assert.deepEqual(mb, ma);
+  }
+});
+
+test('determinismo: janelas de git contam a partir do commit HEAD, não do relógio', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    const env = { ...process.env, GIT_COMMITTER_DATE: '2020-01-01T12:00:00Z', GIT_AUTHOR_DATE: '2020-01-01T12:00:00Z' };
+    execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '--amend', '--no-edit', '--date=2020-01-01T12:00:00Z'], { cwd: dir, env });
+  });
+  const g = read('baseline.json').git;
+  assert.match(g.data_commit, /^2020-01-01/);
+  assert.ok(g.arquivos_mudados_7d >= 30, `commit de 2020 continua dentro da janela de 7 dias do próprio HEAD (obtido ${g.arquivos_mudados_7d})`);
+  assert.ok(g.arquivos_mais_mudados_90d.some((x) => x.arquivo === 'src/main.tsx'));
+  assert.deepEqual(g.autores_30d, [{ autor: 't', commits: 1 }]);
+});
+
+test('erro de seção é registrado no manifest, no baseline e avisado no INDEX', (t) => {
+  let dirFx;
+  const read = isolatedFixture(t, (dir) => { dirFx = dir; w(dir, 'graphify-out/graph.json', '{ nope'); });
+  assert.deepEqual(read('manifest.json').erros.map((e) => e.secao), ['graphify']);
+  assert.deepEqual(read('baseline.json').erros_do_gerador.map((e) => e.secao), ['graphify']);
+  assert.match(read('manifest.json').erros[0].erro, /SyntaxError|JSON/);
+  assert.match(fs.readFileSync(path.join(dirFx, 'inventario/ia/INDEX.md'), 'utf8'), /⚠️ 1 seção\(ões\) falharam/);
+  assert.equal(read('rotas.json').urls.length, 7, 'as outras seções continuam saindo');
+});
+
+test('A1 rotas: proteção vem dos wrappers e do layout pai, não do nome da página nem de props; M1 rotas não somem', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/routes/paths.ts', `export const PATHS = { dinamica: '/dinamica' };`);
+    w(dir, 'src/routes/Publicas.tsx', `import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy } from 'react';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { AuthPageSkeleton } from '@/components/loading';
+import { PATHS } from './paths';
+const AuthPage = lazy(() => import('@/pages/AuthPage'));
+const AdminDocs = lazy(() => import('@/pages/AdminDocs'));
+const Painel = lazy(() => import('@/pages/Painel'));
+const Docs = lazy(() => import('@/pages/Docs'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+export const Publicas = () => (<Routes>
+  <Route path="/auth" element={<PublicPage fallback={<AuthPageSkeleton />}><AuthPage /></PublicPage>} />
+  <Route path="/admin-docs" element={<AdminDocs />} />
+  <Route path="*" element={<PublicPage fallback={<AuthPageSkeleton />}><NotFound /></PublicPage>} />
+  <Route element={<ProtectedRoute />}>
+    <Route path="/painel" element={<Painel />} />
+    <Route path="/painel/config" element={<Painel aba="config" />} />
+  </Route>
+  <Route path="/docs/*" element={<Docs accept="image/*" />} />
+  {/* comentário logo depois do splat */}
+  <Route path="/com-state" element={<Navigate to="/auth" state={{ de: { origem: 'x' } }} replace />} />
+  <Route path="/depois" element={<Docs estilo={{ a: { b: 1 } }} render={() => <b>x</b>} />} />
+  <Route path={PATHS.dinamica} element={<Docs />} />
+  <Route path={\`/u/\${id}\`} element={<Docs />} />
+  <Route path="/guard" element={<ProtectedPage fallback={<AuthPageSkeleton />} allowedRoles={['manager']}><Docs /></ProtectedPage>} />
+  <Route path="/erro" element={<Docs />} errorElement={<AuthPageSkeleton />} />
+</Routes>);`);
+    for (const p of ['AuthPage', 'AdminDocs', 'Painel', 'Docs', 'NotFound']) w(dir, `src/pages/${p}.tsx`, `export default function ${p}() { return <div/>; }`);
+    w(dir, 'src/components/loading/index.tsx', `export const AuthPageSkeleton = () => <i/>;`);
+    w(dir, 'src/router.tsx', `import { createBrowserRouter } from 'react-router-dom';
+import { Shell } from '@/components/layout/Shell';
+import { Home } from '@/components/home/Home';
+import Login from '@/pages/Login';
+export const router = createBrowserRouter([
+  { path: '/o', element: <Shell/>, children: [
+    { index: true, element: <Home/> },
+    { path: 'u', element: <Login/>, children: [ { path: ':id', element: <Login/> } ] },
+    { path: ROTA_VAR, element: <Login/> },
+  ] },
+]);`);
+  });
+  const urls = read('rotas.json').urls; const by = Object.fromEntries(urls.filter((u) => !u.indice && u.definida_em !== 'src/router.tsx').map((u) => [u.caminho, u]));
+  assert.equal(by['/auth'].protegida, false, 'AuthPage + fallback AuthPageSkeleton não protegem');
+  assert.equal(by['/auth'].arquivo, 'src/pages/AuthPage.tsx'); assert.deepEqual(by['/auth'].wrappers, ['PublicPage']);
+  assert.equal(by['/admin-docs'].protegida, false, 'nome da página com Admin não protege');
+  assert.equal(by['/*'].protegida, false); assert.equal(by['/*'].arquivo, 'src/pages/NotFound.tsx');
+  assert.equal(by['/painel'].protegida, true, 'filha de rota-layout sem path com guard');
+  assert.equal(by['/painel/config'].protegida, true);
+  assert.equal(by['/guard'].protegida, true); assert.deepEqual(by['/guard'].wrappers, ['ProtectedPage']);
+  assert.equal(by['/docs/*'].arquivo, 'src/pages/Docs.tsx', 'splat seguido de comentário JSX');
+  assert.equal(by['/com-state'].tipo, 'redirect'); assert.equal(by['/com-state'].redireciona, '/auth');
+  assert.equal(by['/depois'].arquivo, 'src/pages/Docs.tsx', 'três níveis de chaves e arrow function no element');
+  assert.equal(by['/erro'].arquivo, 'src/pages/Docs.tsx', 'errorElement não vira o componente da rota');
+  assert.equal(by['/erro'].protegida, false);
+  const obj = urls.filter((u) => u.definida_em === 'src/router.tsx').map((u) => `${u.caminho}${u.indice ? '#index' : ''}→${u.arquivo}`);
+  assert.deepEqual(obj, ['/o→src/components/layout/Shell.tsx', '/o#index→src/components/home/Home.tsx', '/o/u→src/pages/Login.tsx', '/o/u/:id→src/pages/Login.tsx']);
+  const pub = read('ferramentas.json').permissoes.rotas_publicas;
+  for (const c of ['/auth', '/admin-docs', '/*', '/docs/*', '/depois', '/erro']) assert.ok(pub.includes(c), `${c} é pública`);
+  for (const c of ['/painel', '/painel/config', '/guard', '/app']) assert.ok(!pub.includes(c), `${c} é protegida`);
+  const al = read('baseline.json').alertas.rotas_nao_interpretadas;
+  assert.equal(al.length, 2);
+  assert.match(al.find((x) => x.startsWith('src/routes/Publicas.tsx')), /^src\/routes\/Publicas\.tsx: 2 de 13 rota\(s\) não interpretada\(s\) — ex\.: .*path=\{PATHS\.dinamica\}/);
+  assert.match(al.find((x) => x.startsWith('src/router.tsx')), /^src\/router\.tsx: 1 de 5 rota\(s\) não interpretada\(s\) — ex\.: path: ROTA_VAR/);
+  assert.deepEqual(read('manifest.json').erros, []);
+});
+
+test('A2: fixtures em scripts/ (tooling) não viram rota HTTP, hook, tabela, flag, papel, host, bucket, canal nem segredo', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'scripts/cenarios-falsos.mjs', `const fx = "app.get('/falsa', h); export function useFalso() {} isFeatureEnabled('flag-falsa'); if (role === 'papel_falso') {}";
+export function useDeFerramenta() {}
+const d = "pgTable('tabela_falsa', { id: int('id') })"; const e = "@Entity('entidade_falsa')\\nexport class X {}";
+fetch('https://evil-host.io/x'); supabase.storage.from('bucket-falso'); supabase.channel('canal-falso');
+const k = 'sk_live_abcdefghijklmnopqrstuv';
+const L = lazy(() => import('../src/pages/Login'));`);
+    w(dir, 'scripts/ferramenta.unit.mjs', `import './cenarios-falsos.mjs';\nconst fx = "import Login from '@/pages/Login'; import { supabase } from '@/lib/supabase';";\ntest('x', () => {});`);
+    w(dir, 'scripts/modelo.py', `from sqlalchemy.orm import DeclarativeBase\nclass Base(DeclarativeBase):\n    pass\nclass Falsa(Base):\n    pass\n@app.get('/py-falsa')\ndef f():\n    pass\n`);
+  });
+  assert.deepEqual(read('rotas.json').rotas_http_backend.map((x) => `${x.metodo} ${x.caminho} ${x.arquivo}`), ['GET /health server/api.ts', 'GET /items backend/app.py', 'POST /webhook/stripe server/api.ts']);
+  assert.equal(read('baseline.json').contagens.rotas_http_backend, 3);
+  assert.deepEqual(read('hooks.json').hooks.map((h) => h.arquivo), ['src/hooks/useContacts.ts']);
+  const b = read('banco.json');
+  assert.deepEqual(b.fonte, ['python-models', 'src/integrations/supabase/types.ts', 'supabase/migrations']);
+  for (const tb of ['tabela_falsa', 'entidade_falsa', 'Falsa']) assert.equal(b.tabelas[tb], undefined, tb);
+  assert.ok(b.tabelas.Item, 'modelo Python da aplicação continua');
+  assert.deepEqual(b.buckets.map((x) => x.nome), ['avatars']);
+  const f = read('ferramentas.json');
+  assert.deepEqual(f.feature_flags.flags, [{ flag: 'novo-inbox', arquivos: 1 }]);
+  assert.deepEqual(f.permissoes.papeis_no_codigo, [{ papel: 'admin', ocorrencias: 2 }]);
+  assert.deepEqual(f.integracoes.hosts_externos, [{ host: 'api.resend.com', arquivos: 1 }]);
+  assert.deepEqual(f.integracoes.realtime, []);
+  assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, []);
+  assert.deepEqual(Object.keys(read('rotas.json').lazy), ['AchievementsLazy', 'Admin', 'HomeLazy'], 'lazy de tooling não entra no mapa');
+  assert.ok(read('scripts.json').scripts.some((s) => s.arquivo === 'scripts/cenarios-falsos.mjs'), 'o script continua no inventário de scripts');
+  const tst = read('testes.json');
+  assert.deepEqual(tst.cobertura_por_arquivo, { 'scripts/cenarios-falsos.mjs': 1, 'src/hooks/useContacts.ts': 1 }, 'teste de ferramenta não "cobre" src/ por fixture em string');
+  assert.deepEqual(tst.arquivos.find((a) => a.arquivo === 'scripts/ferramenta.unit.mjs').testa, ['scripts/cenarios-falsos.mjs']);
+  assert.ok(tst.sem_teste.telas.includes('src/pages/Login.tsx'));
+});
+
+test('A3 edges: wrapper, constante, quebra de linha e generic contam como chamada; literal solto não', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/lib/edgeFetch.ts', 'export const edgeFetch = (p: string, init?: RequestInit) => fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${p}`, init);');
+    w(dir, 'src/uso.ts', `import { edgeFetch } from '@/lib/edgeFetch';
+export const a = () => edgeFetch("orphan-fn?acao=x", { method: 'POST' });
+const FN = 'fn-const';
+export const b = () => supabase.functions.invoke(FN, { body: {} });
+export const c = () => supabase.functions
+  .invoke('fn-multi');
+export const d = () => supabase.functions.invoke<Resposta>('fn-generic');
+export const rotulos = { 'fn-literal': 'só um rótulo', tag: 'fn-literal' };`);
+    w(dir, 'src/semImport.ts', `export const z = () => edgeFetch('fn-literal');`);
+    for (const n of ['fn-const', 'fn-multi', 'fn-generic', 'fn-literal']) w(dir, `supabase/functions/${n}/index.ts`, `Deno.serve(() => new Response('x'));`);
+  });
+  const e = Object.fromEntries(read('edge-functions.json').edges.map((x) => [x.nome, x]));
+  for (const n of ['orphan-fn', 'fn-const', 'fn-multi', 'fn-generic']) { assert.deepEqual(e[n].chamada_pelo_front, ['src/uso.ts'], n); assert.equal(e[n].orfa, false, n); }
+  assert.deepEqual(e['fn-literal'].chamada_pelo_front, [], 'chave/valor de objeto e chamada sem importar o wrapper não contam');
+  assert.equal(e['fn-literal'].orfa, true);
+  assert.deepEqual(read('baseline.json').alertas.edges_orfas, ['fn-literal']);
+  assert.deepEqual(read('baseline.json').alertas.edges_chamadas_sem_pasta, []);
+  assert.doesNotMatch(fs.readFileSync(GERADOR, 'utf8'), /technical-assistant/, 'nenhum nome de função deste repo fixo no gerador');
+});
+
+test('A4 rotas: fecho só por import estático e campo `diretos` (tela + imports de 1º nível, barrel resolvido)', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/routes/Leve.tsx', `import { Routes, Route } from 'react-router-dom';\nimport { lazy } from 'react';\nconst Leve = lazy(() => import('@/pages/Leve'));\nexport const R = () => <Routes><Route path="/leve" element={<Leve />} /></Routes>;`);
+    w(dir, 'src/pages/Leve.tsx', `import { prefetch } from '@/lib/prefetch';\nimport { useLeve } from '@/hooks2';\nexport default function Leve() { prefetch(); useLeve(); supabase.functions.invoke('send-email'); return <p/>; }`);
+    w(dir, 'src/lib/prefetch.ts', `export const prefetch = () => import('@/pages/Pesada');`);
+    w(dir, 'src/pages/Pesada.tsx', `export default function Pesada() { supabase.from('payments'); supabase.rpc('is_admin'); return <p/>; }`);
+    w(dir, 'src/hooks2/index.ts', `export * from './useLeve';\nexport * from './useOutro';`);
+    w(dir, 'src/hooks2/useLeve.ts', `import { fundo } from '@/lib/fundo';\nexport const useLeve = () => { fundo(); return supabase.from('emails'); };`);
+    w(dir, 'src/hooks2/useOutro.ts', `export const useOutro = () => supabase.from('contacts');`);
+    w(dir, 'src/lib/fundo.ts', `export const fundo = () => supabase.from('tabela_do_fundo');`);
+  });
+  const u = read('rotas.json').urls.find((x) => x.caminho === '/leve');
+  assert.equal(u.arquivo, 'src/pages/Leve.tsx');
+  assert.deepEqual(u.tabelas, ['contacts', 'emails', 'tabela_do_fundo'], 'payments só é alcançada por import() e não entra');
+  assert.deepEqual(u.rpcs, []);
+  assert.deepEqual(u.diretos, { tabelas: ['emails'], rpcs: [], edges: ['send-email'] }, 'barrel conta só pelo hook importado');
+  assert.equal(u.arquivos_puxados, 5);
+  assert.deepEqual(read('grafo-arestas.json').arestas['src/lib/prefetch.ts'], ['src/pages/Pesada.tsx'], 'import() continua no grafo (não vira órfão)');
+  assert.equal(read('componentes.json').componentes.find((x) => x.arquivo === 'src/pages/Pesada.tsx').orfao, false);
+  assert.match(read('rotas.json').descricao, /diretos/);
+});
+
+test('M2 Python: import de módulo irmão/ancestral, importlib por caminho e def test_ dentro de classe', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'scripts/gx/run.py', 'from corpus import x\nimport pipeline, json\n');
+    w(dir, 'scripts/gx/corpus.py', 'x = 1\n'); w(dir, 'scripts/gx/pipeline.py', 'y = 1\n'); w(dir, 'scripts/gx/solto.py', 'z = 1\n');
+    w(dir, 'scripts/gx/tests/test_corpus.py', 'import unittest\nfrom corpus import x\nclass T(unittest.TestCase):\n    def test_a(self):\n        pass\n    async def test_b(self):\n        pass\ndef test_topo():\n    pass\ndef helper():\n    pass\n');
+    w(dir, 'scripts/rn/gerar.py', 'def main():\n    pass\n');
+    w(dir, 'scripts/rn/test_gerar.py', 'import importlib.util\nfrom pathlib import Path\nSCRIPT = Path(__file__).with_name("gerar.py")\nclass T:\n    def test_x(self):\n        pass\n');
+    w(dir, '.github/workflows/py.yml', 'name: PY\non: [push]\njobs:\n  j:\n    runs-on: x\n    steps:\n      - run: python3 scripts/gx/run.py\n');
+  });
+  const l = Object.fromEntries(read('logica.json').arquivos.map((a) => [a.arquivo, a]));
+  assert.equal(l['scripts/gx/corpus.py'].usado_por, 1); assert.equal(l['scripts/gx/corpus.py'].orfao, false); assert.equal(l['scripts/gx/corpus.py'].coberto_por_testes, 1);
+  assert.equal(l['scripts/gx/pipeline.py'].orfao, false);
+  assert.equal(l['scripts/gx/run.py'].orfao, false, 'ponto de entrada chamado por workflow');
+  assert.equal(l['scripts/gx/solto.py'].orfao, true, 'quem ninguém importa nem chama continua órfão');
+  assert.deepEqual(l['scripts/gx/run.py'].externos, ['json']);
+  assert.equal(l['scripts/rn/gerar.py'].coberto_por_testes, 1, 'teste carrega o script por caminho');
+  assert.equal(l['backend/models.py'].usado_por, 1, 'from . import models');
+  assert.deepEqual(read('grafo-arestas.json').arestas['scripts/gx/run.py'], ['scripts/gx/corpus.py', 'scripts/gx/pipeline.py']);
+  const tst = Object.fromEntries(read('testes.json').arquivos.map((a) => [a.arquivo, a]));
+  assert.equal(tst['scripts/gx/tests/test_corpus.py'].casos, 3); assert.deepEqual(tst['scripts/gx/tests/test_corpus.py'].testa, ['scripts/gx/corpus.py']);
+  assert.equal(tst['scripts/rn/test_gerar.py'].casos, 1);
+  assert.deepEqual(read('scripts.json').scripts.filter((s) => s.orfao).map((s) => s.arquivo), ['scripts/gx/solto.py', 'scripts/orphan.sh']);
+});
+
+test('M3 banco: drop de lista, drop policy/alter não ressuscitam, types.ts antigo vira alerta, nomes de protótipo não derrubam a seção', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_cria.sql', `create table public.morta (id int);\ncreate table public.a1 (id int);\ncreate table "public"."b1" (id int);\ncreate table public.volta (id int);\ncreate table public.sozinha (id int);`);
+    w(dir, 'supabase/migrations/004_drop.sql', `DROP TABLE IF EXISTS public.morta;\ndrop policy if exists "p" on public.morta;\nalter table if exists public.morta enable row level security;\ncreate index morta_idx on public.morta (id);\ndrop table if exists public.a1, "public"."b1" cascade;\ndrop policy if exists "x" on public.nunca_existiu;\ndrop table public.volta;\ncreate table public.volta (id int, novo text);\ncreate table public.constructor (id int);\ncreate table public.__proto__ (id int);\ncreate type public.constructor as enum ('x');\nalter type public.tostring add value 'y';`);
+    w(dir, 'src/integrations/supabase/types.ts', `export type Database = {\n  public: {\n    Tables: {\n      contacts: {\n        Row: {\n          id: string\n        }\n      }\n      morta: {\n        Row: {\n          id: number\n        }\n      }\n      so_types: {\n        Row: {\n          id: number\n        }\n      }\n    }\n  }\n}`);
+    w(dir, 'src/protos.ts', `supabase.from('constructor'); isFeatureEnabled('toString'); isFeatureEnabled('toString'); if (role === 'valueOf') {}`);
+  });
+  const b = read('banco.json'); const nomes = Object.keys(b.tabelas);
+  assert.deepEqual(read('manifest.json').erros, []);
+  for (const tb of ['morta', 'a1', 'b1', 'legacy', 'nunca_existiu']) assert.ok(!nomes.includes(tb), `${tb} não existe mais`);
+  assert.deepEqual(Object.keys(b.tabelas.volta.colunas), ['id', 'novo'], 'recriada depois do drop');
+  assert.deepEqual(nomes, ['Base', 'Item', '__proto__', 'constructor', 'contacts', 'emails', 'payments', 'so_types', 'sozinha', 'volta']);
+  assert.equal(read('baseline.json').contagens.tabelas, 10);
+  assert.equal(b.tabelas.constructor.criada_em, '004_drop.sql'); assert.equal(b.tabelas.constructor.nao_usada, false);
+  assert.equal(b.tabelas.sozinha.nao_usada, true); assert.equal(b.tabelas.sozinha.sem_rls, true);
+  assert.deepEqual(b.enums.constructor, ['x']); assert.deepEqual(b.enums.tostring, ['y']);
+  assert.deepEqual(b.tabelas_so_no_types, [{ tabela: 'morta', motivo: 'dropada em 004_drop.sql' }, { tabela: 'so_types', motivo: 'sem create table nas migrations' }]);
+  assert.deepEqual(read('baseline.json').alertas.tabelas_so_no_types, ['morta', 'so_types']);
+  assert.equal(b.tabelas.so_types.criada_em, null); assert.deepEqual(b.tabelas.so_types.colunas_types, { id: 'number' });
+  const f = read('ferramentas.json');
+  assert.deepEqual(f.feature_flags.flags, [{ flag: 'toString', arquivos: 1 }, { flag: 'novo-inbox', arquivos: 1 }].sort((x, y) => y.arquivos - x.arquivos || (x.flag < y.flag ? -1 : 1)));
+  assert.ok(f.permissoes.papeis_no_codigo.some((p) => p.papel === 'valueOf' && p.ocorrencias === 1));
+});
+
+test('M4 testes: helpers são suporte (fora do total), src/features/qa|spec é aplicação, *_test.ts (Deno) é teste', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/test/setup.ts', `import '@testing-library/jest-dom';`);
+    w(dir, 'src/test/realtimeMock.ts', `import { supabase } from '@/lib/supabase';\nexport const mock = () => supabase;`);
+    w(dir, 'tests/e2e/helpers/login.ts', `export const login = async () => {};`);
+    w(dir, 'tests/e2e/fluxo.spec.ts', `import { login } from './helpers/login';\ntest('fluxo', async () => { await login(); });`);
+    w(dir, 'src/features/qa/PainelQa.tsx', `export const PainelQa = () => <div/>;`);
+    w(dir, 'src/features/spec/FichaSpec.tsx', `export const FichaSpec = () => <div/>;`);
+    w(dir, 'supabase/functions/send-email/index_test.ts', `Deno.test('envia', () => {});\nDeno.test('falha', () => {});`);
+    w(dir, 'qa/roteiro.test.ts', `it('roteiro', () => {});`);
+  });
+  const t2 = read('testes.json'); const arq = Object.fromEntries(t2.arquivos.map((a) => [a.arquivo, a]));
+  assert.equal(t2.total, 4, 'useContacts.test + fluxo.spec + index_test + qa/roteiro.test');
+  assert.equal(t2.suporte_total, 3);
+  assert.deepEqual(t2.arquivos.filter((a) => a.suporte).map((a) => a.arquivo), ['src/test/realtimeMock.ts', 'src/test/setup.ts', 'tests/e2e/helpers/login.ts']);
+  assert.deepEqual(t2.por_tipo, { e2e: 1, qa: 1, unit: 2 });
+  assert.equal(read('baseline.json').contagens.testes, 4);
+  assert.equal(arq['supabase/functions/send-email/index_test.ts'].casos, 2); assert.equal(arq['supabase/functions/send-email/index_test.ts'].suporte, false);
+  assert.equal(arq['src/features/qa/PainelQa.tsx'], undefined);
+  const comps = read('componentes.json').componentes.map((x) => x.arquivo);
+  assert.ok(comps.includes('src/features/qa/PainelQa.tsx') && comps.includes('src/features/spec/FichaSpec.tsx'));
+  assert.equal(t2.cobertura_por_arquivo['src/lib/supabase.ts'], undefined, 'import feito por arquivo de suporte não é cobertura');
+  assert.equal(read('edge-functions.json').edges.find((e) => e.nome === 'send-email').testes, 1);
+  assert.deepEqual(t2.sem_teste.edges, ['orphan-fn', 'stripe-webhook']);
+});
+
+test('M5 papéis: role de ARIA/JSX não é papel de usuário', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/components/ui/Botao.tsx', `export const Botao = () => <div role="button" aria-label="x"><span role='alert'/><Tabs role={"tablist"} {...{ role: 'dialog' }}/></div>;`);
+    w(dir, 'src/lib/perm.ts', `export const pode = (u) => u.role === 'gerente' || hasRole('supervisor');\nexport const G = <Portao role="gerente"/>;`);
+  });
+  assert.deepEqual(read('ferramentas.json').permissoes.papeis_no_codigo, [{ papel: 'admin', ocorrencias: 2 }, { papel: 'gerente', ocorrencias: 1 }, { papel: 'supervisor', ocorrencias: 1 }]);
+});
+
+test('M6 gerenciador de pacotes: packageManager > workflows > lockfile', (t) => {
+  const wf = 'name: B\non: [push]\njobs:\n  j:\n    runs-on: x\n    steps:\n      - run: npm ci --legacy-peer-deps\n';
+  const pm = (prep) => isolatedFixture(t, prep)('ferramentas.json').stack.gerenciador_pacotes;
+  assert.equal(J('ferramentas.json').stack.gerenciador_pacotes, 'não detectado');
+  assert.equal(pm((dir) => { w(dir, 'bun.lockb', ''); w(dir, 'package-lock.json', '{}'); }), 'bun', 'só lockfile: ordem antiga');
+  assert.equal(pm((dir) => { w(dir, 'bun.lockb', ''); w(dir, 'package-lock.json', '{}'); w(dir, '.github/workflows/b.yml', wf); }), 'npm', 'CI instala com npm ci');
+  assert.equal(pm((dir) => { w(dir, 'bun.lockb', ''); w(dir, '.github/workflows/b.yml', wf); const p = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')); p.packageManager = 'pnpm@9.1.0'; w(dir, 'package.json', JSON.stringify(p)); }), 'pnpm', 'packageManager vence');
+});
+
+test('M7 verify_jwt: comentário no config.toml não conta e a chave vale para a seção certa', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/config.toml', `project_id = "x"\n\n[functions.send-email]\n# antes era verify_jwt = false\nverify_jwt = true\n\n[functions.orphan-fn]\n# ver [docs] sobre jwt\nverify_jwt = false # público\n\n[functions.stripe-webhook]\nstatic_files = ["./a"]\nverify_jwt=false\n\n[auth]\n# verify_jwt = false\n`);
+  });
+  const e = Object.fromEntries(read('edge-functions.json').edges.map((x) => [x.nome, x]));
+  assert.equal(e['send-email'].verify_jwt, true); assert.equal(e['orphan-fn'].verify_jwt, false); assert.equal(e['stripe-webhook'].verify_jwt, false);
+  assert.deepEqual(read('edge-functions.json').verify_jwt_false, ['orphan-fn', 'stripe-webhook']);
+  assert.equal(e['orphan-fn'].orfa, false);
+});
+
+test('menu: item de command palette usa o caminho de navigate*(), ação sem navegação não é menu', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/components/navigation/Comandos.tsx', `export const cmds = ({ navigateTo }) => [\n  { id: "nav-admin", name: "Administração", icon: <i/>, action: () => navigateTo("/admin", "nav-admin"), category: "navigation" },\n  { id: "action-refresh", name: "Atualizar", action: () => reload() },\n];`);
+  });
+  const m = Object.fromEntries(read('rotas.json').menu.map((x) => [x.rotulo, x]));
+  assert.equal(m['Administração'].destino, '/admin'); assert.equal(m['Administração'].resolve_para, 'src/pages/admin/Admin.tsx');
+  assert.equal(m['Atualizar'], undefined);
+  assert.deepEqual(read('baseline.json').alertas.menu_sem_destino, ['Fantasma -> /nada']);
+});
+
+test('grafo: arquivo de public/ registrado por caminho (service worker) não é órfão; ciclo de import é contado', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'public/sw.js', `self.addEventListener('push', () => {});`); w(dir, 'public/solto.js', `console.log(1);`);
+    w(dir, 'src/ciclo/a.ts', `import { b } from './b';\nexport const a = () => b;`); w(dir, 'src/ciclo/b.ts', `import { a } from './a';\nexport const b = () => a;`);
+    fs.appendFileSync(path.join(dir, 'src/main.tsx'), `\nnavigator.serviceWorker\n  .register('/sw.js', { scope: '/' });\n`);
+  });
+  const o = read('grafo.json').orfaos;
+  assert.ok(!o.includes('public/sw.js')); assert.ok(o.includes('public/solto.js'));
+  assert.deepEqual(read('grafo.json').ciclos, { total: 1, maiores: [{ tamanho: 2, arquivos: ['src/ciclo/a.ts', 'src/ciclo/b.ts'] }] });
+  assert.equal(read('baseline.json').alertas.ciclos_de_import, 1);
+});
+
+test('avisos: config inválida, JSON que não parseia e arquivo acima de maxFileMB ficam no manifest; tsconfig com comentário vale', (t) => {
+  const r1 = isolatedFixture(t, (dir) => {
+    w(dir, 'ai-context.config.json', '{ nope');
+    w(dir, 'tsconfig.json', '{\n  // comentário\n  "compilerOptions": { "strict": true, /* bloco */ "paths": { "@app/*": ["./src/*"], }, },\n}');
+    w(dir, 'tsconfig.quebrado.json', '{ "compilerOptions": ');
+    w(dir, 'src/usaAlias.ts', `import { supabase } from '@app/lib/supabase';\nexport const u = supabase;`);
+  });
+  assert.deepEqual(r1('manifest.json').avisos.map((a) => `${a.tipo}:${a.arquivo}`), ['config_invalida:ai-context.config.json', 'json_invalido:tsconfig.quebrado.json']);
+  assert.deepEqual(r1('baseline.json').avisos_do_gerador, r1('manifest.json').avisos);
+  assert.deepEqual(r1('manifest.json').erros, []);
+  assert.equal(r1('convencoes.json').alias_imports['(raiz)']['@app/'], 'src/');
+  assert.deepEqual(r1('grafo-arestas.json').arestas['src/usaAlias.ts'], ['src/lib/supabase.ts']);
+  assert.equal(r1('convencoes.json').typescript.strict, true);
+  const r2 = isolatedFixture(t, (dir) => { w(dir, 'ai-context.config.json', JSON.stringify({ maxFileMB: 0.004 })); w(dir, 'src/grande.ts', `export const g = '${'x'.repeat(6000)}';`); });
+  assert.deepEqual(r2('manifest.json').avisos, [{ tipo: 'arquivo_ignorado_por_tamanho', arquivo: 'src/grande.ts', detalhe: 'maior que 0.004 MB (maxFileMB) — conteúdo não foi lido' }]);
+  assert.deepEqual(r2('manifest.json').erros, []);
+});
+
+test('CLI: --root inexistente falha, --help não grava, flag desconhecida ou sem valor sai 2, --out relativo parte de --root', (t) => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ctx-cli-')); t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const vazio = path.join(tmp, 'vazio'); fs.mkdirSync(vazio);
+  let r = cli(['--root', path.join(tmp, 'nao-existe')], { cwd: vazio });
+  assert.equal(r.status, 1); assert.match(r.stderr, /raiz não existe/); assert.ok(!fs.existsSync(path.join(tmp, 'nao-existe')), 'não cria a raiz');
+  r = cli(['--help'], { cwd: vazio });
+  assert.equal(r.status, 0); assert.match(r.stdout, /^Uso: /); assert.match(r.stdout, /--out <dir>.*relativo é resolvido a partir de --root/);
+  for (const args of [['--out'], ['--root'], ['--bogus'], ['--out', '--quiet'], ['solto']]) { r = cli(args, { cwd: vazio }); assert.equal(r.status, 2, args.join(' ')); assert.match(r.stderr, /argumento desconhecido ou sem valor/); }
+  assert.deepEqual(fs.readdirSync(vazio), [], 'nenhuma dessas chamadas grava saída');
+  const proj = path.join(tmp, 'proj'); w(proj, 'src/a.ts', 'export const a = 1;');
+  r = cli(['--quiet', '--root', proj, '--out', 'saida/ctx'], { cwd: vazio });
+  assert.equal(r.status, 0); assert.ok(fs.existsSync(path.join(proj, 'saida/ctx/INDEX.md'))); assert.deepEqual(fs.readdirSync(vazio), []);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(proj, 'saida/ctx/baseline.json'), 'utf8')).contagens.arquivos_total, 1, 'a própria saída não entra na contagem');
+});

@@ -6,11 +6,13 @@
 //   scripts, workflows, git e baseline. Backends: Supabase (migrations/types/edges/config),
 //   Prisma, Drizzle, TypeORM, SQL solto.
 //
-// Uso: node scripts/ai-context/gerar.mjs [--root <dir>] [--out <dir>] [--quiet]
+// Uso: node scripts/ai-context/gerar.mjs [--root <dir>] [--out <dir>] [--quiet] [--help]
+//   --out relativo é resolvido a partir de --root (não do diretório atual).
 // Config opcional na raiz do repo: ai-context.config.json
 //   { "out": "inventario/ia", "skipDirs": [...], "srcDirs": [...], "menuFiles": [...],
 //     "routeFiles": [...], "aliases": { "@/": "src/" }, "typesFile": "...", "maxFileMB": 8, "publicacao": "texto do rodapé do INDEX.md" }
-// Saída determinística: só manifest.json carrega data/hora.
+// Saída determinística: só manifest.json carrega data/hora; as janelas de git (7/30/90 dias) contam a partir
+// da data do commit HEAD, não do relógio — o mesmo commit gera sempre os mesmos bytes.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,17 +21,23 @@ import { execFileSync } from 'node:child_process';
 
 const FORMAT_VERSION = 2;
 const args = process.argv.slice(2);
+const USO = 'Uso: node scripts/ai-context/gerar.mjs [--root <dir>] [--out <dir>] [--quiet] [--help]\n  --root <dir>  raiz do repositório (padrão: env AI_CONTEXT_ROOT ou o diretório atual)\n  --out <dir>   pasta de saída; caminho relativo é resolvido a partir de --root, não do diretório atual\n                (padrão: env AI_CONTEXT_DIR, ai-context.config.json → out, ou inventario/ia)\n  --quiet       sem log no stdout\n  --help        mostra este uso e sai sem gravar nada';
+if (args.includes('--help') || args.includes('-h')) { console.log(USO); process.exit(0); }
+for (let i = 0; i < args.length; i++) { if (args[i] === '--quiet') continue; if ((args[i] === '--root' || args[i] === '--out') && args[i + 1] && !args[i + 1].startsWith('--')) { i++; continue; } console.error(`[contexto-ia] argumento desconhecido ou sem valor: ${args[i]}\n${USO}`); process.exit(2); }
 const argOf = (k, d) => { const i = args.indexOf(k); return i >= 0 && args[i + 1] ? args[i + 1] : d; };
 const ROOT = path.resolve(argOf('--root', process.env.AI_CONTEXT_ROOT || process.cwd()));
+if (!fs.existsSync(ROOT) || !fs.statSync(ROOT).isDirectory()) { console.error(`[contexto-ia] raiz não existe ou não é diretório: ${ROOT}`); process.exit(1); }
 const QUIET = args.includes('--quiet');
 const log = (...m) => { if (!QUIET) console.log('[contexto-ia]', ...m); };
 const ERROS = [];
+// Avisos não derrubam seção, mas não podem ser calados: config/JSON que não parseia e arquivo ignorado por tamanho vão para o manifest.
+const AVISOS = []; const GRANDES = new Set();
 const secao = (nome, fn, fallback) => { try { return fn(); } catch (e) { ERROS.push({ secao: nome, erro: String((e && e.stack) || e).split('\n').slice(0, 3).join(' | ') }); log(`ERRO na seção ${nome}: ${e && e.message}`); return fallback; } };
 
 // ---------- util ----------
 const rel = (p) => path.relative(ROOT, p).split(path.sep).join('/');
 const abs = (p) => path.join(ROOT, p);
-const CFG = (() => { try { return JSON.parse(fs.readFileSync(abs('ai-context.config.json'), 'utf8')); } catch { return {}; } })();
+const CFG = (() => { if (!fs.existsSync(abs('ai-context.config.json'))) return {}; try { const j = JSON.parse(fs.readFileSync(abs('ai-context.config.json'), 'utf8')); if (j && typeof j === 'object' && !Array.isArray(j)) return j; } catch { /* registrado abaixo */ } AVISOS.push({ tipo: 'config_invalida', arquivo: 'ai-context.config.json', detalhe: 'não é um objeto JSON válido — configuração ignorada, valores padrão em uso' }); return {}; })();
 const OUT = path.resolve(ROOT, argOf('--out', process.env.AI_CONTEXT_DIR || CFG.out || 'inventario/ia'));
 const OUT_REL = rel(OUT);
 const MAX_FILE_BYTES = (CFG.maxFileMB || 8) * 1024 * 1024;
@@ -37,17 +45,34 @@ const MAX_FILE_BYTES = (CFG.maxFileMB || 8) * 1024 * 1024;
 // workflow/branch em ai-context.config.json → "publicacao" (ou env AI_CONTEXT_PUBLICACAO).
 const PUBLICACAO = process.env.AI_CONTEXT_PUBLICACAO || CFG.publicacao || 'Publicado pelo workflow de contexto do repositório (ver .github/workflows).';
 const exists = (p) => fs.existsSync(abs(p));
-const readText = (p) => { try { const a = path.isAbsolute(p) ? p : abs(p); if (fs.statSync(a).size > MAX_FILE_BYTES) return ''; return fs.readFileSync(a, 'utf8'); } catch { return ''; } };
-const readJson = (p) => { try { return JSON.parse(readText(p).replace(/^﻿/, '')); } catch { return null; } };
+const readText = (p) => { try { const a = path.isAbsolute(p) ? p : abs(p); if (fs.statSync(a).size > MAX_FILE_BYTES) { GRANDES.add(rel(a)); return ''; } return fs.readFileSync(a, 'utf8'); } catch { return ''; } };
+// JSON com comentários e vírgula sobrando (tsconfig) também vale; o que não parseia de jeito nenhum vira aviso.
+const readJson = (p) => { const t = readText(p).replace(/^﻿/, ''); if (!t) return null; try { return JSON.parse(t); } catch { try { return JSON.parse(stripComments(t).replace(/,(\s*[}\]])/g, '$1')); } catch { AVISOS.push({ tipo: 'json_invalido', arquivo: path.isAbsolute(p) ? rel(p) : p, detalhe: 'não parseia nem como JSON com comentários — tratado como ausente' }); return null; } } };
 const uniq = (a) => [...new Set(a)].sort();
 const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const countLines = (s) => (s ? s.split('\n').length : 0);
 const git = (...args) => { try { return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).trim(); } catch { return ''; } };
-const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
+// Remove comentários sem tocar em strings/template literals ("image/*", "/docs/*", URLs). Aspas soltas (apóstrofo em
+// texto JSX, regex) valem só até o fim da linha, então o pior caso é deixar de remover um comentário naquela linha.
+const stripComments = (s) => {
+  let out = '', i = 0, ini = 0; const n = s.length, tpl = [];
+  const template = () => { while (i < n) { const c = s[i]; if (c === '\\') i += 2; else if (c === '`') { i++; return; } else if (c === '$' && s[i + 1] === '{') { i += 2; tpl.push(0); return; } else i++; } };
+  while (i < n) {
+    const ch = s[i];
+    if (ch === '"' || ch === "'") { i++; while (i < n && s[i] !== ch && s[i] !== '\n') i += s[i] === '\\' ? 2 : 1; i++; }
+    else if (ch === '`') { i++; template(); }
+    else if (ch === '{' && tpl.length) { tpl[tpl.length - 1]++; i++; }
+    else if (ch === '}' && tpl.length) { i++; if (tpl[tpl.length - 1]-- === 0) { tpl.pop(); template(); } }
+    else if (ch === '/' && s[i + 1] === '*' && s.indexOf('*/', i + 2) >= 0) { out += s.slice(ini, i); i = ini = s.indexOf('*/', i + 2) + 2; }
+    else if (ch === '/' && s[i + 1] === '/' && s[i - 1] !== ':' && s[i - 1] !== '\\') { out += s.slice(ini, i); const e = s.indexOf('\n', i); i = ini = e < 0 ? n : e; }
+    else i++;
+  }
+  return out + s.slice(ini);
+};
 const cap = (arr, n = 200) => arr.slice(0, n);
 const allMatches = (re, s, g = 1) => { const out = []; re.lastIndex = 0; let m; while ((m = re.exec(s))) out.push(m[g]); return out; };
-const byCount = (arr) => Object.entries(arr.reduce((a, k) => { a[k] = (a[k] || 0) + 1; return a; }, {})).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
+const byCount = (arr) => Object.entries(arr.reduce((a, k) => { a[k] = (a[k] || 0) + 1; return a; }, Object.create(null))).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
 const dirOf = (f) => path.posix.dirname(f);
 const baseOf = (f) => path.posix.basename(f).replace(/\.[^.]+$/, '');
 
@@ -74,7 +99,10 @@ log(`arquivos no repo: ${ALL.length}`);
 // ---------- linguagens / stack ----------
 const EXT_LANG = { '.ts': 'TypeScript', '.tsx': 'TypeScript', '.mts': 'TypeScript', '.cts': 'TypeScript', '.js': 'JavaScript', '.jsx': 'JavaScript', '.mjs': 'JavaScript', '.cjs': 'JavaScript', '.vue': 'Vue', '.svelte': 'Svelte', '.astro': 'Astro', '.py': 'Python', '.go': 'Go', '.rs': 'Rust', '.java': 'Java', '.kt': 'Kotlin', '.rb': 'Ruby', '.php': 'PHP', '.cs': 'C#', '.swift': 'Swift', '.dart': 'Dart', '.sql': 'SQL', '.sh': 'Shell', '.css': 'CSS', '.scss': 'SCSS', '.html': 'HTML', '.md': 'Markdown', '.json': 'JSON', '.yml': 'YAML', '.yaml': 'YAML', '.toml': 'TOML' };
 const CODE_EXT = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts', '.vue', '.svelte', '.astro']);
-const TEST_RE = /(\.(test|spec|e2e|contract|contracts|unit|fixture|fixtures)\.[cm]?[jt]sx?$)|(^|\/)(__tests__|tests?|fixtures|__fixtures__|e2e|qa|__mocks__|spec|cypress|playwright)\/|(^|\/)(test_\w+\.py|\w+_test\.py|conftest\.py)$/;
+// `qa/` e `spec/` só valem como pasta de teste na raiz (ou na raiz de um pacote): `src/features/qa/` é domínio de aplicação.
+const TEST_RE = /(\.(test|spec|e2e|contract|contracts|unit|fixture|fixtures)\.[cm]?[jt]sx?$)|_test\.[cm]?[jt]sx?$|(^|\/)(__tests__|tests?|fixtures|__fixtures__|e2e|__mocks__|cypress|playwright)\/|^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(qa|spec)\/|(^|\/)(test_\w+\.py|\w+_test\.py|conftest\.py)$/;
+// Arquivo de teste = nome de teste ou tem casos; o resto do que mora em pasta de teste (setup, mocks, helpers, fixtures) é suporte.
+const NOME_TESTE_RE = /\.(test|spec|e2e|contract|contracts|unit)\.[cm]?[jt]sx?$|_test\.[cm]?[jt]sx?$|(^|\/)(test_\w+|\w+_test)\.py$/;
 const STORY_RE = /\.stories\.[cm]?[jt]sx?$/;
 const pkg = readJson('package.json') || {};
 const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}), ...(pkg.peerDependencies || {}) };
@@ -102,7 +130,8 @@ const stack = {
   testes: [has('vitest') && 'vitest', has('jest') && 'jest', has('@playwright/test') && 'playwright', has('cypress') && 'cypress', has('mocha') && 'mocha', hasPy('pytest') && 'pytest'].filter(Boolean),
   ui: [has('tailwindcss') && 'tailwind', (has('@radix-ui/react-dialog') || exists('components.json')) && 'radix/shadcn', has('@mui/material') && 'mui', has('antd') && 'antd', has('@chakra-ui/react') && 'chakra'].filter(Boolean),
   estado: [has('@tanstack/react-query') && 'react-query', has('zustand') && 'zustand', has('redux') && 'redux', has('@reduxjs/toolkit') && 'redux-toolkit', has('jotai') && 'jotai', has('pinia') && 'pinia', has('swr') && 'swr'].filter(Boolean),
-  gerenciador_pacotes: exists('bun.lock') || exists('bun.lockb') ? 'bun' : exists('pnpm-lock.yaml') ? 'pnpm' : exists('yarn.lock') ? 'yarn' : exists('package-lock.json') ? 'npm' : exists('poetry.lock') ? 'poetry' : exists('uv.lock') ? 'uv' : exists('Pipfile.lock') ? 'pipenv' : exists('requirements.txt') ? 'pip' : 'não detectado',
+  // precedência: packageManager do package.json > gerenciador que os workflows instalam > lockfile presente
+  gerenciador_pacotes: (/^(npm|pnpm|yarn|bun)@/.exec(String(pkg.packageManager || '')) || [])[1] || (byCount(ALL.filter((f) => /^\.github\/workflows\/.+\.ya?ml$/.test(f)).flatMap((f) => allMatches(/(?:^|[\s;&|"'(])(npm|pnpm|yarn|bun)[ \t]+(?:ci\b|install\b|i\b|--frozen-lockfile|--immutable)/gm, readText(f))))[0] || [])[0] || (exists('bun.lock') || exists('bun.lockb') ? 'bun' : exists('pnpm-lock.yaml') ? 'pnpm' : exists('yarn.lock') ? 'yarn' : exists('package-lock.json') ? 'npm' : exists('poetry.lock') ? 'poetry' : exists('uv.lock') ? 'uv' : exists('Pipfile.lock') ? 'pipenv' : exists('requirements.txt') ? 'pip' : 'não detectado'),
   node: readText('.nvmrc').trim() || (pkg.engines && pkg.engines.node) || null,
   python: readText('.python-version').trim() || null,
   deploy: [exists('vercel.json') && 'vercel', exists('netlify.toml') && 'netlify', exists('Dockerfile') && 'docker', ALL.some((f) => /docker-(compose|stack)[\w.-]*\.ya?ml$/.test(f)) && 'compose/swarm', exists('fly.toml') && 'fly', exists('render.yaml') && 'render', exists('railway.json') && 'railway', exists('wrangler.toml') && 'cloudflare', exists('serverless.yml') && 'serverless'].filter(Boolean),
@@ -154,7 +183,7 @@ const RE = {
   hook: /\b(use[A-Z]\w*)\s*\(/g,
   from: /\.from\(\s*['"`]([\w.]+)['"`]/g,
   rpc: /\.rpc\(\s*['"`](\w+)['"`]/g,
-  invoke: /functions\.invoke\(\s*['"`]([\w-]+)['"`]/g,
+  invoke: /functions\s*\.\s*invoke\s*(?:<[^()]{0,200}?>)?\s*\(\s*['"`]([\w-]+)['"`]/g,
   fnUrl: /\/functions\/v1\/([\w-]+)/g,
   envVite: /import\.meta\.env\.(\w+)/g,
   envNode: /process\.env\.(\w+)/g,
@@ -176,10 +205,13 @@ const RE = {
   nestCtrl: /@Controller\(\s*(?:['"`]([^'"`]*)['"`])?\s*\)/,
 };
 const envNames = (s) => uniq([...allMatches(RE.envVite, s), ...allMatches(RE.envNode, s), ...allMatches(RE.envDeno, s)]);
+// role="button" / role: 'dialog' é atributo ARIA, não papel de usuário.
+const ARIA_ROLES = new Set('alert alertdialog application article banner button cell checkbox columnheader combobox complementary contentinfo definition dialog directory document feed figure form grid gridcell group heading img link list listbox listitem log main marquee math menu menubar menuitem menuitemcheckbox menuitemradio navigation none note option presentation progressbar radio radiogroup region row rowgroup rowheader scrollbar search searchbox separator slider spinbutton status switch tab table tablist tabpanel term textbox timer toolbar tooltip tree treegrid treeitem'.split(' '));
 for (const f of CODE_FILES) secao(`arquivo:${f}`, () => {
   const raw = readText(f);
   const src = stripComments(raw);
-  const specs = [...allMatches(RE.imp, src), ...allMatches(RE.dyn, src), ...allMatches(RE.req, src)];
+  const specsEst = [...allMatches(RE.imp, src), ...allMatches(RE.req, src)];
+  const specs = [...specsEst, ...allMatches(RE.dyn, src)];
   const local = uniq(specs.map((s) => resolveImport(f, s)).filter(Boolean));
   const external = uniq(specs.filter((s) => !s.startsWith('.') && !s.startsWith('/') && !isAliasSpec(f, s) && !resolveImport(f, s)).map((s) => (s.startsWith('@') ? s.split('/').slice(0, 2).join('/') : s.split('/')[0])));
   const expDef = allMatches(RE.expDefault, src).filter(Boolean);
@@ -193,11 +225,11 @@ for (const f of CODE_FILES) secao(`arquivo:${f}`, () => {
   const ctrl = (RE.nestCtrl.exec(src) || [])[1];
   for (const m of src.matchAll(RE.nestRoute)) rotasHttp.push({ metodo: m[1].toUpperCase(), caminho: '/' + [ctrl, m[2]].filter(Boolean).join('/').replace(/\/+/g, '/').replace(/^\//, '') });
   FILE.set(f, {
-    linhas: countLines(raw), bytes: Buffer.byteLength(raw), imports: local, externos: external, exports: exportsNamed, export_default: expDef[0] || (/export\s+default\b/.test(src) ? '(anônimo)' : null),
+    linhas: countLines(raw), bytes: Buffer.byteLength(raw), imports: local, imports_estaticos: uniq(specsEst.map((s) => resolveImport(f, s)).filter(Boolean)), externos: external, exports: exportsNamed, export_default: expDef[0] || (/export\s+default\b/.test(src) ? '(anônimo)' : null),
     hooks: uniq(allMatches(RE.hook, src)), tabelas: uniq([...allMatches(RE.from, src), ...allMatches(RE.prisma, src)]), rpcs: uniq(allMatches(RE.rpc, src)),
     edges: uniq([...allMatches(RE.invoke, src), ...allMatches(RE.fnUrl, src)]), env: envNames(src), buckets: uniq(allMatches(RE.storage, src)), canais_realtime: uniq(allMatches(RE.channel, src)),
     hosts_externos: uniq(allMatches(RE.urlHost, src).map((h) => h.toLowerCase())).filter((h) => !/localhost|example\.(com|org)|w3\.org|schema\.org|github\.com|npmjs\.com|deno\.land|esm\.sh|jsdelivr|unpkg/.test(h)),
-    flags: uniq([...allMatches(RE.flag, src), ...allMatches(RE.flagEnv, src)]), papeis: uniq(allMatches(RE.role, src)), zod: (src.match(RE.zod) || []).length,
+    flags: uniq([...allMatches(RE.flag, src), ...allMatches(RE.flagEnv, src)]), papeis: uniq([...src.matchAll(RE.role)].filter((m) => !(/^role\s*[:=](?!=)/.test(m[0]) && ARIA_ROLES.has(m[1]))).map((m) => m[1])), zod: (src.match(RE.zod) || []).length,
     rotas_http: rotasHttp, drizzle: uniq(allMatches(RE.drizzleTable, src)),
     todos, teste: isTest, story: isStory,
     componente: temJsx && !isTest && !isStory && (exportsNamed.some((e) => /^[A-Z]/.test(e)) || /\.(vue|svelte|astro)$/.test(f)),
@@ -207,6 +239,20 @@ for (const f of CODE_FILES) secao(`arquivo:${f}`, () => {
     conteudo: src,
   });
 });
+// 2ª passada — chamada indireta de edge function. Wrapper = função exportada por um arquivo que monta `/functions/v1/${x}`
+// ou faz invoke(variável); quem importa esse arquivo e chama `wrapper('nome…')` chama a edge `nome`. Também vale
+// invoke(CONSTANTE) com `CONSTANTE = 'nome'` no mesmo arquivo. (Literal solto igual ao nome da pasta NÃO conta: casa com
+// chave de breadcrumb, tag de notificação etc.)
+const escRe = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const GEN = '(?:<[^()]{0,200}?>)?';
+const WRAPPERS = new Map();
+for (const [f, d] of FILE) if (!d.teste && new RegExp(`functions/v1/\\$\\{|functions\\s*\\.\\s*invoke\\s*${GEN}\\s*\\(\\s*[A-Za-z_$]`).test(d.conteudo)) { const nomes = d.exports.filter((e) => /^[a-z_$][\w$]*$/.test(e)); if (nomes.length) WRAPPERS.set(f, nomes); }
+for (const [f, d] of FILE) {
+  const nomes = uniq([f, ...d.imports].flatMap((i) => WRAPPERS.get(i) || []));
+  const extra = nomes.length ? allMatches(new RegExp(`(?<![\\w$.])(?:${nomes.map(escRe).join('|')})\\s*${GEN}\\s*\\(\\s*['"\`]([\\w-]+)`, 'g'), d.conteudo) : [];
+  for (const m of d.conteudo.matchAll(new RegExp(`functions\\s*\\.\\s*invoke\\s*${GEN}\\s*\\(\\s*([A-Za-z_$][\\w$]*)\\s*[,)]`, 'g'))) { const c = new RegExp(`(?<![\\w$.])${escRe(m[1])}\\s*(?::[^=;]+)?=\\s*['"\`]([\\w-]+)['"\`]`).exec(d.conteudo); if (c) extra.push(c[1]); }
+  if (extra.length) d.edges = uniq([...d.edges, ...extra]);
+}
 
 // ---------- Python (leve): imports, defs, rotas ----------
 const PY = new Map();
@@ -215,13 +261,32 @@ const pyModule = (f) => f.replace(/\.py$/, '').replace(/\/__init__$/, '').replac
 const PY_MODS = new Map(PY_FILES.map((f) => [pyModule(f), f]));
 for (const f of PY_FILES) secao(`py:${f}`, () => {
   const raw = readText(f); const src = raw.replace(/"""[\s\S]*?"""|'''[\s\S]*?'''/g, '""').replace(/#[^\n]*/g, '');
-  const mods = [...allMatches(/^\s*from\s+([\w.]+)\s+import/gm, src), ...allMatches(/^\s*import\s+([\w.]+)/gm, src)];
-  const local = uniq(mods.map((m) => { const k = m.replace(/^\.+/, ''); for (const cand of [k, 'src.' + k, 'app.' + k]) if (PY_MODS.has(cand)) return PY_MODS.get(cand); const parts = k.split('.'); while (parts.length) { const cnd = parts.join('.'); if (PY_MODS.has(cnd)) return PY_MODS.get(cnd); parts.pop(); } return null; }).filter(Boolean));
+  // módulo irmão/ancestral primeiro (como o sys.path de um script), depois raiz, src/ e app/; `from . import x` e `from pkg import sub` olham os nomes importados
+  const dir = dirOf(f) === '.' ? [] : dirOf(f).split('/');
+  const bases = [...dir.map((_, i) => dir.slice(0, dir.length - i).join('.') + '.'), '', 'src.', 'app.'];
+  const acha = (k, exato) => { for (const parts = k.split('.'); parts.length && parts[0]; parts.pop()) { for (const b of bases) { const hit = PY_MODS.get(b + parts.join('.')); if (hit && hit !== f) return hit; } if (exato) break; } return null; };
+  const mods = []; const achados = [];
+  for (const m of src.matchAll(/^[ \t]*from[ \t]+(\.*)([\w.]*)[ \t]+import[ \t]+(\([^)]*\)|[^\n]*)/gm)) {
+    const nomes = m[3].replace(/[()\\]/g, ' ').split(',').map((x) => x.trim().split(/\s+/)[0]).filter((x) => /^\w+$/.test(x));
+    if (m[1]) { const base = [...dir.slice(0, Math.max(0, dir.length - (m[1].length - 1))), ...(m[2] ? m[2].split('.') : [])].join('.'); for (const k of [base, ...nomes.map((x) => (base ? base + '.' : '') + x)]) if (PY_MODS.has(k) && PY_MODS.get(k) !== f) achados.push(PY_MODS.get(k)); }
+    else if (m[2]) { mods.push(m[2]); achados.push(acha(m[2]), ...nomes.map((x) => acha(m[2] + '.' + x, true))); }
+  }
+  for (const l of allMatches(/^[ \t]*import[ \t]+([^\n]+)/gm, src)) for (const x of l.split(',')) { const k = x.trim().split(/\s+/)[0]; if (/^[\w.]+$/.test(k)) { mods.push(k); achados.push(acha(k)); } }
+  // importlib/subprocess por caminho: literal "x.py" que existe ao lado (ou a partir da raiz) também é dependência
+  for (const lit of allMatches(/['"]([\w./-]+\.py)['"]/g, src)) for (const cand of [path.posix.normalize(path.posix.join(dirOf(f), lit)), lit]) if (PY_FILES.includes(cand)) { if (cand !== f) achados.push(cand); break; }
+  const local = uniq(achados.filter(Boolean));
   const rotas = [...src.matchAll(/@(?:app|router|api|bp|blueprint)\.(get|post|put|patch|delete|route)\(\s*['"]([^'"]+)['"]([^)]*)\)/g)].map((m) => ({ metodo: m[1] === 'route' ? (/methods\s*=\s*\[([^\]]*)\]/.exec(m[3]) || [, 'GET'])[1].replace(/['"\s]/g, '') : m[1].toUpperCase(), caminho: m[2] }));
   for (const m of src.matchAll(/\b(?:path|re_path|url)\(\s*r?['"]([^'"]+)['"]/g)) rotas.push({ metodo: 'DJANGO', caminho: m[1] });
-  PY.set(f, { linhas: countLines(raw), imports: local, externos: uniq(mods.filter((m) => !m.startsWith('.')).map((m) => m.split('.')[0])).filter((m) => !PY_MODS.has(m)), defs: uniq(allMatches(/^(?:async\s+)?def\s+(\w+)/gm, src)), classes: uniq(allMatches(/^class\s+(\w+)/gm, src)), rotas_http: rotas, env: uniq([...allMatches(/os\.environ(?:\.get)?\s*[[(]\s*['"](\w+)['"]/g, src), ...allMatches(/getenv\(\s*['"](\w+)['"]/g, src)]), teste: TEST_RE.test(f), modelos: uniq(allMatches(/^class\s+(\w+)\((?:[\w.]*(?:Model|Base|BaseModel|DeclarativeBase)[\w.]*)\)/gm, src)), hooks: [], tabelas: [], rpcs: [], edges: [], buckets: [], canais_realtime: [], flags: [], papeis: [], todos: raw.split('\n').map((l, i) => { const m = /\b(TODO|FIXME|HACK|XXX)\b[:\s-]*([^\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2].trim() } : null; }).filter(Boolean) });
+  PY.set(f, { linhas: countLines(raw), imports: local, externos: uniq(mods.filter((m) => !acha(m)).map((m) => m.split('.')[0])).filter((m) => !PY_MODS.has(m)), casos: (src.match(/^[ \t]*(?:async[ \t]+)?def[ \t]+test_\w*/gm) || []).length, defs: uniq(allMatches(/^(?:async\s+)?def\s+(\w+)/gm, src)), classes: uniq(allMatches(/^class\s+(\w+)/gm, src)), rotas_http: rotas, env: uniq([...allMatches(/os\.environ(?:\.get)?\s*[[(]\s*['"](\w+)['"]/g, src), ...allMatches(/getenv\(\s*['"](\w+)['"]/g, src)]), teste: TEST_RE.test(f), modelos: uniq(allMatches(/^class\s+(\w+)\((?:[\w.]*(?:Model|Base|BaseModel|DeclarativeBase)[\w.]*)\)/gm, src)), hooks: [], tabelas: [], rpcs: [], edges: [], buckets: [], canais_realtime: [], flags: [], papeis: [], todos: raw.split('\n').map((l, i) => { const m = /\b(TODO|FIXME|HACK|XXX)\b[:\s-]*([^\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2].trim() } : null; }).filter(Boolean) });
 });
 const anyFile = (f) => FILE.get(f) || PY.get(f);
+// Exemplos, testes e ferramentas continuam no inventário, mas não provam uso pela aplicação: tudo que descreve a
+// APLICAÇÃO (hooks, rotas HTTP, lazy, ORM, flags, papéis, hosts, buckets, segredos, chamadas) lê só appFiles/appPy —
+// senão o gerador ingere as fixtures dos próprios testes. srcDirs explícito permite tratar uma raiz de ferramentas como aplicação.
+const TOOLING_ROOT = /^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(?:scripts|bin|tools|\.github|docs|inventario|analise|examples?|samples?)\//;
+const ehApp = ([f, d]) => !d.teste && !d.story && (isSrc(f) || !TOOLING_ROOT.test(f));
+const appFiles = [...FILE.entries()].filter(ehApp);
+const appPy = [...PY.entries()].filter(ehApp);
 
 // ---------- grafo reverso / fecho ----------
 const USED_BY = new Map();
@@ -232,7 +297,8 @@ const closureCache = new Map();
 function closure(f) {
   if (closureCache.has(f)) return closureCache.get(f);
   const seen = new Set(); const stack = [f];
-  while (stack.length) { const cur = stack.pop(); if (seen.has(cur)) continue; seen.add(cur); const d = FILE.get(cur); if (d) for (const i of d.imports) if (!seen.has(i) && !FILE.get(i)?.teste) stack.push(i); }
+  // só import estático: seguir import() faz qualquer tela "alcançar" todas as outras via prefetch/lazy e o fecho vira ruído
+  while (stack.length) { const cur = stack.pop(); if (seen.has(cur)) continue; seen.add(cur); const d = FILE.get(cur); if (d) for (const i of d.imports_estaticos) if (!seen.has(i) && !FILE.get(i)?.teste) stack.push(i); }
   seen.delete(f); const arr = [...seen].sort(); closureCache.set(f, arr); return arr;
 }
 const AGG_KEYS = ['hooks', 'tabelas', 'rpcs', 'edges', 'env', 'buckets', 'canais_realtime', 'flags', 'papeis'];
@@ -261,8 +327,7 @@ const localHooks = (hooks) => hooks.filter((h) => HOOK_FILES_BY_NAME.has(h));
 // ---------- hooks / composables ----------
 const hooksOut = secao('hooks', () => {
   const out = [];
-  for (const [f, d] of FILE) {
-    if (d.teste) continue;
+  for (const [f, d] of appFiles) {
     const names = d.exports.filter((e) => /^use[A-Z]/.test(e));
     if (!names.length && !d.hook_arquivo) continue;
     for (const n of names) if (!HOOK_FILES_BY_NAME.has(n)) HOOK_FILES_BY_NAME.set(n, f);
@@ -273,7 +338,7 @@ const hooksOut = secao('hooks', () => {
 
 // ---------- rotas / telas ----------
 const lazyMap = new Map();
-for (const [f, d] of FILE) {
+for (const [f, d] of appFiles) {
   const re = /(?:export\s+)?const\s+(\w+)\s*=\s*(?:lazy\w*|React\.lazy|loadable|defineAsyncComponent)\s*\(\s*(?:async\s*)?(?:\(\)\s*=>\s*)?(?:\{[^}]{0,200}?)?(?:await\s+)?import\(\s*['"]([^'"]+)['"]/g; let m;
   while ((m = re.exec(d.conteudo))) { const t = resolveImport(f, m[2]); if (t) lazyMap.set(m[1], t); }
 }
@@ -296,41 +361,89 @@ function componentFile(name, fromFile, strict = false) {
 const joinPath = (parent, child) => { if (child === undefined || child === null || child === '') return parent || '/'; if (child.startsWith('/')) return child; const p = (parent || '').replace(/\/$/, ''); return (p + '/' + child).replace(/\/+/g, '/'); };
 const mk = (o) => ({ protegida: false, wrappers: [], pai: null, indice: false, lazy: false, tipo: 'tela', ...o });
 const rotas = [];
+const rotasNaoInterpretadas = [];
+// Lê os atributos de uma tag JSX a partir do fim de "<Nome": conta chaves balanceadas e pula strings (o `>` de
+// `state={{ a: 1 }}` ou de uma arrow function não fecha a tag). `topo` é `attrs` com o conteúdo das chaves em branco
+// (mesmo comprimento), para achar só os atributos da própria tag. null = tag que não fecha.
+const lerTag = (src, i) => {
+  let d = 0, topo = '';
+  for (let j = i; j < src.length; j++) {
+    const ch = src[j];
+    if (ch === '"' || ch === "'" || ch === '`') { const e = src.indexOf(ch, j + 1), nl = src.indexOf('\n', j + 1); if (e > 0 && (ch === '`' || nl < 0 || e < nl)) { topo += d > 0 ? ' '.repeat(e - j + 1) : src.slice(j, e + 1); j = e; continue; } }
+    if (ch === '}' && --d < 0) return null;
+    if (d === 0 && ch === '>' && src[j - 1] !== '=') return { attrs: src.slice(i, j), topo, self: /\/\s*$/.test(topo), fim: j + 1 };
+    if (d === 0 && ch === '<') return null;
+    topo += d > 0 ? ' ' : ch;
+    if (ch === '{') d++;
+  }
+  return null;
+};
+// índice do fecho que casa com o `{` ou `[` em s[i] (pulando strings); -1 se não fechar
+const fecha = (s, i) => { const ab = s[i], fe = ab === '{' ? '}' : ']'; let d = 0; for (let j = i; j < s.length; j++) { const ch = s[j]; if (ch === '"' || ch === "'" || ch === '`') { const e = s.indexOf(ch, j + 1), nl = s.indexOf('\n', j + 1); if (e > 0 && (ch === '`' || nl < 0 || e < nl)) j = e; } else if (ch === ab) d++; else if (ch === fe && --d === 0) return j; } return -1; };
+// JSX sem o valor das props (`fallback={<Skeleton/>}` vira `fallback={}`): sobra só a árvore pai → filho
+const semProps = (s) => { let o = ''; for (let j = 0; j < s.length; j++) { if (s[j] === '{' && /=\s*$/.test(o)) { const f = fecha(s, j); o += '{}'; if (f < 0) break; j = f; } else o += s[j]; } return o; };
+// tags abertas em volta da 1ª ocorrência de `alvo` na árvore (de fora para dentro); null se `alvo` não está na árvore
+const ancestrais = (arv, alvo) => { const st = []; for (const t of arv.matchAll(/<(\/?)([A-Za-z]\w*)?[^<>]*?(\/?)>/g)) { if (t[1]) st.pop(); else if (t[2] === alvo) return st.filter((x) => /^[A-Z]/.test(x)); else if (!t[3]) st.push(t[2] || ''); } return null; };
+// Proteção vem de quem ENVOLVE a página (ou do layout pai), nunca do nome da página nem de JSX passado em props:
+// `AuthPage`, `AdminDocs` e `fallback={<AuthPageSkeleton/>}` não protegem nada.
+const NAO_GUARD = /^Auth\w*(?:Layout|Provider|Page|Form|Card|Shell|Container)$|Skeleton$/;
+const ehGuard = (w) => /Protected|Private|Auth|Guard|Require|Admin/i.test(w) && !NAO_GUARD.test(w);
+const ehGuardProprio = (n) => /^(?:Protected|Private|Require)|(?:Guard|Gate)$|^(?:Auth|Admin|Role|Authenticated|Authorized)\w*(?:Route|Outlet|Only|Required|Wrapper|Layout|Shell)$/.test(n) && !NAO_GUARD.test(n) && !/(?:Page|Screen|View|Form)$/.test(n);
 const routeFiles = uniq([...CODE_FILES.filter((f) => !FILE.get(f)?.teste && (isSrc(f) || /^(app|pages|routes|server|api)\//.test(f)) && (/<Route\b/.test(FILE.get(f).conteudo) || /create(Browser|Hash|Memory)Router|createRoutesFromElements|\bRouteObject\b|new\s+VueRouter|createRouter\(/.test(FILE.get(f).conteudo))), ...(CFG.routeFiles || [])]);
 secao('rotas-jsx', () => {
   for (const rf of routeFiles) {
-    const src = FILE.get(rf)?.conteudo || ''; const stack = [];
-    const re = /<Route\b((?:[^>{/]|\/(?!>)|\{(?:[^{}]|\{[^{}]*\})*\})*)(\/?)>|<\/Route\s*>/g; let m;
+    const src = FILE.get(rf)?.conteudo || ''; const stack = []; let vistos = 0; const falhas = [];
+    const re = /<Route\b|<\/Route\s*>/g; let m;
     while ((m = re.exec(src))) {
       if (m[0].startsWith('</')) { stack.pop(); continue; }
-      const attrs = m[1] || ''; const self = m[2] === '/';
-      const p = /\bpath=["']([^"']*)["']/.exec(attrs) || /\bpath:\s*["']([^"']*)["']/.exec(attrs); const isIndex = /\bindex\b/.test(attrs);
-      const parent = stack.length ? stack[stack.length - 1] : null;
+      vistos++;
+      const tag = lerTag(src, m.index + m[0].length); if (!tag) { falhas.push('tag não fechada'); continue; }
+      re.lastIndex = tag.fim;
+      const { attrs, topo, self } = tag;
+      // valor de um atributo da PRÓPRIA <Route> (não de tags dentro do element): `"x"`/`'x'` com aspas, ou a expressão de `{...}`
+      const attr = (nome) => { const mm = new RegExp(`(?:^|[\\s}])${nome}\\s*=\\s*`).exec(topo); if (!mm) return null; const k = mm.index + mm[0].length; return attrs[k] === '{' ? attrs.slice(k + 1, topo.indexOf('}', k)).trim() : attrs.slice(k, attrs.indexOf(attrs[k], k + 1) + 1); };
+      const pExpr = attr('path'); const pLit = pExpr === null ? /\bpath:\s*(["'])([^"']*)\1/.exec(attrs) : /^(["'`])([^"'`$]*)\1$/.exec(pExpr);
+      if (pExpr !== null && !pLit) { falhas.push(`path={${pExpr.slice(0, 40)}}`); if (!self) stack.push(stack.length ? stack[stack.length - 1] : { caminho: null, protegida: false }); continue; }
+      const p = pLit ? [pLit[0], pLit[2]] : null; const isIndex = /(?:^|[\s}])index(?=[\s=/]|$)/.test(topo);
+      const pai = stack.length ? stack[stack.length - 1] : null; const parent = pai ? pai.caminho : null;
       const full = p ? joinPath(parent, p[1]) : isIndex ? parent || '/' : parent;
-      const tags = [...attrs.matchAll(/<([A-Z]\w*)/g)].map((x) => x[1]);
+      const elem = attr('element'); const arv = elem === null ? attrs : semProps(elem);
+      const tags = [...arv.matchAll(/<([A-Z]\w*)/g)].map((x) => x[1]);
+      const tagsEmProps = [...attrs.matchAll(/<([A-Z]\w*)/g)].map((x) => x[1]).filter((t) => !tags.includes(t));
       const props = [...attrs.matchAll(/\w+=\{\s*([A-Z]\w*)\s*\}/g)].map((x) => x[1]);
       const GENERIC = /^(Navigate|Redirect|Suspense|Fragment|Outlet|LazyPage|Lazy\w*|Loadable|ErrorBoundary|\w*Boundary|\w*Provider|\w*Layout|\w*Route|\w*Guard|Protected\w*|Private\w*|Require\w*|Auth\w*)$/;
-      // candidato: prop Component={X} > tag mais interna > demais; prefere o que resolve por lazy/import (strict), depois busca global
+      // candidato: prop Component={X} > tag mais interna da árvore > demais; prefere o que resolve por lazy/import (strict), depois
+      // busca global; JSX passado em props (fallback, errorElement) só entra se a árvore não resolver nada
       const ordem = uniq([...props, ...tags.slice().reverse()]).sort((a, b) => (props.includes(b) ? 1 : 0) - (props.includes(a) ? 1 : 0) || tags.lastIndexOf(b) - tags.lastIndexOf(a));
       let comp = null, file = null;
-      for (const cnd of ordem.filter((x) => !GENERIC.test(x))) { const fl = componentFile(cnd, rf, true); if (fl) { comp = cnd; file = fl; break; } }
-      if (!comp) for (const cnd of ordem.filter((x) => !GENERIC.test(x))) { const fl = componentFile(cnd, rf); if (fl) { comp = cnd; file = fl; break; } }
+      for (const cands of [ordem, tagsEmProps.slice().reverse()]) for (const strict of [true, false]) { if (comp) break; for (const cnd of cands.filter((x) => !GENERIC.test(x))) { const fl = componentFile(cnd, rf, strict); if (fl) { comp = cnd; file = fl; break; } } }
       if (!comp) { const inner = tags[tags.length - 1]; if (inner && !/^(Navigate|Redirect)$/.test(inner)) { comp = inner; file = componentFile(inner, rf); } }
       const redir = /<(?:Navigate|Redirect)\b[^>]*\bto=["']([^"']+)["']/.exec(attrs);
-      const paiProtegido = parent ? !!rotas.find((r) => r.caminho === parent && r.definida_em === rf && r.protegida) : false;
-      if (p || isIndex) rotas.push(mk({ caminho: full, componente: comp, arquivo: file, protegida: tags.some((w) => /Protected|Private|Auth|Guard|Require|Admin/i.test(w)) || paiProtegido, wrappers: tags.filter((t) => t !== comp), pai: parent, indice: isIndex, definida_em: rf, lazy: comp ? lazyMap.has(comp) : false, tipo: redir && !comp ? 'redirect' : 'tela', redireciona: redir ? redir[1] : null }));
-      if (!self) stack.push(full);
+      const wrappers = (comp && ancestrais(arv, comp)) || tags.filter((t) => t !== comp);
+      // herda do pai na pilha (inclusive rota-layout sem path: <Route element={<ProtectedRoute/>}> com filhas)
+      const protegida = wrappers.some(ehGuard) || (!!comp && ehGuardProprio(comp)) || !!(pai && pai.protegida);
+      if (p || isIndex) rotas.push(mk({ caminho: full, componente: comp, arquivo: file, protegida, wrappers, pai: parent, indice: isIndex, definida_em: rf, lazy: comp ? lazyMap.has(comp) : false, tipo: redir && !comp ? 'redirect' : 'tela', redireciona: redir ? redir[1] : null }));
+      if (!self) stack.push({ caminho: full, protegida });
     }
+    // objetos de rota (createBrowserRouter/vue-router): chaves balanceadas, em qualquer profundidade; `index: true` é rota-índice do pai
     const scanObjs = (text, parent, depth) => {
-      const re2 = /\{\s*(?:[^{}]*?\b)?path:\s*['"]([^'"]*)['"]([^{}]*(?:\{[^{}]*\}[^{}]*)*)/g; let mm;
-      while ((mm = re2.exec(text))) {
-        const body = mm[2].replace(/children\s*:\s*\[[\s\S]*$/, ''); const compM = /(?:element|Component|component|lazy)\s*:\s*(?:<)?(?:\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\))?([A-Z]\w*)?/.exec(body);
-        const full = joinPath(parent, mm[1]);
-        if (compM && (compM[1] || compM[2])) rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf, compM[1]) : componentFile(compM[2], rf), pai: parent, definida_em: rf, lazy: !!compM[1] }));
-        const ch = /children\s*:\s*\[([\s\S]*)$/.exec(mm[2]); if (ch && depth < 6) scanObjs(ch[1], full, depth + 1);
+      for (let i = text.indexOf('{'); i >= 0 && depth < 10; i = text.indexOf('{', i + 1)) {
+        const f = fecha(text, i); if (f < 0) continue;
+        const corpo = text.slice(i + 1, f); let proprio = '', d = 0;
+        for (let j = 0; j < corpo.length; j++) { const ch = corpo[j]; if (ch === '}' || ch === ']') d--; if (d <= 0) proprio += ch; if (ch === '{' || ch === '[') d++; }
+        const compM = /(?:^|[\s,])(?:element|Component|component|lazy)\s*:\s*(?:<)?(?:\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\))?([A-Z]\w*)?/.exec(proprio);
+        const temPath = /(?:^|[\s,])path\s*:/.test(proprio); const pm = /(?:^|[\s,])path\s*:\s*(['"`])([^'"`$]*)\1/.exec(proprio); const idx = /(?:^|[\s,])index\s*:\s*true\b/.test(proprio);
+        const ehRota = !!(compM && (compM[1] || compM[2])) && (temPath || idx); let full = parent;
+        if (ehRota) {
+          vistos++;
+          if (pm || idx) { full = pm ? joinPath(parent, pm[2]) : parent || '/'; rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf, compM[1]) : componentFile(compM[2], rf), pai: parent, indice: !pm && idx, definida_em: rf, lazy: !!compM[1] })); }
+          else falhas.push(`path: ${(/(?:^|[\s,])path\s*:\s*([^,\n]{0,40})/.exec(proprio) || [, '?'])[1].trim()}`);
+        }
+        scanObjs(corpo, full, depth + 1); i = f;
       }
     };
     scanObjs(src, null, 0);
+    if (falhas.length) rotasNaoInterpretadas.push(`${rf}: ${falhas.length} de ${vistos} rota(s) não interpretada(s) — ex.: ${uniq(falhas).slice(0, 3).join(', ')}`);
   }
 });
 secao('rotas-fs', () => {
@@ -350,7 +463,7 @@ secao('rotas-fs', () => {
   }
 });
 const apiHttp = [];
-for (const [f, d] of [...FILE, ...PY]) for (const r of d.rotas_http || []) apiHttp.push({ ...r, arquivo: f, tabelas: d.tabelas || [], env: d.env || [] });
+for (const [f, d] of [...appFiles, ...appPy]) for (const r of d.rotas_http || []) apiHttp.push({ ...r, arquivo: f, tabelas: d.tabelas || [], env: d.env || [] });
 apiHttp.sort((a, b) => a.caminho.localeCompare(b.caminho) || a.metodo.localeCompare(b.metodo) || a.arquivo.localeCompare(b.arquivo));
 const vistas = [];
 secao('vistas', () => {
@@ -366,10 +479,16 @@ secao('vistas', () => {
   }
 });
 const vistasUniq = Object.values(Object.fromEntries(vistas.map((v) => [v.id + '|' + v.componente, v]))).sort((a, b) => a.id.localeCompare(b.id));
+// imports estáticos de 1º nível; um barrel (index.ts) conta pelos arquivos que exportam os nomes que `f` importa
+const nivel1 = (f) => {
+  const d = FILE.get(f); if (!d) return [];
+  const nomes = new Set(allMatches(/import\s+(?:type\s+)?([\w$*\s,{}]+?)\s+from\s/g, d.conteudo).flatMap((c) => c.replace(/[{}*]/g, ' ').split(',').map((x) => x.trim().split(/\s+as\s+/)[0]).filter(Boolean)));
+  return uniq(d.imports_estaticos.filter((i) => !FILE.get(i)?.teste).flatMap((i) => (/(^|\/)index\.[cm]?[jt]sx?$/.test(i) ? [i, ...(FILE.get(i)?.imports_estaticos || []).filter((j) => FILE.get(j) && !FILE.get(j).teste && FILE.get(j).exports.some((e) => nomes.has(e)))] : [i])));
+};
 const enrich = (r) => {
-  if (!r.arquivo || !FILE.has(r.arquivo)) return { ...r, hooks: [], hooks_locais: [], tabelas: [], rpcs: [], edges: [], canais_realtime: [], flags: [], papeis: [], arquivos_puxados: 0 };
-  const files = [r.arquivo, ...closure(r.arquivo)]; const a = aggregate(files);
-  return { ...r, hooks: a.hooks, hooks_locais: localHooks(a.hooks), tabelas: a.tabelas, rpcs: a.rpcs, edges: a.edges, canais_realtime: a.canais_realtime, flags: a.flags, papeis: a.papeis, arquivos_puxados: files.length - 1 };
+  if (!r.arquivo || !FILE.has(r.arquivo)) return { ...r, hooks: [], hooks_locais: [], tabelas: [], rpcs: [], edges: [], canais_realtime: [], flags: [], papeis: [], arquivos_puxados: 0, diretos: { tabelas: [], rpcs: [], edges: [] } };
+  const files = [r.arquivo, ...closure(r.arquivo)]; const a = aggregate(files); const dir = aggregate([r.arquivo, ...nivel1(r.arquivo)]);
+  return { ...r, hooks: a.hooks, hooks_locais: localHooks(a.hooks), tabelas: a.tabelas, rpcs: a.rpcs, edges: a.edges, canais_realtime: a.canais_realtime, flags: a.flags, papeis: a.papeis, arquivos_puxados: files.length - 1, diretos: { tabelas: dir.tabelas, rpcs: dir.rpcs, edges: dir.edges } };
 };
 const rotasDedup = Object.values(Object.fromEntries(rotas.map((r) => [`${r.caminho}|${r.componente}|${r.definida_em}`, r])));
 const rotasEnriched = rotasDedup.sort((a, b) => a.caminho.localeCompare(b.caminho) || (a.indice ? 1 : 0) - (b.indice ? 1 : 0) || a.tipo.localeCompare(b.tipo) || a.definida_em.localeCompare(b.definida_em)).map(enrich);
@@ -384,7 +503,9 @@ secao('menu', () => {
     const re = /\{[^{}]*?\b(?:label|title|name)\s*:\s*(['"`])([^'"`]+)\1[^{}]*?\b(?:path|href|to|view|id|route|url)\s*:\s*(['"`])([^'"`]+)\3[^{}]*\}|\{[^{}]*?\b(?:path|href|to|view|id|route|url)\s*:\s*(['"`])([^'"`]+)\5[^{}]*?\b(?:label|title|name)\s*:\s*(['"`])([^'"`]+)\7[^{}]*\}/g;
     let m;
     while ((m = re.exec(src))) {
-      const label = m[2] || m[8]; const dest = m[4] || m[6]; const block = m[0];
+      const label = m[2] || m[8]; let dest = m[4] || m[6]; const block = m[0];
+      // item de command palette: o destino casado é o `id` do comando e o bloco tem uma ação — vale o caminho de navigate*("/x"); ação sem navegação não é item de menu
+      if (new RegExp(`\\bid\\s*:\\s*['"\`]${dest.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"\`]`).test(block) && /\b(?:action|onSelect|onClick|handler|perform|run)\s*:/.test(block)) { const nav = /\bnavigate\w*\(\s*['"`](\/[^'"`]*)['"`]/.exec(block); if (!nav) continue; dest = nav[1]; }
       if (!/^[\w/.:#?=&-]+$/.test(dest) || label.length > 60) continue;
       const before = src.slice(0, m.index); const g = [...before.matchAll(/(?:title|label|group|section|id|name)\s*:\s*['"`]([^'"`]+)['"`]\s*,?\s*\n?\s*(?:items|children|links|routes)\s*:/g)];
       let papeisExpr = null; const roles = [];
@@ -435,12 +556,14 @@ for (const co of componentes) for (const e of co.exports) (nomesComp[e] = nomesC
 const componentesDuplicados = sortObj(Object.fromEntries(Object.entries(nomesComp).filter(([k, v]) => v.length > 1 && !/^(Index|Page|Layout|App|Default|Root|Props)$/.test(k))));
 
 // ---------- banco (SQL em ordem de statement) ----------
-const banco = { tabelas: {}, funcoes: new Set(), triggers: [], views: new Set(), enums: {}, extensoes: new Set(), migrations: 0, fonte: [], cron: [], buckets_sql: new Set(), seeds: [], ddl_dinamico: 0 };
+// tabelas/enums sem protótipo: uma tabela chamada `constructor` ou `__proto__` é só mais uma chave
+const banco = { tabelas: Object.create(null), dropadas: new Map(), funcoes: new Set(), triggers: [], views: new Set(), enums: Object.create(null), extensoes: new Set(), migrations: 0, fonte: [], cron: [], buckets_sql: new Set(), seeds: [], ddl_dinamico: 0 };
 let SQL_TEXT_LOWER = '';
 const isCurrentSql = (f) => f.endsWith('.sql') && !/(^|\/)(_foreign|_superseded)\//.test(f);
 const migDir = ['supabase/migrations', 'migrations', 'db/migrations', 'database/migrations', 'prisma/migrations', 'drizzle', 'sql', 'db'].find((d) => exists(d) && ALL.some((f) => f.startsWith(d + '/') && isCurrentSql(f)));
 const tname = (name) => { const n = name.replace(/"/g, ''); return /^public\./i.test(n) ? n.slice(7) : n; };
-const T = (name) => { const n = tname(name); if (!banco.tabelas[n]) banco.tabelas[n] = { colunas: {}, rls: false, policies: [], indices: [], fks: [], criada_em: null }; return banco.tabelas[n]; };
+// `nova` = CREATE TABLE/modelo ORM (cria ou recria). Sem `nova`, statement sobre tabela já dropada não a ressuscita.
+const T = (name, nova) => { const n = tname(name); if (nova) banco.dropadas.delete(n); else if (banco.dropadas.has(n)) return { colunas: {}, rls: false, policies: [], indices: [], fks: [], criada_em: null }; if (!banco.tabelas[n]) banco.tabelas[n] = { colunas: {}, rls: false, policies: [], indices: [], fks: [], criada_em: null }; return banco.tabelas[n]; };
 const splitStatements = (text) => { const out = []; let cur = '', q = null; for (let i = 0; i < text.length; i++) { const ch = text[i]; if (q) { cur += ch; if (ch === q) { if (text[i + 1] === q) { cur += q; i++; } else q = null; } continue; } if (ch === "'" || ch === '"') { q = ch; cur += ch; continue; } if (ch === ';') { out.push(cur); cur = ''; continue; } cur += ch; } out.push(cur); return out; };
 const parseCols = (body, table) => {
   let depth = 0, cur = ''; const parts = [];
@@ -474,11 +597,11 @@ secao('banco-sql', () => {
       if ((m = /^create\s+(?:unlogged\s+)?table\s+(?:if\s+not\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)\s*\(/i.exec(st))) {
         let i = m[0].length, depth = 1, body = '';
         while (i < st.length && depth > 0) { const ch = st[i++]; if (ch === '(') depth++; if (ch === ')') depth--; if (depth > 0) body += ch; }
-        const t = T(m[1]); if (!t.criada_em) t.criada_em = path.posix.basename(f); parseCols(body, t); continue;
+        const t = T(m[1], true); if (!t.criada_em) t.criada_em = path.posix.basename(f); parseCols(body, t); continue;
       }
-      if ((m = /^create\s+table\s+(?:if\s+not\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)\s+(?:partition\s+of|as\s+)/i.exec(st))) { const t = T(m[1]); if (!t.criada_em) t.criada_em = path.posix.basename(f); continue; }
-      if ((m = /^drop\s+table\s+(?:if\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { delete banco.tabelas[tname(m[1])]; continue; }
-      if ((m = /^alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?((?:"?\w+"?\.)?"?\w+"?)\s+rename\s+to\s+("?\w+"?)/i.exec(st))) { const o = tname(m[1]); if (banco.tabelas[o]) { banco.tabelas[m[2].replace(/"/g, '')] = banco.tabelas[o]; delete banco.tabelas[o]; } continue; }
+      if ((m = /^create\s+table\s+(?:if\s+not\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)\s+(?:partition\s+of|as\s+)/i.exec(st))) { const t = T(m[1], true); if (!t.criada_em) t.criada_em = path.posix.basename(f); continue; }
+      if ((m = /^drop\s+table\s+(?:if\s+exists\s+)?([\s\S]+?)(?:\s+(?:cascade|restrict))?$/i.exec(st))) { for (const nm of m[1].split(',')) if (/^\s*(?:"?\w+"?\.)?"?\w+"?\s*$/.test(nm)) { const n = tname(nm.trim()); delete banco.tabelas[n]; banco.dropadas.set(n, path.posix.basename(f)); } continue; }
+      if ((m = /^alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?((?:"?\w+"?\.)?"?\w+"?)\s+rename\s+to\s+("?\w+"?)/i.exec(st))) { const o = tname(m[1]); if (banco.tabelas[o]) { const novo = m[2].replace(/"/g, ''); banco.tabelas[novo] = banco.tabelas[o]; delete banco.tabelas[o]; banco.dropadas.delete(novo); banco.dropadas.set(o, path.posix.basename(f)); } continue; }
       if ((m = /^alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?((?:"?\w+"?\.)?"?\w+"?)\s+([\s\S]+)$/i.exec(st))) {
         const t = T(m[1]); const ops = m[2].split(/,\s*(?=(?:add|drop|alter|enable|disable|force|rename)\s)/i);
         for (const op of ops) {
@@ -500,7 +623,7 @@ secao('banco-sql', () => {
         const t = T(m[2]); const nome = m[1].replace(/"/g, ''); t.policies = t.policies.filter((p) => p.nome !== nome);
         t.policies.push({ nome, comando: (m[4] || 'all').toLowerCase(), para: (m[5] || 'public').trim(), tipo: (m[3] || 'permissive').toLowerCase() }); continue;
       }
-      if ((m = /^drop\s+policy\s+(?:if\s+exists\s+)?("[^"]+"|\w+)\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const t = T(m[2]); t.policies = t.policies.filter((p) => p.nome !== m[1].replace(/"/g, '')); continue; }
+      if ((m = /^drop\s+policy\s+(?:if\s+exists\s+)?("[^"]+"|\w+)\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const t = banco.tabelas[tname(m[2])]; if (t) t.policies = t.policies.filter((p) => p.nome !== m[1].replace(/"/g, '')); continue; }
       if ((m = /^create\s+(unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?("?\w+"?)\s+on\s+(?:only\s+)?((?:"?\w+"?\.)?"?\w+"?)\s*(?:using\s+\w+\s*)?\(([^)]+)\)/i.exec(st))) {
         const t = T(m[3]); const nome = m[2].replace(/"/g, ''); t.indices = t.indices.filter((i) => i.nome !== nome); t.indices.push({ nome, colunas: m[4].replace(/\s+/g, ' ').trim(), unico: !!m[1] }); continue;
       }
@@ -530,14 +653,14 @@ secao('banco-sql', () => {
 secao('banco-orm', () => {
   for (const f of ALL.filter((x) => x.endsWith('.prisma'))) {
     banco.fonte.push(f); const s = readText(f); let m; const re = /model\s+(\w+)\s*\{([^}]*)\}/g;
-    while ((m = re.exec(s))) { const t = T(m[1]); t.criada_em = path.posix.basename(f); for (const l of m[2].split('\n')) { const cm = /^\s*(\w+)\s+([\w[\]?]+)(.*)$/.exec(l); if (cm && !cm[1].startsWith('@')) { const ref = /@relation/.test(cm[3]) ? cm[2].replace(/[[\]?]/g, '') : null; t.colunas[cm[1]] = { tipo: cm[2].toLowerCase(), nn: !cm[2].endsWith('?'), pk: /@id/.test(cm[3]), default: (/@default\(([^)]*)\)/.exec(cm[3]) || [])[1] || null, ref }; if (ref) t.fks.push({ coluna: cm[1], ref }); } } }
+    while ((m = re.exec(s))) { const t = T(m[1], true); t.criada_em = path.posix.basename(f); for (const l of m[2].split('\n')) { const cm = /^\s*(\w+)\s+([\w[\]?]+)(.*)$/.exec(l); if (cm && !cm[1].startsWith('@')) { const ref = /@relation/.test(cm[3]) ? cm[2].replace(/[[\]?]/g, '') : null; t.colunas[cm[1]] = { tipo: cm[2].toLowerCase(), nn: !cm[2].endsWith('?'), pk: /@id/.test(cm[3]), default: (/@default\(([^)]*)\)/.exec(cm[3]) || [])[1] || null, ref }; if (ref) t.fks.push({ coluna: cm[1], ref }); } } }
     const re2 = /enum\s+(\w+)\s*\{([^}]*)\}/g; while ((m = re2.exec(s))) banco.enums[m[1]] = m[2].split(/\s+/).map((x) => x.trim()).filter((x) => /^\w+$/.test(x) && !/^@/.test(x));
   }
-  for (const [f, d] of FILE) for (const t of d.drizzle) { const tb = T(t); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('drizzle')) banco.fonte.push('drizzle'); const m = new RegExp(`(?:pgTable|mysqlTable|sqliteTable)\\(\\s*['"]${t}['"]\\s*,\\s*\\{([^}]*)\\}`).exec(d.conteudo); if (m) for (const cm of m[1].matchAll(/(\w+)\s*:\s*(\w+)\(/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2], nn: /notNull/.test(m[1]), pk: false, default: null, ref: null }; }
-  for (const [f, d] of FILE) { let m; const re = /@Entity\(\s*(?:['"](\w+)['"])?\s*\)[\s\S]*?class\s+(\w+)/g; while ((m = re.exec(d.conteudo))) { const tb = T(m[1] || m[2]); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('typeorm')) banco.fonte.push('typeorm'); for (const cm of d.conteudo.matchAll(/@(?:Primary\w*|Column|CreateDateColumn|UpdateDateColumn)\([^)]*\)\s*\n\s*(\w+)\s*[?!]?:\s*([\w[\]]+)/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2].toLowerCase(), nn: true, pk: false, default: null, ref: null }; } }
-  for (const [f, d] of PY) for (const cls of d.modelos) { const tb = T(cls); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('python-models')) banco.fonte.push('python-models'); }
+  for (const [f, d] of appFiles) for (const t of d.drizzle) { const tb = T(t, true); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('drizzle')) banco.fonte.push('drizzle'); const m = new RegExp(`(?:pgTable|mysqlTable|sqliteTable)\\(\\s*['"]${t}['"]\\s*,\\s*\\{([^}]*)\\}`).exec(d.conteudo); if (m) for (const cm of m[1].matchAll(/(\w+)\s*:\s*(\w+)\(/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2], nn: /notNull/.test(m[1]), pk: false, default: null, ref: null }; }
+  for (const [f, d] of appFiles) { let m; const re = /@Entity\(\s*(?:['"](\w+)['"])?\s*\)[\s\S]*?class\s+(\w+)/g; while ((m = re.exec(d.conteudo))) { const tb = T(m[1] || m[2], true); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('typeorm')) banco.fonte.push('typeorm'); for (const cm of d.conteudo.matchAll(/@(?:Primary\w*|Column|CreateDateColumn|UpdateDateColumn)\([^)]*\)\s*\n\s*(\w+)\s*[?!]?:\s*([\w[\]]+)/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2].toLowerCase(), nn: true, pk: false, default: null, ref: null }; } }
+  for (const [f, d] of appPy) for (const cls of d.modelos) { const tb = T(cls, true); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('python-models')) banco.fonte.push('python-models'); }
 });
-const tabelasTypes = {};
+const tabelasTypes = Object.create(null);
 secao('banco-types', () => {
   const typesFile = CFG.typesFile || ALL.find((f) => /(supabase|database)[/.-].*types\.ts$|types\/supabase\.ts$|database\.types\.ts$|supabase\.types\.ts$/.test(f) && !TEST_RE.test(f));
   if (!typesFile) return;
@@ -549,31 +672,36 @@ secao('banco-types', () => {
   const re = /(\w+):\s*\{\s*Row:\s*\{/g; let m;
   while ((m = re.exec(body))) { let j = re.lastIndex, d2 = 1, row = ''; while (j < body.length && d2 > 0) { const ch = body[j++]; if (ch === '{') d2++; if (ch === '}') d2--; if (d2 > 0) row += ch; } const campos = []; let dd = 0, cur = ''; for (const ch of row) { if (ch === '{' || ch === '[' || ch === '(') dd++; if (ch === '}' || ch === ']' || ch === ')') dd--; if ((ch === ';' || ch === '\n') && dd === 0) { campos.push(cur); cur = ''; } else cur += ch; } campos.push(cur); tabelasTypes[m[1]] = Object.fromEntries(campos.map((cmp) => /^\s*(\w+)\??:\s*([\s\S]+?)\s*$/.exec(cmp)).filter(Boolean).map((cm) => [cm[1], cm[2].replace(/\s+/g, ' ')])); }
 });
-for (const [t, cols] of Object.entries(tabelasTypes)) T(t).colunas_types = cols;
+// types.ts é gerado do banco em algum momento do passado: tabela que só ele conhece (dropada depois, ou sem CREATE TABLE nas
+// migrations) vira alerta em vez de ser afirmada; a dropada sai da lista, a sem migration fica (só com colunas_types).
+const tabelasSoNoTypes = [];
+for (const [t, cols] of Object.entries(tabelasTypes)) {
+  if (banco.dropadas.has(t)) { tabelasSoNoTypes.push({ tabela: t, motivo: `dropada em ${banco.dropadas.get(t)}` }); continue; }
+  if (banco.migrations && !banco.tabelas[t]) tabelasSoNoTypes.push({ tabela: t, motivo: 'sem create table nas migrations' });
+  T(t).colunas_types = cols;
+}
 const EDGE_DIR = ['supabase/functions', 'functions', 'netlify/functions', 'edge-functions'].find((d) => exists(d)) || 'supabase/functions';
-// Exemplos, testes e ferramentas continuam no inventário, mas não provam uso pela aplicação.
-// srcDirs explícito permite tratar uma raiz de ferramentas como código de aplicação.
-const TOOLING_ROOT = /^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(?:scripts|bin|tools|\.github|docs|inventario|analise|examples?|samples?)\//;
-const appFiles = [...FILE.entries()].filter(([f, d]) => !d.teste && !d.story && (isSrc(f) || !TOOLING_ROOT.test(f)));
 const tabelasUsadas = new Map();
 for (const [f, d] of appFiles) for (const t of d.tabelas) { if (!tabelasUsadas.has(t)) tabelasUsadas.set(t, { front: [], edges: [] }); (f.startsWith(EDGE_DIR) ? tabelasUsadas.get(t).edges : tabelasUsadas.get(t).front).push(f); }
 const bancoOut = {
   fonte: uniq(banco.fonte), migrations: banco.migrations, seeds: banco.seeds, avisos: banco.ddl_dinamico ? [`${banco.ddl_dinamico} bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo`] : [], extensoes: [...banco.extensoes].sort(), enums: sortObj(banco.enums), views: [...banco.views].sort(), funcoes: [...banco.funcoes].sort(),
   triggers: banco.triggers.sort((a, b) => a.tabela.localeCompare(b.tabela) || a.nome.localeCompare(b.nome)),
   cron_jobs: banco.cron.sort((a, b) => a.nome.localeCompare(b.nome)),
-  buckets: uniq([...banco.buckets_sql, ...[...FILE.values()].flatMap((d) => d.buckets)]).map((b) => ({ nome: b, criado_em_sql: banco.buckets_sql.has(b), usado_em: [...FILE.values()].filter((d) => d.buckets.includes(b)).length })),
+  buckets: uniq([...banco.buckets_sql, ...appFiles.flatMap(([, d]) => d.buckets)]).map((b) => ({ nome: b, criado_em_sql: banco.buckets_sql.has(b), usado_em: appFiles.filter(([, d]) => d.buckets.includes(b)).length })),
   tabelas: sortObj(Object.fromEntries(Object.entries(banco.tabelas).map(([n, t]) => {
     const uso = tabelasUsadas.get(n) || { front: [], edges: [] };
     const cols = Object.keys(t.colunas); const colsT = t.colunas_types ? Object.keys(t.colunas_types) : null;
     return [n, { ...t, colunas: sortObj(t.colunas), colunas_types: t.colunas_types ? sortObj(t.colunas_types) : undefined, drift: colsT && cols.length ? { so_na_migration: cols.filter((cc) => !colsT.includes(cc)), so_no_types: colsT.filter((cc) => !cols.includes(cc)) } : undefined, policies: t.policies.sort((a, b) => a.nome.localeCompare(b.nome)), indices: t.indices.sort((a, b) => a.nome.localeCompare(b.nome)), fks: uniq(t.fks.map((x) => `${x.coluna}->${x.ref}`)), usada_no_front: uniq(uso.front).length, usada_em_edges: uniq(uso.edges.map((f) => f.split('/').slice(-2)[0])), triggers: banco.triggers.filter((tr) => tr.tabela === n).map((tr) => tr.nome), sem_rls: !t.rls && !n.includes('.') && !!t.criada_em && /\.sql$/.test(t.criada_em), nao_usada: !uso.front.length && !uso.edges.length }];
   }))),
+  tabelas_so_no_types: tabelasSoNoTypes.sort((a, b) => a.tabela.localeCompare(b.tabela)),
   tabelas_usadas_no_codigo_sem_definicao: uniq([...tabelasUsadas.keys()]).filter((t) => !banco.tabelas[t] && !banco.views.has(t)),
   rpcs_usadas_no_codigo: uniq(appFiles.flatMap(([, d]) => d.rpcs)).map((r) => ({ nome: r, definida: banco.funcoes.has(r), usada_em: appFiles.filter(([, d]) => d.rpcs.includes(r)).length })),
 };
 
 // ---------- edge functions / serverless ----------
 const configToml = readText('supabase/config.toml');
-const verifyJwt = {}; { const re = /\[functions\.([\w-]+)\]\s*\n(?:[^[]*?)verify_jwt\s*=\s*(true|false)/g; let m; while ((m = re.exec(configToml))) verifyJwt[m[1]] = m[2] === 'true'; }
+// linha a linha, sem comentários `# ...`: verify_jwt citado em comentário não conta, e a chave vale para a seção [functions.x] em que está
+const verifyJwt = Object.create(null); { let sec = null; for (const l of configToml.replace(/#[^\n]*/g, '').split('\n')) { const s = /^\s*\[([^\]]+)\]/.exec(l); if (s) { sec = (/^functions\.["']?([\w-]+)["']?$/.exec(s[1].trim()) || [])[1] || null; continue; } const v = sec && /^\s*verify_jwt\s*=\s*(true|false)\b/.exec(l); if (v) verifyJwt[sec] = v[1] === 'true'; } }
 const edges = secao('edges', () => {
   const out = [];
   if (!exists(EDGE_DIR)) return out;
@@ -618,7 +746,7 @@ const scriptsRepo = secao('scripts', () => ALL.filter((f) => /^(scripts|bin|tool
   const bn = path.posix.basename(f);
   const usadoPorNpm = Object.entries(pkg.scripts || {}).filter(([, v]) => v.includes(f) || v.includes(bn)).map(([k]) => k);
   const usadoPorWf = workflows.filter((w) => w.scripts_usados.includes(f)).map((w) => path.posix.basename(w.arquivo));
-  return { arquivo: f, descricao: first.slice(0, 2).join(' ').slice(0, 200) || null, linhas: countLines(src), env: envNames(src), npm_scripts: usadoPorNpm, workflows: usadoPorWf, orfao: !usadoPorNpm.length && !usadoPorWf.length && !TEXT_CORPUS.some(([o, t]) => o !== f && t.includes(bn)) };
+  return { arquivo: f, descricao: first.slice(0, 2).join(' ').slice(0, 200) || null, linhas: countLines(src), env: envNames(src), npm_scripts: usadoPorNpm, workflows: usadoPorWf, orfao: !usadoPorNpm.length && !usadoPorWf.length && !usedBy(f).length && !TEXT_CORPUS.some(([o, t]) => o !== f && t.includes(bn)) };
 }), []);
 const envExample = uniq(ALL.filter((f) => /(^|\/)\.env\.(example|sample|template)$/.test(f)).flatMap((f) => [...readText(f).matchAll(/^\s*(?:export\s+)?([A-Z][A-Z0-9_]+)\s*=/gm)].map((m) => m[1])));
 const envUsadas = uniq([...FILE.entries()].filter(([f]) => isSrc(f)).flatMap(([, d]) => d.env));
@@ -635,21 +763,21 @@ const changelogTopo = (() => { const s = readText(ALL.find((f) => /^CHANGELOG\.m
 const integracoes = secao('integracoes', () => {
   const SDK = { stripe: 'Stripe', '@stripe/stripe-js': 'Stripe', twilio: 'Twilio', openai: 'OpenAI', '@anthropic-ai/sdk': 'Anthropic', '@google/generative-ai': 'Gemini', '@elevenlabs/react': 'ElevenLabs', '@sentry/react': 'Sentry', '@sentry/node': 'Sentry', '@sentry/nextjs': 'Sentry', 'posthog-js': 'PostHog', mixpanel: 'Mixpanel', '@segment/analytics-next': 'Segment', resend: 'Resend', nodemailer: 'SMTP', '@sendgrid/mail': 'SendGrid', 'aws-sdk': 'AWS', '@aws-sdk/client-s3': 'AWS S3', firebase: 'Firebase', 'firebase-admin': 'Firebase', '@upstash/redis': 'Upstash', ioredis: 'Redis', redis: 'Redis', 'socket.io': 'Socket.IO', pusher: 'Pusher', 'web-push': 'Web Push', '@vercel/analytics': 'Vercel Analytics', 'next-auth': 'NextAuth', '@clerk/nextjs': 'Clerk', '@auth0/auth0-react': 'Auth0', axios: 'HTTP (axios)', i18next: 'i18next', 'react-i18next': 'i18next', zod: 'zod', '@tanstack/react-query': 'react-query', 'googleapis': 'Google APIs', '@supabase/supabase-js': 'Supabase' };
   const sdks = Object.keys(deps).filter((d) => SDK[d]).map((d) => ({ pacote: d, servico: SDK[d], versao: deps[d] })).sort((a, b) => a.servico.localeCompare(b.servico) || a.pacote.localeCompare(b.pacote));
-  const hosts = byCount([...FILE.values()].flatMap((d) => d.hosts_externos)).map(([h, n]) => ({ host: h, arquivos: n }));
+  const hosts = byCount(appFiles.flatMap(([, d]) => d.hosts_externos)).map(([h, n]) => ({ host: h, arquivos: n }));
   const envHints = uniq([...envUsadas, ...envEdges, ...envExample]).filter((e) => /(API_KEY|TOKEN|SECRET|WEBHOOK|DSN|SID|CLIENT_ID|SMTP|S3|BUCKET|STRIPE|TWILIO|OPENAI|ELEVEN|SENTRY|EVOLUTION|WHATSAPP|GMAIL|GOOGLE|FIREBASE|REDIS|RESEND)/i.test(e));
   const webhooks = edges.filter((e) => !e.verify_jwt).map((e) => e.nome).concat(apiHttp.filter((r) => /webhook|callback|hook/i.test(r.caminho)).map((r) => `${r.metodo} ${r.caminho}`));
-  return { sdks, hosts_externos: hosts, env_de_integracao: envHints, webhooks_recebidos: uniq(webhooks), realtime: uniq([...FILE.values()].flatMap((d) => d.canais_realtime)) };
+  return { sdks, hosts_externos: hosts, env_de_integracao: envHints, webhooks_recebidos: uniq(webhooks), realtime: uniq(appFiles.flatMap(([, d]) => d.canais_realtime)) };
 }, { sdks: [], hosts_externos: [], env_de_integracao: [], webhooks_recebidos: [], realtime: [] });
 const permissoes = secao('permissoes', () => ({
-  papeis_no_codigo: byCount([...FILE.values()].flatMap((d) => d.papeis)).map(([p, n]) => ({ papel: p, ocorrencias: n })),
+  papeis_no_codigo: byCount(appFiles.flatMap(([, d]) => d.papeis)).map(([p, n]) => ({ papel: p, ocorrencias: n })),
   enums_de_papel: Object.entries(banco.enums).filter(([k]) => /role|papel|perfil|permission/i.test(k)).map(([k, v]) => ({ enum: k, valores: v })),
   rpcs_de_autorizacao: bancoOut.rpcs_usadas_no_codigo.filter((r) => /admin|role|permission|can_|has_|is_|auth/i.test(r.nome)).map((r) => r.nome),
-  guards: uniq([...FILE.entries()].filter(([, d]) => d.componente && /Protected|Guard|RequireAuth|RequireRole|PrivateRoute|Authorized/.test(d.exports.join(' '))).map(([f]) => f)),
+  guards: uniq(appFiles.filter(([, d]) => d.componente && /Protected|Guard|RequireAuth|RequireRole|PrivateRoute|Authorized/.test(d.exports.join(' '))).map(([f]) => f)),
   rotas_protegidas: rotasEnriched.filter((r) => r.protegida).length, rotas_publicas: rotasEnriched.filter((r) => !r.protegida && r.tipo === 'tela').map((r) => r.caminho),
   menu_com_papeis: menuUniq.filter((m) => m.papeis.length).map((m) => ({ rotulo: m.rotulo, papeis: m.papeis })),
   tabelas_sem_rls: Object.entries(bancoOut.tabelas).filter(([, t]) => t.sem_rls).map(([n]) => n),
 }), {});
-const flags = secao('flags', () => { const all = byCount([...FILE.values()].flatMap((d) => d.flags)); return { total: all.length, flags: all.map(([f, n]) => ({ flag: f, arquivos: n })), tabelas_de_flag: Object.keys(bancoOut.tabelas).filter((t) => /flag|feature|toggle|setting/i.test(t)) }; }, { total: 0, flags: [], tabelas_de_flag: [] });
+const flags = secao('flags', () => { const all = byCount(appFiles.flatMap(([, d]) => d.flags)); return { total: all.length, flags: all.map(([f, n]) => ({ flag: f, arquivos: n })), tabelas_de_flag: Object.keys(bancoOut.tabelas).filter((t) => /flag|feature|toggle|setting/i.test(t)) }; }, { total: 0, flags: [], tabelas_de_flag: [] });
 const providers = secao('providers', () => { const entry = ALL.find((f) => /^(?:src\/)?(main|index)\.[tj]sx$/.test(f)) || ALL.find((f) => /^(?:src\/)?(App|app|root|_app)\.[tj]sx$/.test(f)) || ALL.find((f) => /^(?:src\/)?app\/layout\.tsx$/.test(f)); if (!entry) return { entrada: null, providers: [] }; const files = [entry, ...closure(entry).filter((f) => /App\.[tj]sx$|providers?\//i.test(f)).slice(0, 10)]; return { entrada: entry, providers: uniq(files.flatMap((f) => allMatches(/<([A-Z]\w*(?:Provider|Context|Boundary|Router|Client|Store)\b[\w.]*)/g, FILE.get(f)?.conteudo || ''))) }; }, { entrada: null, providers: [] });
 const i18n = secao('i18n', () => { const arqs = ALL.filter((f) => /(^|\/)(i18n|locales?|lang|translations?)\/.+\.(json|ts|js|yml|yaml)$/.test(f)); const LANG = /^[a-z]{2}(?:[-_][A-Za-z]{2,4})?$/; const idiomas = uniq(arqs.map((f) => { const partes = f.split('/'); const i = partes.findIndex((p0) => /^(i18n|locales?|lang|translations?)$/.test(p0)); const resto = partes.slice(i + 1); const b0 = baseOf(f).split('.')[0]; return resto.slice(0, -1).find((p0) => LANG.test(p0)) || (LANG.test(b0) ? b0 : null); }).filter(Boolean)); return { arquivos: arqs.length, idiomas, lib: [has('i18next') && 'i18next', has('react-intl') && 'react-intl', has('vue-i18n') && 'vue-i18n', has('next-intl') && 'next-intl'].filter(Boolean) }; }, { arquivos: 0, idiomas: [], lib: [] });
 const ferramentas = {
@@ -663,16 +791,22 @@ const ferramentas = {
 };
 
 // ---------- testes ----------
-const testFiles = [...FILE.entries(), ...PY.entries()].filter(([, d]) => d.teste);
+const casosDe = (d) => (d.conteudo ? (d.conteudo.match(/\b(?:it|test)(?:\.(?:each|only|skip|concurrent|todo))?\s*\(/g) || []).length : d.casos || 0);
+const ehSuporte = (f, d) => !NOME_TESTE_RE.test(f) && casosDe(d) === 0;
+const testFilesTodos = [...FILE.entries(), ...PY.entries()].filter(([, d]) => d.teste);
+const testFiles = testFilesTodos.filter(([f, d]) => !ehSuporte(f, d));
 const cobertoPor = new Map();
-for (const [, d] of testFiles) for (const i of d.imports) { if (anyFile(i)?.teste) continue; cobertoPor.set(i, (cobertoPor.get(i) || 0) + 1); }
+// teste que mora em raiz de ferramenta (scripts/…) só cobre ferramenta: o que ele "importa" de src/ são fixtures em string
+const soFerramenta = (f) => TOOLING_ROOT.test(f) && !isSrc(f);
+const testaDe = (f, d) => d.imports.filter((i) => !anyFile(i)?.teste && !(soFerramenta(f) && !soFerramenta(i)));
+for (const [f, d] of testFiles) for (const i of testaDe(f, d)) cobertoPor.set(i, (cobertoPor.get(i) || 0) + 1);
 for (const h of hooksOut) h.coberto_por_testes = cobertoPor.get(h.arquivo) || 0;
-const tipoTeste = (f) => (/(^|\/)(e2e|cypress|playwright)\/|\.e2e\./.test(f) ? 'e2e' : /contract/.test(f) ? 'contrato' : /\/qa\//.test(f) ? 'qa' : /\.py$/.test(f) ? 'pytest' : 'unit');
+const tipoTeste = (f) => (/(^|\/)(e2e|cypress|playwright)\/|\.e2e\./.test(f) ? 'e2e' : /contract/.test(f) ? 'contrato' : /(^|\/)qa\//.test(f) ? 'qa' : /\.py$/.test(f) ? 'pytest' : 'unit');
 const testes = secao('testes', () => ({
-  frameworks: stack.testes, total: testFiles.length + ALL.filter((f) => /^supabase\/tests\/.*\.sql$/.test(f)).length,
+  frameworks: stack.testes, total: testFiles.length + ALL.filter((f) => /^supabase\/tests\/.*\.sql$/.test(f)).length, suporte_total: testFilesTodos.length - testFiles.length,
   por_tipo: sortObj(testFiles.reduce((acc, [f]) => { const t = tipoTeste(f); acc[t] = (acc[t] || 0) + 1; return acc; }, {})),
   onde_ficam: byCount(testFiles.map(([f]) => (/__tests__\//.test(f) ? 'co-localizado (__tests__)' : /\.(test|spec)\./.test(f) && !/^(tests?|e2e|qa)\//.test(f) ? 'co-localizado (*.test)' : /^e2e\//.test(f) ? 'e2e/' : /^tests?\//.test(f) ? 'tests/' : 'outro'))).map(([k, n]) => ({ padrao: k, arquivos: n })),
-  arquivos: testFiles.map(([f, d]) => ({ arquivo: f, tipo: tipoTeste(f), linhas: d.linhas, testa: d.imports.filter((i) => !anyFile(i)?.teste), casos: d.conteudo ? (d.conteudo.match(/\b(?:it|test)(?:\.(?:each|only|skip|concurrent|todo))?\s*\(/g) || []).length : (d.defs || []).filter((x) => /^test_/.test(x)).length })).sort((a, b) => a.arquivo.localeCompare(b.arquivo)),
+  arquivos: testFilesTodos.map(([f, d]) => ({ arquivo: f, tipo: tipoTeste(f), linhas: d.linhas, testa: testaDe(f, d), casos: casosDe(d), suporte: ehSuporte(f, d) })).sort((a, b) => a.arquivo.localeCompare(b.arquivo)),
   sql: ALL.filter((f) => /^supabase\/tests\/.*\.sql$/.test(f)),
   cobertura_por_arquivo: sortObj(Object.fromEntries(cobertoPor)),
   sem_teste: { telas: uniq(rotasEnriched.filter((r) => r.arquivo && !cobertoPor.has(r.arquivo)).map((r) => r.arquivo)), hooks: hooksOut.filter((h) => !h.coberto_por_testes).map((h) => h.arquivo), edges: edges.filter((e) => !e.testes).map((e) => e.nome), servicos: [] },
@@ -685,7 +819,7 @@ const logica = secao('logica', () => [...FILE.entries()].filter(([f, d]) => cama
   arquivo: f, camada: camadaDe(f), exports: d.exports, export_default: d.export_default, linhas: d.linhas, tabelas: d.tabelas, rpcs: d.rpcs, edges: d.edges, env: d.env, externos: d.externos, zod_schemas: d.zod, flags: d.flags, papeis: d.papeis,
   usado_por: usedBy(f).length, usado_por_modulos: uniq(usedBy(f).map(dominioDe).filter(Boolean)), coberto_por_testes: cobertoPor.get(f) || 0,
   orfao: usedBy(f).length === 0 && !/index\.[tj]sx?$|main\.[tj]sx?$|\.d\.ts$|\.config\./.test(f),
-})).concat([...PY.entries()].filter(([f, d]) => !d.teste && !/^(docs|qa|analise|inventario|examples?|samples?)\//.test(f)).map(([f, d]) => ({ arquivo: f, camada: camadaDe(f) || 'python', exports: [...d.defs, ...d.classes], linhas: d.linhas, tabelas: [], rpcs: [], edges: [], env: d.env, externos: d.externos, rotas_http: d.rotas_http.length, usado_por: usedBy(f).length, usado_por_modulos: uniq(usedBy(f).map(dominioDe).filter(Boolean)), coberto_por_testes: cobertoPor.get(f) || 0, orfao: usedBy(f).length === 0 && !/__init__|main\.py|manage\.py|app\.py|wsgi|asgi/.test(f) }))).sort((a, b) => a.arquivo.localeCompare(b.arquivo)), []);
+})).concat([...PY.entries()].filter(([f, d]) => !d.teste && !/^(docs|qa|analise|inventario|examples?|samples?)\//.test(f)).map(([f, d]) => ({ arquivo: f, camada: camadaDe(f) || 'python', exports: [...d.defs, ...d.classes], linhas: d.linhas, tabelas: [], rpcs: [], edges: [], env: d.env, externos: d.externos, rotas_http: d.rotas_http.length, usado_por: usedBy(f).length, usado_por_modulos: uniq(usedBy(f).map(dominioDe).filter(Boolean)), coberto_por_testes: cobertoPor.get(f) || 0, orfao: usedBy(f).length === 0 && !/__init__|main\.py|manage\.py|app\.py|wsgi|asgi/.test(f) && !scriptsRepo.some((s) => s.arquivo === f && !s.orfao) }))).sort((a, b) => a.arquivo.localeCompare(b.arquivo)), []);
 testes.sem_teste.servicos = logica.filter((l) => !l.coberto_por_testes && l.usado_por > 0 && /^serv/.test(l.camada || '')).map((l) => l.arquivo);
 
 // ---------- grafo ----------
@@ -703,7 +837,10 @@ const grafo = secao('grafo', () => {
     }
   };
   for (const f of prodFiles) if (!ord.has(f)) tarjan(f);
-  const entradas = new Set([...rotasEnriched.map((r) => r.arquivo), ...vistasEnriched.map((v) => v.arquivo), ...edges.map((e) => e.entrada), ...lazyTargets, ...ALL.filter((f) => /^(src\/)?(main|index|App|app|server|worker)\.[tj]sx?$|^scripts\/|^(src\/)?(app|pages|routes)\//.test(f) || /(^|\/)(main|app|manage|wsgi|asgi|__main__)\.py$/.test(f))].filter(Boolean));
+  // arquivo de public/ citado por caminho no app ou no index.html (service worker registrado, script do HTML) é entrada, não órfão
+  const htmlRaiz = readText('index.html');
+  const citadoPorCaminho = (f) => { const re = new RegExp(`['"\`=(]\\.?/?${f.slice(7).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"\`?#)]`); return re.test(htmlRaiz) || appFiles.some(([a, d]) => a !== f && re.test(d.conteudo)); };
+  const entradas = new Set([...prodFiles.filter((f) => f.startsWith('public/') && citadoPorCaminho(f)), ...rotasEnriched.map((r) => r.arquivo), ...vistasEnriched.map((v) => v.arquivo), ...edges.map((e) => e.entrada), ...lazyTargets, ...ALL.filter((f) => /^(src\/)?(main|index|App|app|server|worker)\.[tj]sx?$|^scripts\/|^(src\/)?(app|pages|routes)\//.test(f) || /(^|\/)(main|app|manage|wsgi|asgi|__main__)\.py$/.test(f))].filter(Boolean));
   return {
     nos: prodFiles.length, arestas: prodFiles.reduce((s, f) => s + importsOf(f).length, 0),
     hubs: [...USED_BY.entries()].filter(([f]) => anyFile(f) && !anyFile(f).teste).map(([f, u]) => ({ arquivo: f, importado_por: u.length })).sort((a, b) => b.importado_por - a.importado_por || a.arquivo.localeCompare(b.arquivo)).slice(0, 40),
@@ -763,17 +900,22 @@ const convencoes = secao('convencoes', () => {
 }, { onde_ficam: {}, nomenclatura: {}, instrucoes_agentes: [] });
 
 // ---------- baseline ----------
+// janelas relativas à data do commit HEAD (não ao relógio): o mesmo commit gera o mesmo baseline/INDEX amanhã
+const headTs = Number(git('log', '-1', '--format=%ct')) || 0;
+const desde = (dias) => `--since=${new Date((headTs - dias * 86400) * 1000).toISOString().replace(/\.\d+Z$/, 'Z')}`;
 const gitInfo = secao('git', () => ({
   commit: git('rev-parse', 'HEAD') || null, branch: git('rev-parse', '--abbrev-ref', 'HEAD') || null, data_commit: git('log', '-1', '--format=%cI') || null, remote: git('remote', 'get-url', 'origin').replace(/\/\/[^@]+@/, '//') || null,
   ultimos_commits: git('log', '-25', '--format=%h|%cs|%s').split('\n').filter(Boolean).map((l) => { const [h, d, ...s] = l.split('|'); return { sha: h, data: d, assunto: s.join('|').slice(0, 120) }; }),
-  arquivos_mudados_7d: uniq(git('log', '--since=7.days', '--name-only', '--format=').split('\n').filter(Boolean)).length,
-  pastas_mais_mudadas_30d: byCount(git('log', '--since=30.days', '--name-only', '--format=').split('\n').filter(Boolean).map((f) => f.split('/').slice(0, 3).join('/'))).slice(0, 15).map(([pasta, n]) => ({ pasta, mudancas: n })),
-  arquivos_mais_mudados_90d: byCount(git('log', '--since=90.days', '--name-only', '--format=').split('\n').filter((f) => f && FILESET.has(f))).slice(0, 25).map(([arquivo, n]) => ({ arquivo, mudancas: n })),
-  autores_30d: byCount(git('log', '--since=30.days', '--format=%an').split('\n').filter(Boolean)).slice(0, 10).map(([a, n]) => ({ autor: a, commits: n })),
+  janelas_relativas_a: 'data do commit HEAD',
+  arquivos_mudados_7d: uniq(git('log', desde(7), '--name-only', '--format=').split('\n').filter(Boolean)).length,
+  pastas_mais_mudadas_30d: byCount(git('log', desde(30), '--name-only', '--format=').split('\n').filter(Boolean).map((f) => f.split('/').slice(0, 3).join('/'))).slice(0, 15).map(([pasta, n]) => ({ pasta, mudancas: n })),
+  arquivos_mais_mudados_90d: byCount(git('log', desde(90), '--name-only', '--format=').split('\n').filter((f) => f && FILESET.has(f))).slice(0, 25).map(([arquivo, n]) => ({ arquivo, mudancas: n })),
+  autores_30d: byCount(git('log', desde(30), '--format=%an').split('\n').filter(Boolean)).slice(0, 10).map(([a, n]) => ({ autor: a, commits: n })),
 }), {});
 const byDir = {};
 for (const [f, d] of [...FILE, ...PY]) { const k = f.split('/').slice(0, 2).join('/'); byDir[k] = byDir[k] || { arquivos: 0, linhas: 0 }; byDir[k].arquivos++; byDir[k].linhas += d.linhas; }
 const allDocs = [...FILE.values(), ...PY.values()];
+const avisos = uniq([...AVISOS, ...[...GRANDES].map((a) => ({ tipo: 'arquivo_ignorado_por_tamanho', arquivo: a, detalhe: `maior que ${CFG.maxFileMB || 8} MB (maxFileMB) — conteúdo não foi lido` }))].map((a) => JSON.stringify(a))).map((a) => JSON.parse(a));
 const baseline = {
   git: gitInfo,
   contagens: { arquivos_total: ALL.length, arquivos_codigo: CODE_FILES.length + PY_FILES.length, linhas_codigo: allDocs.reduce((s, d) => s + d.linhas, 0), rotas: rotasEnriched.length, rotas_http_backend: apiHttp.length, vistas_por_id: vistasEnriched.length, itens_menu: menuUniq.length, modulos: modulos.length, componentes: componentes.length, hooks: hooksOut.length, edge_functions: edges.length, tabelas: Object.keys(bancoOut.tabelas).length, migrations: bancoOut.migrations, cron_jobs: bancoOut.cron_jobs.length, testes: testes.total, workflows: workflows.length, scripts: scriptsRepo.length, docs_md: ALL.filter((f) => f.endsWith('.md')).length },
@@ -783,12 +925,14 @@ const baseline = {
   todos: cap([...FILE.entries(), ...PY.entries()].flatMap(([f, d]) => d.todos.map((t) => ({ arquivo: f, ...t }))), 300),
   alertas: {
     rotas_sem_arquivo: rotasEnriched.filter((r) => !r.arquivo && r.tipo === 'tela').map((r) => r.caminho),
+    rotas_nao_interpretadas: rotasNaoInterpretadas,
     componentes_ambiguos: [...ambiguos].sort(),
     menu_sem_destino: menuUniq.filter((m) => !resolveDestino(m.destino)).map((m) => `${m.rotulo} -> ${m.destino}`),
     edges_orfas: edges.filter((e) => e.orfa).map((e) => e.nome),
     edges_chamadas_sem_pasta: edgesSemPasta,
     tabelas_sem_rls: Object.entries(bancoOut.tabelas).filter(([, t]) => t.sem_rls).map(([n]) => n),
     tabelas_usadas_sem_definicao: bancoOut.tabelas_usadas_no_codigo_sem_definicao,
+    tabelas_so_no_types: bancoOut.tabelas_so_no_types.map((t) => t.tabela),
     tabelas_com_drift_migration_vs_types: Object.entries(bancoOut.tabelas).filter(([, t]) => t.drift && (t.drift.so_na_migration.length || t.drift.so_no_types.length)).map(([n]) => n),
     rpcs_sem_definicao: bancoOut.rpcs_usadas_no_codigo.filter((r) => !r.definida).map((r) => r.nome),
     componentes_orfaos: componentes.filter((co) => co.orfao).map((co) => co.arquivo).slice(0, 200),
@@ -796,9 +940,10 @@ const baseline = {
     scripts_orfaos: scriptsRepo.filter((s) => s.orfao).map((s) => s.arquivo),
     env_usadas_nao_declaradas: ferramentas.env.usadas_mas_nao_declaradas,
     ciclos_de_import: grafo.ciclos.total,
-    possiveis_segredos_no_codigo: cap([...FILE.entries(), ...PY.entries()].flatMap(([f, d]) => { const out = []; let ln = 0; for (const line of (d.conteudo || readText(f)).split('\n')) { ln++; if (/eyJ[a-zA-Z0-9_-]{30,}\.[a-zA-Z0-9_-]{10,}|sk_live_[a-zA-Z0-9]{10,}|sk-[a-zA-Z0-9]{32,}|AKIA[0-9A-Z]{16}|ghp_[a-zA-Z0-9]{30,}|xox[baprs]-[a-zA-Z0-9-]{10,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE/.test(line) && !/example|placeholder|xxx|mock|fake|dummy/i.test(line)) out.push(`${f}:${ln}`); } return out; }), 50),
+    possiveis_segredos_no_codigo: cap([...appFiles, ...appPy].flatMap(([f, d]) => { const out = []; let ln = 0; for (const line of (d.conteudo || readText(f)).split('\n')) { ln++; if (/eyJ[a-zA-Z0-9_-]{30,}\.[a-zA-Z0-9_-]{10,}|sk_live_[a-zA-Z0-9]{10,}|sk-[a-zA-Z0-9]{32,}|AKIA[0-9A-Z]{16}|ghp_[a-zA-Z0-9]{30,}|xox[baprs]-[a-zA-Z0-9-]{10,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE/.test(line) && !/example|placeholder|xxx|mock|fake|dummy/i.test(line)) out.push(`${f}:${ln}`); } return out; }), 50),
   },
   erros_do_gerador: ERROS,
+  avisos_do_gerador: avisos,
 };
 
 // ---------- escrita ----------
@@ -806,7 +951,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const AVISO = 'GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.';
 const c = baseline.contagens;
 const files = {
-  'rotas.json': { aviso: AVISO, format_version: FORMAT_VERSION, resumo: { urls: rotasEnriched.length, rotas_http_backend: apiHttp.length, vistas_por_id: vistasEnriched.length, itens_menu: menuUniq.length, lazy: lazyMap.size }, urls: rotasEnriched, rotas_http_backend: apiHttp, vistas: vistasEnriched, menu: menuUniq.map((m) => ({ ...m, resolve_para: (resolveDestino(m.destino) || {}).arquivo || null })), lazy: sortObj(Object.fromEntries(lazyMap)) },
+  'rotas.json': { aviso: AVISO, format_version: FORMAT_VERSION, descricao: 'Em cada url/vista, tabelas/rpcs/edges/hooks são TRANSITIVOS por import estático (import() não é seguido; o lazy da própria rota é a entrada). `diretos` tem só o arquivo da tela e os imports de 1º nível — comece por ele. `protegida` olha os wrappers do element e os layouts pais, nunca o nome da página.', resumo: { urls: rotasEnriched.length, rotas_http_backend: apiHttp.length, vistas_por_id: vistasEnriched.length, itens_menu: menuUniq.length, lazy: lazyMap.size }, urls: rotasEnriched, rotas_http_backend: apiHttp, vistas: vistasEnriched, menu: menuUniq.map((m) => ({ ...m, resolve_para: (resolveDestino(m.destino) || {}).arquivo || null })), lazy: sortObj(Object.fromEntries(lazyMap)) },
   'modulos.json': { aviso: AVISO, format_version: FORMAT_VERSION, descricao: 'menu → módulo (pasta de domínio) → telas/rotas → hooks → edge functions → tabelas → dependências entre módulos. edges/tabelas/rpcs são TRANSITIVOS (tudo que os arquivos do módulo puxam); `diretos` tem só o que está escrito nos arquivos do próprio módulo.', modulos },
   'componentes.json': { aviso: AVISO, format_version: FORMAT_VERSION, total: componentes.length, orfaos: componentes.filter((co) => co.orfao).length, nomes_duplicados: componentesDuplicados, componentes },
   'hooks.json': { aviso: AVISO, format_version: FORMAT_VERSION, total: hooksOut.length, hooks: hooksOut },
@@ -829,10 +974,10 @@ const kv = (o) => Object.entries(o || {}).map(([k, v]) => `- ${k}: ${Array.isArr
 const indexMd = `# Contexto do projeto para agentes de IA
 
 ${AVISO}
-${PUBLICACAO} Gere local com \`node scripts/ai-context/gerar.mjs\`. Commit-base: \`${gitInfo.commit || 'n/d'}\` (${gitInfo.data_commit || 'n/d'}).${ERROS.length ? `\n\n> ⚠️ ${ERROS.length} seção(ões) falharam na geração — ver \`baseline.json → erros_do_gerador\`.` : ''}
+${PUBLICACAO} Gere local com \`node scripts/ai-context/gerar.mjs\`. Commit-base: \`${gitInfo.commit || 'n/d'}\` (${gitInfo.data_commit || 'n/d'}).${ERROS.length ? `\n\n> ⚠️ ${ERROS.length} seção(ões) falharam na geração — ver \`baseline.json → erros_do_gerador\`.` : ''}${avisos.length ? `\n\n> ℹ️ ${avisos.length} aviso(s) do gerador (config/JSON inválido, arquivo ignorado por tamanho) — ver \`baseline.json → avisos_do_gerador\`.` : ''}
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
-1. **Tela/rota/menu** → \`rotas.json\` (url/vista/menu → arquivo → hooks → tabelas → edges; \`rotas_http_backend\` para APIs) e \`modulos.json\` (módulo inteiro + dependências entre módulos).
+1. **Tela/rota/menu** → \`rotas.json\` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; \`diretos\` = só a tela e seus imports de 1º nível; \`rotas_http_backend\` para APIs) e \`modulos.json\` (módulo inteiro + dependências entre módulos).
 2. **Hook/serviço/lógica** → \`hooks.json\`, \`logica.json\` (quem usa, o que toca, se tem teste).
 3. **Edge function / serverless** → \`edge-functions.json\` (verify_jwt, tabelas, env, quem chama, órfãs).
 4. **Banco** → \`banco.json\` (colunas, RLS, policies, índices, FKs, triggers, cron jobs, buckets, drift migration×types, uso no código) — visão do código; para o banco vivo use o MCP.
@@ -918,6 +1063,6 @@ ${Object.keys(files).map((f) => `- \`${OUT_REL}/${f}\``).join('\n')}
 `;
 fs.writeFileSync(path.join(OUT, 'INDEX.md'), indexMd);
 hashes['INDEX.md'] = sha(indexMd);
-fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify({ aviso: AVISO, format_version: FORMAT_VERSION, gerado_em: new Date().toISOString(), commit: gitInfo.commit || null, branch: gitInfo.branch || null, gerador: 'scripts/ai-context/gerar.mjs', node: process.version, arquivos: sortObj(hashes), contagens: c, erros: ERROS }, null, 1) + '\n');
+fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify({ aviso: AVISO, format_version: FORMAT_VERSION, gerado_em: new Date().toISOString(), commit: gitInfo.commit || null, branch: gitInfo.branch || null, gerador: 'scripts/ai-context/gerar.mjs', node: process.version, arquivos: sortObj(hashes), contagens: c, erros: ERROS, avisos }, null, 1) + '\n');
 log(`escrito em ${OUT_REL}/ (${Object.keys(files).length + 2} arquivos)${ERROS.length ? `; ${ERROS.length} erro(s) de seção` : ''}`);
 log(`rotas=${c.rotas} http=${c.rotas_http_backend} vistas=${c.vistas_por_id} menu=${c.itens_menu} modulos=${c.modulos} hooks=${c.hooks} edges=${c.edge_functions} tabelas=${c.tabelas} cron=${c.cron_jobs} testes=${c.testes}`);
