@@ -274,5 +274,53 @@ class PushModeTests(PublishFixture):
         self.assertEqual((self.git(b, "rev-list", "--count", "origin/main..HEAD"), self.git(b, "rev-list", "--count", "HEAD..origin/main")), ("0", "0"))
 
 
+class DetachedHeadTests(PublishFixture):
+    """CI que faz checkout de SHA/tag deixa o HEAD destacado: `HEAD:HEAD` não é destino de push."""
+
+    def detached_clone(self):
+        a = self.clone("A")
+        self.git(a, "checkout", "-q", "--detach")
+        self.generate(a, "docs/ctx/regras", "regras v1")
+        return a
+
+    def test_push_mode_without_branch_fails_clearly_and_publishes_nothing(self):
+        a = self.detached_clone()
+        head = self.git(a, "rev-parse", "HEAD")
+        result = self.publish(a, OUT_DIR="docs/ctx/regras", MODE="push", GEN_CMD="touch gerador-rodou")
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("HEAD destacado", result.stderr)
+        self.assertIn("Defina BRANCH=<branch destino>", result.stderr)
+        self.assertEqual((self.git(a, "rev-parse", "HEAD"), self.remote_sha("main")), (head, head))  # nenhum commit local nem remoto
+        self.assertFalse((a / "gerador-rodou").exists())
+
+    def test_push_mode_with_explicit_branch_publishes_from_detached_head(self):
+        a = self.detached_clone()
+        result = self.publish(a, OUT_DIR="docs/ctx/regras", MODE="push", BRANCH="main")
+        self.assert_ok(result)
+        self.assertIn("contexto publicado em", result.stdout)
+        self.assertEqual(self.remote_show("main", "docs/ctx/regras/saida.md"), "regras v1")
+        self.assertEqual(self.git(self.remote, "log", "-1", "--format=%s", "main"), "chore(ai-context): atualiza contexto para agentes [skip ci]")
+        self.assertEqual(self.git(self.remote, "rev-list", "--count", "main"), "2")
+
+    def test_detached_head_outside_target_branch_is_refused(self):
+        a = self.clone("A")
+        self.git(a, "commit", "-q", "--allow-empty", "-m", "feat: so local")
+        self.git(a, "checkout", "-q", "--detach")
+        self.generate(a, "docs/ctx/regras", "regras v1")
+        main_before = self.remote_sha("main")
+        result = self.publish(a, OUT_DIR="docs/ctx/regras", MODE="push", BRANCH="main")
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("não está contido em origin/main", result.stderr)
+        self.assertEqual(self.remote_sha("main"), main_before)
+
+    def test_branch_mode_works_from_detached_head(self):
+        a = self.detached_clone()
+        result = self.publish(a, OUT_DIR="docs/ctx/regras", **BRANCH_MODE)
+        self.assert_ok(result)
+        self.assertEqual(self.remote_show("contexto", "docs/ctx/regras/saida.md"), "regras v1")
+        self.assertEqual(self.git(self.remote, "rev-parse", "contexto^"), self.remote_sha("main"))
+        self.assert_clean_temp(a)
+
+
 if __name__ == "__main__":
     unittest.main()

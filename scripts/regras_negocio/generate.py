@@ -109,7 +109,9 @@ def read_text(p: Path, limit: int = MAX_FILE_BYTES) -> str:
         if size > limit:
             SKIPPED[p] = f"ignorado: {size} bytes > limite de {limit}"
             return ""
-        return redact(p.read_text(encoding="utf-8", errors="replace").lstrip("\ufeff").replace("\r\n", "\n"))
+        raw = p.read_bytes()
+        enc = "utf-16" if raw[:2] in (b"\xff\xfe", b"\xfe\xff") else "utf-8"  # editor do Windows salva .sql em UTF-16 com BOM
+        return redact(raw.decode(enc, errors="replace").lstrip("\ufeff").replace("\r\n", "\n"))
     except Exception as e:  # noqa: BLE001
         SKIPPED[p] = f"ilegível: {type(e).__name__}"
         return ""
@@ -223,9 +225,68 @@ def balanced(txt: str, start: int, open_ch: str = "(", close_ch: str = ")") -> i
     return -1
 
 
+SQL_SCAN_RE = re.compile(r"--|/\*|['\"$]")
+SQL_DOLLAR_TAG_RE = re.compile(r"\$(?:[^\W\d]\w*)?\$")
+
+
+def sql_spans(txt: str, i: int = 0, end: int | None = None):
+    """Trechos de SQL que não são código, na ordem: (tipo, início, fim) com c = comentário (`--`, `/* */` aninhável),
+    s = literal '...' ou E'...' (com `\\'`), i = "identificador" e d = $tag$…$tag$. O corpo de um `d` também é varrido
+    (comentários e literais de PL/pgSQL) e seus trechos vêm logo depois do `d`."""
+    n = len(txt) if end is None else end
+    while i < n:
+        m = SQL_SCAN_RE.search(txt, i, n)
+        if not m:
+            return
+        i, tok = m.start(), m.group()
+        if tok == "--":
+            j = txt.find("\n", i, n)
+            j = n if j < 0 else j
+            yield "c", i, j
+            i = j
+        elif tok == "/*":
+            depth, j = 1, i + 2
+            while j < n and depth:
+                if txt.startswith("/*", j): depth += 1; j += 2
+                elif txt.startswith("*/", j): depth -= 1; j += 2
+                else: j += 1
+            yield "c", i, min(j, n)
+            i = j
+        elif tok == "$":
+            tag = SQL_DOLLAR_TAG_RE.match(txt, i, n)
+            if not tag or (i and (txt[i - 1].isalnum() or txt[i - 1] in "_$")):  # $1 é parâmetro; `as$$` é identificador
+                i += 1
+                continue
+            close = txt.find(tag.group(), tag.end(), n)
+            j = n if close < 0 else close + len(tag.group())
+            yield "d", i, j
+            yield from sql_spans(txt, tag.end(), n if close < 0 else close)
+            i = j
+        else:
+            esc = tok == "'" and i > 0 and txt[i - 1] in "eE" and (i < 2 or not (txt[i - 2].isalnum() or txt[i - 2] in "_$"))
+            j = i + 1
+            while j < n:
+                if esc and txt[j] == "\\":
+                    j += 2
+                    continue
+                if txt[j] == tok:
+                    if txt.startswith(tok * 2, j):  # '' e "" são aspas literais
+                        j += 2
+                        continue
+                    break
+                j += 1
+            j = min(j + 1, n)
+            yield ("s" if tok == "'" else "i"), i, j
+            i = j
+
+
 def strip_sql_comments(txt: str) -> str:
-    txt = re.sub(r"/\*[\s\S]*?\*/", "", txt)
-    return re.sub(r"--[^\n]*", "", txt)
+    out, last = [], 0
+    for kind, a, b in sql_spans(txt):
+        if kind == "c":
+            out += [txt[last:a], " " if txt[a + 1] == "*" else ""]
+            last = b
+    return "".join(out) + txt[last:]
 
 
 def is_test_file(r: str) -> bool:
@@ -685,32 +746,51 @@ def analyze_code_file(p: Path, root: Path) -> dict | None:
 # --------------------------------------------------------------------------- #
 # 4. Schema SQL (migrations / schema.sql / prisma / database.types.ts)
 # --------------------------------------------------------------------------- #
-SQL_CREATE_TABLE_RE = re.compile(r"create\s+(?:unlogged\s+|temp(?:orary)?\s+|global\s+|local\s+)*table\s+(?:if\s+not\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(", re.I)
-SQL_ALTER_ADD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^;]+)", re.I)
-SQL_ALTER_ADD_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+constraint\s+\"?(\w+)\"?\s+([^;]+);", re.I)
-SQL_ALTER_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^,;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^,;]+)", re.I)
-SQL_ALTER_DROP_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+column\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
-SQL_DROP_TABLE_RE = re.compile(r"drop\s+table\s+(?:if\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
-SQL_POLICY_RE = re.compile(
+SQL_ID = r'("[^"]+"|\w+)'  # nome com ou sem aspas (com aspas pode ter espaço/maiúscula)
+
+
+def sql_re(pattern: str, flags: int = re.I) -> re.Pattern:
+    """Compila um regex SQL trocando cada nome (aspas opcionais + \\w+) por SQL_ID, no mesmo grupo; o valor lido passa por `unq`."""
+    return re.compile(pattern.replace(r'\"?(\w+)\"?', SQL_ID), flags)
+
+
+def unq(name: str | None) -> str | None:
+    """Como o Postgres guarda o identificador: entre aspas mantém a caixa; sem aspas vira minúsculas."""
+    if name is None:
+        return None
+    return name[1:-1] if name.startswith('"') else name.lower()
+
+
+def tk(m: re.Match, sch: int, name: int) -> str:
+    return tkey(unq(m.group(sch)), unq(m.group(name)))
+
+
+SQL_CREATE_TABLE_RE = sql_re(r"create\s+(?:unlogged\s+|temp(?:orary)?\s+|global\s+|local\s+)*table\s+(?:if\s+not\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(", re.I)
+SQL_ALTER_ADD_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^;]+)", re.I)
+SQL_ALTER_ADD_CONSTRAINT_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+constraint\s+\"?(\w+)\"?\s+([^;]+);", re.I)
+SQL_ALTER_COL_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^,;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^,;]+)", re.I)
+SQL_ALTER_DROP_COL_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+column\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
+SQL_DROP_TABLE_RE = sql_re(r"drop\s+table\s+(?:if\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
+SQL_POLICY_RE = sql_re(
     r"create\s+policy\s+\"?([^\"\n]+?)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w,\s]+?)\s*)?(?:using\s*\(((?:[^()]|\([^()]*(?:\([^()]*\)[^()]*)*\))*)\)\s*)?(?:with\s+check\s*\(((?:[^()]|\([^()]*(?:\([^()]*\)[^()]*)*\))*)\)\s*)?;",
     re.I)
-SQL_DROP_POLICY_RE = re.compile(r"drop\s+policy\s+(?:if\s+exists\s+)?\"?([^\"\n]+?)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
-SQL_RLS_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+(enable|disable|force|no\s+force)\s+row\s+level\s+security", re.I)
-SQL_TRIGGER_RE = re.compile(r"create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+\"?(\w+)\"?\s+(before|after|instead\s+of)\s+([\w\s|,]+?)\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?([\s\S]*?)execute\s+(?:function|procedure)\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
-SQL_FUNC_RE = re.compile(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([^)]*)\)\s*returns\s+((?:setof\s+)?[\w\s\[\]\.]+?)\s+(?=language|as|security|stable|volatile|immutable)", re.I)
-SQL_FUNC_FULL_RE = re.compile(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?\w+\"?\.)?\"?(\w+)\"?\s*\(([\s\S]*?)\$([\w]*)\$([\s\S]*?)\$\3\$([^;]*);", re.I)
-SQL_ENUM_RE = re.compile(r"create\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+as\s+enum\s*\(([^)]*)\)", re.I)
-SQL_ENUM_ADD_RE = re.compile(r"alter\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+value\s+(?:if\s+not\s+exists\s+)?'([^']+)'", re.I)
-SQL_INDEX_RE = re.compile(r"create\s+(unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:using\s+\w+\s*)?\(([^)]*)\)(\s*where\s+[^;]+)?", re.I)
+SQL_DROP_POLICY_RE = sql_re(r"drop\s+policy\s+(?:if\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
+SQL_RLS_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+(enable|disable|force|no\s+force)\s+row\s+level\s+security", re.I)
+SQL_TRIGGER_RE = sql_re(r"create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+\"?(\w+)\"?\s+(before|after|instead\s+of)\s+([\w\s|,]+?)\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?([\s\S]*?)execute\s+(?:function|procedure)\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
+SQL_FUNC_RE = sql_re(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([^)]*)\)\s*returns\s+((?:setof\s+)?[\w\s\[\]\.]+?)\s+(?=language|as|security|stable|volatile|immutable)", re.I)
+SQL_FUNC_FULL_RE = sql_re(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([\s\S]*?)\$((?:[^\W\d]\w*)?)\$([\s\S]*?)\$\4\$([^;]*);", re.I)
+SQL_ENUM_RE = sql_re(r"create\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+as\s+enum\s*\(", re.I)
+SQL_ENUM_ADD_RE = sql_re(r"alter\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+value\s+(?:if\s+not\s+exists\s+)?'((?:[^']|'')+)'", re.I)
+SQL_INDEX_RE = sql_re(r"create\s+(unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:using\s+\w+\s*)?\(([^)]*)\)(\s*where\s+[^;]+)?", re.I)
 SQL_CRON_RE = re.compile(r"cron\.schedule\s*\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*(?:\$\$([\s\S]*?)\$\$|'([^']*)')", re.I)
 SQL_COMMENT_RE = re.compile(r"comment\s+on\s+(table|column|function|type)\s+([\w.\"]+)\s+is\s+'((?:[^']|'')*)'", re.I)
-SQL_VIEW_RE = re.compile(r"create\s+(?:or\s+replace\s+)?(?:materialized\s+)?(?:recursive\s+)?view\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\([^)]*\))?\s*(?:with\s*\([^)]*\)\s*)?as\s+([\s\S]*?);", re.I)
-SQL_FK_RE = re.compile(r"references\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\(\s*\"?(\w+)\"?\s*\))?\s*(on\s+delete\s+(?:cascade|set\s+null|restrict|no\s+action|set\s+default))?", re.I)
+SQL_VIEW_RE = sql_re(r"create\s+(?:or\s+replace\s+)?(?:materialized\s+)?(?:recursive\s+)?view\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\([^)]*\))?\s*(?:with\s*\([^)]*\)\s*)?as\s+([\s\S]*?);", re.I)
+SQL_FK_RE = sql_re(r"references\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\(\s*\"?(\w+)\"?\s*\))?\s*(on\s+delete\s+(?:cascade|set\s+null|restrict|no\s+action|set\s+default))?", re.I)
 SQL_CHECK_RE = re.compile(r"check\s*\(((?:[^()]|\([^()]*\))*)\)", re.I)
 SQL_GENERATED_RE = re.compile(r"generated\s+always\s+as\s*\(((?:[^()]|\([^()]*\))*)\)\s*stored", re.I)
-SQL_GRANT_RE = re.compile(r"(grant|revoke)\s+([\w\s,]+?)\s+on\s+(?:(?:all\s+)?(table|tables|function|functions|sequence|sequences)\s+(?:in\s+schema\s+)?)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?(?:\([^)]*\))?\s+(?:to|from)\s+([\w,\s]+?)\s*;", re.I)
+SQL_GRANT_RE = sql_re(r"(grant|revoke)\s+([\w\s,]+?)\s+on\s+(?:(?:all\s+)?(table|tables|function|functions|sequence|sequences)\s+(?:in\s+schema\s+)?)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?(?:\([^)]*\))?\s+(?:to|from)\s+([\w,\s]+?)\s*;", re.I)
 SQL_RAISE_RE = re.compile(r"raise\s+(exception|notice|warning)\s+'((?:[^']|'')+)'", re.I)
-SQL_INSERT_RE = re.compile(r"insert\s+into\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([^)]*)\)\s*values\s*([\s\S]*?);", re.I)
+SQL_INSERT_RE = sql_re(r"insert\s+into\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([^)]*)\)\s*values\s*([\s\S]*?);", re.I)
 
 
 def split_columns(body: str) -> list[str]:
@@ -743,34 +823,14 @@ def parse_column(cname: str, ctype: str, src: str) -> dict:
 
 
 def split_sql_statements(txt: str) -> list[str]:
-    """Divide em statements no ';' de nível superior, respeitando aspas simples e dollar-quoting ($$, $tag$)."""
-    out, cur, i, n = [], [], 0, len(txt)
-    in_sq = False
-    dollar = None
-    while i < n:
-        ch = txt[i]
-        if dollar:
-            if txt.startswith(dollar, i):
-                cur.append(dollar); i += len(dollar); dollar = None; continue
-            cur.append(ch); i += 1; continue
-        if in_sq:
-            cur.append(ch)
-            if ch == "'":
-                in_sq = False
-            i += 1; continue
-        if ch == "'":
-            in_sq = True; cur.append(ch); i += 1; continue
-        if ch == "$":
-            m = re.match(r"\$[A-Za-z_]*\$", txt[i:i + 64])
-            if m:
-                dollar = m.group(0); cur.append(dollar); i += len(dollar); continue
-        if ch == ";":
-            st = "".join(cur).strip()
-            if st:
-                out.append(st + ";")
-            cur = []; i += 1; continue
-        cur.append(ch); i += 1
-    st = "".join(cur).strip()
+    """Divide em statements no ';' de nível superior, respeitando literais, "identificadores", comentários e dollar-quoting ($$, $tag1$)."""
+    masked, out, start = mask_sql_strings(txt), [], 0
+    for m in re.finditer(";", masked):
+        st = txt[start:m.start()].strip()
+        if st:
+            out.append(st + ";")
+        start = m.end()
+    st = txt[start:].strip()
     if st:
         out.append(st + ";")
     return out
@@ -779,23 +839,29 @@ def split_sql_statements(txt: str) -> list[str]:
 SQL_DO_RE = re.compile(r"do\s+(?:language\s+\w+\s+)?\$(\w*)\$([\s\S]*)\$\1\$", re.I)
 SQL_DDL_IN_BLOCK_RE = re.compile(
     r"(?:^|\b(?:begin|then|else|loop)\s+)((?:create\s+(?:or\s+replace\s+)?(?:policy|(?:constraint\s+)?trigger|(?:unique\s+)?index|table|type)"
-    r"|drop\s+(?:policy|trigger|table)|alter\s+(?:policy|table|function|type))\b)", re.I)
+    r"|drop\s+(?:policy|trigger|table|type|(?:materialized\s+)?view)|alter\s+(?:policy|table|function|type))\b)", re.I)
 SQL_EXECUTE_STATIC_RE = re.compile(r"\bexecute\s+'((?:[^']|'')*)'\s*;?\s*$", re.I)
-SQL_ALTER_TABLE_HEAD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?\w+\"?\.)?\"?\w+\"?\s+", re.I)
+SQL_ALTER_TABLE_HEAD_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+", re.I)
 SQL_ALTER_ACTION_RE = re.compile(r"\s*(?:add|drop|alter|rename|enable|disable|force|no\s+force|validate|owner|set|reset|attach|detach|replica|cluster|inherit|no\s+inherit)\b", re.I)
-SQL_ALTER_POLICY_RE = re.compile(r"alter\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*([\s\S]*)", re.I)
-SQL_ALTER_FUNC_RE = re.compile(r"alter\s+function\s+(?:\"?\w+\"?\.)?\"?(\w+)\"?\s*(?:\([^)]*\))?\s*([\s\S]*)", re.I)
+SQL_ALTER_POLICY_RE = sql_re(r"alter\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*([\s\S]*)", re.I)
+SQL_ALTER_FUNC_RE = re.compile(r"alter\s+function\s+", re.I)
+SQL_DROP_FUNC_RE = re.compile(r"drop\s+function\s+(?:if\s+exists\s+)?", re.I)
+SQL_FN_NAME_RE = sql_re(r"\s*(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*", re.I)
 
 
 def mask_sql_strings(s: str) -> str:
-    """Mesmo comprimento, com o conteúdo de '...' em branco — para achar palavras-chave fora de literais."""
-    out, in_sq = [], False
-    for ch in s:
-        if ch == "'":
-            in_sq = not in_sq; out.append(ch)
-        else:
-            out.append(" " if in_sq and ch != "\n" else ch)
-    return "".join(out)
+    """Mesmo comprimento, com comentários e o conteúdo de '...', "..." e $tag$…$tag$ em branco (quebra de linha preservada):
+    para achar palavras-chave, parênteses e ';' fora de literais."""
+    out, last = [], 0
+    for kind, a, b in sql_spans(s):
+        if a < last:
+            continue  # trecho dentro de um corpo $tag$ já apagado
+        edge = len(SQL_DOLLAR_TAG_RE.match(s, a).group()) if kind == "d" else 0 if kind == "c" else 1  # delimitadores ficam
+        lo, hi = a + edge, b - edge
+        if hi > lo:
+            out += [s[last:lo], re.sub(r"[^\n]", " ", s[lo:hi])]
+            last = hi
+    return "".join(out) + s[last:]
 
 
 def split_alter_actions(rest: str) -> list[str]:
@@ -832,9 +898,9 @@ def expand_statement(st: str, dynamic: list[str], guard: str | None = None) -> l
             if re.match(r"\s*end\s+if\b", inner, re.I):
                 guard = ""
                 continue
-            g = re.search(r"\bif\b[\s\S]*?to_regclass\(\s*'(?:\"?(\w+)\"?\.)?\"?(\w+)\"?'\s*\)\s+is\s+not\s+null", inner, re.I)
+            g = sql_re(r"\bif\b[\s\S]*?to_regclass\(\s*'(?:\"?(\w+)\"?\.)?\"?(\w+)\"?'\s*\)\s+is\s+not\s+null").search(inner)
             if g:
-                guard = tkey(g.group(1), g.group(2))
+                guard = tk(g, 1, 2)
             masked = mask_sql_strings(inner)
             dm = SQL_DDL_IN_BLOCK_RE.search(masked)
             if dm:  # DDL direto (pode conter "EXECUTE FUNCTION f()" de trigger — não é EXECUTE dinâmico)
@@ -855,29 +921,33 @@ def expand_statement(st: str, dynamic: list[str], guard: str | None = None) -> l
     return [(st, guard)]
 
 
-def policy_clause(rest: str, kw: str) -> str:
-    km = re.search(kw + r"\s*\(", rest, re.I)
-    if not km:
-        return ""
-    close = balanced(rest, km.end() - 1)
-    return squash(rest[km.end():close]) if close > 0 else squash(rest[km.end():])
+def policy_clause(rest: str, kw: str) -> str | None:
+    """Conteúdo de `kw (...)` no nível 0 de `rest` (None se não houver): ignora `using (` dentro de literal ou de subconsulta (JOIN … USING)."""
+    masked = mask_sql_strings(rest)
+    for km in re.finditer(kw + r"\s*\(", masked, re.I):
+        pre = masked[:km.start()]
+        if pre.count("(") != pre.count(")"):
+            continue
+        close = balanced(masked, km.end() - 1)
+        return squash(rest[km.end():close]) if close > 0 else squash(rest[km.end():])
+    return None
 
 
-SQL_RENAME_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+(?:column\s+)?\"?(\w+)\"?\s+to\s+\"?(\w+)\"?", re.I)
-SQL_RENAME_TABLE_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+to\s+\"?(\w+)\"?", re.I)
-SQL_DROP_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+constraint\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
-SQL_POLICY_HEAD_RE = re.compile(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
+SQL_RENAME_COL_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+(?:column\s+)?\"?(\w+)\"?\s+to\s+\"?(\w+)\"?", re.I)
+SQL_RENAME_TABLE_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+to\s+\"?(\w+)\"?", re.I)
+SQL_DROP_CONSTRAINT_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+constraint\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
+SQL_POLICY_HEAD_RE = sql_re(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
 
 
 def parse_policy(st: str) -> dict | None:
     m = SQL_POLICY_HEAD_RE.match(st)
     if not m:
         return None
-    pname = m.group(1) or m.group(2)
+    pname = m.group(1) or m.group(2).lower()
     rest = st[m.end():]
-    return {"name": pname.strip(), "table": tkey(m.group(3), m.group(4)), "cmd": (m.group(6) or "ALL").upper(),
+    return {"name": pname.strip(), "table": tk(m, 3, 4), "cmd": (m.group(6) or "ALL").upper(),
             "roles": squash(m.group(7) or "public"), "mode": (m.group(5) or "permissive").lower(),
-            "using": policy_clause(rest, r"\busing"), "check": policy_clause(rest, r"with\s+check")}
+            "using": policy_clause(rest, r"\busing") or "", "check": policy_clause(rest, r"with\s+check") or ""}
 
 
 def alter_policy(policies: list[dict], st: str) -> None:
@@ -885,17 +955,18 @@ def alter_policy(policies: list[dict], st: str) -> None:
     m = SQL_ALTER_POLICY_RE.match(st)
     if not m:
         return
-    name, table, rest = (m.group(1) or m.group(2)).strip(), tkey(m.group(3), m.group(4)), m.group(5)
+    name, table, rest = (m.group(1) or m.group(2).lower()).strip(), tk(m, 3, 4), m.group(5)
     for pol in policies:
         if pol["name"] == name and pol["table"] == table:
             rn = re.match(r"rename\s+to\s+(?:\"([^\"]+)\"|(\w+))", rest, re.I)
             if rn:
-                pol["name"] = (rn.group(1) or rn.group(2)).strip()
+                pol["name"] = (rn.group(1) or rn.group(2).lower()).strip()
                 return
             to = re.match(r"to\s+([\w\s,]+?)\s*(?=using\b|with\s+check\b|;|$)", rest, re.I)
             if to: pol["roles"] = squash(to.group(1))
-            if re.search(r"\busing\s*\(", rest, re.I): pol["using"] = policy_clause(rest, r"\busing")
-            if re.search(r"with\s+check\s*\(", rest, re.I): pol["check"] = policy_clause(rest, r"with\s+check")
+            using, check = policy_clause(rest, r"\busing"), policy_clause(rest, r"with\s+check")
+            if using is not None: pol["using"] = using
+            if check is not None: pol["check"] = check
             return
 
 
@@ -903,12 +974,70 @@ def new_table(src: str) -> dict:
     return {"columns": [], "constraints": [], "src": src, "comment": "", "origin": "migration"}
 
 
+def natural_key(path: str) -> list:
+    """9_a.sql antes de 10_b.sql: números dentro do caminho comparam como números, não como texto."""
+    return [int(x) if x.isdigit() else x for x in re.split(r"(\d+)", path)]
+
+
+FN_TYPE_ALIASES = {"int": "integer", "int4": "integer", "int8": "bigint", "int2": "smallint", "bool": "boolean", "float": "double precision", "float8": "double precision",
+                   "float4": "real", "varchar": "character varying", "timestamptz": "timestamp with time zone", "decimal": "numeric"}
+FN_TYPE_FIRST_WORDS = {"double", "timestamp", "time", "character", "bit", "interval", "national"}  # tipos de mais de uma palavra
+SQL_TABLE_KIND = r"(?:unlogged\s+|temp(?:orary)?\s+|global\s+|local\s+)*table\s+(?:if\s+not\s+exists\s+)?"
+SQL_CREATE_PARTITION_RE = sql_re(r"create\s+" + SQL_TABLE_KIND + r"(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+partition\s+of\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?")
+SQL_CREATE_AS_RE = sql_re(r"create\s+" + SQL_TABLE_KIND + r"(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\([^()]*\)\s*)?(?:with\s*\([^()]*\)\s*)?as\s")
+SQL_LIKE_RE = sql_re(r"like\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?([\s\S]*)")
+SQL_DROP_TRIGGER_RE = sql_re(r"drop\s+trigger\s+(?:if\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?")
+SQL_TRIGGER_STATE_RE = sql_re(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+(enable|disable)\s+(replica\s+|always\s+)?trigger\s+\"?(\w+)\"?")
+SQL_ALTER_TYPE_RE = sql_re(r"alter\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+(?:rename\s+value\s+'((?:[^']|'')+)'\s+to\s+'((?:[^']|'')+)'|rename\s+to\s+\"?(\w+)\"?)")
+
+
+def fn_signature(args: str) -> list[str]:
+    """Tipos dos argumentos de uma função, sem nome, default, modificador ou schema padrão — o que distingue sobrecargas.
+    Argumentos OUT não entram (o Postgres não os usa para identificar a função)."""
+    sig = []
+    for a in split_columns(args):
+        a = re.split(r"\s+default\s+|\s*=\s*", squash(a), maxsplit=1, flags=re.I)[0].lower()
+        if re.match(r"out\s", a):
+            continue
+        a = re.sub(r"\([^)]*\)|\b(?:public|pg_catalog)\.|^(?:in|inout|variadic)\s+", "", a).strip()
+        words = a.split()
+        if len(words) > 1 and words[0] not in FN_TYPE_FIRST_WORDS:
+            a = " ".join(words[1:])  # primeiro termo é o nome do argumento
+        sig.append(re.sub(r"\b(" + "|".join(FN_TYPE_ALIASES) + r")\b", lambda m: FN_TYPE_ALIASES[m.group(1)], a))
+    return sig
+
+
+def fn_refs(text: str) -> tuple[list[tuple[str, str | None]], str]:
+    """`a.f(int), g` → ([(chave, argumentos|None), …], resto): referências a funções separadas por vírgula; o resto
+    começa no que deixa de ser referência (`SET …`, `CASCADE`)."""
+    refs, i, masked = [], 0, mask_sql_strings(text)
+    while (m := SQL_FN_NAME_RE.match(text, i)):
+        i, args = m.end(), None
+        if text.startswith("(", i):
+            close = balanced(masked, i)
+            if close < 0:
+                break
+            args, i = text[i + 1:close], close + 1
+        refs.append((tkey(unq(m.group(1)), unq(m.group(2))), args))
+        comma = re.compile(r"\s*,\s*").match(text, i)
+        if not comma:
+            break
+        i = comma.end()
+    return refs, text[i:]
+
+
+def drop_targets(st: str, kind: str) -> list[str]:
+    """`DROP <kind> [IF EXISTS] a, s.b [CASCADE]` → chaves (tkey) de todos os objetos citados."""
+    names = re.sub(r"^drop\s+" + kind + r"\s+(?:concurrently\s+)?(?:if\s+exists\s+)?|\s+(?:cascade|restrict)\s*$", "", st.rstrip().rstrip(";").rstrip(), flags=re.I)
+    return [tkey(unq(sch), unq(name)) for sch, name in sql_re(r"(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:,|$)").findall(names)]
+
+
 def parse_sql_schema(root: Path, files: list[Path]) -> dict:
     sql_files = sorted(
         [f for f in files if f.suffix == ".sql" and not is_archived_sql(f, root)
          and ("migration" in rel(f, root).lower() or "schema" in f.name.lower()
               or rel(f, root).startswith(("supabase/", "db/", "sql/", "database/", "prisma/")))],
-        key=lambda f: rel(f, root))
+        key=lambda f: natural_key(rel(f, root)))
     in_migrations = lambda f: "migrations" in f.relative_to(root).parts[:-1]
     # Com supabase/migrations/, só ela reconstrói o schema: supabase/*.sql solto (fix_*.sql, rascunho) é script
     # manual sem ordem — aplicado "antes" das migrations ele sobrescreveria o estado final.
@@ -918,15 +1047,35 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
     sql_files = [f for f in sql_files if f not in loose]
     schema: dict = {"tables": {}, "policies": [], "triggers": [], "functions": {}, "enums": {}, "indexes": [], "cron_jobs": [],
                     "views": {}, "sources": [rel(f, root) for f in sql_files], "rls": {}, "grants": [], "raises": [],
-                    "seed": [], "comments": {}, "types_file": "", "ignored_sources": [rel(f, root) for f in loose], "dynamic_ddl": []}
+                    "seed": [], "comments": {}, "types_file": "", "ignored_sources": [rel(f, root) for f in loose], "dynamic_ddl": [], "unparsed": []}
     T = schema["tables"]
     dropped: set[str] = set()
     guarded_missing: set[str] = set()
+    rls_bits: dict[str, list[bool]] = {}  # tabela → [ENABLE, FORCE]; schema["rls"] deriva dos dois (FORCE sem ENABLE não liga RLS)
+    fsig: dict[str, list[str]] = {}       # chave em schema["functions"] → tipos dos argumentos (distingue sobrecargas)
 
     def drop_table(key: str) -> None:
-        T.pop(key, None); schema["rls"].pop(key, None); dropped.add(key)
+        T.pop(key, None); schema["rls"].pop(key, None); rls_bits.pop(key, None); dropped.add(key)
         for kind in ("policies", "triggers", "indexes"):
             schema[kind] = [x for x in schema[kind] if x["table"] != key]
+
+    def set_rls(key: str, enable: bool | None = None, force: bool | None = None) -> None:
+        bits = rls_bits.setdefault(key, [False, False])
+        bits[:] = [bits[0] if enable is None else enable, bits[1] if force is None else force]
+        schema["rls"][key] = "forced" if all(bits) else "enabled" if bits[0] else "disabled"
+
+    def functions_named(key: str, argspec: str | None) -> list[str]:
+        """Chaves de schema["functions"] que `DROP/ALTER FUNCTION key(argspec)` atinge (sem argspec: todas as sobrecargas)."""
+        cands = [k for k in schema["functions"] if k == key or k.startswith(key + "(")]
+        if argspec is None:
+            return cands
+        want = fn_signature(argspec)
+        hit = [k for k in cands if fsig.get(k) == want]
+        same_arity = [k for k in cands if len(fsig.get(k, [])) == len(want)]
+        return hit or (same_arity if len(same_arity) == 1 else [])  # tipo que não normalizei: único candidato com a mesma aridade
+
+    def unparsed(src: str, what: str) -> None:
+        schema["unparsed"].append({"src": src, "what": what})
 
     for f in sql_files:
         src = rel(f, root)
@@ -952,58 +1101,83 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                 guarded_missing.add(guard)  # IF to_regclass('t') IS NOT NULL: t pode ter sido criada fora das migrations
             low = st.lower().lstrip()
             # ---- CREATE TABLE
+            m = SQL_CREATE_PARTITION_RE.match(st) or SQL_CREATE_AS_RE.match(st)
+            if m:
+                key = tk(m, 1, 2)
+                if key in T and re.match(r"create\s+[\w\s]*?table\s+if\s+not\s+exists\b", st, re.I):
+                    continue
+                dropped.discard(key)
+                T[key] = t = new_table(src)
+                if m.re is SQL_CREATE_PARTITION_RE:  # a partição tem as colunas do pai
+                    parent = T.get(tk(m, 3, 4))
+                    t["columns"] = [dict(c, src=src) for c in parent["columns"]] if parent else []
+                    if not parent:
+                        unparsed(src, f"`{key}` é partição de `{tk(m, 3, 4)}`, que não está nas migrations: colunas desconhecidas")
+                else:
+                    unparsed(src, f"`{key}` criada por CREATE TABLE … AS: as colunas vêm da consulta e não são derivadas")
+                continue
             m = SQL_CREATE_TABLE_RE.match(st)
             if m:
-                close = balanced(st, m.end() - 1)
+                close = balanced(mask_sql_strings(st), m.end() - 1)
                 if close > 0:
-                    key = tkey(m.group(1), m.group(2))
+                    key = tk(m, 1, 2)
                     if key in T and re.match(r"create\s+[\w\s]*?table\s+if\s+not\s+exists\b", st, re.I):
                         continue  # IF NOT EXISTS em tabela que já existe é no-op no Postgres
                     dropped.discard(key)
                     t = new_table(src)
                     for part in split_columns(st[m.end():close]):
-                        pl = part.lower()
-                        if pl.startswith(("constraint", "primary key", "foreign key", "unique", "check", "exclude", "like")):
+                        lk = SQL_LIKE_RE.match(part)
+                        if lk:  # (LIKE outra INCLUDING …): colunas da origem (defaults só com INCLUDING DEFAULTS/ALL)
+                            origin = T.get(tk(lk, 1, 2))
+                            incl = lk.group(3).lower()
+                            if origin:
+                                keep_default = bool(re.search(r"including\s+(?:defaults|all)", incl))
+                                t["columns"] += [dict(c, src=src, type=c["type"] if keep_default else re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I)) for c in origin["columns"]]
+                                if re.search(r"including\s+(?:constraints|all)", incl): t["constraints"] += origin["constraints"]
+                            else:
+                                t["constraints"].append(trunc(squash(part), 300))
+                                unparsed(src, f"`{key}`: LIKE `{tk(lk, 1, 2)}`, que não está nas migrations: colunas desconhecidas")
+                        elif re.match(r"(?:constraint|primary\s+key|foreign\s+key|unique|check|exclude)\b", part, re.I):
                             t["constraints"].append(trunc(squash(part), 300))
                         else:
-                            cm = re.match(r"\"?(\w+)\"?\s+(.+)", part, re.S)
+                            cm = re.match(SQL_ID + r"\s+(.+)", part, re.S)
                             if cm:
-                                t["columns"].append(parse_column(cm.group(1), cm.group(2), src))
+                                t["columns"].append(parse_column(unq(cm.group(1)), cm.group(2), src))
                     T[key] = t
                 continue
             if low.startswith("alter table"):
                 m = SQL_ALTER_ADD_CONSTRAINT_RE.match(st)
                 if m:
-                    key = tkey(m.group(1), m.group(2)); t = T.setdefault(key, new_table(src))
+                    key = tk(m, 1, 2); t = T.setdefault(key, new_table(src))
                     body = m.group(4)
-                    t["constraints"].append(trunc(f"constraint {m.group(3)} {squash(body)}", 300))
-                    fkm = re.search(r"foreign\s+key\s*\(\s*\"?(\w+)\"?\s*\)\s*" + SQL_FK_RE.pattern, body, re.I)
+                    t["constraints"].append(trunc(f"constraint {unq(m.group(3))} {squash(body)}", 300))
+                    fkm = sql_re(r"foreign\s+key\s*\(\s*\"?(\w+)\"?\s*\)\s*" + SQL_FK_RE.pattern).search(body)
                     if fkm:
                         for c in t["columns"]:
-                            if c["name"] == fkm.group(1) and not c["fk"]:
-                                c["fk"] = f"{fkm.group(3)}.{fkm.group(4) or 'id'}" + (f" {squash(fkm.group(5))}" if fkm.group(5) else "")
+                            if c["name"] == unq(fkm.group(1)) and not c["fk"]:
+                                c["fk"] = f"{unq(fkm.group(3))}.{unq(fkm.group(4)) or 'id'}" + (f" {squash(fkm.group(5))}" if fkm.group(5) else "")
                     continue
                 m = SQL_DROP_CONSTRAINT_RE.match(st)
                 if m:
-                    key = tkey(m.group(1), m.group(2))
+                    key = tk(m, 1, 2)
                     if key in T:
-                        T[key]["constraints"] = [c for c in T[key]["constraints"] if not re.match(rf"constraint\s+{re.escape(m.group(3))}\b", c, re.I)]
+                        T[key]["constraints"] = [c for c in T[key]["constraints"] if not re.match(rf"constraint\s+\"?{re.escape(unq(m.group(3)))}\"?(?:\s|$)", c, re.I)]
                     continue
                 m = SQL_ALTER_ADD_RE.match(st)
                 if m and m.group(3).lower() in ("primary", "unique", "check", "foreign", "exclude"):
-                    T.setdefault(tkey(m.group(1), m.group(2)), new_table(src))["constraints"].append(trunc(squash(f"{m.group(3)} {m.group(4)}".rstrip(";")), 300))
+                    T.setdefault(tk(m, 1, 2), new_table(src))["constraints"].append(trunc(squash(f"{m.group(3)} {m.group(4)}".rstrip(";")), 300))
                     continue
                 if m and m.group(3).lower() != "constraint":
-                    key = tkey(m.group(1), m.group(2)); t = T.setdefault(key, new_table(src))
-                    if not any(c["name"] == m.group(3) for c in t["columns"]):
-                        t["columns"].append(parse_column(m.group(3), m.group(4), src))
+                    key = tk(m, 1, 2); t = T.setdefault(key, new_table(src))
+                    if not any(c["name"] == unq(m.group(3)) for c in t["columns"]):
+                        t["columns"].append(parse_column(unq(m.group(3)), m.group(4), src))
                     continue
                 m = SQL_ALTER_COL_RE.match(st)
                 if m:
-                    t = T.get(tkey(m.group(1), m.group(2)))
+                    t = T.get(tk(m, 1, 2))
                     if t:
                         for c in t["columns"]:
-                            if c["name"] == m.group(3):
+                            if c["name"] == unq(m.group(3)):
                                 a = m.group(4); al = a.lower()
                                 if al.startswith("set not null") and "not null" not in c["type"].lower(): c["type"] += " not null"
                                 elif al.startswith("drop not null"): c["type"] = re.sub(r"\s*not null", "", c["type"], flags=re.I)
@@ -1014,37 +1188,52 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     continue
                 m = SQL_ALTER_DROP_COL_RE.match(st)
                 if m:
-                    key = tkey(m.group(1), m.group(2))
+                    key = tk(m, 1, 2)
                     if key in T:
-                        T[key]["columns"] = [c for c in T[key]["columns"] if c["name"] != m.group(3)]
+                        T[key]["columns"] = [c for c in T[key]["columns"] if c["name"] != unq(m.group(3))]
                     continue
                 m = SQL_RENAME_TABLE_RE.match(st)
                 if m:
-                    key = tkey(m.group(1), m.group(2))
+                    key, new = tk(m, 1, 2), tkey(unq(m.group(1)), unq(m.group(3)))
                     if key in T:
-                        T[tkey(m.group(1), m.group(3))] = T.pop(key)
-                        schema["rls"][tkey(m.group(1), m.group(3))] = schema["rls"].pop(key, "não encontrado")
+                        T[new] = T.pop(key)
+                        schema["rls"][new] = schema["rls"].pop(key, "não encontrado")
+                        if key in rls_bits: rls_bits[new] = rls_bits.pop(key)
                         for pol in schema["policies"]:
-                            if pol["table"] == key: pol["table"] = tkey(m.group(1), m.group(3))
+                            if pol["table"] == key: pol["table"] = new
                     continue
                 m = SQL_RENAME_COL_RE.match(st)
                 if m:
-                    t = T.get(tkey(m.group(1), m.group(2)))
+                    t = T.get(tk(m, 1, 2))
                     if t:
                         for c in t["columns"]:
-                            if c["name"] == m.group(3): c["name"] = m.group(4)
+                            if c["name"] == unq(m.group(3)): c["name"] = unq(m.group(4))
                     continue
                 m = SQL_RLS_RE.match(st)
                 if m:
-                    a = m.group(3).lower(); key = tkey(m.group(1), m.group(2))
-                    schema["rls"][key] = {"enable": "enabled", "disable": "disabled", "force": "forced"}.get(a, schema["rls"].get(key, "enabled"))
+                    a = squash(m.group(3)).lower(); key = tk(m, 1, 2)
+                    set_rls(key, **{"enable": {"enable": True}, "disable": {"enable": False}, "force": {"force": True}, "no force": {"force": False}}[a])
+                    continue
+                m = SQL_TRIGGER_STATE_RE.match(st)
+                if m:  # ENABLE/DISABLE [REPLICA|ALWAYS] TRIGGER nome|ALL|USER — mesmo rótulo do snapshot: [DISABLED], [REPLICA], [ALWAYS]
+                    state = " [DISABLED]" if m.group(3).lower() == "disable" else f" [{m.group(4).strip().upper()}]" if m.group(4) else ""
+                    for tg in schema["triggers"]:
+                        if tg["table"] == tk(m, 1, 2) and (unq(m.group(5)) in ("all", "user") or tg["name"] == unq(m.group(5))):
+                            tg["when"] = re.sub(r" \[\w+\]$", "", tg["when"]) + state
                     continue
                 continue
             m = SQL_DROP_TABLE_RE.match(st)
             if m:
-                names = re.sub(r"^drop\s+table\s+(?:if\s+exists\s+)?|\s+(?:cascade|restrict)\s*$", "", st.rstrip().rstrip(";").rstrip(), flags=re.I)
-                for sch, name in re.findall(r"(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:,|$)", names):
-                    drop_table(tkey(sch, name))  # DROP TABLE a, b: todas; leva junto policies, triggers, índices e RLS
+                for key in drop_targets(st, "table"):
+                    drop_table(key)  # DROP TABLE a, b: todas; leva junto policies, triggers, índices e RLS
+                continue
+            if re.match(r"drop\s+type\b", low):
+                for key in drop_targets(st, "type"):
+                    schema["enums"].pop(key, None)
+                continue
+            if re.match(r"drop\s+(?:materialized\s+)?view\b", low):
+                for key in drop_targets(st, r"(?:materialized\s+)?view"):
+                    schema["views"].pop(key, None)
                 continue
             if low.startswith("alter policy"):
                 alter_policy(schema["policies"], st); continue
@@ -1058,30 +1247,40 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                 continue
             m = SQL_DROP_POLICY_RE.match(st)
             if m:
-                key = tkey(m.group(2), m.group(3))
-                schema["policies"] = [p for p in schema["policies"] if not (p["name"] == m.group(1).strip() and p["table"] == key)]
+                key = tk(m, 2, 3)
+                schema["policies"] = [p for p in schema["policies"] if not (p["name"] == unq(m.group(1)).strip() and p["table"] == key)]
                 continue
             m = SQL_TRIGGER_RE.match(st)
             if m:
                 name, when, events, sch, tname, mid, fsch, fn = m.groups()
+                name, fn, tname = unq(name), unq(fn), tkey(unq(sch), unq(tname))
                 cond = re.search(r"when\s*\(((?:[^()]|\([^()]*\))*)\)", mid, re.I)
-                schema["triggers"] = [t for t in schema["triggers"] if not (t["name"] == name and t["table"] == tkey(sch, tname))]
-                schema["triggers"].append({"name": name, "when": f"{when.upper()} {squash(events).upper()}", "table": tkey(sch, tname), "function": fn,
+                schema["triggers"] = [t for t in schema["triggers"] if not (t["name"] == name and t["table"] == tname)]
+                schema["triggers"].append({"name": name, "when": f"{when.upper()} {squash(events).upper()}", "table": tname, "function": fn,
                                            "condition": squash(cond.group(1)) if cond else "", "each": "row" if re.search(r"for\s+each\s+row", mid, re.I) else "statement", "src": src})
                 continue
-            m = re.match(r"drop\s+trigger\s+(?:if\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", st, re.I)
+            m = SQL_DROP_TRIGGER_RE.match(st)
             if m:
-                schema["triggers"] = [t for t in schema["triggers"] if not (t["name"] == m.group(1) and t["table"] == tkey(m.group(2), m.group(3)))]
+                schema["triggers"] = [t for t in schema["triggers"] if not (t["name"] == unq(m.group(1)) and t["table"] == tk(m, 2, 3))]
                 continue
             m = SQL_FUNC_FULL_RE.match(st)
             if m:
-                name, head, tag, body, tail = m.groups()
+                fsch, fname, head, tag, body, tail = m.groups()
                 full_head = head + tail
                 ret = re.search(r"returns\s+((?:setof\s+)?[\w\[\]\.]+(?:\s*\([^)]*\))?)", full_head, re.I)
                 lang = re.search(r"language\s+(\w+)", full_head, re.I)
-                args = re.match(r"([^)]*)\)", head)
+                close = balanced(mask_sql_strings("(" + head), 0)
+                args_txt = ("(" + head)[1:close] if close > 0 else (re.match(r"([^)]*)\)", head) or [None, ""])[1]
+                # chave como no snapshot: schema.nome (public sem prefixo); sobrecarga com outra assinatura vira nome(args)
+                name, sig = tkey(unq(fsch), unq(fname)), fn_signature(args_txt)
+                same = next((k for k in functions_named(name, None) if fsig.get(k) == sig), None)
+                if same:
+                    name = same
+                elif name in schema["functions"]:
+                    name = f"{name}({trunc(squash(args_txt), 200)})"
+                fsig[name] = sig
                 schema["functions"][name] = {
-                    "args": trunc(squash(args.group(1)) if args else "", 200), "returns": ret.group(1).strip() if ret else "?",
+                    "args": trunc(squash(args_txt), 200), "returns": ret.group(1).strip() if ret else "?",
                     "lang": (lang.group(1) if lang else "").lower(), "src": src,
                     "security_definer": bool(re.search(r"security\s+definer", full_head, re.I)),
                     "search_path": bool(re.search(r"set\s+search_path", full_head, re.I)),
@@ -1094,41 +1293,59 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     if k.lower() == "exception":
                         schema["raises"].append({"function": name, "msg": squash(msg), "src": src})
                 continue
-            m = re.match(r"drop\s+function\s+(?:if\s+exists\s+)?(?:\"?\w+\"?\.)?\"?(\w+)\"?", st, re.I)
+            if re.match(r"create\s+(?:or\s+replace\s+)?function\b", low):
+                unparsed(src, "CREATE FUNCTION sem corpo $$…$$ (AS '…' ou BEGIN ATOMIC) não é lido: " + trunc(squash(st), 70))
+                continue
+            m = SQL_DROP_FUNC_RE.match(st)
             if m:
-                schema["functions"].pop(m.group(1), None); continue
+                refs, _ = fn_refs(st[m.end():].rstrip(";"))
+                for key, argspec in refs:
+                    for k in functions_named(key, argspec):
+                        schema["functions"].pop(k, None); fsig.pop(k, None)
+                        schema["raises"] = [r for r in schema["raises"] if r["function"] != k]
+                continue
             m = SQL_ALTER_FUNC_RE.match(st)
             if m:
-                fn = schema["functions"].get(m.group(1))
-                if fn:
-                    if re.search(r"\bset\s+search_path\b", m.group(2), re.I): fn["search_path"] = True
-                    elif re.search(r"\breset\s+(?:search_path|all)\b", m.group(2), re.I): fn["search_path"] = False
-                    if re.search(r"\bsecurity\s+definer\b", m.group(2), re.I): fn["security_definer"] = True
-                    elif re.search(r"\bsecurity\s+invoker\b", m.group(2), re.I): fn["security_definer"] = False
+                refs, rest = fn_refs(st[m.end():].rstrip(";"))
+                for key, argspec in refs[:1]:
+                    for k in functions_named(key, argspec):
+                        fn = schema["functions"][k]
+                        if re.search(r"\bset\s+search_path\b", rest, re.I): fn["search_path"] = True
+                        elif re.search(r"\breset\s+(?:search_path|all)\b", rest, re.I): fn["search_path"] = False
+                        if re.search(r"\bsecurity\s+definer\b", rest, re.I): fn["security_definer"] = True
+                        elif re.search(r"\bsecurity\s+invoker\b", rest, re.I): fn["security_definer"] = False
                 continue
             m = SQL_ENUM_RE.match(st)
             if m:
-                schema["enums"][m.group(2)] = [v.strip().strip("'") for v in m.group(3).split(",") if v.strip()]; continue
+                close = balanced(mask_sql_strings(st), m.end() - 1)
+                values = re.findall(r"'((?:[^']|'')*)'", st[m.end():close] if close > 0 else st[m.end():])
+                schema["enums"][tk(m, 1, 2)] = [v.replace("''", "'") for v in values]; continue
             m = SQL_ENUM_ADD_RE.match(st)
             if m:
-                schema["enums"].setdefault(m.group(2), [])
-                if m.group(3) not in schema["enums"][m.group(2)]:
-                    schema["enums"][m.group(2)].append(m.group(3))
+                vals, new = schema["enums"].setdefault(tk(m, 1, 2), []), m.group(3).replace("''", "'")
+                if new not in vals:
+                    vals.append(new)
                 continue
-            m = re.match(r"alter\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+value\s+'([^']+)'\s+to\s+'([^']+)'", st, re.I)
-            if m and m.group(2) in schema["enums"]:
-                schema["enums"][m.group(2)] = [m.group(4) if v == m.group(3) else v for v in schema["enums"][m.group(2)]]; continue
+            m = SQL_ALTER_TYPE_RE.match(st)
+            if m and tk(m, 1, 2) in schema["enums"]:
+                key = tk(m, 1, 2)
+                if m.group(5):  # RENAME TO: o enum continua no mesmo schema
+                    schema["enums"][tkey(unq(m.group(1)), unq(m.group(5)))] = schema["enums"].pop(key)
+                else:
+                    old, new = m.group(3).replace("''", "'"), m.group(4).replace("''", "'")
+                    schema["enums"][key] = [new if v == old else v for v in schema["enums"][key]]
+                continue
             m = SQL_INDEX_RE.match(st)
             if m:
                 uniq, name, sch, tname, icols, where = m.groups()
-                schema["indexes"].append({"name": name, "table": tkey(sch, tname), "columns": squash(icols), "unique": bool(uniq), "where": squash(where or ""), "src": src}); continue
+                schema["indexes"].append({"name": unq(name), "table": tkey(unq(sch), unq(tname)), "columns": squash(icols), "unique": bool(uniq), "where": squash(where or ""), "src": src}); continue
             m = SQL_VIEW_RE.match(st)
             if m:
-                schema["views"][tkey(m.group(1), m.group(2))] = {"body": trunc(squash(m.group(3)), 600), "src": src}; continue
+                schema["views"][tk(m, 1, 2)] = {"body": trunc(squash(m.group(3)), 600), "src": src}; continue
             m = SQL_GRANT_RE.match(st)
             if m:
                 kind, privs, objkind, sch, obj, roles = m.groups()
-                schema["grants"].append({"kind": kind.lower(), "privs": squash(privs).lower(), "object": tkey(sch, obj), "objkind": (objkind or "table").lower(), "roles": squash(roles), "src": src}); continue
+                schema["grants"].append({"kind": kind.lower(), "privs": squash(privs).lower(), "object": tkey(unq(sch), unq(obj)), "objkind": (objkind or "table").lower(), "roles": squash(roles), "src": src}); continue
         for key, t in T.items():
             c = schema["comments"].get(f"table:{key}")
             if c: t["comment"] = c
@@ -1186,7 +1403,12 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     schema["enums"][name] = re.findall(r"\"([^\"]+)\"", vals)
             fb = block("Functions")
             if fb:
-                for name in re.findall(r"\n\s+(\w+):\s*\{", fb):
+                depth, names = 0, []
+                for tok in re.finditer(r"([{}])|\n\s*([A-Za-z_]\w*)\s*:\s*(?=\{)", fb):  # só as chaves diretas: Args/Returns não são funções
+                    depth += (tok.group(1) == "{") - (tok.group(1) == "}")
+                    if tok.group(2) and depth == 0:
+                        names.append(tok.group(2))
+                for name in names:
                     schema["functions"].setdefault(name, {"args": "", "returns": "?", "lang": "", "src": rel(f, root), "security_definer": False, "search_path": False, "body": "", "raises": [], "tables": []})
             schema["sources"].append(rel(f, root))
             break
@@ -1290,7 +1512,7 @@ def load_snapshot_schema(snap_dir: Path, snap: str) -> tuple[dict | None, str, l
         ff = exact[0] if exact else (cands[0] if len(cands) == 1 else None)
         fm = SQL_FUNC_FULL_RE.match(read_text(ff).strip() + ";") if ff else None
         if fm:
-            body, fsrc = fm.group(4), f"{snap}/functions/{fn.get('schema')}/{ff.name}"
+            body, fsrc = fm.group(5), f"{snap}/functions/{fn.get('schema')}/{ff.name}"
         fraises = [squash(x) for k, x in SQL_RAISE_RE.findall(body) if k.lower() == "exception"]
         functions[name] = {
             "args": trunc(squash(str(fn.get("args") or "")), 200), "returns": str(fn.get("returns") or "?"), "lang": str(fn.get("language") or "").lower(), "src": fsrc,
@@ -2460,6 +2682,9 @@ def main() -> int:
         if schema["dynamic_ddl"]:
             avisos.append(f"{len(schema['dynamic_ddl'])} migration(s) com DDL dinâmico (EXECUTE format/loop) que não dá para reconstruir estaticamente: "
                           + ", ".join(d["src"] for d in schema["dynamic_ddl"][:5]) + (" …" if len(schema["dynamic_ddl"]) > 5 else ""))
+        if schema["unparsed"]:
+            avisos.append(f"{len(schema['unparsed'])} trecho(s) de SQL que o parser não reconstrói (colunas ou corpo ficam vazios/ausentes): "
+                          + "; ".join(f"{u['what']} [{u['src']}]" for u in schema["unparsed"][:5]) + (" …" if len(schema["unparsed"]) > 5 else ""))
         if schema["ignored_sources"]:
             avisos.append("SQL solto em supabase/ fora de migrations/ não entra na reconstrução do schema: " + ", ".join(schema["ignored_sources"]))
     feats = detect_features(root, files, code, stack)
