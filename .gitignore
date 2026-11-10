@@ -64,3 +64,7 @@ docs/contexto/*
 !docs/contexto/regras/
 docs/contexto/regras/*
 !docs/contexto/regras/manual/
+
+# Relatórios locais dos motores determinísticos
+.autofix/
+.audit/
