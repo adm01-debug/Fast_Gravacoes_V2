@@ -58,7 +58,7 @@ const findings = [];
 const checks = []; // {id, titulo, limite, total}
 function add(check, sev, titulo, arquivo, linha, evidencia, sugestao, extra = {}) {
   findings.push(JSON.parse(JSON.stringify({ check, sev, titulo, arquivo, linha, evidencia, sugestao, ...extra },
-    (_key, value) => typeof value === 'string' ? redactEvidence(value) : value))); 
+    (_key, value) => typeof value === 'string' ? redactEvidence(value) : value)));
 }
 function defCheck(id, titulo, limite, fn) {
   const before = findings.length;
@@ -398,7 +398,7 @@ const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
 
 const sevCount = (sev) => findings.filter((x) => x.sev === sev).length;
 const excerpt = (f, line) => {
-  const ls = read(f).split('\n');
+  const ls = redactEvidence(read(f)).split('\n');
   return ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n');
 };
 

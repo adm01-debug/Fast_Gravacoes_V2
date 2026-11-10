@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -252,4 +252,106 @@ test('audit com checagem quebrada não devolve sucesso', (t) => {
   assert.equal(r.status, 1, r.stdout + r.stderr);
   const report = JSON.parse(read(join(dir, '.audit/findings.json')));
   assert.ok(report.checks.some((c) => c.ok === false));
+});
+
+
+test('apply sem commit isola antes dos gates e preserva branch e arquivos locais', (t) => {
+  const dir = fixture(t);
+  const head = git(dir, 'rev-parse', 'HEAD');
+  writeFileSync(join(dir, 'third.txt'), 'edicao local\n');
+  writeFileSync(join(dir, 'local.txt'), 'nao rastreado\n');
+  writeFileSync(join(dir, '.gitignore'), read(join(dir, '.gitignore')) + 'privado.txt\n');
+  writeFileSync(join(dir, 'privado.txt'), 'conteudo privado fixture\n');
+  writeFileSync(join(dir, 'scripts/check-any-baseline.mjs'), `
+import {execFileSync} from 'node:child_process';
+if(execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim()!=='autofix/apply-isolado') process.exit(2);
+`);
+  const r = cli(dir, ['--apply', '--only=unused'], { AUTOFIX_BRANCH: 'autofix/apply-isolado' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(git(dir, 'branch', '--show-current'), 'autofix/apply-isolado');
+  assert.equal(git(dir, 'rev-parse', 'trabalho'), head);
+  assert.match(git(dir, 'show', 'trabalho:src/app.ts'), /unused = 42/);
+  assert.doesNotMatch(read(join(dir, 'src/app.ts')), /unused = 42/);
+  assert.equal(read(join(dir, 'third.txt')), 'edicao local\n');
+  assert.equal(read(join(dir, 'local.txt')), 'nao rastreado\n');
+  assert.equal(read(join(dir, 'privado.txt')), 'conteudo privado fixture\n');
+});
+
+test('audit redige credenciais em todas as evidencias e trechos', (t) => {
+  // Valores sintéticos: nunca lemos nem exportamos credenciais do clone real.
+  const token = 'sk_' + 'live_' + 'Q8w9E7r6T5y4U3i2O1p0Z9x8C7v6B5n4';
+  const password = 'SenhaFixtureSemUsoReal987';
+  const code = `export const fakeData = { token: '${token}' };\n// postgres://fixture:${password}@localhost/db\n`;
+  const dir = fixture(t, code);
+  cpSync(join(root, 'scripts/audit'), join(dir, 'scripts/audit'), { recursive: true });
+  git(dir, 'add', 'scripts/audit'); git(dir, 'commit', '-m', 'audit fixture');
+  const r = run(process.execPath, ['scripts/audit/run.mjs'], dir);
+  assert.equal(r.status, 0, 'auditoria fixture deve concluir sem erro de ferramenta');
+  const report = JSON.parse(read(join(dir, '.audit/findings.json')));
+  assert.ok(report.findings.some(f => f.check === 'segredo-exposto'));
+  assert.ok(report.findings.some(f => f.check === 'dado-fabricado'));
+  const outputs = ['findings.json', 'relatorio.md', 'fila-para-decisao.md'].map(f => read(join(dir, '.audit', f))).join('\n') + r.stdout + r.stderr;
+  assert.ok(!outputs.includes(token), 'token sintetico deve estar redigido em todos os relatorios');
+  assert.ok(!outputs.includes(password), 'senha sintetica em trecho adjacente deve estar redigida');
+  assert.match(outputs, /SEGREDO REDIGIDO/);
+});
+
+for (const kind of ['arquivo', 'pasta local', 'pasta remota', 'nome especial']) {
+  test(`sync preserva colisao ignored: ${kind}`, (t) => {
+    const dir = fixture(t);
+    const remote = mkdtempSync(join(tmpdir(), 'fast-sync-ignored-'));
+    const upstream = mkdtempSync(join(tmpdir(), 'fast-peer-ignored-'));
+    t.after(() => { rmSync(remote, { recursive: true, force: true }); rmSync(upstream, { recursive: true, force: true }); });
+    const ignored = kind === 'nome especial' ? 'privado com\nlinha.txt' : 'privado';
+    writeFileSync(join(dir, '.gitignore'), read(join(dir, '.gitignore')) + (kind === 'nome especial' ? 'privado*' : ignored) + '\n');
+    git(dir, 'add', '.gitignore'); git(dir, 'commit', '-m', 'ignore fixture');
+    git(remote, 'init', '--bare'); git(dir, 'remote', 'add', 'origin', remote); git(dir, 'push', '-u', 'origin', 'trabalho');
+    git(upstream, 'clone', '-b', 'trabalho', remote, '.');
+    git(upstream, 'config', 'user.email', 'teste@example.invalid'); git(upstream, 'config', 'user.name', 'Teste');
+    const remotePath = kind === 'pasta remota' ? join(ignored, 'novo.txt') : ignored;
+    mkdirSync(dirname(join(upstream, remotePath)), { recursive: true });
+    writeFileSync(join(upstream, remotePath), 'remoto\n');
+    git(upstream, 'add', '-f', '--', remotePath); git(upstream, 'commit', '-m', 'colisao'); git(upstream, 'push');
+    const localPath = kind === 'pasta local' ? join(ignored, 'local.txt') : ignored;
+    mkdirSync(dirname(join(dir, localPath)), { recursive: true });
+    writeFileSync(join(dir, localPath), 'ignorado local preservado\n');
+    const head = git(dir, 'rev-parse', 'HEAD');
+    const r = run('bash', [join(root, 'scripts/sync/sincronizar.sh')], dir, { FG_REPO: dir, FG_REPORTS: join(remote, 'relatorios') });
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(read(join(dir, localPath)), 'ignorado local preservado\n');
+    assert.equal(git(dir, 'rev-parse', 'HEAD'), head);
+    assert.match(r.stdout, /ignorado colide/);
+  });
+}
+
+test('rotina respeita FG_REPO fora do caminho padrao', (t) => {
+  const { dir, home } = routineFixture(t);
+  rmSync(join(home, 'projetos/Fast_Gravacoes_V2'));
+  const r = run(process.execPath, [join(root, 'scripts/rotina/rotina.mjs')], dir,
+    { FG_HOME: home, FG_REPO: dir, ROTINA_SCRIPTS: join(dir, 'scripts'), FAIL_AUDIT: '1' });
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  const report = read(join(home, 'relatorios/fast-gravacoes-v2/ULTIMO.md'));
+  assert.match(report, /auditoria falhou/i);
+  assert.doesNotMatch(report, /origin\/main não existe/);
+});
+
+
+test('instalador grava clone escolhido com espacos, aspas e percentuais sem iniciar servico real', (t) => {
+  const original = fixture(t);
+  const dir = original + ' com % e "aspas"';
+  renameSync(original, dir);
+  const home = mkdtempSync(join(tmpdir(), 'fast-installer-home-'));
+  t.after(() => { rmSync(dir, { recursive: true, force: true }); rmSync(home, { recursive: true, force: true }); });
+  cpSync(join(root, 'scripts/audit'), join(dir, 'scripts/audit'), { recursive: true });
+  cpSync(join(root, 'scripts/rotina'), join(dir, 'scripts/rotina'), { recursive: true });
+  mkdirSync(join(home, 'bin'));
+  const systemctl = join(home, 'bin/systemctl');
+  writeFileSync(systemctl, '#!/bin/sh\nexit 0\n'); chmodSync(systemctl, 0o700);
+  const r = run('bash', [join(root, 'scripts/rotina/instalar.sh')], dir,
+    { HOME: home, PATH: join(home, 'bin') + ':' + process.env.PATH });
+  assert.equal(r.status, 0, r.stderr);
+  const unit = read(join(home, '.config/systemd/user/fast-gravacoes-rotina.service'));
+  const escaped = dir.replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('%', '%%');
+  assert.ok(unit.includes(`Environment="FG_REPO=${escaped}"`));
+  assert.equal(read(join(home, '.local/share/fast-gravacoes-rotina/rotina.mjs')), read(join(root, 'scripts/rotina/rotina.mjs')));
 });
