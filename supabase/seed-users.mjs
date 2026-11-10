@@ -6,7 +6,10 @@
 // Etapa 5 do plano-mestre: project ref NUNCA hardcoded — sempre via ambiente,
 // para que o mesmo script sirva dev/staging/produção sem edição (ver
 // supabase/ENVIRONMENTS.md).
-const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+// Refs do Supabase são minúsculos e sem espaços: normaliza antes de comparar, senão um
+// espaço/maiúscula no secret fazia a trava de produção abaixo não casar e o seed seguir.
+const normRef = (v) => (v ?? '').trim().toLowerCase();
+const PROJECT_REF = normRef(process.env.SUPABASE_PROJECT_REF);
 const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 if (!ACCESS_TOKEN) {
   console.error('Defina SUPABASE_ACCESS_TOKEN no ambiente.');
@@ -22,7 +25,7 @@ if (!PROJECT_REF) {
 
 const allowedRefs = (process.env.SUPABASE_SEED_ALLOWED_REFS ?? '')
   .split(',')
-  .map((ref) => ref.trim())
+  .map(normRef)
   .filter(Boolean);
 if (!allowedRefs.includes(PROJECT_REF)) {
   console.error(
@@ -32,7 +35,7 @@ if (!allowedRefs.includes(PROJECT_REF)) {
   process.exit(1);
 }
 if (
-  process.env.SUPABASE_PRODUCTION_PROJECT_REF === PROJECT_REF &&
+  normRef(process.env.SUPABASE_PRODUCTION_PROJECT_REF) === PROJECT_REF &&
   process.env.ALLOW_PRODUCTION_SEED !== 'true'
 ) {
   console.error(
@@ -72,7 +75,10 @@ async function createUser(u) {
   catch { return { email: u.email, status: 201, data: text }; }
 }
 
-const results = await Promise.all(USERS.map(createUser));
+const results = await Promise.all(
+  USERS.map((u) => createUser(u).catch((err) => ({ email: u.email, status: 0, error: String(err?.message ?? err) }))),
+);
+let failed = 0;
 for (const r of results) {
   if (r.status === 201) {
     const id = r.data?.id ?? r.data?.user?.id ?? '?';
@@ -80,6 +86,12 @@ for (const r of results) {
   } else if (r.status === 422 && r.error?.includes('already')) {
     console.log(`SKIP ${r.email.padEnd(20)} already exists`);
   } else {
+    failed += 1;
     console.log(`ERR ${r.email.padEnd(20)} ${r.status} ${r.error?.slice(0, 200)}`);
   }
+}
+// Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou).
+if (failed > 0) {
+  console.error(`Seed incompleto: ${failed} de ${results.length} usuário(s) falharam.`);
+  process.exitCode = 1;
 }

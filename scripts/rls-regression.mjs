@@ -113,7 +113,9 @@ async function main() {
     user_id: foreignUserId,
   });
 
-  await supabase.auth.signOut();
+  // scope 'local': encerra só esta sessão. O default ('global') derruba TODAS as sessões
+  // da conta, que é a mesma do job e2e e de runs paralelos de outras PRs.
+  await supabase.auth.signOut({ scope: 'local' });
 
   if (!insertError) {
     console.error('\n# ❌ RLS regression: FALHOU — operador conseguiu inserir technical_conversations em nome de outro usuário.');
