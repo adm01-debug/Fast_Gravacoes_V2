@@ -526,6 +526,34 @@ class RealDatabaseSnapshotTests(RepoFixture):
         self.assertEqual(update, "authenticated: USING is_coordinator() · WITH CHECK is_coordinator_check()")
         self.assertEqual(delete, "authenticated: is_coordinator()<br>**E AINDA EXIGE (RESTRICTIVE)** authenticated: ((auth.jwt() ->> 'aal'::text) = 'aal2'::text)")
 
+    def test_generated_column_keeps_its_formula_and_is_not_a_default(self):
+        data = snapshot_fixture()
+        data["db"]["columns"].append({"schema": "public", "table": "jobs", "name": "total_cost", "type": "numeric", "position": 9, "nullable": True,
+                                      "default": "(quantity * unit_cost)", "generated": "s", "identity": None, "is_enum": False, "comment": None})
+        self.write_snapshot(data)
+        self.cli("--schema-snapshot", self.SNAP)
+        rules = self.out("07-REGRAS-DE-NEGOCIO.md")
+        self.assertIn("(quantity * unit_cost)", rules)
+        self.assertNotIn("default (quantity * unit_cost)", rules)
+        self.assertNotRegex(rules, r"CALCULADA\s*=?\s*`?s`?(\s|$|\|)")
+
+    def test_snapshot_with_failed_or_carried_sections_degrades_the_source(self):
+        for key, value, reason in (("errors", [{"section": "policies", "error": "timeout"}], "coleta com erro em policies"),
+                                   ("carried", ["policies"], "reaproveitada(s) da coleta anterior: policies")):
+            with self.subTest(key=key):
+                data = snapshot_fixture()
+                data[key] = value
+                self.write_snapshot(data)
+                self.cli("--schema-snapshot", self.SNAP, "--force")
+                manifest = self.out_json("manifest.json")
+                self.assertEqual(manifest["fonte_schema"], "snapshot")
+                self.assertTrue(any(reason in e for e in manifest["erros"]), manifest["erros"])
+
+    def test_clean_snapshot_has_no_degradation_errors(self):
+        self.write_snapshot()
+        self.cli("--schema-snapshot", self.SNAP)
+        self.assertEqual(self.out_json("manifest.json")["erros"], [])
+
     def test_missing_snapshot_falls_back_to_migrations_and_says_so(self):
         self.cli("--schema-snapshot", self.SNAP)
         rules = self.out("07-REGRAS-DE-NEGOCIO.md")
