@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida.
 # Variáveis:
-#   BRANCH          branch alvo (default: branch atual)
+#   BRANCH          branch alvo (default: branch atual). Com HEAD destacado (checkout de tag/SHA) os modos push/pr exigem BRANCH
+#                   explícito, e o HEAD precisa estar contido em origin/<BRANCH>; o modo branch não precisa (parte do commit do HEAD)
 #   OUT_DIR         pasta gerada (default: docs/ai-context)
 #   MODE            push | pr | branch (maiúsculas/minúsculas tanto faz; qualquer outro valor é erro, nada é publicado)
 #                   push   = commit direto na branch padrão (cai para pr se rejeitado e gh existir)
@@ -20,7 +21,7 @@
 #                   No modo branch é também de onde a branch derivada é lida.
 #   GEN_CMD         comando para regenerar após rebase (default: python3 <pasta deste script>/generate.py --repo . --out $OUT_DIR)
 set -euo pipefail
-BRANCH="${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
+BRANCH="${BRANCH:-}"
 OUT_DIR="${OUT_DIR:-docs/ai-context}"
 MODE="$(printf '%s' "${MODE:-push}" | tr '[:upper:]' '[:lower:]')"
 case "$MODE" in
@@ -68,6 +69,25 @@ assert_no_foreign_staged_changes() {
   done < <(git diff --cached --name-only -z)
 }
 
+if [ -z "$BRANCH" ]; then
+  BRANCH="$(git symbolic-ref -q --short HEAD || true)"   # vazio = HEAD destacado
+  if [ -z "$BRANCH" ]; then
+    if [ "$MODE" != "branch" ]; then
+      echo "ERRO: HEAD destacado (checkout de tag/SHA) e BRANCH não definido — não há branch para publicar. Defina BRANCH=<branch destino> (ex.: BRANCH=main). Nada foi publicado." >&2
+      exit 2
+    fi
+    BRANCH="$(git rev-parse --short HEAD)"   # no modo branch é só o rótulo da mensagem: a base é o commit do HEAD
+  fi
+elif [ "$MODE" != "branch" ] && ! git symbolic-ref -q HEAD >/dev/null; then
+  # HEAD destacado com BRANCH explícito: só publica se o commit estiver em origin/$BRANCH — senão o rebase levaria commits alheios para a branch
+  if ! git fetch -q origin "$BRANCH" 2>"$ERR"; then
+    echo "ERRO: não foi possível buscar origin/$BRANCH — nada foi publicado." >&2; show_err; exit 1
+  fi
+  if ! git merge-base --is-ancestor HEAD "refs/remotes/origin/$BRANCH"; then
+    echo "ERRO: HEAD destacado em $(git rev-parse --short HEAD) não está contido em origin/$BRANCH — publicar levaria commits alheios para $BRANCH. Faça checkout de $BRANCH (ou de um commit dele). Nada foi publicado." >&2
+    exit 1
+  fi
+fi
 if git check-ignore -q "$OUT_DIR"; then
   echo "ERRO: $OUT_DIR está no .gitignore — os docs nunca seriam commitados. Remova a regra ou mude AI_CONTEXT_OUT."; exit 1
 fi
@@ -206,7 +226,7 @@ remember_generated_head
 
 if [ "$MODE" = "push" ]; then
   for attempt in 1 2 3; do
-    if git push -q origin "HEAD:$BRANCH" 2>"$ERR"; then
+    if git push -q origin "HEAD:refs/heads/$BRANCH" 2>"$ERR"; then
       echo "contexto publicado em $(git rev-parse --short HEAD) ($BRANCH)"; exit 0
     fi
     if grep -qiE "protected|GH006|pre-receive|required status|review|rule" "$ERR"; then

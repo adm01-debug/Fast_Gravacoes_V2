@@ -54,6 +54,18 @@ Regras da reconstrução por migrations (fallback):
 - `DROP TABLE a, b` remove as tabelas com suas policies, triggers, índices e RLS, e `types.ts` não as traz de volta;
   `CREATE TABLE IF NOT EXISTS` não sobrescreve tabela existente; `ALTER TABLE` com várias ações, `ALTER POLICY` e
   `ALTER FUNCTION … SET search_path` são aplicados.
+- Literais (`'…'`, `E'…\'…'`), `"identificadores"`, comentários (`--`, `/* */` aninhado) e `$tag1$ … $tag1$` nunca quebram nem inventam
+  statements. Identificador sem aspas vale em minúsculas (`DROP POLICY P` remove `p`); com aspas mantém caixa e espaço.
+- As migrations são aplicadas em ordem numérica de nome (`9_x.sql` antes de `10_y.sql`).
+- Enum: valores com vírgula, `)` ou `''` ficam inteiros; `DROP TYPE`, `ALTER TYPE … RENAME TO/RENAME VALUE` e `DROP [MATERIALIZED] VIEW` valem.
+- Funções têm a mesma chave do snapshot (`schema.nome`; `public` sem prefixo; outra assinatura vira `nome(args)`): `DROP/ALTER FUNCTION`
+  atinge só a sobrecarga citada, e o mesmo nome em schemas diferentes não se sobrescreve.
+- RLS = dois bits (ENABLE, FORCE): `FORCE` sem `ENABLE` continua `disabled`, `NO FORCE` volta para `enabled`.
+  `ENABLE/DISABLE [REPLICA|ALWAYS] TRIGGER` marca o trigger como no snapshot (`[DISABLED]`, `[REPLICA]`, `[ALWAYS]`).
+- `CREATE TABLE … (LIKE x [INCLUDING …])` e `… PARTITION OF pai` copiam as colunas da origem; `CREATE TABLE … AS SELECT` registra a tabela
+  sem colunas. O que o parser não consegue reconstruir (CTAS, LIKE/partição de tabela fora das migrations, `CREATE FUNCTION` com corpo
+  `AS '…'`/`BEGIN ATOMIC`) vai para `avisos` do manifest ("trecho(s) de SQL que o parser não reconstrói"), nunca some em silêncio.
+- Arquivo `.sql` em UTF-16 com BOM é lido; `Args`/`Returns` do `types.ts` não viram funções.
 
 ## Regras humanas
 
@@ -81,7 +93,7 @@ python3 -m unittest discover -s scripts/regras_negocio -p 'test_*.py'
   do 07/10/11 e do manifest, Zod/transições, redação de segredo.
 - `test_indice.py` — datas (formatos dos três produtores), manifest ausente/ilegível, erros e avisos do produtor.
 - `test_publish.py` — `publish.sh` contra um remoto bare local em tempdir (1ª publicação, sem mudança = sem commit, pastas de
-  outros produtores, remoto ilegível = aborta, corrida com lease). Precisa de `bash` e `git`.
+  outros produtores, remoto ilegível = aborta, corrida com lease, HEAD destacado). Precisa de `bash` e `git`.
 
 Nenhum teste acessa banco, API de LLM ou remoto real.
 
