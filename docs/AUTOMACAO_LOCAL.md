@@ -37,7 +37,7 @@ A ponte privada fica em `.tools/repo-automation/`; não substitui os arquivos Hu
 - `scripts/graphify-local.unit.mjs`
 - `scripts/autofix.test.mjs`
 
-Estado local informado pelo coordenador: o sincronizador histórico possui timer externo horário ativo. A rotina antiga foi desativada e substituída pelo fleet; não é reativada por este kit, pois podia publicar alterações. Os respectivos instaladores e operações permanecem manuais no dispatcher novo; o timer de sync existente continua independente.
+Estado local informado pelo coordenador: o sincronizador histórico possui timer externo horário ativo. A rotina antiga foi desativada e substituída pelo fleet; não é reativada por este kit para evitar duplicidade com o fleet. Essa rotina cria apenas branch local, sem publicar. Os respectivos instaladores e operações permanecem manuais no dispatcher novo; o timer de sync existente continua independente.
 
 Fixtures dos corretores anteriores exigem dependências reais. Este workflow instala o lockfile com `npm ci --ignore-scripts` e `--legacy-peer-deps` conforme a política existente; não executa lifecycle nem instala dependências novas.
 
@@ -45,7 +45,7 @@ As suites usam fixtures descartáveis e não executam os scripts operacionais do
 
 ## Registro exato dos demais scripts
 
-Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
+Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Para arquivos TypeScript de apoio sem runner comprovado, o comando listado só valida o inventário; os chamadores originais continuam sendo a referência de execução. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
 
 | Arquivo exato | Invocação manual de inventário | Chamadores literais / justificativa |
 |---|---|---|
