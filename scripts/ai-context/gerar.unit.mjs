@@ -572,10 +572,10 @@ test('A4 rotas: fecho só por import estático e campo `diretos` (tela + imports
   });
   const u = read('rotas.json').urls.find((x) => x.caminho === '/leve');
   assert.equal(u.arquivo, 'src/pages/Leve.tsx');
-  assert.deepEqual(u.tabelas, ['contacts', 'emails', 'tabela_do_fundo'], 'payments só é alcançada por import() e não entra');
+  assert.deepEqual(u.tabelas, ['emails', 'tabela_do_fundo'], 'payments só é alcançada por import() e contacts (useOutro) não é importado do barrel');
   assert.deepEqual(u.rpcs, []);
   assert.deepEqual(u.diretos, { tabelas: ['emails'], rpcs: [], edges: ['send-email'] }, 'barrel conta só pelo hook importado');
-  assert.equal(u.arquivos_puxados, 5);
+  assert.equal(u.arquivos_puxados, 4);
   assert.deepEqual(read('grafo-arestas.json').arestas['src/lib/prefetch.ts'], ['src/pages/Pesada.tsx'], 'import() continua no grafo (não vira órfão)');
   assert.equal(read('componentes.json').componentes.find((x) => x.arquivo === 'src/pages/Pesada.tsx').orfao, false);
   assert.match(read('rotas.json').descricao, /diretos/);
@@ -799,4 +799,37 @@ test('pastas env/build/out dentro de src/ entram no inventário; na raiz (e node
   const arquivos = JSON.stringify(read('componentes.json')) + JSON.stringify(read('grafo.json'));
   for (const ok of ['src/env/config.ts', 'src/features/build/Builder.tsx', 'src/out/saida.ts']) assert.ok(arquivos.includes(ok), `${ok} deveria aparecer`);
   for (const lixo of ['build/gerado.ts', 'env/lixo.ts', 'src/node_modules/x/index.ts', 'src/dist/gerado.ts']) assert.ok(!arquivos.includes(lixo), `${lixo} não deveria aparecer`);
+});
+
+test('fecho por barrel: importa só o que o barrel expõe para os nomes pedidos; namespace, default, export *, renomes e barrel aninhado não perdem dependência', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    const pagina = (nome, imports, corpo = 'null') => w(dir, `src/pages/${nome}.tsx`, `${imports}\nexport default function ${nome}() { return ${corpo}; }\n`);
+    w(dir, 'src/routes/Barrel.tsx', `import { Routes, Route } from 'react-router-dom';\nimport P1 from '@/pages/P1';\nimport P2 from '@/pages/P2';\nimport P3 from '@/pages/P3';\nimport P4 from '@/pages/P4';\nimport P5 from '@/pages/P5';\nimport P6 from '@/pages/P6';\nimport P7 from '@/pages/P7';\nexport const R = () => <Routes><Route path="/p1" element={<P1 />} /><Route path="/p2" element={<P2 />} /><Route path="/p3" element={<P3 />} /><Route path="/p4" element={<P4 />} /><Route path="/p5" element={<P5 />} /><Route path="/p6" element={<P6 />} /><Route path="/p7" element={<P7 />} /></Routes>;\n`);
+    // feature com barrel: a, b (nomeados), c (default re-exportado com outro nome), sub (barrel aninhado com d)
+    w(dir, 'src/features/f/index.ts', `export { useA } from './useA';\nexport * from './useB';\nexport { default as useC } from './useC';\nexport { useD as useDD } from './sub';\nexport * from './sub';\n`);
+    w(dir, 'src/features/f/useA.ts', `export const useA = () => supabase.from('tab_a');`);
+    w(dir, 'src/features/f/useB.ts', `export const useB = () => supabase.from('tab_b');`);
+    w(dir, 'src/features/f/useC.ts', `export default () => supabase.from('tab_c');`);
+    w(dir, 'src/features/f/sub/index.ts', `export { useD } from './useD';\nexport { useE } from './useE';\n`);
+    w(dir, 'src/features/f/sub/useD.ts', `export const useD = () => supabase.from('tab_d');`);
+    w(dir, 'src/features/f/sub/useE.ts', `export const useE = () => supabase.from('tab_e');`);
+    pagina('P1', `import { useA } from '@/features/f';`, 'useA()');                      // nomeado: só tab_a
+    pagina('P2', `import { useB } from '@/features/f';`, 'useB()');                      // export * : tab_b
+    pagina('P3', `import { useC } from '@/features/f';`, 'useC()');                      // default re-exportado: tab_c
+    pagina('P4', `import { useDD } from '@/features/f';`, 'useDD()');                    // renome + barrel aninhado: tab_d
+    pagina('P5', `import * as F from '@/features/f';`, 'F.useA()');                      // namespace: o barrel inteiro
+    pagina('P6', `import F from '@/features/f';\nimport type { Algo } from '@/features/f';`, 'F');   // default/tipo: o barrel inteiro
+    w(dir, 'src/features/g/index.ts', `export * as ns from './useG';\nexport { useH } from './useH';\n`);
+    w(dir, 'src/features/g/useG.ts', `export const g = () => supabase.from('tab_g');`);
+    w(dir, 'src/features/g/useH.ts', `export const useH = () => supabase.from('tab_h');`);
+    pagina('P7', `import { ns } from '@/features/g';`, 'ns.g()');                          // export * as ns: o módulo inteiro, não só o nome
+  });
+  const tab = Object.fromEntries(read('rotas.json').urls.map((u) => [u.caminho, u.tabelas]));
+  assert.deepEqual(tab['/p1'], ['tab_a'], 'nomeado puxa só o arquivo que exporta');
+  assert.deepEqual(tab['/p2'], ['tab_b'], 'export * resolve pelo nome');
+  assert.deepEqual(tab['/p3'], ['tab_c'], 'export { default as X } resolve pelo nome exposto');
+  assert.deepEqual(tab['/p4'], ['tab_d'], 'renome (as) dentro de barrel aninhado');
+  assert.deepEqual(tab['/p5'], ['tab_a', 'tab_b', 'tab_c', 'tab_d', 'tab_e'], 'namespace volta a puxar o barrel inteiro (sem sub-relato)');
+  assert.ok(['tab_a', 'tab_b', 'tab_c', 'tab_d', 'tab_e'].every((x) => tab['/p6'].includes(x)), 'default sem nome conhecido também puxa tudo');
+  assert.deepEqual(tab['/p7'], ['tab_g'], 'export * as ns puxa o módulo do namespace e não o resto do barrel');
 });
