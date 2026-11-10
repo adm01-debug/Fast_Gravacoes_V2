@@ -62,7 +62,17 @@ from psycopg.rows import dict_row
 # Config
 # --------------------------------------------------------------------------- #
 
-FORMAT_VERSION = 2
+# v3 (achado por auditoria adversarial, não por bug visto em produção): versoes <= 2 gravavam
+# cron.job.command CRU em snapshot.json. Sem este bump, um snapshot.json pre-fix ainda em disco
+# passa a validacao de format_version e e aceito como `previous`; se a coleta de "cron" falhar no
+# PRIMEIRO run pos-deploy, introspect_db reaproveita previous_db["cron"] (ainda cru) e o guard de
+# redacao em main() PULA a redacao justamente porque "cron" esta em CARRIED (pensado pra nao
+# redigir de novo um resumo ja seguro) -- o segredo bruto pre-fix vaza de novo, agora pelo caminho
+# de carry-over. O bump invalida qualquer `previous` pre-fix (vira None, sem CARRIED algum) na
+# primeira coleta pos-deploy: o preco e perder o reaproveitamento de schema.sql/types.ts/funcoes
+# nesse UM run; o beneficio e nunca reaproveitar command nao redigido. Runs seguintes (com
+# previous ja em v3, ja redigido) nao pagam esse preco de novo.
+FORMAT_VERSION = 3
 OUTPUT_MARKER = ".supabase-snapshot-output"
 OUTPUT_MARKER_CONTENT = f"supabase-snapshot-v{FORMAT_VERSION}\n"
 CONFIG_ERRORS: list[str] = []
@@ -138,13 +148,25 @@ def log(msg: str) -> None:
 
 
 def valid_previous_snapshot(path: pathlib.Path) -> bool:
+    """So confere a FORMA (e' um snapshot nosso, seguro de possuir/sobrescrever), nao a VERSAO.
+    Quem decide se um `previous` de versao antiga pode ser REAPROVEITADO e' main() (compara
+    contra FORMAT_VERSION e zera `previous` se nao bater). As duas perguntas sao diferentes: um
+    arquivo de versao antiga ainda e' claramente NOSSO (format_version presente, db/api dict) --
+    exigir a versao EXATA aqui faria prepare_output_directory() RECUSAR a propria pasta logo
+    depois de um bump de FORMAT_VERSION (ex.: v2->v3 do fix de redacao do cron), porque a pasta
+    restaurada da branch `contexto` tem o snapshot.json da versao anterior e nenhum marcador
+    (o marcador nunca e' commitado -- cada run do GitHub Actions comeca num runner novo). O job
+    inteiro travaria pra sempre: nada seria gerado, entao a pasta nunca ficaria no formato novo,
+    entao o proximo run bateria na mesma recusa. Aceitar qualquer versao aqui destrava a
+    transicao; main() ainda descarta o dado antigo antes de reaproveitar qualquer coisa dele.
+    """
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError):
         return False
     return (
         isinstance(data, dict)
-        and data.get("format_version") == FORMAT_VERSION
+        and isinstance(data.get("format_version"), int)
         and isinstance(data.get("db"), dict)
         and isinstance(data.get("api"), dict)
     )
@@ -280,6 +302,20 @@ def approx(n: Any) -> str:
         if n >= div:
             return f"~{n / div:.1f}{suf}".replace(".0", "")
     return f"~{round(n, -1)}"
+
+
+_RX_FUNCAO_CHAMADA = re.compile(r"((?:public|net|cron)\.[a-z_0-9]+)\s*\(")
+
+
+def redigir_comando_cron(command: Any) -> str:
+    """O `command` de cron.job pode trazer URL e cabeçalho inteiros — neste banco, pelo menos um
+    job embute o segredo (`x-cron-secret`) em texto puro na chamada HTTP. cron.md e snapshot.json
+    são publicados numa branch do GitHub; NUNCA o command bruto sai daqui, só o nome das funções
+    chamadas (mesmo padrão do SQL de só leitura em scripts/inventario/banco.sql). Isso vale mesmo
+    que o segredo mude de nome ou de formato: a lista é sempre e só os nomes, nunca o texto livre.
+    """
+    nomes = sorted(set(_RX_FUNCAO_CHAMADA.findall(str(command or ""))))
+    return f"chama: {', '.join(nomes)}" if nomes else "(sem chamada reconhecida)"
 
 
 def slug(text: str) -> str:
@@ -1625,8 +1661,11 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
     if not cron.get("installed"):
         write(OUT / "cron.md", "# Cron (pg_cron)\n\n_extensão pg_cron não instalada_\n")
     else:
-        write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron") + "Horários em UTC. Execuções recentes em `cron-runs.md`.\n\n" + md_table(
-            ["id", "nome", "schedule", "ativo", "database", "usuário", "comando"],
+        write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron")
+            + "Horários em UTC. Execuções recentes em `cron-runs.md`. O `command` de cada job nunca sai daqui "
+            + "(pode ter URL e cabeçalho com segredo, ex.: `x-cron-secret`) — só o nome das funções chamadas; "
+            + "ver `redigir_comando_cron()` em `scripts/supabase_snapshot/snapshot.py`.\n\n" + md_table(
+            ["id", "nome", "schedule", "ativo", "database", "usuário", "chama"],
             [[j["jobid"], j["jobname"], code(j["schedule"]), j["active"], j["database"], j["username"], code(j["command"])] for j in cron.get("jobs") or []]))
     qs = db.get("queues") or {}
     write(OUT / "queues.md", "# Queues (pgmq)\n\n" + (banner("queues") + md_table(
@@ -1899,6 +1938,17 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     caller_sources = build_function_callers(db)
+    # Redige o command de cron.job DEPOIS do cruzamento acima (que precisa do texto bruto para
+    # achar quem chama quem) e ANTES de qualquer render ou serialização: cron.md e snapshot.json
+    # são publicados numa branch pública, e pelo menos um job deste banco embute um segredo em
+    # texto puro no command (cabeçalho x-cron-secret). Ver redigir_comando_cron().
+    # "cron" in CARRIED: a coleta falhou agora e db["cron"] é o previous_db["cron"] — já redigido
+    # na publicação anterior (mesmo código já rodou). Redigir de novo apagaria a informação:
+    # o resumo "chama: f(), g()" não tem "(" depois do nome, então não bateria no regex de novo
+    # e viraria "(sem chamada reconhecida)" numa seção que nunca teve nada de errado.
+    if "cron" not in CARRIED:
+        for job in (db.get("cron") or {}).get("jobs") or []:
+            job["command"] = redigir_comando_cron(job.get("command"))
     api_, api_stats = introspect_api((previous or {}).get("api"))
     schema_sql = run_pg_dump()
     types_ts = run_gen_types()
