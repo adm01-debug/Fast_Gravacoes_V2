@@ -2,12 +2,10 @@ import { useState, Suspense, useMemo, memo, useCallback, useEffect } from 'react
 import { lazyWithRetry } from '@/lib/lazyWithRetry';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { cn } from '@/lib/utils';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,28 +22,17 @@ import {
 import {
   Activity,
   Clock,
-  Gauge,
-  Target,
   TrendingUp,
-  TrendingDown,
-  Award,
   AlertTriangle,
-  CheckCircle2,
   BarChart3,
   Shield,
-  ShieldCheck,
-  ZapOff,
   Settings2,
-  Leaf,
-  Droplets,
-  Zap,
   Sparkles,
   FileDown,
   ArrowRight,
   Calculator,
   Lightbulb,
   ArrowUpRight,
-  Play,
   FileSpreadsheet,
   FileText,
   LayoutDashboard,
@@ -53,12 +40,11 @@ import {
   Save,
   Trash2
 } from 'lucide-react';
-import { useOEE, WORLD_CLASS_OEE, getOEEColor, useOEEAlerts, useProductionLosses } from '@/features/production';
+import { useOEE, WORLD_CLASS_OEE, useOEEAlerts, useProductionLosses } from '@/features/production';
 import { useOEEDashboardFilters } from '@/features/analytics/hooks/useOEEDashboardFilters';
 import { exportOeeCsv, exportOeePdf } from '@/features/analytics/lib/oeeReportExport';
 import { STUDIOS, INDUSTRY_BENCHMARKS } from '@/features/analytics/constants/oee';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
-import { Progress } from '@/components/ui/progress';
 import {
   OEEAuditPanel,
   OEEBenchmarkTooltip,
@@ -67,8 +53,6 @@ import {
   OEEStudiosTab,
 } from '@/features/analytics';
 const OEEGaugeCard = lazyWithRetry(() => import('@/features/analytics/components/oee/OEEGaugeCard').then(m => ({ default: m.OEEGaugeCard })));
-import { Skeleton } from '@/components/ui/skeleton';
-import { KPITooltip, KPI_DEFINITIONS } from '@/components/ui/kpi-tooltip';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { Button } from '@/components/ui/button';
