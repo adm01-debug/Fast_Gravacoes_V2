@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "project": "Fast_Gravacoes_V2",
+  "environment": ".venv-graphify",
+  "pin": "0.9.48",
+  "pythonVersion": "3.11",
+  "state": ".venv-graphify/graphify-local-state",
+  "output": "graphify-out",
+  "adapter": "generic",
+  "scope": [
+    "."
+  ],
+  "partial": false,
+  "timeoutMs": 1200000,
+  "minAvailableMb": 6144,
+  "metadata": [
+    ".gitignore",
+    ".graphifyignore",
+    ".graphifyrc",
+    "package.json",
+    "tsconfig.json"
+  ]
+}
