@@ -433,7 +433,7 @@ secao('rotas-jsx', () => {
         for (let j = 0; j < corpo.length; j++) { const ch = corpo[j]; if (ch === '}' || ch === ']') d--; if (d <= 0) proprio += ch; if (ch === '{' || ch === '[') d++; }
         const compM = /(?:^|[\s,])(?:element|Component|component|lazy)\s*:\s*(?:<)?(?:\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\))?([A-Z]\w*)?/.exec(proprio);
         const temPath = /(?:^|[\s,])path\s*:/.test(proprio); const pm = /(?:^|[\s,])path\s*:\s*(['"`])([^'"`$]*)\1/.exec(proprio); const idx = /(?:^|[\s,])index\s*:\s*true\b/.test(proprio);
-        const ehRota = !!(compM && (compM[1] || compM[2])) && (temPath || idx); let full = parent;
+        const ehRota = !!(compM && (compM[1] || compM[2])) && (temPath || idx); let full = pm ? joinPath(parent, pm[2]) : parent;
         if (ehRota) {
           vistos++;
           if (pm || idx) { full = pm ? joinPath(parent, pm[2]) : parent || '/'; rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf, compM[1]) : componentFile(compM[2], rf), pai: parent, indice: !pm && idx, definida_em: rf, lazy: !!compM[1] })); }
