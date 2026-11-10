@@ -736,3 +736,67 @@ test('CLI: --root inexistente falha, --help não grava, flag desconhecida ou sem
   assert.equal(r.status, 0); assert.ok(fs.existsSync(path.join(proj, 'saida/ctx/INDEX.md'))); assert.deepEqual(fs.readdirSync(vazio), []);
   assert.equal(JSON.parse(fs.readFileSync(path.join(proj, 'saida/ctx/baseline.json'), 'utf8')).contagens.arquivos_total, 1, 'a própria saída não entra na contagem');
 });
+
+test('rotas-objeto (createBrowserRouter): guard no element, layout sem path e herança para as filhas; pai só com path mantém o prefixo', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/pages/Painel.tsx', 'export default function Painel() { return null; }\n');
+    w(dir, 'src/pages/Login.tsx', 'export default function Login() { return null; }\n');
+    w(dir, 'src/pages/Doc.tsx', 'export default function Doc() { return null; }\n');
+    w(dir, 'src/pages/Sub.tsx', 'export default function Sub() { return null; }\n');
+    w(dir, 'src/routes/objetos.tsx', `import { createBrowserRouter } from 'react-router-dom';
+import Painel from '@/pages/Painel';
+import Login from '@/pages/Login';
+import Doc from '@/pages/Doc';
+import Sub from '@/pages/Sub';
+export const router = createBrowserRouter([
+  { path: '/login', element: <Login /> },
+  { path: '/painel', element: <ProtectedRoute><Painel /></ProtectedRoute>, children: [
+    { path: 'sub', element: <Sub /> },
+  ] },
+  { element: <RequireAuth />, children: [
+    { path: '/privada', element: <Doc /> },
+    { index: true, element: <Painel /> },
+  ] },
+  { path: '/pai', children: [
+    { path: 'filho', element: <Doc /> },
+  ] },
+  { path: '/aberta', element: <AuthPageSkeleton><Doc /></AuthPageSkeleton> },
+]);
+`);
+  });
+  const prot = Object.fromEntries(read('rotas.json').urls.filter((u) => u.definida_em === 'src/routes/objetos.tsx').map((u) => [u.caminho + (u.indice ? '#index' : ''), u.protegida]));
+  assert.equal(prot['/login'], false, 'página sem guard continua pública');
+  assert.equal(prot['/painel'], true, 'wrapper <ProtectedRoute> em volta da página');
+  assert.equal(prot['/painel/sub'], true, 'filha herda o guard do pai');
+  assert.equal(prot['/privada'], true, 'layout sem path com guard protege as filhas');
+  assert.equal(prot['/#index'], true, 'índice dentro do layout protegido');
+  assert.equal(prot['/pai/filho'], false, 'pai só com path mantém o prefixo e não inventa proteção');
+  assert.equal(prot['/aberta'], false, 'AuthPageSkeleton não é guard');
+  assert.ok(!('/filho' in prot), 'o filho de um pai sem element não perde o prefixo');
+});
+
+test('package.json atípico (workspaces com arquivo, item não-string ou fora de array) não derruba o gerador', (t) => {
+  for (const workspaces of [['README.md'], [1, null, 'packages/*'], { packages: 'x' }, 'packages/*']) {
+    const read = isolatedFixture(t, (dir) => {
+      const pj = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+      w(dir, 'package.json', JSON.stringify({ ...pj, workspaces }));
+      w(dir, 'packages/app/package.json', JSON.stringify({ name: 'app' }));
+    });
+    assert.deepEqual(read('manifest.json').erros, [], JSON.stringify(workspaces));
+  }
+});
+
+test('pastas env/build/out dentro de src/ entram no inventário; na raiz (e node_modules/dist em qualquer nível) continuam de fora', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/env/config.ts', 'export const cfg = 1;\n');
+    w(dir, 'src/features/build/Builder.tsx', 'export const Builder = () => null;\n');
+    w(dir, 'src/out/saida.ts', 'export const saida = 1;\n');
+    w(dir, 'build/gerado.ts', 'export const lixo = 1;\n');
+    w(dir, 'env/lixo.ts', 'export const lixo = 1;\n');
+    w(dir, 'src/node_modules/x/index.ts', 'export const lixo = 1;\n');
+    w(dir, 'src/dist/gerado.ts', 'export const lixo = 1;\n');
+  });
+  const arquivos = JSON.stringify(read('componentes.json')) + JSON.stringify(read('grafo.json'));
+  for (const ok of ['src/env/config.ts', 'src/features/build/Builder.tsx', 'src/out/saida.ts']) assert.ok(arquivos.includes(ok), `${ok} deveria aparecer`);
+  for (const lixo of ['build/gerado.ts', 'env/lixo.ts', 'src/node_modules/x/index.ts', 'src/dist/gerado.ts']) assert.ok(!arquivos.includes(lixo), `${lixo} não deveria aparecer`);
+});
