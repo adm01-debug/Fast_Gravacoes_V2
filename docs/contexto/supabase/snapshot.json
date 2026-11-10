@@ -24529,7 +24529,7 @@
         },
         {
           "active": true,
-          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/cron-alert-email', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','066af6c0839a78c6822089e040eb249c3f68c3852cc3b09308091a0f8b170e1e'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
+          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/cron-alert-email', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','[REDACTED]'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
           "database": "postgres",
           "jobid": 5,
           "jobname": "cron-alert-email-every-30min",
@@ -24538,7 +24538,7 @@
         },
         {
           "active": true,
-          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/health-monitor', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','066af6c0839a78c6822089e040eb249c3f68c3852cc3b09308091a0f8b170e1e'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
+          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/health-monitor', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','[REDACTED]'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
           "database": "postgres",
           "jobid": 6,
           "jobname": "health-monitor-every-5min",
