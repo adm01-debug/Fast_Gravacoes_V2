@@ -394,7 +394,7 @@ if (args.includes('--baseline')) {
   console.log(`[audit] baseline gravado com ${findings.length} achados em scripts/audit/baseline.json`);
 }
 const base = existsSync(BASELINE) ? new Set(JSON.parse(read(BASELINE)).fps) : null;
-const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
+const novos = base ? findings.filter((x) => !base.has(x.fp)) : findings;
 
 const sevCount = (sev) => findings.filter((x) => x.sev === sev).length;
 const excerpt = (f, line) => {
@@ -404,7 +404,7 @@ const excerpt = (f, line) => {
 
 const md = [`# Auditoria — ${new Date().toISOString()}`, '',
   `**${findings.length} achados** · crítica ${sevCount('critica')} · alta ${sevCount('alta')} · média ${sevCount('media')} · baixa ${sevCount('baixa')}`,
-  base ? `Comparado ao baseline: **${novos.length} novo(s)**.` : 'Sem baseline (rode com --baseline para aceitar o estado atual e passar a ver só o que é novo).', '',
+  base ? `Comparado ao baseline: **${novos.length} novo(s)**.` : 'Sem baseline: todos os achados são considerados novos; o modo estrito reprova severidades crítica e alta.', '',
   '## Por checagem', '', '| Checagem | Achados | Limite |', '|---|---|---|',
   ...checks.map((c) => `| ${c.titulo} | ${c.total} | ${c.limite} |`), ''];
 if (novos.length) md.push('## NOVOS desde o baseline', '', ...novos.slice(0, 50).map((x) => `- **${x.sev}** ${x.titulo} — \`${x.arquivo}:${x.linha}\``), '');

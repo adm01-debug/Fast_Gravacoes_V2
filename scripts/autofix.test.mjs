@@ -381,3 +381,19 @@ test('apply sem proposta nao deixa branch vazia bloqueando a proxima execucao', 
   assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
   assert.equal(git(dir, 'branch', '--list', 'autofix/sem-mudancas'), '');
 });
+
+
+test('audit estrito sem baseline bloqueia achados críticos sem aceitar o estado atual', (t) => {
+  const token = 'sk_' + 'live_' + 'FixtureSemUsoRealA1234567890123456';
+  const dir = fixture(t, `export const fakeData = { token: '${token}' };\n`);
+  cpSync(join(root, 'scripts/audit'), join(dir, 'scripts/audit'), { recursive: true });
+  const absentBaseline = join(dir, 'baseline-nao-existente.json');
+  git(dir, 'add', 'scripts/audit'); git(dir, 'commit', '-m', 'audit fixture');
+  const result = run(process.execPath, ['scripts/audit/run.mjs', '--estrito'], dir, { AUDIT_BASELINE: absentBaseline });
+  assert.equal(result.status, 1, 'modo estrito deve reprovar achado crítico sem baseline');
+  const report = JSON.parse(read(join(dir, '.audit/findings.json')));
+  assert.ok(report.findings.some(f => f.sev === 'critica' || f.sev === 'alta'));
+  assert.ok(!result.stdout.includes(token));
+  assert.throws(() => readFileSync(absentBaseline), { code: 'ENOENT' });
+  assert.match(read(join(dir, '.audit/relatorio.md')), /todos os achados são considerados novos/);
+});
