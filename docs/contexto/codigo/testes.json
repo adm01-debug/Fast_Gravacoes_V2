@@ -5,12 +5,13 @@
   "vitest",
   "playwright"
  ],
- "total": 111,
+ "total": 105,
+ "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
-  "e2e": 21,
+  "e2e": 18,
   "pytest": 5,
-  "unit": 84
+  "unit": 81
  },
  "onde_ficam": [
   {
@@ -19,30 +20,29 @@
   },
   {
    "padrao": "tests/",
-   "arquivos": 21
+   "arquivos": 18
   },
   {
    "padrao": "outro",
-   "arquivos": 9
+   "arquivos": 6
   }
  ],
  "arquivos": [
   {
    "arquivo": "scripts/ai-context/gerar.unit.mjs",
    "tipo": "unit",
-   "linhas": 361,
-   "testa": [
-    "src/components/auth/ProtectedRoute.tsx",
-    "src/routes/AppRoutes.tsx"
-   ],
-   "casos": 18
+   "linhas": 739,
+   "testa": [],
+   "casos": 39,
+   "suporte": false
   },
   {
    "arquivo": "scripts/audit-gate.test.mjs",
    "tipo": "unit",
    "linhas": 107,
    "testa": [],
-   "casos": 12
+   "casos": 12,
+   "suporte": false
   },
   {
    "arquivo": "scripts/bundle.test.mjs",
@@ -52,7 +52,8 @@
     "scripts/bundle-diff.mjs",
     "scripts/bundle-report.mjs"
    ],
-   "casos": 29
+   "casos": 29,
+   "suporte": false
   },
   {
    "arquivo": "scripts/check-any-baseline.test.mjs",
@@ -61,70 +62,92 @@
    "testa": [
     "scripts/check-any-baseline.mjs"
    ],
-   "casos": 12
+   "casos": 12,
+   "suporte": false
   },
   {
    "arquivo": "scripts/ci/check-claude-md-integrity.test.mjs",
    "tipo": "unit",
    "linhas": 104,
    "testa": [],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "scripts/ci/session-start.test.mjs",
    "tipo": "unit",
    "linhas": 109,
    "testa": [],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "scripts/graphify.test.mjs",
    "tipo": "unit",
    "linhas": 76,
    "testa": [],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "scripts/graphify/tests/test_integration.py",
    "tipo": "pytest",
    "linhas": 490,
-   "testa": [],
-   "casos": 0
+   "testa": [
+    "scripts/graphify/corpus.py",
+    "scripts/graphify/enrich.py",
+    "scripts/graphify/pipeline.py",
+    "scripts/graphify/quality.py",
+    "scripts/graphify/run.py"
+   ],
+   "casos": 31,
+   "suporte": false
   },
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
    "tipo": "pytest",
    "linhas": 667,
-   "testa": [],
-   "casos": 0
+   "testa": [
+    "scripts/regras_negocio/generate.py"
+   ],
+   "casos": 39,
+   "suporte": false
   },
   {
    "arquivo": "scripts/regras_negocio/test_indice.py",
    "tipo": "pytest",
    "linhas": 145,
-   "testa": [],
-   "casos": 0
+   "testa": [
+    "scripts/regras_negocio/indice.py"
+   ],
+   "casos": 14,
+   "suporte": false
   },
   {
    "arquivo": "scripts/regras_negocio/test_publish.py",
    "tipo": "pytest",
    "linhas": 279,
    "testa": [],
-   "casos": 0
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "scripts/seed-users.test.mjs",
    "tipo": "unit",
    "linhas": 73,
    "testa": [],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
    "tipo": "pytest",
    "linhas": 986,
-   "testa": [],
-   "casos": 0
+   "testa": [
+    "scripts/supabase_snapshot/snapshot.py"
+   ],
+   "casos": 43,
+   "suporte": false
   },
   {
    "arquivo": "src/features/admin/hooks/useCronHealthHistory.test.ts",
@@ -133,7 +156,8 @@
    "testa": [
     "src/features/admin/hooks/useCronHealthHistory.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "src/features/admin/hooks/useCronP95Daily.test.ts",
@@ -142,7 +166,8 @@
    "testa": [
     "src/features/admin/hooks/useCronP95Daily.ts"
    ],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "src/features/admin/hooks/useSystemStatusSummary.test.ts",
@@ -151,7 +176,8 @@
    "testa": [
     "src/features/admin/hooks/useSystemStatusSummary.ts"
    ],
-   "casos": 11
+   "casos": 11,
+   "suporte": false
   },
   {
    "arquivo": "src/features/analytics/components/bi/BIStatCard.test.tsx",
@@ -160,7 +186,8 @@
    "testa": [
     "src/features/analytics/components/bi/BIStatCard.tsx"
    ],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "src/features/analytics/hooks/useKPIs.test.ts",
@@ -171,7 +198,8 @@
     "src/features/jobs/index.ts",
     "src/lib/dateUtils.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/analytics/hooks/useOEE.test.ts",
@@ -182,7 +210,8 @@
     "src/features/jobs/index.ts",
     "src/features/production/index.ts"
    ],
-   "casos": 1
+   "casos": 1,
+   "suporte": false
   },
   {
    "arquivo": "src/features/analytics/hooks/useRealtimeConnection.test.ts",
@@ -192,7 +221,8 @@
     "src/features/analytics/hooks/useRealtimeConnection.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "src/features/auth/components/AuthProvider.test.tsx",
@@ -203,7 +233,8 @@
     "src/features/auth/hooks/useAuth.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "src/features/auth/types/admin_bypass.test.ts",
@@ -212,7 +243,8 @@
    "testa": [
     "src/features/auth/types/auth.types.ts"
    ],
-   "casos": 1
+   "casos": 1,
+   "suporte": false
   },
   {
    "arquivo": "src/features/inventory/hooks/useInventory.test.ts",
@@ -223,7 +255,8 @@
     "src/features/inventory/hooks/useInventory.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 16
+   "casos": 16,
+   "suporte": false
   },
   {
    "arquivo": "src/features/inventory/hooks/useLogistics.test.ts",
@@ -233,7 +266,8 @@
     "src/features/inventory/hooks/useLogistics.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "src/features/inventory/hooks/useTraceability.test.ts",
@@ -243,7 +277,8 @@
     "src/features/inventory/hooks/useTraceability.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 23
+   "casos": 23,
+   "suporte": false
   },
   {
    "arquivo": "src/features/inventory/services/traceabilityService.test.ts",
@@ -253,7 +288,8 @@
     "src/features/inventory/services/traceabilityService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/hooks/useJobs.realtime.test.tsx",
@@ -262,7 +298,8 @@
    "testa": [
     "src/features/jobs/hooks/useJobs.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/hooks/useSchedulingConflicts.test.tsx",
@@ -271,7 +308,8 @@
    "testa": [
     "src/features/jobs/hooks/useSchedulingConflicts.ts"
    ],
-   "casos": 14
+   "casos": 14,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/hooks/useSchedulingData.test.tsx",
@@ -280,7 +318,8 @@
    "testa": [
     "src/features/jobs/hooks/useSchedulingData.ts"
    ],
-   "casos": 9
+   "casos": 9,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/hooks/useTechniques.realtime.test.tsx",
@@ -289,7 +328,8 @@
    "testa": [
     "src/features/jobs/hooks/useTechniques.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/hooks/useTechniques.test.tsx",
@@ -298,7 +338,8 @@
    "testa": [
     "src/features/jobs/hooks/useTechniques.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/services/jobsService.test.ts",
@@ -308,7 +349,8 @@
     "src/features/jobs/services/jobsService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/services/jobStateMachine.test.ts",
@@ -317,7 +359,8 @@
    "testa": [
     "src/features/jobs/services/jobStateMachine.ts"
    ],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "src/features/jobs/services/scheduling.test.ts",
@@ -326,7 +369,8 @@
    "testa": [
     "src/features/jobs/services/scheduling.ts"
    ],
-   "casos": 14
+   "casos": 14,
+   "suporte": false
   },
   {
    "arquivo": "src/features/notifications/hooks/useNotifications.test.ts",
@@ -336,7 +380,8 @@
     "src/features/notifications/hooks/useNotifications.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/production/hooks/useMachines.realtime.test.tsx",
@@ -345,7 +390,8 @@
    "testa": [
     "src/features/production/hooks/useMachines.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/production/hooks/useMachines.test.tsx",
@@ -354,7 +400,8 @@
    "testa": [
     "src/features/production/hooks/useMachines.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/production/hooks/useOperatorProductivity.test.ts",
@@ -365,7 +412,8 @@
     "src/features/production/hooks/useOperatorProductivity.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/features/production/services/oeeCalculations.test.ts",
@@ -375,7 +423,8 @@
     "src/features/jobs/index.ts",
     "src/features/production/services/oeeCalculations.ts"
    ],
-   "casos": 4
+   "casos": 4,
+   "suporte": false
   },
   {
    "arquivo": "src/hooks/use-modal-param.test.tsx",
@@ -384,7 +433,8 @@
    "testa": [
     "src/hooks/use-modal-param.ts"
    ],
-   "casos": 6
+   "casos": 6,
+   "suporte": false
   },
   {
    "arquivo": "src/hooks/use-smart-back.test.tsx",
@@ -394,7 +444,8 @@
     "src/hooks/use-smart-back.ts",
     "src/lib/navHistory.ts"
    ],
-   "casos": 4
+   "casos": 4,
+   "suporte": false
   },
   {
    "arquivo": "src/hooks/useOfflineSync.test.ts",
@@ -404,7 +455,8 @@
     "src/hooks/useOfflineSync.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/calendarExports.test.ts",
@@ -414,7 +466,8 @@
     "src/features/jobs/index.ts",
     "src/lib/calendarExports.ts"
    ],
-   "casos": 11
+   "casos": 11,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/csvSafety.test.ts",
@@ -423,7 +476,8 @@
    "testa": [
     "src/lib/csvSafety.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/excel.test.ts",
@@ -432,7 +486,8 @@
    "testa": [
     "src/lib/excel.ts"
    ],
-   "casos": 4
+   "casos": 4,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/excelExport.test.ts",
@@ -443,7 +498,8 @@
     "src/lib/excel.ts",
     "src/lib/excelExport.ts"
    ],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/logger.test.ts",
@@ -452,7 +508,8 @@
    "testa": [
     "src/lib/logger.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/oeeExport.test.ts",
@@ -461,7 +518,8 @@
    "testa": [
     "src/lib/oeeExport.ts"
    ],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/offlineStorage.test.ts",
@@ -470,7 +528,8 @@
    "testa": [
     "src/lib/offlineStorage.ts"
    ],
-   "casos": 33
+   "casos": 33,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/pdfExport.test.ts",
@@ -480,7 +539,8 @@
     "src/features/analytics/hooks/useExecutiveDashboard.ts",
     "src/lib/pdfExport.ts"
    ],
-   "casos": 13
+   "casos": 13,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/spcExport.test.ts",
@@ -490,7 +550,8 @@
     "src/features/analytics/hooks/useSPC.ts",
     "src/lib/spcExport.ts"
    ],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "src/lib/utils.test.ts",
@@ -499,7 +560,8 @@
    "testa": [
     "src/lib/utils.ts"
    ],
-   "casos": 9
+   "casos": 9,
+   "suporte": false
   },
   {
    "arquivo": "src/pages/AdminTelemetriaPage.test.tsx",
@@ -508,7 +570,8 @@
    "testa": [
     "src/pages/AdminTelemetriaPage.tsx"
    ],
-   "casos": 1
+   "casos": 1,
+   "suporte": false
   },
   {
    "arquivo": "src/pages/InventoryPage.test.tsx",
@@ -518,14 +581,16 @@
     "src/features/inventory/index.ts",
     "src/pages/InventoryPage.tsx"
    ],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "src/test/assertNonNull.ts",
    "tipo": "unit",
    "linhas": 12,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "src/test/authFlow.test.ts",
@@ -536,7 +601,8 @@
     "src/lib/rateLimiter.ts",
     "src/lib/validation.ts"
    ],
-   "casos": 18
+   "casos": 18,
+   "suporte": false
   },
   {
    "arquivo": "src/test/circuitBreaker.test.ts",
@@ -545,7 +611,8 @@
    "testa": [
     "src/lib/circuitBreaker.ts"
    ],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "src/test/circuitBreakerAdvanced.test.ts",
@@ -554,7 +621,8 @@
    "testa": [
     "src/lib/circuitBreaker.ts"
    ],
-   "casos": 12
+   "casos": 12,
+   "suporte": false
   },
   {
    "arquivo": "src/test/dateUtils.test.ts",
@@ -563,7 +631,8 @@
    "testa": [
     "src/lib/dateUtils.ts"
    ],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "src/test/erpApiContracts.test.ts",
@@ -572,7 +641,8 @@
    "testa": [
     "supabase/functions/_shared/contracts.ts"
    ],
-   "casos": 28
+   "casos": 28,
+   "suporte": false
   },
   {
    "arquivo": "src/test/errorHandling.test.ts",
@@ -581,7 +651,8 @@
    "testa": [
     "src/lib/errorHandling.ts"
    ],
-   "casos": 30
+   "casos": 30,
+   "suporte": false
   },
   {
    "arquivo": "src/test/exportRegression.test.ts",
@@ -591,7 +662,8 @@
     "src/hooks/utils/inventoryExport.ts",
     "src/lib/oeeExport.ts"
    ],
-   "casos": 22
+   "casos": 22,
+   "suporte": false
   },
   {
    "arquivo": "src/test/exportSimulation.test.ts",
@@ -601,7 +673,8 @@
     "src/hooks/utils/inventoryExport.ts",
     "src/lib/oeeExport.ts"
    ],
-   "casos": 12
+   "casos": 12,
+   "suporte": false
   },
   {
    "arquivo": "src/test/jobsService.test.ts",
@@ -611,7 +684,8 @@
     "src/features/jobs/services/jobsService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 15
+   "casos": 15,
+   "suporte": false
   },
   {
    "arquivo": "src/test/jobStateMachine.test.ts",
@@ -621,7 +695,8 @@
     "src/features/jobs/services/jobStateMachine.ts",
     "src/features/jobs/services/jobsService.ts"
    ],
-   "casos": 58
+   "casos": 58,
+   "suporte": false
   },
   {
    "arquivo": "src/test/loadStress.test.ts",
@@ -633,7 +708,8 @@
     "src/lib/retryWithBackoff.ts",
     "src/lib/sanitize.ts"
    ],
-   "casos": 15
+   "casos": 15,
+   "suporte": false
   },
   {
    "arquivo": "src/test/oeeCalculations.test.ts",
@@ -643,7 +719,8 @@
     "src/features/jobs/index.ts",
     "src/features/production/services/oeeCalculations.ts"
    ],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "src/test/offlineStorage.test.ts",
@@ -652,7 +729,8 @@
    "testa": [
     "src/lib/sanitize.ts"
    ],
-   "casos": 23
+   "casos": 23,
+   "suporte": false
   },
   {
    "arquivo": "src/test/queryConfig.test.ts",
@@ -661,7 +739,8 @@
    "testa": [
     "src/lib/queryConfig.ts"
    ],
-   "casos": 28
+   "casos": 28,
+   "suporte": false
   },
   {
    "arquivo": "src/test/rateLimiter.test.ts",
@@ -670,7 +749,8 @@
    "testa": [
     "src/lib/rateLimiter.ts"
    ],
-   "casos": 6
+   "casos": 6,
+   "suporte": false
   },
   {
    "arquivo": "src/test/rateLimiterAdvanced.test.ts",
@@ -679,21 +759,24 @@
    "testa": [
     "src/lib/rateLimiter.ts"
    ],
-   "casos": 11
+   "casos": 11,
+   "suporte": false
   },
   {
    "arquivo": "src/test/realtimeMock.test.ts",
    "tipo": "unit",
    "linhas": 34,
    "testa": [],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "src/test/realtimeMock.ts",
    "tipo": "unit",
    "linhas": 86,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "src/test/retryBackoffAdvanced.test.ts",
@@ -702,7 +785,8 @@
    "testa": [
     "src/lib/retryWithBackoff.ts"
    ],
-   "casos": 9
+   "casos": 9,
+   "suporte": false
   },
   {
    "arquivo": "src/test/retryWithBackoff.test.ts",
@@ -711,7 +795,8 @@
    "testa": [
     "src/lib/retryWithBackoff.ts"
    ],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "src/test/sanitize.test.ts",
@@ -720,14 +805,16 @@
    "testa": [
     "src/lib/sanitize.ts"
    ],
-   "casos": 16
+   "casos": 16,
+   "suporte": false
   },
   {
    "arquivo": "src/test/setup.ts",
    "tipo": "unit",
    "linhas": 2,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "src/test/utils.test.ts",
@@ -737,7 +824,8 @@
     "src/lib/dateUtils.ts",
     "src/lib/utils.ts"
    ],
-   "casos": 26
+   "casos": 26,
+   "suporte": false
   },
   {
    "arquivo": "src/test/validation.test.ts",
@@ -746,7 +834,8 @@
    "testa": [
     "src/lib/validation.ts"
    ],
-   "casos": 13
+   "casos": 13,
+   "suporte": false
   },
   {
    "arquivo": "src/test/webhookFuzz.test.ts",
@@ -755,7 +844,8 @@
    "testa": [
     "supabase/functions/_shared/contracts.ts"
    ],
-   "casos": 22
+   "casos": 22,
+   "suporte": false
   },
   {
    "arquivo": "src/test/webhookSimulation.test.ts",
@@ -764,7 +854,8 @@
    "testa": [
     "supabase/functions/_shared/contracts.ts"
    ],
-   "casos": 25
+   "casos": 25,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/auth.test.ts",
@@ -773,7 +864,8 @@
    "testa": [
     "supabase/functions/_shared/auth.ts"
    ],
-   "casos": 19
+   "casos": 19,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/contracts.test.ts",
@@ -782,14 +874,16 @@
    "testa": [
     "supabase/functions/_shared/contracts.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/cors.test.ts",
    "tipo": "unit",
    "linhas": 75,
    "testa": [],
-   "casos": 6
+   "casos": 6,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/cronAuth.test.ts",
@@ -798,7 +892,8 @@
    "testa": [
     "supabase/functions/_shared/cronAuth.ts"
    ],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/logger.test.ts",
@@ -807,7 +902,8 @@
    "testa": [
     "supabase/functions/_shared/logger.ts"
    ],
-   "casos": 6
+   "casos": 6,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.test.ts",
@@ -816,7 +912,8 @@
    "testa": [
     "supabase/functions/_shared/rateLimit.ts"
    ],
-   "casos": 7
+   "casos": 7,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/_shared/webpushEncrypt.test.ts",
@@ -825,14 +922,16 @@
    "testa": [
     "supabase/functions/_shared/webpushEncrypt.ts"
    ],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/external-db-bridge/index.test.ts",
    "tipo": "unit",
    "linhas": 629,
    "testa": [],
-   "casos": 95
+   "casos": 95,
+   "suporte": false
   },
   {
    "arquivo": "supabase/functions/webhook-handler/index.test.ts",
@@ -842,154 +941,176 @@
     "supabase/functions/_shared/test-utils.ts",
     "supabase/functions/webhook-handler/index.ts"
    ],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/accessibility.spec.ts",
    "tipo": "e2e",
    "linhas": 95,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/admin.spec.ts",
    "tipo": "e2e",
    "linhas": 34,
    "testa": [],
-   "casos": 4
+   "casos": 4,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/auth.spec.ts",
    "tipo": "e2e",
    "linhas": 123,
    "testa": [],
-   "casos": 9
+   "casos": 9,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/critical-flows.spec.ts",
    "tipo": "e2e",
    "linhas": 100,
    "testa": [],
-   "casos": 5
+   "casos": 5,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/dashboard.spec.ts",
    "tipo": "e2e",
    "linhas": 55,
    "testa": [],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/error-states.spec.ts",
    "tipo": "e2e",
    "linhas": 40,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/helpers/credentials.ts",
    "tipo": "e2e",
    "linhas": 34,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "tests/e2e/helpers/e2e-setup.ts",
    "tipo": "e2e",
    "linhas": 95,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "tests/e2e/helpers/totp.ts",
    "tipo": "e2e",
    "linhas": 42,
    "testa": [],
-   "casos": 0
+   "casos": 0,
+   "suporte": true
   },
   {
    "arquivo": "tests/e2e/inventory-intelligence.spec.ts",
    "tipo": "e2e",
    "linhas": 84,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/inventory-stability.spec.ts",
    "tipo": "e2e",
    "linhas": 94,
    "testa": [],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/jobs.spec.ts",
    "tipo": "e2e",
    "linhas": 101,
    "testa": [],
-   "casos": 8
+   "casos": 8,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/logistics.spec.ts",
    "tipo": "e2e",
    "linhas": 42,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/maintenance.spec.ts",
    "tipo": "e2e",
    "linhas": 40,
    "testa": [],
-   "casos": 2
+   "casos": 2,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/navigation.spec.ts",
    "tipo": "e2e",
    "linhas": 149,
    "testa": [],
-   "casos": 10
+   "casos": 10,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/offline.spec.ts",
    "tipo": "e2e",
    "linhas": 117,
    "testa": [],
-   "casos": 1
+   "casos": 1,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/packaging.spec.ts",
    "tipo": "e2e",
    "linhas": 114,
    "testa": [],
-   "casos": 6
+   "casos": 6,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/production.spec.ts",
    "tipo": "e2e",
    "linhas": 71,
    "testa": [],
-   "casos": 4
+   "casos": 4,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/simulation.spec.ts",
    "tipo": "e2e",
    "linhas": 57,
    "testa": [],
-   "casos": 1
+   "casos": 1,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/system-status.spec.ts",
    "tipo": "e2e",
    "linhas": 57,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   },
   {
    "arquivo": "tests/e2e/visual-regression.spec.ts",
    "tipo": "e2e",
    "linhas": 90,
    "testa": [],
-   "casos": 3
+   "casos": 3,
+   "suporte": false
   }
  ],
  "sql": [],
@@ -997,7 +1118,14 @@
   "scripts/bundle-diff.mjs": 1,
   "scripts/bundle-report.mjs": 1,
   "scripts/check-any-baseline.mjs": 1,
-  "src/components/auth/ProtectedRoute.tsx": 1,
+  "scripts/graphify/corpus.py": 1,
+  "scripts/graphify/enrich.py": 1,
+  "scripts/graphify/pipeline.py": 1,
+  "scripts/graphify/quality.py": 1,
+  "scripts/graphify/run.py": 1,
+  "scripts/regras_negocio/generate.py": 1,
+  "scripts/regras_negocio/indice.py": 1,
+  "scripts/supabase_snapshot/snapshot.py": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
@@ -1056,7 +1184,6 @@
   "src/lib/validation.ts": 2,
   "src/pages/AdminTelemetriaPage.tsx": 1,
   "src/pages/InventoryPage.tsx": 1,
-  "src/routes/AppRoutes.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
   "supabase/functions/_shared/contracts.ts": 4,
   "supabase/functions/_shared/cronAuth.ts": 1,
@@ -1124,7 +1251,6 @@
    "src/pages/WeeklyCalendar.tsx"
   ],
   "hooks": [
-   "scripts/ai-context/cenarios.mjs",
    "src/components/accessibility/AccessibilityProvider.tsx",
    "src/components/accessibility/hooks.ts",
    "src/components/activity/ActivityLog.tsx",

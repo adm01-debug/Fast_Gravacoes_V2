@@ -22,8 +22,8 @@
   ],
   "testes": [
    "co-localizado (*.test) (81)",
-   "tests/ (21)",
-   "outro (9)"
+   "tests/ (18)",
+   "outro (6)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
@@ -43,7 +43,7 @@
   "hooks": "use + PascalCase",
   "servicos": "camelCase (98%)",
   "edge_functions": "kebab-case (100%)",
-  "tabelas": "snake_case (94%)"
+  "tabelas": "snake_case (95%)"
  },
  "barrels_index": 20,
  "extensao_componentes": [
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)",
    "fix(regras): usa o snapshot do banco como fonte (#154)",
    "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)",
    "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)",
-   "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)",
-   "chore(src): remove imports e declarações não usados (#149)"
+   "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,10 +1,10 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7a712fb390b0cef4490fbd12111ef2d31e14ac05` (2026-11-10T16:34:29-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d39d646445b45d6324f0013add7abd04689f7e57` (2026-11-10T22:23:38Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
-1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
+1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
 2. **Hook/serviço/lógica** → `hooks.json`, `logica.json` (quem usa, o que toca, se tem teste).
 3. **Edge function / serverless** → `edge-functions.json` (verify_jwt, tabelas, env, quem chama, órfãs).
 4. **Banco** → `banco.json` (colunas, RLS, policies, índices, FKs, triggers, cron jobs, buckets, drift migration×types, uso no código) — visão do código; para o banco vivo use o MCP.
@@ -24,7 +24,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - testes: vitest, playwright
 - ui: tailwind, radix/shadcn
 - estado: react-query, zustand
-- gerenciador_pacotes: bun
+- gerenciador_pacotes: npm
 - node: n/d
 - python: n/d
 - deploy: vercel
@@ -36,19 +36,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1470 |
 | arquivos_codigo | 1083 |
-| linhas_codigo | 173134 |
+| linhas_codigo | 173657 |
 | rotas | 58 |
-| rotas_http_backend | 12 |
+| rotas_http_backend | 0 |
 | vistas_por_id | 0 |
-| itens_menu | 83 |
+| itens_menu | 69 |
 | modulos | 74 |
 | componentes | 621 |
-| hooks | 197 |
+| hooks | 196 |
 | edge_functions | 34 |
-| tabelas | 142 |
+| tabelas | 133 |
 | migrations | 244 |
 | cron_jobs | 4 |
-| testes | 111 |
+| testes | 105 |
 | workflows | 7 |
 | scripts | 18 |
 | docs_md | 68 |
@@ -58,12 +58,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (41), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (81), tests/ (21), outro (9)
+- testes: co-localizado (*.test) (81), tests/ (18), outro (6)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (5), scripts/regras_negocio (3), scripts/ai-context (2)
 - docs: (raiz) (10), docs (7), .github (1)
-- nomenclatura: {"componentes":"PascalCase (90%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (100%)","tabelas":"snake_case (94%)"}
+- nomenclatura: {"componentes":"PascalCase (90%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (100%)","tabelas":"snake_case (95%)"}
 - instruções para agentes no repo: AGENTS.md, CLAUDE.md
 
 ## Módulos (menu → domínio)
@@ -79,7 +79,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/jobs | 0 | 0 | 8 | 131 | 8 | 70 |
 | components/kanban | 0 | 0 | 6 | 142 | 9 | 72 |
 | components/knowledge | 0 | 0 | 15 | 26 | 3 | 22 |
-| components/layout | 0 | 0 | 12 | 200 | 11 | 106 |
+| components/layout | 0 | 0 | 12 | 151 | 8 | 62 |
 | components/machines | 0 | 0 | 10 | 130 | 9 | 65 |
 | components/navigation | 0 | 0 | 15 | 144 | 8 | 58 |
 | components/offline | 0 | 0 | 5 | 3 | 0 | 5 |
@@ -100,16 +100,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | features/jobs | 0 | 0 | 26 | 124 | 8 | 58 |
 | features/maintenance | 0 | 0 | 41 | 131 | 9 | 76 |
 | features/notifications | 0 | 0 | 26 | 123 | 8 | 58 |
-| features/packaging | 0 | 0 | 35 | 28 | 2 | 15 |
+| features/packaging | 0 | 0 | 35 | 28 | 3 | 15 |
 | features/production | 0 | 0 | 27 | 123 | 8 | 58 |
-| hooks | 0 | 0 | 44 | 207 | 11 | 107 |
+| hooks | 0 | 0 | 44 | 165 | 9 | 79 |
 | hooks/abc | 0 | 0 | 5 | 123 | 8 | 58 |
-| lib | 0 | 0 | 37 | 200 | 12 | 106 |
-| pages | 50 | 56 | 56 | 220 | 14 | 115 |
+| lib | 0 | 0 | 37 | 128 | 9 | 62 |
+| pages | 66 | 56 | 56 | 218 | 15 | 113 |
 
 ## Rotas (url → arquivo)
 - `/` [tela] → src/pages/Index.tsx (protegida)
-- `/*` [tela] → src/pages/NotFound.tsx (protegida)
+- `/*` [tela] → src/pages/NotFound.tsx
 - `/abc` [redirect] → **ARQUIVO NÃO RESOLVIDO**
 - `/abc-costing` [tela] → src/pages/ABCCostingDashboard.tsx (protegida)
 - `/admin/monitoring` [tela] → src/pages/SystemMonitoringPage.tsx (protegida)
@@ -117,7 +117,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/alerts` [tela] → src/pages/AlertsDashboard.tsx (protegida)
 - `/assistant` [tela] → src/pages/TechnicalAssistantPage.tsx (protegida)
 - `/audit` [tela] → src/pages/AuditTrailPage.tsx (protegida)
-- `/auth` [tela] → src/pages/AuthPage.tsx (protegida)
+- `/auth` [tela] → src/pages/AuthPage.tsx
 - `/bi` [tela] → src/pages/BIDashboard.tsx (protegida)
 - `/calendar/daily` [tela] → src/pages/DailyCalendar.tsx (protegida)
 - `/calendar/monthly` [tela] → src/pages/MonthlyCalendar.tsx (protegida)
@@ -155,7 +155,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/packaging/kiosk` [tela] → src/pages/PackagingKioskPage.tsx (protegida)
 - `/pending` [tela] → src/pages/PendingQueue.tsx (protegida)
 - `/report-builder` [tela] → src/pages/ReportBuilderPage.tsx (protegida)
-- `/reset-password` [tela] → src/pages/ResetPasswordPage.tsx (protegida)
+- `/reset-password` [tela] → src/pages/ResetPasswordPage.tsx
 - `/scanner` [tela] → src/pages/QRScannerPage.tsx (protegida)
 - `/security` [tela] → src/pages/SecurityDashboard.tsx (protegida)
 - `/settings` [tela] → src/pages/SettingsPage.tsx (protegida)
@@ -168,18 +168,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/track` [tela] → src/pages/PublicTrackingPage.tsx
 
 ## Rotas HTTP de backend
-- `GET /{t}` → scripts/ai-context/cenarios.mjs
-- `GET /a` → scripts/ai-context/cenarios.mjs
-- `GET /a` → scripts/ai-context/cenarios.mjs
-- `POST /b` → scripts/ai-context/cenarios.mjs
-- `POST /b` → scripts/ai-context/cenarios.mjs
-- `DELETE /c` → scripts/ai-context/cenarios.mjs
-- `PUT /d` → scripts/ai-context/cenarios.mjs
-- `GET /items` → scripts/ai-context/gerar.unit.mjs
-- `GET /u` → scripts/ai-context/cenarios.mjs
-- `GET /users` → scripts/ai-context/cenarios.mjs
-- `POST /users/:id` → scripts/ai-context/cenarios.mjs
-- `GET /x` → scripts/ai-context/cenarios.mjs
+- (nenhum)
 
 ## Vistas por id (menu/ViewRouter → arquivo)
 - (nenhum)
@@ -188,7 +177,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `approve-password-reset` — tabelas: password_reset_requests, profiles; chamada por 1 arquivo(s) do front
 - `auto-promote-jobs` — tabelas: jobs, techniques, user_roles; chamada por 1 arquivo(s) do front, por SQL/cron
 - `backup-scheduler` — tabelas: backup_logs, backups; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `bitrix24-sync` (verify_jwt=false) — tabelas: bitrix24_field_mappings, bitrix24_oauth_states, bitrix24_oauth_tokens, bitrix24_sync_history, jobs, user_roles; chamada por 1 arquivo(s) do front
+- `bitrix24-sync` (verify_jwt=false) — tabelas: bitrix24_field_mappings, bitrix24_oauth_states, bitrix24_oauth_tokens, bitrix24_sync_history, jobs, user_roles; chamada por 5 arquivo(s) do front
 - `calculate-inventory-intelligence` — tabelas: inventory_items, inventory_movements, user_roles; chamada por 1 arquivo(s) do front
 - `calculate-rankings` — tabelas: jobs, operator_achievements, operator_machines, operator_rankings, user_roles; chamada por 1 arquivo(s) do front
 - `check-login-lockout` — tabelas: login_lockouts, security_events; chamada por 1 arquivo(s) do front
@@ -214,7 +203,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `send-loss-risk-alert` — tabelas: maintenance_records, tpm_executions, user_notification_settings; chamada por 0 arquivo(s) do front, por SQL/cron
 - `send-push-notification` — tabelas: push_notifications, push_subscriptions, user_roles; chamada por 2 arquivo(s) do front
 - `send-tpm-email` — tabelas: machines, user_notification_settings; chamada por 0 arquivo(s) do front, por SQL/cron
-- `technical-assistant` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `technical-assistant` — tabelas: -; chamada por 2 arquivo(s) do front
 - `tpm-notifications` — tabelas: maintenance_records, maintenance_schedules, tpm_notification_logs, tpm_notification_queue; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `update-operator` — tabelas: profiles; chamada por 1 arquivo(s) do front
 - `validate-login-ip` — tabelas: ip_allowlist, login_audit; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -228,36 +217,38 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Resend, Sentry, Supabase, i18next, react-query, zod
-- hosts mais citados: api.resend.com, fastgravacoes.com.br, ai.gateway.lovable.dev, example.test, x.supabase.co, api.fastgravacoes.com, api.ipify.org, api.pwnedpasswords.com, api.supabase.com, api.x.com, app.fastgravacoes.com.br, app.test, evil.com, evil.example, exemplo.com
+- hosts mais citados: api.resend.com, ai.gateway.lovable.dev, fastgravacoes.com.br, api.fastgravacoes.com, api.ipify.org, api.pwnedpasswords.com, api.supabase.com, exemplo.com, xxroejpvloldkmqdydar.lovableproject.com
 - webhooks recebidos: bitrix24-sync, csp-report
 - env de integração (só nomes): BACKUP_API_KEY, BITRIX24_ACCESS_TOKEN, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_REFRESH_TOKEN, BITRIX24_WEBHOOK_SECRET, BITRIX24_WEBHOOK_TOKEN, BITRIX24_WEBHOOK_URL, CRON_API_KEY, CRON_SECRET, LOVABLE_API_KEY, RESEND_API_KEY, SECRET, SENTRY_DSN, VITE_ALERT_WEBHOOK_URL, VITE_GOOGLE_ANALYTICS_ID, VITE_GOOGLE_MAPS_API_KEY, VITE_SENTRY_DSN, WEBHOOK_API_KEY
 
 ## Permissões / papéis
-- papéis no código: button (21), admin (9), operator (9), coordinator (8), user (7), region (5), alert (4), assistant (4), manager (4), status (4), tab (4), combobox (3), dialog (3), navigation (3), presentation (3), alertdialog (2), superuser (2), system (2), toolbar (2), agent (1), group (1), link (1), list (1), main (1), none (1), option (1), progressbar (1), separator (1), sup (1), tablist (1), tabpanel (1)
+- papéis no código: coordinator (8), operator (7), user (7), admin (4), assistant (4), manager (4), system (2)
 - enums de papel: app_role: coordinator|operator|manager|admin
-- guards: src/components/auth/ProtectedRoute.tsx, src/contexts/DirtyFormContext.tsx · rotas protegidas: 53 · públicas: /design-system, /install, /track
-- feature flags: FEATURE_X, nova-tela, novo-inbox
+- guards: src/components/auth/ProtectedRoute.tsx, src/contexts/DirtyFormContext.tsx · rotas protegidas: 50 · públicas: /*, /auth, /design-system, /install, /reset-password, /track
+- feature flags: nenhuma
 
 ## Alertas (baseline.json → alertas)
 - rotas_sem_arquivo: 0
+- rotas_nao_interpretadas: 0
 - componentes_ambiguos: 0
-- menu_sem_destino: 31 — ex.: Abrir Filtros -> action-filter, Adicionar Coluna -> ctx-add-column, Adicionar Operador -> ctx-add-operator
-- edges_orfas: 16 — ex.: backup-scheduler, cleanup-security-logs, cron-alert-email
+- menu_sem_destino: 1 — ex.: Voltar -> #
+- edges_orfas: 15 — ex.: backup-scheduler, cleanup-security-logs, cron-alert-email
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 0
 - tabelas_usadas_sem_definicao: 1 — ex.: backups
+- tabelas_so_no_types: 8 — ex.: email_verification_tokens, gamification_settings, packaging_equipment
 - tabelas_com_drift_migration_vs_types: 9 — ex.: business_config, jobs, operator_rankings
 - rpcs_sem_definicao: 0
 - componentes_orfaos: 30 — ex.: src/components/accessibility/AccessibleIconButton.tsx, src/components/accessibility/FocusTrap.tsx, src/components/alerts/AlertCard.tsx
 - componentes_com_nome_duplicado: 6 — ex.: AdjustmentParameters, DashboardSkeleton, JobQuickActions
-- scripts_orfaos: 4 — ex.: scripts/graphify/corpus.py, scripts/graphify/enrich.py, scripts/graphify/pipeline.py
+- scripts_orfaos: 0
 - env_usadas_nao_declaradas: 7 — ex.: DEV, NODE_ENV, PROD
 - ciclos_de_import: 9
-- possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
+- possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6725 nós · 20469 arestas · 624 comunidades · grafo do commit `7a712fb3`
-- comunidades maiores: card.tsx (236), Button (159), dialog.tsx (137), generate.py (100), cn (100), analytics/index.ts (100), errorHandling.ts (97), GraphifyIntegrationTests (96), snapshot.py (90), .collect (88), DailyCalendar.tsx (88), recharts.ts (88)
+- 6755 nós · 20520 arestas · 632 comunidades · grafo do commit `d39d6464`
+- comunidades maiores: input.tsx (135), Card (130), cn (103), card.tsx (102), Badge (99), gerar.mjs (93), snapshot.py (90), button.tsx (90), .collect (88), client.ts (88), recharts.ts (86), generate.py (83)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .write() (scripts/regras_negocio/test_generate.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .schema() (scripts/regras_negocio/test_generate.py), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -345,6 +336,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-10 `d39d646` fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)
 - 2026-11-10 `7a712fb` fix(regras): usa o snapshot do banco como fonte (#154)
 - 2026-11-10 `9df0dd4` fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)
 - 2026-11-10 `6701c3d` fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)
@@ -359,7 +351,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `5db90ba` feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)
 - 2026-11-08 `3720de3` fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)
 - 2026-11-08 `c9814e8` fix(contexto): guard de segredos por ocorrência (#137)
-- 2026-11-08 `bce2374` feat(contexto): contexto autônomo para agentes de IA (#136)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

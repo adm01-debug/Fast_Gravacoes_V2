@@ -322,7 +322,9 @@
    "dominio": "components/assistant",
    "hooks_locais": [],
    "tabelas": [],
-   "edges": [],
+   "edges": [
+    "technical-assistant"
+   ],
    "usado_por": 1,
    "orfao": false
   },
@@ -2373,7 +2375,9 @@
    "dominio": "components/integrations",
    "hooks_locais": [],
    "tabelas": [],
-   "edges": [],
+   "edges": [
+    "bitrix24-sync"
+   ],
    "usado_por": 1,
    "orfao": false
   },
@@ -8999,7 +9003,9 @@
     "useToast"
    ],
    "tabelas": [],
-   "edges": [],
+   "edges": [
+    "bitrix24-sync"
+   ],
    "usado_por": 2,
    "orfao": false
   },
@@ -9809,7 +9815,9 @@
     "useTechnicalMessages"
    ],
    "tabelas": [],
-   "edges": [],
+   "edges": [
+    "technical-assistant"
+   ],
    "usado_por": 2,
    "orfao": false
   },

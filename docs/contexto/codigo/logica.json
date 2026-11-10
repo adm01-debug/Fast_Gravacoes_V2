@@ -32,10 +32,10 @@
     "pathlib"
    ],
    "rotas_http": 0,
-   "usado_por": 0,
+   "usado_por": 2,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/graphify/enrich.py",
@@ -72,10 +72,10 @@
     "re"
    ],
    "rotas_http": 0,
-   "usado_por": 0,
+   "usado_por": 1,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/graphify/pipeline.py",
@@ -94,9 +94,7 @@
    "externos": [
     "collections",
     "contextlib",
-    "corpus",
     "datetime",
-    "enrich",
     "fcntl",
     "graphify",
     "json",
@@ -108,10 +106,10 @@
     "time"
    ],
    "rotas_http": 0,
-   "usado_por": 0,
+   "usado_por": 1,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/graphify/quality.py",
@@ -135,10 +133,10 @@
     "pathlib"
    ],
    "rotas_http": 0,
-   "usado_por": 0,
+   "usado_por": 1,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/graphify/run.py",
@@ -154,11 +152,8 @@
    "env": [],
    "externos": [
     "argparse",
-    "corpus",
     "importlib",
     "json",
-    "pipeline",
-    "quality",
     "signal",
     "subprocess",
     "sys",
@@ -167,8 +162,8 @@
    "rotas_http": 0,
    "usado_por": 0,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -245,8 +240,8 @@
    "rotas_http": 0,
    "usado_por": 0,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/regras_negocio/indice.py",
@@ -277,8 +272,8 @@
    "rotas_http": 0,
    "usado_por": 0,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
@@ -397,8 +392,8 @@
    "rotas_http": 0,
    "usado_por": 0,
    "usado_por_modulos": [],
-   "coberto_por_testes": 0,
-   "orfao": true
+   "coberto_por_testes": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/integrations/lovable/index.ts",
@@ -548,9 +543,7 @@
    ],
    "zod_schemas": 0,
    "flags": [],
-   "papeis": [
-    "button"
-   ],
+   "papeis": [],
    "usado_por": 11,
    "usado_por_modulos": [
     "components/alerts",

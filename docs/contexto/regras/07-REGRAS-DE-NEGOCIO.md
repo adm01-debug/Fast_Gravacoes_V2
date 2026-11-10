@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7a712fb390` · branch `main` · 2026-11-10 19:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d39d646445` · branch `main` · 2026-11-10 22:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -2901,6 +2901,7 @@ _nenhum item encontrado_
 | GRAPHIFY_PYTHON (${explicitly}) não tem graphify ${config.version} instalado  | `scripts/graphify.mjs` |
 | GRAPHIFY_PYTHON não pôde ser executado (${explicitly}): ${probe.error.message} | `scripts/graphify.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
+| /><Tabs role={ | `scripts/ai-context/gerar.unit.mjs` |
 | Aresta sem endpoint no grafo exportado. | `scripts/graphify/corpus.py` |
 | Artefato inconsistente: graph.json. Execute graph:build. | `scripts/graphify/corpus.py` |
 | Direção das relações perdida. | `scripts/graphify/corpus.py` |
@@ -3185,8 +3186,7 @@ _nenhum item encontrado_
 | Erro ao criar ficha | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao remover | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao remover dica | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao remover etapa | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| … +170 linhas — lista completa em `context.json` | |
+| … +171 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

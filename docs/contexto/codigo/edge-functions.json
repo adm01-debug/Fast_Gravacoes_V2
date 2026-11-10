@@ -170,7 +170,11 @@
     "cors.ts"
    ],
    "chamada_pelo_front": [
-    "src/features/admin/services/integrationsService.ts"
+    "src/components/integrations/Bitrix24SyncHistory.tsx",
+    "src/features/admin/hooks/useBitrix24Sync.ts",
+    "src/features/admin/services/integrationsService.ts",
+    "src/features/jobs/services/jobsService.ts",
+    "src/pages/Bitrix24ConfigPage.tsx"
    ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
@@ -1062,10 +1066,13 @@
     "cors.ts",
     "logger.ts"
    ],
-   "chamada_pelo_front": [],
+   "chamada_pelo_front": [
+    "src/components/assistant/TechnicalAssistant.tsx",
+    "src/pages/TechnicalAssistantPage.tsx"
+   ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "orfa": false,
    "testes": 0
   },
   {

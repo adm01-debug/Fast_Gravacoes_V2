@@ -2,6 +2,15 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "arestas": {
+  "scripts/graphify/pipeline.py": [
+   "scripts/graphify/corpus.py",
+   "scripts/graphify/enrich.py"
+  ],
+  "scripts/graphify/run.py": [
+   "scripts/graphify/corpus.py",
+   "scripts/graphify/pipeline.py",
+   "scripts/graphify/quality.py"
+  ],
   "src/App.tsx": [
    "src/components/error/GlobalErrorBoundary.tsx",
    "src/components/offline/NetworkStatusToaster.tsx",

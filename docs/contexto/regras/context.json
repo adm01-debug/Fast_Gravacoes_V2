@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7a712fb390b0cef4490fbd12111ef2d31e14ac05",
+  "sha": "d39d646445b45d6324f0013add7abd04689f7e57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 19:34 UTC",
+  "generated_at": "2026-11-10 22:24 UTC",
   "files_total": 1467,
   "code_files": 1337,
-  "code_lines": 188040
+  "code_lines": 188563
  },
  "version": "1.3.2",
- "facts_hash": "9eb13812cd1e3135",
+ "facts_hash": "679980a254f0a3ee",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24168,6 +24168,16 @@
    },
    {
     "method": "GET",
+    "path": "/falsa",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "method": "GET",
+    "path": "/py-falsa",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "method": "GET",
     "path": "server_version",
     "file": "scripts/supabase_snapshot/snapshot.py"
    },
@@ -24250,6 +24260,13 @@
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
+    "path": "/admin-docs",
+    "component": "AdminDocs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/app",
     "component": "Shell",
     "guard": "ProtectedRoute",
@@ -24278,6 +24295,34 @@
     "file": "scripts/ai-context/cenarios.mjs"
    },
    {
+    "path": "/com-state",
+    "component": "Navigate",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/depois",
+    "component": "Docs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/docs/*",
+    "component": "Docs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/erro",
+    "component": "Docs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/falso",
     "component": "A",
     "guard": "",
@@ -24299,8 +24344,22 @@
     "file": "scripts/graphify/tests/test_integration.py"
    },
    {
+    "path": "/leve",
+    "component": "Leve",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/login",
     "component": "Login",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/o",
+    "component": "Shell",
     "guard": "",
     "roles": [],
     "file": "scripts/ai-context/gerar.unit.mjs"
@@ -24327,11 +24386,46 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/painel",
+    "component": "Painel",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/painel/config",
+    "component": "Painel",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/x",
     "component": "L",
     "guard": "",
     "roles": [],
     "file": "scripts/ai-context/cenarios.mjs"
+   },
+   {
+    "path": ":id",
+    "component": "Login",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "PATHS.dinamica",
+    "component": "Docs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "\\`/u/\\${id",
+    "component": "Docs",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
     "path": "b",
@@ -24343,6 +24437,13 @@
    {
     "path": "contacts/:id",
     "component": "ContactPage",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "u",
+    "component": "Login",
     "guard": "",
     "roles": [],
     "file": "scripts/ai-context/gerar.unit.mjs"
@@ -24391,6 +24492,10 @@
   "hooks": [
    {
     "name": "useContacts",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "name": "useDeFerramenta",
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
@@ -25422,6 +25527,14 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
@@ -25487,9 +25600,10 @@
   {
    "module": "scripts",
    "files": 30,
-   "lines": 11750,
+   "lines": 12273,
    "tables": [
     "a",
+    "constructor",
     "contacts",
     "dashboard_table",
     "emails",
@@ -25504,6 +25618,7 @@
     "so_teste",
     "t",
     "t1",
+    "tabela_do_fundo",
     "technical_conversations",
     "tools_runtime",
     "tx"
@@ -25512,7 +25627,7 @@
     "bundle-diff.mjs: validateReport, loadReport, buildDiffMarkdown, main",
     "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, measureFiles",
     "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
-    "gerar.unit.mjs: AppRoutes, useContacts",
+    "gerar.unit.mjs: AppRoutes, useContacts, Publicas, router, useDeFerramenta, a",
     "corpus.py: load_config, digest, inventory, output_dir, validate_graph, check_snapshot",
     "enrich.py: _write, _relative, _text, _matches, _source_paths, _routes",
     "pipeline.py: build_lock, write_json, git_value, build",
@@ -25537,9 +25652,11 @@
    ],
    "deps": [
     "#",
+    "@app/lib",
     "@lib/y",
     "@supabase/supabase-js",
     "@tanstack/react-query",
+    "@testing-library/jest-dom",
     "drizzle-orm",
     "express",
     "lib",
@@ -25564,6 +25681,7 @@
     "src/components",
     "src/config",
     "src/hooks",
+    "src/hooks2",
     "src/lib",
     "src/pages",
     "src/routes",
@@ -28048,8 +28166,16 @@
      "src/components/chat/QuickChat.tsx"
     ]
    },
+   "constructor": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
    "contacts": {
     "select": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ],
+    "ref": [
      "scripts/ai-context/gerar.unit.mjs"
     ]
    },
@@ -28126,6 +28252,9 @@
    },
    "emails": {
     "insert": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ],
+    "ref": [
      "scripts/ai-context/gerar.unit.mjs"
     ]
    },
@@ -28720,6 +28849,9 @@
    "payments": {
     "insert": [
      "scripts/ai-context/gerar.unit.mjs"
+    ],
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
     ]
    },
    "pre_production_checklists": {
@@ -29078,6 +29210,11 @@
    "t1": {
     "ref": [
      "scripts/ai-context/cenarios.mjs"
+    ]
+   },
+   "tabela_do_fundo": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
     ]
    },
    "technical_conversations": {
@@ -30383,6 +30520,9 @@
    "fixture-edge": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
+   "fn-multi": [
+    "scripts/ai-context/gerar.unit.mjs"
+   ],
    "ghost-edge": [
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/regras_negocio/test_generate.py"
@@ -30442,6 +30582,9 @@
    "backups": [
     "supabase/functions/backup-scheduler/index.ts"
    ],
+   "bucket-falso": [
+    "scripts/ai-context/gerar.unit.mjs"
+   ],
    "execution-evidence": [
     "src/features/maintenance/components/MaintenanceExecutionModal.tsx"
    ],
@@ -30463,6 +30606,9 @@
    ],
    "admin-telemetry-realtime": [
     "src/pages/AdminTelemetriaPage.tsx"
+   ],
+   "canal-falso": [
+    "scripts/ai-context/gerar.unit.mjs"
    ],
    "chat-${channel}": [
     "src/components/chat/QuickChat.tsx"
@@ -30504,6 +30650,9 @@
    ],
    "https://api.x.com": [
     "scripts/ai-context/cenarios.mjs"
+   ],
+   "https://evil-host.io": [
+    "scripts/ai-context/gerar.unit.mjs"
    ]
   },
   "dynamic_from": [
@@ -31753,6 +31902,10 @@
    {
     "file": "scripts/ai-context/cenarios.mjs",
     "msg": "${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)}"
+   },
+   {
+    "file": "scripts/ai-context/gerar.unit.mjs",
+    "msg": "/><Tabs role={"
    },
    {
     "file": "scripts/graphify/corpus.py",
@@ -63282,6 +63435,14 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
@@ -65096,7 +65257,7 @@
   },
   "scripts/ai-context/gerar.mjs": {
    "path": "scripts/ai-context/gerar.mjs",
-   "lines": 924,
+   "lines": 1069,
    "env": [
     "AI_CONTEXT_DIR",
     "AI_CONTEXT_PUBLICACAO",
@@ -65106,9 +65267,17 @@
     {
      "name": "FORMAT_VERSION",
      "value": "2"
+    },
+    {
+     "name": "GEN",
+     "value": "'(?:<[^()]{0,200}?>)?'"
     }
    ],
+   "guards": [
+    "ProtectedRoute"
+   ],
    "rule_comments": [
+    "(?:Route|Outlet|Only|Required|Wrapper|Layout|Shell)$/.test(n) && !NAO_GUARD.test(n) && !/(?:Page|Screen|View|Form)$/.test(n);",
     "1024 * 1024) return { ...base, presente: true, erro: `graph.json com ${Math.round(stat.size / 1048576)} MB — acima do limite de leitura` };"
    ],
    "doc": "!/usr/bin/env node Gera o contexto de projeto para agentes de IA (padrão: inventario/ia/*). Zero dependências. Node >= 18. Genérico: funciona em qualquer repositório. JS/TS (React, Next, Vue, Svelte, Nuxt, Remix, Astro, Express/Hono/Fastify/Nest), Python (FastAPI/Flask/Django), e qualquer outra ling …",
@@ -65116,16 +65285,27 @@
     {
      "name": "scanObjs",
      "params": "text, parent, depth",
-     "body": "const re2 = /\\{\\s*(?:[^{}]*?\\b)?path:\\s*['\"]([^'\"]*)['\"]([^{}]*(?:\\{[^{}]*\\}[^{}]*)*)/g; let mm; while ((mm = re2.exec(text))) { const body = mm[2].replace(/children\\s*:\\s*\\[[\\s\\S]*$/, ''); const compM = /(?:element|Component|component|lazy)\\s*:\\s*(?:<)?(?:\\(\\)\\s*=>\\s*import\\(\\s*['\"]([^'\"]+)['\"]\\s*\\))?([A-Z]\\w*)?/.exec(body); const full = joinPath(parent, mm[1]); if (compM && (compM[1] || compM[2])) rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf …"
+     "body": "{ for (let i = text.indexOf('{'); i >= 0 && depth < 10; i = text.indexOf('{', i + 1)) { const f = fecha(text, i); if (f < 0) continue; const corpo = text.slice(i + 1, f); let proprio = '', d = 0; for (let j = 0; j < corpo.length; j++) { const ch = corpo[j]; if (ch === '}' || ch === ']') d--; if (d <= 0) proprio += ch; if (ch === '{' || ch === '[') d++; } const compM = /(?:^|[\\s,])(?:element|Component|compone"
     }
+   ],
+   "side_effects": [
+    "invoke("
    ]
   },
   "scripts/ai-context/gerar.unit.mjs": {
    "path": "scripts/ai-context/gerar.unit.mjs",
-   "lines": 361,
+   "lines": 739,
    "exports": [
     "function AppRoutes",
-    "function useContacts"
+    "function useContacts",
+    "const Publicas",
+    "const router",
+    "function useDeFerramenta",
+    "const a",
+    "const b",
+    "const c",
+    "const d",
+    "const rotulos"
    ],
    "tables": [
     {
@@ -65159,6 +65339,26 @@
     {
      "table": "dashboard_table",
      "op": "select"
+    },
+    {
+     "table": "payments",
+     "op": "ref"
+    },
+    {
+     "table": "emails",
+     "op": "ref"
+    },
+    {
+     "table": "contacts",
+     "op": "ref"
+    },
+    {
+     "table": "tabela_do_fundo",
+     "op": "ref"
+    },
+    {
+     "table": "constructor",
+     "op": "ref"
     }
    ],
    "rpc": [
@@ -65172,6 +65372,7 @@
    "invokes": [
     "dashboard-edge",
     "fixture-edge",
+    "fn-multi",
     "ghost-edge",
     "orphan-fn",
     "runtime-fn",
@@ -65179,8 +65380,15 @@
     "send-email",
     "tools-edge"
    ],
+   "storage": [
+    "bucket-falso"
+   ],
+   "channels": [
+    "canal-falso"
+   ],
    "external_urls": [
-    "https://api.resend.com/x"
+    "https://api.resend.com/x",
+    "https://evil-host.io/x"
    ],
    "env": [
     "DB_URL",
@@ -65218,23 +65426,118 @@
      "component": "Navigate",
      "guard": "",
      "roles": []
+    },
+    {
+     "path": "/admin-docs",
+     "component": "AdminDocs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/painel",
+     "component": "Painel",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/painel/config",
+     "component": "Painel",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/docs/*",
+     "component": "Docs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/com-state",
+     "component": "Navigate",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/depois",
+     "component": "Docs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "PATHS.dinamica",
+     "component": "Docs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "\\`/u/\\${id",
+     "component": "Docs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/erro",
+     "component": "Docs",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/leve",
+     "component": "Leve",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/o",
+     "component": "Shell",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "u",
+     "component": "Login",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": ":id",
+     "component": "Login",
+     "guard": "",
+     "roles": []
     }
    ],
    "server_routes": [
     {
      "method": "GET",
      "path": "/items"
+    },
+    {
+     "method": "GET",
+     "path": "/falsa"
+    },
+    {
+     "method": "GET",
+     "path": "/py-falsa"
     }
    ],
+   "errors": [
+    "/><Tabs role={"
+   ],
    "role_checks": [
-    "admin"
+    "admin",
+    "gerente",
+    "papel_falso",
+    "supervisor",
+    "valueOf"
    ],
    "guards": [
+    "ProtectedRoute",
     "ProtectedRoute"
    ],
    "doc": "Teste do gerador de contexto (scripts/ai-context/gerar.mjs). Monta um repositório sintético em pasta temporária cobrindo os casos que o gerador precisa entender (rotas aninhadas, lazy, menu, hooks, edge functions, migrations em ordem, barrel re-export, backend HTTP, Python, nested tsconfig) e confer …",
    "hooks": [
-    "useContacts"
+    "useContacts",
+    "useDeFerramenta"
    ],
    "cron": [
     "nightly 0 3 * * *",
@@ -91427,10 +91730,21 @@
   }
  },
  "git": {
-  "sha": "7a712fb390b0cef4490fbd12111ef2d31e14ac05",
+  "sha": "d39d646445b45d6324f0013add7abd04689f7e57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d39d646",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)",
+    "files": [
+     "scripts/ai-context/README.md",
+     "scripts/ai-context/gerar.mjs",
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
    {
     "sha": "7a712fb",
     "date": "2026-11-10",
@@ -92071,15 +92385,6 @@
     "author": "adm01-debug",
     "subject": "fix: quebrar ciclo logger, remover mock SPC e fixes TS (#120)",
     "files": []
-   },
-   {
-    "sha": "918828f",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "fix: restaurar INSERT anon em password_reset_requests (RLS bloqueava reset de senha)",
-    "files": [
-     "supabase/migrations/20261031184500_fix_password_reset_anon_policy.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -92094,6 +92399,18 @@
    [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
+   ],
+   [
+    "scripts/ai-context/README.md",
+    2
+   ],
+   [
+    "scripts/ai-context/gerar.mjs",
+    2
+   ],
+   [
+    "scripts/ai-context/gerar.unit.mjs",
+    2
    ],
    [
     "docs/agentes/contexto.md",
@@ -92149,18 +92466,6 @@
    ],
    [
     "scripts/check-any-baseline.mjs",
-    2
-   ],
-   [
-    "scripts/ci/check-claude-md-integrity.mjs",
-    2
-   ],
-   [
-    "scripts/rls-regression.mjs",
-    2
-   ],
-   [
-    ".claude/hooks/session-start.sh",
     2
    ]
   ]

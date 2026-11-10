@@ -30,7 +30,7 @@
    "react-query",
    "zustand"
   ],
-  "gerenciador_pacotes": "bun",
+  "gerenciador_pacotes": "npm",
   "node": null,
   "python": null,
   "deploy": [
@@ -717,22 +717,14 @@
   "hosts_externos": [
    {
     "host": "api.resend.com",
-    "arquivos": 6
-   },
-   {
-    "host": "fastgravacoes.com.br",
-    "arquivos": 3
+    "arquivos": 5
    },
    {
     "host": "ai.gateway.lovable.dev",
     "arquivos": 2
    },
    {
-    "host": "example.test",
-    "arquivos": 2
-   },
-   {
-    "host": "x.supabase.co",
+    "host": "fastgravacoes.com.br",
     "arquivos": 2
    },
    {
@@ -752,39 +744,7 @@
     "arquivos": 1
    },
    {
-    "host": "api.x.com",
-    "arquivos": 1
-   },
-   {
-    "host": "app.fastgravacoes.com.br",
-    "arquivos": 1
-   },
-   {
-    "host": "app.test",
-    "arquivos": 1
-   },
-   {
-    "host": "evil.com",
-    "arquivos": 1
-   },
-   {
-    "host": "evil.example",
-    "arquivos": 1
-   },
-   {
     "host": "exemplo.com",
-    "arquivos": 1
-   },
-   {
-    "host": "fn.test",
-    "arquivos": 1
-   },
-   {
-    "host": "proj.supabase.co",
-    "arquivos": 1
-   },
-   {
-    "host": "staging.fastgravacoes.com.br",
     "arquivos": 1
    },
    {
@@ -829,31 +789,19 @@
  "permissoes": {
   "papeis_no_codigo": [
    {
-    "papel": "button",
-    "ocorrencias": 21
-   },
-   {
-    "papel": "admin",
-    "ocorrencias": 9
+    "papel": "coordinator",
+    "ocorrencias": 8
    },
    {
     "papel": "operator",
-    "ocorrencias": 9
-   },
-   {
-    "papel": "coordinator",
-    "ocorrencias": 8
+    "ocorrencias": 7
    },
    {
     "papel": "user",
     "ocorrencias": 7
    },
    {
-    "papel": "region",
-    "ocorrencias": 5
-   },
-   {
-    "papel": "alert",
+    "papel": "admin",
     "ocorrencias": 4
    },
    {
@@ -865,92 +813,8 @@
     "ocorrencias": 4
    },
    {
-    "papel": "status",
-    "ocorrencias": 4
-   },
-   {
-    "papel": "tab",
-    "ocorrencias": 4
-   },
-   {
-    "papel": "combobox",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "dialog",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "navigation",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "presentation",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "alertdialog",
-    "ocorrencias": 2
-   },
-   {
-    "papel": "superuser",
-    "ocorrencias": 2
-   },
-   {
     "papel": "system",
     "ocorrencias": 2
-   },
-   {
-    "papel": "toolbar",
-    "ocorrencias": 2
-   },
-   {
-    "papel": "agent",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "group",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "link",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "list",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "main",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "none",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "option",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "progressbar",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "separator",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "sup",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "tablist",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "tabpanel",
-    "ocorrencias": 1
    }
   ],
   "enums_de_papel": [
@@ -969,10 +833,13 @@
    "src/components/auth/ProtectedRoute.tsx",
    "src/contexts/DirtyFormContext.tsx"
   ],
-  "rotas_protegidas": 53,
+  "rotas_protegidas": 50,
   "rotas_publicas": [
+   "/*",
+   "/auth",
    "/design-system",
    "/install",
+   "/reset-password",
    "/track"
   ],
   "menu_com_papeis": [
@@ -1033,15 +900,6 @@
     ]
    },
    {
-    "rotulo": "Gamificação",
-    "papeis": [
-     "admin",
-     "coordinator",
-     "manager",
-     "operator"
-    ]
-   },
-   {
     "rotulo": "Histórico de Ações",
     "papeis": [
      "admin",
@@ -1055,15 +913,6 @@
      "admin",
      "coordinator",
      "manager"
-    ]
-   },
-   {
-    "rotulo": "Passagem de Turno",
-    "papeis": [
-     "admin",
-     "coordinator",
-     "manager",
-     "operator"
     ]
    },
    {
@@ -1158,31 +1007,7 @@
     ]
    },
    {
-    "rotulo": "Rastreabilidade",
-    "papeis": [
-     "admin",
-     "coordinator",
-     "manager"
-    ]
-   },
-   {
-    "rotulo": "Calendário Diário",
-    "papeis": [
-     "admin",
-     "coordinator",
-     "manager"
-    ]
-   },
-   {
     "rotulo": "Calendário Mensal",
-    "papeis": [
-     "admin",
-     "coordinator",
-     "manager"
-    ]
-   },
-   {
-    "rotulo": "Calendário Semanal",
     "papeis": [
      "admin",
      "coordinator",
@@ -1257,24 +1082,10 @@
   "tabelas_sem_rls": []
  },
  "feature_flags": {
-  "total": 3,
-  "flags": [
-   {
-    "flag": "FEATURE_X",
-    "arquivos": 1
-   },
-   {
-    "flag": "nova-tela",
-    "arquivos": 1
-   },
-   {
-    "flag": "novo-inbox",
-    "arquivos": 1
-   }
-  ],
+  "total": 0,
+  "flags": [],
   "tabelas_de_flag": [
    "feature_flags",
-   "gamification_settings",
    "geo_blocking_settings",
    "packaging_settings",
    "rate_limit_settings",

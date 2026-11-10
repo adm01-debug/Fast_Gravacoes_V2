@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7a712fb390b0cef4490fbd12111ef2d31e14ac05",
+  "commit": "d39d646445b45d6324f0013add7abd04689f7e57",
   "branch": "main",
-  "data_commit": "2026-11-10T16:34:29-03:00",
+  "data_commit": "2026-11-10T22:23:38Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d39d646",
+    "data": "2026-11-10",
+    "assunto": "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)"
+   },
    {
     "sha": "7a712fb",
     "data": "2026-11-10",
@@ -126,22 +131,14 @@
     "sha": "ef2da88",
     "data": "2026-11-05",
     "assunto": "fix: adicionar --yes ao supabase db push (CI não-interativo)"
-   },
-   {
-    "sha": "6da824c",
-    "data": "2026-11-05",
-    "assunto": "fix: verificação RLS USING(true) em políticas de escrita via migration"
    }
   ],
+  "janelas_relativas_a": "data do commit HEAD",
   "arquivos_mudados_7d": 370,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
     "mudancas": 38
-   },
-   {
-    "pasta": "src/components/navigation",
-    "mudancas": 20
    },
    {
     "pasta": "src/features/maintenance",
@@ -164,12 +161,12 @@
     "mudancas": 13
    },
    {
-    "pasta": "src/components/layout",
-    "mudancas": 11
-   },
-   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 10
+   },
+   {
+    "pasta": "src/components/navigation",
+    "mudancas": 9
    },
    {
     "pasta": "src/components/design-system",
@@ -185,6 +182,10 @@
    },
    {
     "pasta": "PENDENCIAS.md",
+    "mudancas": 7
+   },
+   {
+    "pasta": "src/components/layout",
     "mudancas": 7
    },
    {
@@ -301,30 +302,30 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 32
+    "commits": 33
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 14
+    "commits": 13
    }
   ]
  },
  "contagens": {
   "arquivos_total": 1470,
   "arquivos_codigo": 1083,
-  "linhas_codigo": 173134,
+  "linhas_codigo": 173657,
   "rotas": 58,
-  "rotas_http_backend": 12,
+  "rotas_http_backend": 0,
   "vistas_por_id": 0,
-  "itens_menu": 83,
+  "itens_menu": 69,
   "modulos": 74,
   "componentes": 621,
-  "hooks": 197,
+  "hooks": 196,
   "edge_functions": 34,
-  "tabelas": 142,
+  "tabelas": 133,
   "migrations": 244,
   "cron_jobs": 4,
-  "testes": 111,
+  "testes": 105,
   "workflows": 7,
   "scripts": 18,
   "docs_md": 68
@@ -352,7 +353,7 @@
   },
   "scripts/ai-context": {
    "arquivos": 3,
-   "linhas": 1458
+   "linhas": 1981
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
@@ -522,7 +523,7 @@
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linhas": 924
+   "linhas": 1069
   },
   {
    "arquivo": "src/hooks/useOfflineSync.ts",
@@ -606,23 +607,23 @@
   }
  ],
  "qualidade": {
-  "any": 114,
-  "console_log": 113,
+  "any": 116,
+  "console_log": 116,
   "ts_ignore": 0,
-  "eslint_disable": 1,
+  "eslint_disable": 2,
   "todos": 7,
   "arquivos_acima_500_linhas": 20
  },
  "todos": [
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linha": 188,
+   "linha": 220,
    "tipo": "TODO",
    "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linha": 222,
+   "linha": 280,
    "tipo": "TODO",
    "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
   },
@@ -659,38 +660,9 @@
  ],
  "alertas": {
   "rotas_sem_arquivo": [],
+  "rotas_nao_interpretadas": [],
   "componentes_ambiguos": [],
   "menu_sem_destino": [
-   "Abrir Filtros -> action-filter",
-   "Adicionar Coluna -> ctx-add-column",
-   "Adicionar Operador -> ctx-add-operator",
-   "Business Intelligence -> nav-bi",
-   "Calendário Diário -> nav-calendar-daily",
-   "Calendário Semanal -> nav-calendar-weekly",
-   "Central de Ajuda -> settings-help",
-   "Central de Notificações -> nav-notifications",
-   "Configurações -> nav-settings",
-   "Criar Nova Ordem -> action-new-job",
-   "Dashboard -> nav-dashboard",
-   "Documentos Técnicos -> nav-documents",
-   "Eficiência Operacional -> nav-efficiency",
-   "Exportar Dados -> action-export",
-   "Fila de Espera -> nav-queue",
-   "Gamificação -> nav-gamification",
-   "Gestão de Máquinas -> nav-machines",
-   "Gestão de Operadores -> nav-operators",
-   "Kanban Board -> nav-kanban",
-   "KPIs Dashboard -> nav-kpis",
-   "OEE Dashboard -> nav-oee",
-   "Passagem de Turno -> nav-shift",
-   "Personalizar Dashboard -> ctx-customize-dashboard",
-   "Rastreabilidade -> nav-traceability",
-   "Recolher Todas Colunas -> ctx-collapse-all",
-   "Scanner QR Code -> nav-scanner",
-   "Segurança -> nav-security",
-   "SPC Dashboard -> nav-spc",
-   "TPM Dashboard -> nav-tpm",
-   "Ver Atalhos de Teclado -> settings-shortcuts",
    "Voltar -> #"
   ],
   "edges_orfas": [
@@ -707,7 +679,6 @@
    "rate-limit-check",
    "security-alert",
    "send-email-report",
-   "technical-assistant",
    "tpm-notifications",
    "validate-login-ip"
   ],
@@ -715,6 +686,16 @@
   "tabelas_sem_rls": [],
   "tabelas_usadas_sem_definicao": [
    "backups"
+  ],
+  "tabelas_so_no_types": [
+   "email_verification_tokens",
+   "gamification_settings",
+   "packaging_equipment",
+   "packaging_waste",
+   "shipment_costs",
+   "tpm_execution_checklist",
+   "webauthn_challenges",
+   "webauthn_credentials"
   ],
   "tabelas_com_drift_migration_vs_types": [
    "business_config",
@@ -768,12 +749,7 @@
    "StaggeredList",
    "Toaster"
   ],
-  "scripts_orfaos": [
-   "scripts/graphify/corpus.py",
-   "scripts/graphify/enrich.py",
-   "scripts/graphify/pipeline.py",
-   "scripts/graphify/quality.py"
-  ],
+  "scripts_orfaos": [],
   "env_usadas_nao_declaradas": [
    "DEV",
    "NODE_ENV",
@@ -784,9 +760,8 @@
    "VITE_VAPID_PUBLIC_KEY"
   ],
   "ciclos_de_import": 9,
-  "possiveis_segredos_no_codigo": [
-   "scripts/ai-context/cenarios.mjs:102"
-  ]
+  "possiveis_segredos_no_codigo": []
  },
- "erros_do_gerador": []
+ "erros_do_gerador": [],
+ "avisos_do_gerador": []
 }
