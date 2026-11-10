@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)",
    "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)",
    "fix(regras): usa o snapshot do banco como fonte (#154)",
    "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)",
-   "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)",
-   "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)"
+   "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

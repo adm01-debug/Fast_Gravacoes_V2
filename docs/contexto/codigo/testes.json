@@ -31,9 +31,9 @@
   {
    "arquivo": "scripts/ai-context/gerar.unit.mjs",
    "tipo": "unit",
-   "linhas": 739,
+   "linhas": 803,
    "testa": [],
-   "casos": 39,
+   "casos": 42,
    "suporte": false
   },
   {

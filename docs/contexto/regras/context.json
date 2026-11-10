@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d39d646445b45d6324f0013add7abd04689f7e57",
+  "sha": "dfdb3313157e4326a29b47d35db26d83129fac06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 22:24 UTC",
+  "generated_at": "2026-11-10 22:54 UTC",
   "files_total": 1467,
   "code_files": 1337,
-  "code_lines": 188563
+  "code_lines": 188634
  },
  "version": "1.3.2",
- "facts_hash": "679980a254f0a3ee",
+ "facts_hash": "cc55b3e02dbfa9b4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24246,6 +24246,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/aberta",
+    "component": "AuthPageSkeleton",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/abs",
     "component": "C",
     "guard": "",
@@ -24386,6 +24393,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/pai",
+    "component": "Doc",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/painel",
     "component": "Painel",
     "guard": "",
@@ -24393,8 +24407,22 @@
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
+    "path": "/painel",
+    "component": "ProtectedRoute",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/painel/config",
     "component": "Painel",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/privada",
+    "component": "Doc",
     "guard": "",
     "roles": [],
     "file": "scripts/ai-context/gerar.unit.mjs"
@@ -24437,6 +24465,13 @@
    {
     "path": "contacts/:id",
     "component": "ContactPage",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "sub",
+    "component": "Sub",
     "guard": "",
     "roles": [],
     "file": "scripts/ai-context/gerar.unit.mjs"
@@ -25531,6 +25566,22 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "RequireAuth",
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
@@ -25600,7 +25651,7 @@
   {
    "module": "scripts",
    "files": 30,
-   "lines": 12273,
+   "lines": 12344,
    "tables": [
     "a",
     "constructor",
@@ -63439,6 +63490,22 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "RequireAuth",
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
@@ -65257,7 +65324,7 @@
   },
   "scripts/ai-context/gerar.mjs": {
    "path": "scripts/ai-context/gerar.mjs",
-   "lines": 1069,
+   "lines": 1076,
    "env": [
     "AI_CONTEXT_DIR",
     "AI_CONTEXT_PUBLICACAO",
@@ -65274,9 +65341,11 @@
     }
    ],
    "guards": [
+    "ProtectedRoute",
     "ProtectedRoute"
    ],
    "rule_comments": [
+    "package.json atípico (workspaces fora de array, item não-string, entrada que é arquivo) não pode derrubar o gerador",
     "(?:Route|Outlet|Only|Required|Wrapper|Layout|Shell)$/.test(n) && !NAO_GUARD.test(n) && !/(?:Page|Screen|View|Form)$/.test(n);",
     "1024 * 1024) return { ...base, presente: true, erro: `graph.json com ${Math.round(stat.size / 1048576)} MB — acima do limite de leitura` };"
    ],
@@ -65284,7 +65353,7 @@
    "calc_fns": [
     {
      "name": "scanObjs",
-     "params": "text, parent, depth",
+     "params": "text, parent, depth, herdaProt = false",
      "body": "{ for (let i = text.indexOf('{'); i >= 0 && depth < 10; i = text.indexOf('{', i + 1)) { const f = fecha(text, i); if (f < 0) continue; const corpo = text.slice(i + 1, f); let proprio = '', d = 0; for (let j = 0; j < corpo.length; j++) { const ch = corpo[j]; if (ch === '}' || ch === ']') d--; if (d <= 0) proprio += ch; if (ch === '{' || ch === '[') d++; } const compM = /(?:^|[\\s,])(?:element|Component|compone"
     }
    ],
@@ -65294,7 +65363,7 @@
   },
   "scripts/ai-context/gerar.unit.mjs": {
    "path": "scripts/ai-context/gerar.unit.mjs",
-   "lines": 739,
+   "lines": 803,
    "exports": [
     "function AppRoutes",
     "function useContacts",
@@ -65305,7 +65374,8 @@
     "const b",
     "const c",
     "const d",
-    "const rotulos"
+    "const rotulos",
+    "const router"
    ],
    "tables": [
     {
@@ -65504,6 +65574,42 @@
      "component": "Login",
      "guard": "",
      "roles": []
+    },
+    {
+     "path": "/login",
+     "component": "Login",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/painel",
+     "component": "ProtectedRoute",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "sub",
+     "component": "Sub",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/privada",
+     "component": "Doc",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/pai",
+     "component": "Doc",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/aberta",
+     "component": "AuthPageSkeleton",
+     "guard": "",
+     "roles": []
     }
    ],
    "server_routes": [
@@ -65532,6 +65638,9 @@
    ],
    "guards": [
     "ProtectedRoute",
+    "ProtectedRoute",
+    "ProtectedRoute",
+    "RequireAuth",
     "ProtectedRoute"
    ],
    "doc": "Teste do gerador de contexto (scripts/ai-context/gerar.mjs). Monta um repositório sintético em pasta temporária cobrindo os casos que o gerador precisa entender (rotas aninhadas, lazy, menu, hooks, edge functions, migrations em ordem, barrel re-export, backend HTTP, Python, nested tsconfig) e confer …",
@@ -91730,10 +91839,20 @@
   }
  },
  "git": {
-  "sha": "d39d646445b45d6324f0013add7abd04689f7e57",
+  "sha": "dfdb3313157e4326a29b47d35db26d83129fac06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "dfdb331",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)",
+    "files": [
+     "scripts/ai-context/gerar.mjs",
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
    {
     "sha": "d39d646",
     "date": "2026-11-10",
@@ -92378,19 +92497,20 @@
     "files": [
      "supabase/functions/csp-report/index.ts"
     ]
-   },
-   {
-    "sha": "8120bef",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "fix: quebrar ciclo logger, remover mock SPC e fixes TS (#120)",
-    "files": []
    }
   ],
   "hot_files": [
    [
     "AGENTS.md",
     4
+   ],
+   [
+    "scripts/ai-context/gerar.mjs",
+    3
+   ],
+   [
+    "scripts/ai-context/gerar.unit.mjs",
+    3
    ],
    [
     "scripts/supabase_snapshot/snapshot.py",
@@ -92402,14 +92522,6 @@
    ],
    [
     "scripts/ai-context/README.md",
-    2
-   ],
-   [
-    "scripts/ai-context/gerar.mjs",
-    2
-   ],
-   [
-    "scripts/ai-context/gerar.unit.mjs",
     2
    ],
    [

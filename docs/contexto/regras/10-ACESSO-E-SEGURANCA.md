@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d39d646445` · branch `main` · 2026-11-10 22:24 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dfdb331315` · branch `main` · 2026-11-10 22:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -307,7 +307,7 @@
 |---|---|---|---|
 | /app | ProtectedRoute |  | `scripts/ai-context/gerar.unit.mjs` |
 
-Guards usados: Protected, ProtectedRoute
+Guards usados: Protected, ProtectedRoute, RequireAuth
 
 Middleware matcher (Next.js): nenhum
 
