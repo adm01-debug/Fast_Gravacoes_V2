@@ -106,11 +106,11 @@
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
    "tipo": "pytest",
-   "linhas": 667,
+   "linhas": 854,
    "testa": [
     "scripts/regras_negocio/generate.py"
    ],
-   "casos": 39,
+   "casos": 61,
    "suporte": false
   },
   {
@@ -126,9 +126,9 @@
   {
    "arquivo": "scripts/regras_negocio/test_publish.py",
    "tipo": "pytest",
-   "linhas": 279,
+   "linhas": 327,
    "testa": [],
-   "casos": 10,
+   "casos": 14,
    "suporte": false
   },
   {

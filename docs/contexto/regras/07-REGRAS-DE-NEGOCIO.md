@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dfdb331315` · branch `main` · 2026-11-10 22:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `346947dad0` · branch `main` · 2026-11-10 23:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -684,14 +684,13 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `maintenance_checklists` | `version` | default 1 |
 | `maintenance_checklists` | `technique_id` | FK → techniques.id |
 | `maintenance_checklist_items` | `id` | PK; default gen_random_uuid() |
+| `maintenance_checklist_items` | `checklist_id` | obrigatório; FK → maintenance_checklists.id ON DELETE CASCADE |
 | `maintenance_checklist_items` | `item_order` | default 0 |
 | `maintenance_checklist_items` | `description` | obrigatório |
 | `maintenance_checklist_items` | `is_critical` | default false |
 | `maintenance_checklist_items` | `requires_photo` | default false |
 | `maintenance_checklist_items` | `requires_measurement` | default false |
 | `maintenance_checklist_items` | `created_at` | default now() |
-| `maintenance_checklist_items` | `checklist_id` | obrigatório |
-| `maintenance_checklist_items` | `(tabela)` | checklist_id UUID NOT NULL REFERENCES public.maintenance_checklists(id) ON DELETE CASCADE |
 | `maintenance_records` | `id` | PK; default gen_random_uuid() |
 | `maintenance_records` | `schedule_id` | obrigatório; FK → maintenance_schedules.id ON DELETE CASCADE |
 | `maintenance_records` | `machine_id` | obrigatório; FK → machines.id |
@@ -709,10 +708,9 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `maintenance_records` | `override_by` | FK → users.id |
 | `maintenance_item_responses` | `id` | PK; default gen_random_uuid() |
 | `maintenance_item_responses` | `record_id` | obrigatório; FK → maintenance_records.id ON DELETE CASCADE |
+| `maintenance_item_responses` | `checklist_item_id` | obrigatório; FK → maintenance_checklist_items.id |
 | `maintenance_item_responses` | `is_checked` | default false |
 | `maintenance_item_responses` | `responded_at` | default now() |
-| `maintenance_item_responses` | `checklist_item_id` | obrigatório |
-| `maintenance_item_responses` | `(tabela)` | checklist_item_id UUID NOT NULL REFERENCES public.maintenance_checklist_items(id) |
 | `maintenance_alerts` | `id` | PK; default gen_random_uuid() |
 | `maintenance_alerts` | `schedule_id` | obrigatório; FK → maintenance_schedules.id ON DELETE CASCADE |
 | `maintenance_alerts` | `machine_id` | obrigatório; FK → machines.id |
@@ -768,7 +766,6 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `shift_handover_checklist` | `is_checked` | default false |
 | `shift_handover_checklist` | `item_order` | default 0 |
 | `shift_handover_checklist` | `created_at` | default now() |
-| `shift_handover_checklist` | `(tabela)` | checked_at TIMESTAMP WITH TIME ZONE |
 | `shift_pending_tasks` | `id` | PK; default gen_random_uuid() |
 | `shift_pending_tasks` | `handover_id` | obrigatório; FK → shift_handovers.id ON DELETE CASCADE |
 | `shift_pending_tasks` | `title` | obrigatório |
@@ -1052,8 +1049,6 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `pre_production_checklists` | `machine_clean` | default false |
 | `pre_production_checklists` | `tools_ready` | default false |
 | `pre_production_checklists` | `created_at` | default now() |
-| `pre_production_checklists` | `(tabela)` | checked_by UUID |
-| `pre_production_checklists` | `(tabela)` | checked_by_name TEXT |
 | `query_telemetry` | `id` | PK; default gen_random_uuid() |
 | `query_telemetry` | `operation` | obrigatório |
 | `query_telemetry` | `duration_ms` | default 0 |
@@ -1386,10 +1381,9 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `packaging_task_checklist` | `packaging_task_id` | obrigatório; FK → packaging_tasks.id ON DELETE CASCADE |
 | `packaging_task_checklist` | `item_id` | obrigatório; FK → packaging_checklist_items.id ON DELETE CASCADE |
 | `packaging_task_checklist` | `is_checked` | default false |
+| `packaging_task_checklist` | `checked_by` | FK → users.id ON DELETE SET NULL |
 | `packaging_task_checklist` | `created_at` | default now() |
 | `packaging_task_checklist` | `updated_at` | default now() |
-| `packaging_task_checklist` | `(tabela)` | checked_by UUID REFERENCES auth.users(id) ON DELETE SET NULL |
-| `packaging_task_checklist` | `(tabela)` | checked_at TIMESTAMPTZ |
 | `packaging_task_checklist` | `(tabela)` | UNIQUE (packaging_task_id, item_id) |
 | `packaging_sla_overrides` | `id` | PK; default gen_random_uuid() |
 | `packaging_sla_overrides` | `technique_id` | FK → techniques.id ON DELETE CASCADE |
@@ -1417,11 +1411,10 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `cron_p95_daily` | `(tabela)` | UNIQUE (jobid, day) |
 | `edge_health_history` | `id` | PK; default gen_random_uuid() |
 | `edge_health_history` | `status` | obrigatório; CHECK status IN ('pass','warn','fail') |
+| `edge_health_history` | `checks` | default '{}'::jsonb |
 | `edge_health_history` | `source` | default 'health-monitor' |
 | `edge_health_history` | `captured_at` | default now() |
 | `edge_health_history` | `created_at` | default now() |
-| `edge_health_history` | `checks` | obrigatório |
-| `edge_health_history` | `(tabela)` | checks JSONB NOT NULL DEFAULT '{}'::jsonb |
 | `geo_blocking_settings` | `id` | PK; default gen_random_uuid() |
 | `geo_blocking_settings` | `is_enabled` | default false |
 | `geo_blocking_settings` | `mode` | default 'blocklist' |
@@ -1448,9 +1441,33 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `app_private.runtime_config` | `value` | obrigatório |
 | `bitrix24_oauth_states` | `state` | PK |
 | `bitrix24_oauth_states` | `created_at` | default now() |
+| `archived_jobs` | `id` | PK; default gen_random_uuid() |
+| `archived_jobs` | `order_number` | obrigatório |
+| `archived_jobs` | `client` | obrigatório |
+| `archived_jobs` | `product` | obrigatório |
+| `archived_jobs` | `quantity` | obrigatório |
+| `archived_jobs` | `technique_id` | obrigatório; FK → techniques.id |
+| `archived_jobs` | `machine_id` | FK → machines.id |
+| `archived_jobs` | `estimated_duration` | default 60 |
+| `archived_jobs` | `status` | default 'queue'; CHECK status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework') |
+| `archived_jobs` | `lost_pieces` | default 0 |
+| `archived_jobs` | `priority` | default 'medium'; CHECK priority IN ('low', 'medium', 'high', 'urgent') |
+| `archived_jobs` | `created_at` | default now() |
+| `archived_jobs` | `updated_at` | default now() |
+| `archived_jobs` | `production_photos` | default '{}' |
+| `archived_jobs` | `produced_quantity` | default 0 |
+| `archived_jobs` | `sort_order` | default 0 |
+| `archived_jobs` | `operator_id` | FK → users.id |
+| `archived_jobs` | `shipment_id` | FK → shipments.id |
+| `archived_jobs` | `parent_job_id` | FK → jobs.id ON DELETE SET NULL |
 | `archived_jobs` | `archived_at` | default now() |
 | `archived_jobs` | `children` | default '{}'::jsonb |
-| `archived_jobs` | `(tabela)` | LIKE public.jobs INCLUDING ALL |
+| `archived_jobs` | `(tabela)` | constraint quantity_non_negative CHECK (quantity >= 0) |
+| `archived_jobs` | `(tabela)` | constraint produced_quantity_non_negative CHECK (produced_quantity >= 0) |
+| `archived_jobs` | `(tabela)` | constraint lost_pieces_non_negative CHECK (lost_pieces >= 0) |
+| `archived_jobs` | `(tabela)` | constraint check_job_times CHECK (end_time >= start_time) |
+| `archived_jobs` | `(tabela)` | constraint jobs_quantity_positive CHECK (quantity >= 0) |
+| `archived_jobs` | `(tabela)` | constraint jobs_status_check CHECK (status IN ('queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework','buffer','packaging')) |
 | `backup_logs` | `id` | PK; default gen_random_uuid() |
 | `backup_logs` | `backup_id` | obrigatório |
 | `backup_logs` | `tables_backed_up` | default '{}'::jsonb |
@@ -1602,6 +1619,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `cron_health_history` | `last_status` | **livre (sem enum/CHECK)** |  |
 | `edge_health_history` | `status` | `fail`, `pass`, `warn` |  |
 | `bitrix24_oauth_states` | `state` | **livre (sem enum/CHECK)** |  |
+| `archived_jobs` | `status` | `buffer`, `cancelled`, `delayed`, `finished`, `packaging`, `paused`, `production`, `queue`, `ready`, `rework`, `scheduled` | `queue` |
+| `archived_jobs` | `shipping_status` | **livre (sem enum/CHECK)** |  |
 
 ### E.2 Mapas de transição declarados no código
 

@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dfdb331315` · branch `main` · 2026-11-10 22:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `346947dad0` · branch `main` · 2026-11-10 23:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -248,6 +248,8 @@
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
+- `app_private.has_role`
+- `app_private.runtime_config_get`
 - `archive_finished_jobs`
 - `audit_job_changes`
 - `audit_job_status_change`
@@ -286,7 +288,6 @@
 - `on_packaging_ready_create_shipment`
 - `purge_old_logs`
 - `rollup_cron_p95_daily`
-- `runtime_config_get`
 - `snapshot_cron_health`
 - `trigger_auto_promotion`
 - `trigger_send_tpm_email`
@@ -295,6 +296,7 @@
 - `validate_inventory_stock`
 - `validate_stock_before_movement`
 - `verify_audit_chain`
+- `verify_audit_chain()`
 
 ## Edge functions públicas (sem JWT — qualquer um chama)
 
@@ -501,6 +503,7 @@ _nenhuma coluna de tenant identificada — sistema single-tenant ou isolamento p
 | `geo_blocking_logs` | `created_at` |
 | `csp_violation_reports` | `created_at` |
 | `bitrix24_oauth_states` | `created_at` |
+| `archived_jobs` | `created_at`, `updated_at` |
 | `backup_logs` | `created_at` |
 
 ## Dados pessoais / sensíveis (LGPD — cuidado em logs, exports, prompts de IA)
@@ -539,3 +542,4 @@ _nenhuma coluna de tenant identificada — sistema single-tenant ou isolamento p
 | `shipments` | `tax_cost` | `DECIMAL(10,2)` |
 | `shipments` | `cost_currency` | `TEXT` |
 | `packaging_tasks` | `total_weight_kg` | `NUMERIC(10,3)` |
+| `archived_jobs` | `shipping_status` | `TEXT` |

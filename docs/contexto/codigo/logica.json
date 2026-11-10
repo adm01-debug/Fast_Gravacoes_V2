@@ -203,6 +203,7 @@
     "render_modules",
     "render_overview",
     "render_rules",
+    "sql_spans",
     "squash",
     "squash_code",
     "stable_hash",
@@ -212,7 +213,7 @@
     "upsert_pointer",
     "walk_repo"
    ],
-   "linhas": 2571,
+   "linhas": 2796,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

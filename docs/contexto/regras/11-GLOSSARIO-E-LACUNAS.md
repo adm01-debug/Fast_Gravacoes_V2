@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dfdb331315` · branch `main` · 2026-11-10 22:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `346947dad0` · branch `main` · 2026-11-10 23:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Tabelas do glossário e schema usado na auditoria código × schema: **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -14,7 +14,7 @@
 | `abc_cost_pools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `abc_job_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `app_private.runtime_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
-| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
+| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
 | `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `backup_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
 | `bitrix24_field_mappings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
@@ -266,7 +266,7 @@
 | segurança | função `update_audit_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260520000001_security_rls_indexes_fixes.sql` |
 | segurança | função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql` |
 | segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
-| segurança | função `runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
+| segurança | função `app_private.runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
 | webhook | edge function `external-db-bridge` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/external-db-bridge/index.ts` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
@@ -288,6 +288,7 @@
 - `job_status_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cron_health_history.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `bitrix24_oauth_states.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `archived_jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - 129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `techniques`, `machines`, `jobs`, `profiles`, `user_roles`, `efficiency_alert_history`, `technical_conversations`, `technical_messages`, `qr_scan_history`, `bitrix24_sync_history`, `bitrix24_oauth_tokens`, `bitrix24_field_mappings` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 

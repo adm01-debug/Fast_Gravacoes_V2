@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "dfdb3313157e4326a29b47d35db26d83129fac06",
+  "sha": "346947dad012367ee57be7c321f3a9688dbe6055",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 22:54 UTC",
+  "generated_at": "2026-11-10 23:22 UTC",
   "files_total": 1467,
   "code_files": 1337,
-  "code_lines": 188634
+  "code_lines": 189094
  },
  "version": "1.3.2",
- "facts_hash": "cc55b3e02dbfa9b4",
+ "facts_hash": "6a52bee1038f58be",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -2329,6 +2329,13 @@
       "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
      },
      {
+      "name": "checklist_id",
+      "type": "UUID NOT NULL REFERENCES public.maintenance_checklists(id) ON DELETE CASCADE",
+      "fk": "maintenance_checklists.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
+     },
+     {
       "name": "item_order",
       "type": "INTEGER NOT NULL DEFAULT 0",
       "fk": "",
@@ -2390,18 +2397,9 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
-     },
-     {
-      "name": "checklist_id",
-      "type": "string not null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
      }
     ],
-    "constraints": [
-     "checklist_id UUID NOT NULL REFERENCES public.maintenance_checklists(id) ON DELETE CASCADE"
-    ],
+    "constraints": [],
     "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql",
     "comment": "",
     "origin": "migration"
@@ -2634,6 +2632,13 @@
       "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
      },
      {
+      "name": "checklist_item_id",
+      "type": "UUID NOT NULL REFERENCES public.maintenance_checklist_items(id)",
+      "fk": "maintenance_checklist_items.id",
+      "generated": "",
+      "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
+     },
+     {
       "name": "is_checked",
       "type": "BOOLEAN NOT NULL DEFAULT false",
       "fk": "",
@@ -2667,18 +2672,9 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql"
-     },
-     {
-      "name": "checklist_item_id",
-      "type": "string not null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
      }
     ],
-    "constraints": [
-     "checklist_item_id UUID NOT NULL REFERENCES public.maintenance_checklist_items(id)"
-    ],
+    "constraints": [],
     "src": "supabase/migrations/20251214172945_ab94e7d7-4876-49e2-8a72-60c8a0bf40c3.sql",
     "comment": "",
     "origin": "migration"
@@ -3226,6 +3222,13 @@
       "src": "supabase/migrations/20251220135105_e07f8d61-3537-459b-9cbd-635d23c55d27.sql"
      },
      {
+      "name": "checked_at",
+      "type": "TIMESTAMP WITH TIME ZONE",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20251220135105_e07f8d61-3537-459b-9cbd-635d23c55d27.sql"
+     },
+     {
       "name": "notes",
       "type": "TEXT",
       "fk": "",
@@ -3245,18 +3248,9 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20251220135105_e07f8d61-3537-459b-9cbd-635d23c55d27.sql"
-     },
-     {
-      "name": "checked_at",
-      "type": "string | null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
      }
     ],
-    "constraints": [
-     "checked_at TIMESTAMP WITH TIME ZONE"
-    ],
+    "constraints": [],
     "src": "supabase/migrations/20251220135105_e07f8d61-3537-459b-9cbd-635d23c55d27.sql",
     "comment": "",
     "origin": "migration"
@@ -6108,6 +6102,20 @@
       "src": "supabase/migrations/20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
      },
      {
+      "name": "checked_by",
+      "type": "UUID",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
+     },
+     {
+      "name": "checked_by_name",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
+     },
+     {
       "name": "material_verified",
       "type": "BOOLEAN NOT NULL DEFAULT false",
       "fk": "",
@@ -6157,20 +6165,6 @@
       "src": "supabase/migrations/20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql"
      },
      {
-      "name": "checked_by",
-      "type": "string | null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
-     },
-     {
-      "name": "checked_by_name",
-      "type": "string | null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
-     },
-     {
       "name": "consumables_confirmed",
       "type": "Json | null",
       "fk": "",
@@ -6213,10 +6207,7 @@
       "src": "src/integrations/supabase/types.ts"
      }
     ],
-    "constraints": [
-     "checked_by UUID",
-     "checked_by_name TEXT"
-    ],
+    "constraints": [],
     "src": "supabase/migrations/20260317212106_5246a827-40e5-4db2-85b3-91621dd92ce8.sql",
     "comment": "",
     "origin": "migration"
@@ -9568,6 +9559,20 @@
       "src": "supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
      },
      {
+      "name": "checked_by",
+      "type": "UUID REFERENCES auth.users(id) ON DELETE SET NULL",
+      "fk": "users.id ON DELETE SET NULL",
+      "generated": "",
+      "src": "supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
+     },
+     {
+      "name": "checked_at",
+      "type": "TIMESTAMPTZ",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
+     },
+     {
       "name": "created_at",
       "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
       "fk": "",
@@ -9580,25 +9585,9 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql"
-     },
-     {
-      "name": "checked_at",
-      "type": "string | null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
-     },
-     {
-      "name": "checked_by",
-      "type": "string | null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [
-     "checked_by UUID REFERENCES auth.users(id) ON DELETE SET NULL",
-     "checked_at TIMESTAMPTZ",
      "UNIQUE (packaging_task_id, item_id)"
     ],
     "src": "supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql",
@@ -9909,6 +9898,13 @@
       "src": "supabase/migrations/20260726165835_441f51a4-fda0-44bd-9395-849d58bcdb2b.sql"
      },
      {
+      "name": "checks",
+      "type": "JSONB NOT NULL DEFAULT '{}'::jsonb",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260726165835_441f51a4-fda0-44bd-9395-849d58bcdb2b.sql"
+     },
+     {
       "name": "latency_ms",
       "type": "INTEGER",
       "fk": "",
@@ -9935,18 +9931,9 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260726165835_441f51a4-fda0-44bd-9395-849d58bcdb2b.sql"
-     },
-     {
-      "name": "checks",
-      "type": "Json not null",
-      "fk": "",
-      "generated": "",
-      "src": "src/integrations/supabase/types.ts"
      }
     ],
-    "constraints": [
-     "checks JSONB NOT NULL DEFAULT '{}'::jsonb"
-    ],
+    "constraints": [],
     "src": "supabase/migrations/20260726165835_441f51a4-fda0-44bd-9395-849d58bcdb2b.sql",
     "comment": "",
     "origin": "migration"
@@ -10314,6 +10301,195 @@
    "archived_jobs": {
     "columns": [
      {
+      "name": "id",
+      "type": "UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "order_number",
+      "type": "TEXT NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "client",
+      "type": "TEXT NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "product",
+      "type": "TEXT NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "quantity",
+      "type": "INTEGER NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "technique_id",
+      "type": "TEXT NOT NULL REFERENCES public.techniques(id)",
+      "fk": "techniques.id",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "machine_id",
+      "type": "UUID REFERENCES public.machines(id)",
+      "fk": "machines.id",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "scheduled_date",
+      "type": "DATE",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "start_time",
+      "type": "TIME USING (CASE WHEN start_time ~ '^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$' THEN start_time::TIME ELSE NULL END)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "end_time",
+      "type": "TIME USING (CASE WHEN end_time ~ '^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$' THEN end_time::TIME ELSE NULL END)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "estimated_duration",
+      "type": "INTEGER NOT NULL DEFAULT 60",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "status",
+      "type": "TEXT NOT NULL DEFAULT 'queue' CHECK (status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "gravure_color",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "notes",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "actual_start_time",
+      "type": "TIMESTAMP WITH TIME ZONE",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "actual_end_time",
+      "type": "TIMESTAMP WITH TIME ZONE",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "lost_pieces",
+      "type": "INTEGER DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "priority",
+      "type": "TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "production_photos",
+      "type": "TEXT[] DEFAULT '{}'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "produced_quantity",
+      "type": "INTEGER DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "sort_order",
+      "type": "INTEGER DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "operator_id",
+      "type": "UUID REFERENCES auth.users(id)",
+      "fk": "users.id",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "shipment_id",
+      "type": "UUID REFERENCES public.shipments(id)",
+      "fk": "shipments.id",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "shipping_status",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
+      "name": "parent_job_id",
+      "type": "UUID REFERENCES public.jobs(id) ON DELETE SET NULL",
+      "fk": "jobs.id ON DELETE SET NULL",
+      "generated": "",
+      "src": "supabase/migrations/20261029001000_missing_internal_tables.sql"
+     },
+     {
       "name": "archived_at",
       "type": "timestamptz NOT NULL DEFAULT now()",
       "fk": "",
@@ -10329,7 +10505,12 @@
      }
     ],
     "constraints": [
-     "LIKE public.jobs INCLUDING ALL"
+     "constraint quantity_non_negative CHECK (quantity >= 0)",
+     "constraint produced_quantity_non_negative CHECK (produced_quantity >= 0)",
+     "constraint lost_pieces_non_negative CHECK (lost_pieces >= 0)",
+     "constraint check_job_times CHECK (end_time >= start_time)",
+     "constraint jobs_quantity_positive CHECK (quantity >= 0)",
+     "constraint jobs_status_check CHECK (status IN ('queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework','buffer','packaging'))"
     ],
     "src": "supabase/migrations/20261029001000_missing_internal_tables.sql",
     "comment": "",
@@ -14593,10 +14774,10 @@
     "tables": []
    },
    "has_role": {
-    "args": "_user_id uuid, _role public.app_role",
+    "args": "_user_id uuid, _role app_role",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20261001143000_geo_blocking_tables_reconstruct.sql",
+    "src": "supabase/migrations/20260317221345_a38f2094-b684-4efe-ba7b-15f925fdd6cb.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role AND is_active = true )",
@@ -15021,6 +15202,19 @@
      "last_hash"
     ]
    },
+   "verify_audit_chain()": {
+    "args": "",
+    "returns": "TABLE (\n    total_records bigint,\n    verified_count bigint,\n    broken_count bigint,\n    is_integral boolean\n)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20260512180411_f99a244d-b109-4109-9787-0f907e4a9c14.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE rec RECORD; prev_h text := 'GENESIS'; v_total bigint := 0; v_verified bigint := 0; v_broken bigint := 0; calc_h text; BEGIN FOR rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LOOP v_total := v_total + 1; IF rec.previous_hash != prev_h THEN v_broken := v_broken + 1; ELSE calc_h := public.calculate_audit_hash(rec); IF rec.hash != calc_h THEN v_broken := v_broken + 1; ELSE v_verified := v_verified + 1; END IF; END IF; prev_h := rec.hash; END LOOP; RETURN QUERY SELECT v_total, v_verified, v_broken, (v_broken = 0); END;",
+    "raises": [],
+    "tables": [
+     "audit_log"
+    ]
+   },
    "rollback_inventory_stock": {
     "args": "",
     "returns": "TRIGGER",
@@ -15189,6 +15383,19 @@
     "raises": [],
     "tables": [
      "qr_scan_history",
+     "user_roles"
+    ]
+   },
+   "app_private.has_role": {
+    "args": "_user_id uuid, _role public.app_role",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261001143000_geo_blocking_tables_reconstruct.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role AND is_active = true )",
+    "raises": [],
+    "tables": [
      "user_roles"
     ]
    },
@@ -15533,7 +15740,7 @@
      "v_per_ip_count"
     ]
    },
-   "runtime_config_get": {
+   "app_private.runtime_config_get": {
     "args": "p_key text",
     "returns": "text",
     "lang": "sql",
@@ -15634,28 +15841,6 @@
      "jobs",
      "parent_parent_id"
     ]
-   },
-   "Args": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "Returns": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
    },
    "test_rls_policies": {
     "args": "",
@@ -19812,6 +19997,7 @@
     "count": 2
    }
   ],
+  "unparsed": [],
   "source": {
    "kind": "migrations",
    "path": "docs/contexto/supabase"
@@ -25651,7 +25837,7 @@
   {
    "module": "scripts",
    "files": 30,
-   "lines": 12344,
+   "lines": 12804,
    "tables": [
     "a",
     "constructor",
@@ -25687,9 +25873,9 @@
     "test_integration.py: GraphifyIntegrationTests, GraphifyCliTests",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
-    "test_generate.py: CurrentSqlSourcesTests, RepoFixture, PolicyParsingTests, MigrationReplayTests, CodeExtractionTests, snapshot_fixture",
+    "test_generate.py: CurrentSqlSourcesTests, RepoFixture, PolicyParsingTests, MigrationReplayTests, SqlLexingTests, SqlIdentityTests",
     "test_indice.py: ParseDateTests, IndexStateTests",
-    "test_publish.py: PublishFixture, BranchModeTests, PushModeTests",
+    "test_publish.py: PublishFixture, BranchModeTests, PushModeTests, DetachedHeadTests",
     "snapshot.py: env_int, log, valid_previous_snapshot, prepare_output_directory, record_error, jsonable",
     "test_snapshot.py: OfflineConnection, function, migration, structural_records, SnapshotFixture, SnapshotSQLRecoveryTests"
    ],
@@ -30808,6 +30994,9 @@
    "abc_cost_pools": [
     "abc_activity_rates"
    ],
+   "maintenance_checklists": [
+    "maintenance_checklist_items"
+   ],
    "maintenance_schedules": [
     "maintenance_records",
     "maintenance_item_responses",
@@ -35805,6 +35994,11 @@
    },
    {
     "table": "maintenance_checklist_items",
+    "column": "checklist_id",
+    "rule": "obrigatório; FK → maintenance_checklists.id ON DELETE CASCADE"
+   },
+   {
+    "table": "maintenance_checklist_items",
     "column": "item_order",
     "rule": "default 0"
    },
@@ -35832,16 +36026,6 @@
     "table": "maintenance_checklist_items",
     "column": "created_at",
     "rule": "default now()"
-   },
-   {
-    "table": "maintenance_checklist_items",
-    "column": "checklist_id",
-    "rule": "obrigatório"
-   },
-   {
-    "table": "maintenance_checklist_items",
-    "column": "(tabela)",
-    "rule": "checklist_id UUID NOT NULL REFERENCES public.maintenance_checklists(id) ON DELETE CASCADE"
    },
    {
     "table": "maintenance_records",
@@ -35930,6 +36114,11 @@
    },
    {
     "table": "maintenance_item_responses",
+    "column": "checklist_item_id",
+    "rule": "obrigatório; FK → maintenance_checklist_items.id"
+   },
+   {
+    "table": "maintenance_item_responses",
     "column": "is_checked",
     "rule": "default false"
    },
@@ -35937,16 +36126,6 @@
     "table": "maintenance_item_responses",
     "column": "responded_at",
     "rule": "default now()"
-   },
-   {
-    "table": "maintenance_item_responses",
-    "column": "checklist_item_id",
-    "rule": "obrigatório"
-   },
-   {
-    "table": "maintenance_item_responses",
-    "column": "(tabela)",
-    "rule": "checklist_item_id UUID NOT NULL REFERENCES public.maintenance_checklist_items(id)"
    },
    {
     "table": "maintenance_alerts",
@@ -36222,11 +36401,6 @@
     "table": "shift_handover_checklist",
     "column": "created_at",
     "rule": "default now()"
-   },
-   {
-    "table": "shift_handover_checklist",
-    "column": "(tabela)",
-    "rule": "checked_at TIMESTAMP WITH TIME ZONE"
    },
    {
     "table": "shift_pending_tasks",
@@ -37642,16 +37816,6 @@
     "table": "pre_production_checklists",
     "column": "created_at",
     "rule": "default now()"
-   },
-   {
-    "table": "pre_production_checklists",
-    "column": "(tabela)",
-    "rule": "checked_by UUID"
-   },
-   {
-    "table": "pre_production_checklists",
-    "column": "(tabela)",
-    "rule": "checked_by_name TEXT"
    },
    {
     "table": "query_telemetry",
@@ -39315,6 +39479,11 @@
    },
    {
     "table": "packaging_task_checklist",
+    "column": "checked_by",
+    "rule": "FK → users.id ON DELETE SET NULL"
+   },
+   {
+    "table": "packaging_task_checklist",
     "column": "created_at",
     "rule": "default now()"
    },
@@ -39322,16 +39491,6 @@
     "table": "packaging_task_checklist",
     "column": "updated_at",
     "rule": "default now()"
-   },
-   {
-    "table": "packaging_task_checklist",
-    "column": "(tabela)",
-    "rule": "checked_by UUID REFERENCES auth.users(id) ON DELETE SET NULL"
-   },
-   {
-    "table": "packaging_task_checklist",
-    "column": "(tabela)",
-    "rule": "checked_at TIMESTAMPTZ"
    },
    {
     "table": "packaging_task_checklist",
@@ -39470,6 +39629,11 @@
    },
    {
     "table": "edge_health_history",
+    "column": "checks",
+    "rule": "default '{}'::jsonb"
+   },
+   {
+    "table": "edge_health_history",
     "column": "source",
     "rule": "default 'health-monitor'"
    },
@@ -39482,16 +39646,6 @@
     "table": "edge_health_history",
     "column": "created_at",
     "rule": "default now()"
-   },
-   {
-    "table": "edge_health_history",
-    "column": "checks",
-    "rule": "obrigatório"
-   },
-   {
-    "table": "edge_health_history",
-    "column": "(tabela)",
-    "rule": "checks JSONB NOT NULL DEFAULT '{}'::jsonb"
    },
    {
     "table": "geo_blocking_settings",
@@ -39625,6 +39779,101 @@
    },
    {
     "table": "archived_jobs",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "order_number",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "client",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "product",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "quantity",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "technique_id",
+    "rule": "obrigatório; FK → techniques.id"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "machine_id",
+    "rule": "FK → machines.id"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "estimated_duration",
+    "rule": "default 60"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "status",
+    "rule": "default 'queue'; CHECK status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework')"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "lost_pieces",
+    "rule": "default 0"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "priority",
+    "rule": "default 'medium'; CHECK priority IN ('low', 'medium', 'high', 'urgent')"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "production_photos",
+    "rule": "default '{}'"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "produced_quantity",
+    "rule": "default 0"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "sort_order",
+    "rule": "default 0"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "operator_id",
+    "rule": "FK → users.id"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "shipment_id",
+    "rule": "FK → shipments.id"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "parent_job_id",
+    "rule": "FK → jobs.id ON DELETE SET NULL"
+   },
+   {
+    "table": "archived_jobs",
     "column": "archived_at",
     "rule": "default now()"
    },
@@ -39636,7 +39885,32 @@
    {
     "table": "archived_jobs",
     "column": "(tabela)",
-    "rule": "LIKE public.jobs INCLUDING ALL"
+    "rule": "constraint quantity_non_negative CHECK (quantity >= 0)"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "(tabela)",
+    "rule": "constraint produced_quantity_non_negative CHECK (produced_quantity >= 0)"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "(tabela)",
+    "rule": "constraint lost_pieces_non_negative CHECK (lost_pieces >= 0)"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "(tabela)",
+    "rule": "constraint check_job_times CHECK (end_time >= start_time)"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "(tabela)",
+    "rule": "constraint jobs_quantity_positive CHECK (quantity >= 0)"
+   },
+   {
+    "table": "archived_jobs",
+    "column": "(tabela)",
+    "rule": "constraint jobs_status_check CHECK (status IN ('queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework','buffer','packaging'))"
    },
    {
     "table": "backup_logs",
@@ -57052,10 +57326,10 @@
     "tables": []
    },
    "has_role": {
-    "args": "_user_id uuid, _role public.app_role",
+    "args": "_user_id uuid, _role app_role",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20261001143000_geo_blocking_tables_reconstruct.sql",
+    "src": "supabase/migrations/20260317221345_a38f2094-b684-4efe-ba7b-15f925fdd6cb.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role AND is_active = true )",
@@ -57480,6 +57754,19 @@
      "last_hash"
     ]
    },
+   "verify_audit_chain()": {
+    "args": "",
+    "returns": "TABLE (\n    total_records bigint,\n    verified_count bigint,\n    broken_count bigint,\n    is_integral boolean\n)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20260512180411_f99a244d-b109-4109-9787-0f907e4a9c14.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE rec RECORD; prev_h text := 'GENESIS'; v_total bigint := 0; v_verified bigint := 0; v_broken bigint := 0; calc_h text; BEGIN FOR rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LOOP v_total := v_total + 1; IF rec.previous_hash != prev_h THEN v_broken := v_broken + 1; ELSE calc_h := public.calculate_audit_hash(rec); IF rec.hash != calc_h THEN v_broken := v_broken + 1; ELSE v_verified := v_verified + 1; END IF; END IF; prev_h := rec.hash; END LOOP; RETURN QUERY SELECT v_total, v_verified, v_broken, (v_broken = 0); END;",
+    "raises": [],
+    "tables": [
+     "audit_log"
+    ]
+   },
    "rollback_inventory_stock": {
     "args": "",
     "returns": "TRIGGER",
@@ -57648,6 +57935,19 @@
     "raises": [],
     "tables": [
      "qr_scan_history",
+     "user_roles"
+    ]
+   },
+   "app_private.has_role": {
+    "args": "_user_id uuid, _role public.app_role",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261001143000_geo_blocking_tables_reconstruct.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role AND is_active = true )",
+    "raises": [],
+    "tables": [
      "user_roles"
     ]
    },
@@ -57992,7 +58292,7 @@
      "v_per_ip_count"
     ]
    },
-   "runtime_config_get": {
+   "app_private.runtime_config_get": {
     "args": "p_key text",
     "returns": "text",
     "lang": "sql",
@@ -58093,28 +58393,6 @@
      "jobs",
      "parent_parent_id"
     ]
-   },
-   "Args": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "Returns": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
    },
    "test_rls_policies": {
     "args": "",
@@ -58711,6 +58989,34 @@
      "allowed": [],
      "default": "",
      "type": "text PRIMARY KEY"
+    },
+    {
+     "table": "archived_jobs",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "buffer",
+      "cancelled",
+      "delayed",
+      "finished",
+      "packaging",
+      "paused",
+      "production",
+      "queue",
+      "ready",
+      "rework",
+      "scheduled"
+     ],
+     "default": "queue",
+     "type": "TEXT NOT NULL DEFAULT 'queue' CHECK (status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework'))"
+    },
+    {
+     "table": "archived_jobs",
+     "column": "shipping_status",
+     "enum": "",
+     "allowed": [],
+     "default": "",
+     "type": "TEXT"
     }
    ],
    "usage": {
@@ -61968,6 +62274,8 @@
    "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
   ],
   "security_definer_fns": [
+   "app_private.has_role",
+   "app_private.runtime_config_get",
    "archive_finished_jobs",
    "audit_job_changes",
    "audit_job_status_change",
@@ -62006,7 +62314,6 @@
    "on_packaging_ready_create_shipment",
    "purge_old_logs",
    "rollup_cron_p95_daily",
-   "runtime_config_get",
    "snapshot_cron_health",
    "trigger_auto_promotion",
    "trigger_send_tpm_email",
@@ -62014,7 +62321,8 @@
    "update_inventory_stock",
    "validate_inventory_stock",
    "validate_stock_before_movement",
-   "verify_audit_chain"
+   "verify_audit_chain",
+   "verify_audit_chain()"
   ],
   "public_functions": [
    "bitrix24-sync",
@@ -64047,7 +64355,10 @@
    "bitrix24_oauth_states": [
     "created_at"
    ],
-   "archived_jobs": [],
+   "archived_jobs": [
+    "created_at",
+    "updated_at"
+   ],
    "backup_logs": [
     "created_at"
    ],
@@ -64182,6 +64493,11 @@
     "packaging_tasks",
     "total_weight_kg",
     "NUMERIC(10,3)"
+   ],
+   [
+    "archived_jobs",
+    "shipping_status",
+    "TEXT"
    ]
   ]
  },
@@ -64641,7 +64957,7 @@
    },
    {
     "kind": "segurança",
-    "msg": "função `runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco",
+    "msg": "função `app_private.runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco",
     "where": [
      "supabase/migrations/20261008160000_runtime_config_edge_auth.sql"
     ]
@@ -64672,6 +64988,7 @@
    "`job_status_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`cron_health_history.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`bitrix24_oauth_states.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
+   "`archived_jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `techniques`, `machines`, `jobs`, `profiles`, `user_roles`, `efficiency_alert_history`, `technical_conversations`, `technical_messages`, `qr_scan_history`, `bitrix24_sync_history`, `bitrix24_oauth_tokens`, `bitrix24_field_mappings` …",
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
@@ -65883,7 +66200,7 @@
   },
   "scripts/regras_negocio/generate.py": {
    "path": "scripts/regras_negocio/generate.py",
-   "lines": 2571,
+   "lines": 2796,
    "exports": [
     "def is_app_code",
     "def log",
@@ -65900,6 +66217,7 @@
     "def files_cell",
     "def stable_hash",
     "def balanced",
+    "def sql_spans",
     "def strip_sql_comments",
     "def is_test_file",
     "def walk_repo",
@@ -65909,6 +66227,9 @@
     "def extract_zod",
     "def extract_html_constraints",
     "def analyze_code_file",
+    "def sql_re",
+    "def unq",
+    "def tk",
     "def split_columns",
     "def tkey",
     "def parse_column",
@@ -65920,6 +66241,10 @@
     "def parse_policy",
     "def alter_policy",
     "def new_table",
+    "def natural_key",
+    "def fn_signature",
+    "def fn_refs",
+    "def drop_targets",
     "def parse_sql_schema",
     "def load_snapshot_schema",
     "def make_resolver",
@@ -65936,15 +66261,7 @@
     "def build_audit",
     "def git_info",
     "def collect_existing_docs",
-    "def llm_synthesis",
-    "def header",
-    "def render_index",
-    "def render_overview",
-    "def render_architecture",
-    "def render_modules",
-    "def render_features",
-    "def render_dataflow",
-    "def render_database"
+    "def llm_synthesis"
    ],
    "dyn_from": 2,
    "env": [
@@ -66012,12 +66329,16 @@
   },
   "scripts/regras_negocio/test_generate.py": {
    "path": "scripts/regras_negocio/test_generate.py",
-   "lines": 667,
+   "lines": 854,
    "exports": [
     "class CurrentSqlSourcesTests",
     "class RepoFixture",
     "class PolicyParsingTests",
     "class MigrationReplayTests",
+    "class SqlLexingTests",
+    "class SqlIdentityTests",
+    "class SqlObjectLifecycleTests",
+    "class SqlTableDerivationTests",
     "class CodeExtractionTests",
     "def snapshot_fixture",
     "class RealDatabaseSnapshotTests",
@@ -66130,11 +66451,12 @@
   },
   "scripts/regras_negocio/test_publish.py": {
    "path": "scripts/regras_negocio/test_publish.py",
-   "lines": 279,
+   "lines": 327,
    "exports": [
     "class PublishFixture",
     "class BranchModeTests",
-    "class PushModeTests"
+    "class PushModeTests",
+    "class DetachedHeadTests"
    ],
    "env": [
     "PATH"
@@ -91839,10 +92161,23 @@
   }
  },
  "git": {
-  "sha": "dfdb3313157e4326a29b47d35db26d83129fac06",
+  "sha": "346947dad012367ee57be7c321f3a9688dbe6055",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "346947d",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)",
+    "files": [
+     "scripts/regras_negocio/README.md",
+     "scripts/regras_negocio/generate.py",
+     "scripts/regras_negocio/publish.sh",
+     "scripts/regras_negocio/test_generate.py",
+     "scripts/regras_negocio/test_publish.py"
+    ]
+   },
    {
     "sha": "dfdb331",
     "date": "2026-11-10",
@@ -92488,21 +92823,28 @@
      "AGENTS.md",
      "CLAUDE.md"
     ]
-   },
-   {
-    "sha": "8664d93",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "fix(csp): rejeitar .vercel.app e localhost por padrão sem CSP_REPORT_ALLOWED_HOSTS (#121)",
-    "files": [
-     "supabase/functions/csp-report/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "AGENTS.md",
     4
+   ],
+   [
+    "scripts/regras_negocio/README.md",
+    3
+   ],
+   [
+    "scripts/regras_negocio/generate.py",
+    3
+   ],
+   [
+    "scripts/regras_negocio/publish.sh",
+    3
+   ],
+   [
+    "scripts/regras_negocio/test_generate.py",
+    3
    ],
    [
     "scripts/ai-context/gerar.mjs",
@@ -92521,6 +92863,10 @@
     3
    ],
    [
+    "scripts/regras_negocio/test_publish.py",
+    2
+   ],
+   [
     "scripts/ai-context/README.md",
     2
    ],
@@ -92529,23 +92875,7 @@
     2
    ],
    [
-    "scripts/regras_negocio/README.md",
-    2
-   ],
-   [
-    "scripts/regras_negocio/generate.py",
-    2
-   ],
-   [
     "scripts/regras_negocio/indice.py",
-    2
-   ],
-   [
-    "scripts/regras_negocio/publish.sh",
-    2
-   ],
-   [
-    "scripts/regras_negocio/test_generate.py",
     2
    ],
    [
@@ -92574,10 +92904,6 @@
    ],
    [
     "scripts/bundle.test.mjs",
-    2
-   ],
-   [
-    "scripts/check-any-baseline.mjs",
     2
    ]
   ]

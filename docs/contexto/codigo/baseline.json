@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dfdb3313157e4326a29b47d35db26d83129fac06",
+  "commit": "346947dad012367ee57be7c321f3a9688dbe6055",
   "branch": "main",
-  "data_commit": "2026-11-10T19:54:17-03:00",
+  "data_commit": "2026-11-10T20:22:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "346947d",
+    "data": "2026-11-10",
+    "assunto": "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)"
+   },
    {
     "sha": "dfdb331",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "28215b3",
     "data": "2026-11-06",
     "assunto": "infra: migra imports esm.sh para npm nas edge functions (#129)"
-   },
-   {
-    "sha": "d6c9c11",
-    "data": "2026-11-05",
-    "assunto": "fix: atualiza hash tslib@2.8.1 no deno.lock (esm.sh CDN update)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 34
+    "commits": 35
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1470,
   "arquivos_codigo": 1083,
-  "linhas_codigo": 173728,
+  "linhas_codigo": 174188,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -401,7 +401,7 @@
   },
   "scripts/regras_negocio": {
    "arquivos": 5,
-   "linhas": 3924
+   "linhas": 4384
   },
   "scripts/rls-regression.mjs": {
    "arquivos": 1,
@@ -511,7 +511,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linhas": 2571
+   "linhas": 2796
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
@@ -653,7 +653,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linha": 636,
+   "linha": 697,
    "tipo": "TODO",
    "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
   }
