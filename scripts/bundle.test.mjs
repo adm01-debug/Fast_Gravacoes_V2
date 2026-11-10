@@ -11,8 +11,15 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { chunkNameFromFile, collectViolations, DEFAULT_BUDGET } from './bundle-report.mjs';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync, symlinkSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, DEFAULT_BUDGET } from './bundle-report.mjs';
 import { validateReport, buildDiffMarkdown } from './bundle-diff.mjs';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
 
 // --- bundle-report chunkNameFromFile ---
 
@@ -207,4 +214,115 @@ test('aceita base ausente (primeiro merge)', () => {
   const head = mk(100, 2, [{ file: 'a.js', chunk: 'a', gzipKb: 60 }]);
   const md = buildDiffMarkdown(null, head);
   assert.match(md, /Nenhum relat\u00f3rio base dispon/);
+});
+
+// --- regressões da auditoria de scripts (budgets mortos, protótipo, validação, CLI) ---
+
+test('chunk com nome de propriedade do protótipo usa o default, não o protótipo', () => {
+  const budget = { defaults: { maxChunkKb: 100 }, chunks: {}, entrypoints: {} };
+  for (const chunk of ['constructor', 'toString', '__proto__', 'hasOwnProperty']) {
+    const v = collectViolations([{ file: `assets/${chunk}-ABCDEFGH.js`, chunk, gzipKb: 500 }], budget);
+    assert.equal(v.length, 1, chunk);
+    assert.match(v[0], /> limite 100KB/);
+  }
+});
+
+test('budget de chunk sem chunk no build é listado como morto (aviso, não violação)', () => {
+  const budget = { defaults: {}, chunks: { 'vendor-react': 180, 'lib-sumiu': 30, 'a-sumiu': 10 }, entrypoints: {} };
+  const files = [{ file: 'assets/vendor-react-ABCDEFGH.js', chunk: 'vendor-react', gzipKb: 50 }];
+  assert.deepEqual(collectStaleBudgets(files, budget), ['a-sumiu', 'lib-sumiu']);
+  assert.deepEqual(collectViolations(files, budget), []);
+  assert.deepEqual(collectStaleBudgets(files, DEFAULT_BUDGET), []);
+  assert.deepEqual(collectStaleBudgets(files, null), []);
+});
+
+test('validateBudget recusa formas que desligariam os limites em silêncio', () => {
+  assert.equal(validateBudget(DEFAULT_BUDGET), DEFAULT_BUDGET);
+  for (const ruim of [null, [], 'x', 1, { chunks: [] }, { defaults: null }, { chunks: { a: '180' } },
+    { chunks: { a: 0 } }, { defaults: { maxChunkKb: -1 } }, { entrypoints: { '/': null } }, { chunks: { a: NaN } }]) {
+    assert.throws(() => validateBudget(ruim), /bundle-budget\.json/, JSON.stringify(ruim));
+  }
+});
+
+test('o bundle-budget.json versionado é válido', () => {
+  const real = JSON.parse(readFileSync(join(HERE, '..', 'bundle-budget.json'), 'utf8'));
+  assert.equal(validateBudget(real), real);
+});
+
+test('validateReport exige números de verdade (string concatenaria na soma)', () => {
+  const ok = { totals: { gzipKb: 1, fileCount: 1 }, files: [{ file: 'a.js', chunk: 'a', gzipKb: 1 }] };
+  assert.equal(validateReport(ok, 'x'), ok);
+  for (const gz of ['10', null, true, NaN, Infinity, undefined]) {
+    assert.throws(() => validateReport({ ...ok, files: [{ file: 'a.js', chunk: 'a', gzipKb: gz }] }, 'x'), /gzipKb inválido/, String(gz));
+  }
+  assert.throws(() => validateReport({ ...ok, totals: { gzipKb: '1', fileCount: 1 } }, 'x'), /totals\.gzipKb/);
+  assert.throws(() => validateReport({ ...ok, totals: { gzipKb: 1, fileCount: null } }, 'x'), /totals\.fileCount/);
+});
+
+test('diff limita as listas de novos/removidos e ordena de forma estável', () => {
+  const mk = (n, prefix) => ({
+    totals: { gzipKb: n, fileCount: n },
+    files: Array.from({ length: n }, (_, i) => ({ file: `${prefix}${i}.js`, chunk: `${prefix}${String(i).padStart(4, '0')}`, gzipKb: 1 })),
+  });
+  const md = buildDiffMarkdown(mk(300, 'old'), mk(300, 'new'));
+  assert.match(md, /Novos arquivos\/chunks \(300\)/);
+  assert.match(md, /_e mais 250_/);
+  assert.ok(md.length < 20000, `markdown com ${md.length} bytes`);
+  assert.equal(md, buildDiffMarkdown(mk(300, 'old'), mk(300, 'new')));
+  assert.ok(md.indexOf('`new0000`') < md.indexOf('`new0001`'));
+});
+
+// CLI: caminho com `#`/`%`/espaço e chamada via symlink não podem "não rodar" e sair 0.
+function cliFixture() {
+  const root = mkdtempSync(join(tmpdir(), 'bundle #50% cli-'));
+  mkdirSync(join(root, 'scripts'));
+  for (const f of ['bundle-report.mjs', 'bundle-diff.mjs']) copyFileSync(join(HERE, f), join(root, 'scripts', f));
+  mkdirSync(join(root, 'dist', 'assets'), { recursive: true });
+  writeFileSync(join(root, 'dist', 'assets', 'index-ABCDEFGH.js'), 'console.log(1);\n');
+  const run = (script, args = []) => {
+    const r = spawnSync(process.execPath, [script, ...args], { cwd: root, encoding: 'utf8', env: { ...process.env, GITHUB_STEP_SUMMARY: '' } });
+    return { code: r.status, out: `${r.stdout}${r.stderr}` };
+  };
+  return { root, run, done: () => rmSync(root, { recursive: true, force: true }) };
+}
+
+test('CLI bundle-report: mede, grava relatório e reprova budget estourado (inclusive via symlink)', () => {
+  const f = cliFixture();
+  try {
+    const ok = f.run(join(f.root, 'scripts', 'bundle-report.mjs'));
+    assert.equal(ok.code, 0, ok.out);
+    const rep = JSON.parse(readFileSync(join(f.root, 'dist', 'bundle-report.json'), 'utf8'));
+    assert.equal(rep.totals.fileCount, 1);
+    assert.equal(rep.files[0].chunk, 'index');
+
+    writeFileSync(join(f.root, 'bundle-budget.json'), JSON.stringify({ defaults: { maxChunkKb: 0.001 } }));
+    symlinkSync(join(f.root, 'scripts', 'bundle-report.mjs'), join(f.root, 'link.mjs'));
+    const viaLink = f.run(join(f.root, 'link.mjs'));
+    assert.equal(viaLink.code, 1, viaLink.out);
+    assert.match(viaLink.out, /violação\(ões\) de budget/);
+
+    for (const ruim of ['null', '[]', '{"chunks":{"a":"1"}}', '{ quebrado']) {
+      writeFileSync(join(f.root, 'bundle-budget.json'), ruim);
+      assert.equal(f.run(join(f.root, 'scripts', 'bundle-report.mjs')).code, 1, ruim);
+    }
+    rmSync(join(f.root, 'dist'), { recursive: true });
+    assert.equal(f.run(join(f.root, 'scripts', 'bundle-report.mjs')).code, 1);
+  } finally { f.done(); }
+});
+
+test('CLI bundle-diff: gera o markdown em caminho com #, % e espaço; head ausente sai 1', () => {
+  const f = cliFixture();
+  try {
+    const rep = (kb) => JSON.stringify({ totals: { gzipKb: kb, fileCount: 1 }, files: [{ file: 'a-ABCDEFGH.js', chunk: 'a', gzipKb: kb }] });
+    writeFileSync(join(f.root, 'base.json'), rep(10));
+    writeFileSync(join(f.root, 'head.json'), rep(25));
+    const r = f.run(join(f.root, 'scripts', 'bundle-diff.mjs'), ['base.json', 'head.json', 'out.md']);
+    assert.equal(r.code, 0, r.out);
+    assert.match(readFileSync(join(f.root, 'out.md'), 'utf8'), /`a` \| 10\.00 \| 25\.00 \| 🔺 \+15\.00/);
+    const semBase = f.run(join(f.root, 'scripts', 'bundle-diff.mjs'), ['nao-existe.json', 'head.json', 'out2.md']);
+    assert.equal(semBase.code, 0, semBase.out);
+    assert.match(readFileSync(join(f.root, 'out2.md'), 'utf8'), /sem base para comparar/);
+    assert.equal(f.run(join(f.root, 'scripts', 'bundle-diff.mjs'), ['base.json', 'nao-existe.json', 'out3.md']).code, 1);
+    assert.equal(f.run(join(f.root, 'scripts', 'bundle-diff.mjs')).code, 1);
+  } finally { f.done(); }
 });

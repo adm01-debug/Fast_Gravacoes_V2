@@ -94,12 +94,12 @@ próprio, então vale o do preset: `build`, `chore`, `ci`, `docs`, `feat`, `fix`
 ```bash
 npm run lint -- --max-warnings 9999
 npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.node.json
-npm run quality:any                      # = node scripts/check-any-baseline.mjs (baseline 0)
+npm run quality:any                      # = node scripts/check-any-baseline.mjs (AST; no CI o baseline tem de ser igual à contagem)
 node scripts/audit-gate.mjs              # npm audit com allowlist por advisory
 npm run test:coverage                    # limiares do vitest.config.ts
 npm run build && npm run bundle:report   # budgets de bundle-budget.json
 node scripts/ci/check-claude-md-integrity.mjs   # instruções para agentes não encolheram
-node scripts/bundle.test.mjs             # testes dos scripts de bundle (não roda em CI)
+npm run test:scripts                     # testes dos scripts (audit-gate, any, bundle, guard, seed) — não roda em CI
 ```
 
 Edge Functions: `deno check --frozen supabase/functions/_shared/auth.ts supabase/functions/*/index.ts` e
