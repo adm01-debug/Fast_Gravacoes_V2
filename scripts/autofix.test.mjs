@@ -257,7 +257,10 @@ test('audit com checagem quebrada não devolve sucesso', (t) => {
 
 test('apply sem commit isola antes dos gates e preserva branch e arquivos locais', (t) => {
   const dir = fixture(t);
+  writeFileSync(join(dir, 'src/dirty.ts'), 'export const dirty = 1;\n');
+  git(dir, 'add', 'src/dirty.ts'); git(dir, 'commit', '-m', 'dirty base');
   const head = git(dir, 'rev-parse', 'HEAD');
+  writeFileSync(join(dir, 'src/dirty.ts'), 'const localUnused = 7; export const dirty = 2;\n');
   writeFileSync(join(dir, 'third.txt'), 'edicao local\n');
   writeFileSync(join(dir, 'local.txt'), 'nao rastreado\n');
   writeFileSync(join(dir, '.gitignore'), read(join(dir, '.gitignore')) + 'privado.txt\n');
@@ -272,6 +275,7 @@ if(execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim()!=='a
   assert.equal(git(dir, 'rev-parse', 'trabalho'), head);
   assert.match(git(dir, 'show', 'trabalho:src/app.ts'), /unused = 42/);
   assert.doesNotMatch(read(join(dir, 'src/app.ts')), /unused = 42/);
+  assert.equal(read(join(dir, 'src/dirty.ts')), 'const localUnused = 7; export const dirty = 2;\n');
   assert.equal(read(join(dir, 'third.txt')), 'edicao local\n');
   assert.equal(read(join(dir, 'local.txt')), 'nao rastreado\n');
   assert.equal(read(join(dir, 'privado.txt')), 'conteudo privado fixture\n');
@@ -354,4 +358,26 @@ test('instalador grava clone escolhido com espacos, aspas e percentuais sem inic
   const escaped = dir.replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('%', '%%');
   assert.ok(unit.includes(`Environment="FG_REPO=${escaped}"`));
   assert.equal(read(join(home, '.local/share/fast-gravacoes-rotina/rotina.mjs')), read(join(root, 'scripts/rotina/rotina.mjs')));
+});
+
+
+test('falha antes de propor correcoes remove somente branch criada e preserva staging de terceiro', (t) => {
+  const dir = fixture(t);
+  writeFileSync(join(dir, 'third.txt'), 'staging preservado\n'); git(dir, 'add', 'third.txt');
+  const staged = git(dir, 'diff', '--cached');
+  writeFileSync(join(dir, 'scripts/check-any-baseline.mjs'), 'process.exit(3);\n');
+  const r = cli(dir, ['--apply', '--only=unused'], { AUTOFIX_BRANCH: 'autofix/falha-inicial' });
+  assert.equal(r.status, 1);
+  assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
+  assert.equal(git(dir, 'branch', '--list', 'autofix/falha-inicial'), '');
+  assert.equal(git(dir, 'diff', '--cached'), staged);
+  assert.match(read(join(dir, 'src/app.ts')), /unused = 42/);
+});
+
+test('apply sem proposta nao deixa branch vazia bloqueando a proxima execucao', (t) => {
+  const dir = fixture(t, 'export const kept = 1;\n');
+  const r = cli(dir, ['--apply', '--only=unused'], { AUTOFIX_BRANCH: 'autofix/sem-mudancas' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
+  assert.equal(git(dir, 'branch', '--list', 'autofix/sem-mudancas'), '');
 });

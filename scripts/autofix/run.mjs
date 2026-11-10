@@ -100,7 +100,7 @@ function indexLimpo() {
 function restaurar() {
   for (const [file, original] of snapshots) writeFileSync(file, original);
   if (criada) {
-    checkedGit('restore', '--staged', '--', ...snapshots.keys());
+    if (snapshots.size) checkedGit('restore', '--staged', '--', ...snapshots.keys());
     if (originalBranch) checkedGit('switch', originalBranch);
     else checkedGit('switch', '--detach', originalHead);
     checkedGit('branch', '-D', criada);
@@ -171,6 +171,7 @@ try {
   for (const f of eslint(['.'])) for (const m of f.messages) {
     residuoEslint[m.ruleId || 'parse'] = (residuoEslint[m.ruleId || 'parse'] || 0) + 1;
   }
+  if (APPLY && !snapshots.size) restaurar();
   if (COMMIT && snapshots.size) {
     indexLimpo();
     if (checkedGit('rev-parse', 'HEAD').trim() !== originalHead) throw new Error('HEAD mudou durante a execução');
