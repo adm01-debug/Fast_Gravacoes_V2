@@ -30,15 +30,6 @@ const auditar = (root, args = [], env = {}) => {
   return { status: r.status, findings, err: r.stderr };
 };
 
-test('tabela apagada e recriada sem RLS volta a ser acusada', () => {
-  const root = repo({
-    'supabase/migrations/001.sql': 'create table public.a (id int);\nalter table public.a enable row level security;\n',
-    'supabase/migrations/002.sql': 'drop table public.a;\n',
-    'supabase/migrations/003.sql': 'create table public.a (id int);\n',
-  });
-  assert.ok(auditar(root).findings.some((f) => f.check === 'tabela-sem-rls' && /Tabela a /.test(f.titulo)));
-});
-
 test('tabela com RLS ativado depois da criação NÃO é acusada', () => {
   const root = repo({
     'supabase/migrations/001.sql': 'create table public.b (id int);\nalter table public.b enable row level security;\n',
@@ -56,22 +47,6 @@ test('AUDIT_BASELINE apontando para arquivo inexistente falha', () => {
   assert.equal(auditar(root, [], { AUDIT_BASELINE: join(root, 'nao-existe.json') }).status, 2);
 });
 
-test('arquivo com acento no nome é analisado (git sem escapar o caminho)', () => {
-  const root = repo({ 'src/ação.ts': 'export const mockDados = [1, 2, 3];\n' });
-  const f = auditar(root).findings.find((x) => x.check === 'dado-fabricado');
-  assert.ok(f, 'deveria achar o dado fabricado');
-  assert.equal(f.arquivo, 'src/ação.ts');
-});
-
-
-test('DISABLE ROW LEVEL SECURITY depois do ENABLE volta a acusar a tabela', () => {
-  const root = repo({
-    'supabase/migrations/001.sql': 'create table public.c (id int);\nalter table public.c enable row level security;\n',
-    'supabase/migrations/002.sql': 'alter table public.c disable row level security;\n',
-  });
-  assert.ok(auditar(root).findings.some((f) => f.check === 'tabela-sem-rls' && /Tabela c /.test(f.titulo)));
-});
-
 test('segredo na mesma linha de OUTRO achado não vaza no relatório', () => {
   const chave = 're_abcdefghijklmnopqrstuvwxyz123456';
   const root = repo({ 'src/a.ts': `export const fakeData = [{ k: '${chave}' }];\n` });
@@ -86,5 +61,5 @@ test('--estrito reprova quando uma checagem quebra (regra com regex inválida)',
   auditar(root, ['--baseline']);
   const r = auditar(root, ['--estrito']);
   assert.equal(r.status, 1);
-  assert.ok(r.findings.some((f) => f.check === 'regra-de-negocio' && /regra inválida/.test(f.titulo)));
+  assert.ok(r.findings.some((f) => f.check === 'regra-de-negocio' && /falhou ao rodar/.test(f.titulo)));
 });

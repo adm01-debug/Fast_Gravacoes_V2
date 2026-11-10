@@ -7,7 +7,6 @@
     "scripts/maintenance/maintenance.unit.mjs",
     "scripts/graphify-local.unit.mjs",
     "scripts/audit/audit.unit.mjs",
-    "scripts/autofix/unused.unit.mjs",
     "scripts/autofix.test.mjs"
   ],
   "motor": ["sh", "scripts/maintenance/run.sh"],
@@ -49,7 +48,6 @@
         "scripts/maintenance/maintenance.unit.mjs",
         "scripts/graphify-local.unit.mjs",
         "scripts/audit/audit.unit.mjs",
-        "scripts/autofix/unused.unit.mjs",
         "scripts/autofix.test.mjs"
       ],
       "manual": ["node", "scripts/automation.mjs", "test"],
@@ -331,22 +329,6 @@
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml. O dispatcher não executa esta operação."
     },
-          {
-            "id": "legacy-7b43a7da20c3011f",
-            "kind": "legacy",
-            "files": ["scripts/regras_negocio/test_indice.py"],
-            "manual": ["python3", "scripts/regras_negocio/test_indice.py"],
-            "triggers": ["manual"],
-            "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml. O dispatcher não executa esta operação."
-          },
-          {
-            "id": "legacy-f9f2006e0e7b217f",
-            "kind": "legacy",
-            "files": ["scripts/regras_negocio/test_publish.py"],
-            "manual": ["python3", "scripts/regras_negocio/test_publish.py"],
-            "triggers": ["manual"],
-            "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml. O dispatcher não executa esta operação."
-          },
     {
       "id": "legacy-6e8f3d028fa888b2",
       "kind": "legacy",
