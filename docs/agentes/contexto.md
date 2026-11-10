@@ -31,7 +31,7 @@ Onde fica e quem chama? → `codigo/`. Pode fazer isso? → `regras/`.
 |---|---|---|
 | `codigo/` | `scripts/ai-context/gerar.mjs` (Node, zero deps) | arquivos do repo + `git log` + grafo graphify |
 | `supabase/` | `scripts/supabase_snapshot/snapshot.py` (psycopg) | banco oficial `uoujzvpecohinketylud`, sessão **read-only** + Management API |
-| `regras/` | `scripts/regras_negocio/generate.py` (stdlib) | código, migrations/`types.ts` e `docs/contexto/regras/manual/` |
+| `regras/` | `scripts/regras_negocio/generate.py` (stdlib) | código, snapshot do banco em `--schema-snapshot` (sem ele: migrations/`types.ts`, com aviso no documento) e `docs/contexto/regras/manual/` |
 | `00-INDEX.md` | `scripts/regras_negocio/indice.py` | o `manifest.json` de cada pasta |
 
 Orquestração: `.github/workflows/contexto.yml` — um job por produtor, a cada push em `main` que toque
@@ -65,6 +65,6 @@ Testes dos produtores (sem banco, sem rede):
 
 ```bash
 node --test scripts/ai-context/gerar.unit.mjs
-python3 scripts/regras_negocio/test_generate.py -v
+python3 -m unittest discover -s scripts/regras_negocio -p 'test_*.py'
 python3 scripts/supabase_snapshot/test_snapshot.py -v
 ```
