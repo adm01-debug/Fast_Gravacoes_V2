@@ -849,7 +849,13 @@ export function removeExclude(path, addition) {
 
 async function install(ctx) {
   const { root, c, config } = ctx;
-  const base = join(root, '.tools/repo-automation'),
+  const common = realpathSync(
+    resolve(
+      root,
+      (await git(root, ['rev-parse', '--git-common-dir'])).stdout.trim()
+    )
+  );
+  const base = join(resolve(common, '..'), '.tools/repo-automation'),
     hooks = join(base, 'hooks'),
     stateFile = join(base, 'state.json');
   for (const path of [base, hooks, join(base, 'runtime')])
@@ -866,7 +872,7 @@ async function install(ctx) {
   if (existsSync(stateFile)) {
     state = json(stateFile);
     if (
-      state.root !== root ||
+      state.common !== common ||
       state.hooks !== hooks ||
       ![hooks, state.previousEffective || ''].includes(effective)
     )
@@ -964,11 +970,18 @@ async function install(ctx) {
   };
 }
 async function uninstall(ctx) {
-  const stateFile = join(ctx.root, '.tools/repo-automation/state.json');
+  const common = realpathSync(
+    resolve(
+      ctx.root,
+      (await git(ctx.root, ['rev-parse', '--git-common-dir'])).stdout.trim()
+    )
+  );
+  const base = join(resolve(common, '..'), '.tools/repo-automation'),
+    stateFile = join(base, 'state.json'),
+    expected = join(base, 'hooks');
   if (!existsSync(stateFile)) return { ok: true, status: 'not_installed' };
-  const state = json(stateFile),
-    expected = join(ctx.root, '.tools/repo-automation/hooks');
-  if (state.root !== ctx.root || state.hooks !== expected)
+  const state = json(stateFile);
+  if (state.common !== common || state.hooks !== expected)
     throw fail('estado de hooks inválido');
   for (const path of [
     dirname(expected),
