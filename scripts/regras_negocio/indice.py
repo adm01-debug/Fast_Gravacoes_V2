@@ -49,16 +49,21 @@ def git(root: Path, *a: str) -> str:
         return ""
 
 
+FUTURE_TOLERANCE_MIN = 5  # diferença de relógio aceitável entre quem gerou e quem monta o índice
+
+
 def parse_dt(v) -> datetime | None:
-    if not isinstance(v, str):
+    """ISO 8601 com timezone (`Z`, `+00:00`, `-03:00`) ou o sufixo ` UTC` dos nossos produtores.
+
+    Sem timezone devolve None: assumir UTC para uma hora local erra a idade em horas sem ninguém notar.
+    """
+    if not isinstance(v, str) or not v.strip():
         return None
-    for fmt in ("%Y-%m-%d %H:%M UTC", "%Y-%m-%d %H:%M:%S UTC", "%Y-%m-%dT%H:%M UTC", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S.%f%z", "%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
-        try:
-            d = datetime.strptime(v, fmt)
-            return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
-        except ValueError:
-            continue
-    return None
+    try:
+        d = datetime.fromisoformat(re.sub(r"\s*UTC$", "+00:00", v.strip()))
+    except ValueError:
+        return None
+    return d if d.tzinfo else None
 
 
 def read_manifest(d: Path) -> dict:
@@ -72,7 +77,7 @@ def read_manifest(d: Path) -> dict:
                 return manifest
             except Exception:
                 return {"_erro": f"{name} ilegível"}
-    return {}
+    return {"_erro": "manifest.json ausente — não dá para saber quando, de qual commit nem com quais erros a fonte foi gerada"}
 
 
 def producer_health(d: Path, man: dict) -> tuple[str, list[str]]:
@@ -84,7 +89,9 @@ def producer_health(d: Path, man: dict) -> tuple[str, list[str]]:
         errors = man.get(key)
         if errors:
             total = len(errors) if isinstance(errors, (list, dict)) else 1
-            avisos.append(f"{total} erro(s) de coleta no manifest ({key})")
+            first = errors[0] if isinstance(errors, list) else errors
+            detail = f": {first[:160].replace('|', '/')}{'…' if len(first) > 160 else ''}" if isinstance(first, str) else ""
+            avisos.append(f"{total} erro(s) de coleta no manifest ({key}){detail}")
     if man.get("carried"):
         avisos.append("seções reaproveitadas da coleta anterior")
     report = d / "errors.md"
@@ -98,7 +105,11 @@ def producer_health(d: Path, man: dict) -> tuple[str, list[str]]:
                 avisos.append(f"{len(errors)} seção(ões) com erro em errors.md")
         except (OSError, UnicodeError):
             return "não verificável", avisos + ["errors.md ilegível"]
-    return ("parcial" if avisos else "ok"), avisos
+    status = "parcial" if avisos else "ok"
+    notes = man.get("avisos")
+    if notes:  # limitação declarada pelo produtor: aparece no índice, mas não rebaixa o estado
+        avisos.append(f"{len(notes) if isinstance(notes, (list, dict)) else 1} aviso(s) do produtor no manifest")
+    return status, avisos
 
 
 def entry_file(d: Path, man: dict) -> str:
@@ -138,8 +149,10 @@ def main() -> int:
         d = root / caminho
         local = d.is_dir() and any(d.iterdir())
         man = read_manifest(d) if local else {}
-        gerado = parse_dt(man.get("gerado_em") or man.get("generated_at") or man.get("timestamp") or man.get("data"))
-        if local and not gerado:
+        raw_dt = man.get("gerado_em") or man.get("generated_at") or man.get("timestamp") or man.get("data")
+        gerado = parse_dt(raw_dt)
+        data_invalida = local and raw_dt not in (None, "") and not gerado
+        if local and not gerado and not data_invalida:
             # produtor sem manifest datado: 1º "## <data>" do CHANGELOG.md, senão o último commit da pasta
             cl = d / "CHANGELOG.md"
             if cl.exists():
@@ -153,6 +166,18 @@ def main() -> int:
         status, avisos = producer_health(d, man) if local else ("ok", [])
         if not local:
             status = "não disponível neste checkout" if branch else "ainda não gerado"
+        if data_invalida:
+            status = "não verificável"
+            avisos.append(f"data de geração ilegível ou sem timezone no manifest ({str(raw_dt)[:40].replace('|', '/')!r}) — idade desconhecida")
+        elif idade_min is not None and idade_min < -FUTURE_TOLERANCE_MIN:
+            status = "não verificável"
+            avisos.append(f"data de geração {-idade_min} min no futuro — relógio ou manifest incorreto")
+            idade_min = None
+        elif idade_min is not None:
+            idade_min = max(idade_min, 0)
+        elif local and status in ("ok", "parcial"):
+            status = "não verificável"
+            avisos.append("sem data de geração (manifest, CHANGELOG ou git) — idade desconhecida")
         mesmo_commit = (isinstance(commit, str) and isinstance(head, str)
                         and min(len(commit), len(head)) >= 7
                         and (head.startswith(commit) or commit.startswith(head)))
