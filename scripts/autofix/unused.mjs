@@ -18,7 +18,7 @@
  *  - desestruturação com `...rest` (remover o irmão mudaria o conteúdo do rest).
  */
 import ts from 'typescript';
-import { writeFileSync } from 'node:fs';
+import { lstatSync, writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
 const UNUSED_CODES = new Set([6133, 6192, 6196, 6198]);
@@ -29,6 +29,24 @@ const isRemoveFix = (f) =>
   f.fixId !== 'unusedIdentifier_infer' &&
   /^Remove /.test(f.description);
 const MAX_PASSES = 8;
+
+/** Recusa gravar em caminho cujo componente (ou o próprio alvo) seja symlink: o autofix
+ * nunca deve seguir link que aponta para fora da raiz nem sobrescrever destino alheio. */
+function rejeitarSymlink(root, file) {
+  const abs = resolve(root, file);
+  let cursor = root;
+  for (const part of relative(root, abs).split(/[\\/]/).filter(Boolean)) {
+    cursor = resolve(cursor, part);
+    try {
+      if (lstatSync(cursor).isSymbolicLink())
+        throw new Error(`autofix recusa symlink: ${relative(root, cursor)}`);
+    } catch (e) {
+      if (e.code === 'ENOENT') continue;
+      throw e;
+    }
+  }
+  return abs;
+}
 
 const K = ts.SyntaxKind;
 const LITERAL_KINDS = new Set([
@@ -266,7 +284,7 @@ export function runUnused({ root, tsconfig = 'tsconfig.app.json', skipFiles = ne
 
   const changedFiles = [...text.keys()].filter((f) => text.get(f) !== original.get(f));
   if (apply) {
-    for (const f of changedFiles) writeFileSync(f, text.get(f));
+      for (const f of changedFiles) writeFileSync(rejeitarSymlink(root, f), text.get(f));
   }
   return {
     changedFiles: changedFiles.map((f) => relative(root, f)),

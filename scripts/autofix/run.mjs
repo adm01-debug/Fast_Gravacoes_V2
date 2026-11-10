@@ -19,8 +19,8 @@
  * Saída: .autofix/relatorio.md e .autofix/relatorio.json (fila manual = o que sobrou).
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { lstatSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, relative, resolve } from 'node:path';
 import { runUnused } from './unused.mjs';
 
 const args = process.argv.slice(2);
@@ -81,10 +81,28 @@ function anyBaseline() {
   return sh(process.execPath, ['scripts/check-any-baseline.mjs']).status === 0;
 }
 
+/** Recusa gravar em caminho cujo componente (ou o próprio alvo) seja symlink: o autofix
+ * nunca deve seguir link que aponta para fora da raiz nem sobrescrever destino alheio. */
+function rejeitarSymlink(file) {
+  const abs = resolve(ROOT, file);
+  let cursor = ROOT;
+  for (const part of relative(ROOT, abs).split(/[\\/]/).filter(Boolean)) {
+    cursor = resolve(cursor, part);
+    try {
+      if (lstatSync(cursor).isSymbolicLink())
+        throw new Error(`autofix recusa symlink: ${relative(ROOT, cursor)}`);
+    } catch (e) {
+      if (e.code === 'ENOENT') continue;
+      throw e;
+    }
+  }
+  return abs;
+}
+
 /** Desfaz arquivos gravando de volta o conteúdo de ANTES deste fixer (preserva correções já validadas de fixers anteriores). */
 function restaurar(files, originals) {
   for (const f of files) {
-    if (originals[f] !== undefined) writeFileSync(join(ROOT, f), originals[f]);
+    if (originals[f] !== undefined) writeFileSync(rejeitarSymlink(f), originals[f]);
     else git('checkout', '--', f); // sem snapshot: último recurso
   }
 }
@@ -183,7 +201,7 @@ const fixers = [
       try { results = JSON.parse(r.stdout); } catch { /* ignora */ }
       const changed = results.filter((f) => typeof f.output === 'string');
       const originals = Object.fromEntries(changed.map((f) => [f.filePath.replace(ROOT + '/', ''), readFileSync(f.filePath, 'utf8')]));
-      if (APPLY) for (const f of changed) writeFileSync(f.filePath, f.output);
+      if (APPLY) for (const f of changed) writeFileSync(rejeitarSymlink(relative(ROOT, f.filePath)), f.output);
       return {
         changedFiles: changed.map((f) => f.filePath.replace(ROOT + '/', '')),
         originals,
