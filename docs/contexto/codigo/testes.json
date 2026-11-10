@@ -5,11 +5,11 @@
   "vitest",
   "playwright"
  ],
- "total": 109,
+ "total": 111,
  "por_tipo": {
   "contrato": 1,
   "e2e": 21,
-  "pytest": 3,
+  "pytest": 5,
   "unit": 84
  },
  "onde_ficam": [
@@ -23,7 +23,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 7
+   "arquivos": 9
   }
  ],
  "arquivos": [
@@ -94,7 +94,21 @@
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
    "tipo": "pytest",
-   "linhas": 164,
+   "linhas": 667,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_indice.py",
+   "tipo": "pytest",
+   "linhas": 145,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_publish.py",
+   "tipo": "pytest",
+   "linhas": 279,
    "testa": [],
    "casos": 0
   },

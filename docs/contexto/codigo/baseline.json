@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9df0dd4de5a4deaf23d1d132cf6ff953dd62e0ec",
+  "commit": "7a712fb390b0cef4490fbd12111ef2d31e14ac05",
   "branch": "main",
-  "data_commit": "2026-11-10T10:42:45Z",
+  "data_commit": "2026-11-10T16:34:29-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "7a712fb",
+    "data": "2026-11-10",
+    "assunto": "fix(regras): usa o snapshot do banco como fonte (#154)"
+   },
    {
     "sha": "9df0dd4",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "6da824c",
     "data": "2026-11-05",
     "assunto": "fix: verificação RLS USING(true) em políticas de escrita via migration"
-   },
-   {
-    "sha": "33983fd",
-    "data": "2026-11-05",
-    "assunto": "fix: adiciona --yes no supabase functions deploy para CI não-interativo (#123)"
    }
   ],
-  "arquivos_mudados_7d": 368,
+  "arquivos_mudados_7d": 370,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 31
+    "commits": 32
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1468,
-  "arquivos_codigo": 1081,
-  "linhas_codigo": 171749,
+  "arquivos_total": 1470,
+  "arquivos_codigo": 1083,
+  "linhas_codigo": 173134,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 142,
   "migrations": 244,
   "cron_jobs": 4,
-  "testes": 109,
+  "testes": 111,
   "workflows": 7,
   "scripts": 18,
   "docs_md": 68
@@ -399,8 +399,8 @@
    "linhas": 76
   },
   "scripts/regras_negocio": {
-   "arquivos": 3,
-   "linhas": 2539
+   "arquivos": 5,
+   "linhas": 3924
   },
   "scripts/rls-regression.mjs": {
    "arquivos": 1,
@@ -510,7 +510,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linhas": 2138
+   "linhas": 2571
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
@@ -652,7 +652,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linha": 570,
+   "linha": 636,
    "tipo": "TODO",
    "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
   }

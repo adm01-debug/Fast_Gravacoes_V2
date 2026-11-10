@@ -8,7 +8,7 @@
    "Markdown (68)",
    "JavaScript (22)",
    "JSON (20)",
-   "Python (11)",
+   "Python (13)",
    "YAML (9)",
    "CSS (2)"
   ],
@@ -623,6 +623,7 @@
    "ANTHROPIC_API_KEY",
    "CODE_SCAN_DIRS",
    "GEN_TYPES",
+   "PATH",
    "PGDUMP",
    "PGDUMP_SCHEMAS",
    "REPO_ROOT",

@@ -181,7 +181,7 @@
   {
    "arquivo": "scripts/regras_negocio/generate.py",
    "descricao": null,
-   "linhas": 2138,
+   "linhas": 2571,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -192,7 +192,7 @@
   {
    "arquivo": "scripts/regras_negocio/indice.py",
    "descricao": null,
-   "linhas": 237,
+   "linhas": 262,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -203,7 +203,7 @@
   {
    "arquivo": "scripts/regras_negocio/publish.sh",
    "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
-   "linhas": 195,
+   "linhas": 275,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

@@ -1,7 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9df0dd4de5` · branch `main` · 2026-11-10 10:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7a712fb390` · branch `main` · 2026-11-10 19:34 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
+
+> ⚠️ Tabelas do glossário e schema usado na auditoria código × schema: **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -12,7 +14,7 @@
 | `abc_cost_pools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `abc_job_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `app_private.runtime_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
-| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 1 colunas | migration |
+| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
 | `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `backup_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
 | `bitrix24_field_mappings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
@@ -31,7 +33,6 @@
 | `document_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `edge_health_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `efficiency_alert_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `email_verification_tokens` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | types.ts |
 | `energy_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `energy_consumption` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `energy_targets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
@@ -39,7 +40,6 @@
 | `error_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `feature_flags` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `gamification_rewards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `gamification_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | types.ts |
 | `geo_blocking_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `geo_blocking_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `geo_blocking_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
@@ -72,17 +72,15 @@
 | `operator_achievements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `operator_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `operator_machines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `operator_rankings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `operator_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `operator_status_audit` | Audit log tracking operator status changes (activation, deactivation, removal) | 11 colunas | migration |
+| `operator_rankings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `operator_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `operator_status_audit` | Audit log tracking operator status changes (activation, deactivation, removal) | 8 colunas | migration |
 | `packaging_checklist_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `packaging_defects` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `packaging_equipment` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | types.ts |
 | `packaging_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `packaging_sla_overrides` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `packaging_task_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `packaging_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
-| `packaging_waste` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | types.ts |
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `pre_production_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `prediction_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
@@ -106,7 +104,6 @@
 | `shift_handovers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `shift_occurrences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `shift_pending_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `shipment_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | types.ts |
 | `shipments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `shipping_providers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `spc_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
@@ -129,9 +126,8 @@
 | `telemetry_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `tpm_execution_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `tpm_execution_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `tpm_execution_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | types.ts |
 | `tpm_execution_parts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `tpm_execution_supplies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `tpm_execution_supplies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `tpm_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `tpm_notification_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `tpm_notification_queue` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
@@ -144,8 +140,6 @@
 | `user_mfa_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `user_notification_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `user_roles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `webauthn_challenges` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | types.ts |
-| `webauthn_credentials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | types.ts |
 | `webhook_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `app_role` (enum) | coordinator, operator, manager, admin |  | banco |
 | `sheet_status` (enum) | draft, published, review_needed |  | banco |
@@ -248,79 +242,31 @@
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `failed` para `login_status` usado no código não existe em nenhum enum do banco/TS | `filtra:src/features/admin/hooks/useMonitoringData.ts` |
 | coluna | coluna `processed` usada no código não existe no schema de `tpm_notification_queue` |  |
-| tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `backups` usada no código não existe nas migrations/types do repo | `supabase/functions/backup-scheduler/index.ts` |
-| tabela | tabela `contacts` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `dashboard_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `emails` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `fantasma` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `fixture_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `ghost_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `payments` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `runtime_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `so_teste` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `t` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `t1` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `tools_runtime` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | rls | `erp_api_keys`: RLS ligado sem nenhuma política → só service_role acessa |  |
-| rls | `geo_blocking_logs`: front faz SELECT mas nenhuma política RLS permite SELECT → vai falhar/retornar vazio para usuários | `src/features/admin/hooks/useGeoBlocking.ts` |
 | rls | `inventory_movements`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
 | rls | `inventory_movements`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
 | rls | `profiles`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |
 | rls | `tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/maintenance/components/TPMNotificationTemplates.tsx` |
-| edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `ghost-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `inexistente` invocada mas não existe em supabase/functions/ | `scripts/ai-context/cenarios.mjs` |
-| edge | edge function `literal-name` invocada mas não existe em supabase/functions/ | `scripts/graphify/tests/test_integration.py` |
-| edge | edge function `orphan-fn` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `other` invocada mas não existe em supabase/functions/ | `scripts/ai-context/cenarios.mjs` |
-| edge | edge function `runtime-fn` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `runtime-missing` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `send-email` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `sync-jobs` invocada mas não existe em supabase/functions/ | `scripts/graphify/tests/test_integration.py` |
-| edge | edge function `template-name` invocada mas não existe em supabase/functions/ | `scripts/graphify/tests/test_integration.py` |
-| edge | edge function `tools-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `dashboard_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `demo` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/test_snapshot.py` |
-| rpc | RPC `fixture_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `fn` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/snapshot.py` |
-| rpc | RPC `ghost_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `is_admin` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `nome` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/snapshot.py` |
-| rpc | RPC `r1` chamada mas não definida nas migrations/types | `scripts/ai-context/cenarios.mjs` |
-| rpc | RPC `runtime_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `tools_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/regras_negocio/generate.py` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataExport.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataImport.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useBulkActions.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/ReportBuilderPage.tsx` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup-scheduler/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/excel-export/index.ts` |
-| segurança | função `notify_tpm_email` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260508115941_72493014-c1ac-4815-aab4-748637090416.sql` |
-| segurança | função `trigger_send_tpm_email` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261019140000_validation_hardening.sql` |
-| segurança | função `audit_tpm_execution_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260508130112_1bb71df0-47bb-4121-9d87-b4c184c45325.sql` |
-| segurança | função `notify_loss_risk` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
-| segurança | função `log_technical_sheet_change` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260509120259_98878e05-6d31-44ea-971c-c50d9f484741.sql` |
-| segurança | função `audit_technical_sheet_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260509121606_76a3170f-ee88-4c8e-b50e-dc58317e4d7c.sql` |
-| segurança | função `increment_sheet_view_count` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260509121953_b8753901-5152-47a8-9b24-9de24614e2cb.sql` |
-| segurança | função `update_inventory_stock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260509124023_04666a2c-f77e-47dc-88f8-dd50f6615c3d.sql` |
-| segurança | função `check_job_overlap` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql` |
-| segurança | função `trigger_auto_promotion` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
-| segurança | função `create_technical_sheet_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512163310_dd03391e-12f0-470b-9f53-6e6371248d69.sql` |
-| segurança | função `audit_logistics_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512174222_10c215dd-dab4-4535-9789-a63c68021a74.sql` |
-| segurança | função `audit_job_status_change` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516174623_70372cef-5273-4e8f-8a85-b425f24bdae6.sql` |
-| segurança | função `validate_stock_before_movement` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260514211903_477568e2-65ad-42f1-ba19-c4d35bc22e9f.sql` |
-| segurança | função `log_job_status_change` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516172507_1193e061-8bc4-44b8-9cf5-ba855879c3bb.sql` |
-| segurança | função `check_and_notify_kpi_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516174623_70372cef-5273-4e8f-8a85-b425f24bdae6.sql` |
-| segurança | função `audit_job_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516180359_c5765536-5948-4b13-8df3-c01302f21cf6.sql` |
-| segurança | função `audit_machine_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260516180359_c5765536-5948-4b13-8df3-c01302f21cf6.sql` |
-| segurança | função `update_audit_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260520000001_security_rls_indexes_fixes.sql` |
-| segurança | função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql` |
-| segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
-| segurança | função `runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
+| segurança | função `trigger_send_tpm_email` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261019140000_validation_hardening.sql` |
+| segurança | função `audit_tpm_execution_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260508130112_1bb71df0-47bb-4121-9d87-b4c184c45325.sql` |
+| segurança | função `notify_loss_risk` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
+| segurança | função `increment_sheet_view_count` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260509121953_b8753901-5152-47a8-9b24-9de24614e2cb.sql` |
+| segurança | função `update_inventory_stock` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260509124023_04666a2c-f77e-47dc-88f8-dd50f6615c3d.sql` |
+| segurança | função `check_job_overlap` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql` |
+| segurança | função `trigger_auto_promotion` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
+| segurança | função `create_technical_sheet_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260512163310_dd03391e-12f0-470b-9f53-6e6371248d69.sql` |
+| segurança | função `audit_logistics_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260512174222_10c215dd-dab4-4535-9789-a63c68021a74.sql` |
+| segurança | função `update_audit_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260520000001_security_rls_indexes_fixes.sql` |
+| segurança | função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql` |
+| segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
+| segurança | função `runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
 | webhook | edge function `external-db-bridge` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/external-db-bridge/index.ts` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
@@ -331,7 +277,6 @@
 - `production_lots.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `push_notifications.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `login_audit.login_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `tpm_notification_templates.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `reward_redemptions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -343,8 +288,7 @@
 - `job_status_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cron_health_history.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `bitrix24_oauth_states.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `packaging_equipment.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 137/140 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `techniques`, `machines`, `jobs`, `profiles`, `user_roles`, `efficiency_alert_history`, `technical_conversations`, `technical_messages`, `qr_scan_history`, `bitrix24_sync_history`, `bitrix24_oauth_tokens`, `bitrix24_field_mappings` …
+- 129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `techniques`, `machines`, `jobs`, `profiles`, `user_roles`, `efficiency_alert_history`, `technical_conversations`, `technical_messages`, `qr_scan_history`, `bitrix24_sync_history`, `bitrix24_oauth_tokens`, `bitrix24_field_mappings` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes
