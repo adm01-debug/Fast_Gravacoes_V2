@@ -9,7 +9,8 @@ com autorização explícita para a sobreposição de arquivos. Nenhum motor cha
   restaura os bytes originais dos arquivos propostos caso qualquer gate falhe.
 - `node scripts/autofix/run.mjs --apply --commit --tests`: exige índice vazio, mede
   testes antes/depois e só então cria commit restrito aos próprios arquivos.
-  Falhas restauram os arquivos e a branch original; sucesso sem commit mantém a nova branch.
+  Falhas restauram os arquivos e a branch original; nenhuma proposta remove a branch vazia.
+  Uma proposta validada sem commit mantém a nova branch para revisão.
 - `npm run autofix:test`: regressões isoladas em diretórios temporários.
 
 Gates: projetos TypeScript app/node, ESLint dos arquivos alterados, baseline any,
