@@ -46,6 +46,7 @@ test-results/
 
 # Local architecture graphs and Python tooling (never ship in Vite/public).
 graphify-out/
+graphify-local-out/
 .graphify-cache/
 .graphify_cache/
 .venv-graphify/
