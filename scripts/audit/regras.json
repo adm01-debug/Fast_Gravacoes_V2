@@ -1,0 +1,38 @@
+{
+  "_como_usar": "Regras de negócio/segurança verificáveis por texto. Cada regra aponta arquivo(s) (aceita * e ** no caminho; vários arquivos contam como um texto só) e exige (deve_conter) ou proíbe (nao_deve_conter) expressões regulares. Quando uma regra falha, vira achado no relatório. Para proteger uma correção já feita contra regressão, basta acrescentar uma regra aqui — sem código e sem IA.",
+  "regras": [
+    {
+      "id": "mfa-unenroll-exige-challenge",
+      "titulo": "Desativar MFA exige challenge+verify TOTP antes do unenroll",
+      "severidade": "alta",
+      "arquivo": "src/features/auth/hooks/useMFA.ts*",
+      "deve_conter": ["mfa\\.challenge\\(", "mfa\\.verify\\("],
+      "por_que": "Sem isso, uma sessão roubada remove o segundo fator sem conhecer o código. Estava como bug em PENDENCIAS.md §4 e já foi corrigido."
+    },
+    {
+      "id": "web-push-payload-criptografado",
+      "titulo": "Web Push envia o payload criptografado (aes128gcm)",
+      "severidade": "alta",
+      "arquivo": "supabase/functions/send-push-notification/index.ts",
+      "deve_conter": ["encryptPushPayload\\(", "aes128gcm"],
+      "nao_deve_conter": ["body:\\s*payload\\s*[,}]"],
+      "por_que": "Payload em texto puro expõe o conteúdo das notificações ao serviço de push. Estava como bug em PENDENCIAS.md §4 e já foi corrigido."
+    },
+    {
+      "id": "cliente-supabase-sem-service-role",
+      "titulo": "Código do navegador não usa a chave service_role",
+      "severidade": "critica",
+      "arquivo": "src/integrations/supabase/client.ts",
+      "nao_deve_conter": ["service_role", "SERVICE_ROLE"],
+      "por_que": "A service_role ignora RLS; no bundle do navegador dá acesso total ao banco a qualquer visitante."
+    },
+    {
+      "id": "login-lockout-chamado-no-login",
+      "titulo": "Fluxo de login consulta o bloqueio por tentativas (check-login-lockout)",
+      "severidade": "alta",
+      "arquivo": "src/features/auth/**/*.ts*",
+      "deve_conter": ["check-login-lockout"],
+      "por_que": "A edge function existe para frear força bruta; sem chamador ela não protege nada."
+    }
+  ]
+}
