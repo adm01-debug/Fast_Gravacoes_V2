@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)",
    "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)",
    "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)",
    "chore(src): remove imports e declarações não usados (#149)",
-   "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)",
-   "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)"
+   "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

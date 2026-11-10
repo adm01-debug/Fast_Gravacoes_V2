@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6701c3d9f513f570a902983f1c3957dcf393685b` (2026-11-10T01:23:12Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9df0dd4de5a4deaf23d1d132cf6ff953dd62e0ec` (2026-11-10T10:42:45Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1468 |
 | arquivos_codigo | 1081 |
-| linhas_codigo | 171632 |
+| linhas_codigo | 171749 |
 | rotas | 58 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -256,8 +256,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6594 nós · 20108 arestas · 627 comunidades · grafo do commit `6701c3d9`
-- comunidades maiores: utils.ts (143), Card (142), card.tsx (141), cn (137), FuturisticBI.tsx (132), input.tsx (124), client.ts (105), useAuth (104), Breadcrumbs.tsx (100), snapshot.py (90), errorHandling.ts (88), HandoverDetailsModal.tsx (84)
+- 6604 nós · 20121 arestas · 630 comunidades · grafo do commit `9df0dd4d`
+- comunidades maiores: card.tsx (138), createAppError (114), input.tsx (111), cn (108), Button (104), MainLayout.tsx (103), client.ts (101), badge.tsx (97), recharts.ts (95), snapshot.py (90), .collect (88), gerar.mjs (82)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), .build() (scripts/graphify/tests/test_integration.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -345,6 +345,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-10 `9df0dd4` fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)
 - 2026-11-10 `6701c3d` fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)
 - 2026-11-09 `136dd36` fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)
 - 2026-11-09 `6c96376` chore(src): remove imports e declarações não usados (#149)
@@ -359,7 +360,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `c9814e8` fix(contexto): guard de segredos por ocorrência (#137)
 - 2026-11-08 `bce2374` feat(contexto): contexto autônomo para agentes de IA (#136)
 - 2026-11-07 `92a5fee` fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)
-- 2026-11-07 `d149e29` fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

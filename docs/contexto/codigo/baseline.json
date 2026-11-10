@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6701c3d9f513f570a902983f1c3957dcf393685b",
+  "commit": "9df0dd4de5a4deaf23d1d132cf6ff953dd62e0ec",
   "branch": "main",
-  "data_commit": "2026-11-10T01:23:12Z",
+  "data_commit": "2026-11-10T10:42:45Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9df0dd4",
+    "data": "2026-11-10",
+    "assunto": "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)"
+   },
    {
     "sha": "6701c3d",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "33983fd",
     "data": "2026-11-05",
     "assunto": "fix: adiciona --yes no supabase functions deploy para CI não-interativo (#123)"
-   },
-   {
-    "sha": "7b98977",
-    "data": "2026-11-02",
-    "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#122)"
    }
   ],
   "arquivos_mudados_7d": 368,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 30
+    "commits": 31
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1468,
   "arquivos_codigo": 1081,
-  "linhas_codigo": 171632,
+  "linhas_codigo": 171749,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -412,7 +412,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2694
+   "linhas": 2811
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -514,7 +514,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1816
+   "linhas": 1825
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",

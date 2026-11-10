@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6701c3d9f513f570a902983f1c3957dcf393685b",
+  "sha": "9df0dd4de5a4deaf23d1d132cf6ff953dd62e0ec",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 01:39 UTC",
+  "generated_at": "2026-11-10 10:43 UTC",
   "files_total": 1465,
   "code_files": 1335,
-  "code_lines": 186538
+  "code_lines": 186655
  },
  "version": "1.3.2",
- "facts_hash": "e0f353ab16f2d9c2",
+ "facts_hash": "9560e3dd9f57475b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26304,7 +26304,7 @@
   {
    "module": "scripts",
    "files": 28,
-   "lines": 10248,
+   "lines": 10365,
    "tables": [
     "a",
     "contacts",
@@ -67195,7 +67195,7 @@
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
-   "lines": 1816,
+   "lines": 1825,
    "exports": [
     "def env_int",
     "def log",
@@ -67300,11 +67300,13 @@
    ],
    "rule_comments": [
     "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout).",
+    "A regra acima exige ':' ou '=' entre nome e valor; aqui o separador é vírgula e o segredo do",
     "Role sem SELECT em auth.* (ex.: role de leitura do workflow) nao pode derrubar a secao inteira:",
     "Auth\\n\", \"Contagens de usuários em `stats.md` (apenas agregados — sem dados pessoais).\\n\"]",
     "Vault (somente nomes — valores nunca são exportados)\\n\\n\" + banner(\"vault\") + md_table(",
     "# Secrets (apenas nomes)\\n\\n\" + md_table([\"nome\"], [[s] for s in api_.get(\"secrets_names\") or []]))",
-    "mantém no máximo 300 entradas"
+    "mantém no máximo 300 entradas",
+    "seção reaproveitada (carry-over) não pode republicar um segredo antigo."
    ],
    "doc": "!/usr/bin/env python3",
    "temporal": [
@@ -67318,7 +67320,7 @@
   },
   "scripts/supabase_snapshot/test_snapshot.py": {
    "path": "scripts/supabase_snapshot/test_snapshot.py",
-   "lines": 878,
+   "lines": 986,
    "exports": [
     "class OfflineConnection",
     "def function",
@@ -67334,7 +67336,8 @@
     "def source_freshness_case",
     "class SnapshotDBStatsTests",
     "class SnapshotConfigurationTests",
-    "def db_stats_case"
+    "def db_stats_case",
+    "class ScrubTests"
    ],
    "rpc": [
     "demo"
@@ -67353,7 +67356,9 @@
     "não pode apagar callers da seção que veio do histórico",
     "Falha da coleta não pode transformar registros conhecidos em remoções.",
     "introspect_db reutiliza a lista anterior; o mapa não pode alterar esse histórico em memória.",
-    "Aceita somente um identificador SQL delimitado, não texto cru."
+    "Aceita somente um identificador SQL delimitado, não texto cru.",
+    "Não pode mutilar o que não é segredo: nomes de chave, mensagens, tipos, valores curtos.",
+    "agora, o carry-over não pode republicá-lo."
    ],
    "doc": "!/usr/bin/env python3"
   },
@@ -92828,10 +92833,20 @@
   }
  },
  "git": {
-  "sha": "6701c3d9f513f570a902983f1c3957dcf393685b",
+  "sha": "9df0dd4de5a4deaf23d1d132cf6ff953dd62e0ec",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9df0dd4",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)",
+    "files": [
+     "scripts/supabase_snapshot/snapshot.py",
+     "scripts/supabase_snapshot/test_snapshot.py"
+    ]
+   },
    {
     "sha": "6701c3d",
     "date": "2026-11-09",
@@ -93465,15 +93480,6 @@
      ".env.example",
      "src/pages/MasterAPIPage.tsx"
     ]
-   },
-   {
-    "sha": "c3f0227",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "docs(analise): reconciliação de auditorias e planos anteriores (#117)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -93482,8 +93488,16 @@
     4
    ],
    [
+    "scripts/supabase_snapshot/snapshot.py",
+    3
+   ],
+   [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
+   ],
+   [
+    "scripts/supabase_snapshot/test_snapshot.py",
+    2
    ],
    [
     "docs/agentes/github-ci.md",
@@ -93547,14 +93561,6 @@
    ],
    [
     "src/pages/MasterAPIPage.tsx",
-    2
-   ],
-   [
-    "src/pages/PublicTrackingPage.tsx",
-    2
-   ],
-   [
-    ".agents/skills/fast-grava-es-v2/SKILL.md",
     2
    ]
   ]
