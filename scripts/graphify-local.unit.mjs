@@ -12,7 +12,8 @@ import {
   lstat,
   rename,
   truncate,
-} from 'node:fs/promises';
+    utimes,
+  } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -319,7 +320,26 @@ test('trava local impede concorrência e recupera apenas dono comprovadamente mo
   await recovered();
 });
 
-test('lease global é interoperável com flock e libera FD ao terminar', async (t) => {
+  test('trava órfã sem owner.json é recuperada depois da janela antiga e recusada antes', async (t) => {
+    const f = await fixture(t),
+      lock = path.join(f.dir, 'orphan.lock');
+    await mkdir(lock);
+    await writeFile(
+      path.join(lock, 'owner.json'),
+      JSON.stringify({ pid: 2147483647, token: 'old' })
+    );
+    await rm(path.join(lock, 'owner.json'));
+    // owner.json ausente e trava jovem → ainda busy
+    await assert.rejects(acquire(lock), (e) => e.status === 'busy');
+    // owner.json ausente e trava antiga → órfã recuperada
+    const past = new Date(Date.now() - 60_000);
+    await utimes(lock, past, past);
+    const recovered = await acquire(lock);
+    await recovered();
+    await assert.rejects(readdir(lock), /ENOENT/);
+  });
+
+  test('lease global é interoperável com flock e libera FD ao terminar', async (t) => {
   const f = await fixture(t),
     file = path.join(f.dir, 'shared.lock'),
     release = await acquireGlobal(file);

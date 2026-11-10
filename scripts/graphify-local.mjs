@@ -243,30 +243,50 @@ export async function acquire(dir) {
     } catch {
       fail('Trava em recuperação por outro executor', 'busy');
     }
-    try {
-      let owner;
-      try {
-        owner = await json(path.join(dir, 'owner.json'));
-      } catch {
-        fail('Trava sem dono verificável', 'busy');
-      }
-      if (!Number.isSafeInteger(owner.pid) || owner.pid <= 1)
-        fail('Dono da trava inválido', 'busy');
-      let stale = false;
-      try {
-        process.kill(owner.pid, 0);
-      } catch (error) {
-        stale = error.code === 'ESRCH';
-      }
-      if (!stale) fail('Outra execução usa o grafo', 'busy');
-      const old = `${dir}.stale-${randomUUID()}`;
-      await rename(dir, old);
-      try {
-        await mkdir(dir, { mode: 0o700 });
-      } finally {
-        await rm(old, { recursive: true, force: true });
-      }
-    } finally {
+    const ownerFile = path.join(dir, 'owner.json');
+        try {
+          let owner;
+          let recovered = false;
+          try {
+            owner = await json(ownerFile);
+          } catch {
+            // Trava criada (mkdir) mas dono ainda não registrado — provável órfã
+            // de crash entre mkdir e a gravação atômica do owner.json. Só
+            // recupera se for antiga o bastante para descartar o executor
+            // honestamente em andamento (janela mkdir→owner é de ms).
+            const STALE_MS = 30_000;
+            const info = await lstat(dir);
+            const age = Date.now() - info.mtimeMs;
+            if (age < STALE_MS) fail('Trava sem dono verificável', 'busy');
+            const old = `${dir}.stale-${randomUUID()}`;
+            await rename(dir, old);
+            try {
+              await mkdir(dir, { mode: 0o700 });
+            } finally {
+              await rm(old, { recursive: true, force: true });
+            }
+            owner = { pid: process.pid };
+            recovered = true;
+          }
+          if (!recovered) {
+            if (!Number.isSafeInteger(owner.pid) || owner.pid <= 1)
+              fail('Dono da trava inválido', 'busy');
+            let stale = false;
+            try {
+              process.kill(owner.pid, 0);
+            } catch (error) {
+              stale = error.code === 'ESRCH';
+            }
+            if (!stale) fail('Outra execução usa o grafo', 'busy');
+            const old = `${dir}.stale-${randomUUID()}`;
+            await rename(dir, old);
+            try {
+              await mkdir(dir, { mode: 0o700 });
+            } finally {
+              await rm(old, { recursive: true, force: true });
+            }
+          }
+        } finally {
       await rm(recovery, { recursive: true, force: true });
     }
   }
