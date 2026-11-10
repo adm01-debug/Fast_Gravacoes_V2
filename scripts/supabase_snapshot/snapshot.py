@@ -180,6 +180,7 @@ def prepare_output_directory() -> None:
 
 def record_error(section: str, err: Exception | str) -> None:
     text = str(err).strip().splitlines()[0] if str(err).strip() else repr(err)
+    text = scrub(text)  # mensagem de erro do driver pode trazer a DSN com senha
     ERRORS.append({"section": section, "error": text[:500]})
     log(f"ERRO em {section}: {text[:300]}")
 
@@ -310,6 +311,10 @@ SCRUB_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]{16,}"), r"\1[REDACTED]"),
     # valor precisa parecer token: >= 16 chars, sem espaço, com pelo menos um dígito (evita redigir prosa)
     (re.compile(r"""(?i)((?:apikey|api_key|x-api-key|authorization|token|secret|password|passwd|service_role_key|anon_key)\s*["']?\s*[:=]\s*["']?)(?=[^"'\s,;)}]*\d)[^"'\s,;)}]{16,}"""), r"\1[REDACTED]"),
+    # par 'nome-sensível', 'valor' — jsonb_build_object('x-cron-secret','<hex>'), VALUES, array de headers.
+    # A regra acima exige ':' ou '=' entre nome e valor; aqui o separador é vírgula e o segredo do
+    # pg_cron saía em texto puro em cron.md/snapshot.json. Mesmo critério de "parece token".
+    (re.compile(r"""(?i)((['"])[\w.-]*(?:secret|token|api[_-]?key|authorization|password|passwd|credential)[\w.-]*\2\s*,\s*(['"]))(?=[^'"\s]*\d)[^'"\s]{16,}(?=\3)"""), r"\1[REDACTED]"),
     # PASSWORD 'x' em DDL de role
     (re.compile(r"(?i)(password\s+)'[^']*'"), r"\1'[REDACTED]'"),
     # DSN com senha
@@ -1746,6 +1751,10 @@ def main() -> int:
             previous = json.loads(prev_path.read_text(encoding="utf-8"))
             if previous.get("format_version") != FORMAT_VERSION:
                 previous = None
+            else:
+                # O snapshot anterior pode ter sido gravado por uma versão com redação mais fraca:
+                # seção reaproveitada (carry-over) não pode republicar um segredo antigo.
+                previous = scrub_value(previous)
         except Exception:  # noqa: BLE001
             previous = None
 
