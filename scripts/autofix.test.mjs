@@ -161,3 +161,95 @@ test('branch automática existente nunca é reutilizada', (t) => {
   assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
   assert.match(read(join(dir, 'src/app.ts')), /unused = 42/);
 });
+
+test('sync preserva untracked mesmo quando upstream passa a rastrear o mesmo caminho', (t) => {
+  const dir = fixture(t);
+  const remote = mkdtempSync(join(tmpdir(), 'fast-remote-'));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  git(remote, 'init', '--bare');
+  git(dir, 'remote', 'add', 'origin', remote);
+  git(dir, 'push', '-u', 'origin', 'trabalho');
+  const upstream = mkdtempSync(join(tmpdir(), 'fast-upstream-'));
+  t.after(() => rmSync(upstream, { recursive: true, force: true }));
+  git(upstream, 'clone', '-b', 'trabalho', remote, '.');
+  git(upstream, 'config', 'user.email', 'teste@example.invalid');
+  git(upstream, 'config', 'user.name', 'Teste');
+  writeFileSync(join(upstream, 'colisao.txt'), 'remoto\n');
+  git(upstream, 'add', 'colisao.txt'); git(upstream, 'commit', '-m', 'arquivo novo'); git(upstream, 'push');
+  writeFileSync(join(dir, 'colisao.txt'), 'trabalho local nao rastreado\n');
+  const head = git(dir, 'rev-parse', 'HEAD');
+  const r = run('bash', [join(root, 'scripts/sync/sincronizar.sh')], dir,
+    { FG_REPO: dir, FG_REPORTS: join(remote, 'relatorios') });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(read(join(dir, 'colisao.txt')), 'trabalho local nao rastreado\n');
+  assert.equal(git(dir, 'rev-parse', 'HEAD'), head);
+  assert.match(r.stdout, /alterações locais/);
+});
+
+test('sync com árvore limpa avança até upstream', (t) => {
+  const dir = fixture(t);
+  const remote = mkdtempSync(join(tmpdir(), 'fast-sync-clean-'));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  git(remote, 'init', '--bare'); git(dir, 'remote', 'add', 'origin', remote); git(dir, 'push', '-u', 'origin', 'trabalho');
+  const upstream = mkdtempSync(join(tmpdir(), 'fast-peer-clean-'));
+  t.after(() => rmSync(upstream, { recursive: true, force: true }));
+  git(upstream, 'clone', '-b', 'trabalho', remote, '.');
+  git(upstream, 'config', 'user.email', 'teste@example.invalid'); git(upstream, 'config', 'user.name', 'Teste');
+  writeFileSync(join(upstream, 'novo.txt'), 'remoto\n'); git(upstream, 'add', '.'); git(upstream, 'commit', '-m', 'novo'); git(upstream, 'push');
+  const r = run('bash', [join(root, 'scripts/sync/sincronizar.sh')], dir,
+    { FG_REPO: dir, FG_REPORTS: join(remote, 'relatorios') });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(read(join(dir, 'novo.txt')), 'remoto\n');
+  assert.equal(git(dir, 'rev-parse', 'HEAD'), git(upstream, 'rev-parse', 'HEAD'));
+});
+
+function routineFixture(t) {
+  const dir = fixture(t);
+  const home = mkdtempSync(join(tmpdir(), 'fast-routine-'));
+  t.after(() => rmSync(home, { recursive: true, force: true }));
+  mkdirSync(join(home, 'projetos'), { recursive: true });
+  symlinkSync(dir, join(home, 'projetos/Fast_Gravacoes_V2'), 'dir');
+  mkdirSync(join(dir, 'scripts/audit'));
+  writeFileSync(join(dir, 'scripts/audit/run.mjs'), `
+import fs from 'node:fs';
+if(process.env.FAIL_AUDIT) process.exit(2);
+fs.mkdirSync('.audit',{recursive:true});
+fs.writeFileSync('.audit/findings.json',JSON.stringify({findings:[]}));
+for(const name of ['relatorio.md','fila-para-decisao.md']) fs.writeFileSync('.audit/'+name,'audit fixture');
+console.log('[audit] 0 achados');
+`);
+  git(dir, 'add', 'scripts/audit'); git(dir, 'commit', '-m', 'audit fixture');
+  git(dir, 'branch', 'main'); git(dir, 'remote', 'add', 'origin', dir);
+  return { dir, home };
+}
+
+test('rotina retorna falha de auditoria ao agendador e não cria branch de correção', (t) => {
+  const { dir, home } = routineFixture(t);
+  const r = run(process.execPath, [join(root, 'scripts/rotina/rotina.mjs')], dir,
+    { FG_HOME: home, ROTINA_SCRIPTS: join(dir, 'scripts'), FAIL_AUDIT: '1' });
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(read(join(home, 'relatorios/fast-gravacoes-v2/ULTIMO.md')), /auditoria falhou/i);
+  assert.equal(git(dir, 'branch', '--list', 'autofix/auto-*'), '');
+});
+
+test('rotina retorna regressão de teste ao agendador sem commit de correção', (t) => {
+  const { dir, home } = routineFixture(t);
+  const head = git(dir, 'rev-parse', 'HEAD');
+  const r = run(process.execPath, [join(root, 'scripts/rotina/rotina.mjs')], dir,
+    { FG_HOME: home, ROTINA_SCRIPTS: join(dir, 'scripts'), FAIL_TEST_AFTER: '1' });
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(read(join(home, 'relatorios/fast-gravacoes-v2/ULTIMO.md')), /FALHOU/);
+  assert.equal(git(dir, 'branch', '--list', 'autofix/auto-*'), '');
+  assert.equal(git(dir, 'rev-parse', 'HEAD'), head);
+});
+
+test('audit com checagem quebrada não devolve sucesso', (t) => {
+  const dir = fixture(t);
+  mkdirSync(join(dir, 'scripts/audit'));
+  cpSync(join(root, 'scripts/audit/run.mjs'), join(dir, 'scripts/audit/run.mjs'));
+  // Falta regras.json: a checagem deve registrar falha e propagá-la ao agendador.
+  const r = run(process.execPath, ['scripts/audit/run.mjs'], dir);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  const report = JSON.parse(read(join(dir, '.audit/findings.json')));
+  assert.ok(report.checks.some((c) => c.ok === false));
+});

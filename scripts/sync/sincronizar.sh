@@ -21,7 +21,7 @@
 # Log: ~/relatorios/fast-gravacoes-v2/sync.log   Repo: $FG_REPO (padrão ~/projetos/Fast_Gravacoes_V2)
 set -euo pipefail
 REPO="${FG_REPO:-$HOME/projetos/Fast_Gravacoes_V2}"
-LOGDIR="$HOME/relatorios/fast-gravacoes-v2"
+LOGDIR="${FG_REPORTS:-$HOME/relatorios/fast-gravacoes-v2}"
 LOG="$LOGDIR/sync.log"
 mkdir -p "$LOGDIR"
 [ -f "$LOG" ] && [ "$(stat -c %s "$LOG")" -gt 1048576 ] && mv -f "$LOG" "$LOG.1"

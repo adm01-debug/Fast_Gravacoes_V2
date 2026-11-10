@@ -16,7 +16,7 @@ import { createHash } from 'node:crypto';
 import { homedir, loadavg } from 'node:os';
 import { join } from 'node:path';
 
-const HOME = homedir();
+const HOME = process.env.FG_HOME || homedir();
 const REPO = join(HOME, 'projetos/Fast_Gravacoes_V2');
 const STORE = join(HOME, '.local/share/fast-gravacoes-rotina');
 // ROTINA_SCRIPTS permite testar com os scripts do repo, sem instalar nada (ex.: ROTINA_SCRIPTS=$PWD/scripts)

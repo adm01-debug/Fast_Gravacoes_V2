@@ -51,12 +51,14 @@ function add(check, sev, titulo, arquivo, linha, evidencia, sugestao, extra = {}
 }
 function defCheck(id, titulo, limite, fn) {
   const before = findings.length;
+  let ok = true;
   try {
     fn();
   } catch (e) {
+    ok = false;
     add(id, 'baixa', `A checagem "${id}" falhou ao rodar`, '-', 0, String(e.message || e), 'Corrigir o script de auditoria');
   }
-  checks.push({ id, titulo, limite, total: findings.length - before });
+  checks.push({ id, titulo, limite, total: findings.length - before, ok });
 }
 
 // ---------- 1. RLS: políticas de escrita permissivas (estado final das migrations) ----------
@@ -419,3 +421,6 @@ console.log(`[audit] ${findings.length} achados (crítica ${sevCount('critica')}
 for (const c of checks) console.log(`  ${String(c.total).padStart(4)}  ${c.id}`);
 console.log('[audit] relatório em .audit/relatorio.md e .audit/fila-para-decisao.md');
 if (args.includes('--estrito') && novos.some((x) => x.sev === 'critica' || x.sev === 'alta')) process.exit(1);
+
+// Uma checagem quebrada não é evidência de auditoria concluída.
+if (checks.some((c) => !c.ok)) process.exitCode = 1;
