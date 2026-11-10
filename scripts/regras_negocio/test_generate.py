@@ -371,6 +371,193 @@ class MigrationReplayTests(RepoFixture):
         self.assertEqual(schema["ignored_sources"], ["supabase/fix_staff_view_policies.sql"])
 
 
+class SqlLexingTests(RepoFixture):
+    """Literais, comentários e identificadores: o que parece SQL dentro deles não pode quebrar nem inventar statements."""
+
+    def test_comment_markers_and_semicolons_inside_strings_do_not_break_statements(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.s (id int, note text DEFAULT 'a -- b', url text DEFAULT 'x;y', g text DEFAULT '/* z');\n"
+                                  "-- comentário com ' aspa solta\nCREATE TABLE public.s2 (id int); /* bloco /* aninhado */ ainda comentário */\n")
+        tables = self.schema()["tables"]
+        self.assertEqual(set(tables), {"s", "s2"})
+        self.assertEqual({c["name"]: c["type"] for c in tables["s"]["columns"]},
+                         {"id": "int", "note": "text DEFAULT 'a -- b'", "url": "text DEFAULT 'x;y'", "g": "text DEFAULT '/* z'"})
+
+    def test_dollar_tag_with_digit_keeps_body_in_one_statement(self):
+        self.write(MIG + "1.sql", "CREATE FUNCTION f1() RETURNS int LANGUAGE sql AS $fn1$ SELECT 1; -- não é fim\n SELECT 2; $fn1$;\n"
+                                  "CREATE TABLE public.after_fn (id int);\n")
+        schema = self.schema()
+        self.assertIn("after_fn", schema["tables"])
+        self.assertEqual(schema["functions"]["f1"]["body"], "SELECT 1; SELECT 2;")
+
+    def test_escape_string_with_backslash_quote_does_not_open_a_literal(self):
+        self.write(MIG + "1.sql", "INSERT INTO x VALUES (E'it\\'s; ok');\nCREATE TABLE public.after_e (id int);\n")
+        self.assertEqual(set(self.schema()["tables"]), {"after_e"})
+
+    def test_semicolon_inside_quoted_identifier_does_not_split_policy(self):
+        self.write(MIG + "1.sql", BASE_TABLE + 'CREATE POLICY "Users can do it; really" ON public.t FOR SELECT USING (true);\nCREATE TABLE public.k (id int);\n')
+        schema = self.schema()
+        self.assertEqual([(p["name"], p["using"]) for p in schema["policies"]], [("Users can do it; really", "true")])
+        self.assertIn("k", schema["tables"])
+
+    def test_using_text_inside_with_check_literal_or_join_is_not_the_using_clause(self):
+        self.write(MIG + "1.sql", BASE_TABLE + "CREATE POLICY only_check ON public.t FOR INSERT WITH CHECK (status = 'using (x)');\n"
+                   "CREATE POLICY joined ON public.t FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.t a JOIN public.t b USING (id)));\n")
+        policies = {p["name"]: p for p in self.schema()["policies"]}
+        self.assertEqual((policies["only_check"]["using"], policies["only_check"]["check"]), ("", "status = 'using (x)'"))
+        self.assertEqual(policies["joined"]["using"], "")
+        self.assertIn("USING (id)", policies["joined"]["check"])
+
+    def test_utf16_file_with_bom_is_decoded(self):
+        file = self.root / MIG / "1.sql"
+        file.parent.mkdir(parents=True)
+        file.write_bytes(b"\xff\xfe" + "CREATE TABLE public.u16 (id int);".encode("utf-16-le"))
+        self.files.append(file)
+        self.assertEqual(set(self.schema()["tables"]), {"u16"})
+
+
+class SqlIdentityTests(RepoFixture):
+    """Identificadores como o Postgres os guarda: sem aspas dobra para minúsculas; com aspas é exato."""
+
+    def test_unquoted_identifiers_are_case_insensitive_across_statements(self):
+        self.write(MIG + "1.sql", "CREATE TABLE Public.Orders (Id int, Status text);\nALTER TABLE ORDERS ENABLE ROW LEVEL SECURITY;\n"
+                   "CREATE POLICY P ON orders FOR SELECT USING (true);\nCREATE POLICY q ON ORDERS FOR SELECT USING (true);\n"
+                   "CREATE TRIGGER Tg BEFORE INSERT ON Orders FOR EACH ROW EXECUTE FUNCTION F();\n")
+        self.write(MIG + "2.sql", "DROP POLICY P ON public.ORDERS;\nALTER POLICY Q ON Orders USING (false);\nDROP TRIGGER TG ON orders;\n"
+                                  "ALTER TABLE orders ADD COLUMN Extra int;\n")
+        schema = self.schema()
+        self.assertEqual(list(schema["tables"]), ["orders"])
+        self.assertEqual([c["name"] for c in schema["tables"]["orders"]["columns"]], ["id", "status", "extra"])
+        self.assertEqual([(p["name"], p["table"], p["using"]) for p in schema["policies"]], [("q", "orders", "false")])
+        self.assertEqual((schema["triggers"], schema["rls"]), ([], {"orders": "enabled"}))
+
+    def test_quoted_identifiers_keep_case_and_spaces(self):
+        self.write(MIG + "1.sql", 'CREATE TABLE "public"."Quoted Table" (id int);\nCREATE TABLE public."MixedCase" ("Col A" text, plain int);\n'
+                                  'ALTER TABLE "MixedCase" ADD COLUMN "Other B" int;\n')
+        tables = self.schema()["tables"]
+        self.assertEqual(set(tables), {"Quoted Table", "MixedCase"})
+        self.assertEqual([(c["name"], c["type"]) for c in tables["MixedCase"]["columns"]],
+                         [("Col A", "text"), ("plain", "int"), ("Other B", "int")])
+
+    def test_columns_named_like_constraint_keywords_are_columns(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.c (checklist_id uuid NOT NULL, checked_at timestamptz, unique_code text, likes int,\n"
+                                  "  CHECK (likes >= 0), UNIQUE (unique_code));\n")
+        table = self.schema()["tables"]["c"]
+        self.assertEqual([c["name"] for c in table["columns"]], ["checklist_id", "checked_at", "unique_code", "likes"])
+        self.assertEqual(table["constraints"], ["CHECK (likes >= 0)", "UNIQUE (unique_code)"])
+
+
+class SqlObjectLifecycleTests(RepoFixture):
+    def test_enum_values_keep_commas_parentheses_and_escaped_quotes(self):
+        self.write(MIG + "1.sql", "CREATE TYPE st AS ENUM ('a', 'b,c', 'd)e', 'it''s');\nALTER TYPE st ADD VALUE IF NOT EXISTS 'x''y';\n")
+        self.assertEqual(self.schema()["enums"], {"st": ["a", "b,c", "d)e", "it's", "x'y"]})
+
+    def test_drop_type_and_rename_type_and_rename_value(self):
+        self.write(MIG + "1.sql", "CREATE TYPE gone AS ENUM ('a');\nCREATE TYPE old AS ENUM ('a', 'b');\nCREATE TYPE keep AS ENUM ('p', 'q');\n")
+        self.write(MIG + "2.sql", "DROP TYPE IF EXISTS gone CASCADE;\nALTER TYPE old RENAME TO newer;\nALTER TYPE keep RENAME VALUE 'p' TO 'it''s';\n")
+        self.assertEqual(self.schema()["enums"], {"newer": ["a", "b"], "keep": ["it's", "q"]})
+
+    def test_drop_view_removes_views_and_materialized_views(self):
+        self.write(MIG + "1.sql", "CREATE VIEW public.v AS SELECT 1;\nCREATE OR REPLACE VIEW public.w AS SELECT 2;\nCREATE MATERIALIZED VIEW mv AS SELECT 3;\n"
+                                  "CREATE VIEW public.keep AS SELECT 4;\n")
+        self.write(MIG + "2.sql", "DROP VIEW IF EXISTS public.v, w;\nDROP MATERIALIZED VIEW mv;\n")
+        self.assertEqual(list(self.schema()["views"]), ["keep"])
+
+    def test_drop_function_removes_only_the_dropped_overload(self):
+        self.write(MIG + "1.sql", "CREATE FUNCTION f(a int) RETURNS int LANGUAGE sql AS $$ select 1 $$;\n"
+                                  "CREATE FUNCTION f(a text) RETURNS int LANGUAGE sql SECURITY DEFINER AS $$ select 2 $$;\n"
+                                  "CREATE FUNCTION g(x timestamptz, y numeric(10,2)) RETURNS int LANGUAGE sql AS $$ select 3 $$;\n"
+                                  "CREATE FUNCTION h() RETURNS int LANGUAGE sql AS $$ select 4 $$;\n")
+        self.write(MIG + "2.sql", "DROP FUNCTION f(text);\nDROP FUNCTION IF EXISTS public.g(timestamp with time zone, numeric), h CASCADE;\n")
+        functions = self.schema()["functions"]
+        self.assertEqual({k: v["security_definer"] for k, v in functions.items()}, {"f": False})
+        self.assertEqual(functions["f"]["args"], "a int")
+
+    def test_overloads_coexist_and_create_or_replace_hits_the_same_signature(self):
+        self.write(MIG + "1.sql", "CREATE FUNCTION f(a int) RETURNS int LANGUAGE sql AS $$ select 1 $$;\n"
+                                  "CREATE FUNCTION f(a text) RETURNS int LANGUAGE sql AS $$ select 2 $$;\n"
+                                  "CREATE OR REPLACE FUNCTION f(b integer) RETURNS int LANGUAGE sql AS $$ select 9 $$;\n")
+        self.write(MIG + "2.sql", "ALTER FUNCTION f(text) SECURITY DEFINER;\n")
+        functions = self.schema()["functions"]
+        self.assertEqual({k: (v["body"], v["security_definer"]) for k, v in functions.items()},
+                         {"f": ("select 9", False), "f(a text)": ("select 2", True)})
+
+    def test_same_function_name_in_different_schemas_is_kept_apart(self):
+        self.write(MIG + "1.sql", "CREATE FUNCTION app_private.has_role() RETURNS bool LANGUAGE sql SECURITY DEFINER SET search_path = '' AS $$ select true $$;\n"
+                                  "CREATE FUNCTION public.has_role() RETURNS bool LANGUAGE sql AS $$ select false $$;\n")
+        functions = self.schema()["functions"]
+        self.assertEqual({k: (v["security_definer"], v["body"]) for k, v in functions.items()},
+                         {"app_private.has_role": (True, "select true"), "has_role": (False, "select false")})
+
+    def test_force_row_level_security_alone_does_not_turn_rls_on(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.a (id int);\nALTER TABLE public.a FORCE ROW LEVEL SECURITY;\n"
+                                  "CREATE TABLE public.b (id int);\nALTER TABLE public.b ENABLE ROW LEVEL SECURITY;\nALTER TABLE public.b FORCE ROW LEVEL SECURITY;\n"
+                                  "ALTER TABLE public.b NO   FORCE ROW LEVEL SECURITY;\n"
+                                  "CREATE TABLE public.c (id int);\nALTER TABLE public.c FORCE ROW LEVEL SECURITY;\nALTER TABLE public.c ENABLE ROW LEVEL SECURITY;\n")
+        self.assertEqual(self.schema()["rls"], {"a": "disabled", "b": "enabled", "c": "forced"})
+
+    def test_disable_and_enable_trigger_follow_the_snapshot_labels(self):
+        self.write(MIG + "1.sql", BASE_TABLE + "CREATE FUNCTION f() RETURNS trigger LANGUAGE plpgsql AS $$ begin return new; end $$;\n"
+                   "CREATE TRIGGER a BEFORE INSERT ON public.t FOR EACH ROW EXECUTE FUNCTION f();\n"
+                   "CREATE TRIGGER b BEFORE INSERT ON public.t FOR EACH ROW EXECUTE FUNCTION f();\n"
+                   "CREATE TRIGGER c BEFORE INSERT ON public.t FOR EACH ROW EXECUTE FUNCTION f();\n"
+                   "ALTER TABLE public.t DISABLE TRIGGER a;\nALTER TABLE public.t DISABLE TRIGGER b;\nALTER TABLE public.t ENABLE TRIGGER b;\n"
+                   "ALTER TABLE public.t ENABLE ALWAYS TRIGGER c;\n")
+        self.assertEqual({t["name"]: t["when"] for t in self.schema()["triggers"]},
+                         {"a": "BEFORE INSERT [DISABLED]", "b": "BEFORE INSERT", "c": "BEFORE INSERT [ALWAYS]"})
+
+    def test_migrations_apply_in_numeric_order_not_text_order(self):
+        self.write(MIG + "10_add.sql", "ALTER TABLE public.o ADD COLUMN x int;\n")
+        self.write(MIG + "9_create.sql", "CREATE TABLE public.o (id int);\n")
+        schema = self.schema()
+        self.assertEqual([c["name"] for c in schema["tables"]["o"]["columns"]], ["id", "x"])
+        self.assertEqual(schema["sources"], [MIG + "9_create.sql", MIG + "10_add.sql"])
+
+
+class SqlTableDerivationTests(RepoFixture):
+    def test_create_table_like_copies_columns_and_only_included_defaults(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.base (id int DEFAULT 1, name text NOT NULL, CONSTRAINT pos CHECK (id > 0));\n"
+                                  "CREATE TABLE public.plain (LIKE public.base, extra int);\n"
+                                  "CREATE TABLE public.full_ (LIKE public.base INCLUDING ALL);\n")
+        self.write(MIG + "2.sql", "ALTER TABLE public.base ADD COLUMN later int;\n")
+        tables = self.schema()["tables"]
+        self.assertEqual([(c["name"], c["type"]) for c in tables["plain"]["columns"]], [("id", "int"), ("name", "text NOT NULL"), ("extra", "int")])
+        self.assertEqual([(c["name"], c["type"]) for c in tables["full_"]["columns"]], [("id", "int DEFAULT 1"), ("name", "text NOT NULL")])
+        self.assertEqual((tables["plain"]["constraints"], tables["full_"]["constraints"]), ([], ["CONSTRAINT pos CHECK (id > 0)"]))
+        self.assertEqual([c["name"] for c in tables["base"]["columns"]], ["id", "name", "later"])
+
+    def test_partition_of_inherits_parent_columns(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.p (id int, day date) PARTITION BY RANGE (day);\n"
+                                  "CREATE TABLE public.p1 PARTITION OF public.p FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');\n")
+        schema = self.schema()
+        self.assertEqual([c["name"] for c in schema["tables"]["p1"]["columns"]], ["id", "day"])
+        self.assertEqual(schema["unparsed"], [])
+
+    def test_ctas_and_unknown_origins_are_registered_and_reported(self):
+        self.write(MIG + "1.sql", "CREATE TABLE public.ctas AS SELECT 1 AS x;\nCREATE TABLE public.lk (LIKE public.nowhere INCLUDING ALL);\n"
+                                  "CREATE TABLE public.orphan PARTITION OF public.nowhere DEFAULT;\n"
+                                  "CREATE FUNCTION public.sql_body() RETURNS int LANGUAGE sql AS 'select 1';\n")
+        schema = self.schema()
+        self.assertEqual({k: v["columns"] for k, v in schema["tables"].items()}, {"ctas": [], "lk": [], "orphan": []})
+        self.assertEqual(schema["functions"], {})
+        self.assertEqual(len(schema["unparsed"]), 4)
+        self.assertEqual({u["src"] for u in schema["unparsed"]}, {MIG + "1.sql"})
+        for text, entry in zip(("`ctas` criada por CREATE TABLE … AS", "`lk`: LIKE `nowhere`", "`orphan` é partição de `nowhere`", "CREATE FUNCTION sem corpo"),
+                               schema["unparsed"]):
+            self.assertIn(text, entry["what"])
+        self.cli()
+        warning = [a for a in self.out_json("manifest.json")["avisos"] if "não reconstrói" in a]
+        self.assertEqual(len(warning), 1)
+        self.assertIn("4 trecho(s) de SQL", warning[0])
+        self.assertIn("CREATE TABLE … AS", warning[0])
+
+    def test_types_file_functions_block_lists_only_function_names(self):
+        self.write("src/integrations/supabase/types.ts",
+                   "export type Database = {\n  public: {\n    Tables: {\n      t: {\n        Row: {\n          id: string\n        }\n      }\n    }\n"
+                   "    Views: {\n      [_ in never]: never\n    }\n    Functions: {\n      one_line: { Args: never; Returns: undefined }\n"
+                   "      multi: {\n        Args: {\n          p_id: string\n        }\n        Returns: string\n      }\n    }\n  }\n}\n")
+        self.assertEqual(sorted(self.schema()["functions"]), ["multi", "one_line"])
+
+
 class CodeExtractionTests(RepoFixture):
     def analyze(self, name, content):
         return generator.analyze_code_file(self.write(name, content), self.root)
