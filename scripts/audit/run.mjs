@@ -40,14 +40,25 @@ const isTest = (f) => /\.(test|spec)\.[tj]sx?$/.test(f) || /(^|\/)(test|tests|__
 const srcFiles = tracked.filter((f) => /^src\/.*\.(ts|tsx)$/.test(f) && !isTest(f) && !f.endsWith('.d.ts'));
 const lineOf = (text, idx) => text.slice(0, idx).split('\n').length;
 const lineText = (text, line) => (text.split('\n')[line - 1] || '').trim().slice(0, 160);
-const redact = (s) => (s.length > 10 ? `${s.slice(0, 6)}…[${s.length} chars]` : '***');
+const redact = () => '[SEGREDO REDIGIDO]';
+// A redação vale para todas as checagens e trechos, mesmo se a evidência já
+// truncou a linha. Não conserve prefixos de credenciais nem corpos de PEM.
+const redactEvidence = (text) => text
+  .replace(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|$)/g, redact)
+  .replace(/\b(?:sk_live_|re_)[A-Za-z0-9]*/g, redact)
+  .replace(/\bAC[a-f0-9]{16,}\b/g, redact)
+  .replace(/\beyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]*){0,2}/g, redact)
+  .replace(/postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]+@?/g, redact)
+  .replace(/https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]*/gi, redact);
+
 const globRx = (g) =>
   new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
 
 const findings = [];
 const checks = []; // {id, titulo, limite, total}
 function add(check, sev, titulo, arquivo, linha, evidencia, sugestao, extra = {}) {
-  findings.push({ check, sev, titulo, arquivo, linha, evidencia, sugestao, ...extra });
+  findings.push(JSON.parse(JSON.stringify({ check, sev, titulo, arquivo, linha, evidencia, sugestao, ...extra },
+    (_key, value) => typeof value === 'string' ? redactEvidence(value) : value)));
 }
 function defCheck(id, titulo, limite, fn) {
   const before = findings.length;
@@ -387,7 +398,7 @@ const novos = base ? findings.filter((x) => !base.has(x.fp)) : [];
 
 const sevCount = (sev) => findings.filter((x) => x.sev === sev).length;
 const excerpt = (f, line) => {
-  const ls = read(f).split('\n');
+  const ls = redactEvidence(read(f)).split('\n');
   return ls.slice(Math.max(0, line - 3), line + 2).map((l, i) => `${String(Math.max(1, line - 2) + i).padStart(4)}| ${l}`).join('\n');
 };
 
