@@ -81,6 +81,8 @@ const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', '.n
   'out', '.cache', '.parcel-cache', 'tmp', '.tmp', 'vendor', '__pycache__', '.venv', 'venv', 'env', '.mypy_cache', '.pytest_cache', '.ruff_cache',
   'playwright-report', 'test-results', 'storybook-static', 'graphify-out', '.idea', '.vscode', 'target', 'obj', '.gradle', '.dart_tool', 'Pods', ...(CFG.skipDirs || [])]);
 const KEEP_DOT = new Set(['.github', '.env.example', '.env.sample', '.env.template', '.nvmrc', '.husky', '.gitlab-ci.yml', '.python-version', '.tool-versions', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.editorconfig', '.claude', '.cursor', '.cursorrules']);
+// nomes que são lixo de build na raiz mas pasta de código legítima DENTRO de src/ (src/env, src/features/build, src/out)
+const PASTA_AMBIGUA = new Set(['env', 'build', 'out', 'target', 'obj', 'tmp', 'vendor']);
 const ALL = [];
 (function walk(dir) {
   let ents = [];
@@ -88,7 +90,7 @@ const ALL = [];
   for (const e of ents) {
     if (e.name.startsWith('.') && !KEEP_DOT.has(e.name)) continue;
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) { if (SKIP_DIRS.has(e.name) || full === OUT || (e.name === '.claude' && /worktrees/.test(full))) continue; walk(full); }
+    if (e.isDirectory()) { if ((SKIP_DIRS.has(e.name) && !(PASTA_AMBIGUA.has(e.name) && /(^|\/)src(\/|$)/.test(rel(dir)))) || full === OUT || (e.name === '.claude' && /worktrees/.test(full))) continue; walk(full); }
     else if (e.isFile()) ALL.push(rel(full));
   }
 })(ROOT);
@@ -112,8 +114,9 @@ const pyImportados = (() => { const out = new Set(); for (const f of ALL.filter(
 const hasPy = (d) => pyReqs.has(d) || pyImportados.has(d);
 const langCounts = byCount(ALL.map((f) => EXT_LANG[path.extname(f).toLowerCase()]).filter(Boolean));
 const workspaces = (() => {
-  const w = Array.isArray(pkg.workspaces) ? pkg.workspaces : (pkg.workspaces && pkg.workspaces.packages) || []; const dirs = [];
-  for (const g of w) { const base = g.replace(/\/?\*+.*$/, ''); if (!exists(base)) continue; for (const d of fs.readdirSync(abs(base))) { const pj = `${base}/${d}/package.json`; if (FILESET.has(pj)) { const p = readJson(pj) || {}; dirs.push({ pasta: `${base}/${d}`, nome: p.name || null, scripts: Object.keys(p.scripts || {}) }); } } }
+  // package.json atípico (workspaces fora de array, item não-string, entrada que é arquivo) não pode derrubar o gerador
+  const w0 = Array.isArray(pkg.workspaces) ? pkg.workspaces : (pkg.workspaces && pkg.workspaces.packages) || []; const w = Array.isArray(w0) ? w0.filter((g) => typeof g === 'string') : []; const dirs = [];
+  for (const g of w) { const base = g.replace(/\/?\*+.*$/, ''); if (!exists(base) || !fs.statSync(abs(base)).isDirectory()) continue; for (const d of fs.readdirSync(abs(base))) { const pj = `${base}/${d}/package.json`; if (FILESET.has(pj)) { const p = readJson(pj) || {}; dirs.push({ pasta: `${base}/${d}`, nome: p.name || null, scripts: Object.keys(p.scripts || {}) }); } } }
   for (const pj of ALL.filter((f) => /^(apps|packages|services|libs)\/[^/]+\/package\.json$/.test(f))) if (!dirs.some((d) => `${d.pasta}/package.json` === pj)) { const p = readJson(pj) || {}; dirs.push({ pasta: dirOf(pj), nome: p.name || null, scripts: Object.keys(p.scripts || {}) }); }
   return dirs.sort((a, b) => a.pasta.localeCompare(b.pasta));
 })();
@@ -426,20 +429,24 @@ secao('rotas-jsx', () => {
       if (!self) stack.push({ caminho: full, protegida });
     }
     // objetos de rota (createBrowserRouter/vue-router): chaves balanceadas, em qualquer profundidade; `index: true` é rota-índice do pai
-    const scanObjs = (text, parent, depth) => {
+    const scanObjs = (text, parent, depth, herdaProt = false) => {
       for (let i = text.indexOf('{'); i >= 0 && depth < 10; i = text.indexOf('{', i + 1)) {
         const f = fecha(text, i); if (f < 0) continue;
         const corpo = text.slice(i + 1, f); let proprio = '', d = 0;
         for (let j = 0; j < corpo.length; j++) { const ch = corpo[j]; if (ch === '}' || ch === ']') d--; if (d <= 0) proprio += ch; if (ch === '{' || ch === '[') d++; }
         const compM = /(?:^|[\s,])(?:element|Component|component|lazy)\s*:\s*(?:<)?(?:\(\)\s*=>\s*import\(\s*['"]([^'"]+)['"]\s*\))?([A-Z]\w*)?/.exec(proprio);
         const temPath = /(?:^|[\s,])path\s*:/.test(proprio); const pm = /(?:^|[\s,])path\s*:\s*(['"`])([^'"`$]*)\1/.exec(proprio); const idx = /(?:^|[\s,])index\s*:\s*true\b/.test(proprio);
+        // proteção como no JSX: quem ENVOLVE a página (<Guard><Page/></Guard>) ou o próprio guard (`element: <ProtectedRoute/>`, com ou sem path)
+        // protege o objeto e as filhas; objeto sem path/element só repassa a herança
+        const tg = [...proprio.matchAll(/<([A-Z]\w*)/g)].map((x) => x[1]); const wr = tg.length > 1 ? tg.slice(0, -1) : [];
+        const prot = herdaProt || wr.some(ehGuard) || (tg.length === 1 && ehGuardProprio(tg[0])) || (!tg.length && !!(compM && compM[2]) && ehGuardProprio(compM[2]));
         const ehRota = !!(compM && (compM[1] || compM[2])) && (temPath || idx); let full = pm ? joinPath(parent, pm[2]) : parent;
         if (ehRota) {
           vistos++;
-          if (pm || idx) { full = pm ? joinPath(parent, pm[2]) : parent || '/'; rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf, compM[1]) : componentFile(compM[2], rf), pai: parent, indice: !pm && idx, definida_em: rf, lazy: !!compM[1] })); }
+          if (pm || idx) { full = pm ? joinPath(parent, pm[2]) : parent || '/'; rotas.push(mk({ caminho: full, componente: compM[2] || null, arquivo: compM[1] ? resolveImport(rf, compM[1]) : componentFile(compM[2], rf), pai: parent, indice: !pm && idx, definida_em: rf, lazy: !!compM[1], protegida: prot, wrappers: wr })); }
           else falhas.push(`path: ${(/(?:^|[\s,])path\s*:\s*([^,\n]{0,40})/.exec(proprio) || [, '?'])[1].trim()}`);
         }
-        scanObjs(corpo, full, depth + 1); i = f;
+        scanObjs(corpo, full, depth + 1, prot); i = f;
       }
     };
     scanObjs(src, null, 0);
