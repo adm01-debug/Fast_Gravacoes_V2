@@ -2,7 +2,7 @@
 /**
  * Derivado do motor local e11bc583/f331b977: correções determinísticas, sem IA.
  * Simula por padrão; --apply valida tudo antes de aceitar; --commit exige testes
- * e cria branch nova somente depois dos gates. Nunca faz push.
+ * e cria branch nova antes da primeira escrita. Nunca faz push.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -100,7 +100,7 @@ function indexLimpo() {
 function restaurar() {
   for (const [file, original] of snapshots) writeFileSync(file, original);
   if (criada) {
-    checkedGit('restore', '--staged', '--', ...snapshots.keys());
+    if (snapshots.size) checkedGit('restore', '--staged', '--', ...snapshots.keys());
     if (originalBranch) checkedGit('switch', originalBranch);
     else checkedGit('switch', '--detach', originalHead);
     checkedGit('branch', '-D', criada);
@@ -111,8 +111,14 @@ function restaurar() {
 try {
   if (COMMIT && !APPLY) throw new Error('--commit exige --apply');
   if (only?.some((id) => !['unused', 'eslint'].includes(id))) throw new Error('--only aceita unused ou eslint');
-  if (APPLY && ['main', 'master'].includes(originalBranch)) throw new Error('aplicação exige worktree isolada ou branch própria');
   if (COMMIT) indexLimpo();
+  if (APPLY) {
+    const branch = process.env.AUTOFIX_BRANCH || `autofix/auto-${new Date().toISOString().replace(/[:.]/g, '-')}`;
+    checkedGit('check-ref-format', '--branch', branch);
+    if (git('show-ref', '--verify', '--quiet', `refs/heads/${branch}`).status !== 1) throw new Error('branch de correção já existe; reutilização recusada');
+    checkedGit('switch', '-c', branch);
+    criada = branch;
+  }
   mkdirSync(OUT, { recursive: true });
   const dirty = new Set([
     ...checkedGit('diff', '--name-only', '-z').split('\0'),
@@ -165,14 +171,10 @@ try {
   for (const f of eslint(['.'])) for (const m of f.messages) {
     residuoEslint[m.ruleId || 'parse'] = (residuoEslint[m.ruleId || 'parse'] || 0) + 1;
   }
+  if (APPLY && !snapshots.size) restaurar();
   if (COMMIT && snapshots.size) {
     indexLimpo();
     if (checkedGit('rev-parse', 'HEAD').trim() !== originalHead) throw new Error('HEAD mudou durante a execução');
-    const branch = process.env.AUTOFIX_BRANCH || `autofix/auto-${new Date().toISOString().replace(/[:.]/g, '-')}`;
-    checkedGit('check-ref-format', '--branch', branch);
-    if (git('show-ref', '--verify', '--quiet', `refs/heads/${branch}`).status !== 1) throw new Error('branch de correção já existe; reutilização recusada');
-    checkedGit('switch', '-c', branch);
-    criada = branch;
     checkedGit('add', '--', ...snapshots.keys());
     checkedGit('commit', '--only', '-m', 'chore(autofix): aplica correções após validar os gates', '--', ...snapshots.keys());
     for (const entry of resultados) if (entry.arquivosMantidos) entry.commit = true;

@@ -14,10 +14,10 @@ import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { homedir, loadavg } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 const HOME = process.env.FG_HOME || homedir();
-const REPO = join(HOME, 'projetos/Fast_Gravacoes_V2');
+const REPO = resolve(process.env.FG_REPO || join(HOME, 'projetos/Fast_Gravacoes_V2'));
 const STORE = join(HOME, '.local/share/fast-gravacoes-rotina');
 // ROTINA_SCRIPTS permite testar com os scripts do repo, sem instalar nada (ex.: ROTINA_SCRIPTS=$PWD/scripts)
 const SCRIPTS = process.env.ROTINA_SCRIPTS || join(STORE, 'scripts');

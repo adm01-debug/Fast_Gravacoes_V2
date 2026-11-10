@@ -7,6 +7,10 @@ REPO="$(git rev-parse --show-toplevel)"
 STORE="$HOME/.local/share/fast-gravacoes-rotina"
 UNITS="$HOME/.config/systemd/user"
 NODE="$(command -v node)"
+# Escape para uma atribuição Environment= do systemd, inclusive espaços e % literal.
+REPO_ENV="${REPO//\\/\\\\}"
+REPO_ENV="${REPO_ENV//\"/\\\"}"
+REPO_ENV="${REPO_ENV//%/%%}"
 mkdir -p "$HOME/.cache" "$STORE/scripts" "$UNITS" "$HOME/relatorios/fast-gravacoes-v2"
 rm -rf "$STORE/scripts/autofix" "$STORE/scripts/audit"
 cp -r "$REPO/scripts/autofix" "$REPO/scripts/audit" "$STORE/scripts/"
@@ -18,6 +22,7 @@ cat > "$UNITS/fast-gravacoes-rotina.service" <<UNIT
 Description=Rotina diaria Fast_Gravacoes_V2 (audit + autofix, sem IA)
 [Service]
 Type=oneshot
+Environment="FG_REPO=$REPO_ENV"
 ExecStart=/usr/bin/flock -n $HOME/.cache/fast-gravacoes-git.lock $NODE $STORE/rotina.mjs
 Nice=15
 IOSchedulingClass=idle

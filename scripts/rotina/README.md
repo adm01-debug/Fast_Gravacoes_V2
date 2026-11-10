@@ -6,7 +6,8 @@ em worktree temporária de origin/main; produz relatórios em
 
 `bash scripts/rotina/instalar.sh` copia versões estáveis para
 `~/.local/share/fast-gravacoes-rotina` e instala o timer de usuário das 08:15.
-Instalar somente após validar os motores. O instalador não roda a correção.
+Instalar somente após validar os motores. O instalador não roda a correção. O serviço grava `FG_REPO` com a raiz do clone
+escolhido na instalação; a rotina respeita esse caminho, inclusive fora de `~/projetos`.
 
 Falha de dependência, audit, autofix ou testes retorna código não zero ao systemd.
 Máquina ocupada ou branch automática pendente são execução pulada com motivo.

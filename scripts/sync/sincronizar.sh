@@ -66,6 +66,8 @@ while IFS= read -r ref; do
   [[ "$d" =~ ^[0-9]{8}$ ]] && [ "$d" -lt "$limite" ] && git update-ref -d "$ref"
 done < <(git for-each-ref --format='%(refname)' refs/backup/sync)
 
+scan_dir=""
+trap 'if [ -n "$scan_dir" ]; then rm -rf -- "$scan_dir"; fi' EXIT
 igualadas=(); avancadas=(); puladas=(); avisos=()
 while IFS='|' read -r b up track; do
   [ -z "$up" ] && continue
@@ -87,6 +89,36 @@ while IFS='|' read -r b up track; do
     if em_andamento "$dir"; then puladas+=("$b: merge/rebase em andamento"); continue; fi
     if [ -n "$(git -C "$dir" status --porcelain --untracked-files=all)" ]; then
       puladas+=("$b: alterações locais não commitadas (espera ficar limpa)"); continue
+    fi
+    # reset --keep não protege arquivos ignorados: recuse colisões com qualquer
+    # arquivo do alvo, incluindo arquivo/diretório e nomes com espaços/newlines.
+    scan_dir=$(mktemp -d) || { puladas+=("$b: não consegui preparar checagem de ignorados"); continue; }
+    if ! git -C "$dir" ls-tree -r --name-only -z "$up_sha" > "$scan_dir/alvos" \
+       || ! git -C "$dir" ls-files --others --ignored --exclude-standard -z > "$scan_dir/ignorados"; then
+      rm -rf -- "$scan_dir"; scan_dir=""
+      puladas+=("$b: checagem de ignorados falhou (nenhuma atualização)"); continue
+    fi
+    colisao=0
+    declare -A alvos=() pastas_alvo=()
+    while IFS= read -r -d '' alvo; do
+      alvos["$alvo"]=1
+      pasta="$alvo"
+      while [[ "$pasta" = */* ]]; do
+        pasta="${pasta%/*}"; pastas_alvo["$pasta"]=1
+      done
+    done < "$scan_dir/alvos"
+    while IFS= read -r -d '' ignorado; do
+      if [[ -n "${alvos[$ignorado]:-}" || -n "${pastas_alvo[$ignorado]:-}" ]]; then colisao=1; break; fi
+      pasta="$ignorado"
+      while [[ "$pasta" = */* ]]; do
+        pasta="${pasta%/*}"
+        if [[ -n "${alvos[$pasta]:-}" ]]; then colisao=1; break; fi
+      done
+      [ "$colisao" -eq 1 ] && break
+    done < "$scan_dir/ignorados"
+    rm -rf -- "$scan_dir"; scan_dir=""
+    if [ "$colisao" -eq 1 ]; then
+      puladas+=("$b: arquivo ignorado colide com upstream (preservado)"); continue
     fi
   fi
 
