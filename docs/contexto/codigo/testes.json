@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 103,
+ "total": 105,
  "por_tipo": {
   "contrato": 1,
   "e2e": 21,
   "pytest": 3,
-  "unit": 78
+  "unit": 80
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 75
+   "arquivos": 77
   },
   {
    "padrao": "tests/",
@@ -48,9 +48,23 @@
    "casos": 21
   },
   {
+   "arquivo": "scripts/ci/session-start.test.mjs",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [],
+   "casos": 7
+  },
+  {
+   "arquivo": "scripts/graphify.test.mjs",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [],
+   "casos": 5
+  },
+  {
    "arquivo": "scripts/graphify/tests/test_integration.py",
    "tipo": "pytest",
-   "linhas": 229,
+   "linhas": 490,
    "testa": [],
    "casos": 0
   },

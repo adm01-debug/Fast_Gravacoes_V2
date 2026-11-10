@@ -106,9 +106,10 @@
   {
    "arquivo": "scripts/graphify.mjs",
    "descricao": "Keep graph tooling outside the Vite runtime and never interpret user input as shell code.",
-   "linhas": 95,
+   "linhas": 103,
    "env": [
-    "GRAPHIFY_PYTHON"
+    "GRAPHIFY_PYTHON",
+    "PYTHONHASHSEED"
    ],
    "npm_scripts": [
     "graph:install",
@@ -133,7 +134,7 @@
   {
    "arquivo": "scripts/graphify/corpus.py",
    "descricao": "Explicit local corpus and content hashes; no network or LLM is used.\"\"\"",
-   "linhas": 77,
+   "linhas": 91,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -142,7 +143,7 @@
   {
    "arquivo": "scripts/graphify/enrich.py",
    "descricao": "Deterministic architecture evidence derived from the selected local corpus.",
-   "linhas": 299,
+   "linhas": 312,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -151,7 +152,7 @@
   {
    "arquivo": "scripts/graphify/pipeline.py",
    "descricao": "Cached AST extraction, full reconstruction and validated publication.\"\"\"",
-   "linhas": 145,
+   "linhas": 167,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -160,7 +161,7 @@
   {
    "arquivo": "scripts/graphify/quality.py",
    "descricao": "Read-only quality controls for published Graphify snapshots.\"\"\" File and raw-edge counts are capacity telemetry, not quality regressions: a",
-   "linhas": 107,
+   "linhas": 145,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -168,8 +169,8 @@
   },
   {
    "arquivo": "scripts/graphify/run.py",
-   "descricao": "Project entry point. All user arguments are passed as argv, never through a shell.\"\"\"",
-   "linhas": 93,
+   "descricao": "Project entry point. All user arguments are passed as argv, never through a shell.\"\"\" SIGTERM vira saída normal do Python: os `finally` rodam (lock e diretório de stage limpos).",
+   "linhas": 113,
    "env": [],
    "npm_scripts": [],
    "workflows": [

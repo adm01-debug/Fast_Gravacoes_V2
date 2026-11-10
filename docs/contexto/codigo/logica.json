@@ -20,7 +20,7 @@
     "output_dir",
     "validate_graph"
    ],
-   "linhas": 77,
+   "linhas": 91,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -59,7 +59,7 @@
     "_write",
     "enrich"
    ],
-   "linhas": 299,
+   "linhas": 312,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -86,7 +86,7 @@
     "git_value",
     "write_json"
    ],
-   "linhas": 145,
+   "linhas": 167,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -97,6 +97,7 @@
     "corpus",
     "datetime",
     "enrich",
+    "fcntl",
     "graphify",
     "json",
     "os",
@@ -123,7 +124,7 @@
     "graph_diff",
     "ratchet"
    ],
-   "linhas": 107,
+   "linhas": 145,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -143,9 +144,10 @@
    "arquivo": "scripts/graphify/run.py",
    "camada": "python",
    "exports": [
+    "_terminate",
     "main"
    ],
-   "linhas": 93,
+   "linhas": 113,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -157,6 +159,7 @@
     "json",
     "pipeline",
     "quality",
+    "signal",
     "subprocess",
     "sys",
     "tree_sitter_sql"

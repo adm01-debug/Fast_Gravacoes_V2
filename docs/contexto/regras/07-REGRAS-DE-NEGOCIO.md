@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6c96376b1d` · branch `main` · 2026-11-09 14:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `136dd36eda` · branch `main` · 2026-11-10 00:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2137,10 +2137,12 @@ _nenhum item encontrado_
 | GRAPHIFY_PYTHON não pôde ser executado (${explicitly}): ${probe.error.message} | `scripts/graphify.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
 | Aresta sem endpoint no grafo exportado. | `scripts/graphify/corpus.py` |
+| Artefato inconsistente: graph.json. Execute graph:build. | `scripts/graphify/corpus.py` |
 | Direção das relações perdida. | `scripts/graphify/corpus.py` |
 | Grafo desatualizado. Execute npm run graph:build para este perfil. | `scripts/graphify/corpus.py` |
 | Grafo vazio; saída anterior preservada. | `scripts/graphify/corpus.py` |
 | IDs de nós duplicados. | `scripts/graphify/corpus.py` |
+| manifest.json fora do formato esperado. Execute npm run graph:build. | `scripts/graphify/corpus.py` |
 | Arquivos mudaram durante a extração. Execute novamente. | `scripts/graphify/pipeline.py` |
 | Exportação recusada. | `scripts/graphify/pipeline.py` |
 | Extração vazia; saída anterior preservada. | `scripts/graphify/pipeline.py` |
@@ -2151,6 +2153,7 @@ _nenhum item encontrado_
 | Parser SQL ausente. Execute npm run graph:install. | `scripts/graphify/run.py` |
 | Ratchet encontrou regressão sem exceção válida. | `scripts/graphify/run.py` |
 | diff exige --baseline CAMINHO_PARA_graph.json. | `scripts/graphify/run.py` |
+| ratchet só existe para o perfil all (a baseline é do snapshot completo). | `scripts/graphify/run.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | catálogo indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -2423,10 +2426,7 @@ _nenhum item encontrado_
 | Database not initialized | `src/lib/offlineStorage.ts` |
 | Erro ao limpar telemetria | `src/pages/AdminTelemetriaPage.tsx` |
 | Novo erro detectado: ${payload.new.message.substring(0, 50)}... | `src/pages/AdminTelemetriaPage.tsx` |
-| Performance Crítica: ${payload.new.operation} em ${payload.new.table_name \|\|  | `src/pages/AdminTelemetriaPage.tsx` |
-| Conta Bloqueada | `src/pages/AuthPage.tsx` |
-| Erro ao conectar com Google | `src/pages/AuthPage.tsx` |
-| … +161 linhas — lista completa em `context.json` | |
+| … +164 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -2483,7 +2483,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1147 testes em 92 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1159 testes em 94 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -2534,6 +2534,7 @@ _nenhum item encontrado_
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
+| `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
@@ -2545,6 +2546,7 @@ _nenhum item encontrado_
 | `src/lib/logger.test.ts` | 6 | logger persistence · batches multiple events into a single insert after the debounce window · does not recurse when the error_logs insert itself fails · redacts email addresses from the persisted message and error data … |
 | `supabase/functions/_shared/cors.test.ts` | 6 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
+| `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
 | `supabase/functions/_shared/contracts.test.ts` | 5 | Webhook Contract - Valid Payload · Webhook Contract - Invalid Source · ERP Job Contract - Valid Request · ERP Job Contract - Missing Required Field … |

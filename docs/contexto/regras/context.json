@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6c96376b1d88ab7baf87a769144be1cd5606972d",
+  "sha": "136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-09 14:45 UTC",
-  "files_total": 1459,
-  "code_files": 1329,
-  "code_lines": 185200
+  "generated_at": "2026-11-10 00:54 UTC",
+  "files_total": 1461,
+  "code_files": 1331,
+  "code_lines": 185761
  },
  "version": "1.3.2",
- "facts_hash": "94d6088a35ad60d3",
+ "facts_hash": "2f3ec7c0ae150898",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -217,7 +217,7 @@
    ".tsx": 656,
    ".ts": 395,
    ".sql": 251,
-   ".mjs": 12,
+   ".mjs": 14,
    ".py": 11,
    ".js": 4
   },
@@ -26302,8 +26302,8 @@
   },
   {
    "module": "scripts",
-   "files": 22,
-   "lines": 8922,
+   "files": 24,
+   "lines": 9483,
    "tables": [
     "a",
     "contacts",
@@ -26330,8 +26330,8 @@
     "enrich.py: _write, _relative, _text, _matches, _source_paths, _routes",
     "pipeline.py: build_lock, write_json, git_value, build",
     "quality.py: _read, _overview, _metric_snapshot, ratchet, graph_diff, audit",
-    "run.py: main",
-    "test_integration.py: GraphifyIntegrationTests",
+    "run.py: _terminate, main",
+    "test_integration.py: GraphifyIntegrationTests, GraphifyCliTests",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
     "test_generate.py: CurrentSqlSourcesTests",
@@ -26387,11 +26387,13 @@
     "scripts/bundle.test.mjs",
     "scripts/check-any-baseline.mjs",
     "scripts/graphify.mjs",
+    "scripts/graphify.test.mjs",
     "scripts/rls-regression.mjs",
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/session-start.test.mjs",
     "scripts/graphify/corpus.py",
     "scripts/graphify/enrich.py",
     "scripts/graphify/pipeline.py",
@@ -30823,6 +30825,9 @@
    "PY2": [
     "scripts/ai-context/cenarios.mjs"
    ],
+   "PYTHONHASHSEED": [
+    "scripts/graphify.mjs"
+   ],
    "REPO_ROOT": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -32466,6 +32471,10 @@
    },
    {
     "file": "scripts/graphify/corpus.py",
+    "msg": "Artefato inconsistente: graph.json. Execute graph:build."
+   },
+   {
+    "file": "scripts/graphify/corpus.py",
     "msg": "Direção das relações perdida."
    },
    {
@@ -32479,6 +32488,10 @@
    {
     "file": "scripts/graphify/corpus.py",
     "msg": "IDs de nós duplicados."
+   },
+   {
+    "file": "scripts/graphify/corpus.py",
+    "msg": "manifest.json fora do formato esperado. Execute npm run graph:build."
    },
    {
     "file": "scripts/graphify/pipeline.py",
@@ -32519,6 +32532,10 @@
    {
     "file": "scripts/graphify/run.py",
     "msg": "diff exige --baseline CAMINHO_PARA_graph.json."
+   },
+   {
+    "file": "scripts/graphify/run.py",
+    "msg": "ratchet só existe para o perfil all (a baseline é do snapshot completo)."
    },
    {
     "file": "scripts/supabase_snapshot/test_snapshot.py",
@@ -48472,6 +48489,54 @@
    {
     "file": "scripts/bundle.test.mjs",
     "name": "aceita base ausente (primeiro merge)"
+   },
+   {
+    "file": "scripts/graphify.test.mjs",
+    "name": "fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito"
+   },
+   {
+    "file": "scripts/graphify.test.mjs",
+    "name": "repassa argumentos intactos, sem shell"
+   },
+   {
+    "file": "scripts/graphify.test.mjs",
+    "name": "propaga o código de saída do Python"
+   },
+   {
+    "file": "scripts/graphify.test.mjs",
+    "name": "interpretador apontado com versão errada ou inexistente falha com mensagem clara"
+   },
+   {
+    "file": "scripts/graphify.test.mjs",
+    "name": "--version e --help não chamam o Python, e o help só cita comando que existe"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "fora da nuvem não faz nada"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "primeira sessão: declara async, instala, constrói e carimba o commit"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "grafo já carimbado e árvore limpa: nada a fazer"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "edição não commitada invalida a marca: reconstrói"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "sem flock no PATH o hook segue e gera o grafo"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "sem CLAUDE_PROJECT_DIR usa a raiz do repo do próprio hook, não o cwd"
+   },
+   {
+    "file": "scripts/ci/session-start.test.mjs",
+    "name": "build que falha não carimba (a próxima sessão refaz)"
    },
    {
     "file": "src/features/admin/hooks/useCronHealthHistory.test.ts",
@@ -65953,9 +66018,10 @@
   },
   "scripts/graphify.mjs": {
    "path": "scripts/graphify.mjs",
-   "lines": 95,
+   "lines": 103,
    "env": [
-    "GRAPHIFY_PYTHON"
+    "GRAPHIFY_PYTHON",
+    "PYTHONHASHSEED"
    ],
    "errors": [
     "GRAPHIFY_PYTHON (${explicitly}) não tem graphify ${config.version} instalado ",
@@ -65966,6 +66032,19 @@
     "An explicitly configured interpreter must succeed; do not silently use another version."
    ],
    "doc": "!/usr/bin/env node Keep graph tooling outside the Vite runtime and never interpret user input as shell code."
+  },
+  "scripts/graphify.test.mjs": {
+   "path": "scripts/graphify.test.mjs",
+   "lines": 76,
+   "is_test": true,
+   "doc": "Testes do wrapper Node do graphify — `node --test scripts/graphify.test.mjs`. Um \"python\" falso (GRAPHIFY_PYTHON) responde à sonda de versão e ecoa o que recebeu.",
+   "tests": [
+    "fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito",
+    "repassa argumentos intactos, sem shell",
+    "propaga o código de saída do Python",
+    "interpretador apontado com versão errada ou inexistente falha com mensagem clara",
+    "--version e --help não chamam o Python, e o help só cita comando que existe"
+   ]
   },
   "scripts/rls-regression.mjs": {
    "path": "scripts/rls-regression.mjs",
@@ -66437,9 +66516,24 @@
     "// com >= 50% do tamanho de la. CLAUDE.md fica de fora: e so `@AGENTS.md` por design."
    ]
   },
+  "scripts/ci/session-start.test.mjs": {
+   "path": "scripts/ci/session-start.test.mjs",
+   "lines": 109,
+   "is_test": true,
+   "doc": "Testes do hook de início de sessão (.claude/hooks/session-start.sh) — `node --test scripts/ci/session-start.test.mjs`. `npm` é um stub: nada é instalado nem construído.",
+   "tests": [
+    "fora da nuvem não faz nada",
+    "primeira sessão: declara async, instala, constrói e carimba o commit",
+    "grafo já carimbado e árvore limpa: nada a fazer",
+    "edição não commitada invalida a marca: reconstrói",
+    "sem flock no PATH o hook segue e gera o grafo",
+    "sem CLAUDE_PROJECT_DIR usa a raiz do repo do próprio hook, não o cwd",
+    "build que falha não carimba (a próxima sessão refaz)"
+   ]
+  },
   "scripts/graphify/corpus.py": {
    "path": "scripts/graphify/corpus.py",
-   "lines": 77,
+   "lines": 91,
    "exports": [
     "def load_config",
     "def digest",
@@ -66450,16 +66544,18 @@
    ],
    "errors": [
     "Aresta sem endpoint no grafo exportado.",
+    "Artefato inconsistente: graph.json. Execute graph:build.",
     "Direção das relações perdida.",
     "Grafo desatualizado. Execute npm run graph:build para este perfil.",
     "Grafo vazio; saída anterior preservada.",
-    "IDs de nós duplicados."
+    "IDs de nós duplicados.",
+    "manifest.json fora do formato esperado. Execute npm run graph:build."
    ],
    "doc": "Explicit local corpus and content hashes; no network or LLM is used."
   },
   "scripts/graphify/enrich.py": {
    "path": "scripts/graphify/enrich.py",
-   "lines": 299,
+   "lines": 312,
    "exports": [
     "def _write",
     "def _relative",
@@ -66490,7 +66586,7 @@
   },
   "scripts/graphify/pipeline.py": {
    "path": "scripts/graphify/pipeline.py",
-   "lines": 145,
+   "lines": 167,
    "exports": [
     "def build_lock",
     "def write_json",
@@ -66513,7 +66609,7 @@
   },
   "scripts/graphify/quality.py": {
    "path": "scripts/graphify/quality.py",
-   "lines": 107,
+   "lines": 145,
    "exports": [
     "def _read",
     "def _overview",
@@ -66526,19 +66622,24 @@
     "Exceção de ratchet exige metric, reason, responsible e expires_on.",
     "Modo de ratchet deve ser report ou enforce."
    ],
+   "rule_comments": [
+    "str(): aresta sem endpoint (None) não pode quebrar a ordenação."
+   ],
    "doc": "Read-only quality controls for published Graphify snapshots."
   },
   "scripts/graphify/run.py": {
    "path": "scripts/graphify/run.py",
-   "lines": 93,
+   "lines": 113,
    "exports": [
+    "def _terminate",
     "def main"
    ],
    "errors": [
     "Budget deve estar entre 100 e 10000 tokens estimados.",
     "Parser SQL ausente. Execute npm run graph:install.",
     "Ratchet encontrou regressão sem exceção válida.",
-    "diff exige --baseline CAMINHO_PARA_graph.json."
+    "diff exige --baseline CAMINHO_PARA_graph.json.",
+    "ratchet só existe para o perfil all (a baseline é do snapshot completo)."
    ],
    "rule_comments": [
     "Required for the migration corpus, not an optional silent fallback."
@@ -66547,10 +66648,11 @@
   },
   "scripts/graphify/tests/test_integration.py": {
    "path": "scripts/graphify/tests/test_integration.py",
-   "lines": 229,
+   "lines": 490,
    "is_test": true,
    "exports": [
-    "class GraphifyIntegrationTests"
+    "class GraphifyIntegrationTests",
+    "class GraphifyCliTests"
    ],
    "tables": [
     {
@@ -66572,6 +66674,10 @@
     }
    ],
    "doc": "Exercise failure modes and actual AST behavior in disposable repositories.",
+   "temporal": [
+    "holder.wait(timeout=10)",
+    "self.assertEqual(proc.wait(timeout=15), 128 + signal.SIGTERM)"
+   ],
    "side_effects": [
     "invoke("
    ]
@@ -92353,10 +92459,29 @@
   }
  },
  "git": {
-  "sha": "6c96376b1d88ab7baf87a769144be1cd5606972d",
+  "sha": "136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "136dd36",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)",
+    "files": [
+     ".claude/hooks/session-start.sh",
+     "docs/graphify/README.md",
+     "scripts/ci/session-start.test.mjs",
+     "scripts/graphify.mjs",
+     "scripts/graphify.test.mjs",
+     "scripts/graphify/corpus.py",
+     "scripts/graphify/enrich.py",
+     "scripts/graphify/pipeline.py",
+     "scripts/graphify/quality.py",
+     "scripts/graphify/run.py",
+     "scripts/graphify/tests/test_integration.py"
+    ]
+   },
    {
     "sha": "6c96376",
     "date": "2026-11-09",
@@ -92998,26 +93123,6 @@
      "src/pages/PackagingDashboard.tsx",
      "src/pages/SPCDashboard.tsx"
     ]
-   },
-   {
-    "sha": "63e6195",
-    "date": "2026-10-29",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(db,ui): tabelas internas ausentes, código morto e selo demo nos painéis (#115)",
-    "files": [
-     "src/components/layout/SidebarNavData.tsx",
-     "src/components/traceability/BlockchainIntegrityCard.tsx",
-     "src/components/ui/demo-data-badge.tsx",
-     "src/features/analytics/components/bi/FuturisticBI.tsx",
-     "src/features/maintenance/components/ExecutionDetailsModal.tsx",
-     "src/features/notifications/components/NotificationCenter.tsx",
-     "src/features/notifications/index.ts",
-     "src/pages/MasterAPIPage.tsx",
-     "supabase/functions/cron-cleanup/index.ts",
-     "supabase/functions/webhook-handler/index.ts",
-     "supabase/migrations/20261029001000_missing_internal_tables.sql",
-     "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -93026,12 +93131,28 @@
     5
    ],
    [
-    "src/pages/MasterAPIPage.tsx",
+    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
    ],
    [
-    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
-    3
+    ".claude/hooks/session-start.sh",
+    2
+   ],
+   [
+    "scripts/graphify.mjs",
+    2
+   ],
+   [
+    "scripts/graphify/enrich.py",
+    2
+   ],
+   [
+    "scripts/graphify/quality.py",
+    2
+   ],
+   [
+    "scripts/graphify/tests/test_integration.py",
+    2
    ],
    [
     "src/components/autonomous/AutonomousEventLog.tsx",
@@ -93042,19 +93163,11 @@
     2
    ],
    [
-    "src/components/traceability/BlockchainIntegrityCard.tsx",
-    2
-   ],
-   [
     "src/features/admin/components/security/GeoBlockingSettings.tsx",
     2
    ],
    [
     "src/features/analytics/components/bi/BIAIInsights.tsx",
-    2
-   ],
-   [
-    "src/features/analytics/components/bi/FuturisticBI.tsx",
     2
    ],
    [
@@ -93074,10 +93187,6 @@
     2
    ],
    [
-    "src/features/maintenance/components/ExecutionDetailsModal.tsx",
-    2
-   ],
-   [
     "src/features/notifications/components/DailySummaryCard.tsx",
     2
    ],
@@ -93086,19 +93195,15 @@
     2
    ],
    [
+    "src/pages/MasterAPIPage.tsx",
+    2
+   ],
+   [
     "src/pages/PackagingDashboard.tsx",
     2
    ],
    [
     "src/pages/PublicTrackingPage.tsx",
-    2
-   ],
-   [
-    "src/pages/SPCDashboard.tsx",
-    2
-   ],
-   [
-    ".agents/skills/fast-grava-es-v2/SKILL.md",
     2
    ]
   ]
