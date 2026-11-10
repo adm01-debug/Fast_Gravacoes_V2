@@ -17,6 +17,7 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 import { homedir, loadavg, availableParallelism } from 'node:os';
+import { StringDecoder } from 'node:string_decoder';
 import { fileURLToPath } from 'node:url';
 
 const extensions = new Set(
@@ -32,7 +33,8 @@ const ignoredParts = new Set([
   'venv',
   'node_modules',
   'graphify-out',
-  '.graphify-local',
+    'graphify-local-out',
+    '.graphify-local',
   'dist',
   'coverage',
   'test-results',
@@ -139,6 +141,8 @@ export function run(command, cwd, env, timeoutMs = 120000) {
       canceled = false,
       settled = false,
       hard;
+        const stdoutDecoder = new StringDecoder('utf8'),
+          stderrDecoder = new StringDecoder('utf8');
     const kill = (signal) => {
       if (child.pid)
         try {
@@ -180,14 +184,15 @@ export function run(command, cwd, env, timeoutMs = 120000) {
       timedOut = true;
       stop();
     }, timeoutMs);
-    const collect = (chunk) => {
-      if (Buffer.byteLength(output) + chunk.length > 4 * 1024 * 1024) {
-        overflow = true;
-        stop();
-      } else output += chunk;
-    };
-    child.stdout.on('data', collect);
-    child.stderr.on('data', collect);
+    const collect = (decoder) => (chunk) => {
+          const text = decoder.write(chunk);
+          if (Buffer.byteLength(output) + text.length > 4 * 1024 * 1024) {
+            overflow = true;
+            stop();
+          } else output += text;
+        };
+        child.stdout.on('data', collect(stdoutDecoder));
+        child.stderr.on('data', collect(stderrDecoder));
     child.once('error', () => finish(1));
     child.once('close', finish);
   });
@@ -1208,6 +1213,7 @@ export async function acquireGlobal(file) {
     let ready = false,
       output = '',
       finished = false;
+        const decoder = new StringDecoder('utf8');
     const kill = () => {
       if (child.pid)
         try {
@@ -1223,7 +1229,7 @@ export async function acquireGlobal(file) {
     }, 5000);
     child.stderr.resume();
     child.stdout.on('data', (part) => {
-      output += part;
+          output += decoder.write(part);
       if (!ready && output.includes('LOCKED\n')) {
         ready = true;
         clearTimeout(timer);
