@@ -23,7 +23,7 @@ function fixture(t, source = 'const unused = 42;\nexport const kept = 1;\n') {
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   for (const p of ['src', 'scripts/autofix', 'node_modules/eslint/bin', 'node_modules/vitest']) mkdirSync(join(dir, p), { recursive: true });
   cpSync(join(root, 'scripts/autofix'), join(dir, 'scripts/autofix'), { recursive: true });
-  symlinkSync(tsRoot, join(dir, 'node_modules/typescript'), 'dir');
+  symlinkSync(tsRoot, join(dir, 'node_modules/typescript'), 'junction');
   writeFileSync(join(dir, 'package.json'), '{"type":"module"}\n');
   writeFileSync(join(dir, '.gitignore'), 'node_modules/\n.autofix/\n');
   writeFileSync(join(dir, '.any-baseline.json'), '{"baseline":0}');
@@ -381,3 +381,25 @@ test('apply sem proposta nao deixa branch vazia bloqueando a proxima execucao', 
   assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
   assert.equal(git(dir, 'branch', '--list', 'autofix/sem-mudancas'), '');
 });
+
+test('symlink para fora da raiz é recusado sem tocar no alvo externo', (t) => {
+  const dir = fixture(t, 'const unused = 42;\nexport const kept = 1;\n');
+  const extern = mkdtempSync(join(tmpdir(), 'fast-autofix-externo-'));
+  t.after(() => rmSync(extern, { recursive: true, force: true }));
+  // src passa a ser symlink (junction, no Windows) para um diretório FORA do fixture
+  mkdirSync(join(extern, 'src'), { recursive: true });
+  writeFileSync(join(extern, 'src/app.ts'), 'const unused = 42;\nexport const kept = 1;\n');
+  rmSync(join(dir, 'src'), { recursive: true, force: true });
+  symlinkSync(join(extern, 'src'), join(dir, 'src'), 'junction');
+    // commita o symlink: o autofix só opera sobre árvore limpa
+    git(dir, 'add', '-f', 'src');
+    git(dir, 'commit', '-m', 'symlink fixture');
+    assert.equal(git(dir, 'status', '--porcelain'), '');
+    const head = git(dir, 'rev-parse', 'HEAD');
+    const r = cli(dir, ['--apply', '--commit', '--only=unused']);
+    assert.equal(r.status, 1, r.stdout + r.stderr);
+    assert.equal(readFileSync(join(extern, 'src/app.ts'), 'utf8'), 'const unused = 42;\nexport const kept = 1;\n', 'alvo externo nunca pode ser sobrescrito');
+    assert.equal(git(dir, 'rev-parse', 'HEAD'), head);
+    assert.equal(git(dir, 'branch', '--show-current'), 'trabalho');
+    assert.equal(git(dir, 'status', '--porcelain'), '');
+  });
