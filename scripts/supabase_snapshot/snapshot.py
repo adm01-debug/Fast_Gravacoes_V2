@@ -14,8 +14,10 @@ Garantias:
     Métricas voláteis (linhas, bytes, scans, contagens, execuções de cron,
     saúde) ficam separadas em stats.md / stats.json / cron-runs.md.
   * Cada seção é isolada: falha em uma não derruba as outras. Uma seção que
-    falhou é carregada da coleta anterior (com aviso), nunca registrada como
-    "tudo removido" no CHANGELOG.
+    falhou (do banco ou da Management API) é carregada da coleta anterior (com
+    aviso), nunca registrada como "tudo removido" no CHANGELOG. Se nenhuma seção
+    do banco foi coletada de fato, a execução termina com código 1 e não renova
+    o manifest.
   * CHANGELOG.md recebe um diff semântico por categoria a cada mudança.
 
 Variáveis de ambiente:
@@ -37,6 +39,7 @@ Variáveis de ambiente:
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import hashlib
 import json
@@ -46,6 +49,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from decimal import Decimal
@@ -117,7 +121,7 @@ API_ROLES = ("anon", "authenticated", "service_role", "PUBLIC")
 MGMT_API = "https://api.supabase.com/v1"
 REDACT_RE = re.compile(
     r"(secret|password|passwd|token|private_key|api_key|apikey|smtp_pass|client_secret|"
-    r"signing_key|service_key|anon_key|service_role|jwt|credential|encryption_key|connection_string|dsn)",
+    r"signing_key|service_key|anon_key|access_key|service_role|jwt|credential|encryption_key|connection_string|dsn)",
     re.I,
 )
 
@@ -146,6 +150,15 @@ def valid_previous_snapshot(path: pathlib.Path) -> bool:
     )
 
 
+def valid_previous_manifest(path: pathlib.Path) -> bool:
+    """O artefato do CI não leva arquivos ocultos: manifest.json prova a origem quando o marcador não chega."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return False
+    return isinstance(data, dict) and data.get("produtor") == "supabase-snapshot"
+
+
 def prepare_output_directory() -> None:
     """Recusa alvos amplos ou alheios antes de qualquer coleta/limpeza."""
     cwd = pathlib.Path.cwd().resolve()
@@ -167,7 +180,7 @@ def prepare_output_directory() -> None:
                 marker_valid = marker.read_text(encoding="utf-8") == OUTPUT_MARKER_CONTENT
             except (OSError, UnicodeError):
                 marker_valid = False
-        legacy_valid = valid_previous_snapshot(OUT / "snapshot.json")
+        legacy_valid = valid_previous_snapshot(OUT / "snapshot.json") or valid_previous_manifest(OUT / "manifest.json")
         if entries and not (marker_valid or legacy_valid):
             raise ValueError(
                 f"SNAPSHOT_DIR não vazio e sem marcador/snapshot válido: {OUT}. Nada foi alterado."
@@ -227,7 +240,20 @@ def md_table(headers: list[str], rows: list[list[Any]]) -> str:
 
 
 def code(v: Any) -> str:
-    return f"`{v}`" if v not in (None, "") else ""
+    if v in (None, ""):
+        return ""
+    text = str(v)
+    # crase no valor: o delimitador precisa ser mais longo que a maior sequência interna.
+    ticks = "`" * (max((len(m) for m in re.findall(r"`+", text)), default=0) + 1)
+    pad = " " if text.startswith("`") or text.endswith("`") else ""
+    return f"{ticks}{pad}{text}{pad}{ticks}"
+
+
+def md_fence(body: str, lang: str = "") -> str:
+    """Bloco cercado cuja cerca é mais longa que qualquer sequência de crases do conteúdo."""
+    longest = max((len(m) for m in re.findall(r"`{3,}", body)), default=2)
+    fence = "`" * max(3, longest + 1)
+    return f"{fence}{lang}\n{body}\n{fence}\n"
 
 
 def human_bytes(n: Any) -> str:
@@ -257,7 +283,9 @@ def approx(n: Any) -> str:
 
 
 def slug(text: str) -> str:
-    return re.sub(r"[^A-Za-z0-9_.-]+", "_", text).strip("_") or "_"
+    out = re.sub(r"[^A-Za-z0-9_.-]+", "_", text).strip("_")
+    # "." e ".." (schema/nome) viram caminho relativo: escreveriam fora da pasta de destino.
+    return "_" if not out or set(out) == {"."} else out
 
 
 _SLUG_SEEN: dict[str, str] = {}
@@ -278,7 +306,10 @@ def write(path: pathlib.Path, content: str) -> None:
 
 def redact(obj: Any) -> Any:
     if isinstance(obj, dict):
-        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) else redact(v)) for k, v in obj.items()}
+        # Só valor que pode ser segredo (str/lista/objeto não vazio) é redigido pelo NOME da chave:
+        # "[REDACTED]" no lugar de número/booleano/null é truthy e falsificava jwt_exp, hooks e política de senha.
+        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) and isinstance(v, (str, list, dict)) and v else redact(v))
+                for k, v in obj.items()}
     if isinstance(obj, list):
         return [redact(v) for v in obj]
     if isinstance(obj, str):
@@ -310,17 +341,24 @@ SCRUB_RULES: list[tuple[re.Pattern, str]] = [
     # Authorization: Bearer <token>  /  apikey: <token>
     (re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]{16,}"), r"\1[REDACTED]"),
     # valor precisa parecer token: >= 16 chars, sem espaço, com pelo menos um dígito (evita redigir prosa)
-    (re.compile(r"""(?i)((?:apikey|api_key|x-api-key|authorization|token|secret|password|passwd|service_role_key|anon_key)\s*["']?\s*[:=]\s*["']?)(?=[^"'\s,;)}]*\d)[^"'\s,;)}]{16,}"""), r"\1[REDACTED]"),
+    (re.compile(r"""(?i)((?:apikey|api_key|x-api-key|authorization|token|secret|password|passwd|service_role_key|anon_key|secret_access_key|secret_key|access_key)\s*["']?\s*[:=]\s*["']?)(?=[^"'\s,;)}]*\d)[^"'\s,;)}]{16,}"""), r"\1[REDACTED]"),
     # par 'nome-sensível', 'valor' — jsonb_build_object('x-cron-secret','<hex>'), VALUES, array de headers.
     # A regra acima exige ':' ou '=' entre nome e valor; aqui o separador é vírgula e o segredo do
     # pg_cron saía em texto puro em cron.md/snapshot.json. Mesmo critério de "parece token".
     (re.compile(r"""(?i)((['"])[\w.-]*(?:secret|token|api[_-]?key|authorization|password|passwd|credential)[\w.-]*\2\s*,\s*(['"]))(?=[^'"\s]*\d)[^'"\s]{16,}(?=\3)"""), r"\1[REDACTED]"),
     # PASSWORD 'x' em DDL de role
     (re.compile(r"(?i)(password\s+)'[^']*'"), r"\1'[REDACTED]'"),
-    # DSN com senha
-    (re.compile(r"(\w+://[^/\s:@]+:)[^@\s]+(@)"), r"\1[REDACTED]\2"),
+    # password = 'x' / password := 'x' (sem exigir dígito: a regra de "parece token" deixava senha só de letras)
+    (re.compile(r"(?i)(\bpassword\s*(?::=|=>|=)\s*)'[^']+'"), r"\1'[REDACTED]'"),
+    # vault.create_secret('<valor>', ...) posicional ou new_secret := '<valor>'
+    (re.compile(r"(?i)(\bcreate_secret\s*\(\s*(?:new_secret\s*(?::=|=>)\s*)?)'(?:[^']|'')+'"), r"\1'[REDACTED]'"),
+    # DSN com senha (a senha vai até o último '@' do trecho, sem atravessar aspas/espaço; usuário pode ser vazio)
+    (re.compile(r"""(\w+://[^/\s:@]*:)[^\s'"]+(@)"""), r"\1[REDACTED]\2"),
+    # URL de bot do Telegram e webhook do Slack: o segredo vai no caminho
+    (re.compile(r"(?i)(api\.telegram\.org/(?:file/)?bot)\d{6,}:[A-Za-z0-9_-]{20,}"), r"\1[REDACTED]"),
+    (re.compile(r"(hooks\.slack\.com/services/)[A-Za-z0-9/_-]{16,}"), r"\1[REDACTED]"),
     # chaves de provedores comuns
-    (re.compile(r"\b(?:sk-[A-Za-z0-9_-]{20,}|sk_live_[A-Za-z0-9]{10,}|sk_test_[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,})\b"), "[REDACTED_KEY]"),
+    (re.compile(r"\b(?:sbp_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}|sk_live_[A-Za-z0-9]{10,}|sk_test_[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,})\b"), "[REDACTED_KEY]"),
 ]
 
 
@@ -382,13 +420,16 @@ def section(name: str, volatile: bool = False):
 
 @section("server")
 def get_server(conn):
+    # O GUC do fuso é "TimeZone" (o IN é sensível a maiúsculas). statement_timeout: reset_val é o valor global;
+    # setting seria o da sessão, que o próprio script fixa com SET (90s).
     rows = q(conn, """
-        SELECT name, setting FROM pg_settings
-        WHERE name IN ('server_version','max_connections','timezone','statement_timeout','idle_in_transaction_session_timeout',
-                       'shared_buffers','work_mem','maintenance_work_mem','max_wal_size','log_min_duration_statement',
-                       'default_transaction_isolation','wal_level','max_worker_processes','max_parallel_workers')
-        ORDER BY name""")
-    info = {r["name"]: r["setting"] for r in rows}
+        SELECT lower(name) AS name, CASE WHEN name = 'statement_timeout' THEN reset_val ELSE setting END AS setting
+        FROM pg_settings
+        WHERE lower(name) IN ('server_version','max_connections','timezone','statement_timeout','idle_in_transaction_session_timeout',
+                              'shared_buffers','work_mem','maintenance_work_mem','max_wal_size','log_min_duration_statement',
+                              'default_transaction_isolation','wal_level','max_worker_processes','max_parallel_workers')
+        ORDER BY 1""")
+    info = {r["name"].lower(): r["setting"] for r in rows}
     info["database"] = q(conn, "SELECT current_database() AS db")[0]["db"]
     info["exposed_schemas_hint"] = "ver project-config.md (postgrest db_schemas); default: public, graphql_public"
     return info
@@ -681,7 +722,9 @@ def get_realtime(conn):
     pubs = q(conn, """
         SELECT p.pubname AS publication, p.puballtables AS all_tables, p.pubinsert AS "insert", p.pubupdate AS "update",
                p.pubdelete AS "delete", p.pubtruncate AS "truncate" FROM pg_publication p ORDER BY 1""")
-    tables = q(conn, "SELECT pubname AS publication, schemaname AS schema, tablename AS \"table\" FROM pg_publication_tables ORDER BY 1, 2, 3")
+    # realtime.messages é particionada por dia: a partição que entra/sai a cada dia não é mudança estrutural.
+    tables = q(conn, "SELECT pubname AS publication, schemaname AS schema, tablename AS \"table\" FROM pg_publication_tables "
+                     "WHERE schemaname <> 'realtime' ORDER BY 1, 2, 3")
     return {"publications": pubs, "tables": tables}
 
 
@@ -947,26 +990,67 @@ def introspect_db(previous_db: dict | None) -> tuple[dict[str, Any], dict[str, A
 # Management API
 # --------------------------------------------------------------------------- #
 
+API_ATTEMPTS = 2        # 1 retry só para falha transitória (5xx, 429, timeout/rede); 400/401/403/404 nunca repetem
+API_BACKOFF_S = 1.0
+API_SLEEP: Callable[[float], None] = time.sleep  # injetável nos testes
+# seção da API -> chave em snapshot.json["api"] (a reaproveitada da coleta anterior quando a atual falha)
+API_SECTION_KEYS = {
+    "project": "project", "edge_functions": "edge_functions", "secrets": "secrets_names", "auth_config": "auth_config",
+    "postgrest_config": "postgrest_config", "postgres_config": "postgres_config", "pooler_config": "pooler_config",
+    "storage_config": "storage_config", "network_restrictions": "network_restrictions", "ssl_enforcement": "ssl_enforcement",
+    "custom_hostname": "custom_hostname", "branches": "branches", "backups": "backups_config",
+}
+
+
 def api(path: str) -> Any:
     req = urllib.request.Request(f"{MGMT_API}{path}", headers={"Authorization": f"Bearer {ACCESS_TOKEN}", "User-Agent": "supabase-snapshot/2"})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        body = resp.read()
-        return json.loads(body.decode("utf-8")) if body else None
+    for attempt in range(1, API_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                body = resp.read()
+            return json.loads(body.decode("utf-8")) if body else None
+        except urllib.error.HTTPError as e:
+            if (e.code != 429 and e.code < 500) or attempt == API_ATTEMPTS:
+                raise
+        except OSError:  # URLError, timeout, conexão resetada
+            if attempt == API_ATTEMPTS:
+                raise
+        log(f"api {path.split('?')[0]}: falha transitória, nova tentativa em {API_BACKOFF_S:g}s")
+        API_SLEEP(API_BACKOFF_S)
 
 
-def api_section(name: str, path: str, transform=lambda x: x, optional: bool = False):
+def api_error_hint(e: urllib.error.HTTPError) -> str:
+    """Trecho curto (já redigido) do corpo do erro: sem ele um 400 permanente não tem como ser diagnosticado."""
+    try:
+        body = e.read(2048).decode("utf-8", "replace")
+    except Exception:  # noqa: BLE001
+        return ""
+    body = " ".join(scrub(body).split())[:200]
+    return f": {body}" if body else ""
+
+
+def api_section(name: str, path: str, transform=lambda x: x, optional: bool = False, ignore: tuple = (403, 404)):
     try:
         data = transform(api(path))
         log(f"api {name}: ok")
         return data
     except urllib.error.HTTPError as e:
-        if optional and e.code in (403, 404):
+        if optional and e.code in ignore:
             log(f"api {name}: indisponível ({e.code}), ignorado")
             return None
-        record_error(f"api.{name}", f"HTTP {e.code} em {path}")
+        record_error(f"api.{name}", f"HTTP {e.code} em {path}{api_error_hint(e)}")
     except Exception as e:  # noqa: BLE001
         record_error(f"api.{name}", e)
     return None
+
+
+def api_shape(kind: type, transform=lambda x: x):
+    """Resposta fora do formato esperado vira erro da seção (isolado e reaproveitável), não exceção na renderização."""
+    def check(data):
+        if not isinstance(data, kind):
+            raise ValueError(f"resposta inesperada da API: esperado {kind.__name__}, recebido {type(data).__name__}")
+        return transform(data)
+    return check
 
 
 def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -981,19 +1065,26 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     def keep(d, keys):
         return {k: d.get(k) for k in keys} if isinstance(d, dict) else d
 
-    out["project"] = api_section("project", f"/projects/{ref}", lambda p: keep(p, ("id", "name", "region", "status", "created_at", "organization_id")))
-    out["edge_functions"] = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
-        [keep(f, ("slug", "name", "status", "version", "verify_jwt", "import_map", "entrypoint_path", "import_map_path", "created_at", "updated_at")) for f in fs],
-        key=lambda f: f["slug"] or "")) or []
+    def edge_functions(fs):
+        for f in fs:
+            if not isinstance(f, dict) or not isinstance(f.get("slug"), str) or not f["slug"]:
+                raise ValueError("resposta inesperada da API: edge function sem slug")
+        return sorted(
+            [keep(f, ("slug", "name", "status", "version", "verify_jwt", "import_map", "entrypoint_path", "import_map_path", "created_at", "updated_at")) for f in fs],
+            key=lambda f: f["slug"])
+
+    out["project"] = api_section("project", f"/projects/{ref}", api_shape(dict, lambda p: keep(p, ("id", "name", "region", "status", "created_at", "organization_id"))))
+    out["edge_functions"] = api_section("edge_functions", f"/projects/{ref}/functions", api_shape(list, edge_functions))
     out["secrets_names"] = api_section("secrets", f"/projects/{ref}/secrets", lambda s: sorted(x.get("name") for x in s if isinstance(x, dict)))
-    out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", redact)
-    out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", redact)
+    out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", api_shape(dict, redact))
+    out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", api_shape(dict, redact))
     out["postgres_config"] = api_section("postgres_config", f"/projects/{ref}/config/database/postgres", redact, optional=True)
     out["pooler_config"] = api_section("pooler_config", f"/projects/{ref}/config/database/pooler", redact)
     out["storage_config"] = api_section("storage_config", f"/projects/{ref}/config/storage", redact, optional=True)
     out["network_restrictions"] = api_section("network_restrictions", f"/projects/{ref}/network-restrictions", redact, optional=True)
     out["ssl_enforcement"] = api_section("ssl_enforcement", f"/projects/{ref}/ssl-enforcement", redact, optional=True)
-    out["custom_hostname"] = api_section("custom_hostname", f"/projects/{ref}/custom-hostname", redact, optional=True)
+    # custom hostname é add-on pago: sem ele a API responde 400 (esperado), não é falha de coleta.
+    out["custom_hostname"] = api_section("custom_hostname", f"/projects/{ref}/custom-hostname", redact, optional=True, ignore=(400, 403, 404))
     out["branches"] = api_section("branches", f"/projects/{ref}/branches",
                                   lambda bs: [keep(b, ("id", "name", "git_branch", "status", "is_default", "persistent")) for b in bs], optional=True)
     backups = api_section("backups", f"/projects/{ref}/database/backups", redact, optional=True)
@@ -1001,23 +1092,43 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     stats["backups"] = backups
     stats["health"] = api_section("health", f"/projects/{ref}/health?services=auth,db,pooler,realtime,rest,storage", redact, optional=True)
 
-    # Edge functions: a API devolve bundle binário (eszip), não fonte. Guardamos só metadados por função;
+    # Falha transitória (401/500/timeout) não pode virar "tudo removido": a seção que falhou volta da coleta
+    # anterior (com aviso nos arquivos), como já é feito com as seções do banco.
+    for name in sorted({e["section"][len("api."):] for e in ERRORS if e["section"].startswith("api.")}):
+        key = API_SECTION_KEYS.get(name)
+        if key and (previous_api or {}).get(key) is not None:
+            out[key] = previous_api[key]
+            CARRIED.append(f"api.{name}")
+            log(f"api {name}: reaproveitado da coleta anterior")
+    return out, stats
+
+
+def section_failed(name: str) -> bool:
+    return any(e["section"] == name for e in ERRORS)
+
+
+def render_edge_function_readmes(api_: dict) -> None:
+    # A Management API devolve bundle binário (eszip), não fonte. Guardamos só metadados por função;
     # o fonte canônico é supabase/functions/<slug>/ no repo.
     fn_dir = OUT / "edge-functions"
-    current = set()
-    for f in out["edge_functions"]:
+    if not api_.get("enabled"):
+        shutil.rmtree(fn_dir, ignore_errors=True)  # edge-functions.md diz "API desabilitada": README antigo seria órfão
+        return
+    functions = [f for f in api_.get("edge_functions") or [] if isinstance(f, dict) and isinstance(f.get("slug"), str) and f["slug"]]
+    for f in functions:
         s = f["slug"]
-        current.add(s)
         md = [f"# Edge Function `{s}`\n", md_table(["campo", "valor"], [
             ["nome", f.get("name")], ["status", f.get("status")], ["versão", f.get("version")],
             ["verify_jwt", f.get("verify_jwt")], ["entrypoint", f.get("entrypoint_path")], ["import_map", f.get("import_map_path")],
-            ["URL", f"https://{ref}.supabase.co/functions/v1/{s}"], ["fonte no repo", f"`supabase/functions/{s}/`"]])]
+            ["URL", f"https://{api_['ref']}.supabase.co/functions/v1/{s}"], ["fonte no repo", f"`supabase/functions/{s}/`"]])]
         write(fn_dir / slug(s) / "README.md", "\n".join(md))
-    if fn_dir.exists():
-        for d in fn_dir.iterdir():
-            if d.is_dir() and d.name not in {slug(s) for s in current}:
-                shutil.rmtree(d)
-    return out, stats
+    # Listagem que falhou (mesmo reaproveitada) não prova que a função sumiu: só poda quando a coleta foi bem-sucedida.
+    if section_failed("api.edge_functions") or not fn_dir.exists():
+        return
+    current = {slug(f["slug"]) for f in functions}
+    for d in fn_dir.iterdir():
+        if d.is_dir() and d.name not in current:
+            shutil.rmtree(d)
 
 
 # --------------------------------------------------------------------------- #
@@ -1216,8 +1327,9 @@ def fingerprints(snap: dict[str, Any]) -> dict[str, dict[str, str]]:
     add("constraints", db.get("constraints"), lambda r: f"{r['schema']}.{r['table']}.{r['name']}")
     add("indexes", db.get("indexes"), lambda r: f"{r['schema']}.{r['name']}")
     add("views", db.get("views"), lambda r: f"{r['schema']}.{r['name']}")
+    # callers vem do código do repo (muda sem o banco mudar): fica no arquivo, fora do fingerprint do banco.
     add("functions", [{**r, "definition": None, "definition_sha": r.get("definition_sha") or (sha(r["definition"]) if r.get("definition") else None)}
-                      for r in (db.get("functions") or [])], lambda r: f"{r['schema']}.{r['name']}({r['args']})")
+                      for r in (db.get("functions") or [])], lambda r: f"{r['schema']}.{r['name']}({r['args']})", strip=("callers",))
     add("triggers", db.get("triggers"), lambda r: f"{r['schema']}.{r['table']}.{r['name']}")
     add("policies (RLS)", db.get("policies"), lambda r: f"{r['schema']}.{r['table']}.{r['name']}")
     add("types/enums", db.get("types"), lambda r: f"{r['schema']}.{r['name']}")
@@ -1265,6 +1377,10 @@ def banner(name: str) -> str:
     return ""
 
 
+def api_banner(*names: str) -> str:
+    return "".join(banner(f"api.{n}") for n in names)
+
+
 def callers_status_table(states: dict[str, str] | None) -> str:
     if not states:
         return ""
@@ -1301,7 +1417,7 @@ def render_tables(db: dict) -> None:
                            t["rls_enabled"], len(pol.get(key, [])), len(cols.get(key, [])), key in rt, t.get("comment")])
         md = [f"# {t['schema']}.{t['name']}\n"]
         if t.get("comment"):
-            md.append(f"> {t['comment']}\n")
+            md.append("\n".join(f"> {ln}".rstrip() for ln in t["comment"].splitlines()) + "\n")
         props = [["tipo", t["kind"]], ["owner", t["owner"]], ["RLS habilitado", t["rls_enabled"]], ["RLS forçado (owner)", t["rls_forced"]],
                  ["policies", len(pol.get(key, []))], ["realtime (publication)", key in rt], ["replica identity", t["replica_identity"]],
                  ["vem de extensão", t["from_extension"]]]
@@ -1394,14 +1510,14 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
         md.append(md_table(["campo", "valor"], [["owner", v["owner"]], ["security_invoker", v["security_invoker"] if v["kind"] == "view" else "n/a"],
                                                  ["opções", ", ".join(v["options"] or [])], ["depende de", v["depends_on"]],
                                                  ["populada", v["populated"] if v["kind"] == "materialized" else "n/a"], ["comentário", v["comment"]]]))
-        md.append(f"\n```sql\n{(v['definition'] or '').strip()}\n```\n")
+        md.append("\n" + md_fence((v["definition"] or "").strip(), "sql"))
     write(OUT / "views.md", "\n".join(md) if len(md) > 2 else "# Views\n\n_nenhuma_\n")
 
     # Functions
     rows = []
     missing_function_sql = 0
     for f in db.get("functions") or []:
-        rel = f"functions/{slug(f['schema'])}/{slug(f['name'] + '__' + sha(f['args']))}.sql"
+        rel = f"functions/{slug(f['schema'])}/{uslug(f['name'] + '__' + sha(f['args']), 'functions/' + f['schema'])}.sql"
         if f.get("definition"):
             write(OUT / rel, f["definition"].strip())
         sql_available = bool(f.get("definition")) or ("functions" in CARRIED and (OUT / rel).is_file())
@@ -1546,13 +1662,15 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
           if db.get("migrations") is not None else "_Coleta indisponível; nenhuma versão anterior foi encontrada._\n"))
 
     # Storage
-    write(OUT / "storage.md", "# Storage\n\n" + banner("storage") + "Policies de `storage.objects`/`storage.buckets` em `policies.md`. Contagens em `stats.md`.\n\n" + md_table(
+    write(OUT / "storage.md", "# Storage\n\n" + banner("storage") + api_banner("storage_config") + "Policies de `storage.objects`/`storage.buckets` em `policies.md`. Contagens em `stats.md`.\n\n" + md_table(
         ["bucket", "público", "limite por arquivo", "mime permitidos", "criado em"],
         [[b["id"], b["public"], human_bytes(b["file_size_limit"]) if b["file_size_limit"] else "", b["allowed_mime_types"], b["created_at"]] for b in db.get("storage") or []])
-        + ("\n## Configuração (Management API)\n\n```json\n" + dumps(api_["storage_config"]) + "\n```\n" if api_.get("storage_config") else ""))
+        + ("\n## Configuração (Management API)\n\n" + md_fence(dumps(api_["storage_config"]), "json") if api_.get("storage_config") else ""))
 
     # Auth
     md = ["# Auth\n", "Contagens de usuários em `stats.md` (apenas agregados — sem dados pessoais).\n"]
+    if api_banner("auth_config"):
+        md.append("\n" + api_banner("auth_config").rstrip("\n") + "\n")
     if api_.get("auth_config"):
         cfg = api_["auth_config"]
         hooks = {k: v for k, v in cfg.items() if k.startswith("hook_")} if isinstance(cfg, dict) else {}
@@ -1562,9 +1680,9 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
             ["site_url", cfg.get("site_url")], ["providers habilitados", providers], ["jwt_exp (s)", cfg.get("jwt_exp")],
             ["signup desabilitado", cfg.get("disable_signup")], ["confirmação de e-mail", cfg.get("mailer_autoconfirm") is False],
             ["MFA TOTP", cfg.get("mfa_totp_enroll_enabled")], ["hooks", [k for k, v in hooks.items() if k.endswith("_enabled") and v]]]))
-        md.append("\n## Configuração completa (segredos redigidos)\n\n```json\n" + dumps(cfg) + "\n```\n")
+        md.append("\n## Configuração completa (segredos redigidos)\n\n" + md_fence(dumps(cfg), "json"))
     else:
-        md.append("\n_Configuração indisponível (Management API desabilitada)._\n")
+        md.append("\n_Configuração indisponível " + ("nesta coleta (ver errors.md)" if api_.get("enabled") else "(Management API desabilitada)") + "._\n")
     write(OUT / "auth.md", "\n".join(md))
 
     # Vault / webhooks / foreign
@@ -1577,7 +1695,9 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
 
     # Edge functions + project config
     if api_.get("enabled"):
-        md = ["# Edge Functions\n", f"URL base: `{api_['url']}/functions/v1/<slug>`. Metadados por função em `edge-functions/<slug>/README.md`. "
+        notice = api_banner("edge_functions", "secrets")
+        md = ["# Edge Functions\n" + ("\n" + notice.rstrip("\n") + "\n" if notice else ""),
+              f"URL base: `{api_['url']}/functions/v1/<slug>`. Metadados por função em `edge-functions/<slug>/README.md`. "
               "A Management API devolve só o bundle compilado; o fonte canônico é `supabase/functions/<slug>/` no repo.\n",
               md_table(["slug", "nome", "status", "versão", "verify_jwt", "entrypoint"],
                        [[f["slug"], f["name"], f["status"], f["version"], f["verify_jwt"], f["entrypoint_path"]] for f in api_.get("edge_functions") or []])]
@@ -1586,11 +1706,13 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
         cfg = {k: api_.get(k) for k in ("project", "url", "postgrest_config", "postgres_config", "pooler_config", "network_restrictions",
                                         "ssl_enforcement", "custom_hostname", "branches", "backups_config")}
         pr = api_.get("postgrest_config") or {}
-        write(OUT / "project-config.md", "# Configuração do projeto (Management API, segredos redigidos)\n\n" + md_table(["campo", "valor"], [
+        write(OUT / "project-config.md", "# Configuração do projeto (Management API, segredos redigidos)\n\n" + api_banner(
+            "project", "postgrest_config", "postgres_config", "pooler_config", "network_restrictions", "ssl_enforcement",
+            "custom_hostname", "branches", "backups") + md_table(["campo", "valor"], [
             ["projeto", (api_.get("project") or {}).get("name")], ["região", (api_.get("project") or {}).get("region")], ["URL", api_["url"]],
             ["schemas expostos (PostgREST)", pr.get("db_schema")], ["max_rows (PostgREST)", pr.get("max_rows")],
             ["extra_search_path", pr.get("db_extra_search_path")], ["PITR", (api_.get("backups_config") or {}).get("pitr_enabled")],
-            ["branches", len(api_.get("branches") or [])]]) + "\n```json\n" + dumps(cfg) + "\n```\n")
+            ["branches", len(api_.get("branches") or [])]]) + "\n" + md_fence(dumps(cfg), "json"))
     else:
         write(OUT / "edge-functions.md", "# Edge Functions\n\n_Management API desabilitada: defina SUPABASE_PROJECT_REF e SUPABASE_ACCESS_TOKEN._\n")
         write(OUT / "project-config.md", "# Configuração do projeto\n\n_Management API desabilitada._\n")
@@ -1652,7 +1774,7 @@ def render_readme(snap: dict, api_: dict, caller_sources: dict[str, str] | None 
         ["índices", len(db.get("indexes") or [])], ["tipos/enums", len(db.get("types") or [])], ["extensões", len(db.get("extensions") or [])],
         ["cron jobs", len(cron.get("jobs") or [])], ["filas pgmq", len(((db.get("queues") or {}).get("queues")) or [])],
         ["migrations", len(db["migrations"]) if db.get("migrations") is not None else "n/d"], ["buckets", len(db.get("storage") or [])],
-        ["edge functions", len(api_.get("edge_functions") or []) if api_.get("enabled") else "n/d"], ["webhooks", len(db.get("webhooks") or [])],
+        ["edge functions", len(api_.get("edge_functions") or []) if api_.get("enabled") and (not section_failed("api.edge_functions") or "api.edge_functions" in CARRIED) else "n/d"], ["webhooks", len(db.get("webhooks") or [])],
         ["lints ALTA", sum(1 for l in lints if l["severity"] == "ALTA")], ["lints total", len(lints)],
     ]
     server = db.get("server") or {}
@@ -1731,7 +1853,18 @@ def update_changelog(diff: list[tuple[str, str, list[str]]], previous_existed: b
 # Main
 # --------------------------------------------------------------------------- #
 
-def main() -> int:
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="snapshot.py", description=(__doc__ or "").strip(), formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Sem opções: a configuração é toda por variáveis de ambiente (acima). Código de saída: 0 ok, 1 banco indisponível, 2 configuração inválida.")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    try:
+        parse_args(argv or [])  # --help imprime o uso e sai 0; opção desconhecida (ex.: --out) sai 2, sem coletar
+    except SystemExit as exit_:
+        return exit_.code if isinstance(exit_.code, int) else 2
     if CONFIG_ERRORS:
         print("Configuração inválida: " + "; ".join(CONFIG_ERRORS), file=sys.stderr)
         return 2
@@ -1759,7 +1892,9 @@ def main() -> int:
             previous = None
 
     db, stats = introspect_db((previous or {}).get("db"))
-    if all(v is None for v in db.values()):
+    # Nenhuma seção estrutural coletada agora (nula ou toda reaproveitada) = banco indisponível: publicar
+    # dado 100% velho com gerado_em novo faria o índice mostrar "ok" para um retrato que não é de agora.
+    if not any(v is not None and k not in CARRIED for k, v in db.items()):
         log("Banco inteiro indisponível — nada será sobrescrito.")
         return 1
 
@@ -1787,6 +1922,7 @@ def main() -> int:
     render_tables(db)
     render_relationships(db)
     render_simple(db, api_, caller_sources)
+    render_edge_function_readmes(api_)
     render_stats(stats, api_stats, db)
     if schema_sql is not None:
         write(OUT / "schema.sql", schema_sql)
@@ -1821,4 +1957,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
