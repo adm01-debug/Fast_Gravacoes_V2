@@ -88,6 +88,29 @@ while IFS='|' read -r b up track; do
     if [ -n "$(git -C "$dir" status --porcelain --untracked-files=all)" ]; then
       puladas+=("$b: alterações locais não commitadas (espera ficar limpa)"); continue
     fi
+    # reset --keep não protege arquivos ignorados: recuse colisões com qualquer
+    # arquivo do alvo, incluindo arquivo/diretório e nomes com espaços/newlines.
+    colisao=0
+    declare -A alvos=() pastas_alvo=()
+    while IFS= read -r -d '' alvo; do
+      alvos["$alvo"]=1
+      pasta="$alvo"
+      while [[ "$pasta" = */* ]]; do
+        pasta="${pasta%/*}"; pastas_alvo["$pasta"]=1
+      done
+    done < <(git -C "$dir" ls-tree -r --name-only -z "$up_sha")
+    while IFS= read -r -d '' ignorado; do
+      if [[ -n "${alvos[$ignorado]:-}" || -n "${pastas_alvo[$ignorado]:-}" ]]; then colisao=1; break; fi
+      pasta="$ignorado"
+      while [[ "$pasta" = */* ]]; do
+        pasta="${pasta%/*}"
+        if [[ -n "${alvos[$pasta]:-}" ]]; then colisao=1; break; fi
+      done
+      [ "$colisao" -eq 1 ] && break
+    done < <(git -C "$dir" ls-files --others --ignored --exclude-standard -z)
+    if [ "$colisao" -eq 1 ]; then
+      puladas+=("$b: arquivo ignorado colide com upstream (preservado)"); continue
+    fi
   fi
 
   if git merge-base --is-ancestor "$local_sha" "$up_sha"; then

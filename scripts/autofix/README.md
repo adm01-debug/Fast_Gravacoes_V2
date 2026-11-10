@@ -5,10 +5,11 @@ existente e pela PR #148. Esta versão foi preparada separadamente a partir de m
 com autorização explícita para a sobreposição de arquivos. Nenhum motor chama IA.
 
 - `npm run autofix`: simulação; gera `.autofix/relatorio.{json,md}`.
-- `npm run autofix:apply`: aplica em branch própria ou worktree destacada, valida e
+- `npm run autofix:apply`: cria branch própria antes da primeira escrita, valida e
   restaura os bytes originais dos arquivos propostos caso qualquer gate falhe.
 - `node scripts/autofix/run.mjs --apply --commit --tests`: exige índice vazio, mede
-  testes antes/depois e só então cria branch nova e commit restrito aos próprios arquivos.
+  testes antes/depois e só então cria commit restrito aos próprios arquivos.
+  Falhas restauram os arquivos e a branch original; sucesso sem commit mantém a nova branch.
 - `npm run autofix:test`: regressões isoladas em diretórios temporários.
 
 Gates: projetos TypeScript app/node, ESLint dos arquivos alterados, baseline any,
