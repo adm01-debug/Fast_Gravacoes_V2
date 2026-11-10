@@ -7,7 +7,7 @@
  *   0 = OK
  *   1 = budget exceeded (fail CI)
  */
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, appendFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, appendFileSync, realpathSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join, relative, basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -68,7 +68,9 @@ export function collectViolations(files, budget) {
 
   for (const f of files) {
     const isCss = f.file.endsWith('.css');
-    const limit = chunks[f.chunk] ?? (isCss ? defaults.maxAssetKb : defaults.maxChunkKb);
+    // hasOwn: um chunk chamado `constructor`/`toString` não pode ler o protótipo como "budget".
+    const limit = (Object.hasOwn(chunks, f.chunk) ? chunks[f.chunk] : undefined)
+      ?? (isCss ? defaults.maxAssetKb : defaults.maxChunkKb);
     if (limit && f.gzipKb > limit) {
       violations.push(`Chunk "${f.chunk}" (${f.file}) ${f.gzipKb}KB gzip > limite ${limit}KB`);
     }
@@ -108,6 +110,35 @@ export function collectViolations(files, budget) {
   return violations;
 }
 
+/**
+ * Budgets de `chunks` que não casam com nenhum chunk do build: o limite existe no arquivo
+ * mas não protege nada (chunk renomeado/removido no vite.config). Aviso, não violação —
+ * um chunk pode sumir legitimamente por tree-shaking.
+ */
+export function collectStaleBudgets(files, budget) {
+  const built = new Set(files.map((f) => f.chunk));
+  return Object.keys(budget?.chunks ?? {}).filter((name) => !built.has(name)).sort();
+}
+
+/** Valida a forma do bundle-budget.json — `null`/`[]`/tipos errados não podem virar "sem limites". */
+export function validateBudget(budget) {
+  const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(budget)) throw new Error('bundle-budget.json precisa ser um objeto JSON.');
+  for (const key of ['defaults', 'chunks', 'entrypoints', 'entrypointChunks']) {
+    if (budget[key] !== undefined && !isObj(budget[key])) {
+      throw new Error(`bundle-budget.json: "${key}" precisa ser um objeto.`);
+    }
+  }
+  for (const key of ['defaults', 'chunks', 'entrypoints']) {
+    for (const [name, limit] of Object.entries(budget[key] ?? {})) {
+      if (typeof limit !== 'number' || !Number.isFinite(limit) || limit <= 0) {
+        throw new Error(`bundle-budget.json: ${key}["${name}"] precisa ser número > 0, veio ${JSON.stringify(limit)}.`);
+      }
+    }
+  }
+  return budget;
+}
+
 /** Walk dist and measure every JS/CSS/mjs asset (excluding .map). Pure-ish, cwd-based. */
 export function measureFiles() {
   return walk(DIST)
@@ -130,9 +161,9 @@ export async function main() {
     process.exit(1);
   }
 
-  const budget = existsSync(BUDGET_FILE)
-    ? JSON.parse(readFileSync(BUDGET_FILE, 'utf8'))
-    : DEFAULT_BUDGET;
+  const budget = validateBudget(
+    existsSync(BUDGET_FILE) ? JSON.parse(readFileSync(BUDGET_FILE, 'utf8')) : DEFAULT_BUDGET,
+  );
 
   const files = measureFiles();
 
@@ -151,6 +182,7 @@ export async function main() {
 
   // ── Enforce budgets ───────────────────────────────────────────
   const violations = collectViolations(files, budget);
+  const stale = collectStaleBudgets(files, budget);
 
   // ── Markdown summary ──────────────────────────────────────────
   const top = files.slice(0, 15);
@@ -170,6 +202,10 @@ export async function main() {
       ? `## ❌ Violações de budget (${violations.length})\n\n${violations.map((v) => `- ${v}`).join('\n')}`
       : `## ✅ Todos os budgets respeitados`,
     ``,
+    ...(stale.length
+      ? [`## ⚠️ Budgets sem chunk no build (${stale.length})`, ``,
+         `Limites declarados em \`bundle-budget.json\` que não protegem nada hoje: ${stale.map((c) => `\`${c}\``).join(', ')}`, ``]
+      : []),
   ].join('\n');
 
   writeFileSync(OUT_MD, md);
@@ -189,7 +225,14 @@ export async function main() {
 }
 
 // Run only when executed directly (not when imported by tests).
-const isDirect = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+// realpath: via symlink o script não pode "não rodar" e sair 0 sem medir nada.
+const isDirect = (() => {
+  try {
+    return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+})();
 if (isDirect) {
   main().catch((err) => {
     console.error('❌ bundle-report falhou:', err);

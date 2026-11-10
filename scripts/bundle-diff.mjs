@@ -6,7 +6,8 @@
  * Saída compatível com ci.yml (job bundle-diff): markdown appendado em
  * $GITHUB_STEP_SUMMARY e upload do artifact dist/bundle-diff.md.
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, realpathSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const [baseFile, headFile, outFile = 'dist/bundle-diff.md'] = process.argv.slice(2);
 
@@ -31,8 +32,16 @@ export function validateReport(report, label) {
     if (!f || typeof f !== 'object' || typeof f.file !== 'string' || typeof f.chunk !== 'string') {
       throw new Error(`❌ ${label} tem entrada inválida em files[${i}] (faltam "file"/"chunk").`);
     }
-    if (!Number.isFinite(Number(f.gzipKb))) {
+    // Só número de verdade: "10" + "5" concatenaria string na soma por chunk.
+    if (typeof f.gzipKb !== 'number' || !Number.isFinite(f.gzipKb)) {
       throw new Error(`❌ ${label} tem gzipKb inválido em files[${i}] ("${f.file}").`);
+    }
+  }
+  // Totais são opcionais (relatório antigo), mas se vierem precisam ser número.
+  for (const k of ['gzipKb', 'fileCount']) {
+    const v = report.totals[k];
+    if (v !== undefined && (typeof v !== 'number' || !Number.isFinite(v))) {
+      throw new Error(`❌ ${label} tem totals.${k} inválido (arquivo corrompido ou relatório antigo).`);
     }
   }
   return report;
@@ -62,6 +71,12 @@ function indexByChunk(report) {
 }
 
 const fmt = (n) => (n >= 0 ? `+${n.toFixed(2)}` : n.toFixed(2));
+// Listas de novos/removidos limitadas: um rename em massa não pode estourar o tamanho
+// de comentário de PR / step summary.
+const MAX_LISTED = 50;
+const listChunks = (rows) =>
+  `- ${rows.slice(0, MAX_LISTED).map((r) => `\`${r.chunk}\``).join(', ')}` +
+  (rows.length > MAX_LISTED ? ` _e mais ${rows.length - MAX_LISTED}_` : '');
 const arrow = (n) => (n > 0.5 ? '🔺' : n < -0.5 ? '🟢' : '➖');
 
 export function buildDiffMarkdown(base, head) {
@@ -81,7 +96,8 @@ export function buildDiffMarkdown(base, head) {
     });
   }
 
-  rows.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  // Desempate por nome: ordem estável entre runs com deltas iguais.
+  rows.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || (a.chunk < b.chunk ? -1 : a.chunk > b.chunk ? 1 : 0));
   const changed = rows.filter((r) => Math.abs(r.delta) >= 0.5);
   const newChunks = rows.filter((r) => r.base === 0 && r.head > 0);
   const removedChunks = rows.filter((r) => r.head === 0 && r.base > 0);
@@ -116,11 +132,11 @@ export function buildDiffMarkdown(base, head) {
     }
     if (newChunks.length) {
       lines.push(`### 🆕 Novos arquivos/chunks (${newChunks.length})`, '');
-      lines.push(`- ${newChunks.map((r) => `\`${r.chunk}\``).join(', ')}`);
+      lines.push(listChunks(newChunks));
     }
     if (removedChunks.length) {
       lines.push(`### 🗑️ Removidos (${removedChunks.length})`, '');
-      lines.push(`- ${removedChunks.map((r) => `\`${r.chunk}\``).join(', ')}`);
+      lines.push(listChunks(removedChunks));
     }
   }
 
@@ -151,5 +167,13 @@ export function main() {
   console.log(md);
 }
 
-const isDirect = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1].replace(/\\/g, '/')}`).href;
+// realpath + pathToFileURL: caminho com `#`, `%`, espaço ou via symlink não pode fazer o
+// script "não rodar" e sair 0 sem gerar nada.
+const isDirect = (() => {
+  try {
+    return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+})();
 if (isDirect) main();

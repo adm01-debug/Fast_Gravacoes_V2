@@ -13,16 +13,26 @@ import { spawnSync } from 'node:child_process';
 // Cada entrada PRECISA ter: por que é seguro hoje + como/quando será removida.
 // Exceções são escopadas por advisory: um pacote listado aqui só é
 // tolerado se TODOS os `via` do npm audit forem (a) um advisory já
-// conhecido (source id abaixo) ou (b) outro pacote também isento —
+// conhecido (GHSA abaixo) ou (b) outro pacote também isento —
 // qualquer advisory NOVO nesses pacotes volta a quebrar o gate.
-// source 1240992 = GHSA-vfj7-8cjw-p6xm (braces stack-exhaustion).
-const BRACES_ADVISORY = 1240992;
-// source 1241232 = GHSA-rj75-hqrm-r3gf (postcss-selector-parser complexidade
-// quadrática no parsing de seletores).
-const POSTCSS_PARSER_ADVISORY = 1241232;
-// source 1243066 = GHSA-mrhx-c7xc-m3w5 (zod: DoS por bound astronômico
-// em schemas .min()/.max() declarados pelo próprio código).
-const ZOD_ADVISORY = 1243066;
+// A chave é o GHSA (último segmento de `via[].url`), NÃO o `source` numérico:
+// o npm renumera o `source` quando o GitHub edita o advisory (o da
+// GHSA-rj75-hqrm-r3gf passou de 1241232 para 1243379) e o gate ficava
+// vermelho sem nenhuma mudança de código.
+// GHSA-vfj7-8cjw-p6xm = braces stack-exhaustion.
+const BRACES_ADVISORY = 'GHSA-vfj7-8cjw-p6xm';
+// GHSA-rj75-hqrm-r3gf = postcss-selector-parser complexidade quadrática no
+// parsing de seletores.
+const POSTCSS_PARSER_ADVISORY = 'GHSA-rj75-hqrm-r3gf';
+// GHSA-mrhx-c7xc-m3w5 = zod: DoS por bound astronômico em schemas
+// .min()/.max() declarados pelo próprio código.
+const ZOD_ADVISORY = 'GHSA-mrhx-c7xc-m3w5';
+
+/** GHSA de um `via` do npm audit (último segmento da URL), ou null se ausente/malformado. */
+const ghsaOf = (via) => {
+  const id = String(via?.url ?? '').split('/').pop() ?? '';
+  return /^GHSA(-[0-9a-z]{4}){3}$/i.test(id) ? `GHSA${id.slice(4).toLowerCase()}` : null;
+};
 
 const ALLOWED_PACKAGES = new Map([
   // Cadeia braces (GHSA-vfj7-8cjw-p6xm: stack-exhaustion DoS em padrões
@@ -160,6 +170,7 @@ const vulns = audit.vulnerabilities;
 
 const failures = [];
 const skipped = [];
+const usedExemptions = new Set();
 
 for (const [pkg, v] of Object.entries(vulns)) {
   const sev = v.severity ?? 'unknown';
@@ -171,16 +182,18 @@ for (const [pkg, v] of Object.entries(vulns)) {
   const viaCovered =
     exemption &&
     // `via` vazio/nulo não isenta — sem rastreabilidade do advisory a
-    // exceção não pode ser verificada (falha fechada).
+    // exceção não pode ser verificada (falha fechada). O mesmo vale para
+    // um `via` sem URL de GHSA reconhecível.
     Array.isArray(v.via) &&
     v.via.length > 0 &&
     v.via.every((x) =>
       typeof x === 'object' && x !== null
-        ? exemption.advisories.has(x.source)
+        ? exemption.advisories.has(ghsaOf(x))
         : ALLOWED_PACKAGES.has(String(x)),
     );
   if (viaCovered) {
     skipped.push(`${pkg} (${sev}) — ${exemption.reason}`);
+    usedExemptions.add(pkg);
     continue;
   }
   const via = (v.via ?? [])
@@ -210,6 +223,12 @@ const minor = Object.entries(vulns).filter(([, v]) => ['low', 'moderate'].includ
 if (minor.length > 0) {
   console.log(`\nInformativo — ${minor.length} vulnerabilidade(s) abaixo do threshold (high):`);
   for (const [pkg, v] of minor) console.log(`  • ${pkg} (${v.severity})`);
+}
+// Exceção que não isentou nada neste run: ou o advisory foi corrigido/rebaixado
+// (remova a entrada — ela é dívida morta), ou só é alcançada por cadeia.
+const idle = [...ALLOWED_PACKAGES.keys()].filter((pkg) => !usedExemptions.has(pkg));
+if (idle.length > 0) {
+  console.log(`\nInformativo — ${idle.length} exceção(ões) sem uso neste run (candidatas a remoção): ${idle.join(', ')}`);
 }
 const totals = audit.metadata?.vulnerabilities;
 if (totals) console.log(`\nTotais npm audit: ${JSON.stringify(totals)}`);
