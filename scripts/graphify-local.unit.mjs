@@ -594,3 +594,20 @@ test('política de recursos usa amostra determinística e bloqueia memória/carg
     assert.equal((await f.call('ensure')).exitCode, 1);
   }
 });
+
+  test('run preserva caractere multibyte dividido entre chunks (UTF-8)', async () => {
+    const suite = 'ç-日本語-🚀'; // multibyte 2, 3 e 4 bytes
+    const script = [
+      process.execPath,
+      '-e',
+      `const s=process.argv[1];const b=Buffer.from(s,'utf8');const half=Math.ceil(b.length/2);process.stdout.write(b.subarray(0,half));setTimeout(()=>process.stdout.write(b.subarray(half)),50);`,
+      suite,
+    ];
+    const r = await run(script, process.cwd(), process.env, 5000);
+    assert.equal(r.code, 0);
+    assert.equal(r.output, suite);
+    assert.ok(
+      !r.output.includes('\uFFFD'),
+      'saída não pode conter replacement char'
+    );
+  });
