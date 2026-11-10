@@ -6,8 +6,8 @@
    "TypeScript (1051)",
    "SQL (251)",
    "Markdown (68)",
+   "JavaScript (22)",
    "JSON (20)",
-   "JavaScript (18)",
    "Python (11)",
    "YAML (9)",
    "CSS (2)"
@@ -73,10 +73,11 @@
    "preview": "vite preview",
    "quality:any": "node scripts/check-any-baseline.mjs",
    "quality:any:update": "node scripts/check-any-baseline.mjs --update",
-   "quality:gate": "npm run lint && npm run quality:any && npm run test",
+   "quality:gate": "npm run lint && npm run quality:any && npm run test && npm run test:scripts",
    "test": "vitest run",
    "test:coverage": "vitest run --coverage",
    "test:e2e": "playwright test",
+   "test:scripts": "node --test scripts/*.test.mjs scripts/ci/*.test.mjs",
    "test:watch": "vitest"
   },
   "dependencias": 83,
@@ -422,7 +423,7 @@
   {
    "arquivo": ".husky/commit-msg",
    "comandos": [
-    "npx --no -- commitlint --edit ${1}"
+    "npx --no -- commitlint --edit \"$1\""
    ]
   },
   {

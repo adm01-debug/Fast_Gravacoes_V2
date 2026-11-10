@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7` (2026-11-09T20:57:45-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6701c3d9f513f570a902983f1c3957dcf393685b` (2026-11-10T01:23:12Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1051), SQL (251), Markdown (68), JSON (20), JavaScript (18), Python (11), YAML (9), CSS (2)
+- linguagens: TypeScript (1051), SQL (251), Markdown (68), JavaScript (22), JSON (20), Python (11), YAML (9), CSS (2)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1464 |
-| arquivos_codigo | 1077 |
-| linhas_codigo | 170855 |
+| arquivos_total | 1468 |
+| arquivos_codigo | 1081 |
+| linhas_codigo | 171632 |
 | rotas | 58 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 142 |
 | migrations | 244 |
 | cron_jobs | 4 |
-| testes | 105 |
+| testes | 109 |
 | workflows | 7 |
 | scripts | 18 |
 | docs_md | 68 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (41), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (77), tests/ (21), outro (7)
+- testes: co-localizado (*.test) (81), tests/ (21), outro (7)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (5), scripts/regras_negocio (3), scripts/ai-context (2)
@@ -256,8 +256,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 1 — ex.: scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 6550 nós · 20045 arestas · 619 comunidades · grafo do commit `136dd36e`
-- comunidades maiores: card.tsx (222), analytics/index.ts (163), client.ts (145), input.tsx (121), skeleton.tsx (108), button.tsx (108), cn (101), useRealtimeChannel (93), snapshot.py (90), showErrorToast (90), production/index.ts (87), OEEDashboard.tsx (86)
+- 6594 nós · 20108 arestas · 627 comunidades · grafo do commit `6701c3d9`
+- comunidades maiores: utils.ts (143), Card (142), card.tsx (141), cn (137), FuturisticBI.tsx (132), input.tsx (124), client.ts (105), useAuth (104), Breadcrumbs.tsx (100), snapshot.py (90), errorHandling.ts (88), HandoverDetailsModal.tsx (84)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), showErrorToast() (src/lib/errorHandling.ts), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), useDevice() (src/hooks/use-device.tsx), .build() (scripts/graphify/tests/test_integration.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -268,11 +268,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - deno.lock (8)
 - .github/workflows/db-admin.yml (7)
 - PENDENCIAS.md (7)
+- package.json (7)
 - CLAUDE.md (6)
 - index.html (6)
-- package.json (6)
+- scripts/audit-gate.mjs (6)
 - .github/workflows/deploy.yml (5)
-- scripts/audit-gate.mjs (5)
 - src/components/layout/AppSidebar.tsx (5)
 - supabase/config.toml (5)
 - tests/e2e/offline.spec.ts (5)
@@ -299,7 +299,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `test:coverage`: `vitest run --coverage`
 - `quality:any`: `node scripts/check-any-baseline.mjs`
 - `quality:any:update`: `node scripts/check-any-baseline.mjs --update`
-- `quality:gate`: `npm run lint && npm run quality:any && npm run test`
+- `quality:gate`: `npm run lint && npm run quality:any && npm run test && npm run test:scripts`
+- `test:scripts`: `node --test scripts/*.test.mjs scripts/ci/*.test.mjs`
 - `audit:pdf`: `echo 'AUDITORIA_ENTERPRISE_2026.md not found' && exit 0`
 - `test:e2e`: `playwright test`
 - `bundle:report`: `node scripts/bundle-report.mjs`
@@ -344,6 +345,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-10 `6701c3d` fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)
 - 2026-11-09 `136dd36` fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)
 - 2026-11-09 `6c96376` chore(src): remove imports e declarações não usados (#149)
 - 2026-11-09 `d61122a` ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)
@@ -358,7 +360,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `bce2374` feat(contexto): contexto autônomo para agentes de IA (#136)
 - 2026-11-07 `92a5fee` fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)
 - 2026-11-07 `d149e29` fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)
-- 2026-11-07 `c98b362` chore: instruções enxutas para agentes (#130)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

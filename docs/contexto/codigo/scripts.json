@@ -41,7 +41,7 @@
   {
    "arquivo": "scripts/audit-gate.mjs",
    "descricao": "* Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA",
-   "linhas": 216,
+   "linhas": 235,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -53,7 +53,7 @@
   {
    "arquivo": "scripts/bundle-diff.mjs",
    "descricao": "* Compara base/head bundle-report.json e gera um markdown de diff.",
-   "linhas": 156,
+   "linhas": 180,
    "env": [],
    "npm_scripts": [
     "bundle:diff"
@@ -66,7 +66,7 @@
   {
    "arquivo": "scripts/bundle-report.mjs",
    "descricao": "* Generates dist/bundle-report.json with per-chunk sizes (raw + gzip)",
-   "linhas": 199,
+   "linhas": 242,
    "env": [
     "GITHUB_REF_NAME",
     "GITHUB_SHA",
@@ -81,7 +81,7 @@
   {
    "arquivo": "scripts/check-any-baseline.mjs",
    "descricao": "* Quality Gate — Any Ratchet",
-   "linhas": 143,
+   "linhas": 207,
    "env": [],
    "npm_scripts": [
     "quality:any",
@@ -93,7 +93,7 @@
   {
    "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
    "descricao": "* Garante que as instrucoes para agentes nao foram apagadas ou esvaziadas por outra sessao.",
-   "linhas": 123,
+   "linhas": 149,
    "env": [
     "CLAUDE_MD_BASE"
    ],
@@ -212,7 +212,7 @@
   {
    "arquivo": "scripts/rls-regression.mjs",
    "descricao": "* RLS regression gate — verifica, contra o Supabase de produção, que a",
-   "linhas": 138,
+   "linhas": 140,
    "env": [
     "RLS_FOREIGN_USER_ID"
    ],

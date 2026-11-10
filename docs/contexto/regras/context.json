@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7",
+  "sha": "6701c3d9f513f570a902983f1c3957dcf393685b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 00:54 UTC",
-  "files_total": 1461,
-  "code_files": 1331,
-  "code_lines": 185761
+  "generated_at": "2026-11-10 01:39 UTC",
+  "files_total": 1465,
+  "code_files": 1335,
+  "code_lines": 186538
  },
  "version": "1.3.2",
- "facts_hash": "2f3ec7c0ae150898",
+ "facts_hash": "e0f353ab16f2d9c2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -119,7 +119,8 @@
    "test:coverage": "vitest run --coverage",
    "quality:any": "node scripts/check-any-baseline.mjs",
    "quality:any:update": "node scripts/check-any-baseline.mjs --update",
-   "quality:gate": "npm run lint && npm run quality:any && npm run test",
+   "quality:gate": "npm run lint && npm run quality:any && npm run test && npm run test:scripts",
+   "test:scripts": "node --test scripts/*.test.mjs scripts/ci/*.test.mjs",
    "audit:pdf": "echo 'AUDITORIA_ENTERPRISE_2026.md not found' && exit 0",
    "test:e2e": "playwright test",
    "bundle:report": "node scripts/bundle-report.mjs",
@@ -217,7 +218,7 @@
    ".tsx": 656,
    ".ts": 395,
    ".sql": 251,
-   ".mjs": 14,
+   ".mjs": 18,
    ".py": 11,
    ".js": 4
   },
@@ -26302,8 +26303,8 @@
   },
   {
    "module": "scripts",
-   "files": 24,
-   "lines": 9483,
+   "files": 28,
+   "lines": 10248,
    "tables": [
     "a",
     "contacts",
@@ -26324,7 +26325,8 @@
    ],
    "exports": [
     "bundle-diff.mjs: validateReport, loadReport, buildDiffMarkdown, main",
-    "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, measureFiles, main",
+    "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, measureFiles",
+    "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
     "gerar.unit.mjs: AppRoutes, useContacts",
     "corpus.py: load_config, digest, inventory, output_dir, validate_graph, check_snapshot",
     "enrich.py: _write, _relative, _text, _matches, _source_paths, _routes",
@@ -26340,11 +26342,11 @@
    ],
    "docs": [
     "audit-gate.mjs: Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA e documentada para advisories que não afetam este app. Por que um wrapper? `npm audit --audit-level=high` falha em advisories inalcançáveis no nosso contexto (ex.: bug de hidratação SSR num SPA puro) e não sabe expressar e …",
+    "audit-gate.test.mjs: Testes do audit gate — `node --test scripts/audit-gate.test.mjs`. O gate roda `npm audit --json`; aqui um `npm` falso no PATH devolve o JSON do cenário.",
     "bundle-diff.mjs: !/usr/bin/env node",
     "bundle-report.mjs: !/usr/bin/env node",
     "bundle.test.mjs: Testes de unidade dos scripts de bundle (bundle-report.mjs/bundle-diff.mjs) usando node:test (stdlib, sem devDependency nova). Cenários cobertos (gaps 1-3): - hashes Vite de 8/16/20 chars, hash com '-' interno, sem hash - entrypoints com prefixo exato ('/' nao casa 'index-page'/'auth-index') - valid …",
-    "check-any-baseline.mjs: !/usr/bin/env node",
-    "graphify.mjs: !/usr/bin/env node Keep graph tooling outside the Vite runtime and never interpret user input as shell code."
+    "check-any-baseline.mjs: !/usr/bin/env node"
    ],
    "deps": [
     "#",
@@ -26366,6 +26368,7 @@
     "node:zlib",
     "react",
     "react-router-dom",
+    "typescript",
     "vue-router",
     "zod"
    ],
@@ -26382,17 +26385,21 @@
    ],
    "file_list": [
     "scripts/audit-gate.mjs",
+    "scripts/audit-gate.test.mjs",
     "scripts/bundle-diff.mjs",
     "scripts/bundle-report.mjs",
     "scripts/bundle.test.mjs",
     "scripts/check-any-baseline.mjs",
+    "scripts/check-any-baseline.test.mjs",
     "scripts/graphify.mjs",
     "scripts/graphify.test.mjs",
     "scripts/rls-regression.mjs",
+    "scripts/seed-users.test.mjs",
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/check-claude-md-integrity.test.mjs",
     "scripts/ci/session-start.test.mjs",
     "scripts/graphify/corpus.py",
     "scripts/graphify/enrich.py",
@@ -28424,7 +28431,7 @@
   {
    "module": "supabase",
    "files": 8,
-   "lines": 529,
+   "lines": 541,
    "tables": [],
    "exports": [],
    "docs": [
@@ -30805,6 +30812,9 @@
     "scripts/ai-context/cenarios.mjs",
     "src/features/notifications/hooks/useNotifications.ts"
    ],
+   "PATH": [
+    "scripts/audit-gate.test.mjs"
+   ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -32447,11 +32457,31 @@
    },
    {
     "file": "scripts/bundle-diff.mjs",
+    "msg": "❌ ${label} tem totals.${k} inválido (arquivo corrompido ou relatório antigo)."
+   },
+   {
+    "file": "scripts/bundle-diff.mjs",
     "msg": "❌ Relatório ${label} não encontrado: ${path}"
    },
    {
     "file": "scripts/bundle-diff.mjs",
     "msg": "❌ Relatório ${label} não é JSON válido (${path}): ${err.message}"
+   },
+   {
+    "file": "scripts/bundle-report.mjs",
+    "msg": "bundle-budget.json precisa ser um objeto JSON."
+   },
+   {
+    "file": "scripts/bundle-report.mjs",
+    "msg": "bundle-budget.json: "
+   },
+   {
+    "file": "scripts/bundle-report.mjs",
+    "msg": "bundle-budget.json: ${key}["
+   },
+   {
+    "file": "scripts/check-any-baseline.mjs",
+    "msg": "não foi possível carregar o pacote "
    },
    {
     "file": "scripts/graphify.mjs",
@@ -34976,6 +35006,10 @@
    {
     "file": "src/pages/SystemStatusPage.tsx",
     "text": "papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring."
+   },
+   {
+    "file": "supabase/seed-users.mjs",
+    "text": "Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou)."
    },
    {
     "file": "supabase/functions/_shared/auth.ts",
@@ -48407,6 +48441,54 @@
   ],
   "tests": [
    {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "advisory isento passa"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "source renumerado pelo npm com a mesma GHSA continua isento"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "GHSA em caixa diferente na URL continua isenta"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "GHSA nova em pacote isento reprova"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "mesmo source antigo com outra GHSA reprova (source não é mais a chave)"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "via sem URL ou com URL que não é GHSA reprova (falha fechada)"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "GHSA de outro pacote não isenta este"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "cadeia transitiva: via string só passa se o pacote citado também é isento"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "pacote fora da allowlist reprova em high e critical; moderate só informa"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "via vazio ou ausente em pacote isento reprova"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "auditoria que não rodou não é "
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
+    "name": "sem vulnerabilidades passa e lista exceções sem uso"
+   },
+   {
     "file": "scripts/bundle.test.mjs",
     "name": "remove hash Vite de 8 chars"
    },
@@ -48491,6 +48573,86 @@
     "name": "aceita base ausente (primeiro merge)"
    },
    {
+    "file": "scripts/bundle.test.mjs",
+    "name": "chunk com nome de propriedade do protótipo usa o default, não o protótipo"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "budget de chunk sem chunk no build é listado como morto (aviso, não violação)"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "validateBudget recusa formas que desligariam os limites em silêncio"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "o bundle-budget.json versionado é válido"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "validateReport exige números de verdade (string concatenaria na soma)"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "diff limita as listas de novos/removidos e ordena de forma estável"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "CLI bundle-report: mede, grava relatório e reprova budget estourado (inclusive via symlink)"
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
+    "name": "CLI bundle-diff: gera o markdown em caminho com #, % e espaço; head ausente sai 1"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "conta todo any em posição de tipo"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "não conta a palavra fora de posição de tipo"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "linhas reportadas são 1-based e na ordem do arquivo"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "seleção de arquivos"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "decisão do ratchet"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: igual ao baseline passa; any novo reprova listando onde"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: testes, tipos gerados, node_modules e não-TS ficam fora"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: baseline ausente, corrompido ou não inteiro reprova e não cria arquivo"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: baseline acima do real — local avisa, CI reprova"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: --update só reduz; --force aceita aumento; cria quando ausente"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "CLI: sem src/ ou com argumento desconhecido sai 2 (gate não rodou)"
+   },
+   {
+    "file": "scripts/check-any-baseline.test.mjs",
+    "name": "repo real: contagem bate com o baseline versionado"
+   },
+   {
     "file": "scripts/graphify.test.mjs",
     "name": "fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito"
    },
@@ -48509,6 +48671,62 @@
    {
     "file": "scripts/graphify.test.mjs",
     "name": "--version e --help não chamam o Python, e o help só cita comando que existe"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "falha fechado sem token, sem ref ou com ref fora da lista"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "trava de produção vale mesmo com espaço ou maiúscula no ref"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "todos criados ou já existentes: sai 0"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "qualquer usuário com erro faz o seed sair 1"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "erro de rede em um usuário não derruba os outros e sai 1"
+   },
+   {
+    "file": "scripts/seed-users.test.mjs",
+    "name": "usa o ref normalizado na URL e nunca imprime o token"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "estado íntegro passa, com e sem base explícita, e de qualquer cwd"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "AGENTS.md ausente ou sem seção obrigatória reprova"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "wipe do conjunto ou de um arquivo reprova"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "subpasta em docs/agentes não vira falso "
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "base explícita que não resolve reprova (antes passava verde com tudo apagado)"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "CLAUDE_MD_BASE não é interpretada pelo shell"
+   },
+   {
+    "file": "scripts/ci/check-claude-md-integrity.test.mjs",
+    "name": "crescer ou criar doc novo passa"
    },
    {
     "file": "scripts/ci/session-start.test.mjs",
@@ -65908,32 +66126,65 @@
   },
   "scripts/audit-gate.mjs": {
    "path": "scripts/audit-gate.mjs",
-   "lines": 216,
+   "lines": 235,
    "params": [
     {
      "name": "BRACES_ADVISORY",
-     "value": "1240992"
+     "value": "'GHSA-vfj7-8cjw-p6xm'"
     },
     {
      "name": "POSTCSS_PARSER_ADVISORY",
-     "value": "1241232"
+     "value": "'GHSA-rj75-hqrm-r3gf'"
     },
     {
      "name": "ZOD_ADVISORY",
-     "value": "1243066"
+     "value": "'GHSA-mrhx-c7xc-m3w5'"
     }
    ],
    "rule_comments": [
     "aninhados): atinge apenas dependências de build/dev (tailwindcss,",
     "major breaking (API de schemas, zod-validation-error compat).",
     "Remoção: migração zod v4 com revisão do zod-validation-error.",
-    "exceção não pode ser verificada (falha fechada)."
+    "exceção não pode ser verificada (falha fechada). O mesmo vale para"
    ],
    "doc": "Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA e documentada para advisories que não afetam este app. Por que um wrapper? `npm audit --audit-level=high` falha em advisories inalcançáveis no nosso contexto (ex.: bug de hidratação SSR num SPA puro) e não sabe expressar e …"
   },
+  "scripts/audit-gate.test.mjs": {
+   "path": "scripts/audit-gate.test.mjs",
+   "lines": 107,
+   "is_test": true,
+   "env": [
+    "PATH"
+   ],
+   "params": [
+    {
+     "name": "ZOD",
+     "value": "'https://github.com/advisories/GHSA-mrhx-c7xc-m3w5'"
+    },
+    {
+     "name": "BRACES",
+     "value": "'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm'"
+    }
+   ],
+   "doc": "Testes do audit gate — `node --test scripts/audit-gate.test.mjs`. O gate roda `npm audit --json`; aqui um `npm` falso no PATH devolve o JSON do cenário.",
+   "tests": [
+    "advisory isento passa",
+    "source renumerado pelo npm com a mesma GHSA continua isento",
+    "GHSA em caixa diferente na URL continua isenta",
+    "GHSA nova em pacote isento reprova",
+    "mesmo source antigo com outra GHSA reprova (source não é mais a chave)",
+    "via sem URL ou com URL que não é GHSA reprova (falha fechada)",
+    "GHSA de outro pacote não isenta este",
+    "cadeia transitiva: via string só passa se o pacote citado também é isento",
+    "pacote fora da allowlist reprova em high e critical; moderate só informa",
+    "via vazio ou ausente em pacote isento reprova",
+    "auditoria que não rodou não é ",
+    "sem vulnerabilidades passa e lista exceções sem uso"
+   ]
+  },
   "scripts/bundle-diff.mjs": {
    "path": "scripts/bundle-diff.mjs",
-   "lines": 156,
+   "lines": 180,
    "exports": [
     "function validateReport",
     "function loadReport",
@@ -65945,8 +66196,19 @@
     "❌ ${label} não é um object JSON válido (esperado bundle-report.json).",
     "❌ ${label} tem entrada inválida em files[${i}] (faltam ",
     "❌ ${label} tem gzipKb inválido em files[${i}] (",
+    "❌ ${label} tem totals.${k} inválido (arquivo corrompido ou relatório antigo).",
     "❌ Relatório ${label} não encontrado: ${path}",
     "❌ Relatório ${label} não é JSON válido (${path}): ${err.message}"
+   ],
+   "params": [
+    {
+     "name": "MAX_LISTED",
+     "value": "50"
+    }
+   ],
+   "rule_comments": [
+    "Listas de novos/removidos limitadas: um rename em massa não pode estourar o tamanho",
+    "realpath + pathToFileURL: caminho com `#`, `%`, espaço ou via symlink não pode fazer o"
    ],
    "doc": "!/usr/bin/env node",
    "calc_fns": [
@@ -65959,11 +66221,13 @@
   },
   "scripts/bundle-report.mjs": {
    "path": "scripts/bundle-report.mjs",
-   "lines": 199,
+   "lines": 242,
    "exports": [
     "const DEFAULT_BUDGET",
     "function chunkNameFromFile",
     "function collectViolations",
+    "function collectStaleBudgets",
+    "function validateBudget",
     "function measureFiles",
     "function main"
    ],
@@ -65972,19 +66236,35 @@
     "GITHUB_SHA",
     "GITHUB_STEP_SUMMARY"
    ],
-   "rule_comments": [
-    "Prefix-exact match: '/'→'index' must not accidentally capture chunks like"
+   "errors": [
+    "bundle-budget.json precisa ser um objeto JSON.",
+    "bundle-budget.json: ",
+    "bundle-budget.json: ${key}["
    ],
-   "doc": "!/usr/bin/env node"
+   "rule_comments": [
+    "hasOwn: um chunk chamado `constructor`/`toString` não pode ler o protótipo como \"budget\".",
+    "Prefix-exact match: '/'→'index' must not accidentally capture chunks like",
+    "* Budgets de `chunks` que não casam com nenhum chunk do build: o limite existe no arquivo",
+    "realpath: via symlink o script não pode \"não rodar\" e sair 0 sem medir nada."
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "validateBudget",
+     "params": "budget",
+     "body": "const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v); if (!isObj(budget)) throw new Error('bundle-budget.json precisa ser um objeto JSON.'); for (const key of ['defaults', 'chunks', 'entrypoints', 'entrypointChunks']) { if (budget[key] !== undefined && !isObj(budget[key])) { throw new Error(`bundle-budget.json: \"${key}\" precisa ser um objeto.`); } } for (const key of ['defaults', 'chunks', 'entrypoints']) { for (const [name, limit] of Object.entries(budget[key] ?? {})) { …"
+    }
+   ]
   },
   "scripts/bundle.test.mjs": {
    "path": "scripts/bundle.test.mjs",
-   "lines": 211,
+   "lines": 329,
    "is_test": true,
    "rule_comments": [
     "- validacao de schema com erro claro e diff com novos/removidos/fileCount",
     "/auth declara explicitamente AuthPage; auth-index deve ser ignorado",
-    "estourando o limite do mapa explicito"
+    "estourando o limite do mapa explicito",
+    "--- regressões da auditoria de scripts (budgets mortos, protótipo, validação, CLI) ---"
    ],
    "doc": "Testes de unidade dos scripts de bundle (bundle-report.mjs/bundle-diff.mjs) usando node:test (stdlib, sem devDependency nova). Cenários cobertos (gaps 1-3): - hashes Vite de 8/16/20 chars, hash com '-' interno, sem hash - entrypoints com prefixo exato ('/' nao casa 'index-page'/'auth-index') - valid …",
    "tests": [
@@ -66008,13 +66288,56 @@
     "rejeita falta de totals/files",
     "rejeita entrada invalida em files",
     "gera diff com arquivos novos/removidos e delta fileCount",
-    "aceita base ausente (primeiro merge)"
+    "aceita base ausente (primeiro merge)",
+    "chunk com nome de propriedade do protótipo usa o default, não o protótipo",
+    "budget de chunk sem chunk no build é listado como morto (aviso, não violação)",
+    "validateBudget recusa formas que desligariam os limites em silêncio",
+    "o bundle-budget.json versionado é válido",
+    "validateReport exige números de verdade (string concatenaria na soma)",
+    "diff limita as listas de novos/removidos e ordena de forma estável",
+    "CLI bundle-report: mede, grava relatório e reprova budget estourado (inclusive via symlink)",
+    "CLI bundle-diff: gera o markdown em caminho com #, % e espaço; head ausente sai 1"
    ]
   },
   "scripts/check-any-baseline.mjs": {
    "path": "scripts/check-any-baseline.mjs",
-   "lines": 143,
+   "lines": 207,
+   "exports": [
+    "function isCounted",
+    "function findAnyLines",
+    "function collectAny",
+    "function readBaseline",
+    "function decide",
+    "function main"
+   ],
+   "errors": [
+    "não foi possível carregar o pacote "
+   ],
+   "rule_comments": [
+    "* Decisão do modo validação: { code, verdict }. Pura, para teste. */",
+    "Qualquer falha em contar não pode passar o ratchet como se fosse 0."
+   ],
    "doc": "!/usr/bin/env node"
+  },
+  "scripts/check-any-baseline.test.mjs": {
+   "path": "scripts/check-any-baseline.test.mjs",
+   "lines": 185,
+   "is_test": true,
+   "doc": "Testes do ratchet de `any` — `node --test scripts/check-any-baseline.test.mjs`.",
+   "tests": [
+    "conta todo any em posição de tipo",
+    "não conta a palavra fora de posição de tipo",
+    "linhas reportadas são 1-based e na ordem do arquivo",
+    "seleção de arquivos",
+    "decisão do ratchet",
+    "CLI: igual ao baseline passa; any novo reprova listando onde",
+    "CLI: testes, tipos gerados, node_modules e não-TS ficam fora",
+    "CLI: baseline ausente, corrompido ou não inteiro reprova e não cria arquivo",
+    "CLI: baseline acima do real — local avisa, CI reprova",
+    "CLI: --update só reduz; --force aceita aumento; cria quando ausente",
+    "CLI: sem src/ ou com argumento desconhecido sai 2 (gate não rodou)",
+    "repo real: contagem bate com o baseline versionado"
+   ]
   },
   "scripts/graphify.mjs": {
    "path": "scripts/graphify.mjs",
@@ -66048,7 +66371,7 @@
   },
   "scripts/rls-regression.mjs": {
    "path": "scripts/rls-regression.mjs",
-   "lines": 138,
+   "lines": 140,
    "tables": [
     {
      "table": "technical_conversations",
@@ -66073,6 +66396,25 @@
      "params": "value",
      "body": "const trimmed = value.trim(); if (!UUID_RE.test(trimmed)) { console.error(`\\n# RLS regression: RLS_FOREIGN_USER_ID (ou default) não é um UUID válido: \"${value}\"`); console.error('# A regressão só é detectável se o user_id estrangeiro for real — UUID inválido quebraria o gate.'); process.exit(1); } // Supabase normaliza UUIDs para minúsculas; comparar case-sensitive com // uppercase enganaria a proteção de \"não usar a própria conta\". return trimmed.toLowerCase();"
     }
+   ]
+  },
+  "scripts/seed-users.test.mjs": {
+   "path": "scripts/seed-users.test.mjs",
+   "lines": 73,
+   "is_test": true,
+   "errors": [
+    "ECONNRESET",
+    "fetch não devia ser chamado",
+    "url errada: "
+   ],
+   "doc": "Testes do seed de usuários — `node --test scripts/seed-users.test.mjs`. Nenhuma chamada real: um preload troca o fetch global por um mock.",
+   "tests": [
+    "falha fechado sem token, sem ref ou com ref fora da lista",
+    "trava de produção vale mesmo com espaço ou maiúscula no ref",
+    "todos criados ou já existentes: sai 0",
+    "qualquer usuário com erro faz o seed sair 1",
+    "erro de rede em um usuário não derruba os outros e sai 1",
+    "usa o ref normalizado na URL e nunca imprime o token"
    ]
   },
   "scripts/ai-context/cenarios.mjs": {
@@ -66484,7 +66826,7 @@
   },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
-   "lines": 123,
+   "lines": 149,
    "env": [
     "CLAUDE_MD_BASE"
    ],
@@ -66507,6 +66849,8 @@
     }
    ],
    "rule_comments": [
+    "Recursivo, como o `ls-tree -r` da base: subpasta nao pode virar \"encolheu\".",
+    "Base pedida explicitamente e que nao resolve (typo, fetch que falhou) nao pode virar",
     "100)}% vs ${BASE} (atual: ${agora} bytes, base: ${naBase} bytes); limite por arquivo e ${Math.round(FILE_SHRINK_THRESHOLD * 100)}%.`);"
    ],
    "doc": "!/usr/bin/env node",
@@ -66514,6 +66858,28 @@
     "* AGENTS.md + CLAUDE.md + docs/agentes/*.md nao encolheu >30% em bytes vs a base, e cada arquivo",
     "* vigiado (AGENTS.md e cada docs/agentes/*.md que exista na base) continua existindo com >=50% do",
     "// com >= 50% do tamanho de la. CLAUDE.md fica de fora: e so `@AGENTS.md` por design."
+   ]
+  },
+  "scripts/ci/check-claude-md-integrity.test.mjs": {
+   "path": "scripts/ci/check-claude-md-integrity.test.mjs",
+   "lines": 104,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DOC",
+     "value": "'detalhe '"
+    }
+   ],
+   "doc": "Testes do guard de integridade do AGENTS.md — `node --test scripts/ci/check-claude-md-integrity.test.mjs`.",
+   "tests": [
+    "estado íntegro passa, com e sem base explícita, e de qualquer cwd",
+    "AGENTS.md ausente ou sem seção obrigatória reprova",
+    "wipe do conjunto ou de um arquivo reprova",
+    "doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome",
+    "subpasta em docs/agentes não vira falso ",
+    "base explícita que não resolve reprova (antes passava verde com tudo apagado)",
+    "CLAUDE_MD_BASE não é interpretada pelo shell",
+    "crescer ou criar doc novo passa"
    ]
   },
   "scripts/ci/session-start.test.mjs": {
@@ -88243,7 +88609,7 @@
   },
   "supabase/seed-users.mjs": {
    "path": "supabase/seed-users.mjs",
-   "lines": 86,
+   "lines": 98,
    "external_urls": [
     "https://api.supabase.com/v1/projects/${PROJECT_REF}/auth/…"
    ],
@@ -88285,6 +88651,9 @@
      "value": "coordinator",
      "kind": "escreve"
     }
+   ],
+   "rule_comments": [
+    "Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou)."
    ],
    "doc": "Cria 5 usuários operador + 1 admin no Supabase Auth via Management API. Cada um com profile e user_role (role=operator|coordinator) associados. Uso: SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=<ref> SUPABASE_SEED_ALLOWED_REFS=<ref-dev>,<ref-staging> node supabase/seed-users.mjs Etapa 5 do plano-m …"
   },
@@ -92459,10 +92828,35 @@
   }
  },
  "git": {
-  "sha": "136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7",
+  "sha": "6701c3d9f513f570a902983f1c3957dcf393685b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6701c3d",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)",
+    "files": [
+     ".any-baseline.json",
+     ".husky/commit-msg",
+     "docs/agentes/github-ci.md",
+     "docs/agentes/mapa-repo.md",
+     "package.json",
+     "scripts/audit-gate.mjs",
+     "scripts/audit-gate.test.mjs",
+     "scripts/bundle-diff.mjs",
+     "scripts/bundle-report.mjs",
+     "scripts/bundle.test.mjs",
+     "scripts/check-any-baseline.mjs",
+     "scripts/check-any-baseline.test.mjs",
+     "scripts/ci/check-claude-md-integrity.mjs",
+     "scripts/ci/check-claude-md-integrity.test.mjs",
+     "scripts/rls-regression.mjs",
+     "scripts/seed-users.test.mjs",
+     "supabase/seed-users.mjs"
+    ]
+   },
    {
     "sha": "136dd36",
     "date": "2026-11-09",
@@ -93080,59 +93474,52 @@
     "files": [
      "analise-prs/auditorias-anteriores.md"
     ]
-   },
-   {
-    "sha": "549fc32",
-    "date": "2026-10-29",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(arch,ui): ciclos de módulo quebrados, fabricações restantes removidas e sync logística (#116)",
-    "files": [
-     "AGENTS.md",
-     "src/components/autonomous/AutonomousEventLog.tsx",
-     "src/features/admin/components/audit/AuditChainStatus.tsx",
-     "src/features/admin/components/audit/AuditTrailDrawer.tsx",
-     "src/features/admin/components/security/BlockedIPsPanel.tsx",
-     "src/features/admin/components/security/GeoBlockingSettings.tsx",
-     "src/features/admin/components/security/RateLimitSettings.tsx",
-     "src/features/admin/components/security/SecurityEventsLog.tsx",
-     "src/features/analytics/components/bi/BIAIInsights.tsx",
-     "src/features/analytics/components/efficiency/HistoryTab.tsx",
-     "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
-     "src/features/inventory/components/inventory-page/BatchQRLabelModal.tsx",
-     "src/features/inventory/components/inventory-page/InventoryCard.tsx",
-     "src/features/inventory/components/inventory-page/InventoryHistoryTable.tsx",
-     "src/features/inventory/hooks/useLogistics.test.ts",
-     "src/features/inventory/hooks/useLogistics.ts",
-     "src/features/jobs/hooks/useDailyDragDrop.ts",
-     "src/features/jobs/hooks/useKanbanDragDrop.ts",
-     "src/features/jobs/hooks/useStuckJobsDetection.ts",
-     "src/features/jobs/hooks/useTechniques.realtime.test.tsx",
-     "src/features/jobs/hooks/useTechniques.test.tsx",
-     "src/features/jobs/hooks/useTechniques.ts",
-     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-     "src/features/notifications/components/DailySummaryCard.tsx",
-     "src/features/notifications/components/EfficiencyNotificationProvider.tsx",
-     "src/features/notifications/components/NotificationIntegrator.tsx",
-     "src/features/notifications/components/NotificationsList.tsx",
-     "src/features/notifications/components/PushNotificationManager.tsx",
-     "src/features/notifications/components/PushNotificationPrompt.tsx",
-     "src/features/notifications/hooks/useDailySummaryNotifications.ts",
-     "src/features/notifications/hooks/useMLPredictionNotifications.ts",
-     "src/features/notifications/hooks/useTPMNotifications.ts",
-     "src/lib/logger.ts",
-     "src/pages/PackagingDashboard.tsx",
-     "src/pages/SPCDashboard.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "AGENTS.md",
-    5
+    4
    ],
    [
     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
+   ],
+   [
+    "docs/agentes/github-ci.md",
+    2
+   ],
+   [
+    "docs/agentes/mapa-repo.md",
+    2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
+    "scripts/bundle-diff.mjs",
+    2
+   ],
+   [
+    "scripts/bundle-report.mjs",
+    2
+   ],
+   [
+    "scripts/bundle.test.mjs",
+    2
+   ],
+   [
+    "scripts/check-any-baseline.mjs",
+    2
+   ],
+   [
+    "scripts/ci/check-claude-md-integrity.mjs",
+    2
+   ],
+   [
+    "scripts/rls-regression.mjs",
+    2
    ],
    [
     ".claude/hooks/session-start.sh",
@@ -93155,43 +93542,7 @@
     2
    ],
    [
-    "src/components/autonomous/AutonomousEventLog.tsx",
-    2
-   ],
-   [
     "src/components/jobs/JobDetailsModal.tsx",
-    2
-   ],
-   [
-    "src/features/admin/components/security/GeoBlockingSettings.tsx",
-    2
-   ],
-   [
-    "src/features/analytics/components/bi/BIAIInsights.tsx",
-    2
-   ],
-   [
-    "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
-    2
-   ],
-   [
-    "src/features/jobs/hooks/useDailyDragDrop.ts",
-    2
-   ],
-   [
-    "src/features/jobs/hooks/useTechniques.ts",
-    2
-   ],
-   [
-    "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-    2
-   ],
-   [
-    "src/features/notifications/components/DailySummaryCard.tsx",
-    2
-   ],
-   [
-    "src/features/notifications/hooks/useTPMNotifications.ts",
     2
    ],
    [
@@ -93199,11 +93550,11 @@
     2
    ],
    [
-    "src/pages/PackagingDashboard.tsx",
+    "src/pages/PublicTrackingPage.tsx",
     2
    ],
    [
-    "src/pages/PublicTrackingPage.tsx",
+    ".agents/skills/fast-grava-es-v2/SKILL.md",
     2
    ]
   ]

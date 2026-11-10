@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 105,
+ "total": 109,
  "por_tipo": {
   "contrato": 1,
   "e2e": 21,
   "pytest": 3,
-  "unit": 80
+  "unit": 84
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 77
+   "arquivos": 81
   },
   {
    "padrao": "tests/",
@@ -38,14 +38,37 @@
    "casos": 18
   },
   {
+   "arquivo": "scripts/audit-gate.test.mjs",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [],
+   "casos": 12
+  },
+  {
    "arquivo": "scripts/bundle.test.mjs",
    "tipo": "unit",
-   "linhas": 211,
+   "linhas": 329,
    "testa": [
     "scripts/bundle-diff.mjs",
     "scripts/bundle-report.mjs"
    ],
-   "casos": 21
+   "casos": 29
+  },
+  {
+   "arquivo": "scripts/check-any-baseline.test.mjs",
+   "tipo": "unit",
+   "linhas": 185,
+   "testa": [
+    "scripts/check-any-baseline.mjs"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "scripts/ci/check-claude-md-integrity.test.mjs",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [],
+   "casos": 8
   },
   {
    "arquivo": "scripts/ci/session-start.test.mjs",
@@ -74,6 +97,13 @@
    "linhas": 164,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/seed-users.test.mjs",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [],
+   "casos": 7
   },
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
@@ -952,6 +982,7 @@
  "cobertura_por_arquivo": {
   "scripts/bundle-diff.mjs": 1,
   "scripts/bundle-report.mjs": 1,
+  "scripts/check-any-baseline.mjs": 1,
   "src/components/auth/ProtectedRoute.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,

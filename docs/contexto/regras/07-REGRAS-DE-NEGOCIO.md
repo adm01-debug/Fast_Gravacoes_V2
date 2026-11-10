@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `136dd36eda` · branch `main` · 2026-11-10 00:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6701c3d9f5` · branch `main` · 2026-11-10 01:39 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2131,8 +2131,13 @@ _nenhum item encontrado_
 | ❌ ${label} não é um object JSON válido (esperado bundle-report.json). | `scripts/bundle-diff.mjs` |
 | ❌ ${label} tem entrada inválida em files[${i}] (faltam  | `scripts/bundle-diff.mjs` |
 | ❌ ${label} tem gzipKb inválido em files[${i}] ( | `scripts/bundle-diff.mjs` |
+| ❌ ${label} tem totals.${k} inválido (arquivo corrompido ou relatório antigo). | `scripts/bundle-diff.mjs` |
 | ❌ Relatório ${label} não encontrado: ${path} | `scripts/bundle-diff.mjs` |
 | ❌ Relatório ${label} não é JSON válido (${path}): ${err.message} | `scripts/bundle-diff.mjs` |
+| bundle-budget.json precisa ser um objeto JSON. | `scripts/bundle-report.mjs` |
+| bundle-budget.json:  | `scripts/bundle-report.mjs` |
+| bundle-budget.json: ${key}[ | `scripts/bundle-report.mjs` |
+| não foi possível carregar o pacote  | `scripts/check-any-baseline.mjs` |
 | GRAPHIFY_PYTHON (${explicitly}) não tem graphify ${config.version} instalado  | `scripts/graphify.mjs` |
 | GRAPHIFY_PYTHON não pôde ser executado (${explicitly}): ${probe.error.message} | `scripts/graphify.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
@@ -2421,12 +2426,7 @@ _nenhum item encontrado_
 | Erro ao remover dica | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao remover etapa | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao remover material | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Not authenticated | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Circuit breaker [${this.options.name}] is OPEN. Service unavailable. | `src/lib/circuitBreaker.ts` |
-| Database not initialized | `src/lib/offlineStorage.ts` |
-| Erro ao limpar telemetria | `src/pages/AdminTelemetriaPage.tsx` |
-| Novo erro detectado: ${payload.new.message.substring(0, 50)}... | `src/pages/AdminTelemetriaPage.tsx` |
-| … +164 linhas — lista completa em `context.json` | |
+| … +169 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -2483,7 +2483,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1159 testes em 94 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1205 testes em 98 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -2494,6 +2494,7 @@ _nenhum item encontrado_
 | `src/test/errorHandling.test.ts` | 36 | categorizeError · returns UNKNOWN_ERROR for null/undefined · returns NETWORK_ERROR for network errors · returns TIMEOUT for timeout errors … |
 | `src/test/webhookSimulation.test.ts` | 35 | Webhook — valid combinations (happy path) · source=%s event=%s → 200 · Webhook — data field variations · data=%s → 200 … |
 | `src/test/queryConfig.test.ts` | 34 | calculateRetryDelay · returns a positive number for each attempt index · respects the max delay cap · generally increases with attempt index (exponential growth) … |
+| `scripts/bundle.test.mjs` | 29 | remove hash Vite de 8 chars · remove hash Vite de 16 chars (configuravel) · nao come o nome quando o chunk tem multiplos dash segments · aceita hash com  … |
 | `src/features/inventory/hooks/useTraceability.test.ts` | 29 | useProductionLots · busca lotes de produção com o job vinculado, mais recentes primeiro · useProductionLot · não consulta o Supabase quando lotId é null … |
 | `src/test/offlineStorage.test.ts` | 29 | sanitize - additional edge cases · sanitizeUrl · allows https URLs · allows http URLs … |
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
@@ -2501,7 +2502,6 @@ _nenhum item encontrado_
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/webhookFuzz.test.ts` | 25 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
-| `scripts/bundle.test.mjs` | 21 | remove hash Vite de 8 chars · remove hash Vite de 16 chars (configuravel) · nao come o nome quando o chunk tem multiplos dash segments · aceita hash com  … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
 | `src/test/sanitize.test.ts` | 21 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
@@ -2519,6 +2519,8 @@ _nenhum item encontrado_
 | `src/features/jobs/services/jobStateMachine.test.ts` | 13 | jobStateMachine · canTransition · permite fluxo padrão: queue → scheduled → ready → production → finished · bloqueia transições ilegais críticas … |
 | `src/lib/oeeExport.test.ts` | 13 | oeeExport · pdf · renders the header row via doc.autoTable with a grid theme · writes an unsanitized (raw) machineName into the PDF body, unlike the CSV path … |
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
+| `scripts/audit-gate.test.mjs` | 12 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
+| `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/features/inventory/hooks/useLogistics.test.ts` | 11 | useLogistics · busca apenas transportadoras ativas, ordenadas por nome · busca envios com transportadora e job vinculados, mais recentes primeiro · cria um envio removendo campos de relação (provider/job) antes de inserir e sincroniza o job vinculado … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/test/retryBackoffAdvanced.test.ts` | 11 | retryWithBackoff — advanced scenarios · returns immediately on first success · retries up to maxRetries times then throws · stops retrying when isRetryable returns false … |
@@ -2532,6 +2534,7 @@ _nenhum item encontrado_
 | `src/test/circuitBreaker.test.ts` | 9 | CircuitBreaker · starts in closed state · opens after failureThreshold failures · throws CircuitOpenError immediately when open … |
 | `src/test/dateUtils.test.ts` | 9 | parseDateOnly · parses a date-only string at local midnight (no UTC shift) · keeps the calendar day stable regardless of timezone offset · delegates full timestamps to new Date() … |
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
+| `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
@@ -2540,6 +2543,7 @@ _nenhum item encontrado_
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
+| `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/hooks/useOfflineSync.test.ts` | 6 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · should handle sync failures and retries … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
@@ -2776,6 +2780,7 @@ _nenhum item encontrado_
 | ').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; }, | `src/pages/NotificationsPage.tsx` |
 | `j` original não pode seqüestrar a consulta digitada. | `src/pages/PublicTrackingPage.tsx` |
 | papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring. | `src/pages/SystemStatusPage.tsx` |
+| Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou). | `supabase/seed-users.mjs` |
 | const forbidden = requireRole(auth.ctx, ['admin']); if (forbidden) return forbidden; | `supabase/functions/_shared/auth.ts` |
 | ── Decodificação do claim AAL (pós-validação — seguro sem verificar assinatura) ── | `supabase/functions/_shared/auth.ts` |
 | reportada como negação de permissão). | `supabase/functions/_shared/auth.ts` |

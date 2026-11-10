@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "136dd36eda6d21d850a76c00d2e91ba0a6cdc4d7",
+  "commit": "6701c3d9f513f570a902983f1c3957dcf393685b",
   "branch": "main",
-  "data_commit": "2026-11-09T20:57:45-03:00",
+  "data_commit": "2026-11-10T01:23:12Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6701c3d",
+    "data": "2026-11-10",
+    "assunto": "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)"
+   },
    {
     "sha": "136dd36",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "7b98977",
     "data": "2026-11-02",
     "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#122)"
-   },
-   {
-    "sha": "8664d93",
-    "data": "2026-10-31",
-    "assunto": "fix(csp): rejeitar .vercel.app e localhost por padrão sem CSP_REPORT_ALLOWED_HOSTS (#121)"
    }
   ],
-  "arquivos_mudados_7d": 360,
+  "arquivos_mudados_7d": 368,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -222,6 +222,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 7
+   },
+   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -230,15 +234,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 5
    },
    {
@@ -270,6 +270,10 @@
     "mudancas": 4
    },
    {
+    "arquivo": "scripts/rls-regression.mjs",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/features/analytics/components/bi/FuturisticBI.tsx",
     "mudancas": 4
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/routes/AppRoutes.tsx",
     "mudancas": 4
-   },
-   {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 29
+    "commits": 30
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1464,
-  "arquivos_codigo": 1077,
-  "linhas_codigo": 170855,
+  "arquivos_total": 1468,
+  "arquivos_codigo": 1081,
+  "linhas_codigo": 171632,
   "rotas": 58,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 142,
   "migrations": 244,
   "cron_jobs": 4,
-  "testes": 105,
+  "testes": 109,
   "workflows": 7,
   "scripts": 18,
   "docs_md": 68
@@ -356,27 +356,35 @@
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
-   "linhas": 216
+   "linhas": 235
+  },
+  "scripts/audit-gate.test.mjs": {
+   "arquivos": 1,
+   "linhas": 107
   },
   "scripts/bundle-diff.mjs": {
    "arquivos": 1,
-   "linhas": 156
+   "linhas": 180
   },
   "scripts/bundle-report.mjs": {
    "arquivos": 1,
-   "linhas": 199
+   "linhas": 242
   },
   "scripts/bundle.test.mjs": {
    "arquivos": 1,
-   "linhas": 211
+   "linhas": 329
   },
   "scripts/check-any-baseline.mjs": {
    "arquivos": 1,
-   "linhas": 143
+   "linhas": 207
+  },
+  "scripts/check-any-baseline.test.mjs": {
+   "arquivos": 1,
+   "linhas": 185
   },
   "scripts/ci": {
-   "arquivos": 2,
-   "linhas": 232
+   "arquivos": 3,
+   "linhas": 362
   },
   "scripts/graphify": {
    "arquivos": 6,
@@ -396,7 +404,11 @@
   },
   "scripts/rls-regression.mjs": {
    "arquivos": 1,
-   "linhas": 138
+   "linhas": 140
+  },
+  "scripts/seed-users.test.mjs": {
+   "arquivos": 1,
+   "linhas": 73
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
@@ -472,7 +484,7 @@
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
-   "linhas": 86
+   "linhas": 98
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -594,11 +606,11 @@
   }
  ],
  "qualidade": {
-  "any": 88,
-  "console_log": 111,
+  "any": 114,
+  "console_log": 113,
   "ts_ignore": 0,
   "eslint_disable": 1,
-  "todos": 6,
+  "todos": 7,
   "arquivos_acima_500_linhas": 20
  },
  "todos": [
@@ -616,9 +628,15 @@
   },
   {
    "arquivo": "scripts/audit-gate.mjs",
-   "linha": 168,
+   "linha": 179,
    "tipo": "TODO",
    "texto": "`via` é um advisory conhecido (objeto com"
+  },
+  {
+   "arquivo": "scripts/check-any-baseline.test.mjs",
+   "linha": 46,
+   "tipo": "TODO",
+   "texto": "any follow-up',"
   },
   {
    "arquivo": "src/components/design-system/sections/modals/SheetExamples.tsx",
