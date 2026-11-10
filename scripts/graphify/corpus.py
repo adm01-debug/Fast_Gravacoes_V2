@@ -65,11 +65,25 @@ def validate_graph(data):
 
 
 def check_snapshot(out, signature=None):
-    manifest = json.loads((out / 'manifest.json').read_text(encoding='utf-8'))
+    path = out / 'manifest.json'
+    if not path.is_file():
+        raise ValueError(f'Grafo ainda não gerado ({path} ausente). Execute npm run graph:build.')
+    try:
+        manifest = json.loads(path.read_text(encoding='utf-8'))
+    except ValueError as error:
+        raise ValueError(f'manifest.json não é JSON válido ({error}). Execute npm run graph:build.') from error
+    # `[]`, `null` ou manifest sem os campos: snapshot inconsistente, não traceback.
+    if not isinstance(manifest, dict) or not isinstance(manifest.get('artifacts'), dict) or 'signature' not in manifest:
+        raise ValueError('manifest.json fora do formato esperado. Execute npm run graph:build.')
     for name, expected in manifest['artifacts'].items():
-        if digest(out / name) != expected:
+        if not (out / name).is_file() or digest(out / name) != expected:
             raise ValueError(f'Artefato inconsistente: {name}. Execute graph:build.')
-    data = json.loads((out / 'graph.json').read_text(encoding='utf-8'))
+    try:
+        data = json.loads((out / 'graph.json').read_text(encoding='utf-8'))
+    except ValueError as error:
+        raise ValueError(f'Artefato inconsistente: graph.json ({error}). Execute graph:build.') from error
+    if not isinstance(data, dict):
+        raise ValueError('Artefato inconsistente: graph.json. Execute graph:build.')
     validate_graph(data)
     if signature is not None and manifest['signature'] != signature:
         raise ValueError('Grafo desatualizado. Execute npm run graph:build para este perfil.')

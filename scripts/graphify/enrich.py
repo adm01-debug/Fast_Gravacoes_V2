@@ -155,7 +155,11 @@ def _dead_code_candidates(root, graph, paths):
     source_files = {_relative(root, path) for path in paths}
     inbound = Counter()
     for source, target, attributes in graph.edges(data=True):
-        if attributes.get('relation') not in {'imports_from', 'imports', 'reexports', 'dynamic_imports'}:
+        # Nomes emitidos pelo graphify 0.9.x: `re_exports` e `dynamic_import` (os antigos
+        # `reexports`/`dynamic_imports` ficam por compatibilidade). Sem eles, arquivo alcançado
+        # só por barrel (`export … from`) ou `import()` virava candidato a código morto.
+        if attributes.get('relation') not in {'imports_from', 'imports', 're_exports', 'dynamic_import',
+                                              'reexports', 'dynamic_imports'}:
             continue
         target_file = str(graph.nodes[target].get('source_file', ''))
         if target_file:
@@ -231,10 +235,10 @@ def _test_contracts(root, paths):
             'limitation': 'Somente imports e referências explícitas. Não calcula cobertura, não prova execução e não associa import relativo a módulo sem resolução AST.'}
 
 
-def _benchmark(root, graph):
+def _benchmark(root, graph, profile='all'):
     path = root / 'graphify-benchmark.json'
     if not path.is_file():
-        return {'questions': [], 'passed': 0, 'total': 0, 'limitation': 'Arquivo de benchmark ausente.'}
+        return {'questions': [], 'passed': 0, 'total': 0, 'skipped': 0, 'limitation': 'Arquivo de benchmark ausente.'}
     spec = json.loads(path.read_text(encoding='utf-8'))
     haystack = '\n'.join(
         f"{node_id} {node.get('label', '')} {node.get('source_file', '')}"
@@ -243,14 +247,23 @@ def _benchmark(root, graph):
     results = []
     for question in spec.get('questions', []):
         expected = [term.lower() for term in question.get('expected_terms', [])]
+        base = {'id': question.get('id'), 'question': question.get('question'), 'profile': question.get('profile'),
+                'expected_terms': expected}
+        # Num snapshot de perfil (security/frontend/backend) só valem as perguntas daquele
+        # perfil: o corpus não contém o resto e a pergunta falharia sem ser regressão.
+        if profile != 'all' and question.get('profile') not in (profile, 'all', None):
+            results.append({**base, 'missing_terms': [], 'pass': None, 'skipped': f'pergunta do perfil {question.get("profile")}'})
+            continue
+        # Pergunta sem termos esperados não verifica nada: reprova em vez de passar por vacuidade.
         missing = [term for term in expected if term not in haystack]
-        results.append({'id': question.get('id'), 'question': question.get('question'), 'profile': question.get('profile'),
-                        'expected_terms': expected, 'missing_terms': missing, 'pass': not missing})
+        results.append({**base, 'missing_terms': missing, 'pass': bool(expected) and not missing})
+    applicable = [item for item in results if item['pass'] is not None]
     return {'schema_version': 1, 'method': 'Presença de termos esperados no snapshot; não mede precisão humana nem custo real.',
-            'questions': results, 'passed': sum(item['pass'] for item in results), 'total': len(results)}
+            'profile': profile, 'questions': results, 'passed': sum(item['pass'] for item in applicable),
+            'total': len(applicable), 'skipped': len(results) - len(applicable)}
 
 
-def enrich(root, files, raw, graph, stage):
+def enrich(root, files, raw, graph, stage, profile='all'):
     """Write integrity-preserving, review-oriented artifacts into a staged build."""
     paths = _source_paths(root, files)
     functions, consumers = _edge_functions(root, paths)
@@ -293,6 +306,6 @@ def enrich(root, files, raw, graph, stage):
     _write(stage / 'requirements-traceability.json', _requirements(root))
     _write(stage / 'journey-views.json', _journeys(graph))
     _write(stage / 'test-contract-map.json', _test_contracts(root, paths))
-    _write(stage / 'benchmark.json', _benchmark(root, graph))
+    _write(stage / 'benchmark.json', _benchmark(root, graph, profile))
     _write(stage / 'overview.json', overview)
     return overview
