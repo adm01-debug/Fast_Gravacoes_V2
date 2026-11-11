@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
+  "sha": "a19a8bb769543072cfcafd44a91f70454f326b04",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 10:13 UTC",
+  "generated_at": "2026-11-11 17:26 UTC",
   "files_total": 1468,
   "code_files": 1338,
   "code_lines": 190193
@@ -92421,10 +92421,19 @@
   }
  },
  "git": {
-  "sha": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
+  "sha": "a19a8bb769543072cfcafd44a91f70454f326b04",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a19a8bb",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "c9c9f66",
     "date": "2026-11-11",
@@ -93034,60 +93043,6 @@
      "docs/estado/_meta-00-consolidado.md",
      "docs/estado/_meta-02-refutacao-verdes.md"
     ]
-   },
-   {
-    "sha": "28215b3",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "infra: migra imports esm.sh para npm nas edge functions (#129)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "src/test/deno-modules.d.ts",
-     "supabase/functions/_shared/auth.ts",
-     "supabase/functions/_shared/contracts.ts",
-     "supabase/functions/_shared/cronAuth.ts",
-     "supabase/functions/_shared/test-utils.ts",
-     "supabase/functions/_shared/validate.ts",
-     "supabase/functions/_shared/validation.ts",
-     "supabase/functions/approve-password-reset/index.ts",
-     "supabase/functions/auto-promote-jobs/index.ts",
-     "supabase/functions/backup-scheduler/index.ts",
-     "supabase/functions/bitrix24-sync/index.ts",
-     "supabase/functions/calculate-inventory-intelligence/index.ts",
-     "supabase/functions/calculate-rankings/index.ts",
-     "supabase/functions/check-login-lockout/index.ts",
-     "supabase/functions/cleanup-security-logs/index.ts",
-     "supabase/functions/create-operator/index.ts",
-     "supabase/functions/cron-alert-email/index.ts",
-     "supabase/functions/cron-cleanup/index.ts",
-     "supabase/functions/csp-report/index.ts",
-     "supabase/functions/daily-maintenance-summary/index.ts",
-     "supabase/functions/erp-api/index.ts",
-     "supabase/functions/excel-export/index.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/validate_contract.ts",
-     "supabase/functions/health-check/index.ts",
-     "supabase/functions/health-monitor/index.ts",
-     "supabase/functions/import_map.json",
-     "supabase/functions/metrics-collector/index.ts",
-     "supabase/functions/ml-predictions/index.ts",
-     "supabase/functions/new-device-alert/index.ts",
-     "supabase/functions/pdf-generator/index.ts",
-     "supabase/functions/rate-limit-check/index.ts",
-     "supabase/functions/security-alert/index.ts",
-     "supabase/functions/send-email-report/index.ts",
-     "supabase/functions/send-loss-risk-alert/index.ts",
-     "supabase/functions/send-push-notification/index.ts",
-     "supabase/functions/send-tpm-email/index.ts",
-     "supabase/functions/technical-assistant/index.ts",
-     "supabase/functions/tpm-notifications/index.ts",
-     "supabase/functions/update-operator/index.ts",
-     "supabase/functions/validate-login-ip/index.ts",
-     "supabase/functions/webhook-handler/index.ts",
-     "vitest.config.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -93140,6 +93095,10 @@
     3
    ],
    [
+    ".github/workflows/ci.yml",
+    2
+   ],
+   [
     "scripts/regras_negocio/test_publish.py",
     2
    ],
@@ -93157,10 +93116,6 @@
    ],
    [
     "docs/agentes/mapa-repo.md",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [

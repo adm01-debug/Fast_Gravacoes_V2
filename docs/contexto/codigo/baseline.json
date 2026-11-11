@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
+  "commit": "a19a8bb769543072cfcafd44a91f70454f326b04",
   "branch": "main",
-  "data_commit": "2026-11-11T09:53:49Z",
+  "data_commit": "2026-11-11T14:18:13-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a19a8bb",
+    "data": "2026-11-11",
+    "assunto": "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)"
+   },
    {
     "sha": "c9c9f66",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "92a5fee",
     "data": "2026-11-07",
     "assunto": "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)"
-   },
-   {
-    "sha": "d149e29",
-    "data": "2026-11-07",
-    "assunto": "fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -200,7 +200,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "AGENTS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 40
+    "commits": 41
    },
    {
     "autor": "devin-ai-integration[bot]",

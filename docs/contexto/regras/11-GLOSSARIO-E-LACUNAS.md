@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c9c9f66b44` · branch `main` · 2026-11-11 10:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a19a8bb769` · branch `main` · 2026-11-11 17:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Tabelas do glossário e schema usado na auditoria código × schema: **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
