@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-11 10:39 UTC
+
+- **config: auth_config** alterado (1): `auth_config`
+- **realtime** removido (8): `supabase_realtime_messages_publication:realtime.messages_2026_11_07`, `supabase_realtime_messages_publication:realtime.messages_2026_11_08`, `supabase_realtime_messages_publication:realtime.messages_2026_11_09`, `supabase_realtime_messages_publication:realtime.messages_2026_11_10`, `supabase_realtime_messages_publication:realtime.messages_2026_11_11`, `supabase_realtime_messages_publication:realtime.messages_2026_11_12`, `supabase_realtime_messages_publication:realtime.messages_2026_11_13`, `supabase_realtime_messages_publication:realtime.messages_2026_11_14`
+
 ## 2026-11-11 06:54 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_14`

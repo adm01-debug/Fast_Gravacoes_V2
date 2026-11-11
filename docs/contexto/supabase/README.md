@@ -57,9 +57,9 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 |---|---|
 | Postgres | 17.6 |
 | database | postgres |
-| timezone |  |
+| timezone | UTC |
 | max_connections | 60 |
-| statement_timeout (global) | 90000 |
+| statement_timeout (global) | 120000 |
 | projeto | Fast_Gravacoes_V2 |
 | região | ca-central-1 |
 | URL | https://uoujzvpecohinketylud.supabase.co |
@@ -94,4 +94,3 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 | seção | erro |
 |---|---|
 | cron_runs | canceling statement due to statement timeout |
-| api.custom_hostname | HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname |

@@ -5,13 +5,9 @@
     {
       "error": "canceling statement due to statement timeout",
       "section": "cron_runs"
-    },
-    {
-      "error": "HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname",
-      "section": "api.custom_hostname"
     }
   ],
-  "gerado_em": "2026-11-11T09:27:20Z",
+  "gerado_em": "2026-11-11T10:39:21Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
