@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "346947dad012367ee57be7c321f3a9688dbe6055",
+  "sha": "a220f13c039c2306695962eb7a1beeba8787fe3c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 23:22 UTC",
+  "generated_at": "2026-11-10 23:59 UTC",
   "files_total": 1467,
   "code_files": 1337,
-  "code_lines": 189094
+  "code_lines": 189183
  },
  "version": "1.3.2",
- "facts_hash": "6a52bee1038f58be",
+ "facts_hash": "732890c331869b87",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24579,6 +24579,55 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/p1",
+    "component": "P1",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p2",
+    "component": "P2",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p3",
+    "component": "P3",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p4",
+    "component": "P4",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p5",
+    "component": "P5",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p6",
+    "component": "P6",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "path": "/p7",
+    "component": "P7",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/pai",
     "component": "Doc",
     "guard": "",
@@ -25837,7 +25886,7 @@
   {
    "module": "scripts",
    "files": 30,
-   "lines": 12804,
+   "lines": 12893,
    "tables": [
     "a",
     "constructor",
@@ -25855,6 +25904,13 @@
     "so_teste",
     "t",
     "t1",
+    "tab_a",
+    "tab_b",
+    "tab_c",
+    "tab_d",
+    "tab_e",
+    "tab_g",
+    "tab_h",
     "tabela_do_fundo",
     "technical_conversations",
     "tools_runtime",
@@ -25917,6 +25973,8 @@
     "src/b",
     "src/components",
     "src/config",
+    "src/features/f",
+    "src/features/g",
     "src/hooks",
     "src/hooks2",
     "src/lib",
@@ -29447,6 +29505,41 @@
    "t1": {
     "ref": [
      "scripts/ai-context/cenarios.mjs"
+    ]
+   },
+   "tab_a": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_b": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_c": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_d": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_e": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_g": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tab_h": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
     ]
    },
    "tabela_do_fundo": {
@@ -65641,7 +65734,7 @@
   },
   "scripts/ai-context/gerar.mjs": {
    "path": "scripts/ai-context/gerar.mjs",
-   "lines": 1076,
+   "lines": 1132,
    "env": [
     "AI_CONTEXT_DIR",
     "AI_CONTEXT_PUBLICACAO",
@@ -65680,7 +65773,7 @@
   },
   "scripts/ai-context/gerar.unit.mjs": {
    "path": "scripts/ai-context/gerar.unit.mjs",
-   "lines": 803,
+   "lines": 836,
    "exports": [
     "function AppRoutes",
     "function useContacts",
@@ -65745,6 +65838,34 @@
     },
     {
      "table": "constructor",
+     "op": "ref"
+    },
+    {
+     "table": "tab_a",
+     "op": "ref"
+    },
+    {
+     "table": "tab_b",
+     "op": "ref"
+    },
+    {
+     "table": "tab_c",
+     "op": "ref"
+    },
+    {
+     "table": "tab_d",
+     "op": "ref"
+    },
+    {
+     "table": "tab_e",
+     "op": "ref"
+    },
+    {
+     "table": "tab_g",
+     "op": "ref"
+    },
+    {
+     "table": "tab_h",
      "op": "ref"
     }
    ],
@@ -65871,6 +65992,48 @@
     {
      "path": "/leve",
      "component": "Leve",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p1",
+     "component": "P1",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p2",
+     "component": "P2",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p3",
+     "component": "P3",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p4",
+     "component": "P4",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p5",
+     "component": "P5",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p6",
+     "component": "P6",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/p7",
+     "component": "P7",
      "guard": "",
      "roles": []
     },
@@ -92161,10 +92324,21 @@
   }
  },
  "git": {
-  "sha": "346947dad012367ee57be7c321f3a9688dbe6055",
+  "sha": "a220f13c039c2306695962eb7a1beeba8787fe3c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a220f13",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)",
+    "files": [
+     "scripts/ai-context/README.md",
+     "scripts/ai-context/gerar.mjs",
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
    {
     "sha": "346947d",
     "date": "2026-11-10",
@@ -92813,22 +92987,20 @@
     "files": [
      ".github/workflows/deploy.yml"
     ]
-   },
-   {
-    "sha": "7b98977",
-    "date": "2026-11-02",
-    "author": "adm01-debug",
-    "subject": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#122)",
-    "files": [
-     "AGENTS.md",
-     "CLAUDE.md"
-    ]
    }
   ],
   "hot_files": [
    [
-    "AGENTS.md",
+    "scripts/ai-context/gerar.mjs",
     4
+   ],
+   [
+    "scripts/ai-context/gerar.unit.mjs",
+    4
+   ],
+   [
+    "scripts/ai-context/README.md",
+    3
    ],
    [
     "scripts/regras_negocio/README.md",
@@ -92847,15 +93019,11 @@
     3
    ],
    [
-    "scripts/ai-context/gerar.mjs",
-    3
-   ],
-   [
-    "scripts/ai-context/gerar.unit.mjs",
-    3
-   ],
-   [
     "scripts/supabase_snapshot/snapshot.py",
+    3
+   ],
+   [
+    "AGENTS.md",
     3
    ],
    [
@@ -92864,10 +93032,6 @@
    ],
    [
     "scripts/regras_negocio/test_publish.py",
-    2
-   ],
-   [
-    "scripts/ai-context/README.md",
     2
    ],
    [

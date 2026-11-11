@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)",
    "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)",
    "fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)",
    "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)",
-   "fix(regras): usa o snapshot do banco como fonte (#154)",
-   "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)"
+   "fix(regras): usa o snapshot do banco como fonte (#154)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

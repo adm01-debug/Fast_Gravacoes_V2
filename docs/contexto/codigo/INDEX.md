@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `346947dad012367ee57be7c321f3a9688dbe6055` (2026-11-10T20:22:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a220f13c039c2306695962eb7a1beeba8787fe3c` (2026-11-10T23:58:55Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1470 |
 | arquivos_codigo | 1083 |
-| linhas_codigo | 174188 |
+| linhas_codigo | 174277 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -69,43 +69,43 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Módulos (menu → domínio)
 | módulo | itens de menu | telas/rotas | arquivos | hooks locais | edges | tabelas |
 |---|---|---|---|---|---|---|
-| components/abc | 0 | 0 | 6 | 123 | 8 | 58 |
+| components/abc | 0 | 0 | 6 | 8 | 0 | 7 |
 | components/accessibility | 0 | 0 | 5 | 4 | 0 | 0 |
-| components/alerts | 0 | 0 | 6 | 142 | 9 | 72 |
-| components/auth | 0 | 0 | 6 | 12 | 2 | 4 |
-| components/calendar | 0 | 0 | 17 | 132 | 8 | 58 |
-| components/dashboard | 0 | 0 | 32 | 155 | 10 | 89 |
-| components/design-system | 0 | 0 | 71 | 131 | 8 | 58 |
-| components/jobs | 0 | 0 | 8 | 131 | 8 | 70 |
-| components/kanban | 0 | 0 | 6 | 142 | 9 | 72 |
-| components/knowledge | 0 | 0 | 15 | 26 | 3 | 22 |
-| components/layout | 0 | 0 | 12 | 151 | 8 | 62 |
-| components/machines | 0 | 0 | 10 | 130 | 9 | 65 |
-| components/navigation | 0 | 0 | 15 | 144 | 8 | 58 |
+| components/alerts | 0 | 0 | 6 | 10 | 1 | 3 |
+| components/auth | 0 | 0 | 6 | 7 | 0 | 1 |
+| components/calendar | 0 | 0 | 17 | 20 | 1 | 5 |
+| components/dashboard | 0 | 0 | 32 | 79 | 5 | 63 |
+| components/design-system | 0 | 0 | 71 | 26 | 2 | 9 |
+| components/jobs | 0 | 0 | 8 | 41 | 1 | 30 |
+| components/kanban | 0 | 0 | 6 | 21 | 2 | 11 |
+| components/knowledge | 0 | 0 | 15 | 11 | 1 | 11 |
+| components/layout | 0 | 0 | 12 | 43 | 1 | 15 |
+| components/machines | 0 | 0 | 10 | 22 | 3 | 19 |
+| components/navigation | 0 | 0 | 15 | 37 | 2 | 12 |
 | components/offline | 0 | 0 | 5 | 3 | 0 | 5 |
-| components/operator | 0 | 0 | 8 | 125 | 8 | 59 |
-| components/operators | 0 | 0 | 27 | 128 | 10 | 58 |
-| components/planning | 0 | 0 | 7 | 142 | 9 | 72 |
-| components/qrcode | 0 | 0 | 10 | 12 | 2 | 8 |
-| components/settings | 0 | 0 | 12 | 125 | 9 | 62 |
-| components/shift | 0 | 0 | 10 | 131 | 8 | 63 |
-| components/technical-assistant | 0 | 0 | 8 | 10 | 2 | 6 |
-| components/traceability | 0 | 0 | 13 | 123 | 8 | 58 |
+| components/operator | 0 | 0 | 8 | 4 | 1 | 3 |
+| components/operators | 0 | 0 | 27 | 22 | 3 | 13 |
+| components/planning | 0 | 0 | 7 | 22 | 1 | 8 |
+| components/qrcode | 0 | 0 | 10 | 6 | 0 | 6 |
+| components/settings | 0 | 0 | 12 | 19 | 3 | 12 |
+| components/shift | 0 | 0 | 10 | 19 | 1 | 12 |
+| components/technical-assistant | 0 | 0 | 8 | 4 | 0 | 3 |
+| components/traceability | 0 | 0 | 13 | 17 | 1 | 7 |
 | components/ui | 0 | 0 | 61 | 12 | 0 | 1 |
-| contexts | 0 | 0 | 14 | 27 | 2 | 9 |
-| features/admin | 0 | 0 | 52 | 129 | 8 | 64 |
-| features/analytics | 0 | 0 | 74 | 142 | 9 | 72 |
+| contexts | 0 | 0 | 14 | 23 | 0 | 7 |
+| features/admin | 0 | 0 | 52 | 62 | 2 | 36 |
+| features/analytics | 0 | 0 | 74 | 53 | 3 | 39 |
 | features/auth | 0 | 0 | 11 | 8 | 2 | 4 |
-| features/inventory | 0 | 0 | 9 | 19 | 3 | 13 |
-| features/jobs | 0 | 0 | 26 | 124 | 8 | 58 |
-| features/maintenance | 0 | 0 | 41 | 131 | 9 | 76 |
-| features/notifications | 0 | 0 | 26 | 123 | 8 | 58 |
-| features/packaging | 0 | 0 | 35 | 28 | 3 | 15 |
-| features/production | 0 | 0 | 27 | 123 | 8 | 58 |
-| hooks | 0 | 0 | 44 | 165 | 9 | 79 |
-| hooks/abc | 0 | 0 | 5 | 123 | 8 | 58 |
-| lib | 0 | 0 | 37 | 128 | 9 | 62 |
-| pages | 66 | 56 | 56 | 218 | 15 | 113 |
+| features/inventory | 0 | 0 | 9 | 14 | 1 | 9 |
+| features/jobs | 0 | 0 | 26 | 31 | 3 | 12 |
+| features/maintenance | 0 | 0 | 41 | 18 | 2 | 29 |
+| features/notifications | 0 | 0 | 26 | 43 | 4 | 19 |
+| features/packaging | 0 | 0 | 35 | 23 | 1 | 14 |
+| features/production | 0 | 0 | 27 | 30 | 1 | 21 |
+| hooks | 0 | 0 | 44 | 62 | 3 | 36 |
+| hooks/abc | 0 | 0 | 5 | 6 | 0 | 7 |
+| lib | 0 | 0 | 37 | 15 | 2 | 15 |
+| pages | 66 | 56 | 56 | 204 | 13 | 109 |
 
 ## Rotas (url → arquivo)
 - `/` [tela] → src/pages/Index.tsx (protegida)
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6809 nós · 20672 arestas · 643 comunidades · grafo do commit `346947da`
-- comunidades maiores: card.tsx (154), MainLayout.tsx (121), useAuth (108), input.tsx (105), generate.py (101), cn (100), progress.tsx (98), dialog.tsx (96), gerar.mjs (94), .write (93), createAppError (93), badge.tsx (93)
+- 6815 nós · 20688 arestas · 631 comunidades · grafo do commit `a220f13c`
+- comunidades maiores: card.tsx (200), FuturisticBI.tsx (133), analytics/index.ts (123), input.tsx (118), badge.tsx (117), client.ts (111), cn (110), errorHandling.ts (105), Button (98), gerar.mjs (96), GraphifyIntegrationTests (96), .write (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), .git() (scripts/regras_negocio/test_publish.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -336,6 +336,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-10 `a220f13` fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)
 - 2026-11-10 `346947d` fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)
 - 2026-11-10 `dfdb331` fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)
 - 2026-11-10 `d39d646` fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)
@@ -350,7 +351,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `45a5eb9` feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)
 - 2026-11-08 `94c39a5` chore(agentes): padrão enxuto de instruções com referência por tema (#141)
 - 2026-11-08 `a376146` feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4
-- 2026-11-08 `5db90ba` feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
