@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-11 06:54 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_14`
+
 ## 2026-11-10 19:45 UTC
 
 - **edge functions** alterado (1): `new-device-alert`

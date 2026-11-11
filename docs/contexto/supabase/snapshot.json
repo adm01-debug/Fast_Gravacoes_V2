@@ -759,12 +759,7 @@
       "SUPABASE_SERVICE_ROLE_KEY",
       "SUPABASE_URL"
     ],
-    "ssl_enforcement": {
-      "appliedSuccessfully": true,
-      "currentConfig": {
-        "database": false
-      }
-    },
+    "ssl_enforcement": null,
     "storage_config": {
       "capabilities": {
         "iceberg_catalog": true,
@@ -41925,6 +41920,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_13"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_14"
         }
       ]
     },
@@ -45298,6 +45298,18 @@
     "webhooks": []
   },
   "errors": [
+    {
+      "error": "canceling statement due to statement timeout",
+      "section": "cron_runs"
+    },
+    {
+      "error": "canceling statement due to statement timeout",
+      "section": "table_stats"
+    },
+    {
+      "error": "The read operation timed out",
+      "section": "api.ssl_enforcement"
+    },
     {
       "error": "HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname",
       "section": "api.custom_hostname"
