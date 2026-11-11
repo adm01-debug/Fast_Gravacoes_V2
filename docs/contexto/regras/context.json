@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a220f13c039c2306695962eb7a1beeba8787fe3c",
+  "sha": "86e59b42321d81491ed8484ae91641432fee68b5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-10 23:59 UTC",
+  "generated_at": "2026-11-11 01:04 UTC",
   "files_total": 1467,
   "code_files": 1337,
-  "code_lines": 189183
+  "code_lines": 189189
  },
  "version": "1.3.2",
- "facts_hash": "732890c331869b87",
+ "facts_hash": "4ec535686aedf4f4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -25886,7 +25886,7 @@
   {
    "module": "scripts",
    "files": 30,
-   "lines": 12893,
+   "lines": 12899,
    "tables": [
     "a",
     "constructor",
@@ -66760,7 +66760,7 @@
   },
   "scripts/supabase_snapshot/test_snapshot.py": {
    "path": "scripts/supabase_snapshot/test_snapshot.py",
-   "lines": 986,
+   "lines": 992,
    "exports": [
     "class OfflineConnection",
     "def function",
@@ -92324,10 +92324,19 @@
   }
  },
  "git": {
-  "sha": "a220f13c039c2306695962eb7a1beeba8787fe3c",
+  "sha": "86e59b42321d81491ed8484ae91641432fee68b5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "86e59b4",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)",
+    "files": [
+     "scripts/supabase_snapshot/test_snapshot.py"
+    ]
+   },
    {
     "sha": "a220f13",
     "date": "2026-11-10",
@@ -92978,15 +92987,6 @@
     "files": [
      "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql"
     ]
-   },
-   {
-    "sha": "33983fd",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: adiciona --yes no supabase functions deploy para CI não-interativo (#123)",
-    "files": [
-     ".github/workflows/deploy.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -92997,6 +92997,10 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     4
+   ],
+   [
+    "scripts/supabase_snapshot/test_snapshot.py",
+    3
    ],
    [
     "scripts/ai-context/README.md",
@@ -93040,10 +93044,6 @@
    ],
    [
     "scripts/regras_negocio/indice.py",
-    2
-   ],
-   [
-    "scripts/supabase_snapshot/test_snapshot.py",
     2
    ],
    [

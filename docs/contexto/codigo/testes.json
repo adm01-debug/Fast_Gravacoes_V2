@@ -142,7 +142,7 @@
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
    "tipo": "pytest",
-   "linhas": 986,
+   "linhas": 992,
    "testa": [
     "scripts/supabase_snapshot/snapshot.py"
    ],

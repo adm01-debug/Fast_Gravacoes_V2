@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a220f13c039c2306695962eb7a1beeba8787fe3c` (2026-11-10T23:58:55Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `86e59b42321d81491ed8484ae91641432fee68b5` (2026-11-10T22:03:48-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1470 |
 | arquivos_codigo | 1083 |
-| linhas_codigo | 174277 |
+| linhas_codigo | 174283 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6815 nós · 20688 arestas · 631 comunidades · grafo do commit `a220f13c`
-- comunidades maiores: card.tsx (200), FuturisticBI.tsx (133), analytics/index.ts (123), input.tsx (118), badge.tsx (117), client.ts (111), cn (110), errorHandling.ts (105), Button (98), gerar.mjs (96), GraphifyIntegrationTests (96), .write (93)
+- 6815 nós · 20688 arestas · 631 comunidades · grafo do commit `86e59b42`
+- comunidades maiores: card.tsx (200), FuturisticBI.tsx (133), analytics/index.ts (123), input.tsx (118), badge.tsx (117), cn (116), Button (98), errorHandling.ts (98), auth/index.ts (97), gerar.mjs (96), GraphifyIntegrationTests (96), .write (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), .git() (scripts/regras_negocio/test_publish.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -336,6 +336,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-10 `86e59b4` fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)
 - 2026-11-10 `a220f13` fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)
 - 2026-11-10 `346947d` fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)
 - 2026-11-10 `dfdb331` fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)
@@ -350,7 +351,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `961751a` docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)
 - 2026-11-08 `45a5eb9` feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)
 - 2026-11-08 `94c39a5` chore(agentes): padrão enxuto de instruções com referência por tema (#141)
-- 2026-11-08 `a376146` feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
