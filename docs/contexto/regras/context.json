@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a19a8bb769543072cfcafd44a91f70454f326b04",
+  "sha": "78b8006ca8aa9b03bee53ea185786057a478073d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 17:26 UTC",
-  "files_total": 1468,
-  "code_files": 1338,
-  "code_lines": 190193
+  "generated_at": "2026-11-11 19:38 UTC",
+  "files_total": 1469,
+  "code_files": 1339,
+  "code_lines": 190216
  },
  "version": "1.3.2",
- "facts_hash": "e9ccfa2fb256c91c",
+ "facts_hash": "3864b93d80904125",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -217,7 +217,7 @@
   "languages": {
    ".tsx": 656,
    ".ts": 395,
-   ".sql": 251,
+   ".sql": 252,
    ".mjs": 19,
    ".py": 13,
    ".js": 4
@@ -18170,6 +18170,7 @@
    "supabase/migrations/20261107000000_fix_permissive_insert_policies.sql",
    "supabase/migrations/20261107010000_verify_no_using_true_write_policies.sql",
    "supabase/migrations/20261108000001_business_rules_ddl.sql",
+   "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -28194,8 +28195,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 244,
-   "lines": 14450,
+   "files": 245,
+   "lines": 14473,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -91983,6 +91984,10 @@
     "AND updated_at < now() - interval '30 minutes';"
    ]
   },
+  "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql": {
+   "path": "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql",
+   "lines": 23
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -92421,10 +92426,19 @@
   }
  },
  "git": {
-  "sha": "a19a8bb769543072cfcafd44a91f70454f326b04",
+  "sha": "78b8006ca8aa9b03bee53ea185786057a478073d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "78b8006",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)",
+    "files": [
+     "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql"
+    ]
+   },
    {
     "sha": "a19a8bb",
     "date": "2026-11-11",
@@ -93031,17 +93045,6 @@
     "files": [
      "supabase/migrations/20261106010000_fix_permissive_insert_policies.sql",
      "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql"
-    ]
-   },
-   {
-    "sha": "87e85e6",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: redige sufixo de chave Stripe dos docs de estado (#131)",
-    "files": [
-     "docs/estado/_lote-07-admin-integracoes.md",
-     "docs/estado/_meta-00-consolidado.md",
-     "docs/estado/_meta-02-refutacao-verdes.md"
     ]
    }
   ],

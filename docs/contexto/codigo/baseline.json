@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a19a8bb769543072cfcafd44a91f70454f326b04",
+  "commit": "78b8006ca8aa9b03bee53ea185786057a478073d",
   "branch": "main",
-  "data_commit": "2026-11-11T14:18:13-03:00",
+  "data_commit": "2026-11-11T16:08:44-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "78b8006",
+    "data": "2026-11-11",
+    "assunto": "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)"
+   },
    {
     "sha": "a19a8bb",
     "data": "2026-11-11",
@@ -126,15 +131,10 @@
     "sha": "bce2374",
     "data": "2026-11-08",
     "assunto": "feat(contexto): contexto autônomo para agentes de IA (#136)"
-   },
-   {
-    "sha": "92a5fee",
-    "data": "2026-11-07",
-    "assunto": "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 371,
+  "arquivos_mudados_7d": 372,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 41
+    "commits": 42
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -311,7 +311,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1471,
+  "arquivos_total": 1472,
   "arquivos_codigo": 1084,
   "linhas_codigo": 175287,
   "rotas": 58,
@@ -323,7 +323,7 @@
   "hooks": 196,
   "edge_functions": 34,
   "tabelas": 133,
-  "migrations": 244,
+  "migrations": 245,
   "cron_jobs": 4,
   "testes": 106,
   "workflows": 7,
