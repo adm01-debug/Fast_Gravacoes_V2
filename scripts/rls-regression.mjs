@@ -48,6 +48,8 @@
  * linha em produção, o que o gate evita por design.
  */
 import { createClient } from '@supabase/supabase-js';
+import { realpathSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 // Conta admin mais antiga do banco canônico (uoujzvpecohinketylud), obtida
 // via consulta direta em 24/09/2026. Não é segredo — é só um UUID opaco, tão
@@ -91,16 +93,39 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
+// CI roda este gate em várias PRs ao mesmo tempo, todas logando com a MESMA
+// conta de operador E2E contra o Supabase real — sob concorrência, o GoTrue
+// já respondeu com falha transitória/sem corpo (login "falhou: {}", sem
+// Invalid login credentials nem outro motivo claro). Um retry curto absorve
+// isso sem mascarar credencial errada: cada tentativa loga o motivo, e só
+// desiste de vez depois de `attempts` tentativas.
+const RETRY_DELAY_MS = Number(process.env.RLS_LOGIN_RETRY_DELAY_MS) || 5000; // ms por tentativa; só testes encurtam via env.
+
+export async function signInWithRetry(signIn, { attempts = 3, delayMs = (n) => n * RETRY_DELAY_MS } = {}) {
+  let last;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const { data, error } = await signIn();
+    if (!error && data?.user) return data;
+    last = error;
+    if (attempt < attempts) {
+      const wait = delayMs(attempt);
+      console.error(`# RLS regression: login do operador E2E falhou (tentativa ${attempt}/${attempts}): ${error?.message ?? 'sem usuário retornado'} — nova tentativa em ${wait / 1000}s`);
+      await new Promise((resolve) => setTimeout(resolve, wait));
+    }
+  }
+  console.error(`\n# RLS regression: login do operador E2E falhou após ${attempts} tentativas: ${last?.message ?? 'sem usuário retornado'}`);
+  return null;
+}
+
 async function main() {
   const foreignUserId = assertValidUuid(FOREIGN_USER_ID);
 
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+  const authData = await signInWithRetry(() => supabase.auth.signInWithPassword({
     email: operatorEmail,
     password: operatorPassword,
-  });
+  }));
 
-  if (authError || !authData.user) {
-    console.error(`\n# RLS regression: login do operador E2E falhou: ${authError?.message ?? 'sem usuário retornado'}`);
+  if (!authData) {
     process.exit(1);
   }
 
@@ -132,8 +157,20 @@ async function main() {
   console.log('✅ RLS regression: technical_conversations INSERT corretamente rejeitado para user_id de outro usuário (42501).');
 }
 
-main().catch((err) => {
-  console.error('\n# RLS regression: erro inesperado', err);
-  process.exit(1);
-});
+// Só executa quando chamado direto — importar o módulo (p.ex. para testar
+// signInWithRetry) não pode disparar um login real de verdade. Mesma
+// checagem de scripts/check-any-baseline.mjs (funciona via symlink também).
+const isDirect = (() => {
+  try {
+    return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+})();
+if (isDirect) {
+  main().catch((err) => {
+    console.error('\n# RLS regression: erro inesperado', err);
+    process.exit(1);
+  });
+}
 
