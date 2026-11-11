@@ -152,11 +152,11 @@
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
    "tipo": "pytest",
-   "linhas": 992,
+   "linhas": 1623,
    "testa": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
-   "casos": 43,
+   "casos": 89,
    "suporte": false
   },
   {

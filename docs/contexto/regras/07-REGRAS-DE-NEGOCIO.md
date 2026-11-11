@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f03fff898a` · branch `main` · 2026-11-11 07:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c9c9f66b44` · branch `main` · 2026-11-11 10:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -2940,6 +2940,7 @@ _nenhum item encontrado_
 | diff exige --baseline CAMINHO_PARA_graph.json. | `scripts/graphify/run.py` |
 | ratchet só existe para o perfil all (a baseline é do snapshot completo). | `scripts/graphify/run.py` |
 | Falha ao autenticar com {secret} | `scripts/regras_negocio/test_generate.py` |
+| resposta inesperada da API: edge function sem slug | `scripts/supabase_snapshot/snapshot.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | catálogo indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -3204,8 +3205,7 @@ _nenhum item encontrado_
 | Erro ao atualizar favorito | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao criar ficha | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
 | Erro ao remover | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao remover dica | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| … +171 linhas — lista completa em `context.json` | |
+| … +172 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

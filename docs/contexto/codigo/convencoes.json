@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)",
    "fix(regras): fórmula de coluna gerada e snapshot degradado como erro (#160)",
    "fix(ci): rls-regression.mjs reaplica login com retry e não dispara ao importar (#167)",
    "fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)",
-   "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)",
-   "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)"
+   "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

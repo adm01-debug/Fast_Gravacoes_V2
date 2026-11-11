@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f03fff898a816520b94bf4ed9369c087f4e5550c",
+  "sha": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 07:38 UTC",
+  "generated_at": "2026-11-11 10:13 UTC",
   "files_total": 1468,
   "code_files": 1338,
-  "code_lines": 189426
+  "code_lines": 190193
  },
  "version": "1.3.2",
- "facts_hash": "2de0aa6abeb77690",
+ "facts_hash": "e9ccfa2fb256c91c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -25886,7 +25886,7 @@
   {
    "module": "scripts",
    "files": 31,
-   "lines": 13136,
+   "lines": 13903,
    "tables": [
     "a",
     "constructor",
@@ -25933,7 +25933,7 @@
     "test_generate.py: CurrentSqlSourcesTests, RepoFixture, PolicyParsingTests, MigrationReplayTests, SqlLexingTests, SqlIdentityTests",
     "test_indice.py: ParseDateTests, IndexStateTests",
     "test_publish.py: PublishFixture, BranchModeTests, PushModeTests, DetachedHeadTests",
-    "snapshot.py: env_int, log, valid_previous_snapshot, prepare_output_directory, record_error, jsonable",
+    "snapshot.py: env_int, log, valid_previous_snapshot, valid_previous_manifest, prepare_output_directory, record_error",
     "test_snapshot.py: OfflineConnection, function, migration, structural_records, SnapshotFixture, SnapshotSQLRecoveryTests"
    ],
    "docs": [
@@ -32320,6 +32320,10 @@
    {
     "file": "scripts/regras_negocio/test_generate.py",
     "msg": "Falha ao autenticar com {secret}"
+   },
+   {
+    "file": "scripts/supabase_snapshot/snapshot.py",
+    "msg": "resposta inesperada da API: edge function sem slug"
    },
    {
     "file": "scripts/supabase_snapshot/test_snapshot.py",
@@ -66702,11 +66706,12 @@
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
-   "lines": 1825,
+   "lines": 1961,
    "exports": [
     "def env_int",
     "def log",
     "def valid_previous_snapshot",
+    "def valid_previous_manifest",
     "def prepare_output_directory",
     "def record_error",
     "def jsonable",
@@ -66715,6 +66720,7 @@
     "def md_cell",
     "def md_table",
     "def code",
+    "def md_fence",
     "def human_bytes",
     "def approx",
     "def slug",
@@ -66759,11 +66765,9 @@
     "def get_db_stats",
     "def introspect_db",
     "def api",
+    "def api_error_hint",
     "def api_section",
-    "def introspect_api",
-    "def run_pg_dump",
-    "def run_gen_types",
-    "def is_caller_source"
+    "def api_shape"
    ],
    "rpc": [
     "fn",
@@ -66805,10 +66809,15 @@
      "path": "statement_timeout"
     }
    ],
+   "errors": [
+    "resposta inesperada da API: edge function sem slug"
+   ],
    "rule_comments": [
     "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout).",
     "A regra acima exige ':' ou '=' entre nome e valor; aqui o separador é vírgula e o segredo do",
+    "password = 'x' / password := 'x' (sem exigir dígito: a regra de \"parece token\" deixava senha só de letras)",
     "Role sem SELECT em auth.* (ex.: role de leitura do workflow) nao pode derrubar a secao inteira:",
+    "Falha transitória (401/500/timeout) não pode virar \"tudo removido\": a seção que falhou volta da coleta",
     "Auth\\n\", \"Contagens de usuários em `stats.md` (apenas agregados — sem dados pessoais).\\n\"]",
     "Vault (somente nomes — valores nunca são exportados)\\n\\n\" + banner(\"vault\") + md_table(",
     "# Secrets (apenas nomes)\\n\\n\" + md_table([\"nome\"], [[s] for s in api_.get(\"secrets_names\") or []]))",
@@ -66823,11 +66832,14 @@
     "with psycopg.connect(DB_URL, connect_timeout=30, application_name=\"supabase-snapshot\",",
     "with urllib.request.urlopen(req, timeout=60) as resp:"
    ],
+   "percents": [
+    "# dado 100% velho com gerado_em novo faria o índice mostrar \"ok\" para um retrato que não é de agora."
+   ],
    "uses_service_role": true
   },
   "scripts/supabase_snapshot/test_snapshot.py": {
    "path": "scripts/supabase_snapshot/test_snapshot.py",
-   "lines": 992,
+   "lines": 1623,
    "exports": [
     "class OfflineConnection",
     "def function",
@@ -66844,7 +66856,22 @@
     "class SnapshotDBStatsTests",
     "class SnapshotConfigurationTests",
     "def db_stats_case",
-    "class ScrubTests"
+    "class ScrubTests",
+    "class RecordingConnection",
+    "class FakeCursor",
+    "class FakeRowsConnection",
+    "class SnapshotCatalogContractTests",
+    "class SnapshotChangelogTests",
+    "class SnapshotHeartbeatHonestyTests",
+    "class SnapshotOutputOwnershipTests",
+    "class SnapshotCommandLineTests",
+    "class SnapshotMarkdownSafetyTests",
+    "class ManagementApiFixture",
+    "class ManagementApiFailureTests",
+    "class FakeHttpResponse",
+    "class ManagementApiRetryTests",
+    "class RedactionTableTests",
+    "class ScrubAdversarialTests"
    ],
    "rpc": [
     "demo"
@@ -66867,7 +66894,10 @@
     "Não pode mutilar o que não é segredo: nomes de chave, mensagens, tipos, valores curtos.",
     "agora, o carry-over não pode republicá-lo."
    ],
-   "doc": "!/usr/bin/env python3"
+   "doc": "!/usr/bin/env python3",
+   "side_effects": [
+    "slack.com"
+   ]
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
@@ -92391,10 +92421,21 @@
   }
  },
  "git": {
-  "sha": "f03fff898a816520b94bf4ed9369c087f4e5550c",
+  "sha": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c9c9f66",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)",
+    "files": [
+     "scripts/supabase_snapshot/README.md",
+     "scripts/supabase_snapshot/snapshot.py",
+     "scripts/supabase_snapshot/test_snapshot.py"
+    ]
+   },
    {
     "sha": "f03fff8",
     "date": "2026-11-11",
@@ -93047,18 +93088,17 @@
      "supabase/functions/webhook-handler/index.ts",
      "vitest.config.ts"
     ]
-   },
-   {
-    "sha": "d6c9c11",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: atualiza hash tslib@2.8.1 no deno.lock (esm.sh CDN update)",
-    "files": [
-     "deno.lock"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/supabase_snapshot/snapshot.py",
+    4
+   ],
+   [
+    "scripts/supabase_snapshot/test_snapshot.py",
+    4
+   ],
    [
     "scripts/regras_negocio/generate.py",
     4
@@ -93076,11 +93116,11 @@
     4
    ],
    [
-    "scripts/rls-regression.mjs",
+    "scripts/supabase_snapshot/README.md",
     3
    ],
    [
-    "scripts/supabase_snapshot/test_snapshot.py",
+    "scripts/rls-regression.mjs",
     3
    ],
    [
@@ -93093,10 +93133,6 @@
    ],
    [
     "scripts/regras_negocio/publish.sh",
-    3
-   ],
-   [
-    "scripts/supabase_snapshot/snapshot.py",
     3
    ],
    [
@@ -93133,10 +93169,6 @@
    ],
    [
     "scripts/bundle-report.mjs",
-    2
-   ],
-   [
-    "scripts/bundle.test.mjs",
     2
    ]
   ]

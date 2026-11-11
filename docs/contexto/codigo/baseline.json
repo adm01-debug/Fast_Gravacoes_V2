@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f03fff898a816520b94bf4ed9369c087f4e5550c",
+  "commit": "c9c9f66b4424224de6d6b9cfd0ad3ef8c2a9388f",
   "branch": "main",
-  "data_commit": "2026-11-11T07:28:07Z",
+  "data_commit": "2026-11-11T09:53:49Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c9c9f66",
+    "data": "2026-11-11",
+    "assunto": "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)"
+   },
    {
     "sha": "f03fff8",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "d149e29",
     "data": "2026-11-07",
     "assunto": "fix: renomeia migration fix_permissive_insert_policies para timestamp posterior ao remoto (#134)"
-   },
-   {
-    "sha": "c98b362",
-    "data": "2026-11-07",
-    "assunto": "chore: instruções enxutas para agentes (#130)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -291,18 +291,18 @@
     "mudancas": 4
    },
    {
-    "arquivo": "src/features/analytics/components/bi/FuturisticBI.tsx",
+    "arquivo": "scripts/supabase_snapshot/snapshot.py",
     "mudancas": 4
    },
    {
-    "arquivo": "src/hooks/useOfflineSync.ts",
+    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 39
+    "commits": 40
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1471,
   "arquivos_codigo": 1084,
-  "linhas_codigo": 174520,
+  "linhas_codigo": 175287,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -417,7 +417,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2817
+   "linhas": 3584
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -519,7 +519,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1825
+   "linhas": 1961
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
