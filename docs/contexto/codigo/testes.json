@@ -47,12 +47,12 @@
   {
    "arquivo": "scripts/bundle.test.mjs",
    "tipo": "unit",
-   "linhas": 329,
+   "linhas": 337,
    "testa": [
     "scripts/bundle-diff.mjs",
     "scripts/bundle-report.mjs"
    ],
-   "casos": 29,
+   "casos": 30,
    "suporte": false
   },
   {

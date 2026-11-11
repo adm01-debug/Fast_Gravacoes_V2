@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "78b8006ca8aa9b03bee53ea185786057a478073d",
+  "sha": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 19:38 UTC",
+  "generated_at": "2026-11-11 22:45 UTC",
   "files_total": 1469,
   "code_files": 1339,
-  "code_lines": 190216
+  "code_lines": 190224
  },
  "version": "1.3.2",
- "facts_hash": "3864b93d80904125",
+ "facts_hash": "cafadb1b59c1f536",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -25887,7 +25887,7 @@
   {
    "module": "scripts",
    "files": 31,
-   "lines": 13903,
+   "lines": 13911,
    "tables": [
     "a",
     "constructor",
@@ -48318,6 +48318,10 @@
    },
    {
     "file": "scripts/bundle.test.mjs",
+    "name": "totals.gzipKb/fileCount ausentes (relatorio antigo, aceito por validateReport) nao viram "
+   },
+   {
+    "file": "scripts/bundle.test.mjs",
     "name": "chunk com nome de propriedade do protótipo usa o default, não o protótipo"
    },
    {
@@ -65363,7 +65367,7 @@
   },
   "scripts/bundle.test.mjs": {
    "path": "scripts/bundle.test.mjs",
-   "lines": 329,
+   "lines": 337,
    "is_test": true,
    "rule_comments": [
     "- validacao de schema com erro claro e diff com novos/removidos/fileCount",
@@ -65394,6 +65398,7 @@
     "rejeita entrada invalida em files",
     "gera diff com arquivos novos/removidos e delta fileCount",
     "aceita base ausente (primeiro merge)",
+    "totals.gzipKb/fileCount ausentes (relatorio antigo, aceito por validateReport) nao viram ",
     "chunk com nome de propriedade do protótipo usa o default, não o protótipo",
     "budget de chunk sem chunk no build é listado como morto (aviso, não violação)",
     "validateBudget recusa formas que desligariam os limites em silêncio",
@@ -92426,10 +92431,20 @@
   }
  },
  "git": {
-  "sha": "78b8006ca8aa9b03bee53ea185786057a478073d",
+  "sha": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "2f1c7bf",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)",
+    "files": [
+     "scripts/bundle-diff.mjs",
+     "scripts/bundle.test.mjs"
+    ]
+   },
    {
     "sha": "78b8006",
     "date": "2026-11-11",
@@ -93036,16 +93051,6 @@
      "scripts/rls-regression.mjs",
      "vitest.config.ts"
     ]
-   },
-   {
-    "sha": "249d814",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: remove policy INSERT permissiva e reforca verify RLS (#133)",
-    "files": [
-     "supabase/migrations/20261106010000_fix_permissive_insert_policies.sql",
-     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -93072,6 +93077,14 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     4
+   ],
+   [
+    "scripts/bundle-diff.mjs",
+    3
+   ],
+   [
+    "scripts/bundle.test.mjs",
+    3
    ],
    [
     "scripts/supabase_snapshot/README.md",
@@ -93119,14 +93132,6 @@
    ],
    [
     "docs/agentes/mapa-repo.md",
-    2
-   ],
-   [
-    "scripts/bundle-diff.mjs",
-    2
-   ],
-   [
-    "scripts/bundle-report.mjs",
     2
    ]
   ]

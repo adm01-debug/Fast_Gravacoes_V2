@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)",
    "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)",
    "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)",
    "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)",
-   "fix(regras): fórmula de coluna gerada e snapshot degradado como erro (#160)",
-   "fix(ci): rls-regression.mjs reaplica login com retry e não dispara ao importar (#167)"
+   "fix(regras): fórmula de coluna gerada e snapshot degradado como erro (#160)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "78b8006ca8aa9b03bee53ea185786057a478073d",
+  "commit": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
   "branch": "main",
-  "data_commit": "2026-11-11T16:08:44-03:00",
+  "data_commit": "2026-11-11T18:52:54-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "2f1c7bf",
+    "data": "2026-11-11",
+    "assunto": "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)"
+   },
    {
     "sha": "78b8006",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "c9814e8",
     "data": "2026-11-08",
     "assunto": "fix(contexto): guard de segredos por ocorrência (#137)"
-   },
-   {
-    "sha": "bce2374",
-    "data": "2026-11-08",
-    "assunto": "feat(contexto): contexto autônomo para agentes de IA (#136)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 42
+    "commits": 43
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1472,
   "arquivos_codigo": 1084,
-  "linhas_codigo": 175287,
+  "linhas_codigo": 175295,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -373,7 +373,7 @@
   },
   "scripts/bundle.test.mjs": {
    "arquivos": 1,
-   "linhas": 329
+   "linhas": 337
   },
   "scripts/check-any-baseline.mjs": {
    "arquivos": 1,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `78b8006ca8` · branch `main` · 2026-11-11 19:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2f1c7bfa8b` · branch `main` · 2026-11-11 22:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -3262,7 +3262,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1214 testes em 99 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1215 testes em 99 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3273,7 +3273,7 @@ _nenhum item encontrado_
 | `src/test/errorHandling.test.ts` | 36 | categorizeError · returns UNKNOWN_ERROR for null/undefined · returns NETWORK_ERROR for network errors · returns TIMEOUT for timeout errors … |
 | `src/test/webhookSimulation.test.ts` | 35 | Webhook — valid combinations (happy path) · source=%s event=%s → 200 · Webhook — data field variations · data=%s → 200 … |
 | `src/test/queryConfig.test.ts` | 34 | calculateRetryDelay · returns a positive number for each attempt index · respects the max delay cap · generally increases with attempt index (exponential growth) … |
-| `scripts/bundle.test.mjs` | 29 | remove hash Vite de 8 chars · remove hash Vite de 16 chars (configuravel) · nao come o nome quando o chunk tem multiplos dash segments · aceita hash com  … |
+| `scripts/bundle.test.mjs` | 30 | remove hash Vite de 8 chars · remove hash Vite de 16 chars (configuravel) · nao come o nome quando o chunk tem multiplos dash segments · aceita hash com  … |
 | `src/features/inventory/hooks/useTraceability.test.ts` | 29 | useProductionLots · busca lotes de produção com o job vinculado, mais recentes primeiro · useProductionLot · não consulta o Supabase quando lotId é null … |
 | `src/test/offlineStorage.test.ts` | 29 | sanitize - additional edge cases · sanitizeUrl · allows https URLs · allows http URLs … |
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
