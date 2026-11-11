@@ -28,12 +28,12 @@
       {
         "healthy": true,
         "info": {
-          "connected_cluster": 5,
-          "db_connected": true,
+          "connected_cluster": 0,
+          "db_connected": false,
           "healthy": true,
-          "node": "realtime@2600:1f1c:c90:ad00:a7ad:eff8:263:7a7d",
-          "region": "us-west-1",
-          "replication_connected": true
+          "node": "realtime@2600:1f18:67fc:ac02:90a5:694a:bde1:9b5d",
+          "region": "us-east-1",
+          "replication_connected": false
         },
         "name": "realtime",
         "status": "ACTIVE_HEALTHY"
@@ -82,7 +82,7 @@
       },
       "connections": [
         {
-          "n": 2,
+          "n": 1,
           "state": "idle",
           "usename": "authenticator"
         },
@@ -102,12 +102,7 @@
           "usename": "postgres"
         },
         {
-          "n": 1,
-          "state": "active",
-          "usename": "supabase_admin"
-        },
-        {
-          "n": 8,
+          "n": 2,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -117,7 +112,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 557583507,
+      "database_bytes": 557599891,
       "queues": [],
       "schema_bytes": [
         {
@@ -180,6 +175,14 @@
           "total_ms": 599270
         },
         {
+          "calls": 279,
+          "mean_ms": 2052.84,
+          "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
+          "role": "postgres",
+          "rows": 366263,
+          "total_ms": 572744
+        },
+        {
           "calls": 267,
           "mean_ms": 2101.76,
           "query": "SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE",
@@ -196,20 +199,12 @@
           "total_ms": 542726
         },
         {
-          "calls": 276,
-          "mean_ms": 1793.9,
-          "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
-          "role": "postgres",
-          "rows": 362324,
-          "total_ms": 495118
-        },
-        {
-          "calls": 277,
-          "mean_ms": 1556.42,
+          "calls": 280,
+          "mean_ms": 1699.6,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "postgres",
-          "rows": 1939,
-          "total_ms": 431127
+          "rows": 1960,
+          "total_ms": 475887
         },
         {
           "calls": 23640,
@@ -236,20 +231,20 @@
           "total_ms": 355997
         },
         {
+          "calls": 281,
+          "mean_ms": 1208.41,
+          "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
+          "role": "postgres",
+          "rows": 20947,
+          "total_ms": 339562
+        },
+        {
           "calls": 376,
           "mean_ms": 885.27,
           "query": "SELECT name FROM pg_timezone_names",
           "role": "authenticator",
           "rows": 449696,
           "total_ms": 332862
-        },
-        {
-          "calls": 10979,
-          "mean_ms": 27.71,
-          "query": "WITH pgrst_source AS ( SELECT \"public\".\"jobs\".*, row_to_json(\"jobs_machines_1\".*)::jsonb AS \"machines\", row_to_json(\"jobs_techniques_1\".*)::jsonb AS \"techniques\" FROM \"public\".\"jobs\" LEFT JOIN LATERAL ( SELECT \"machines_",
-          "role": "authenticated",
-          "rows": 10979,
-          "total_ms": 304196
         }
       ]
     },
