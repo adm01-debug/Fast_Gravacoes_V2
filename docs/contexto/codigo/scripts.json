@@ -212,9 +212,10 @@
   {
    "arquivo": "scripts/rls-regression.mjs",
    "descricao": "* RLS regression gate — verifica, contra o Supabase de produção, que a",
-   "linhas": 140,
+   "linhas": 193,
    "env": [
-    "RLS_FOREIGN_USER_ID"
+    "RLS_FOREIGN_USER_ID",
+    "RLS_LOGIN_RETRY_DELAY_MS"
    ],
    "npm_scripts": [],
    "workflows": [

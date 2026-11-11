@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 105,
+ "total": 106,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 81
+  "unit": 82
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 81
+   "arquivos": 82
   },
   {
    "padrao": "tests/",
@@ -129,6 +129,16 @@
    "linhas": 327,
    "testa": [],
    "casos": 14,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/rls-regression.test.mjs",
+   "tipo": "unit",
+   "linhas": 150,
+   "testa": [
+    "scripts/rls-regression.mjs"
+   ],
+   "casos": 9,
    "suporte": false
   },
   {
@@ -1125,6 +1135,7 @@
   "scripts/graphify/run.py": 1,
   "scripts/regras_negocio/generate.py": 1,
   "scripts/regras_negocio/indice.py": 1,
+  "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,

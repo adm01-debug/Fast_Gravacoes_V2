@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "86e59b42321d81491ed8484ae91641432fee68b5",
+  "sha": "6907bc497558c32b98d92674ce3a3b1c2b3ef471",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 01:04 UTC",
-  "files_total": 1467,
-  "code_files": 1337,
-  "code_lines": 189189
+  "generated_at": "2026-11-11 06:21 UTC",
+  "files_total": 1468,
+  "code_files": 1338,
+  "code_lines": 189392
  },
  "version": "1.3.2",
- "facts_hash": "4ec535686aedf4f4",
+ "facts_hash": "0182859c142856b9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -218,7 +218,7 @@
    ".tsx": 656,
    ".ts": 395,
    ".sql": 251,
-   ".mjs": 18,
+   ".mjs": 19,
    ".py": 13,
    ".js": 4
   },
@@ -25885,8 +25885,8 @@
   },
   {
    "module": "scripts",
-   "files": 30,
-   "lines": 12899,
+   "files": 31,
+   "lines": 13102,
    "tables": [
     "a",
     "constructor",
@@ -25920,6 +25920,7 @@
     "bundle-diff.mjs: validateReport, loadReport, buildDiffMarkdown, main",
     "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, measureFiles",
     "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
+    "rls-regression.mjs: signInWithRetry",
     "gerar.unit.mjs: AppRoutes, useContacts, Publicas, router, useDeFerramenta, a",
     "corpus.py: load_config, digest, inventory, output_dir, validate_graph, check_snapshot",
     "enrich.py: _write, _relative, _text, _matches, _source_paths, _routes",
@@ -25994,6 +25995,7 @@
     "scripts/graphify.mjs",
     "scripts/graphify.test.mjs",
     "scripts/rls-regression.mjs",
+    "scripts/rls-regression.test.mjs",
     "scripts/seed-users.test.mjs",
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
@@ -30541,6 +30543,9 @@
     "supabase/functions/tpm-notifications/index.ts"
    ],
    "RLS_FOREIGN_USER_ID": [
+    "scripts/rls-regression.mjs"
+   ],
+   "RLS_LOGIN_RETRY_DELAY_MS": [
     "scripts/rls-regression.mjs"
    ],
    "SCRIPT_ONLY": [
@@ -48407,6 +48412,42 @@
     "name": "--version e --help não chamam o Python, e o help só cita comando que existe"
    },
    {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: sucesso de primeira não espera nem repete"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: falha transitória (ex.: "
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: falha em todas as tentativas retorna null (não lança)"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: resposta sem user e sem error também conta como falha"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: corpo de erro vazio ("
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "signInWithRetry: mensagem real (não vazia) do auth-js passa com o status ao lado"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "main(): GoTrue falha 2x com corpo vazio e volta a passar na 3ª — gate conclui corretamente"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "main(): login falha nas 3 tentativas sai 1 com mensagem clara"
+   },
+   {
+    "file": "scripts/rls-regression.test.mjs",
+    "name": "main(): login ok de primeira segue comportamento anterior (sem retry)"
+   },
+   {
     "file": "scripts/seed-users.test.mjs",
     "name": "falha fechado sem token, sem ref ou com ref fora da lista"
    },
@@ -65430,7 +65471,10 @@
   },
   "scripts/rls-regression.mjs": {
    "path": "scripts/rls-regression.mjs",
-   "lines": 140,
+   "lines": 193,
+   "exports": [
+    "function signInWithRetry"
+   ],
    "tables": [
     {
      "table": "technical_conversations",
@@ -65438,7 +65482,8 @@
     }
    ],
    "env": [
-    "RLS_FOREIGN_USER_ID"
+    "RLS_FOREIGN_USER_ID",
+    "RLS_LOGIN_RETRY_DELAY_MS"
    ],
    "params": [
     {
@@ -65447,7 +65492,9 @@
     }
    ],
    "rule_comments": [
-    "Serve apenas como \"usuário estrangeiro real\" pra distinguir rejeição por"
+    "Serve apenas como \"usuário estrangeiro real\" pra distinguir rejeição por",
+    "vazio (bloqueio de rate limit na borda — Kong/gateway, não o GoTrue, que",
+    "signInWithRetry) não pode disparar um login real de verdade. Mesma"
    ],
    "calc_fns": [
     {
@@ -65455,6 +65502,26 @@
      "params": "value",
      "body": "const trimmed = value.trim(); if (!UUID_RE.test(trimmed)) { console.error(`\\n# RLS regression: RLS_FOREIGN_USER_ID (ou default) não é um UUID válido: \"${value}\"`); console.error('# A regressão só é detectável se o user_id estrangeiro for real — UUID inválido quebraria o gate.'); process.exit(1); } return trimmed.toLowerCase();"
     }
+   ]
+  },
+  "scripts/rls-regression.test.mjs": {
+   "path": "scripts/rls-regression.test.mjs",
+   "lines": 150,
+   "is_test": true,
+   "doc": "Testes do gate de RLS — `node --test scripts/rls-regression.test.mjs`. signInWithRetry() é testada em processo (função pura, sem rede). O fluxo completo (main) é testado via subprocess com fetch mockado, como em seed-users.test.mjs — RLS_LOGIN_RETRY_DELAY_MS=1 encurta o backoff real.",
+   "temporal": [
+    "const AUTH_OK = `return new Response(JSON.stringify({access_token:'t',token_type:'bearer',expires_in:3600,refresh_token:'r',user:{id:'00000000-0000-0000-0000-00 …"
+   ],
+   "tests": [
+    "signInWithRetry: sucesso de primeira não espera nem repete",
+    "signInWithRetry: falha transitória (ex.: ",
+    "signInWithRetry: falha em todas as tentativas retorna null (não lança)",
+    "signInWithRetry: resposta sem user e sem error também conta como falha",
+    "signInWithRetry: corpo de erro vazio (",
+    "signInWithRetry: mensagem real (não vazia) do auth-js passa com o status ao lado",
+    "main(): GoTrue falha 2x com corpo vazio e volta a passar na 3ª — gate conclui corretamente",
+    "main(): login falha nas 3 tentativas sai 1 com mensagem clara",
+    "main(): login ok de primeira segue comportamento anterior (sem retry)"
    ]
   },
   "scripts/seed-users.test.mjs": {
@@ -92324,10 +92391,20 @@
   }
  },
  "git": {
-  "sha": "86e59b42321d81491ed8484ae91641432fee68b5",
+  "sha": "6907bc497558c32b98d92674ce3a3b1c2b3ef471",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6907bc4",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(ci): rls-regression.mjs reaplica login com retry e não dispara ao importar (#167)",
+    "files": [
+     "scripts/rls-regression.mjs",
+     "scripts/rls-regression.test.mjs"
+    ]
+   },
    {
     "sha": "86e59b4",
     "date": "2026-11-10",
@@ -92978,15 +93055,6 @@
     "files": [
      ".github/workflows/deploy.yml"
     ]
-   },
-   {
-    "sha": "6da824c",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: verificação RLS USING(true) em políticas de escrita via migration",
-    "files": [
-     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -92997,6 +93065,10 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     4
+   ],
+   [
+    "scripts/rls-regression.mjs",
+    3
    ],
    [
     "scripts/supabase_snapshot/test_snapshot.py",
@@ -93028,10 +93100,6 @@
    ],
    [
     "AGENTS.md",
-    3
-   ],
-   [
-    "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
     3
    ],
    [

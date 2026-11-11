@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `86e59b4232` · branch `main` · 2026-11-11 01:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6907bc4975` · branch `main` · 2026-11-11 06:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
@@ -3262,7 +3262,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1205 testes em 98 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1214 testes em 99 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3308,6 +3308,7 @@ _nenhum item encontrado_
 | `src/features/jobs/hooks/useSchedulingData.test.tsx` | 10 | useSchedulingData · mantém as consultas desabilitadas quando não há usuário autenticado · carrega jobs, técnicas, máquinas e perfis quando autenticado · propaga erro do jobsService através de error … |
 | `tests/e2e/jobs.spec.ts` | 10 | Jobs — CRUD and state transitions · calendar page loads with job blocks · quick job drawer opens and closes · job priority filter changes visible jobs … |
 | `tests/e2e/packaging.spec.ts` | 10 | Packaging — Acesso anônimo · redireciona para /auth ao acessar /packaging sem sessão · sub-rota inexistente de /packaging sem sessão não expõe conteúdo protegido · Packaging — Abertura via sidebar … |
+| `scripts/rls-regression.test.mjs` | 9 | signInWithRetry: sucesso de primeira não espera nem repete · signInWithRetry: falha transitória (ex.:  · signInWithRetry: falha em todas as tentativas retorna null (não lança) · signInWithRetry: resposta sem user e sem error também conta como falha … |
 | `src/features/admin/hooks/useCronP95Daily.test.ts` | 9 | median · retorna null para amostra vazia · calcula mediana ímpar e par · computeDrift … |
 | `src/lib/excelExport.test.ts` | 9 | excelExport · builds the 3 documented sheets in order: Resumo, Tendência de Produção, Performance Máquinas · Resumo sheet contains the KPI rows with formatted percentages · Tendência de Produção sheet header + one row per productionTrend entry … |
 | `src/test/circuitBreaker.test.ts` | 9 | CircuitBreaker · starts in closed state · opens after failureThreshold failures · throws CircuitOpenError immediately when open … |
