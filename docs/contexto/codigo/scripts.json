@@ -181,7 +181,7 @@
   {
    "arquivo": "scripts/regras_negocio/generate.py",
    "descricao": null,
-   "linhas": 2796,
+   "linhas": 2802,
    "env": [],
    "npm_scripts": [],
    "workflows": [

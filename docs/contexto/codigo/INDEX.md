@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6907bc497558c32b98d92674ce3a3b1c2b3ef471` (2026-11-11T06:11:22Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f03fff898a816520b94bf4ed9369c087f4e5550c` (2026-11-11T07:28:07Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1471 |
 | arquivos_codigo | 1084 |
-| linhas_codigo | 174486 |
+| linhas_codigo | 174520 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,9 +247,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6824 nós · 20700 arestas · 640 comunidades · grafo do commit `6907bc49`
-- comunidades maiores: card.tsx (297), Button (220), useAuth (113), createAppError (105), MainLayout.tsx (104), gerar.mjs (96), GraphifyIntegrationTests (96), .write (93), recharts.ts (92), snapshot.py (90), cn (89), .collect (88)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), .git() (scripts/regras_negocio/test_publish.py)
+- 6827 nós · 20714 arestas · 632 comunidades · grafo do commit `f03fff89`
+- comunidades maiores: card.tsx (195), badge.tsx (136), input.tsx (135), production/index.ts (130), FuturisticBI.tsx (126), analytics/index.ts (119), DailyCalendar.tsx (109), button.tsx (105), cn (102), generate.py (101), client.ts (97), gerar.mjs (96)
+- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
@@ -336,6 +336,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-11 `f03fff8` fix(regras): fórmula de coluna gerada e snapshot degradado como erro (#160)
 - 2026-11-11 `6907bc4` fix(ci): rls-regression.mjs reaplica login com retry e não dispara ao importar (#167)
 - 2026-11-10 `86e59b4` fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)
 - 2026-11-10 `a220f13` fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)
@@ -350,7 +351,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `d61122a` ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)
 - 2026-11-08 `dcdf3a3` fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)
 - 2026-11-08 `961751a` docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)
-- 2026-11-08 `45a5eb9` feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6907bc497558c32b98d92674ce3a3b1c2b3ef471",
+  "commit": "f03fff898a816520b94bf4ed9369c087f4e5550c",
   "branch": "main",
-  "data_commit": "2026-11-11T06:11:22Z",
+  "data_commit": "2026-11-11T07:28:07Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "f03fff8",
+    "data": "2026-11-11",
+    "assunto": "fix(regras): fórmula de coluna gerada e snapshot degradado como erro (#160)"
+   },
    {
     "sha": "6907bc4",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "c98b362",
     "data": "2026-11-07",
     "assunto": "chore: instruções enxutas para agentes (#130)"
-   },
-   {
-    "sha": "5e0a121",
-    "data": "2026-11-07",
-    "assunto": "chore: aprimora scripts de bundle, graphify e RLS regression (#132)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -283,26 +283,26 @@
     "mudancas": 4
    },
    {
+    "arquivo": "scripts/regras_negocio/generate.py",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "scripts/regras_negocio/test_generate.py",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/features/analytics/components/bi/FuturisticBI.tsx",
     "mudancas": 4
    },
    {
     "arquivo": "src/hooks/useOfflineSync.ts",
     "mudancas": 4
-   },
-   {
-    "arquivo": "src/pages/InventoryPage.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/pages/PublicTrackingPage.tsx",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 38
+    "commits": 39
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1471,
   "arquivos_codigo": 1084,
-  "linhas_codigo": 174486,
+  "linhas_codigo": 174520,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -401,7 +401,7 @@
   },
   "scripts/regras_negocio": {
    "arquivos": 5,
-   "linhas": 4384
+   "linhas": 4418
   },
   "scripts/rls-regression.mjs": {
    "arquivos": 1,
@@ -515,7 +515,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linhas": 2796
+   "linhas": 2802
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
