@@ -7,8 +7,8 @@
       "section": "cron_runs"
     },
     {
-      "error": "canceling statement due to statement timeout",
-      "section": "index_stats"
+      "error": "HTTP 401 em /projects/uoujzvpecohinketylud",
+      "section": "api.project"
     },
     {
       "error": "The read operation timed out",
@@ -19,7 +19,7 @@
       "section": "api.custom_hostname"
     }
   ],
-  "gerado_em": "2026-11-11T02:36:14Z",
+  "gerado_em": "2026-11-11T05:24:31Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

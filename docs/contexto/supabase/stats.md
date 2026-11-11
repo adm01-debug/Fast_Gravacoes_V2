@@ -150,7 +150,10 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 ## Índices nunca usados (candidatos a remoção; ignore PK/UNIQUE)
 
-_nenhum_
+| índice | tabela | tamanho |
+|---|---|---|
+| idx_cron_health_history_job_time | public.cron_health_history | 2.2 MB |
+| idx_telemetry_traces_trace_id | public.telemetry_traces | 216.0 KB |
 
 
 ## Storage
@@ -186,10 +189,10 @@ _nenhum_
 | postgres | ~23.6k | ~375.8k | 15.90 | `select net.http_post(url := $1, headers := jsonb_build_object($2,$3,$4,$5), body := jsonb_build_object($6, now())) as request_id` |
 | authenticated | ~37.7k | ~359.5k | 9.53 | `WITH pgrst_source AS ( SELECT "public"."business_config".* FROM "public"."business_config" LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_post` |
 | authenticated | ~25.1k | ~355.6k | 14.17 | `WITH pgrst_source AS ( SELECT "public"."inventory_items".* FROM "public"."inventory_items" ORDER BY "public"."inventory_items"."name" ASC , "public"."inventory_items"."id" ASC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS to` |
+| postgres | ~270 | ~351.8k | 1298.19 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
 | authenticator | ~380 | ~331.5k | 883.91 | `SELECT name FROM pg_timezone_names` |
 | authenticated | ~11k | ~304.2k | 27.71 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
 | authenticated | ~2.7k | ~292k | 106.93 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
-| authenticated | ~12.6k | ~262.1k | 20.87 | `WITH pgrst_source AS ( SELECT "public"."jobs".* FROM "public"."jobs" ORDER BY "public"."jobs"."created_at" DESC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, co` |
 
 
 ## Conexões
@@ -199,7 +202,8 @@ _nenhum_
 | pgbouncer | idle | 1 |
 | postgres | active | 1 |
 | postgres | idle | 1 |
-| supabase_admin | idle | 2 |
+| supabase_admin | active | 2 |
+| supabase_admin | idle | 7 |
 | supabase_admin |  | 1 |
 
 
@@ -224,10 +228,17 @@ _nenhum_
     "status": "ACTIVE_HEALTHY"
   },
   {
-    "error": "Service health check failed",
-    "healthy": false,
+    "healthy": true,
+    "info": {
+      "connected_cluster": 1,
+      "db_connected": true,
+      "healthy": true,
+      "node": "realtime@2600:1f18:67fc:ac01:5e:cc43:a683:4bd",
+      "region": "us-east-1",
+      "replication_connected": true
+    },
     "name": "realtime",
-    "status": "UNHEALTHY"
+    "status": "ACTIVE_HEALTHY"
   },
   {
     "error": "Service health check failed",
