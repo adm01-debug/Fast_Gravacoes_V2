@@ -6,7 +6,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | métrica | valor |
 |---|---|
-| tamanho | 530.3 MB |
+| tamanho | 530.4 MB |
 | schema public | 482.4 MB |
 | schema app_private | 32.0 KB |
 
@@ -150,10 +150,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 ## Índices nunca usados (candidatos a remoção; ignore PK/UNIQUE)
 
-| índice | tabela | tamanho |
-|---|---|---|
-| idx_cron_health_history_job_time | public.cron_health_history | 2.2 MB |
-| idx_telemetry_traces_trace_id | public.telemetry_traces | 216.0 KB |
+_nenhum_
 
 
 ## Storage
@@ -202,8 +199,7 @@ _nenhum_
 | pgbouncer | idle | 1 |
 | postgres | active | 1 |
 | postgres | idle | 1 |
-| supabase_admin | active | 4 |
-| supabase_admin | idle | 5 |
+| supabase_admin | idle | 2 |
 | supabase_admin |  | 1 |
 
 
@@ -228,17 +224,10 @@ _nenhum_
     "status": "ACTIVE_HEALTHY"
   },
   {
-    "healthy": true,
-    "info": {
-      "connected_cluster": 5,
-      "db_connected": true,
-      "healthy": true,
-      "node": "realtime@2600:1f18:67fc:ac01:5e:cc43:a683:4bd",
-      "region": "us-east-1",
-      "replication_connected": true
-    },
+    "error": "Service health check failed",
+    "healthy": false,
     "name": "realtime",
-    "status": "ACTIVE_HEALTHY"
+    "status": "UNHEALTHY"
   },
   {
     "error": "Service health check failed",

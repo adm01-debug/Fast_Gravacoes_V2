@@ -45298,6 +45298,10 @@
       "section": "cron_runs"
     },
     {
+      "error": "canceling statement due to statement timeout",
+      "section": "index_stats"
+    },
+    {
       "error": "The read operation timed out",
       "section": "api.ssl_enforcement"
     },
