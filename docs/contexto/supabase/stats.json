@@ -15,10 +15,9 @@
         "status": "UNHEALTHY"
       },
       {
-        "error": "Service health check failed",
-        "healthy": false,
+        "healthy": true,
         "name": "db",
-        "status": "UNHEALTHY"
+        "status": "ACTIVE_HEALTHY"
       },
       {
         "healthy": true,
@@ -28,12 +27,12 @@
       {
         "healthy": true,
         "info": {
-          "connected_cluster": 5,
-          "db_connected": true,
+          "connected_cluster": 0,
+          "db_connected": false,
           "healthy": true,
-          "node": "realtime@2600:1f18:67fc:ac02:2971:c320:967d:242",
+          "node": "realtime@2600:1f18:67fc:ac02:bc7a:1add:d7e7:f8a2",
           "region": "us-east-1",
-          "replication_connected": true
+          "replication_connected": false
         },
         "name": "realtime",
         "status": "ACTIVE_HEALTHY"
@@ -108,11 +107,6 @@
         },
         {
           "n": 1,
-          "state": "active",
-          "usename": "supabase_admin"
-        },
-        {
-          "n": 7,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -122,7 +116,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 562973843,
+      "database_bytes": 562998419,
       "queues": [],
       "schema_bytes": [
         {
@@ -161,20 +155,20 @@
           "total_ms": 1009298
         },
         {
-          "calls": 288,
-          "mean_ms": 3141.85,
+          "calls": 289,
+          "mean_ms": 3157.29,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "postgres",
-          "rows": 378080,
-          "total_ms": 904854
+          "rows": 379393,
+          "total_ms": 912456
         },
         {
-          "calls": 289,
-          "mean_ms": 2667.52,
+          "calls": 290,
+          "mean_ms": 2729.76,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "postgres",
-          "rows": 2023,
-          "total_ms": 770913
+          "rows": 2030,
+          "total_ms": 791629
         },
         {
           "calls": 38028,
@@ -217,12 +211,12 @@
           "total_ms": 542726
         },
         {
-          "calls": 290,
-          "mean_ms": 1569.1,
+          "calls": 291,
+          "mean_ms": 1565.79,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "postgres",
-          "rows": 21622,
-          "total_ms": 455040
+          "rows": 21697,
+          "total_ms": 455644
         },
         {
           "calls": 23654,

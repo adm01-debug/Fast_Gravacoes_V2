@@ -1,19 +1,13 @@
 {
-  "carried": [
-    "api.ssl_enforcement"
-  ],
+  "carried": [],
   "entrada": "README.md",
   "erros": [
     {
       "error": "canceling statement due to statement timeout",
       "section": "cron_runs"
-    },
-    {
-      "error": "The read operation timed out",
-      "section": "api.ssl_enforcement"
     }
   ],
-  "gerado_em": "2026-11-11T14:00:25Z",
+  "gerado_em": "2026-11-11T15:14:50Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

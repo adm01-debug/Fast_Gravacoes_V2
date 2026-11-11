@@ -1,7 +1,5 @@
 # Configuração do projeto (Management API, segredos redigidos)
 
-> ⚠️ Seção `api.ssl_enforcement` não pôde ser atualizada nesta coleta (ver errors.md); mostrando a versão anterior.
-
 | campo | valor |
 |---|---|
 | projeto | Fast_Gravacoes_V2 |
