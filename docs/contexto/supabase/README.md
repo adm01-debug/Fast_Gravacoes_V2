@@ -91,6 +91,10 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 
 ## ⚠️ Problemas na última coleta
 
+Seções reaproveitadas da coleta anterior: `api.ssl_enforcement`.
+
 | seção | erro |
 |---|---|
 | cron_runs | canceling statement due to statement timeout |
+| table_stats | canceling statement due to statement timeout |
+| api.ssl_enforcement | The read operation timed out |
