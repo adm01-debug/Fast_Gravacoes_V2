@@ -198,12 +198,12 @@ _nenhum_
 ## Conexões
 | usuário | estado | n |
 |---|---|---|
-| authenticator | idle | 11 |
+| authenticator | idle | 1 |
 | pgbouncer | idle | 1 |
 | postgres | active | 1 |
 | postgres | idle | 1 |
-| supabase_admin | active | 3 |
-| supabase_admin | idle | 7 |
+| supabase_admin | active | 4 |
+| supabase_admin | idle | 5 |
 | supabase_admin |  | 1 |
 
 
@@ -217,9 +217,10 @@ _nenhum_
     "status": "UNHEALTHY"
   },
   {
-    "healthy": true,
+    "error": "Service health check failed",
+    "healthy": false,
     "name": "db",
-    "status": "ACTIVE_HEALTHY"
+    "status": "UNHEALTHY"
   },
   {
     "healthy": true,
@@ -229,10 +230,10 @@ _nenhum_
   {
     "healthy": true,
     "info": {
-      "connected_cluster": 4,
+      "connected_cluster": 5,
       "db_connected": true,
       "healthy": true,
-      "node": "realtime@2600:1f18:67fc:ac02:7f:9daf:df94:eee1",
+      "node": "realtime@2600:1f18:67fc:ac01:5e:cc43:a683:4bd",
       "region": "us-east-1",
       "replication_connected": true
     },

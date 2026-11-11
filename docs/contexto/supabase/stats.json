@@ -15,9 +15,10 @@
         "status": "UNHEALTHY"
       },
       {
-        "healthy": true,
+        "error": "Service health check failed",
+        "healthy": false,
         "name": "db",
-        "status": "ACTIVE_HEALTHY"
+        "status": "UNHEALTHY"
       },
       {
         "healthy": true,
@@ -27,10 +28,10 @@
       {
         "healthy": true,
         "info": {
-          "connected_cluster": 4,
+          "connected_cluster": 5,
           "db_connected": true,
           "healthy": true,
-          "node": "realtime@2600:1f18:67fc:ac02:7f:9daf:df94:eee1",
+          "node": "realtime@2600:1f18:67fc:ac01:5e:cc43:a683:4bd",
           "region": "us-east-1",
           "replication_connected": true
         },
@@ -81,7 +82,7 @@
       },
       "connections": [
         {
-          "n": 11,
+          "n": 1,
           "state": "idle",
           "usename": "authenticator"
         },
@@ -101,12 +102,12 @@
           "usename": "postgres"
         },
         {
-          "n": 3,
+          "n": 4,
           "state": "active",
           "usename": "supabase_admin"
         },
         {
-          "n": 7,
+          "n": 5,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -116,7 +117,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 556092563,
+      "database_bytes": 556108947,
       "queues": [],
       "schema_bytes": [
         {

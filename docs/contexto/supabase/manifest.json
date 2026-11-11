@@ -1,13 +1,7 @@
 {
-  "carried": [
-    "sequences"
-  ],
+  "carried": [],
   "entrada": "README.md",
   "erros": [
-    {
-      "error": "canceling statement due to statement timeout",
-      "section": "sequences"
-    },
     {
       "error": "canceling statement due to statement timeout",
       "section": "cron_runs"
@@ -21,7 +15,7 @@
       "section": "api.custom_hostname"
     }
   ],
-  "gerado_em": "2026-11-11T00:59:51Z",
+  "gerado_em": "2026-11-11T01:45:40Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
