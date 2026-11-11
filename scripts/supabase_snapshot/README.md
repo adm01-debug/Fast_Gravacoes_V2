@@ -120,9 +120,11 @@ grant usage on schema cron, vault, storage, auth, supabase_migrations to snapsho
 
 - Só há commit quando o conteúdo estrutural mudou. Métricas voláteis vivem em `stats.md`/`stats.json`/`cron-runs.md`; quando só elas mudam, o commit é limitado a 1 por hora (`VOLATILE_MIN_INTERVAL_MIN` no workflow).
 - Schemas internos do Supabase (`auth`, `storage`, `realtime`, `extensions`, `graphql*`, `net`, `pgsodium`, `vault`…) ficam fora da introspecção geral para não poluir; o que importa deles entra em seções dedicadas. Use `SNAPSHOT_INCLUDE_SCHEMAS` para forçar um deles.
-- Uma seção que falha (ex.: sem permissão em `vault`) é reaproveitada da coleta anterior com aviso no topo do arquivo — nunca gera "tudo removido" no CHANGELOG.
+- Uma seção que falha (ex.: sem permissão em `vault`, ou 401/500 da Management API) é reaproveitada da coleta anterior com aviso no topo do arquivo — nunca gera "tudo removido" no CHANGELOG. Para a Management API isso inclui `edge-functions.md` e os `edge-functions/<slug>/README.md`: listagem que falhou não poda nenhuma pasta. Seções `api.*` aparecem em `carried` como `api.<seção>`.
+- A Management API repete uma vez (espera de 1 s) só falha transitória (5xx, 429, timeout/rede); 400/401/403/404 não repetem. O erro registrado em `errors.md` traz um trecho curto (≤200 caracteres, já redigido) do corpo da resposta. `custom-hostname` responde 400 quando o add-on não existe: isso é esperado e não vira erro; 403/404 também são ignorados nos endpoints opcionais.
+- Resposta da API fora do formato esperado (ex.: lista no lugar de objeto, edge function sem `slug`) vira erro da própria seção (`api.<seção>`), com carry-over, e não derruba a execução.
 - `CHANGELOG.md` registra, a cada mudança, o que foi adicionado/removido/alterado por categoria.
-- Falha em uma seção (ex.: sem permissão em `vault`) não derruba as outras: vai para `errors.md` e para o README. O job só falha se o banco inteiro não responder, se o push falhar 3 vezes, ou se o guard de segredos detectar algo.
+- Falha em uma seção (ex.: sem permissão em `vault`) não derruba as outras: vai para `errors.md` e para o README. O job só falha se o banco inteiro não responder (nenhuma seção estrutural coletada de verdade — todas nulas ou todas reaproveitadas: código de saída 1, sem tocar a saída nem renovar `manifest.json`), se o push falhar 3 vezes, ou se o guard de segredos detectar algo.
 - Sessão read-only no Postgres, `statement_timeout` 90s, `lock_timeout` 5s.
 - A Management API devolve só o bundle compilado das edge functions, então o snapshot guarda metadados (`edge-functions/<slug>/README.md`); o fonte canônico é `supabase/functions/<slug>/` no repo.
 - Conexão com `prepare_threshold=None`: funciona tanto na conexão direta quanto no pooler (session ou transaction mode). `pg_dump` exige session mode ou conexão direta.
@@ -136,6 +138,14 @@ pip install -r scripts/supabase_snapshot/requirements.txt
 export SUPABASE_DB_URL='postgresql://...'
 python scripts/supabase_snapshot/snapshot.py
 ```
+
+A configuração é toda por variáveis de ambiente. `--help` imprime o uso e sai 0 sem coletar; qualquer outra
+opção (ex.: `--out`) é rejeitada com código 2. Códigos de saída: 0 ok (inclusive coleta parcial), 1 banco
+indisponível, 2 configuração inválida.
+
+A pasta de saída só é aceita se estiver vazia ou tiver o marcador `.supabase-snapshot-output`, um
+`snapshot.json` v2 válido ou um `manifest.json` com `produtor: supabase-snapshot` (o artefato do CI não leva
+arquivos ocultos, então o marcador não chega à branch `contexto`; o `manifest.json` cobre esse caso).
 
 ## Testes offline
 
@@ -152,6 +162,10 @@ Outra matriz cobre as oito combinações de cron/triggers/views reaproveitados e
 além de fontes vazias, indisponíveis e recuperação, preservando a base anterior do changelog.
 Os casos de frescor verificam o manifest em UTC, coleta sem mudança estrutural, falha/recuperação e
 sua prioridade sobre um CHANGELOG antigo no índice; chamadas em DEFAULTs da assinatura também têm regressão.
+Outros grupos cobrem a Management API simulada (400/401/403/404/429/500 por rota, carry-over com aviso e sem
+ruído no CHANGELOG, retry com espera injetada, formatos inesperados), as consultas de catálogo (sessão
+read-only, `vault` sem valores, partições de `realtime`, timezone/`statement_timeout`), a redação de segredos
+com entradas adversariais (`scrub`/`redact`) e a segurança do Markdown (pipes, crases, cercas, nomes de arquivo).
 
 A matriz de estatísticas usa somente resultados sintéticos: schemas fora do `search_path`, aspas,
 espaços, `%` e palavras SQL no identificador; extensão ausente ou coleta desligada; erros de catálogo,

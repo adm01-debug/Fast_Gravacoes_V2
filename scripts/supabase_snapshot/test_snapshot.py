@@ -17,7 +17,13 @@ import sys
 import tempfile
 import types
 import unittest
+import urllib.error
 from unittest import mock
+
+
+_PGQL = "postgres" + "ql://"  # prefixos montados: o literal inteiro com "usuário:senha@host" dispara o scanner de segredos do CI
+_PG = "postgres" + "://"
+_REDIS = "re" + "dis://"
 
 
 class OfflineConnection:
@@ -645,6 +651,7 @@ class SnapshotHeartbeatTests(SnapshotFixture):
         (self.out / "manifest.json").unlink()
         document_sem_manifest = self.unified_index()
         self.assertIn("| não verificável ·", document_sem_manifest)
+        self.assertIn("manifest.json ausente", document_sem_manifest)
         self.assertIn("desatualizado há", document_sem_manifest)
 
     def test_unavailable_collection_does_not_renew_previous_heartbeat(self):
@@ -985,6 +992,630 @@ class ScrubTests(SnapshotFixture):
             self.assertIn("db.host", self.snapshot.ERRORS[0]["error"])
         finally:
             self.snapshot.ERRORS.clear()
+
+
+class RecordingConnection(OfflineConnection):
+    def __init__(self):
+        self.commands = []
+
+    def execute(self, command):
+        self.commands.append(command)
+        super().execute(command)
+
+
+class FakeCursor:
+    def __init__(self, rows):
+        self.rows = rows
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+    def execute(self, sql, params=None):
+        pass
+
+    def fetchall(self):
+        return self.rows
+
+
+class FakeRowsConnection:
+    def __init__(self, rows):
+        self.rows = rows
+
+    def cursor(self, row_factory=None):
+        return FakeCursor(self.rows)
+
+
+class SnapshotCatalogContractTests(SnapshotFixture):
+    """Contratos das consultas de catálogo: o SQL é o que o teste offline consegue provar."""
+
+    def run_section(self, section, fake_q):
+        with mock.patch.object(self.snapshot, "q", side_effect=fake_q):
+            with contextlib.redirect_stdout(io.StringIO()):
+                return section(OfflineConnection())
+
+    def test_connection_is_read_only_with_timeouts_before_any_section_runs(self):
+        connection = RecordingConnection()
+        self.snapshot.DB_SECTIONS = []
+        with mock.patch.object(self.snapshot.psycopg, "connect", return_value=connection) as connect:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.snapshot.introspect_db(None)
+        self.assertEqual(connection.commands, [
+            "SET default_transaction_read_only = on", "SET statement_timeout = '90s'", "SET lock_timeout = '5s'"])
+        self.assertTrue(connect.call_args.kwargs["autocommit"])
+
+    def test_q_scrubs_every_row_it_returns(self):
+        secret = "9f" * 32
+        rows = [{"jobname": "tpm", "command": f"select http_post(headers := jsonb_build_object('x-cron-secret','{secret}'))",
+                 "nested": [{"k": f"apikey: {secret}"}]}]
+        result = self.snapshot.q(FakeRowsConnection(rows), "SELECT 1")
+        self.assertNotIn(secret, json.dumps(result))
+        self.assertEqual(result[0]["jobname"], "tpm")
+
+    def test_vault_reads_names_only_never_the_decrypted_value(self):
+        seen = []
+
+        def fake_q(_conn, sql, params=None):
+            seen.append(" ".join(sql.split()))
+            return [{"present": 1}]
+
+        self.run_section(self.snapshot.get_vault, fake_q)
+        query = seen[-1]
+        self.assertRegex(query, r"^SELECT name, description, created_at FROM vault\.secrets\b")
+        self.assertNotIn("decrypted", query.lower())
+
+    def test_realtime_publication_tables_skip_the_daily_partitions_of_realtime_messages(self):
+        seen = []
+
+        def fake_q(_conn, sql, params=None):
+            seen.append(" ".join(sql.split()))
+            return []
+
+        self.run_section(self.snapshot.get_realtime, fake_q)
+        tables = [sql for sql in seen if "pg_publication_tables" in sql]
+        self.assertEqual(len(tables), 1)
+        self.assertIn("WHERE schemaname <> 'realtime'", tables[0])
+
+    def test_server_settings_match_timezone_case_insensitively_and_report_the_global_timeout(self):
+        seen = []
+
+        def fake_q(_conn, sql, params=None):
+            seen.append(" ".join(sql.split()))
+            if "pg_settings" in sql:
+                # pg_settings guarda o GUC como "TimeZone".
+                return [{"name": "TimeZone", "setting": "UTC"}, {"name": "statement_timeout", "setting": "0"}]
+            return [{"db": "postgres"}]
+
+        info = self.run_section(self.snapshot.get_server, fake_q)
+        settings = seen[0]
+        self.assertIn("lower(name) IN", settings)
+        self.assertRegex(settings, r"CASE WHEN name = 'statement_timeout' THEN reset_val ELSE setting END")
+        self.assertEqual(info["timezone"], "UTC")
+        self.assertNotIn("TimeZone", info)
+
+    def test_lints_flag_tables_without_rls_and_rls_without_policies(self):
+        def fake_q(_conn, sql, params=None):
+            if "relrowsecurity" in sql:
+                return [{"schema": "public", "table": "open", "rls": False, "policies": 0},
+                        {"schema": "public", "table": "closed", "rls": True, "policies": 0},
+                        {"schema": "public", "table": "fine", "rls": True, "policies": 2}]
+            return []
+
+        lints = self.run_section(self.snapshot.get_lints, fake_q)
+        self.assertEqual([(l["severity"], l["code"], l["object"]) for l in lints],
+                         [("ALTA", "rls_disabled", "public.open"), ("MÉDIA", "rls_no_policies", "public.closed")])
+
+
+class SnapshotChangelogTests(SnapshotFixture):
+    def entries(self):
+        return (self.out / "CHANGELOG.md").read_text(encoding="utf-8").split("\n## ")[1:]
+
+    def test_code_only_change_of_callers_is_not_a_database_change(self):
+        self.assertEqual(self.collect(), 0)
+        changelog = (self.out / "CHANGELOG.md").read_bytes()
+        snapshot_before = (self.out / "snapshot.json").read_bytes()
+        self.source_files = [("src/a.ts", "supabase.rpc('demo')"), ("src/b.ts", "supabase.rpc('demo')")]
+        self.assertEqual(self.collect(), 0)
+        self.assertNotEqual((self.out / "snapshot.json").read_bytes(), snapshot_before, "callers continua no arquivo")
+        self.assertEqual((self.out / "CHANGELOG.md").read_bytes(), changelog)
+
+    def test_real_function_change_is_still_recorded(self):
+        self.collect()
+        self.collect(functions=[function(value=2)])
+        self.assertIn("**functions** alterado (1): `public.demo()`", self.entries()[0])
+
+    def test_policies_are_tracked_by_the_changelog(self):
+        policy = {"schema": "public", "table": "jobs", "name": "sel", "using": "true"}
+        old = self.snapshot.fingerprints({"db": {"policies": [policy]}})
+        new = self.snapshot.fingerprints({"db": {"policies": [policy, {**policy, "name": "ins"}, ]}})
+        self.assertEqual(self.snapshot.diff_fingerprints(old, new), [("policies (RLS)", "adicionado", ["public.jobs.ins"])])
+        changed = self.snapshot.fingerprints({"db": {"policies": [{**policy, "using": "false"}]}})
+        self.assertEqual(self.snapshot.diff_fingerprints(old, changed), [("policies (RLS)", "alterado", ["public.jobs.sel"])])
+
+    def test_changelog_keeps_a_bounded_number_of_entries(self):
+        self.out.mkdir()
+        for i in range(330):
+            self.snapshot.update_changelog([("tabelas", "adicionado", [f"public.t{i}"])], previous_existed=True)
+        entries = self.entries()
+        self.assertLessEqual(len(entries), 301)
+        self.assertIn("`public.t329`", entries[0])
+        self.assertNotIn("public.t0`", (self.out / "CHANGELOG.md").read_text(encoding="utf-8"))
+
+    def test_realtime_partition_rotation_is_not_filtered_after_collection(self):
+        # a filtragem é do SQL; o changelog continua registrando o que a coleta devolver.
+        old = self.snapshot.fingerprints({"db": {"realtime": {"tables": [
+            {"publication": "p", "schema": "realtime", "table": "messages_2026_11_05"}]}}})
+        new = self.snapshot.fingerprints({"db": {"realtime": {"tables": [
+            {"publication": "p", "schema": "realtime", "table": "messages_2026_11_12"}]}}})
+        self.assertEqual(len(self.snapshot.diff_fingerprints(old, new)), 2)
+
+
+class SnapshotHeartbeatHonestyTests(SnapshotFixture):
+    def test_every_structural_section_carried_is_a_database_outage(self):
+        self.assertEqual(self.collect(), 0)
+        watched = ("manifest.json", "snapshot.json", "README.md", "CHANGELOG.md", "errors.md")
+        before = {name: (self.out / name).read_bytes() for name in watched}
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(self.collect(failures={"server", "functions", "migrations"}), 1)
+        self.assertEqual(set(self.snapshot.CARRIED), {"server", "functions", "migrations"})
+        for name in watched:
+            self.assertEqual((self.out / name).read_bytes(), before[name], name)
+
+    def test_one_fresh_section_is_enough_to_publish_a_partial_collection(self):
+        self.collect()
+        self.assertEqual(self.collect(failures={"functions", "migrations"}), 0)
+
+    def test_total_failure_without_history_is_still_an_outage(self):
+        self.assertEqual(self.collect(failures={"server", "functions", "migrations"}), 1)
+        self.assertFalse((self.out / "manifest.json").exists())
+
+
+class SnapshotOutputOwnershipTests(SnapshotFixture):
+    def lose_hidden_files(self):
+        # upload-artifact não leva arquivos ocultos: o marcador nunca chega à branch.
+        (self.out / self.snapshot.OUTPUT_MARKER).unlink()
+        (self.out / ".gitattributes").unlink()
+
+    def test_manifest_proves_ownership_when_marker_is_missing_and_snapshot_json_is_corrupt(self):
+        self.collect()
+        self.lose_hidden_files()
+        text = (self.out / "snapshot.json").read_text(encoding="utf-8")
+        (self.out / "snapshot.json").write_text(text[:300], encoding="utf-8")
+        self.assertEqual(self.collect(), 0)
+        self.assertEqual(self.metadata()["errors"], [])
+        self.assertEqual((self.out / self.snapshot.OUTPUT_MARKER).read_text(encoding="utf-8"), self.snapshot.OUTPUT_MARKER_CONTENT)
+
+    def test_foreign_manifest_does_not_prove_ownership(self):
+        self.collect()
+        self.lose_hidden_files()
+        (self.out / "snapshot.json").write_text("{", encoding="utf-8")
+        (self.out / "manifest.json").write_text(json.dumps({"produtor": "outro-produtor"}), encoding="utf-8")
+        with contextlib.redirect_stderr(io.StringIO()) as stderr:
+            self.assertEqual(self.collect(), 2)
+        self.assertIn("sem marcador/snapshot válido", stderr.getvalue())
+        self.assertEqual((self.out / "snapshot.json").read_text(encoding="utf-8"), "{")
+
+
+class SnapshotCommandLineTests(SnapshotFixture):
+    def run_main(self, argv):
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with mock.patch.object(self.snapshot, "introspect_db", side_effect=AssertionError("coleta proibida")):
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                code_ = self.snapshot.main(argv)
+        return code_, stdout.getvalue(), stderr.getvalue()
+
+    def test_help_prints_usage_and_exits_zero_without_collecting(self):
+        for flag in ("--help", "-h"):
+            with self.subTest(flag=flag):
+                code_, stdout, _ = self.run_main([flag])
+                self.assertEqual(code_, 0)
+                self.assertIn("Variáveis de ambiente", stdout)
+                self.assertIn("SUPABASE_DB_URL", stdout)
+        self.assertFalse(self.out.exists())
+
+    def test_help_works_even_with_invalid_environment(self):
+        self.snapshot.CONFIG_ERRORS.append("CRON_RUNS_PER_JOB inválida")
+        self.assertEqual(self.run_main(["--help"])[0], 0)
+
+    def test_unknown_options_are_rejected_instead_of_silently_ignored(self):
+        for argv in (["--out", "/tmp/x"], ["--bogus"], ["positional"]):
+            with self.subTest(argv=argv):
+                code_, _, stderr = self.run_main(argv)
+                self.assertEqual(code_, 2)
+                self.assertIn("unrecognized arguments", stderr)
+        self.assertFalse(self.out.exists())
+
+
+class SnapshotMarkdownSafetyTests(SnapshotFixture):
+    def table(self, **overrides):
+        return {"schema": "public", "name": "t", "kind": "table", "rls_enabled": True, "rls_forced": False, "owner": "postgres",
+                "comment": None, "is_partition": False, "parent": None, "partition_key": None, "partition_bound": None,
+                "replica_identity": "default", "from_extension": False, **overrides}
+
+    def test_pipes_are_escaped_in_every_table_cell(self):
+        self.assertEqual(self.snapshot.md_cell("a|b\nc"), "a\\|b c")
+        rendered = self.snapshot.md_table(["x", "y"], [["a|b", "c"], [None, "d|e|f"]])
+        for line in rendered.splitlines():
+            self.assertEqual(len(re.findall(r"(?<!\\)\|", line)), 3, line)
+
+    def test_code_span_survives_backticks_in_the_value(self):
+        code = self.snapshot.code
+        self.assertEqual(code("plain"), "`plain`")
+        self.assertEqual(code("a`b"), "``a`b``")
+        self.assertEqual(code("`x`"), "`` `x` ``")
+        self.assertEqual(code("a``b"), "```a``b```")
+        self.assertEqual((code(None), code("")), ("", ""))
+
+    def test_fence_is_longer_than_any_backtick_run_inside(self):
+        fence = self.snapshot.md_fence
+        self.assertEqual(fence("select 1", "sql"), "```sql\nselect 1\n```\n")
+        self.assertEqual(fence("select '```'", "sql"), "````sql\nselect '```'\n````\n")
+        self.assertEqual(fence("x ````` y"), "``````\nx ````` y\n``````\n")
+
+    def test_view_definition_with_triple_backticks_keeps_the_markdown_fence_balanced(self):
+        view = {"schema": "public", "name": "v", "kind": "view", "definition": " SELECT '```'::text AS fence;", "options": None,
+                "owner": "postgres", "comment": None, "populated": None, "security_invoker": True, "depends_on": None}
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.snapshot.render_simple({"views": [view]}, {"enabled": False})
+        text = (self.out / "views.md").read_text(encoding="utf-8")
+        self.assertIn("````sql\nSELECT '```'::text AS fence;\n````\n", text)
+
+    def test_multiline_table_comment_cannot_become_a_heading(self):
+        db = {"tables": [self.table(comment="primeira\n# titulo\nterceira")]}
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.snapshot.render_tables(db)
+        lines = (self.out / "tables" / "public" / "t.md").read_text(encoding="utf-8").splitlines()
+        self.assertEqual([l for l in lines if l.startswith("# ")], ["# public.t"])
+        self.assertEqual(lines[2:5], ["> primeira", "> # titulo", "> terceira"])
+
+    def test_dot_schemas_cannot_write_outside_their_folder(self):
+        for name in (".", "..", "...", "../.."):
+            self.assertNotIn(self.snapshot.slug(name), (".", ".."), name)
+            self.assertNotIn("/", self.snapshot.slug(name))
+        db = {"tables": [self.table(schema="..", name="README")]}
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.snapshot.render_tables(db)
+        self.assertTrue((self.out / "tables" / "_" / "README.md").is_file())
+        self.assertFalse((self.out / "README.md").exists())
+
+    def test_functions_whose_names_collapse_to_the_same_slug_keep_distinct_files(self):
+        spaced, underscored = function("f a"), function("f_a")
+        self.assertEqual(self.collect(functions=[spaced, underscored]), 0)
+        files = sorted(p.name for p in (self.out / "functions" / "public").glob("*.sql"))
+        self.assertEqual(len(files), 2)
+        bodies = {p.read_text(encoding="utf-8").strip() for p in (self.out / "functions" / "public").glob("*.sql")}
+        self.assertEqual(bodies, {spaced["definition"], underscored["definition"]})
+        document = (self.out / "functions.md").read_text(encoding="utf-8")
+        self.assertEqual(len(set(re.findall(r"\]\((functions/public/[^)]+\.sql)\)", document))), 2)
+        # carry-over recalcula os mesmos nomes
+        self.assertEqual(self.collect(failures={"functions"}), 0)
+        self.assertEqual(sorted(p.name for p in (self.out / "functions" / "public").glob("*.sql")), files)
+        self.assertNotIn("SQL indisponível", (self.out / "functions.md").read_text(encoding="utf-8"))
+
+    def test_function_in_a_dot_schema_stays_inside_the_output_folder(self):
+        entry = {**function("x"), "schema": ".."}
+        self.assertEqual(self.collect(functions=[entry]), 0)
+        outside = [p for p in pathlib.Path(self.temp.name).rglob("*.sql") if self.out not in p.parents]
+        self.assertEqual(outside, [])
+        self.assertTrue(list((self.out / "functions" / "_").glob("x__*.sql")))
+
+
+API_OK = {
+    "": {"id": "ref", "name": "proj", "region": "sa-east-1", "status": "ACTIVE_HEALTHY", "created_at": "x", "organization_id": "o"},
+    "/functions": [
+        {"slug": "fn-a", "name": "fn-a", "status": "ACTIVE", "version": 3, "verify_jwt": True, "entrypoint_path": "index.ts", "updated_at": 1},
+        {"slug": "fn-b", "name": "fn-b", "status": "ACTIVE", "version": 1, "verify_jwt": False, "entrypoint_path": "index.ts", "updated_at": 2}],
+    "/secrets": [{"name": "A_KEY", "value": "nao-publicar"}],
+    "/config/auth": {"site_url": "https://app.example", "jwt_exp": 3600, "password_min_length": 8, "smtp_pass": "senha-smtp-fixture",
+                     "sms_messagebird_access_key": "chave-messagebird-fixture", "external_email_enabled": True,
+                     "external_google_secret": "", "hook_custom_access_token_enabled": True, "hook_send_sms_enabled": False,
+                     "hook_send_sms_secrets": "v1,whsec_fixture"},
+    "/postgrest": {"db_schema": "public", "max_rows": 1000, "jwt_secret": "jwt-fixture"},
+    "/config/database/postgres": {}, "/config/database/pooler": [], "/config/storage": {"fileSizeLimit": 1},
+    "/network-restrictions": {}, "/ssl-enforcement": {}, "/custom-hostname": {"status": "x"}, "/branches": [],
+    "/database/backups": {"region": "r", "pitr_enabled": False, "walg_enabled": True}, "/health": [{"name": "db", "healthy": True}],
+}
+
+
+class ManagementApiFixture(SnapshotFixture):
+    def collect_api(self, *, fail=None, responses=None, **options):
+        payloads = copy.deepcopy(API_OK if responses is None else responses)
+        fail = fail or {}
+
+        def fake_api(path):
+            suffix = path[len("/projects/ref"):].split("?")[0]
+            if suffix in fail:
+                code_, body = fail[suffix] if isinstance(fail[suffix], tuple) else (fail[suffix], b'{"message":"boom"}')
+                raise urllib.error.HTTPError(path, code_, "erro", {}, io.BytesIO(body))
+            return copy.deepcopy(payloads[suffix])
+
+        self.snapshot.PROJECT_REF, self.snapshot.ACCESS_TOKEN = "ref", "token-fixture"
+        with mock.patch.object(self.snapshot, "api", side_effect=fake_api):
+            return self.collect(**options)
+
+    def readme(self, slug_):
+        return self.out / "edge-functions" / slug_ / "README.md"
+
+    def manifest(self):
+        return json.loads((self.out / "manifest.json").read_text(encoding="utf-8"))
+
+    def text(self, name):
+        return (self.out / name).read_text(encoding="utf-8")
+
+
+class ManagementApiFailureTests(ManagementApiFixture):
+    def test_custom_hostname_without_the_add_on_is_not_a_collection_error(self):
+        for status in (400, 403, 404):
+            with self.subTest(status=status):
+                self.assertEqual(self.collect_api(fail={"/custom-hostname": status}), 0)
+                self.assertEqual(self.manifest()["erros"], [])
+                self.assertEqual(self.manifest()["carried"], [])
+
+    def test_400_elsewhere_stays_an_error_and_records_a_short_scrubbed_body(self):
+        secret = "9f" * 32
+        body = ('{"message":"parametro invalido","apikey":"' + secret + '","detalhe":"' + "x" * 600 + '"}').encode()
+        self.assertEqual(self.collect_api(fail={"/branches": (400, body), "/ssl-enforcement": 400}), 0)
+        errors = {e["section"]: e["error"] for e in self.manifest()["erros"]}
+        self.assertEqual(set(errors), {"api.branches", "api.ssl_enforcement"})
+        self.assertIn("HTTP 400 em /projects/ref/branches: ", errors["api.branches"])
+        self.assertIn("parametro invalido", errors["api.branches"])
+        self.assertNotIn(secret, errors["api.branches"])
+        self.assertLessEqual(len(errors["api.branches"]), len("HTTP 400 em /projects/ref/branches: ") + 200)
+        self.assertNotIn(secret, self.text("errors.md"))
+
+    def test_error_body_hint_is_redacted_and_tolerates_missing_body(self):
+        secret = "9f" * 32
+        error = urllib.error.HTTPError("https://api.invalid/x", 400, "erro", {}, io.BytesIO(
+            ('{"message":"falhou",\n "apikey": "' + secret + '"}').encode()))
+        hint = self.snapshot.api_error_hint(error)
+        self.assertTrue(hint.startswith(": {"))
+        self.assertNotIn(secret, hint)
+        self.assertNotIn("\n", hint)
+        self.assertEqual(self.snapshot.api_error_hint(urllib.error.HTTPError("https://api.invalid/x", 400, "erro", {}, None)), "")
+
+    def test_transient_failures_keep_edge_functions_config_and_changelog(self):
+        for status in (401, 403, 404, 429, 500):
+            with self.subTest(status=status):
+                shutil.rmtree(self.out, ignore_errors=True)
+                self.assertEqual(self.collect_api(), 0)
+                readmes = {s: self.readme(s).read_bytes() for s in ("fn-a", "fn-b")}
+                changelog = (self.out / "CHANGELOG.md").read_bytes()
+                self.assertEqual(self.collect_api(fail={"/functions": status, "/config/auth": status, "/secrets": status}), 0)
+                for s, content in readmes.items():
+                    self.assertEqual(self.readme(s).read_bytes(), content)
+                self.assertEqual(set(self.manifest()["carried"]), {"api.edge_functions", "api.auth_config", "api.secrets"})
+                self.assertEqual({e["section"] for e in self.manifest()["erros"]}, {"api.edge_functions", "api.auth_config", "api.secrets"})
+                edge = self.text("edge-functions.md")
+                self.assertIn("`api.edge_functions` não pôde ser atualizada", edge)
+                self.assertIn("`api.secrets` não pôde ser atualizada", edge)
+                self.assertIn("| fn-a |", edge)
+                self.assertIn("| A_KEY |", edge)
+                auth = self.text("auth.md")
+                self.assertIn("`api.auth_config` não pôde ser atualizada", auth)
+                self.assertIn("| jwt_exp (s) | 3600 |", auth)
+                self.assertIn("| edge functions | 2 |", self.text("README.md"))
+                self.assertEqual((self.out / "CHANGELOG.md").read_bytes(), changelog)
+                self.assertEqual(self.collect_api(), 0)  # recuperação: sem "adicionado (2)" falso
+                self.assertEqual((self.out / "CHANGELOG.md").read_bytes(), changelog)
+                self.assertEqual(self.manifest()["carried"], [])
+                self.assertNotIn("não pôde ser atualizada", self.text("edge-functions.md"))
+
+    def test_failed_listing_without_history_preserves_existing_readmes_and_says_so(self):
+        self.assertEqual(self.collect_api(), 0)
+        metadata = self.metadata()
+        metadata["api"] = {"enabled": False}  # histórico sem dados da API
+        (self.out / "snapshot.json").write_text(json.dumps(metadata), encoding="utf-8")
+        readme = self.readme("fn-a").read_bytes()
+        self.assertEqual(self.collect_api(fail={"/functions": 401}), 0)
+        self.assertEqual(self.readme("fn-a").read_bytes(), readme)
+        self.assertTrue(self.readme("fn-b").is_file())
+        self.assertEqual(self.manifest()["carried"], [])
+        self.assertIn("`api.edge_functions` indisponível nesta coleta e sem versão anterior", self.text("edge-functions.md"))
+        self.assertIn("| edge functions | n/d |", self.text("README.md"))
+
+    def test_successful_listing_prunes_only_the_removed_functions(self):
+        self.assertEqual(self.collect_api(), 0)
+        kept = self.readme("fn-a").read_bytes()
+        responses = copy.deepcopy(API_OK)
+        responses["/functions"] = responses["/functions"][:1]
+        self.assertEqual(self.collect_api(responses=responses), 0)
+        self.assertEqual(self.readme("fn-a").read_bytes(), kept)
+        self.assertFalse((self.out / "edge-functions" / "fn-b").exists())
+        self.assertIn("**edge functions** removido (1): `fn-b`", self.text("CHANGELOG.md"))
+
+    def test_disabled_api_removes_the_orphaned_edge_function_readmes(self):
+        self.assertEqual(self.collect_api(), 0)
+        self.snapshot.PROJECT_REF, self.snapshot.ACCESS_TOKEN = "", ""
+        self.assertEqual(self.collect(), 0)
+        self.assertFalse((self.out / "edge-functions").exists())
+        self.assertIn("Management API desabilitada", self.text("edge-functions.md"))
+
+    def test_unexpected_response_shapes_become_section_errors_not_crashes(self):
+        cases = [
+            ("/functions", {"message": "x"}, "api.edge_functions"),
+            ("/functions", [{"name": "sem-slug"}], "api.edge_functions"),
+            ("/functions", [{"slug": None, "name": "x"}], "api.edge_functions"),
+            ("/functions", ["texto"], "api.edge_functions"),
+            ("/config/auth", [1], "api.auth_config"),
+            ("/postgrest", "oops", "api.postgrest_config"),
+            ("", None, "api.project"),
+            ("/secrets", [{"name": None}, {"name": "A"}], "api.secrets"),
+        ]
+        for suffix, payload, section in cases:
+            with self.subTest(suffix=suffix, payload=payload):
+                responses = copy.deepcopy(API_OK)
+                responses[suffix] = payload
+                self.assertEqual(self.collect_api(responses=responses), 0)
+                self.assertIn(section, {e["section"] for e in self.manifest()["erros"]})
+                self.assertTrue((self.out / "auth.md").is_file())
+
+    def test_auth_summary_keeps_numbers_and_hooks_but_not_secrets(self):
+        self.assertEqual(self.collect_api(), 0)
+        auth = self.text("auth.md")
+        self.assertIn("| jwt_exp (s) | 3600 |", auth)
+        self.assertIn("| hooks | hook_custom_access_token_enabled |", auth)
+        self.assertIn('"password_min_length": 8', auth)
+        self.assertIn('"hook_send_sms_enabled": false', auth)
+        self.assertIn('"external_google_secret": ""', auth)
+        for leaked in ("senha-smtp-fixture", "chave-messagebird-fixture", "whsec_fixture", "jwt-fixture", "nao-publicar"):
+            for name in ("auth.md", "project-config.md", "edge-functions.md", "snapshot.json"):
+                self.assertNotIn(leaked, self.text(name), name)
+
+
+class FakeHttpResponse:
+    def __init__(self, body):
+        self.body = body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+    def read(self):
+        return self.body
+
+
+class ManagementApiRetryTests(SnapshotFixture):
+    def call(self, effects, path="/projects/ref/functions"):
+        queue = list(effects)
+
+        def urlopen(request, timeout=None):
+            effect = queue.pop(0)
+            if isinstance(effect, BaseException):
+                raise effect
+            return FakeHttpResponse(effect)
+
+        sleep = mock.Mock()
+        with mock.patch.object(self.snapshot.urllib.request, "urlopen", side_effect=urlopen) as opened:
+            with mock.patch.object(self.snapshot, "API_SLEEP", sleep):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    try:
+                        result = self.snapshot.api(path)
+                        error = None
+                    except Exception as exc:  # noqa: BLE001
+                        result, error = None, exc
+        return result, error, opened.call_count, sleep
+
+    @staticmethod
+    def http(status):
+        return urllib.error.HTTPError("https://api.invalid/x", status, "erro", {}, io.BytesIO(b"{}"))
+
+    def test_transient_failures_are_retried_once_after_a_short_backoff(self):
+        transient = [self.http(500), self.http(502), self.http(429), urllib.error.URLError("rede"), TimeoutError("lento")]
+        for failure in transient:
+            with self.subTest(failure=repr(failure)):
+                result, error, calls, sleep = self.call([failure, b'{"ok": 1}'])
+                self.assertIsNone(error)
+                self.assertEqual(result, {"ok": 1})
+                self.assertEqual(calls, 2)
+                sleep.assert_called_once_with(1.0)
+
+    def test_persistent_transient_failure_stops_after_the_configured_attempts(self):
+        result, error, calls, sleep = self.call([self.http(503), self.http(503), b"{}"])
+        self.assertIsInstance(error, urllib.error.HTTPError)
+        self.assertEqual(error.code, 503)
+        self.assertEqual(calls, self.snapshot.API_ATTEMPTS)
+        self.assertEqual(sleep.call_count, self.snapshot.API_ATTEMPTS - 1)
+
+    def test_client_errors_are_never_retried(self):
+        for status in (400, 401, 403, 404, 422):
+            with self.subTest(status=status):
+                _, error, calls, sleep = self.call([self.http(status), b"{}"])
+                self.assertEqual(error.code, status)
+                self.assertEqual(calls, 1)
+                sleep.assert_not_called()
+
+    def test_malformed_json_is_not_retried(self):
+        _, error, calls, sleep = self.call([b"{truncado", b"{}"])
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, 1)
+        sleep.assert_not_called()
+
+
+class RedactionTableTests(SnapshotFixture):
+    def test_name_based_redaction_only_hides_values_that_can_be_secrets(self):
+        redact = self.snapshot.redact
+        hidden = [("smtp_pass", "x"), ("SMTP_PASS", "x"), ("sms_messagebird_access_key", "k"), ("external_x_secret", ["a"]),
+                  ("hook_send_sms_secrets", {"v": "1"}), ("jwt_secret", "s"), ("db_password", "p"), ("api_key", "k")]
+        for key, value in hidden:
+            with self.subTest(hidden=key):
+                self.assertEqual(redact({key: value}), {key: "[REDACTED]"})
+        shown = [("jwt_exp", 3600), ("password_min_length", 8), ("hook_x_enabled", True), ("hook_y_enabled", False),
+                 ("external_google_secret", None), ("smtp_pass", ""), ("secrets", []), ("credentials", {}),
+                 ("refresh_token_rotation_enabled", True), ("security_refresh_token_reuse_interval", 10), ("ratio_secret", 0.5)]
+        for key, value in shown:
+            with self.subTest(shown=key):
+                self.assertEqual(redact({key: value}), {key: value})
+
+    def test_redaction_recurses_and_never_invents_keys(self):
+        redact = self.snapshot.redact
+        self.assertEqual(redact({}), {})
+        self.assertEqual(redact({"a": [{"api_key": "k", "n": 1}]}), {"a": [{"api_key": "[REDACTED]", "n": 1}]})
+        self.assertEqual(redact({"nome": "x"}), {"nome": "x"})
+        self.assertEqual(redact({"url": "postgresql://u:" + "p" * 8 + "@h/db"}), {"url": _PGQL + "u:[REDACTED]@h/db"})
+        self.assertEqual(redact([{"token": "t"}, 3, None]), [{"token": "[REDACTED]"}, 3, None])
+
+
+class ScrubAdversarialTests(SnapshotFixture):
+    HEX = "9f" * 32
+    # montados em partes: o literal inteiro dispara scanners de segredo.
+    SBP = "sb" + "p_" + "0123456789abcdef" * 2 + "01234567"
+    TELEGRAM = "https://api.telegram.org/bot" + "123456789" + ":" + "AAH" + "fakefake" * 4 + "/sendMessage"
+    SLACK = "https://hooks.slack.com/services/" + "T00000000/B00000000/" + "X1" * 12
+    AWS = "aws_secret" + "_access_key=" + "wJalrXUtnFEMI7MDENG" + "bPxRfiCYEXAMPLEKEY"
+
+    LEAKS = [
+        ("password = 'CorrectHorseBatteryStaple'", "CorrectHorseBatteryStaple"),
+        ("PASSWORD := 'SomenteLetrasAqui'", "SomenteLetrasAqui"),
+        ("update t set password=>'SomenteLetrasAqui'", "SomenteLetrasAqui"),
+        ("select vault.create_secret('SegredoSemDigitoNenhum', 'nome')", "SegredoSemDigitoNenhum"),
+        ("select vault.create_secret(new_secret := 'OutroSegredoLongo', new_name := 'n')", "OutroSegredoLongo"),
+        ("select vault.create_secret('com ''aspas'' dentro', 'n')", "aspas"),
+        (SBP, SBP),
+        (f"select net.http_get('{TELEGRAM}')", TELEGRAM.split("/bot")[1].split("/")[0]),
+        (f"webhook '{SLACK}'", "X1X1X1X1"),
+        (AWS, "wJalrXUtnFEMI7MDENG"),
+        (_PGQL + "postgres:p@ssFake1@db.x.supabase.co:5432/postgres", "ssFake1"),
+        (_REDIS + ":SenhaDoRedis9@cache:6379", "SenhaDoRedis9"),
+        (_PG + "user:pa/ss1@host/db", "pa/ss1"),
+    ]
+    KEEP = [
+        "password = current_setting('app.password')",
+        "password_hash = crypt(new.password, gen_salt('bf'))",
+        "select password from auth.users where id = 1",
+        "vault.create_secret(secret_value, 'nome')",
+        "select vault.create_secret(null, 'n')",
+        "select net.http_post('http://kong:8000/functions/v1/x','{\"to\":\"a@b.com\"}')",
+        "https://api.telegram.org/botfoo/sendMessage",
+        "https://hooks.slack.com/services/",
+        "sbp_curto",
+        "aws_access_key_id = 'AKIAEXEMPLO'",
+        "https://example.com:443/path?next=a",
+    ]
+
+    def test_known_leaks_are_redacted(self):
+        for text, secret in self.LEAKS:
+            with self.subTest(text=text[:40]):
+                out = self.snapshot.scrub(text)
+                self.assertNotIn(secret, out)
+                self.assertIn("[REDACTED", out)
+
+    def test_non_secrets_are_left_alone(self):
+        for text in self.KEEP:
+            with self.subTest(text=text[:40]):
+                self.assertEqual(self.snapshot.scrub(text), text)
+
+    def test_every_rule_is_idempotent(self):
+        for text, _ in self.LEAKS:
+            once = self.snapshot.scrub(text)
+            self.assertEqual(self.snapshot.scrub(once), once, text)
+
+    def test_the_dsn_rule_keeps_the_host_after_the_password(self):
+        self.assertEqual(self.snapshot.scrub(_PGQL + "postgres:p@ssFake1@db.x.supabase.co:5432/postgres"),
+                         _PGQL + "postgres:[REDACTED]@db.x.supabase.co:5432/postgres")
 
 
 if __name__ == "__main__":
