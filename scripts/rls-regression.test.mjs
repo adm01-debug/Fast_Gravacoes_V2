@@ -64,6 +64,20 @@ test('signInWithRetry: resposta sem user e sem error também conta como falha', 
   assert.equal(calls, 2);
 });
 
+test('signInWithRetry: erro 429 (corpo vazio) é nomeado como rate limit, não "{}" genérico', async () => {
+  const logs = [];
+  const orig = console.error;
+  console.error = (...args) => logs.push(args.join(' '));
+  try {
+    const data = await signInWithRetry(async () => ({ data: null, error: { status: 429, message: '' } }), { attempts: 2, delayMs: () => 0 });
+    assert.equal(data, null);
+  } finally {
+    console.error = orig;
+  }
+  assert.match(logs.join('\n'), /rate limit \(429\)/);
+  assert.doesNotMatch(logs.join('\n'), /falhou após 2 tentativas: $/m); // nunca cai de volta pro "{}" nu
+});
+
 // ── subprocess: main() fim a fim com fetch mockado (GoTrue + PostgREST) ──
 const ENV_BASE = {
   VITE_SUPABASE_URL: 'https://x.supabase.co',

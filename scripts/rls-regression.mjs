@@ -94,12 +94,24 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 // CI roda este gate em várias PRs ao mesmo tempo, todas logando com a MESMA
-// conta de operador E2E contra o Supabase real — sob concorrência, o GoTrue
-// já respondeu com falha transitória/sem corpo (login "falhou: {}", sem
-// Invalid login credentials nem outro motivo claro). Um retry curto absorve
-// isso sem mascarar credencial errada: cada tentativa loga o motivo, e só
-// desiste de vez depois de `attempts` tentativas.
+// conta de operador E2E contra o Supabase real — sob concorrência, o login
+// já respondeu com falha transitória sem motivo claro. Um retry curto
+// absorve isso sem mascarar credencial errada: cada tentativa loga o motivo,
+// e só desiste de vez depois de `attempts` tentativas.
 const RETRY_DELAY_MS = Number(process.env.RLS_LOGIN_RETRY_DELAY_MS) || 5000; // ms por tentativa; só testes encurtam via env.
+
+// @supabase/auth-js (handleError em lib/fetch.js) monta a mensagem com
+// JSON.stringify(corpo) quando a resposta não tem campo error/msg/
+// error_description reconhecido — por isso "login falhou: {}" (corpo JSON
+// vazio, sem texto nenhum). 429 não está na lista de status "de rede" que o
+// auth-js trata à parte, então um bloqueio de rate limit NA BORDA (gateway/
+// Kong — não o GoTrue, que sempre inclui error_description) aparece como
+// esse mesmo "{}" genérico. Nomear o status aqui poupa quem for depurar de
+// repetir essa investigação.
+function describe(error) {
+  if (error?.status === 429) return `rate limit (429) — provável limite de requisições de auth na borda do Supabase, não credencial errada: ${error?.message || '(corpo de erro vazio)'}`;
+  return error?.message || 'sem usuário retornado';
+}
 
 export async function signInWithRetry(signIn, { attempts = 3, delayMs = (n) => n * RETRY_DELAY_MS } = {}) {
   let last;
@@ -109,11 +121,11 @@ export async function signInWithRetry(signIn, { attempts = 3, delayMs = (n) => n
     last = error;
     if (attempt < attempts) {
       const wait = delayMs(attempt);
-      console.error(`# RLS regression: login do operador E2E falhou (tentativa ${attempt}/${attempts}): ${error?.message ?? 'sem usuário retornado'} — nova tentativa em ${wait / 1000}s`);
+      console.error(`# RLS regression: login do operador E2E falhou (tentativa ${attempt}/${attempts}): ${describe(error)} — nova tentativa em ${wait / 1000}s`);
       await new Promise((resolve) => setTimeout(resolve, wait));
     }
   }
-  console.error(`\n# RLS regression: login do operador E2E falhou após ${attempts} tentativas: ${last?.message ?? 'sem usuário retornado'}`);
+  console.error(`\n# RLS regression: login do operador E2E falhou após ${attempts} tentativas: ${describe(last)}`);
   return null;
 }
 
