@@ -1,3 +1,6 @@
 # Erros da última coleta
 
-_nenhum_
+| seção | erro |
+|---|---|
+| cron_runs | canceling statement due to statement timeout |
+| api.ssl_enforcement | The read operation timed out |
