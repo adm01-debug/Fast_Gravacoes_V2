@@ -15,10 +15,9 @@
         "status": "UNHEALTHY"
       },
       {
-        "error": "Service health check failed",
-        "healthy": false,
+        "healthy": true,
         "name": "db",
-        "status": "UNHEALTHY"
+        "status": "ACTIVE_HEALTHY"
       },
       {
         "healthy": true,
@@ -39,13 +38,12 @@
         "status": "ACTIVE_HEALTHY"
       },
       {
-        "error": "Service health check failed",
-        "healthy": false,
+        "healthy": true,
         "info": {
           "db_schema": "public,graphql_public"
         },
         "name": "rest",
-        "status": "UNHEALTHY"
+        "status": "ACTIVE_HEALTHY"
       },
       {
         "error": "Service health check failed",
@@ -82,7 +80,7 @@
       },
       "connections": [
         {
-          "n": 1,
+          "n": 2,
           "state": "idle",
           "usename": "authenticator"
         },
@@ -102,7 +100,7 @@
           "usename": "postgres"
         },
         {
-          "n": 2,
+          "n": 1,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -112,7 +110,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 558533779,
+      "database_bytes": 558558355,
       "queues": [],
       "schema_bytes": [
         {
@@ -151,20 +149,20 @@
           "total_ms": 996109
         },
         {
-          "calls": 284,
-          "mean_ms": 2812.45,
+          "calls": 286,
+          "mean_ms": 3034.12,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "postgres",
-          "rows": 372828,
-          "total_ms": 798736
+          "rows": 375454,
+          "total_ms": 867757
         },
         {
-          "calls": 285,
-          "mean_ms": 2393.65,
+          "calls": 287,
+          "mean_ms": 2532.82,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "postgres",
-          "rows": 1995,
-          "total_ms": 682190
+          "rows": 2009,
+          "total_ms": 726919
         },
         {
           "calls": 322,
@@ -207,12 +205,12 @@
           "total_ms": 542726
         },
         {
-          "calls": 286,
-          "mean_ms": 1443.42,
+          "calls": 288,
+          "mean_ms": 1527.2,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "postgres",
-          "rows": 21322,
-          "total_ms": 412817
+          "rows": 21472,
+          "total_ms": 439834
         },
         {
           "calls": 23642,
@@ -239,12 +237,12 @@
           "total_ms": 356951
         },
         {
-          "calls": 376,
-          "mean_ms": 885.27,
+          "calls": 377,
+          "mean_ms": 884.22,
           "query": "SELECT name FROM pg_timezone_names",
           "role": "authenticator",
-          "rows": 449696,
-          "total_ms": 332862
+          "rows": 450892,
+          "total_ms": 333349
         }
       ]
     },
