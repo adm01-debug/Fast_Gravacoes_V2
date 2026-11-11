@@ -1478,9 +1478,13 @@ def load_snapshot_schema(snap_dir: Path, snap: str) -> tuple[dict | None, str, l
                 fks[c["columns"][0]] = f"{c['ref_table']}.{(c.get('ref_columns') or ['id'])[0]}" + (f" on delete {act.lower()}" if act and act != "NO ACTION" else "")
         columns = []
         for c in cols_of[key]:
+            # coluna GERADA: o snapshot grava em `generated` só o marcador de pg_attribute.attgenerated ('s') e a expressão de cálculo em
+            # `default` (pg_get_expr). A fórmula é o `generated` do documento e não é um default editável.
+            gen = bool(c.get("generated"))
             ty = str(c.get("type") or "?") + ("" if c.get("nullable", True) else " not null") \
-                + (f" default {c['default']}" if c.get("default") is not None else "") + "".join(f" {x}" for x in flags[c["name"]])
-            columns.append({"name": c["name"], "type": ty, "fk": fks.get(c["name"], ""), "generated": squash(str(c.get("generated") or "")), "src": src})
+                + (f" default {c['default']}" if c.get("default") is not None and not gen else "") + "".join(f" {x}" for x in flags[c["name"]])
+            formula = squash(str(c.get("default") or "")) if gen and c.get("default") else squash(str(c.get("generated") or ""))
+            columns.append({"name": c["name"], "type": ty, "fk": fks.get(c["name"], ""), "generated": formula, "src": src})
         constraints = [f"constraint {c['name']} {squash(str(c.get('definition') or c.get('type')))}" + ("" if c.get("validated", True) else " NOT VALID")
                        for c in sorted(cons_of[key], key=lambda c: str(c.get("name")))
                        if not (len(c.get("columns") or []) == 1 and c.get("type") in ("PRIMARY KEY", "UNIQUE", "FOREIGN KEY") and single.get(c["columns"][0]) is c)]
@@ -2672,7 +2676,9 @@ def main() -> int:
         else:
             schema.update(overlay)
             origin.update(real=True, why="", label=f"banco real, snapshot de {snap_gerado or 'data desconhecida'}")
-            avisos += [f"snapshot do banco (`{snap}/`): {x}" for x in problems]
+            # coleta com erro / seção reaproveitada = o banco "real" aqui NÃO é de agora: degrada a fonte (o índice só rebaixa por `erros`)
+            for x in problems:
+                (erros if x.startswith(("coleta com erro", "seção(ões) reaproveitada")) else avisos).append(f"snapshot do banco (`{snap}/`): {x}")
     elif snap:
         origin["why"] = f"snapshot `{snap}/` não existe nesta execução"
     schema["source"] = {"kind": "snapshot" if origin["real"] else "migrations", "path": snap}
