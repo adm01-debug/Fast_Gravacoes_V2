@@ -1,10 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { type Job as DbJob, type JobUpdate } from '@/features/jobs/services/jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { findNextAvailableSlot } from '@/features/jobs/services/scheduling';
-import { format, parse, isValid } from 'date-fns';
 
 interface UseDailyDragDropProps {
   onUpdate: () => void;
@@ -13,7 +12,7 @@ interface UseDailyDragDropProps {
   totalMinutes: number;
 }
 
-export function useDailyDragDrop({ onUpdate, allJobs, startHour, totalMinutes }: UseDailyDragDropProps) {
+export function useDailyDragDrop({ onUpdate, allJobs }: UseDailyDragDropProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {

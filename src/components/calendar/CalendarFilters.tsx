@@ -85,7 +85,6 @@ export function CalendarFilters({
   filters,
   jobs,
   techniques,
-  machines,
   activeCount,
   onToggle,
   onUpdate,

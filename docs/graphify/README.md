@@ -40,16 +40,18 @@ do executável; argumentos de shell não são aceitos nessa variável.
 | `graph:explain -- "símbolo"` | Exibe nó e vizinhos. |
 | `graph:affected -- "símbolo"` | Consulta dependências reversas potenciais. |
 | `graph:html` | Gera visualização local; agrega comunidades acima de 5.000 nós. |
-| `graph:audit` | Verifica controles locais versionados e os artefatos enriquecidos. |
-| `graph:benchmark` | Exibe o resultado determinístico das perguntas de regressão revisadas. |
+| `graph:audit` | Verifica controles locais versionados e os artefatos enriquecidos; sai 1 se algum controle falhar. |
+| `graph:benchmark` | Exibe o resultado determinístico das perguntas de regressão revisadas; sai 1 se alguma falhar. Em snapshot de perfil, só valem as perguntas daquele perfil. |
 | `graph:ratchet -- --mode report` | Compara métricas com a baseline sem bloquear a entrega. |
-| `graph:ratchet -- --mode enforce` | Falha apenas para regressão sem exceção versionada e não expirada. |
+| `graph:ratchet -- --mode enforce` | Falha apenas para regressão sem exceção versionada e não expirada. Só existe para o perfil `all`. |
 | `graph:diff -- --baseline outro/graph.json` | Compara duas projeções estruturais sem depender de provedor Git. |
 | `graph:test` | Executa cenários de falha em diretórios temporários isolados. |
 
 Todos os comandos operacionais aceitam `--profile`; geração e consulta devem usar
 o mesmo perfil. As consultas rejeitam snapshots desatualizados ou inconsistentes.
-Uma alteração exclusivamente documental não invalida a extração estrutural.
+Uma alteração exclusivamente documental não invalida a extração estrutural — exceto os
+arquivos de controle (`docs/plano-graphify-50-etapas.md`, `docs/plano-mestre-10-10.md`,
+configuração, baseline e benchmark), que entram na assinatura do snapshot.
 
 ```bash
 npm run graph:build -- --profile security
@@ -113,8 +115,9 @@ a partir da lista atual elimina nós de arquivos excluídos, mesmo quando a AST 
 `graphify-baseline.json` contém somente métricas de ambiguidade revisáveis
 (`unresolved_relations` e `parallel_relation_groups`). Contagens de arquivos e
 relações brutas são telemetria de capacidade: uma feature legítima pode aumentá-las.
-Uma exceção ao ratchet exige `metric`, `reason`, `responsible` e `expires_on`; exceções
-expiradas não suprimem a falha. Mantenha `--mode report` até a primeira validação
+Uma exceção ao ratchet exige `metric`, `reason`, `responsible` e `expires_on` (data ISO-8601
+`AAAA-MM-DD`, comparada como data); exceções expiradas não suprimem a falha. Baseline sem
+`metrics`, com métrica desconhecida ou valor não inteiro é erro, não "sem regressão". Mantenha `--mode report` até a primeira validação
 remota da automação; `--mode enforce` já está disponível para execução explícita.
 
 ## Como interpretar o resultado
@@ -155,8 +158,10 @@ O job executou e passou remotamente nos PRs do pacote de auditoria (ver VALIDACA
 Exigi-lo nas proteções de branch é configuração externa pendente.
 
 `CLAUDE.md` e o corpo espelhado de `AGENTS.md` orientam consulta e atualização.
-Husky permanece com seu comportamento existente; hooks automáticos, watcher e MCP
-estão planejados separadamente para não introduzir processos ou conexões implícitos.
+Husky permanece com seu comportamento existente. Nas sessões na nuvem, `.claude/settings.json`
+liga dois hooks: `SessionStart` (`.claude/hooks/session-start.sh` instala o venv e gera o grafo
+em segundo plano) e `PreToolUse` (lembrete de consultar o grafo). Watcher e MCP seguem planejados
+separadamente para não introduzir processos ou conexões implícitos.
 
 ## Falhas e recuperação
 
@@ -166,8 +171,10 @@ estão planejados separadamente para não introduzir processos ou conexões impl
   permanece intacto se a extração falhar antes da publicação.
 - **Build interrompido durante publicação:** `graph:check` rejeita hashes mistos;
   refaça o build. Não use resultados do snapshot inconsistente.
-- **Lock abandonado:** examine o PID em `graphify-out/.build.lock` e confirme que
-  não há build ativo antes de remover somente esse arquivo. Nenhum desbloqueio automático.
+- **Lock de build:** em Linux/macOS o lock é um `flock` do processo — se o build for
+  interrompido (SIGTERM, SIGKILL, queda da sessão) o sistema o libera sozinho e o próximo build
+  segue; o arquivo `graphify-out/.build.lock` só guarda o PID para diagnóstico. Em Windows (sem
+  `flock`) continua valendo o arquivo: confirme que não há build ativo antes de removê-lo.
 - **Arquivos sem nós:** veja a lista em `health.json`; investigue parser/linguagem
   antes de declarar o arquivo sem dependências.
 - **Retirar a integração:** remova os scripts `graph:*`, o workflow dedicado e os

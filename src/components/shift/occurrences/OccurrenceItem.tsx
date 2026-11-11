@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { AlertTriangle, CheckCircle2, Clock, Wrench, Shield, Package, FileText } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Wrench, Shield, Package, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShiftOccurrence } from '@/hooks/useShiftHandover';

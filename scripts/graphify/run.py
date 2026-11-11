@@ -2,6 +2,7 @@
 import argparse
 import importlib.metadata
 import json
+import signal
 import subprocess
 import sys
 
@@ -10,7 +11,13 @@ from pipeline import build
 from quality import audit, graph_diff, ratchet
 
 
+def _terminate(signum, _frame):
+    # SIGTERM vira saída normal do Python: os `finally` rodam (lock e diretório de stage limpos).
+    sys.exit(128 + signum)
+
+
 def main():
+    signal.signal(signal.SIGTERM, _terminate)
     config = load_config()
     parser = argparse.ArgumentParser(description='Graphify local — FAST GRAVAÇÕES V2')
     parser.add_argument('command', choices=['doctor', 'detect', 'build', 'check', 'query', 'path', 'explain', 'affected', 'html', 'test', 'audit', 'ratchet', 'diff', 'benchmark'])
@@ -52,9 +59,16 @@ def main():
                           'edges': manifest['edges'], 'health': health}, indent=2))
         return
     if args.command == 'audit':
-        print(json.dumps(audit(ROOT, out), ensure_ascii=False, indent=2))
+        result = audit(ROOT, out)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        if result['passed'] != result['total']:
+            failed = ', '.join(check['path'] for check in result['checks'] if not check['pass'])
+            raise ValueError(f'Auditoria reprovou {result["total"] - result["passed"]} de {result["total"]} controles: {failed}.')
         return
     if args.command == 'ratchet':
+        if args.profile != 'all':
+            # A baseline versionada mede o snapshot `all`; comparar um perfil com ela sempre "passa".
+            raise ValueError('ratchet só existe para o perfil all (a baseline é do snapshot completo).')
         result = ratchet(ROOT, out, args.mode)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         if args.mode == 'enforce' and result['would_fail']:
@@ -66,7 +80,13 @@ def main():
         print(json.dumps(graph_diff(args.baseline, out / 'graph.json'), ensure_ascii=False, indent=2))
         return
     if args.command == 'benchmark':
-        print((out / 'benchmark.json').read_text(encoding='utf-8'), end='')
+        text = (out / 'benchmark.json').read_text(encoding='utf-8')
+        print(text, end='')
+        result = json.loads(text)
+        if not result['total'] or result['passed'] != result['total']:
+            failed = ', '.join(str(q['id']) for q in result['questions'] if q['pass'] is False)
+            raise ValueError(f'Benchmark: {result["passed"]} de {result["total"]} perguntas passaram'
+                             + (f'; falharam: {failed}.' if failed else ' (nenhuma pergunta aplicável).'))
         return
     if args.command == 'html':
         if len(graph['nodes']) > config['htmlNodeLimit']:
@@ -87,6 +107,6 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except (ValueError, OSError, KeyError, subprocess.CalledProcessError) as error:
+    except (ValueError, OSError, KeyError, TypeError, AttributeError, subprocess.CalledProcessError) as error:
         print(f'[graphify] {error}', file=sys.stderr)
         sys.exit(1)

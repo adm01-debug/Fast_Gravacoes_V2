@@ -1,4 +1,3 @@
-import React from 'react';
 import { AlertTriangle, ShieldAlert, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';

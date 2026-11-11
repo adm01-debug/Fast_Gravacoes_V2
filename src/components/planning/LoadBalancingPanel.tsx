@@ -7,10 +7,10 @@ import {
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog';
 import {
-  Scale, ArrowRight, TrendingDown, AlertCircle,
-  CheckCircle2, Info, ArrowLeftRight, Sparkles, Clock, Zap
+  Scale, ArrowRight, TrendingDown, 
+  Info, ArrowLeftRight, Sparkles, Zap
 } from 'lucide-react';
-import { useLoadBalancing, useLoadBalancingWithActions, LoadBalancingSuggestion } from '@/features/analytics';
+import { useLoadBalancing, LoadBalancingSuggestion } from '@/features/analytics';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,7 +23,7 @@ interface LoadBalancingPanelProps {
 }
 
 export function LoadBalancingPanel({ onExplain }: LoadBalancingPanelProps) {
-  const { suggestions, byTechnique, isLoading } = useLoadBalancing();
+  const { suggestions, isLoading } = useLoadBalancing();
   const [isApplying, setIsApplying] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState<LoadBalancingSuggestion | null>(null);

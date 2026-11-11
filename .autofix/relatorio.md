@@ -1,0 +1,121 @@
+# Relatório do autofix — 2026-11-09T14:06:07.301Z
+Modo: **aplicar** · duração 392s
+
+## Remover código não usado (imports, desestruturação, variáveis puras)
+- propostos: **251** arquivo(s) — {"import":914,"destructure":108,"var":18,"type":10,"function":3}
+- mantidos: **246** · revertidos pelo gate: **5**
+  - revertido: `src/features/maintenance/hooks/useTPMData.ts` — tsc error TS2353: Object literal may only specify known properties, and 'error' does not exist in type '{ data: any; }'. (linha 151)
+  - revertido: `src/components/operators/CreateOperatorModal.tsx` — eslint no-empty-pattern: Unexpected empty object pattern. (linha 84)
+  - revertido: `src/pages/OEEDashboard.tsx` — eslint no-empty-pattern: Unexpected empty array pattern. (linha 113)
+  - revertido: `src/pages/OperatorHistoryPage.tsx` — eslint no-empty-pattern: Unexpected empty array pattern. (linha 42)
+  - revertido: `src/pages/ReportBuilderPage.tsx` — eslint no-empty-pattern: Unexpected empty array pattern. (linha 37)
+
+### Fila manual (93) — exige decisão, não é seguro automatizar
+- `src/components/calendar/ConflictResolutionPanel.tsx:24` `idx` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/dashboard/OEELoadTrendWidget.tsx:20` `{ jobs }` — var: padrão de desestruturação
+- `src/components/dashboard/QuickActions.tsx:21` `index` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/jobs/JobCostsTab.tsx:49` `index` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/jobs/JobCostsTab.tsx:106` `entry` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/knowledge/KnowledgeBaseStats.tsx:15` `withSteps` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/components/layout/LanguageSwitcher.tsx:14` `props` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/layout/LanguageSwitcher.tsx:14` `ref` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/layout/ResponsiveContainer.tsx:41` `{ isMobile }` — var: padrão de desestruturação
+- `src/components/layout/sidebar/NavButton.tsx:25` `ref` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/mobile/SwipeActions.tsx:39` `event` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/mobile/SwipeActions.tsx:64` `event` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/navigation/Breadcrumbs.tsx:112` `handleBack` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/components/navigation/Breadcrumbs.tsx:160` `firstItem` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/components/navigation/MobileNavigation.tsx:283` `{ t }` — var: padrão de desestruturação
+- `src/components/onboarding/OnboardingTour.tsx:57` `{ t }` — var: padrão de desestruturação
+- `src/components/operators/OperatorProductivityCard.tsx:23` `isAbovePB` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/components/planning/PlanningEfficiencyDashboard.tsx:293` `idx` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/planning/SmartSequencingPanel.tsx:26` `queryClient` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/components/settings/TwoFactorSetup.tsx:20` `{ t }` — var: padrão de desestruturação
+- `src/components/settings/UserManagement.tsx:114` `error` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/settings/UserManagement.tsx:137` `error` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/settings/UserManagement.tsx:159` `error` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/ui/calendar.tsx:45` `{ ..._props }` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/ui/calendar.tsx:46` `{ ..._props }` — param: parâmetro: mudar assinatura exige revisão
+- `src/components/voice/VoiceCommands.tsx:155` `ref` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/analytics/components/bi/FuturisticBI.tsx:39` `{ operators }` — var: padrão de desestruturação
+- `src/features/analytics/components/bi/FuturisticBI.tsx:40` `{ stats: tpmStats }` — var: padrão de desestruturação
+- `src/features/analytics/components/oee/OEEGaugeCard.tsx:30` `{ t }` — var: padrão de desestruturação
+- `src/features/analytics/components/oee/OEEHeatmap.tsx:30` `{ t }` — var: padrão de desestruturação
+- `src/features/analytics/components/oee/OEELossDrilldown.tsx:60` `currentLevel` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/analytics/components/oee/OEELossesChart.tsx:104` `index` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/analytics/components/oee/OEETrendChart.tsx:59` `qualityDiff` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/analytics/components/oee/OEETrendChart.tsx:61` `isPositive` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/analytics/components/oee/OEETrendChart.tsx:62` `isNegative` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/analytics/hooks/useRealtimeConnection.ts:54` `err` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/auth/hooks/useSessionTimeout.tsx:296` `event` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/inventory/hooks/useLogistics.test.ts:42` `shipmentsListSelect` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/jobs/hooks/useSchedulingData.ts:36` `queryClient` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/jobs/hooks/useSmartSequencingWithActions.ts:280` `highT` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/maintenance/components/ExecutionRecordView.tsx:231` `sheet` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/maintenance/components/TPMSeverityConfigs.tsx:93` `index` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/maintenance/hooks/useTPMApprovalMutations.ts:19` `{ schedules, alerts }` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/maintenance/hooks/useTPMLifecycleMutations.ts:20` `{ schedules, alerts }` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/notifications/components/NotificationIntegrator.tsx:72` `previousJobsRef` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/notifications/hooks/useNotificationSettings.ts:72` `error` — param: parâmetro: mudar assinatura exige revisão
+- `src/features/notifications/hooks/usePushNotifications.ts:111` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/notifications/hooks/usePushNotifications.ts:147` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/notifications/hooks/usePushNotifications.ts:219` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/production/hooks/useMTBFMTTR.ts:79` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/production/hooks/useMTBFMTTR.ts:105` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/production/hooks/useOperatorMachines.ts:43` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/production/hooks/useOperatorMachines.ts:73` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/features/production/hooks/useOperatorMachines.ts:97` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useGamification.ts:145` `error` — param: parâmetro: mudar assinatura exige revisão
+- `src/hooks/useQuickFavorites.ts:70` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useQuickFavorites.ts:81` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:53` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:84` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:108` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:128` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:165` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/useTechnicalConversations.ts:204` `appError` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/hooks/abc/useABCMutations.ts:28` `technique` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/BIDashboard.tsx:30` `{ toast }` — var: padrão de desestruturação
+- `src/pages/BIDashboard.tsx:212` `format` — param: parâmetro: mudar assinatura exige revisão
+- `src/pages/EfficiencyDashboard.tsx:42` `avgOccupancy` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/GamificationPage.tsx:79` `restRankings` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/Index.tsx:36` `MaintenanceAlertsWidget` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/Index.tsx:37` `EnergyWidget` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/Index.tsx:120` `{ metrics }` — var: padrão de desestruturação
+- `src/pages/InventoryPage.tsx:44` `{ hasPermission }` — var: padrão de desestruturação
+- `src/pages/KanbanBoard.tsx:336` `jobsForColumns` — param: parâmetro: mudar assinatura exige revisão
+- `src/pages/OEEDashboard.tsx:55` `OEEGaugeCard` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/OEEDashboard.tsx:78` `StudioEfficiencyGrid` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/OEEDashboard.tsx:79` `MaterialEfficiencyChart` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/OEEDashboard.tsx:80` `StudioHealthMonitor` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/OperatorHistoryPage.tsx:210` `i` — param: parâmetro: mudar assinatura exige revisão
+- `src/pages/OperatorView.tsx:37` `{ user }` — var: padrão de desestruturação
+- `src/pages/OperatorView.tsx:145` `technique` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/pages/PublicTrackingPage.tsx:253` `index` — param: parâmetro: mudar assinatura exige revisão
+- `src/test/jobsService.test.ts:6` `mockSelect` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:7` `mockEq` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:8` `mockOrder` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:9` `mockSingle` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:10` `mockInsert` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:11` `mockUpdate` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:12` `mockDelete` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:13` `mockOr` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:14` `mockGte` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:15` `mockLte` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/jobsService.test.ts:16` `mockMaybeSingle` — var: inicializador pode ter efeito colateral (chamada/hook/new)
+- `src/test/retryWithBackoff.test.ts:116` `attempt` — param: parâmetro: mudar assinatura exige revisão
+
+## vitest (comparado com a base)
+- 922 testes · 1 já falhavam antes · 0 NOVA(S) falha(s)
+  - já falhava antes (não é do autofix): src/lib/spcExport.test.ts > spcExport renders parameter details, capability indices and measurement history when capability is provided
+
+## Avisos do eslint que sobraram (não auto-corrigíveis)
+- react-refresh/only-export-components: 1
+- no-console: 2
+- react-hooks/set-state-in-effect: 3
+- no-useless-catch: 1
+- react-hooks/incompatible-library: 2
+- @typescript-eslint/no-non-null-assertion: 5
+- react-hooks/exhaustive-deps: 4
+- no-useless-escape: 3
+- jsx-a11y/no-noninteractive-tabindex: 1

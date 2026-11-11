@@ -34,27 +34,7 @@ export function ActiveDevicesPanel() {
   const { devices, isLoading, trustDevice, untrustDevice, removeDevice, isTrusting, isRemoving } = useUserDevices();
   const [deviceToRemove, setDeviceToRemove] = useState<string | null>(null);
 
-  const getDeviceIcon = (deviceType: string | null) => {
-    switch (deviceType) {
-      case 'mobile':
-        return <Smartphone className="h-5 w-5" />;
-      case 'tablet':
-        return <Tablet className="h-5 w-5" />;
-      default:
-        return <Monitor className="h-5 w-5" />;
-    }
-  };
 
-  const getDeviceLabel = (deviceType: string | null) => {
-    switch (deviceType) {
-      case 'mobile':
-        return 'Celular';
-      case 'tablet':
-        return 'Tablet';
-      default:
-        return 'Computador';
-    }
-  };
 
   const handleRemove = () => {
     if (deviceToRemove) {

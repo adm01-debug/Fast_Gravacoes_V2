@@ -58,3 +58,9 @@ supabase/.temp/cli-latest
 
 # Claude Code agent worktree checkouts (local scratch, never part of the repo).
 .claude/worktrees/
+
+# gerado pelo contexto.yml na branch contexto (nunca em main); manual/ é texto humano e fica em main
+docs/contexto/*
+!docs/contexto/regras/
+docs/contexto/regras/*
+!docs/contexto/regras/manual/

@@ -9,7 +9,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Bell,
   AlertTriangle,
-  Smartphone,
   Shield,
   CheckCircle2,
   Clock,

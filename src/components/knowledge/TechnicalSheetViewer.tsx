@@ -1,31 +1,12 @@
-import { useState, useMemo } from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import {
-  Edit, Clock, Wrench, ListOrdered, Package, Lightbulb,
-  AlertTriangle, Info, CheckCircle2, FileDown, Copy, Star, TrendingUp,
-  QrCode, Maximize2, Zap, Droplets, MoveHorizontal, Thermometer,
-  CheckSquare, History, ArrowLeftRight
-} from 'lucide-react';
+  
+  FileDown, 
+  
+  History} from 'lucide-react';
 import {
   useTechnicalSheetDetails,
   useTechnicalSheetAudit,
@@ -34,11 +15,7 @@ import {
 } from '@/hooks/useTechnicalSheets';
 import { useInventory } from '@/features/inventory';
 import { KnowledgeSheetQRCode } from './KnowledgeSheetQRCode';
-import { KnowledgeStatusBadge } from './KnowledgeStatusBadge';
-import { VisualReference } from './TechnicalSheetVisualReference';
-import { MaterialCalculator } from './TechnicalSheetMaterialCalculator';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { TechnicalSheetHeader } from '@/components/knowledge/TechnicalSheetHeader';
 import { TechnicalSheetTab } from '@/components/knowledge/TechnicalSheetTab';
 import { TechnicalSheetHistoryTab } from '@/components/knowledge/TechnicalSheetHistoryTab';

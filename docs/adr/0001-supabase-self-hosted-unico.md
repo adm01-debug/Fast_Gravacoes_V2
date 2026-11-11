@@ -1,6 +1,8 @@
 # ADR 0001 — Supabase self-hosted `supabase.atomicabr.com.br` é o único backend
 
-- **Status:** aceito — 2026-10-01
+- **Status:** superado pela [ADR 0005](0005-supabase-cloud-e-o-backend-oficial.md) — 2026-11-08.
+  Mantido como histórico; não reflete o backend em uso.
+- **Status (histórico):** aceito — 2026-10-01
 - **Contexto:** o histórico do projeto (era Lovable) deixou referências a
   projetos Supabase cloud legados (`xxroejpvloldkmqdydar`, `whnnzdreuwxczxelvqjh`)
   em migrations, seeds e código. Crons versionados chegaram a agendar chamadas

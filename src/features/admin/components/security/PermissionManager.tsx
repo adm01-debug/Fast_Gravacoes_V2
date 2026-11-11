@@ -70,9 +70,7 @@ export function PermissionManager() {
     isLoading,
     isSaving,
     fetchPermissions,
-    togglePermission,
-    hasPermission
-  } = useRolePermissions(selectedRole);
+    togglePermission  } = useRolePermissions(selectedRole);
 
   const [togglingPerm, setTogglingPerm] = useState<string | null>(null);
 
@@ -98,13 +96,6 @@ export function PermissionManager() {
     setTogglingPerm(null);
   };
 
-  const countGrantedPermissions = (role: AppRole) => {
-    // Note: Since useRolePermissions is now keyed to selectedRole,
-    // this count is only accurate for the selected tab.
-    // For a better UX, we'd need a multi-role hook or more complex state.
-    if (role === selectedRole) return permissions.length;
-    return 0; // Simplified for now
-  };
 
   if (isLoading && permissions.length === 0) {
     return (

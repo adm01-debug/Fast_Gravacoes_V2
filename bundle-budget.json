@@ -32,5 +32,12 @@
     "/kiosk": 400,
     "/track": 350,
     "/operator": 500
+  },
+  "entrypointChunks": {
+    "/": ["Index", "index"],
+    "/auth": ["AuthPage"],
+    "/kiosk": ["KioskPage"],
+    "/track": ["PublicTrackingPage"],
+    "/operator": ["OperatorView"]
   }
 }

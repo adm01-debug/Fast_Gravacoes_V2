@@ -1,6 +1,5 @@
 import { useABCCosts } from '@/hooks/useABCCosts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DollarSign, PieChart, TrendingDown, Layers } from 'lucide-react';
 import {
@@ -8,9 +7,7 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  Tooltip as RechartsTooltip,
-  Legend
-} from '@/lib/recharts';
+  Tooltip as RechartsTooltip} from '@/lib/recharts';
 
 interface JobCostsTabProps {
   jobId: string;

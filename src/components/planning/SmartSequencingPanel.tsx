@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,14 +8,12 @@ import {
 } from '@/components/ui/dialog';
 import {
   BrainCircuit, ArrowRight, Zap, AlertTriangle,
-  CheckCircle2, Sparkles, ChevronRight, LayoutPanelTop,
-  Search, Filter, Clock, TrendingDown, TrendingUp, Info, Activity
+  Sparkles, LayoutPanelTop,
+  Clock, TrendingUp, Info, Activity
 } from 'lucide-react';
 import { useSmartSequencingWithActions as useSmartSequencing, SequencingSuggestion } from '@/features/jobs';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface SmartSequencingPanelProps {

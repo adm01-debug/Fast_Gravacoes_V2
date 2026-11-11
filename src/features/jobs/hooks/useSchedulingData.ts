@@ -1,6 +1,6 @@
-import { useQuery, useQueryClient, useQueries } from '@tanstack/react-query';
+import { useQueryClient, useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { differenceInMinutes } from 'date-fns';
 import { type Job as DbJob } from '../services/jobsService';
 import { type Technique as DbTechnique } from '../services/techniquesService';

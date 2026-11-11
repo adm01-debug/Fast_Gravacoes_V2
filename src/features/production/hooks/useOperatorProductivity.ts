@@ -56,7 +56,7 @@ interface OperatorMachineItem {
 export function useOperatorProductivity(period: ProductivityPeriod = 'all') {
   const { user } = useAuth();
   const isAuthenticated = Boolean(user?.id);
-  const { jobs, machines, isLoading: isLoadingScheduling } = useSchedulingData();
+  const { jobs, isLoading: isLoadingScheduling } = useSchedulingData();
 
   // Calculate period start date
   const periodStartDate = useMemo(() => {

@@ -12,20 +12,10 @@ import { Button, LoadingButton } from "@/components/ui/button";
 import { safeParseInt } from "@/lib/utils";
 
 import {
-  Calendar,
-  Clock,
-  User,
   Package,
-  Palette,
-  Play,
-  Pause,
-  CheckCircle,
-  AlertTriangle,
-  RotateCcw,
   FileText,
   Hash,
   Building,
-  QrCode,
   Copy,
   History,
   DollarSign,
@@ -38,7 +28,6 @@ import {
 } from "lucide-react";
 import { useSchedulingData } from "@/features/jobs";
 import { DbJob, useUpdateJob, useDeleteJob } from "@/features/jobs";
-import { JobPriority, JobStatus } from "@/features/jobs";
 import { JobQRCode } from "@/components/qrcode/JobQRCode";
 import { useDuplicateJob } from "@/features/jobs";
 import { useEntityAuditTrail } from "@/features/admin";
@@ -126,6 +115,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   const technique = getTechniqueById(job.technique_id);
   const machine = getMachineById(job.machine_id);
+  const canDelete = !job.produced_quantity && !job.lost_pieces && ['queue', 'scheduled', 'cancelled'].includes(job.status);
 
   const handleSave = async (data: JobEditValues) => {
     try {
@@ -218,7 +208,9 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
                     variant="outline"
                     size="sm"
                     onClick={handleDelete}
-                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
+                    disabled={!canDelete}
+                    title={!canDelete ? 'Não é possível excluir: job possui peças produzidas ou está em andamento' : undefined}
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     {t('common.delete')}

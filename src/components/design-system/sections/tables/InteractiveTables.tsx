@@ -2,11 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CodeBlock } from '@/components/ui/code-block';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronRight, Edit, Eye, HelpCircle, Minimize, MousePointer2, Settings, Tag, Trash2 } from 'lucide-react';
-import { StatusBadge } from '@/components/ui/status-badge';
 
 const sampleData = [
   { id: "INV001", status: "Pago", method: "Cartão de Crédito", amount: "R$ 250,00" },

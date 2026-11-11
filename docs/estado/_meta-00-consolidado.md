@@ -69,7 +69,7 @@ ambiciosos. **17 caíram.**
    `QRScanner.tsx:91-95` faz `JSON.parse` e exige `type==="job"`. Nenhum dos 10 geradores do
    repo emite esse JSON. Derruba 2 itens e deixa `qr_scan_history` sem produtor alcançável.
 3. **`/master-api`** — `MasterAPIPage.tsx` tem **zero** referências a `supabase` em 234 linhas,
-   com chave de API falsa hardcoded (`:29`, `sk_live_fast_9283749123847`). Deveria ser 🟦.
+   com chave de API falsa hardcoded (`:29`, `sk_live_fast_XXXX`). Deveria ser 🟦.
 4. **Notificações TPM (2 itens)** — `tpm-notifications/index.ts:69` traz `// Simular envio` e
    grava `status:'success'` sem enviar; a function é órfã; e o trigger que chamaria
    `send-tpm-email` está **comentado** (`20260508115941…sql:50-53`). Tela de configuração e tela

@@ -3,7 +3,7 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture';
 import { useLocation } from 'react-router-dom';

@@ -4,9 +4,8 @@
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
 import { useMemo, useState, useEffect } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { DbJob } from '@/features/jobs';
-import { Clock, TrendingUp, AlertTriangle, BarChart3, Zap, Scale, Activity } from 'lucide-react';
+import { Clock, TrendingUp, AlertTriangle, Zap, Scale, Activity } from 'lucide-react';
 import { differenceInHours, differenceInDays } from 'date-fns';
 import { useSmartSequencing } from '@/features/jobs';
 import { useLoadBalancing } from '@/features/analytics/hooks/useLoadBalancing';

@@ -128,7 +128,7 @@ const AlertCard = memo(function AlertCard({ alert }: AlertCardProps) {
 AlertCard.displayName = 'AlertCard';
 
 function BottleneckWidgetComponent() {
-  const { alerts, criticalCount, warningCount, infoCount, isLoading } = useBottleneckPrediction();
+  const { alerts, criticalCount, warningCount, isLoading } = useBottleneckPrediction();
 
   const totalAlerts = useMemo(() => alerts.length, [alerts]);
 

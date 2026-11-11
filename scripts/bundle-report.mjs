@@ -7,9 +7,10 @@
  *   0 = OK
  *   1 = budget exceeded (fail CI)
  */
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, appendFileSync, realpathSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join, relative, basename } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
 const DIST = join(ROOT, 'dist');
@@ -17,16 +18,14 @@ const BUDGET_FILE = join(ROOT, 'bundle-budget.json');
 const OUT_JSON = join(DIST, 'bundle-report.json');
 const OUT_MD = join(DIST, 'bundle-report.md');
 
-if (!existsSync(DIST)) {
-  console.error('❌ dist/ não encontrado. Rode `npm run build` antes.');
-  process.exit(1);
-}
-
-const budget = existsSync(BUDGET_FILE)
-  ? JSON.parse(readFileSync(BUDGET_FILE, 'utf8'))
-  : { defaults: { maxChunkKb: 500, maxAssetKb: 1000, maxTotalKb: 10000 }, chunks: {}, entrypoints: {} };
-
 const toKb = (bytes) => +(bytes / 1024).toFixed(2);
+
+/** Default budget used when bundle-budget.json is absent (kept for compat). */
+export const DEFAULT_BUDGET = {
+  defaults: { maxChunkKb: 500, maxAssetKb: 1000, maxTotalKb: 10000 },
+  chunks: {},
+  entrypoints: {},
+};
 
 function walk(dir, files = []) {
   for (const entry of readdirSync(dir)) {
@@ -38,103 +37,205 @@ function walk(dir, files = []) {
   return files;
 }
 
-/** Map filename like "vendor-react-DhJk2Wq8.js" → logical chunk name "vendor-react" */
-function chunkNameFromFile(name) {
+/**
+ * Strip a trailing content hash from a Vite bundle filename. Vite hash length
+ * is configurable with `[hash:N]` (commonly 8 or 16 chars; base64url, so `-`
+ * and `_` are valid hash chars). We therefore match a trailing `-` followed by
+ * exactly one of the known hash lengths — never a greedy run that would swallow
+ * name segments like `lib-mermaid`, nor a short run that would keep a hash
+ * containing dashes.
+ */
+export function chunkNameFromFile(name) {
   const base = basename(name).replace(/\.(js|css|mjs)$/i, '');
-  // Vite hash: trailing "-" + exactly 8 base64-url chars (a-z A-Z 0-9 _ -)
-  return base.replace(/-[A-Za-z0-9_-]{8}$/, '');
+  const hash = base.match(/-[A-Za-z0-9_-]{8}$/) || base.match(/-[A-Za-z0-9_-]{16}$/)
+    || base.match(/-[A-Za-z0-9_-]{20}$/) || base.match(/-[A-Za-z0-9_-]{32}$/)
+    || base.match(/-[A-Za-z0-9_-]{64}$/);
+  return hash ? base.slice(0, hash.index) : base;
 }
 
-const files = walk(DIST)
-  .filter((f) => /\.(js|css|mjs)$/i.test(f.path) && !f.path.endsWith('.map'))
-  .map((f) => {
-    const content = readFileSync(f.path);
-    return {
-      file: relative(DIST, f.path),
-      chunk: chunkNameFromFile(f.path),
-      sizeKb: toKb(f.size),
-      gzipKb: toKb(gzipSync(content).length),
-    };
-  })
-  .sort((a, b) => b.gzipKb - a.gzipKb);
+/**
+ * Collect enforced-budget violations for a list of measured files.
+ * Pure and unit-testable; returns [{ message }] — empty means pass.
+ */
+export function collectViolations(files, budget) {
+  const { defaults = {}, chunks = {}, entrypoints = {} } = budget || {};
+  const violations = [];
+  const totalGzipKb = +files.reduce((s, f) => s + (f.gzipKb ?? 0), 0).toFixed(2);
 
-const totalKb = +files.reduce((s, f) => s + f.sizeKb, 0).toFixed(2);
-const totalGzipKb = +files.reduce((s, f) => s + f.gzipKb, 0).toFixed(2);
-
-const report = {
-  generatedAt: new Date().toISOString(),
-  commit: process.env.GITHUB_SHA || null,
-  branch: process.env.GITHUB_REF_NAME || null,
-  totals: { sizeKb: totalKb, gzipKb: totalGzipKb, fileCount: files.length },
-  files,
-};
-
-writeFileSync(OUT_JSON, JSON.stringify(report, null, 2));
-
-// ── Enforce budgets ───────────────────────────────────────────────
-const violations = [];
-const { defaults = {}, chunks = {}, entrypoints = {} } = budget;
-
-if (defaults.maxTotalKb && totalGzipKb > defaults.maxTotalKb) {
-  violations.push(`Total gzip ${totalGzipKb}KB > limite ${defaults.maxTotalKb}KB`);
-}
-
-for (const f of files) {
-  const isCss = f.file.endsWith('.css');
-  const limit =
-    chunks[f.chunk] ??
-    (isCss ? defaults.maxAssetKb : defaults.maxChunkKb);
-  if (limit && f.gzipKb > limit) {
-    violations.push(`Chunk "${f.chunk}" (${f.file}) ${f.gzipKb}KB gzip > limite ${limit}KB`);
+  if (defaults.maxTotalKb && totalGzipKb > defaults.maxTotalKb) {
+    violations.push(`Total gzip ${totalGzipKb}KB > limite ${defaults.maxTotalKb}KB`);
   }
+
+  for (const f of files) {
+    const isCss = f.file.endsWith('.css');
+    // hasOwn: um chunk chamado `constructor`/`toString` não pode ler o protótipo como "budget".
+    const limit = (Object.hasOwn(chunks, f.chunk) ? chunks[f.chunk] : undefined)
+      ?? (isCss ? defaults.maxAssetKb : defaults.maxChunkKb);
+    if (limit && f.gzipKb > limit) {
+      violations.push(`Chunk "${f.chunk}" (${f.file}) ${f.gzipKb}KB gzip > limite ${limit}KB`);
+    }
+  }
+
+  for (const [route, limit] of Object.entries(entrypoints)) {
+    // Lazy pages are chunked under the component name (AuthPage, KioskPage,
+    // OperatorView...), not the route slug — so budgets allow an explicit
+    // map route→chunk names. When present, match exact names only. Without
+    // it, fall back to prefix-exact on the derived key ('/'→'index').
+    const alias = budget?.entrypointChunks?.[route];
+    let matched;
+    if (Array.isArray(alias) && alias.length) {
+      const names = alias.map((c) => c.toLowerCase());
+      matched = files.filter((f) => names.includes((f.chunk || '').toLowerCase()));
+      if (!matched.length) {
+        violations.push(`Rota "${route}": nenhum chunk do build corresponde a ${JSON.stringify(alias)} — budget não avaliado`);
+      }
+    } else {
+      const key = route === '/' ? 'index' : route.replace(/^\//, '').replace(/\//g, '-');
+      // Prefix-exact match: '/'→'index' must not accidentally capture chunks like
+      // 'index-page' or 'auth-index' that merely *contain* the key substring.
+      matched = files.filter((f) => {
+        const chunk = (f.chunk || '').toLowerCase();
+        return chunk === key.toLowerCase() || chunk.startsWith(`${key.toLowerCase()}-`);
+      });
+      if (!matched.length) {
+        violations.push(`Rota "${route}": nenhum chunk casa com "${key}" (considere declarar entrypointChunks) — budget não avaliado`);
+      }
+    }
+    const sum = +matched.reduce((s, f) => s + f.gzipKb, 0).toFixed(2);
+    if (matched.length && sum > limit) {
+      violations.push(`Rota "${route}" soma ${sum}KB gzip > limite ${limit}KB`);
+    }
+  }
+
+  return violations;
 }
 
-// Entrypoint budgets: match by route → chunk name heuristic
-for (const [route, limit] of Object.entries(entrypoints)) {
-  const key = route === '/' ? 'index' : route.replace(/^\//, '').replace(/\//g, '-');
-  const matched = files.filter((f) =>
-    f.chunk.toLowerCase().includes(key.toLowerCase())
+/**
+ * Budgets de `chunks` que não casam com nenhum chunk do build: o limite existe no arquivo
+ * mas não protege nada (chunk renomeado/removido no vite.config). Aviso, não violação —
+ * um chunk pode sumir legitimamente por tree-shaking.
+ */
+export function collectStaleBudgets(files, budget) {
+  const built = new Set(files.map((f) => f.chunk));
+  return Object.keys(budget?.chunks ?? {}).filter((name) => !built.has(name)).sort();
+}
+
+/** Valida a forma do bundle-budget.json — `null`/`[]`/tipos errados não podem virar "sem limites". */
+export function validateBudget(budget) {
+  const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(budget)) throw new Error('bundle-budget.json precisa ser um objeto JSON.');
+  for (const key of ['defaults', 'chunks', 'entrypoints', 'entrypointChunks']) {
+    if (budget[key] !== undefined && !isObj(budget[key])) {
+      throw new Error(`bundle-budget.json: "${key}" precisa ser um objeto.`);
+    }
+  }
+  for (const key of ['defaults', 'chunks', 'entrypoints']) {
+    for (const [name, limit] of Object.entries(budget[key] ?? {})) {
+      if (typeof limit !== 'number' || !Number.isFinite(limit) || limit <= 0) {
+        throw new Error(`bundle-budget.json: ${key}["${name}"] precisa ser número > 0, veio ${JSON.stringify(limit)}.`);
+      }
+    }
+  }
+  return budget;
+}
+
+/** Walk dist and measure every JS/CSS/mjs asset (excluding .map). Pure-ish, cwd-based. */
+export function measureFiles() {
+  return walk(DIST)
+    .filter((f) => /\.(js|css|mjs)$/i.test(f.path) && !f.path.endsWith('.map'))
+    .map((f) => {
+      const content = readFileSync(f.path);
+      return {
+        file: relative(DIST, f.path),
+        chunk: chunkNameFromFile(f.path),
+        sizeKb: toKb(f.size),
+        gzipKb: toKb(gzipSync(content).length),
+      };
+    })
+    .sort((a, b) => b.gzipKb - a.gzipKb);
+}
+
+export async function main() {
+  if (!existsSync(DIST)) {
+    console.error('❌ dist/ não encontrado. Rode `npm run build` antes.');
+    process.exit(1);
+  }
+
+  const budget = validateBudget(
+    existsSync(BUDGET_FILE) ? JSON.parse(readFileSync(BUDGET_FILE, 'utf8')) : DEFAULT_BUDGET,
   );
-  const sum = +matched.reduce((s, f) => s + f.gzipKb, 0).toFixed(2);
-  if (matched.length && sum > limit) {
-    violations.push(`Rota "${route}" soma ${sum}KB gzip > limite ${limit}KB`);
-  }
-}
 
-// ── Markdown summary ──────────────────────────────────────────────
-const top = files.slice(0, 15);
-const md = [
-  `# 📦 Bundle Report`,
-  ``,
-  `**Commit:** \`${report.commit ?? 'local'}\` · **Branch:** \`${report.branch ?? 'local'}\``,
-  `**Total:** ${totalKb} KB (${totalGzipKb} KB gzip) em ${files.length} arquivos`,
-  ``,
-  `## Top 15 chunks (gzip)`,
-  ``,
-  `| Chunk | Arquivo | Raw (KB) | Gzip (KB) |`,
-  `| --- | --- | ---: | ---: |`,
-  ...top.map((f) => `| \`${f.chunk}\` | \`${f.file}\` | ${f.sizeKb} | ${f.gzipKb} |`),
-  ``,
-  violations.length
-    ? `## ❌ Violações de budget (${violations.length})\n\n${violations.map((v) => `- ${v}`).join('\n')}`
-    : `## ✅ Todos os budgets respeitados`,
-  ``,
-].join('\n');
+  const files = measureFiles();
 
-writeFileSync(OUT_MD, md);
+  const totalKb = +files.reduce((s, f) => s + f.sizeKb, 0).toFixed(2);
+  const totalGzipKb = +files.reduce((s, f) => s + f.gzipKb, 0).toFixed(2);
 
-console.log(md);
+  const report = {
+    generatedAt: new Date().toISOString(),
+    commit: process.env.GITHUB_SHA || null,
+    branch: process.env.GITHUB_REF_NAME || null,
+    totals: { sizeKb: totalKb, gzipKb: totalGzipKb, fileCount: files.length },
+    files,
+  };
 
-if (process.env.GITHUB_STEP_SUMMARY) {
-  try {
-    const { appendFileSync } = await import('node:fs');
+  writeFileSync(OUT_JSON, JSON.stringify(report, null, 2));
+
+  // ── Enforce budgets ───────────────────────────────────────────
+  const violations = collectViolations(files, budget);
+  const stale = collectStaleBudgets(files, budget);
+
+  // ── Markdown summary ──────────────────────────────────────────
+  const top = files.slice(0, 15);
+  const md = [
+    `# 📦 Bundle Report`,
+    ``,
+    `**Commit:** \`${report.commit ?? 'local'}\` · **Branch:** \`${report.branch ?? 'local'}\``,
+    `**Total:** ${totalKb} KB (${totalGzipKb} KB gzip) em ${files.length} arquivos`,
+    ``,
+    `## Top 15 chunks (gzip)`,
+    ``,
+    `| Chunk | Arquivo | Raw (KB) | Gzip (KB) |`,
+    `| --- | --- | ---: | ---: |`,
+    ...top.map((f) => `| \`${f.chunk}\` | \`${f.file}\` | ${f.sizeKb} | ${f.gzipKb} |`),
+    ``,
+    violations.length
+      ? `## ❌ Violações de budget (${violations.length})\n\n${violations.map((v) => `- ${v}`).join('\n')}`
+      : `## ✅ Todos os budgets respeitados`,
+    ``,
+    ...(stale.length
+      ? [`## ⚠️ Budgets sem chunk no build (${stale.length})`, ``,
+         `Limites declarados em \`bundle-budget.json\` que não protegem nada hoje: ${stale.map((c) => `\`${c}\``).join(', ')}`, ``]
+      : []),
+  ].join('\n');
+
+  writeFileSync(OUT_MD, md);
+
+  console.log(md);
+
+  if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
-  } catch {}
+  }
+
+  if (violations.length) {
+    console.error(`\n❌ ${violations.length} violação(ões) de budget — falhando o build.`);
+    process.exit(1);
+  }
+
+  console.log('\n✅ Bundle dentro dos limites.');
 }
 
-if (violations.length) {
-  console.error(`\n❌ ${violations.length} violação(ões) de budget — falhando o build.`);
-  process.exit(1);
+// Run only when executed directly (not when imported by tests).
+// realpath: via symlink o script não pode "não rodar" e sair 0 sem medir nada.
+const isDirect = (() => {
+  try {
+    return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+})();
+if (isDirect) {
+  main().catch((err) => {
+    console.error('❌ bundle-report falhou:', err);
+    process.exit(1);
+  });
 }
-
-console.log('\n✅ Bundle dentro dos limites.');

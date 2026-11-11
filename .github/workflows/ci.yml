@@ -70,6 +70,11 @@ jobs:
       - name: Any Ratchet — impedir regressão de 'any'
         run: npm run quality:any
 
+      - name: AGENTS.md integrity guard
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          CLAUDE_MD_BASE=FETCH_HEAD node scripts/ci/check-claude-md-integrity.mjs
+
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 2: Security scan (runs in parallel with lint)
 # ──────────────────────────────────────────────────────────────────────────
@@ -367,6 +372,12 @@ jobs:
     timeout-minutes: 60
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    concurrency:
+      # O concurrency de topo agrupa por branch (ci-${{ github.ref }}), entao PRs
+      # de branches diferentes rodavam E2E em paralelo contra o mesmo Supabase
+      # real e o MFA TOTP quebrava (3 runs simultaneas, 10:24-10:41Z de 10/11).
+      # Este group global serializa: so um E2E roda por vez (o mais novo espera).
+      group: ci-e2e-global
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 

@@ -6,7 +6,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/FavoritesManager';
@@ -14,12 +14,11 @@ import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
 import { useGamification } from '@/hooks/useGamification';
 import { toast } from 'sonner';
-import { Trophy, Medal, Star, Target, Zap, Award, Crown, TrendingUp, Command, Package, Clock, Sparkles, Loader2, History } from 'lucide-react';
+import { Trophy, Medal, Star, Target, Zap, Award, Crown, TrendingUp, Command, Package, Loader2, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR, enUS, es } from 'date-fns/locale';
 
-const medalColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
 const achievementIcons: Record<string, React.ElementType> = {
   trophy: Trophy,
   medal: Medal,

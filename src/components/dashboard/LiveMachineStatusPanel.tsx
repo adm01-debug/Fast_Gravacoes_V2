@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useOperatorDashboardData } from '@/features/production';
-import { Cpu, Play, Pause, Clock, CheckCircle2, Zap, BrainCircuit, User } from 'lucide-react';
+import { Cpu, Play, Clock, Zap, BrainCircuit, User } from 'lucide-react';
 import { useMLPredictions } from '@/features/analytics/hooks/useMLPredictions';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';

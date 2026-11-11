@@ -1,12 +1,10 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllRows } from '@/lib/fetchAllRows';
-import { useQuery } from '@tanstack/react-query';
 import { UserManagement } from '@/components/settings/UserManagement';
 import { PasswordResetRequests } from '@/components/settings/PasswordResetRequests';
 import { TwoFactorSetup } from '@/components/settings/TwoFactorSetup';

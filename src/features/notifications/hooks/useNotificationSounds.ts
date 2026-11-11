@@ -6,16 +6,6 @@ type BrowserAudioWindow = Window & {
   webkitAudioContext?: typeof AudioContext;
 };
 
-const createBrowserAudioContext = (): AudioContext => {
-  const audioWindow = window as BrowserAudioWindow;
-  const AudioContextConstructor = audioWindow.AudioContext ?? audioWindow.webkitAudioContext;
-
-  if (!AudioContextConstructor) {
-    throw new Error('AudioContext não suportado neste navegador.');
-  }
-
-  return new AudioContextConstructor();
-};
 
 type SoundType = 'delayed' | 'buffer' | 'bottleneck' | 'statusChange' | 'complete' | 'scan' | 'alert';
 

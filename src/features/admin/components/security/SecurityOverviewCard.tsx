@@ -36,7 +36,7 @@ interface SecurityCheck {
 }
 
 export function SecurityOverviewCard() {
-  const { isMFAEnabled, factors } = useMFA();
+  const { isMFAEnabled } = useMFA();
   const { devices } = useUserDevices();
 
   const securityChecks = useMemo<SecurityCheck[]>(() => {

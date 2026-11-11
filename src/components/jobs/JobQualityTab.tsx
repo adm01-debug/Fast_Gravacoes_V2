@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSPCParameters, useSPCMeasurements, useSPCMutations } from '@/features/analytics/hooks/useSPC';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,8 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  CheckCircle2,
-  AlertTriangle,
   Activity,
   Plus,
   ChevronRight,
@@ -19,7 +17,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface JobQualityTabProps {
   jobId: string;

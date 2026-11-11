@@ -24,10 +24,6 @@ export function PreProductionChecklistModal({ jobId, open, onOpenChange, onCompl
             onComplete(jobId);
             onOpenChange(false);
           }}
-          onSkip={() => {
-            onComplete(jobId);
-            onOpenChange(false);
-          }}
         />
       </DialogContent>
     </Dialog>

@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Minus, BarChart3, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useOEE } from '@/features/production';
 import { useSchedulingData } from '@/features/jobs';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from '@/lib/recharts';
-import { format, subDays, startOfDay, endOfDay, eachDayOfInterval } from 'date-fns';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from '@/lib/recharts';
+import { format, subDays, eachDayOfInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 

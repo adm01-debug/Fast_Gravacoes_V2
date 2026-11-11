@@ -9,11 +9,10 @@
    derivado. A cascata é intencional para refletir mudanças externas. */
 import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator,
 } from "@/components/ui/command";
-import { Search, Star, StarOff, ChevronRight, Command, Zap, ArrowRight, Layers, Plus } from "lucide-react";
+import { Search, Star, StarOff, ChevronRight, Command, Zap, ArrowRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/features/auth";
 import { useDirtyGuard } from "@/contexts/DirtyFormContext";

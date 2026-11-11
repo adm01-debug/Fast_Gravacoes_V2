@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { ArrowUpDown, Search, TrendingUp, TrendingDown, Minus, Eye, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpDown, Search, TrendingUp, TrendingDown, Minus, Eye } from 'lucide-react';
 import { MachineOEE, getOEEColor } from '@/features/production';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { MachineTPMPanel } from '@/features/maintenance/components/MachineTPMPanel';
