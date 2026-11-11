@@ -103,14 +103,18 @@ const RETRY_DELAY_MS = Number(process.env.RLS_LOGIN_RETRY_DELAY_MS) || 5000; // 
 // @supabase/auth-js (handleError em lib/fetch.js) monta a mensagem com
 // JSON.stringify(corpo) quando a resposta não tem campo error/msg/
 // error_description reconhecido — por isso "login falhou: {}" (corpo JSON
-// vazio, sem texto nenhum). 429 não está na lista de status "de rede" que o
-// auth-js trata à parte, então um bloqueio de rate limit NA BORDA (gateway/
-// Kong — não o GoTrue, que sempre inclui error_description) aparece como
-// esse mesmo "{}" genérico. Nomear o status aqui poupa quem for depurar de
-// repetir essa investigação.
+// vazio, sem texto nenhum). Isso acontece tanto para um 429 cujo corpo vem
+// vazio (bloqueio de rate limit na borda — Kong/gateway, não o GoTrue, que
+// sempre inclui error_description) quanto para os status "de rede"
+// (502/503/504/520-524/530 — AuthRetryableFetchError), onde o auth-js
+// serializa o próprio objeto de resposta, igualmente sem campos. A única
+// pista que resta é error.status (AuthApiError/AuthRetryableFetchError
+// sempre o define) — expõe ele sempre que a mensagem vier vazia, em vez de
+// deixar "{}" nu sem dizer pra qual status.
 function describe(error) {
-  if (error?.status === 429) return `rate limit (429) — provável limite de requisições de auth na borda do Supabase, não credencial errada: ${error?.message || '(corpo de erro vazio)'}`;
-  return error?.message || 'sem usuário retornado';
+  const msg = error?.message;
+  if (msg && msg !== '{}') return error.status ? `${msg} (status ${error.status})` : msg;
+  return error?.status ? `corpo de erro vazio (status ${error.status})` : 'sem usuário retornado';
 }
 
 export async function signInWithRetry(signIn, { attempts = 3, delayMs = (n) => n * RETRY_DELAY_MS } = {}) {

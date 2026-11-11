@@ -64,18 +64,34 @@ test('signInWithRetry: resposta sem user e sem error também conta como falha', 
   assert.equal(calls, 2);
 });
 
-test('signInWithRetry: erro 429 (corpo vazio) é nomeado como rate limit, não "{}" genérico', async () => {
+test('signInWithRetry: corpo de erro vazio ("{}" do auth-js) expõe o status em vez de ficar mudo', async () => {
   const logs = [];
   const orig = console.error;
   console.error = (...args) => logs.push(args.join(' '));
   try {
-    const data = await signInWithRetry(async () => ({ data: null, error: { status: 429, message: '' } }), { attempts: 2, delayMs: () => 0 });
+    for (const status of [429, 503]) {
+      const data = await signInWithRetry(async () => ({ data: null, error: { status, message: '{}' } }), { attempts: 2, delayMs: () => 0 });
+      assert.equal(data, null);
+    }
+  } finally {
+    console.error = orig;
+  }
+  const out = logs.join('\n');
+  assert.match(out, /corpo de erro vazio \(status 429\)/);
+  assert.match(out, /corpo de erro vazio \(status 503\)/);
+});
+
+test('signInWithRetry: mensagem real (não vazia) do auth-js passa com o status ao lado', async () => {
+  const logs = [];
+  const orig = console.error;
+  console.error = (...args) => logs.push(args.join(' '));
+  try {
+    const data = await signInWithRetry(async () => ({ data: null, error: { status: 400, message: 'Invalid login credentials' } }), { attempts: 2, delayMs: () => 0 });
     assert.equal(data, null);
   } finally {
     console.error = orig;
   }
-  assert.match(logs.join('\n'), /rate limit \(429\)/);
-  assert.doesNotMatch(logs.join('\n'), /falhou após 2 tentativas: $/m); // nunca cai de volta pro "{}" nu
+  assert.match(logs.join('\n'), /Invalid login credentials \(status 400\)/);
 });
 
 // ── subprocess: main() fim a fim com fetch mockado (GoTrue + PostgREST) ──
