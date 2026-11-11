@@ -638,8 +638,14 @@ class SnapshotHeartbeatTests(SnapshotFixture):
         document = self.unified_index()
         self.assertIn("| ok ·", document)
         self.assertNotIn("desatualizado", document)
+        # Sem manifest.json não há como confiar em erros/carried do produtor — producer_health()
+        # retorna "não verificável" antes mesmo de olhar a idade (README.md de regras_negocio:
+        # "não verificável (manifest ausente/ilegível, ...)"). A idade pelo fallback do CHANGELOG
+        # ainda aparece como aviso ("desatualizado há..."), só não promovida a estado principal.
         (self.out / "manifest.json").unlink()
-        self.assertIn("| desatualizado ·", self.unified_index())
+        document_sem_manifest = self.unified_index()
+        self.assertIn("| não verificável ·", document_sem_manifest)
+        self.assertIn("desatualizado há", document_sem_manifest)
 
     def test_unavailable_collection_does_not_renew_previous_heartbeat(self):
         self.collect()
