@@ -7,27 +7,27 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-11 19:30:00 | succeeded | 3.94 | 1 row |
-| 2026-11-11 19:15:00 | succeeded | 4.45 | 1 row |
-| 2026-11-11 19:00:00 | succeeded | 3.35 | 1 row |
+| 2026-11-11 20:15:00 | succeeded | 3.57 | 1 row |
+| 2026-11-11 20:00:00 | succeeded | 3.57 | 1 row |
+| 2026-11-11 19:45:00 | succeeded | 3.92 | 1 row |
 
 
 ## 5 · cron-alert-email-every-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-11 20:00:00 | succeeded | 0.02 | 1 row |
 | 2026-11-11 19:30:00 | succeeded | 0.03 | 1 row |
 | 2026-11-11 19:00:00 | succeeded | 0.05 | 1 row |
-| 2026-11-11 18:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 6 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-11 19:40:00 | succeeded | 0.07 | 1 row |
-| 2026-11-11 19:35:00 | succeeded | 0.03 | 1 row |
-| 2026-11-11 19:30:00 | succeeded | 0.01 | 1 row |
+| 2026-11-11 20:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-11 20:10:00 | succeeded | 0.05 | 1 row |
+| 2026-11-11 20:05:00 | succeeded | 0.05 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -52,15 +52,15 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-11 19:40:00 | succeeded | 0.06 | 1 row |
-| 2026-11-11 19:35:00 | succeeded | 0.03 | 1 row |
-| 2026-11-11 19:30:00 | succeeded | 0.02 | 1 row |
+| 2026-11-11 20:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-11 20:10:00 | succeeded | 0.05 | 1 row |
+| 2026-11-11 20:05:00 | succeeded | 0.05 | 1 row |
 
 
 ## 12 · auto-reassign-packaging-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-11 19:40:00 | succeeded | 0.03 | 1 row |
-| 2026-11-11 19:35:00 | succeeded | 0.04 | 1 row |
-| 2026-11-11 19:30:00 | succeeded | 0.01 | 1 row |
+| 2026-11-11 20:15:00 | succeeded | 0.02 | 1 row |
+| 2026-11-11 20:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-11 20:05:00 | succeeded | 0.06 | 1 row |

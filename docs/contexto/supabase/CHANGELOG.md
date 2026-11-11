@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-11 20:16 UTC
+
+- **functions** alterado (5): `public.auto_reassign_stale_packaging_tasks()`, `public.get_cron_health()`, `public.get_packaging_leaderboard()`, `public.get_packaging_manifest(p_task_ids uuid[])`, `public.get_system_status_summary()`
+- **lints** removido (5): `rpc_anon_executable:public.auto_reassign_stale_packaging_tasks()`, `rpc_anon_executable:public.get_cron_health()`, `rpc_anon_executable:public.get_packaging_leaderboard()`, `rpc_anon_executable:public.get_packaging_manifest(p_task_ids uuid[])`, `rpc_anon_executable:public.get_system_status_summary()`
+- **migrations** adicionado (1): `20261109000001_fix_r3_3_revoke_public`
+
 ## 2026-11-11 10:39 UTC
 
 - **config: auth_config** alterado (1): `auth_config`

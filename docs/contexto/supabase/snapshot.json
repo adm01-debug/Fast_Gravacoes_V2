@@ -25331,8 +25331,8 @@
         "config": null,
         "definition": null,
         "definition_sha": "65e68f7fb7ca16f4",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -25834,8 +25834,8 @@
         ],
         "definition": null,
         "definition_sha": "9be15d2d15b8e8e4",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -25869,8 +25869,8 @@
         ],
         "definition": null,
         "definition_sha": "3dfb2e79c77ebe9a",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -25899,8 +25899,8 @@
         ],
         "definition": null,
         "definition_sha": "4ffe42b2650d8bef",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -25929,8 +25929,8 @@
         ],
         "definition": null,
         "definition_sha": "f1bce77463d79e96",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -36592,37 +36592,7 @@
       {
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.auto_reassign_stale_packaging_tasks()",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.check_and_notify_kpi_alert(p_machine_id uuid, p_metric_name text, p_metric_value double precision, p_threshold double precision, p_severity text)",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.get_cron_health()",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.get_packaging_leaderboard()",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.get_packaging_manifest(p_task_ids uuid[])",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.get_system_status_summary()",
         "severity": "INFO"
       },
       {
@@ -38143,6 +38113,12 @@
         "statements": 25,
         "statements_sha": "d41311cc2c449211",
         "version": "20261108000001"
+      },
+      {
+        "name": "fix_r3_3_revoke_public",
+        "statements": 3,
+        "statements_sha": "ae5e27e8e64d91ab",
+        "version": "20261109000001"
       }
     ],
     "policies": [
