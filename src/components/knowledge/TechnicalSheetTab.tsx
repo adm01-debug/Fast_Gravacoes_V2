@@ -68,7 +68,7 @@ export function TechnicalSheetTab({ sheet, steps, sheetMaterials, tips, inventor
                                 <Package className="h-3 w-3" /> Recomendação por Material
                               </Label>
                               <p className="text-sm font-bold mt-1">
-                                {sheet.materials.name.toLowerCase().includes('metal') ? 'Aderência Crítica: Use Primer ou Tinta Epóxi' : 
+                                {sheet.materials.name.toLowerCase().includes('metal') ? 'Aderência Crítica: Use Primer ou Tinta Epóxi' :
                                  sheet.materials.name.toLowerCase().includes('tecido') ? 'Elasticidade: Use Tinta Elástica / Sericryl' :
                                  'Aderência Padrão: Verifique compatibilidade de solvente'}
                               </p>

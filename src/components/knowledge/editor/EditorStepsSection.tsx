@@ -70,11 +70,11 @@ export function EditorStepsSection({ steps, sheetId, onAddStep, onDeleteStep, is
 
       <div className="p-4 rounded-lg border border-dashed border-border/50 space-y-3">
         <p className="text-xs text-muted-foreground">Adicionar novo passo:</p>
-        <Input placeholder="Título do passo" value={newStep.title} onChange={(e) => setNewStep({...newStep, title: e.target.value})} />
-        <Textarea placeholder="Descrição detalhada..." value={newStep.description} onChange={(e) => setNewStep({...newStep, description: e.target.value})} rows={2} />
+        <Input placeholder="Título do passo" value={newStep.title} onChange={(e) => setNewStep({ ...newStep, title: e.target.value })} />
+        <Textarea placeholder="Descrição detalhada..." value={newStep.description} onChange={(e) => setNewStep({ ...newStep, description: e.target.value })} rows={2} />
         <div className="grid grid-cols-2 gap-2">
-          <Input placeholder="Dica (opcional)" value={newStep.tips} onChange={(e) => setNewStep({...newStep, tips: e.target.value})} />
-          <Input placeholder="Aviso (opcional)" value={newStep.warnings} onChange={(e) => setNewStep({...newStep, warnings: e.target.value})} />
+          <Input placeholder="Dica (opcional)" value={newStep.tips} onChange={(e) => setNewStep({ ...newStep, tips: e.target.value })} />
+          <Input placeholder="Aviso (opcional)" value={newStep.warnings} onChange={(e) => setNewStep({ ...newStep, warnings: e.target.value })} />
         </div>
         <Button size="sm" onClick={handleAdd} disabled={isAdding}>
           <Plus className="h-4 w-4 mr-1" />Adicionar Passo

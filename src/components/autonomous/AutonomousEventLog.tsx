@@ -1,4 +1,4 @@
- 
+
 /* eslint-disable react-hooks/set-state-in-effect --
    Effects nesse arquivo sincronizam com sistemas externos legítimos
    (URL params, localStorage, timers, subscriptions Supabase realtime,

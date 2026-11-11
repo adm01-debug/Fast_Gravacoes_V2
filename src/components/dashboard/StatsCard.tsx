@@ -89,7 +89,7 @@ function StatsCardComponent({
 
   if (compact) {
     return (
-      <Card 
+      <Card
         tabIndex={0}
         role="region"
         aria-label={`${title}: ${value}${subtitle ? `, ${subtitle}` : ''}`}
@@ -129,7 +129,7 @@ function StatsCardComponent({
   }
 
   return (
-    <Card 
+    <Card
       tabIndex={0}
       role="region"
       aria-label={`${title}: ${value}${subtitle ? `, ${subtitle}` : ''}${trend ? `, tendência de ${trend.value}%` : ''}`}
