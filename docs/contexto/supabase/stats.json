@@ -31,8 +31,8 @@
           "connected_cluster": 5,
           "db_connected": true,
           "healthy": true,
-          "node": "realtime@2600:1f18:67fc:ac02:2971:c320:967d:242",
-          "region": "us-east-1",
+          "node": "realtime@2600:1f1c:c90:ad00:a7ad:eff8:263:7a7d",
+          "region": "us-west-1",
           "replication_connected": true
         },
         "name": "realtime",
@@ -107,7 +107,7 @@
           "usename": "supabase_admin"
         },
         {
-          "n": 6,
+          "n": 8,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -196,20 +196,20 @@
           "total_ms": 542726
         },
         {
-          "calls": 275,
-          "mean_ms": 1692.99,
+          "calls": 276,
+          "mean_ms": 1793.9,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "postgres",
-          "rows": 361011,
-          "total_ms": 465573
+          "rows": 362324,
+          "total_ms": 495118
         },
         {
-          "calls": 276,
-          "mean_ms": 1450.21,
+          "calls": 277,
+          "mean_ms": 1556.42,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "postgres",
-          "rows": 1932,
-          "total_ms": 400259
+          "rows": 1939,
+          "total_ms": 431127
         },
         {
           "calls": 23640,
