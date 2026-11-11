@@ -7,7 +7,7 @@
       "section": "cron_runs"
     }
   ],
-  "gerado_em": "2026-11-11T15:14:50Z",
+  "gerado_em": "2026-11-11T16:32:21Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
