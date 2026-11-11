@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -172,7 +173,7 @@ jobs:
   deploy-edge-functions:
     name: Deploy Edge Functions
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     needs: [security-scan, test, apply-migrations]
     if: github.ref == 'refs/heads/main'
     steps:
@@ -186,7 +187,7 @@ jobs:
       - name: "Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)"
         # Função "temporária" de migração que expunha SUPABASE_SERVICE_ROLE_KEY e
         # SUPABASE_DB_URL a quem apresentasse a ACCESS_KEY hardcoded no git.
-        # Tolerante à ausência: o objetivo é garantir a remoção remota idempotente.
+        # Tolerante à ausênncia: o objetivo é garantir a remoção remota idempotente.
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
@@ -204,6 +205,12 @@ jobs:
           else
             echo "migrate-helper não está implantada (estado já conforme)."
           fi
+
+      - name: Autenticar Docker no ghcr.io (evitar rate-limit anônimo)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Deploy all Edge Functions
         env:
