@@ -28,12 +28,12 @@
       {
         "healthy": true,
         "info": {
-          "connected_cluster": 0,
-          "db_connected": false,
+          "connected_cluster": 5,
+          "db_connected": true,
           "healthy": true,
-          "node": "realtime@2600:1f1c:c90:ad01:df03:4854:4067:cd7c",
-          "region": "us-west-1",
-          "replication_connected": false
+          "node": "realtime@2600:1f18:67fc:ac02:2971:c320:967d:242",
+          "region": "us-east-1",
+          "replication_connected": true
         },
         "name": "realtime",
         "status": "ACTIVE_HEALTHY"
@@ -82,7 +82,7 @@
       },
       "connections": [
         {
-          "n": 1,
+          "n": 2,
           "state": "idle",
           "usename": "authenticator"
         },
@@ -102,7 +102,12 @@
           "usename": "postgres"
         },
         {
-          "n": 2,
+          "n": 1,
+          "state": "active",
+          "usename": "supabase_admin"
+        },
+        {
+          "n": 6,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -112,7 +117,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 557567123,
+      "database_bytes": 557583507,
       "queues": [],
       "schema_bytes": [
         {
@@ -199,20 +204,20 @@
           "total_ms": 465573
         },
         {
+          "calls": 276,
+          "mean_ms": 1450.21,
+          "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
+          "role": "postgres",
+          "rows": 1932,
+          "total_ms": 400259
+        },
+        {
           "calls": 23640,
           "mean_ms": 16.15,
           "query": "select net.http_post(url := $1, headers := jsonb_build_object($2,$3,$4,$5), body := jsonb_build_object($6, now())) as request_id",
           "role": "postgres",
           "rows": 23640,
           "total_ms": 381839
-        },
-        {
-          "calls": 275,
-          "mean_ms": 1373.07,
-          "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
-          "role": "postgres",
-          "rows": 1925,
-          "total_ms": 377595
         },
         {
           "calls": 37771,

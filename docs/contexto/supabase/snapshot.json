@@ -796,7 +796,9 @@
     },
     "url": "https://uoujzvpecohinketylud.supabase.co"
   },
-  "carried": [],
+  "carried": [
+    "columns"
+  ],
   "db": {
     "columns": [
       {
@@ -45298,6 +45300,10 @@
     "webhooks": []
   },
   "errors": [
+    {
+      "error": "canceling statement due to statement timeout",
+      "section": "columns"
+    },
     {
       "error": "canceling statement due to statement timeout",
       "section": "cron_runs"
