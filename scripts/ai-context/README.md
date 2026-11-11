@@ -40,7 +40,7 @@ geração, mas ficam registrados em `manifest.json → avisos` e `baseline.json 
   `path`). O nome da página (`AuthPage`, `AdminDocs`) e JSX passado em props (`fallback`, `errorElement`)
   não protegem. `<Route>`/objeto de rota com `path` não literal ou tag que não fecha não some: entra em
   `alertas.rotas_nao_interpretadas` (quantas, de quantas, em qual arquivo).
-- `tabelas`/`edges`/`rpcs` de rota e módulo são o fecho por import **estático** (`import()` não é seguido; o
+- `tabelas`/`edges`/`rpcs` de rota e módulo são o fecho por import **estático** (`import()` não é seguido; importar `{ A }` de um barrel `index.ts` puxa só o arquivo que exporta `A`, resolvendo `as`, `export *` e barrels aninhados — namespace, default ou dúvida voltam a puxar o barrel inteiro; o
   lazy da própria rota é a entrada). `diretos` traz só a tela e seus imports de 1º nível.
 - Edge chamada = `invoke('x')`, URL `/functions/v1/x`, `invoke(CONSTANTE)` com a constante no mesmo
   arquivo, ou wrapper (`edgeFunctionFetch('x')`: função exportada por um arquivo que monta

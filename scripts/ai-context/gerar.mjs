@@ -297,11 +297,67 @@ for (const [f, d] of [...FILE, ...PY]) for (const i of d.imports) { if (!USED_BY
 for (const [, v] of USED_BY) v.sort();
 const usedBy = (f) => (USED_BY.get(f) || []).filter((u) => !anyFile(u)?.teste);
 const closureCache = new Map();
+// barrel = index.ts/js só de re-exports: importar { A } de um barrel puxa o arquivo que exporta A, não a feature inteira.
+// Conservador: namespace (`import * as`), default, `export *` sem nomes conhecidos e qualquer dúvida voltam a puxar o barrel inteiro.
+const ehBarrel = (f) => /(^|\/)index\.[cm]?[jt]s$/.test(f) && /\bexport\s+(?:type\s+)?(?:\*(?:\s+as\s+\w+)?|\{[^}]*\})\s+from\s/.test(FILE.get(f)?.conteudo || '');
+const CLAUSULA_RE = /\b(import|export)\s+(?:type\s+)?([\w$*\s,{}]+?)\s+from\s+['"]([^'"]+)['"]/g;
+// nomes que `d` pede de cada arquivo que importa/re-exporta: Map(arquivo → Set de nomes | null = tudo)
+const nomesCache = new Map();
+function nomesPorArquivo(f) {
+  if (nomesCache.has(f)) return nomesCache.get(f);
+  const m = new Map(); const d = FILE.get(f);
+  for (const mm of (d?.conteudo || '').matchAll(CLAUSULA_RE)) {
+    const r = resolveImport(f, mm[3]); if (!r) continue; if (m.get(r) === null) continue;
+    const clausula = mm[2].trim(); const chaves = /\{([^}]*)\}/.exec(clausula);
+    const semChaves = clausula.replace(/\{[^}]*\}/, '').replace(/,/g, ' ').trim();
+    // `* ...` (namespace/export *) ou identificador fora das chaves (default) → pede o módulo inteiro
+    if (/^\*/.test(clausula) || (mm[1] === 'import' && semChaves) || (mm[1] === 'export' && !chaves)) { m.set(r, null); continue; }
+    const set = m.get(r) || new Set();
+    if (chaves) for (const n of chaves[1].split(',')) { const nome = n.trim().replace(/^type\s+/, '').split(/\s+as\s+/)[0].trim(); if (nome) set.add(nome); }
+    m.set(r, set);
+  }
+  nomesCache.set(f, m); return m;
+}
+// o que o barrel `b` expõe de cada arquivo-fonte: Map(arquivo → { star, nomes: Map(nome EXPOSTO (depois do `as`) → nome original) })
+const expoeCache = new Map();
+function expoePorFonte(b) {
+  if (expoeCache.has(b)) return expoeCache.get(b);
+  const m = new Map();
+  for (const mm of (FILE.get(b)?.conteudo || '').matchAll(/\bexport\s+(?:type\s+)?(\*(?:\s+as\s+\w+)?|\{[^}]*\})\s+from\s+['"]([^'"]+)['"]/g)) {
+    const r = resolveImport(b, mm[2]); if (!r) continue; const e = m.get(r) || { star: false, nomes: new Map() };
+    if (mm[1].startsWith('*')) { e.star = true; if (/\bas\s+(\w+)/.test(mm[1])) e.nomes.set(/\bas\s+(\w+)/.exec(mm[1])[1], '*'); }
+    else for (const n of mm[1].slice(1, -1).split(',')) { const partes = n.trim().replace(/^type\s+/, '').split(/\s+as\s+/); const exposto = (partes[1] || partes[0]).trim(); if (exposto) e.nomes.set(exposto, partes[0].trim()); }
+    m.set(r, e);
+  }
+  expoeCache.set(b, m); return m;
+}
+// `j`, re-exportado por um barrel, é necessário para os nomes pedidos? undefined = não; null = módulo inteiro; Set = nomes a pedir a `j` (desfaz o `as`)
+function barrelPuxa(b, j, nomes) {
+  const e = expoePorFonte(b).get(j); if (!e) return nomes; // import simples dentro do barrel (efeito colateral): mantém
+  const fwd = new Set(); let usa = false;
+  for (const n of nomes) if (e.nomes.has(n)) { usa = true; const o = e.nomes.get(n); if (o === '*') return null; fwd.add(o); }
+  if (e.star) { const dj = FILE.get(j); if (!dj || ehBarrel(j) || !dj.exports.length || dj.exports.some((x) => nomes.has(x))) { usa = true; for (const n of nomes) fwd.add(n); } }
+  return usa ? fwd : undefined;
+}
 function closure(f) {
   if (closureCache.has(f)) return closureCache.get(f);
-  const seen = new Set(); const stack = [f];
+  const seen = new Set(); const nomesVistos = new Map(); const stack = [[f, null]];
   // só import estático: seguir import() faz qualquer tela "alcançar" todas as outras via prefetch/lazy e o fecho vira ruído
-  while (stack.length) { const cur = stack.pop(); if (seen.has(cur)) continue; seen.add(cur); const d = FILE.get(cur); if (d) for (const i of d.imports_estaticos) if (!seen.has(i) && !FILE.get(i)?.teste) stack.push(i); }
+  while (stack.length) {
+    const [cur, pedidos] = stack.pop(); const d = FILE.get(cur); const barrel = !!d && ehBarrel(cur);
+    if (barrel) { // um barrel pode ser pedido várias vezes com nomes diferentes: só reprocessa se houver nome novo (null = tudo)
+      const v = nomesVistos.get(cur); if (v === null) continue;
+      if (pedidos === null) nomesVistos.set(cur, null);
+      else { const novos = [...pedidos].filter((n) => !v?.has(n)); if (seen.has(cur) && !novos.length) continue; nomesVistos.set(cur, new Set([...(v || []), ...pedidos])); }
+    } else if (seen.has(cur)) continue;
+    seen.add(cur); if (!d) continue;
+    const proprios = barrel ? null : nomesPorArquivo(cur);
+    for (const i of d.imports_estaticos) {
+      if (FILE.get(i)?.teste) continue;
+      if (barrel) { const alvo = pedidos === null ? null : barrelPuxa(cur, i, pedidos); if (alvo !== undefined) stack.push([i, ehBarrel(i) ? alvo : null]); }
+      else if (!seen.has(i) || ehBarrel(i)) stack.push([i, ehBarrel(i) ? (proprios.has(i) ? proprios.get(i) : null) : null]);
+    }
+  }
   seen.delete(f); const arr = [...seen].sort(); closureCache.set(f, arr); return arr;
 }
 const AGG_KEYS = ['hooks', 'tabelas', 'rpcs', 'edges', 'env', 'buckets', 'canais_realtime', 'flags', 'papeis'];
@@ -958,7 +1014,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const AVISO = 'GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.';
 const c = baseline.contagens;
 const files = {
-  'rotas.json': { aviso: AVISO, format_version: FORMAT_VERSION, descricao: 'Em cada url/vista, tabelas/rpcs/edges/hooks são TRANSITIVOS por import estático (import() não é seguido; o lazy da própria rota é a entrada). `diretos` tem só o arquivo da tela e os imports de 1º nível — comece por ele. `protegida` olha os wrappers do element e os layouts pais, nunca o nome da página.', resumo: { urls: rotasEnriched.length, rotas_http_backend: apiHttp.length, vistas_por_id: vistasEnriched.length, itens_menu: menuUniq.length, lazy: lazyMap.size }, urls: rotasEnriched, rotas_http_backend: apiHttp, vistas: vistasEnriched, menu: menuUniq.map((m) => ({ ...m, resolve_para: (resolveDestino(m.destino) || {}).arquivo || null })), lazy: sortObj(Object.fromEntries(lazyMap)) },
+  'rotas.json': { aviso: AVISO, format_version: FORMAT_VERSION, descricao: 'Em cada url/vista, tabelas/rpcs/edges/hooks são TRANSITIVOS por import estático (import() não é seguido; um barrel index.ts puxa só os arquivos que exportam os nomes importados — namespace/default/dúvida puxam o barrel inteiro; o lazy da própria rota é a entrada). `diretos` tem só o arquivo da tela e os imports de 1º nível — comece por ele. `protegida` olha os wrappers do element e os layouts pais, nunca o nome da página.', resumo: { urls: rotasEnriched.length, rotas_http_backend: apiHttp.length, vistas_por_id: vistasEnriched.length, itens_menu: menuUniq.length, lazy: lazyMap.size }, urls: rotasEnriched, rotas_http_backend: apiHttp, vistas: vistasEnriched, menu: menuUniq.map((m) => ({ ...m, resolve_para: (resolveDestino(m.destino) || {}).arquivo || null })), lazy: sortObj(Object.fromEntries(lazyMap)) },
   'modulos.json': { aviso: AVISO, format_version: FORMAT_VERSION, descricao: 'menu → módulo (pasta de domínio) → telas/rotas → hooks → edge functions → tabelas → dependências entre módulos. edges/tabelas/rpcs são TRANSITIVOS (tudo que os arquivos do módulo puxam); `diretos` tem só o que está escrito nos arquivos do próprio módulo.', modulos },
   'componentes.json': { aviso: AVISO, format_version: FORMAT_VERSION, total: componentes.length, orfaos: componentes.filter((co) => co.orfao).length, nomes_duplicados: componentesDuplicados, componentes },
   'hooks.json': { aviso: AVISO, format_version: FORMAT_VERSION, total: hooksOut.length, hooks: hooksOut },
