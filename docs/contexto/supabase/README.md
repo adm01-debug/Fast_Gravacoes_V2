@@ -60,8 +60,8 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 | timezone |  |
 | max_connections | 60 |
 | statement_timeout (global) | 90000 |
-| projeto |  |
-| região |  |
+| projeto | Fast_Gravacoes_V2 |
+| região | ca-central-1 |
 | URL | https://uoujzvpecohinketylud.supabase.co |
 
 
@@ -94,6 +94,4 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 | seção | erro |
 |---|---|
 | cron_runs | canceling statement due to statement timeout |
-| api.project | HTTP 401 em /projects/uoujzvpecohinketylud |
-| api.ssl_enforcement | The read operation timed out |
 | api.custom_hostname | HTTP 400 em /projects/uoujzvpecohinketylud/custom-hostname |

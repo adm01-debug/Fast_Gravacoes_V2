@@ -2,8 +2,8 @@
 
 | campo | valor |
 |---|---|
-| projeto |  |
-| região |  |
+| projeto | Fast_Gravacoes_V2 |
+| região | ca-central-1 |
 | URL | https://uoujzvpecohinketylud.supabase.co |
 | schemas expostos (PostgREST) | public,graphql_public |
 | max_rows (PostgREST) | 1000 |
@@ -68,8 +68,20 @@
     "jwt_secret": "[REDACTED]",
     "max_rows": 1000
   },
-  "project": null,
-  "ssl_enforcement": null,
+  "project": {
+    "created_at": "2026-08-01T06:46:48.336957Z",
+    "id": "uoujzvpecohinketylud",
+    "name": "Fast_Gravacoes_V2",
+    "organization_id": "ociubxjrvookukkejdfm",
+    "region": "ca-central-1",
+    "status": "ACTIVE_HEALTHY"
+  },
+  "ssl_enforcement": {
+    "appliedSuccessfully": true,
+    "currentConfig": {
+      "database": false
+    }
+  },
   "url": "https://uoujzvpecohinketylud.supabase.co"
 }
 ```
