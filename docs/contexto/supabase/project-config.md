@@ -76,12 +76,7 @@
     "region": "ca-central-1",
     "status": "ACTIVE_HEALTHY"
   },
-  "ssl_enforcement": {
-    "appliedSuccessfully": true,
-    "currentConfig": {
-      "database": false
-    }
-  },
+  "ssl_enforcement": null,
   "url": "https://uoujzvpecohinketylud.supabase.co"
 }
 ```
