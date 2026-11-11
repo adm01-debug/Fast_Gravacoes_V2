@@ -174,8 +174,8 @@ test('aceita relatorio valido', () => {
 });
 
 test('rejeita null/array com erro claro', () => {
-  assert.throws(() => validateReport(null, 'head'), /object JSON v\u00e1lido/);
-  assert.throws(() => validateReport([], 'head'), /object JSON v\u00e1lido/);
+  assert.throws(() => validateReport(null, 'head'), /object JSON válido/);
+  assert.throws(() => validateReport([], 'head'), /object JSON válido/);
 });
 
 test('rejeita falta de totals/files', () => {
@@ -184,8 +184,8 @@ test('rejeita falta de totals/files', () => {
 });
 
 test('rejeita entrada invalida em files', () => {
-  assert.throws(() => validateReport({ totals: {}, files: [{ file: 'x', chunk: 'x' }] }, 'head'), /gzipKb inv\u00e1lido/);
-  assert.throws(() => validateReport({ totals: {}, files: [null] }, 'head'), /entrada inv\u00e1lida/);
+  assert.throws(() => validateReport({ totals: {}, files: [{ file: 'x', chunk: 'x' }] }, 'head'), /gzipKb inválido/);
+  assert.throws(() => validateReport({ totals: {}, files: [null] }, 'head'), /entrada inválida/);
 });
 
 // --- bundle-diff buildDiffMarkdown ---
@@ -213,7 +213,15 @@ test('gera diff com arquivos novos/removidos e delta fileCount', () => {
 test('aceita base ausente (primeiro merge)', () => {
   const head = mk(100, 2, [{ file: 'a.js', chunk: 'a', gzipKb: 60 }]);
   const md = buildDiffMarkdown(null, head);
-  assert.match(md, /Nenhum relat\u00f3rio base dispon/);
+  assert.match(md, /Nenhum relatório base dispon/);
+});
+
+test('totals.gzipKb/fileCount ausentes (relatorio antigo, aceito por validateReport) nao viram "undefined" no markdown', () => {
+  const head = { files: [{ file: 'a.js', chunk: 'a', gzipKb: 1 }], totals: {} };
+  const md = buildDiffMarkdown(null, head);
+  assert.doesNotMatch(md, /undefined/);
+  assert.match(md, /Total gzip:\*\* \? KB/);
+  assert.match(md, /Arquivos:\*\* \?/);
 });
 
 // --- regressões da auditoria de scripts (budgets mortos, protótipo, validação, CLI) ---

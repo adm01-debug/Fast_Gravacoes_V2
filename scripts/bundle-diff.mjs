@@ -108,11 +108,11 @@ export function buildDiffMarkdown(base, head) {
     `## 📦 Bundle Diff vs \`main\``,
     ``,
     base
-      ? `**Total gzip:** ${head.totals.gzipKb} KB (${arrow(totalDelta)} ${fmt(totalDelta)} KB vs base)`
-      : `**Total gzip:** ${head.totals.gzipKb} KB _(sem base para comparar)_`,
+      ? `**Total gzip:** ${head.totals.gzipKb ?? '?'} KB (${arrow(totalDelta)} ${fmt(totalDelta)} KB vs base)`
+      : `**Total gzip:** ${head.totals.gzipKb ?? '?'} KB _(sem base para comparar)_`,
     base
-      ? `**Arquivos:** ${head.totals.fileCount} (${arrow(fileCountDelta)} ${fileCountDelta >= 0 ? '+' : ''}${fileCountDelta} vs base)`
-      : `**Arquivos:** ${head.totals.fileCount}`,
+      ? `**Arquivos:** ${head.totals.fileCount ?? '?'} (${arrow(fileCountDelta)} ${fileCountDelta >= 0 ? '+' : ''}${fileCountDelta} vs base)`
+      : `**Arquivos:** ${head.totals.fileCount ?? '?'}`,
     ``,
   ];
 
