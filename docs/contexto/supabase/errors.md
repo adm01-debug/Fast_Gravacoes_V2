@@ -4,4 +4,5 @@
 |---|---|
 | cron_runs | canceling statement due to statement timeout |
 | table_stats | canceling statement due to statement timeout |
+| index_stats | canceling statement due to statement timeout |
 | api.ssl_enforcement | The read operation timed out |

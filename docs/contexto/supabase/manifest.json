@@ -13,11 +13,15 @@
       "section": "table_stats"
     },
     {
+      "error": "canceling statement due to statement timeout",
+      "section": "index_stats"
+    },
+    {
       "error": "The read operation timed out",
       "section": "api.ssl_enforcement"
     }
   ],
-  "gerado_em": "2026-11-11T10:59:16Z",
+  "gerado_em": "2026-11-11T11:19:42Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
