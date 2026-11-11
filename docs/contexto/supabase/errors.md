@@ -3,3 +3,5 @@
 | seção | erro |
 |---|---|
 | cron_runs | canceling statement due to statement timeout |
+| db_stats.auth | canceling statement due to statement timeout |
+| api.ssl_enforcement | The read operation timed out |

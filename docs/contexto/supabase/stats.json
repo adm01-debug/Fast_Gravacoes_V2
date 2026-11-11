@@ -28,12 +28,12 @@
       {
         "healthy": true,
         "info": {
-          "connected_cluster": 0,
-          "db_connected": false,
+          "connected_cluster": 2,
+          "db_connected": true,
           "healthy": true,
-          "node": "realtime@2600:1f18:67fc:ac00:1b73:fa1a:af98:a453",
+          "node": "realtime@2600:1f18:67fc:ac00:8426:34a9:e6f6:1269",
           "region": "us-east-1",
-          "replication_connected": false
+          "replication_connected": true
         },
         "name": "realtime",
         "status": "ACTIVE_HEALTHY"
@@ -58,34 +58,8 @@
   "db": {
     "cron_runs": null,
     "db_stats": {
-      "auth": {
-        "identities_by_provider": [
-          {
-            "provider": "email",
-            "users": 4
-          },
-          {
-            "provider": "google",
-            "users": 3
-          }
-        ],
-        "mfa_factors": [
-          {
-            "factor_type": "totp",
-            "status": "verified",
-            "total": 2
-          }
-        ],
-        "users_confirmed": 13,
-        "users_last_30d": 1,
-        "users_total": 13
-      },
+      "auth": {},
       "connections": [
-        {
-          "n": 1,
-          "state": "active",
-          "usename": "authenticator"
-        },
         {
           "n": 1,
           "state": "idle",
@@ -107,7 +81,12 @@
           "usename": "postgres"
         },
         {
-          "n": 1,
+          "n": 3,
+          "state": "active",
+          "usename": "supabase_admin"
+        },
+        {
+          "n": 3,
           "state": "idle",
           "usename": "supabase_admin"
         },
@@ -117,7 +96,7 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 563031187,
+      "database_bytes": 563088531,
       "queues": [],
       "schema_bytes": [
         {
@@ -156,20 +135,20 @@
           "total_ms": 1009298
         },
         {
-          "calls": 291,
-          "mean_ms": 3232.86,
+          "calls": 294,
+          "mean_ms": 3429.77,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "postgres",
-          "rows": 382019,
-          "total_ms": 940761
+          "rows": 385958,
+          "total_ms": 1008352
         },
         {
-          "calls": 292,
-          "mean_ms": 3028.2,
+          "calls": 295,
+          "mean_ms": 3305.25,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "postgres",
-          "rows": 2044,
-          "total_ms": 884233
+          "rows": 2065,
+          "total_ms": 975050
         },
         {
           "calls": 38028,
@@ -212,12 +191,12 @@
           "total_ms": 542726
         },
         {
-          "calls": 293,
-          "mean_ms": 1591.36,
+          "calls": 296,
+          "mean_ms": 1690.98,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "postgres",
-          "rows": 21847,
-          "total_ms": 466269
+          "rows": 22072,
+          "total_ms": 500531
         },
         {
           "calls": 23654,
@@ -244,12 +223,12 @@
           "total_ms": 358909
         },
         {
-          "calls": 377,
-          "mean_ms": 884.22,
-          "query": "SELECT name FROM pg_timezone_names",
-          "role": "authenticator",
-          "rows": 450892,
-          "total_ms": 333349
+          "calls": 292,
+          "mean_ms": 1170.81,
+          "query": "SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.",
+          "role": "postgres",
+          "rows": 38252,
+          "total_ms": 341875
         }
       ]
     },
