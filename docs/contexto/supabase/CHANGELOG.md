@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-11 23:19 UTC
+
+- **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `rate-limit-check`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
+
 ## 2026-11-11 20:16 UTC
 
 - **functions** alterado (5): `public.auto_reassign_stale_packaging_tasks()`, `public.get_cron_health()`, `public.get_packaging_leaderboard()`, `public.get_packaging_manifest(p_task_ids uuid[])`, `public.get_system_status_summary()`

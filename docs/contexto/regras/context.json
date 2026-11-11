@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
+  "sha": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 22:45 UTC",
+  "generated_at": "2026-11-11 23:16 UTC",
   "files_total": 1469,
   "code_files": 1339,
   "code_lines": 190224
@@ -92431,10 +92431,19 @@
   }
  },
  "git": {
-  "sha": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
+  "sha": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "854fc23",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)",
+    "files": [
+     ".github/workflows/deploy.yml"
+    ]
+   },
    {
     "sha": "2f1c7bf",
     "date": "2026-11-11",
@@ -93032,25 +93041,6 @@
      "docs/agentes/arquitetura.md",
      "docs/agentes/graphify.md"
     ]
-   },
-   {
-    "sha": "5e0a121",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "chore: aprimora scripts de bundle, graphify e RLS regression (#132)",
-    "files": [
-     "bundle-budget.json",
-     "scripts/bundle-diff.mjs",
-     "scripts/bundle-report.mjs",
-     "scripts/bundle.test.mjs",
-     "scripts/check-any-baseline.mjs",
-     "scripts/graphify.mjs",
-     "scripts/graphify/enrich.py",
-     "scripts/graphify/quality.py",
-     "scripts/graphify/tests/test_integration.py",
-     "scripts/rls-regression.mjs",
-     "vitest.config.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -93079,19 +93069,7 @@
     4
    ],
    [
-    "scripts/bundle-diff.mjs",
-    3
-   ],
-   [
-    "scripts/bundle.test.mjs",
-    3
-   ],
-   [
     "scripts/supabase_snapshot/README.md",
-    3
-   ],
-   [
-    "scripts/rls-regression.mjs",
     3
    ],
    [
@@ -93111,7 +93089,19 @@
     3
    ],
    [
+    "scripts/bundle-diff.mjs",
+    2
+   ],
+   [
+    "scripts/bundle.test.mjs",
+    2
+   ],
+   [
     ".github/workflows/ci.yml",
+    2
+   ],
+   [
+    "scripts/rls-regression.mjs",
     2
    ],
    [

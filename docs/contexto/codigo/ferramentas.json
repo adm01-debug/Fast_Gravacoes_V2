@@ -298,7 +298,8 @@
     "deploy-edge-functions"
    ],
    "permissoes": [
-    "contents: read"
+    "contents: read",
+    "packages: read"
    ],
    "scripts_usados": [
     "scripts/audit-gate.mjs"

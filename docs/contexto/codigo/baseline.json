@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
+  "commit": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
   "branch": "main",
-  "data_commit": "2026-11-11T18:52:54-03:00",
+  "data_commit": "2026-11-11T19:13:37-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "854fc23",
+    "data": "2026-11-11",
+    "assunto": "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)"
+   },
    {
     "sha": "2f1c7bf",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "3720de3",
     "data": "2026-11-08",
     "assunto": "fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)"
-   },
-   {
-    "sha": "c9814e8",
-    "data": "2026-11-08",
-    "assunto": "fix(contexto): guard de segredos por ocorrência (#137)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -227,6 +227,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 6
+   },
+   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -237,10 +241,6 @@
    {
     "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 6
-   },
-   {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 5
    },
    {
     "arquivo": "scripts/rls-regression.mjs",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 43
+    "commits": 44
    },
    {
     "autor": "devin-ai-integration[bot]",

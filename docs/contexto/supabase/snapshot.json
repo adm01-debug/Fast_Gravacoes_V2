@@ -298,9 +298,9 @@
         "name": "approve-password-reset",
         "slug": "approve-password-reset",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379406199,
@@ -310,9 +310,9 @@
         "name": "auto-promote-jobs",
         "slug": "auto-promote-jobs",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379407600,
@@ -322,9 +322,9 @@
         "name": "backup-scheduler",
         "slug": "backup-scheduler",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379395547,
@@ -334,9 +334,9 @@
         "name": "bitrix24-sync",
         "slug": "bitrix24-sync",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": false,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379404067,
@@ -346,9 +346,9 @@
         "name": "calculate-inventory-intelligence",
         "slug": "calculate-inventory-intelligence",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379379734,
@@ -358,9 +358,9 @@
         "name": "calculate-rankings",
         "slug": "calculate-rankings",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379387034,
@@ -370,9 +370,9 @@
         "name": "check-login-lockout",
         "slug": "check-login-lockout",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379382183,
@@ -382,9 +382,9 @@
         "name": "cleanup-security-logs",
         "slug": "cleanup-security-logs",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379380426,
@@ -394,9 +394,9 @@
         "name": "create-operator",
         "slug": "create-operator",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379403284,
@@ -406,9 +406,9 @@
         "name": "cron-alert-email",
         "slug": "cron-alert-email",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379391021,
@@ -418,9 +418,9 @@
         "name": "cron-cleanup",
         "slug": "cron-cleanup",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379394898,
@@ -430,9 +430,9 @@
         "name": "csp-report",
         "slug": "csp-report",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": false,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379382723,
@@ -442,9 +442,9 @@
         "name": "daily-maintenance-summary",
         "slug": "daily-maintenance-summary",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379398594,
@@ -454,9 +454,9 @@
         "name": "erp-api",
         "slug": "erp-api",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379391931,
@@ -466,9 +466,9 @@
         "name": "excel-export",
         "slug": "excel-export",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379385545,
@@ -478,9 +478,9 @@
         "name": "external-db-bridge",
         "slug": "external-db-bridge",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 22
+        "version": 23
       },
       {
         "created_at": 1791379381627,
@@ -490,9 +490,9 @@
         "name": "health-check",
         "slug": "health-check",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379381034,
@@ -502,9 +502,9 @@
         "name": "health-monitor",
         "slug": "health-monitor",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379408255,
@@ -526,9 +526,9 @@
         "name": "metrics-collector",
         "slug": "metrics-collector",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379400193,
@@ -538,9 +538,9 @@
         "name": "ml-predictions",
         "slug": "ml-predictions",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379401186,
@@ -550,9 +550,9 @@
         "name": "new-device-alert",
         "slug": "new-device-alert",
         "status": "ACTIVE",
-        "updated_at": 1794339430683,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 30
+        "version": 31
       },
       {
         "created_at": 1791379393997,
@@ -562,9 +562,9 @@
         "name": "pdf-generator",
         "slug": "pdf-generator",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 22
+        "version": 23
       },
       {
         "created_at": 1791379396096,
@@ -574,9 +574,9 @@
         "name": "rate-limit-check",
         "slug": "rate-limit-check",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379399176,
@@ -586,9 +586,9 @@
         "name": "security-alert",
         "slug": "security-alert",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379406866,
@@ -598,9 +598,9 @@
         "name": "send-email-report",
         "slug": "send-email-report",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 26
       },
       {
         "created_at": 1791379396879,
@@ -610,9 +610,9 @@
         "name": "send-loss-risk-alert",
         "slug": "send-loss-risk-alert",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379405390,
@@ -622,9 +622,9 @@
         "name": "send-push-notification",
         "slug": "send-push-notification",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379388973,
@@ -634,9 +634,9 @@
         "name": "send-tpm-email",
         "slug": "send-tpm-email",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379397843,
@@ -646,9 +646,9 @@
         "name": "technical-assistant",
         "slug": "technical-assistant",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379384889,
@@ -658,9 +658,9 @@
         "name": "tpm-notifications",
         "slug": "tpm-notifications",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 24
       },
       {
         "created_at": 1791379384221,
@@ -670,9 +670,9 @@
         "name": "update-operator",
         "slug": "update-operator",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 22
+        "version": 23
       },
       {
         "created_at": 1791379383546,
@@ -682,9 +682,9 @@
         "name": "validate-login-ip",
         "slug": "validate-login-ip",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       },
       {
         "created_at": 1791379386183,
@@ -694,9 +694,9 @@
         "name": "webhook-handler",
         "slug": "webhook-handler",
         "status": "ACTIVE",
-        "updated_at": 1793993799701,
+        "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 25
       }
     ],
     "enabled": true,

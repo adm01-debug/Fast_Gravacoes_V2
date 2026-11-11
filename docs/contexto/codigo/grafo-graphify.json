@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "2f1c7bfa8bc7099f6acd0095969d07ce594e76ab",
+ "commit_do_grafo": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
  "grafo_atual": true,
  "nos": 6928,
  "arestas": 20908,
- "comunidades_total": 636,
+ "comunidades_total": 633,
  "relacoes": {
   "calls": 2805,
   "cites": 6,
@@ -194,9 +194,9 @@
   {
    "id": 11,
    "nome": "Button",
-   "nos": 93,
+   "nos": 94,
    "callables": 49,
-   "arquivos": 45,
+   "arquivos": 46,
    "exemplos_arquivos": [
     "src/components/auth/MFALoginVerification.tsx",
     "src/components/calendar/CalendarOnboarding.tsx",
@@ -414,6 +414,23 @@
   },
   {
    "id": 24,
+   "nome": "TraceabilityPage.tsx",
+   "nos": 60,
+   "callables": 49,
+   "arquivos": 20,
+   "exemplos_arquivos": [
+    "src/components/jobs/JobTraceabilityTab.tsx",
+    "src/components/navigation/GlobalSearch.tsx",
+    "src/components/traceability/BlockchainIntegrityCard.tsx",
+    "src/components/traceability/ElectronicSignatureDialog.tsx",
+    "src/components/traceability/LotComponentsTab.tsx",
+    "src/components/traceability/LotDetailsModal.tsx",
+    "src/components/traceability/LotGenealogyView.tsx",
+    "src/components/traceability/LotInspectionsTab.tsx"
+   ]
+  },
+  {
+   "id": 25,
    "nome": "TechnicalKnowledgeBase.tsx",
    "nos": 60,
    "callables": 45,
@@ -430,7 +447,7 @@
    ]
   },
   {
-   "id": 25,
+   "id": 26,
    "nome": "auth/index.ts",
    "nos": 59,
    "callables": 36,
@@ -447,7 +464,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 27,
    "nome": "useTechniques",
    "nos": 59,
    "callables": 44,
@@ -461,23 +478,6 @@
     "src/components/kanban/KanbanAIAdvisor.tsx",
     "src/components/kanban/KanbanMetricsBar.tsx",
     "src/components/settings/SettingsAlertsTab.tsx"
-   ]
-  },
-  {
-   "id": 27,
-   "nome": "TraceabilityPage.tsx",
-   "nos": 59,
-   "callables": 48,
-   "arquivos": 19,
-   "exemplos_arquivos": [
-    "src/components/jobs/JobTraceabilityTab.tsx",
-    "src/components/navigation/GlobalSearch.tsx",
-    "src/components/traceability/BlockchainIntegrityCard.tsx",
-    "src/components/traceability/ElectronicSignatureDialog.tsx",
-    "src/components/traceability/LotComponentsTab.tsx",
-    "src/components/traceability/LotDetailsModal.tsx",
-    "src/components/traceability/LotGenealogyView.tsx",
-    "src/components/traceability/LotInspectionsTab.tsx"
    ]
   },
   {
@@ -499,6 +499,23 @@
   },
   {
    "id": 29,
+   "nome": "JobDetailsModal.tsx",
+   "nos": 56,
+   "callables": 35,
+   "arquivos": 30,
+   "exemplos_arquivos": [
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/documents/DocumentViewer.tsx",
+    "src/components/documents/DocumentsList.tsx",
+    "src/components/jobs/JobDetailsModal.tsx",
+    "src/components/jobs/JobInstructionsTab.tsx",
+    "src/components/jobs/JobQuickActions.tsx",
+    "src/components/layout/PageTransition.tsx",
+    "src/components/onboarding/SystemOnboarding.tsx"
+   ]
+  },
+  {
+   "id": 30,
    "nome": "OfflineStorageManager",
    "nos": 55,
    "callables": 52,
@@ -509,7 +526,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 31,
    "nome": "SystemMonitoringPage.tsx",
    "nos": 49,
    "callables": 23,
@@ -526,7 +543,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 32,
    "nome": "AppRoutes.tsx",
    "nos": 49,
    "callables": 8,
@@ -539,7 +556,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 33,
    "nome": "ReportBuilderPage.tsx",
    "nos": 46,
    "callables": 25,
@@ -556,7 +573,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 34,
    "nome": "_shared/logger.ts",
    "nos": 46,
    "callables": 27,
@@ -573,7 +590,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 35,
    "nome": "useDataExport.ts",
    "nos": 45,
    "callables": 26,
@@ -590,7 +607,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 36,
    "nome": "erp-api/index.ts",
    "nos": 43,
    "callables": 23,
@@ -605,7 +622,7 @@
    ]
   },
   {
-   "id": 36,
+   "id": 37,
    "nome": "cors.ts",
    "nos": 43,
    "callables": 20,
@@ -622,7 +639,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 38,
    "nome": "admin/index.ts",
    "nos": 42,
    "callables": 26,
@@ -639,7 +656,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 39,
    "nome": "hooks/types.ts",
    "nos": 42,
    "callables": 32,
@@ -656,7 +673,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 40,
    "nome": "dependencies",
    "nos": 41,
    "callables": 0,
@@ -666,7 +683,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 41,
    "nome": "parseDateOnly",
    "nos": 41,
    "callables": 34,
@@ -683,7 +700,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 42,
    "nome": "chunks",
    "nos": 40,
    "callables": 0,
@@ -693,7 +710,7 @@
    ]
   },
   {
-   "id": 42,
+   "id": 43,
    "nome": "errorHandling.ts",
    "nos": 39,
    "callables": 28,
@@ -710,7 +727,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 44,
    "nome": "LossesTable.tsx",
    "nos": 39,
    "callables": 25,
@@ -727,7 +744,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 45,
    "nome": "AdminTelemetriaPage.tsx",
    "nos": 39,
    "callables": 25,
@@ -744,7 +761,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 46,
    "nome": "ShiftHandoverPage.tsx",
    "nos": 38,
    "callables": 24,
@@ -761,7 +778,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 47,
    "nome": "loading/index.ts",
    "nos": 38,
    "callables": 24,
@@ -773,7 +790,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 48,
    "nome": "schemas/index.ts",
    "nos": 37,
    "callables": 16,
@@ -790,7 +807,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 49,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -800,7 +817,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 50,
    "nome": "OperatorProductivityPage.tsx",
    "nos": 36,
    "callables": 27,
@@ -817,7 +834,7 @@
    ]
   },
   {
-   "id": 50,
+   "id": 51,
    "nome": ".git",
    "nos": 35,
    "callables": 30,
@@ -827,7 +844,7 @@
    ]
   },
   {
-   "id": 51,
+   "id": 52,
    "nome": "CommandPaletteAdvanced.tsx",
    "nos": 35,
    "callables": 20,
@@ -843,7 +860,7 @@
    ]
   },
   {
-   "id": 52,
+   "id": 53,
    "nome": "PackagingTaskDetail.tsx",
    "nos": 35,
    "callables": 16,
@@ -860,7 +877,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 54,
    "nome": "scripts",
    "nos": 34,
    "callables": 0,
@@ -870,7 +887,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 55,
    "nome": "bundle-report.mjs",
    "nos": 33,
    "callables": 19,
@@ -882,7 +899,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 56,
    "nome": "DirtyFormContext.tsx",
    "nos": 32,
    "callables": 19,
@@ -896,23 +913,6 @@
     "src/contexts/DirtyFormContext.tsx",
     "src/hooks/use-navigation-hotkeys.ts",
     "src/lib/navTelemetry.ts"
-   ]
-  },
-  {
-   "id": 56,
-   "nome": "SettingsPage.tsx",
-   "nos": 32,
-   "callables": 20,
-   "arquivos": 17,
-   "exemplos_arquivos": [
-    "src/components/layout/PageTransition.tsx",
-    "src/components/onboarding/SystemOnboarding.tsx",
-    "src/components/settings/AutoThemeToggle.tsx",
-    "src/components/settings/PasswordResetRequests.tsx",
-    "src/components/settings/SettingsBackupTab.tsx",
-    "src/components/settings/SettingsGeneralTab.tsx",
-    "src/components/settings/SettingsNotificationsTab.tsx",
-    "src/components/settings/TechniqueManagement.tsx"
    ]
   },
   {
@@ -964,6 +964,17 @@
   },
   {
    "id": 60,
+   "nome": "test_snapshot.py",
+   "nos": 30,
+   "callables": 28,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "scripts/supabase_snapshot/snapshot.py",
+    "scripts/supabase_snapshot/test_snapshot.py"
+   ]
+  },
+  {
+   "id": 61,
    "nome": "useSmartBack",
    "nos": 30,
    "callables": 20,
@@ -978,7 +989,7 @@
    ]
   },
   {
-   "id": 61,
+   "id": 62,
    "nome": "realtimeChannel.ts",
    "nos": 30,
    "callables": 23,
@@ -990,7 +1001,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 63,
    "nome": "PackagingDashboard.tsx",
    "nos": 29,
    "callables": 23,
@@ -1007,7 +1018,7 @@
    ]
   },
   {
-   "id": 63,
+   "id": 64,
    "nome": "cenarios.mjs",
    "nos": 28,
    "callables": 10,
@@ -1024,7 +1035,7 @@
    ]
   },
   {
-   "id": 64,
+   "id": 65,
    "nome": "GraphifyIntegrationTests",
    "nos": 28,
    "callables": 28,
@@ -1034,7 +1045,7 @@
    ]
   },
   {
-   "id": 65,
+   "id": 66,
    "nome": "auth.ts",
    "nos": 28,
    "callables": 22,
@@ -1046,24 +1057,13 @@
    ]
   },
   {
-   "id": 66,
+   "id": 67,
    "nome": "compilerOptions",
    "nos": 27,
    "callables": 0,
    "arquivos": 1,
    "exemplos_arquivos": [
     "tsconfig.app.json"
-   ]
-  },
-  {
-   "id": 67,
-   "nome": "test_snapshot.py",
-   "nos": 27,
-   "callables": 25,
-   "arquivos": 2,
-   "exemplos_arquivos": [
-    "scripts/supabase_snapshot/snapshot.py",
-    "scripts/supabase_snapshot/test_snapshot.py"
    ]
   },
   {
@@ -1138,23 +1138,6 @@
   },
   {
    "id": 73,
-   "nome": "JobDetailsModal.tsx",
-   "nos": 26,
-   "callables": 16,
-   "arquivos": 14,
-   "exemplos_arquivos": [
-    "src/components/documents/DocumentUploadModal.tsx",
-    "src/components/documents/DocumentViewer.tsx",
-    "src/components/documents/DocumentsList.tsx",
-    "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/jobs/JobInstructionsTab.tsx",
-    "src/components/jobs/JobQuickActions.tsx",
-    "src/components/operator/ProductionRegistrationModal.tsx",
-    "src/components/production/ProductionPhotos.tsx"
-   ]
-  },
-  {
-   "id": 74,
    "nome": "MachinesPage.tsx",
    "nos": 26,
    "callables": 17,
@@ -1171,7 +1154,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 74,
    "nome": "AuditTrailDrawer.tsx",
    "nos": 26,
    "callables": 16,
@@ -1188,7 +1171,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 75,
    "nome": "AppSidebar.tsx",
    "nos": 26,
    "callables": 10,
@@ -1204,7 +1187,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "MobileNavigation.tsx",
    "nos": 26,
    "callables": 13,
@@ -1221,7 +1204,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "use-toast.ts",
    "nos": 26,
    "callables": 12,
@@ -1233,13 +1216,35 @@
    ]
   },
   {
-   "id": 79,
-   "nome": ".collect",
+   "id": 78,
+   "nome": "types/scheduling.ts",
    "nos": 25,
-   "callables": 25,
-   "arquivos": 1,
+   "callables": 17,
+   "arquivos": 6,
    "exemplos_arquivos": [
-    "scripts/supabase_snapshot/test_snapshot.py"
+    "src/components/calendar/AgendaView.tsx",
+    "src/components/calendar/JobQuickActions.tsx",
+    "src/hooks/use-device.tsx",
+    "src/pages/DailyCalendar.tsx",
+    "src/pages/WeeklyCalendar.tsx",
+    "src/types/scheduling.ts"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "ChatArea.tsx",
+   "nos": 25,
+   "callables": 16,
+   "arquivos": 10,
+   "exemplos_arquivos": [
+    "src/components/technical-assistant/ChatArea.tsx",
+    "src/components/technical-assistant/ChatMessage.tsx",
+    "src/components/technical-assistant/ConversationSidebar.tsx",
+    "src/components/technical-assistant/FileAnalyzer.tsx",
+    "src/components/technical-assistant/SafetyAlert.tsx",
+    "src/components/technical-assistant/TechnicalArtifacts.tsx",
+    "src/components/technical-assistant/TechnicalTelemetryPanel.tsx",
+    "src/hooks/useTechnicalConversations.ts"
    ]
   }
  ],
@@ -2120,7 +2125,7 @@
   "scripts/seed-users.test.mjs": "seed-users.test.mjs",
   "scripts/src/pages/Login": "gerar.unit.mjs",
   "scripts/supabase_snapshot/snapshot.py": "snapshot.py",
-  "scripts/supabase_snapshot/test_snapshot.py": "ManagementApiFailureTests",
+  "scripts/supabase_snapshot/test_snapshot.py": ".collect",
   "sonner": "sonner",
   "src/App.tsx": "main.tsx",
   "src/components/a/A": "cenarios.mjs",
@@ -2376,7 +2381,7 @@
   "src/components/offline/OfflineStatusBanner.tsx": "OfflineReadyIndicator.tsx",
   "src/components/offline/OfflineSyncIndicator.tsx": "OperatorView.tsx",
   "src/components/onboarding/OnboardingTour.tsx": "CommandPaletteAdvanced.tsx",
-  "src/components/onboarding/SystemOnboarding.tsx": "SettingsPage.tsx",
+  "src/components/onboarding/SystemOnboarding.tsx": "JobDetailsModal.tsx",
   "src/components/operator/OperatorProductionCard.tsx": "DbJob",
   "src/components/operator/OperatorQuickHistory.tsx": "DbJob",
   "src/components/operator/OperatorReadyJobCard.tsx": "DbJob",
@@ -2442,10 +2447,10 @@
   "src/components/settings/PasswordResetRequests.tsx": "OEEMachineTable.tsx",
   "src/components/settings/SettingsAlertsTab.tsx": "input.tsx",
   "src/components/settings/SettingsBackupTab.tsx": "card.tsx",
-  "src/components/settings/SettingsGeneralTab.tsx": "SettingsPage.tsx",
-  "src/components/settings/SettingsNotificationsTab.tsx": "SettingsPage.tsx",
+  "src/components/settings/SettingsGeneralTab.tsx": "JobDetailsModal.tsx",
+  "src/components/settings/SettingsNotificationsTab.tsx": "JobDetailsModal.tsx",
   "src/components/settings/TechniqueManagement.tsx": "OEEMachineTable.tsx",
-  "src/components/settings/TransitionsSettings.tsx": "SettingsPage.tsx",
+  "src/components/settings/TransitionsSettings.tsx": "JobDetailsModal.tsx",
   "src/components/settings/TwoFactorSetup.tsx": "showErrorToast",
   "src/components/settings/UserManagement.tsx": "button.tsx",
   "src/components/shift/AutoShiftSummary.tsx": "useAuth",
@@ -2524,11 +2529,11 @@
   "src/components/ui/scroll-area.tsx": "skeleton.tsx",
   "src/components/ui/section-error-boundary.tsx": "analytics/index.ts",
   "src/components/ui/select.tsx": "input.tsx",
-  "src/components/ui/separator.tsx": "SettingsPage.tsx",
+  "src/components/ui/separator.tsx": "JobDetailsModal.tsx",
   "src/components/ui/sheet.tsx": "AuditTrailDrawer.tsx",
   "src/components/ui/sidebar.tsx": "cn",
   "src/components/ui/skeleton.tsx": "skeleton.tsx",
-  "src/components/ui/slider.tsx": "SettingsPage.tsx",
+  "src/components/ui/slider.tsx": "JobDetailsModal.tsx",
   "src/components/ui/sonner.tsx": "App.tsx",
   "src/components/ui/status-badge.tsx": "LossesTable.tsx",
   "src/components/ui/stepper.tsx": "cn",
@@ -2912,7 +2917,7 @@
   "src/hooks/use-toast.ts": "use-toast.ts",
   "src/hooks/useABCCosts.ts": "LossesTable.tsx",
   "src/hooks/useAlertCount.ts": "MobileNavigation.tsx",
-  "src/hooks/useAutoTheme.ts": "SettingsPage.tsx",
+  "src/hooks/useAutoTheme.ts": "JobDetailsModal.tsx",
   "src/hooks/useBulkActions.ts": "showErrorToast",
   "src/hooks/useCalendarFilters.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarHotkeys.ts": "DailyCalendar.tsx",
@@ -2964,7 +2969,7 @@
   "src/lib/excelExport.test.ts": "ExecutiveDashboard.tsx",
   "src/lib/excelExport.ts": "ExecutiveDashboard.tsx",
   "src/lib/fetchAllRows.ts": "useDataExport.ts",
-  "src/lib/file-validation.ts": "JobDetailsModal.tsx",
+  "src/lib/file-validation.ts": "TraceabilityPage.tsx",
   "src/lib/index.ts": "lib/index.ts",
   "src/lib/lazyWithRetry.ts": "DailyCalendar.tsx",
   "src/lib/logger.test.ts": "lib/logger.ts",
@@ -2998,7 +3003,7 @@
   "src/lib/spcExport.ts": "JobQualityTab.tsx",
   "src/lib/transitions/index.ts": "transitions/index.ts",
   "src/lib/utils.test.ts": "JobDetailsModal.tsx",
-  "src/lib/utils.ts": "input.tsx",
+  "src/lib/utils.ts": "JobDetailsModal.tsx",
   "src/lib/validation.ts": "lib/index.ts",
   "src/main.tsx": "main.tsx",
   "src/pages/A": "cenarios.mjs",
@@ -3056,7 +3061,7 @@
   "src/pages/ResetPasswordPage.tsx": "ResetPasswordPage.tsx",
   "src/pages/SPCDashboard.tsx": "JobQualityTab.tsx",
   "src/pages/SecurityDashboard.tsx": "showErrorToast",
-  "src/pages/SettingsPage.tsx": "SettingsPage.tsx",
+  "src/pages/SettingsPage.tsx": "JobDetailsModal.tsx",
   "src/pages/ShiftHandoverPage.tsx": "ShiftHandoverPage.tsx",
   "src/pages/SimulationDashboard.tsx": "cn",
   "src/pages/SystemMonitoringPage.tsx": "useMonitoringData.ts",
@@ -3089,7 +3094,7 @@
   "src/test/offlineStorage.test.ts": "sanitize.ts",
   "src/test/queryConfig.test.ts": "createAppError",
   "src/test/rateLimiter.test.ts": "RateLimiter",
-  "src/test/rateLimiterAdvanced.test.ts": "RateLimiter",
+  "src/test/rateLimiterAdvanced.test.ts": "lib/index.ts",
   "src/test/realtimeMock.test.ts": "useJobs.realtime.test.tsx",
   "src/test/realtimeMock.ts": "useJobs.realtime.test.tsx",
   "src/test/retryBackoffAdvanced.test.ts": "loadStress.test.ts",
