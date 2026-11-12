@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "df3c54d3f41410d22f9d33db11d2392baad159fa",
+  "commit": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
   "branch": "main",
-  "data_commit": "2026-11-12T09:18:11-03:00",
+  "data_commit": "2026-11-12T10:21:56-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "dd1b467",
+    "data": "2026-11-12",
+    "assunto": "style(manutencao): aplica correcoes locais verificadas (#169)"
+   },
    {
     "sha": "df3c54d",
     "data": "2026-11-12",
@@ -126,15 +131,10 @@
     "sha": "45a5eb9",
     "data": "2026-11-08",
     "assunto": "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)"
-   },
-   {
-    "sha": "94c39a5",
-    "data": "2026-11-08",
-    "assunto": "chore(agentes): padrão enxuto de instruções com referência por tema (#141)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 398,
+  "arquivos_mudados_7d": 407,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -149,12 +149,12 @@
     "mudancas": 19
    },
    {
-    "pasta": "src/features/jobs",
+    "pasta": "src/components/dashboard",
     "mudancas": 18
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 14
+    "pasta": "src/features/jobs",
+    "mudancas": 18
    },
    {
     "pasta": "src/features/admin",
@@ -165,6 +165,14 @@
     "mudancas": 10
    },
    {
+    "pasta": "src/components/jobs",
+    "mudancas": 9
+   },
+   {
+    "pasta": "src/components/knowledge",
+    "mudancas": 9
+   },
+   {
     "pasta": "src/components/navigation",
     "mudancas": 9
    },
@@ -173,7 +181,7 @@
     "mudancas": 8
    },
    {
-    "pasta": "src/components/jobs",
+    "pasta": "src/components/kanban",
     "mudancas": 8
    },
    {
@@ -186,14 +194,6 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 7
-   },
-   {
-    "pasta": "src/components/technical-assistant",
-    "mudancas": 7
-   },
-   {
-    "pasta": "src/components/ui",
     "mudancas": 7
    }
   ],
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 47
+    "commits": 48
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1498,
   "arquivos_codigo": 1101,
-  "linhas_codigo": 179009,
+  "linhas_codigo": 179013,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -429,7 +429,7 @@
   },
   "src/components": {
    "arquivos": 415,
-   "linhas": 58548
+   "linhas": 58552
   },
   "src/constants": {
    "arquivos": 2,

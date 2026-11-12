@@ -426,7 +426,7 @@
     "AutonomousEventLog"
    ],
    "export_default": null,
-   "linhas": 130,
+   "linhas": 131,
    "dominio": "components/autonomous",
    "hooks_locais": [],
    "tabelas": [],
@@ -1122,7 +1122,7 @@
     "RecentJobsTable"
    ],
    "export_default": null,
-   "linhas": 178,
+   "linhas": 179,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useOperatorDashboardData"
@@ -2209,7 +2209,7 @@
     "CostSimulationCard"
    ],
    "export_default": null,
-   "linhas": 86,
+   "linhas": 87,
    "dominio": "components/digital-twin",
    "hooks_locais": [
     "useKPIs"
@@ -2243,7 +2243,7 @@
     "SupplyChainPanel"
    ],
    "export_default": null,
-   "linhas": 96,
+   "linhas": 97,
    "dominio": "components/digital-twin",
    "hooks_locais": [
     "useAuth"

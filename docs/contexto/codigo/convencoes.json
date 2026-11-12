@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "style(manutencao): aplica correcoes locais verificadas (#169)",
    "chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)",
    "fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)",
    "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)",
-   "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)",
-   "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)"
+   "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

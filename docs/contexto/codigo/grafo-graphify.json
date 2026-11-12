@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "df3c54d3f41410d22f9d33db11d2392baad159fa",
+ "commit_do_grafo": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
  "grafo_atual": true,
  "nos": 7146,
  "arestas": 21294,
@@ -1153,6 +1153,23 @@
   },
   {
    "id": 74,
+   "nome": "TechnicalKnowledgeBase.tsx",
+   "nos": 27,
+   "callables": 20,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/knowledge/KnowledgeBaseStats.tsx",
+    "src/components/knowledge/KnowledgeSheetList.tsx",
+    "src/components/knowledge/TechnicalSheetEditor.tsx",
+    "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
+    "src/components/knowledge/TechnicalSheetViewer.tsx",
+    "src/components/knowledge/editor/EditorBasicInfo.tsx",
+    "src/components/knowledge/editor/EditorMaterialsSection.tsx",
+    "src/components/knowledge/editor/EditorStepsSection.tsx"
+   ]
+  },
+  {
+   "id": 75,
    "nome": "webpushEncrypt.ts",
    "nos": 26,
    "callables": 17,
@@ -1164,7 +1181,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 76,
    "nome": "SnapshotCatalogContractTests",
    "nos": 26,
    "callables": 25,
@@ -1174,7 +1191,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 77,
    "nome": "types/scheduling.ts",
    "nos": 26,
    "callables": 17,
@@ -1190,7 +1207,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 78,
    "nome": "CalendarTimeline.tsx",
    "nos": 26,
    "callables": 13,
@@ -1206,7 +1223,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 79,
    "nome": "gerar-rotas.mjs",
    "nos": 25,
    "callables": 14,
@@ -1218,19 +1235,6 @@
     "src/pages/Fantasma",
     "src/pages/Kanban",
     "src/pages/Tarde"
-   ]
-  },
-  {
-   "id": 79,
-   "nome": "CommandPaletteAdvanced.tsx",
-   "nos": 25,
-   "callables": 14,
-   "arquivos": 4,
-   "exemplos_arquivos": [
-    "src/components/navigation/CommandPaletteAdvanced.tsx",
-    "src/components/navigation/CommandPaletteCommands.tsx",
-    "src/components/navigation/useCommandEntities.tsx",
-    "src/components/ui/command.tsx"
    ]
   }
  ],
@@ -2078,7 +2082,7 @@
   "public/manifest.json": "manifest.json",
   "public/sw.js": "sw.js",
   "scripts/ai-context/cenarios.mjs": "cenarios.mjs",
-  "scripts/ai-context/gerar.mjs": "modulos",
+  "scripts/ai-context/gerar.mjs": "uniq",
   "scripts/ai-context/gerar.unit.mjs": "gerar.unit.mjs",
   "scripts/ai-context/lib/y": "cenarios.mjs",
   "scripts/ai-context/pages/C": "cenarios.mjs",
@@ -2316,21 +2320,21 @@
   "src/components/kanban/KanbanFiltersBar.tsx": "KanbanBoard.tsx",
   "src/components/kanban/KanbanMetricsBar.tsx": "KanbanBoard.tsx",
   "src/components/kiosk/KioskMode.tsx": "card.tsx",
-  "src/components/knowledge/KnowledgeBaseStats.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/KnowledgeSheetList.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/KnowledgeBaseStats.tsx": "useTechnicalSheetsQueries.ts",
+  "src/components/knowledge/KnowledgeSheetList.tsx": "useTechnicalSheetsQueries.ts",
   "src/components/knowledge/KnowledgeSheetQRCode.tsx": "card.tsx",
-  "src/components/knowledge/KnowledgeStatusBadge.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/TechnicalSheetEditor.tsx": "TechnicalSheetEditor.tsx",
-  "src/components/knowledge/TechnicalSheetHeader.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/TechnicalSheetHistoryTab.tsx": "TechnicalSheetViewer.tsx",
+  "src/components/knowledge/KnowledgeStatusBadge.tsx": "useTechnicalSheetsQueries.ts",
+  "src/components/knowledge/TechnicalSheetEditor.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/TechnicalSheetHeader.tsx": "useTechnicalSheetsQueries.ts",
+  "src/components/knowledge/TechnicalSheetHistoryTab.tsx": "TechnicalKnowledgeBase.tsx",
   "src/components/knowledge/TechnicalSheetMaterialCalculator.tsx": "TechnicalSheetMaterialCalculator.tsx",
   "src/components/knowledge/TechnicalSheetTab.tsx": "JobDetailsModal.tsx",
-  "src/components/knowledge/TechnicalSheetViewer.tsx": "TechnicalSheetViewer.tsx",
+  "src/components/knowledge/TechnicalSheetViewer.tsx": "TechnicalKnowledgeBase.tsx",
   "src/components/knowledge/TechnicalSheetVisualReference.tsx": "card.tsx",
-  "src/components/knowledge/editor/EditorBasicInfo.tsx": "TechnicalSheetEditor.tsx",
-  "src/components/knowledge/editor/EditorMaterialsSection.tsx": "TechnicalSheetEditor.tsx",
-  "src/components/knowledge/editor/EditorStepsSection.tsx": "TechnicalSheetEditor.tsx",
-  "src/components/knowledge/editor/EditorTipsSection.tsx": "TechnicalSheetEditor.tsx",
+  "src/components/knowledge/editor/EditorBasicInfo.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/editor/EditorMaterialsSection.tsx": "useTechnicalSheetsQueries.ts",
+  "src/components/knowledge/editor/EditorStepsSection.tsx": "useTechnicalSheetsQueries.ts",
+  "src/components/knowledge/editor/EditorTipsSection.tsx": "useTechnicalSheetsQueries.ts",
   "src/components/layout/AppSidebar.tsx": "MainLayout.tsx",
   "src/components/layout/LanguageSwitcher.tsx": "dropdown-menu.tsx",
   "src/components/layout/MainLayout.tsx": "MainLayout.tsx",
@@ -2784,7 +2788,7 @@
   "src/features/maintenance/components/TPMScheduleList.tsx": "hooks/types.ts",
   "src/features/maintenance/components/TPMSeverityConfigs.tsx": "select.tsx",
   "src/features/maintenance/components/VirtualSensorPanel.tsx": "recharts.ts",
-  "src/features/maintenance/components/execution/AdjustmentParameters.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/features/maintenance/components/execution/AdjustmentParameters.tsx": "JobDetailsModal.tsx",
   "src/features/maintenance/components/execution/AlertRiskPanel.tsx": "Button",
   "src/features/maintenance/components/execution/ChecklistItem.tsx": "ChecklistItem.tsx",
   "src/features/maintenance/components/execution/ChecklistSection.tsx": "ChecklistItem.tsx",
@@ -2903,8 +2907,8 @@
   "src/hooks/shift-handover/useShiftHandoverMutations.ts": "ShiftHandoverPage.tsx",
   "src/hooks/shift-handover/useShiftHandoverQueries.ts": "ShiftHandoverPage.tsx",
   "src/hooks/technical-sheets/technicalSheetsTypes.ts": "TechnicalKnowledgeBase.tsx",
-  "src/hooks/technical-sheets/useTechnicalSheetMutations.ts": "TechnicalSheetEditor.tsx",
-  "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts": "TechnicalSheetViewer.tsx",
+  "src/hooks/technical-sheets/useTechnicalSheetMutations.ts": "TechnicalKnowledgeBase.tsx",
+  "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts": "MaintenanceExecutionModal.tsx",
   "src/hooks/use-deeplink-focus.ts": "MainLayout.tsx",
   "src/hooks/use-device.tsx": "MobileNavigation.tsx",
   "src/hooks/use-dirty-state-guard.ts": "use-dirty-state-guard.ts",
@@ -2947,7 +2951,7 @@
   "src/hooks/useShiftHandover.ts": "ShiftHandoverPage.tsx",
   "src/hooks/useSmartDelayAlerts.ts": "useAuth",
   "src/hooks/useTechnicalConversations.ts": "TechnicalAssistantPage.tsx",
-  "src/hooks/useTechnicalSheets.ts": "TechnicalSheetEditor.tsx",
+  "src/hooks/useTechnicalSheets.ts": "TechnicalKnowledgeBase.tsx",
   "src/hooks/useTechniqueCapacityAlerts.ts": "useAuth",
   "src/hooks/useThemeSound.ts": "ScanHistory.tsx",
   "src/hooks/useThrottle.ts": "JobTraceabilityTab.tsx",

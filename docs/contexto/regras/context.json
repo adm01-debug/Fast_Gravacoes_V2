@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "df3c54d3f41410d22f9d33db11d2392baad159fa",
+  "sha": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-12 12:37 UTC",
+  "generated_at": "2026-11-12 14:35 UTC",
   "files_total": 1495,
   "code_files": 1357,
-  "code_lines": 194138
+  "code_lines": 194142
  },
  "version": "1.3.2",
- "facts_hash": "b15759f90267ee33",
+ "facts_hash": "99845d32adc2ff3e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26956,7 +26956,7 @@
   {
    "module": "src/components",
    "files": 415,
-   "lines": 58548,
+   "lines": 58552,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -68780,7 +68780,7 @@
   },
   "src/components/autonomous/AutonomousEventLog.tsx": {
    "path": "src/components/autonomous/AutonomousEventLog.tsx",
-   "lines": 130,
+   "lines": 131,
    "exports": [
     "function AutonomousEventLog"
    ],
@@ -69512,7 +69512,7 @@
   },
   "src/components/dashboard/RecentJobsTable.tsx": {
    "path": "src/components/dashboard/RecentJobsTable.tsx",
-   "lines": 178,
+   "lines": 179,
    "exports": [
     "const RecentJobsTable"
    ],
@@ -70796,7 +70796,7 @@
   },
   "src/components/digital-twin/CostSimulationCard.tsx": {
    "path": "src/components/digital-twin/CostSimulationCard.tsx",
-   "lines": 86,
+   "lines": 87,
    "exports": [
     "function CostSimulationCard"
    ],
@@ -70839,7 +70839,7 @@
   },
   "src/components/digital-twin/SupplyChainPanel.tsx": {
    "path": "src/components/digital-twin/SupplyChainPanel.tsx",
-   "lines": 96,
+   "lines": 97,
    "exports": [
     "function SupplyChainPanel"
    ],
@@ -93881,10 +93881,38 @@
   }
  },
  "git": {
-  "sha": "df3c54d3f41410d22f9d33db11d2392baad159fa",
+  "sha": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "dd1b467",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "style(manutencao): aplica correcoes locais verificadas (#169)",
+    "files": [
+     "src/components/activity/ActivityLog.tsx",
+     "src/components/assistant/TechnicalAssistant.tsx",
+     "src/components/auth/AuthLoginForm.tsx",
+     "src/components/autonomous/AutonomousEventLog.tsx",
+     "src/components/dashboard/OccupancyChart.tsx",
+     "src/components/dashboard/RecentJobsTable.tsx",
+     "src/components/dashboard/SortableWidgetSection.tsx",
+     "src/components/dashboard/StatsCard.tsx",
+     "src/components/digital-twin/CostSimulationCard.tsx",
+     "src/components/digital-twin/SupplyChainPanel.tsx",
+     "src/components/error/GlobalErrorBoundary.tsx",
+     "src/components/jobs/JobCostsTab.tsx",
+     "src/components/kanban/DraggableJobCard.tsx",
+     "src/components/kanban/KanbanAIAdvisor.tsx",
+     "src/components/kanban/KanbanFiltersBar.tsx",
+     "src/components/knowledge/TechnicalSheetTab.tsx",
+     "src/components/knowledge/TechnicalSheetViewer.tsx",
+     "src/components/knowledge/editor/EditorBasicInfo.tsx",
+     "src/components/knowledge/editor/EditorMaterialsSection.tsx",
+     "src/components/knowledge/editor/EditorStepsSection.tsx"
+    ]
+   },
    {
     "sha": "df3c54d",
     "date": "2026-11-12",
@@ -94486,115 +94514,87 @@
     "files": [
      ".github/workflows/contexto.yml"
     ]
-   },
-   {
-    "sha": "bce2374",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat(contexto): contexto autônomo para agentes de IA (#136)",
-    "files": [
-     ".github/workflows/contexto.yml",
-     ".gitignore",
-     "AGENTS.md",
-     "ai-context.config.json",
-     "docs/agentes/contexto.md",
-     "docs/contexto/regras/manual/README.md",
-     "docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md",
-     "scripts/ai-context/README.md",
-     "scripts/ai-context/cenarios.mjs",
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs",
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/supabase_snapshot/README.md",
-     "scripts/supabase_snapshot/requirements.txt",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/supabase_snapshot/snapshot.py",
-    5
+    4
    ],
    [
     "scripts/supabase_snapshot/test_snapshot.py",
-    5
+    4
    ],
    [
     ".github/workflows/contexto.yml",
-    4
-   ],
-   [
-    "scripts/regras_negocio/generate.py",
-    4
-   ],
-   [
-    "scripts/regras_negocio/test_generate.py",
-    4
-   ],
-   [
-    "scripts/ai-context/gerar.mjs",
-    4
-   ],
-   [
-    "scripts/ai-context/gerar.unit.mjs",
-    4
+    3
    ],
    [
     ".github/workflows/ci.yml",
     3
    ],
    [
-    "scripts/supabase_snapshot/README.md",
+    "scripts/regras_negocio/generate.py",
     3
    ],
    [
-    "scripts/ai-context/README.md",
+    "scripts/regras_negocio/test_generate.py",
     3
    ],
    [
-    "scripts/regras_negocio/README.md",
+    "scripts/ai-context/gerar.mjs",
     3
    ],
    [
-    "scripts/regras_negocio/publish.sh",
+    "scripts/ai-context/gerar.unit.mjs",
     3
+   ],
+   [
+    "src/components/activity/ActivityLog.tsx",
+    2
+   ],
+   [
+    "src/components/assistant/TechnicalAssistant.tsx",
+    2
+   ],
+   [
+    "src/components/auth/AuthLoginForm.tsx",
+    2
+   ],
+   [
+    "src/components/autonomous/AutonomousEventLog.tsx",
+    2
+   ],
+   [
+    "src/components/digital-twin/CostSimulationCard.tsx",
+    2
+   ],
+   [
+    "src/components/error/GlobalErrorBoundary.tsx",
+    2
+   ],
+   [
+    "src/components/jobs/JobCostsTab.tsx",
+    2
+   ],
+   [
+    "src/components/kanban/DraggableJobCard.tsx",
+    2
+   ],
+   [
+    "src/components/kanban/KanbanAIAdvisor.tsx",
+    2
+   ],
+   [
+    "src/components/kanban/KanbanFiltersBar.tsx",
+    2
+   ],
+   [
+    "src/components/knowledge/TechnicalSheetViewer.tsx",
+    2
    ],
    [
     "package.json",
-    2
-   ],
-   [
-    "scripts/bundle-diff.mjs",
-    2
-   ],
-   [
-    "scripts/bundle.test.mjs",
-    2
-   ],
-   [
-    "scripts/rls-regression.mjs",
-    2
-   ],
-   [
-    "scripts/regras_negocio/test_publish.py",
-    2
-   ],
-   [
-    "docs/agentes/contexto.md",
-    2
-   ],
-   [
-    "scripts/regras_negocio/indice.py",
-    2
-   ],
-   [
-    "docs/agentes/github-ci.md",
     2
    ]
   ]
