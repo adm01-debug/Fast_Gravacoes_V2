@@ -29,7 +29,7 @@ concurrency:
 jobs:
   lint:
     name: Lint & Type Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -80,7 +80,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   security:
     name: Security Scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -134,7 +134,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   unit-tests:
     name: Unit & Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     needs: [lint]
     steps:
@@ -179,7 +179,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   deno-tests:
     name: Edge Functions (Deno)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [lint]
     steps:
@@ -224,7 +224,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   simulation-tests:
     name: Simulation & Fuzz Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     needs: [lint]
     steps:
@@ -264,7 +264,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   build:
     name: Production Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     needs: [security, unit-tests, deno-tests, simulation-tests]
     steps:
@@ -320,7 +320,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   bundle-diff:
     name: Bundle Diff vs main
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: [build]
     if: github.event_name == 'pull_request'
@@ -368,7 +368,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   e2e:
     name: E2E Tests (Playwright)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [build]
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
@@ -463,7 +463,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   rls-regression:
     name: RLS Regression
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     steps:
@@ -512,7 +512,7 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
   quality-gate:
     name: Quality Gate ✅
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: [lint, security, unit-tests, deno-tests, simulation-tests, build, e2e, rls-regression]
     if: always()
