@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 12:49 UTC
+
+- Snapshot inicial.
+
+
 ## 2026-11-12 10:13 UTC
 
 - **config: auth_config** alterado (1): `auth_config`

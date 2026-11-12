@@ -24521,7 +24521,7 @@
       "jobs": [
         {
           "active": true,
-          "command": "select public.snapshot_cron_health();",
+          "command": "chama: public.snapshot_cron_health",
           "database": "postgres",
           "jobid": 3,
           "jobname": "snapshot-cron-health-15min",
@@ -24530,7 +24530,7 @@
         },
         {
           "active": true,
-          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/cron-alert-email', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','[REDACTED]'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
+          "command": "chama: net.http_post",
           "database": "postgres",
           "jobid": 5,
           "jobname": "cron-alert-email-every-30min",
@@ -24539,7 +24539,7 @@
         },
         {
           "active": true,
-          "command": "select net.http_post(url := 'https://supabase.atomicabr.com.br/functions/v1/health-monitor', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret','[REDACTED]'), body := jsonb_build_object('scheduled_at', now())) as request_id;",
+          "command": "chama: net.http_post",
           "database": "postgres",
           "jobid": 6,
           "jobname": "health-monitor-every-5min",
@@ -24548,7 +24548,7 @@
         },
         {
           "active": true,
-          "command": "SELECT public.purge_old_logs()",
+          "command": "chama: public.purge_old_logs",
           "database": "postgres",
           "jobid": 7,
           "jobname": "purge-old-logs-daily",
@@ -24557,7 +24557,7 @@
         },
         {
           "active": true,
-          "command": "SELECT public.rollup_cron_p95_daily(2);",
+          "command": "chama: public.rollup_cron_p95_daily",
           "database": "postgres",
           "jobid": 9,
           "jobname": "rollup-cron-p95-daily",
@@ -24566,7 +24566,7 @@
         },
         {
           "active": true,
-          "command": "SELECT net.http_post(\n           url := (SELECT value FROM app_private.runtime_config WHERE key = 'functions_base_url') || '/auto-promote-jobs',\n           headers := jsonb_build_object(\n             'Content-Type', 'application/json',\n             'Authorization', 'Bearer ' || coalesce((SELECT value FROM app_private.runtime_config WHERE key = 'service_role_key'), ''),\n             'x-cron-secret', coalesce((SELECT value FROM app_private.runtime_config WHERE key = 'cron_secret'), '')),\n           body := '{}'::jsonb)",
+          "command": "chama: net.http_post",
           "database": "postgres",
           "jobid": 11,
           "jobname": "auto-promote-jobs-fallback",
@@ -24575,7 +24575,7 @@
         },
         {
           "active": true,
-          "command": "SELECT public.auto_reassign_stale_packaging_tasks()",
+          "command": "chama: public.auto_reassign_stale_packaging_tasks",
           "database": "postgres",
           "jobid": 12,
           "jobname": "auto-reassign-packaging-30min",
@@ -45241,5 +45241,5 @@
     "webhooks": []
   },
   "errors": [],
-  "format_version": 2
+  "format_version": 3
 }
