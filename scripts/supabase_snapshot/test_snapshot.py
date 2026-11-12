@@ -88,7 +88,7 @@ class SnapshotFixture(unittest.TestCase):
 
         self.source_files = [("src/client.ts", "supabase.rpc('demo')")]
 
-    def collect(self, *, failures=(), functions=None, migrations=None):
+    def collect(self, *, failures=(), functions=None, migrations=None, cron=None):
         snapshot = self.snapshot
         snapshot.ERRORS.clear()
         snapshot.CARRIED.clear()
@@ -98,6 +98,8 @@ class SnapshotFixture(unittest.TestCase):
             "functions": [function()] if functions is None else functions,
             "migrations": [migration()] if migrations is None else migrations,
         }
+        if cron is not None:
+            records["cron"] = cron
 
         def section(name):
             @snapshot.section(name)
@@ -137,6 +139,22 @@ class SnapshotSQLRecoveryTests(SnapshotFixture):
         marker.unlink()  # snapshot.json v2 identifica uma saída legítima anterior ao marcador.
         self.assertEqual(self.collect(), 0)
         self.assertEqual(marker.read_text(encoding="utf-8"), self.snapshot.OUTPUT_MARKER_CONTENT)
+
+    def test_old_format_version_snapshot_is_recognized_as_ours_not_unowned(self):
+        # valid_previous_snapshot() só confere a FORMA, não a versão: um snapshot.json de uma
+        # versão mais antiga do script (sem marcador — o marcador nunca é commitado em git, cada
+        # run do Actions começa num runner novo) ainda é reconhecido como NOSSO. Exigir a versão
+        # exata aqui faria prepare_output_directory() recusar a própria pasta a cada bump de
+        # FORMAT_VERSION, travando o job para sempre (nenhum run geraria o marcador novo, então
+        # nenhum run subsequente passaria). Quem decide se o dado é REAPROVEITÁVEL é main(), não
+        # esta função — e main() continua exigindo a versão exata para isso (ver test_snapshot
+        # desta mesma classe e SnapshotCronSecretRedactionTests).
+        self.out.mkdir()
+        (self.out / "snapshot.json").write_text(
+            json.dumps({"format_version": self.snapshot.FORMAT_VERSION - 1, "db": {}, "api": {}}),
+            encoding="utf-8",
+        )
+        self.assertEqual(self.collect(), 0, "pasta com snapshot de versão antiga não pode travar o job")
 
     def test_unowned_nonempty_output_is_rejected_before_collection(self):
         unowned = pathlib.Path(self.temp.name) / "unowned"
@@ -459,6 +477,130 @@ class SnapshotFunctionCallerTests(SnapshotFixture):
         files["src/not_selected.ts"] = "supabase.rpc('demo')"
         self.assertEqual(self.callers(files, scan_dirs=["runtime", "scripts/operations", "supabase/migrations"]),
                          [{"file": name, "hits": 1} for name in sorted(names)])
+
+
+class SnapshotCronSecretRedactionTests(SnapshotFixture):
+    """cron.job.command pode trazer URL e cabeçalho com segredo em texto puro (achado real: pelo
+    menos um job deste banco embute x-cron-secret). cron.md e snapshot.json são publicados numa
+    branch pública — o command bruto nunca pode chegar lá."""
+
+    # Valor FALSO, só para o teste — nunca o segredo real do banco.
+    SEGREDO = "x-cron-secret", "fake00000000000000000000000000000000000000000000000000000000fake"
+    URL = "https://supabase.atomicabr.com.br/functions/v1/x"
+
+    def comando_com_segredo(self, *funcoes):
+        # net.http_post é sempre chamado: é exatamente o padrão real (job dispara webhook com
+        # segredo no cabeçalho) e também é, ele mesmo, uma chamada de função legítima — o teste
+        # tem de distinguir "o nome net.http_post pode aparecer" de "a URL/o segredo não podem".
+        chamadas = " ".join(f"{f}()" for f in funcoes)
+        header, valor = self.SEGREDO
+        return (f"select net.http_post(url := '{self.URL}', "
+                f"headers := jsonb_build_object('{header}','{valor}')); select {chamadas};")
+
+    def test_pure_function_lists_only_the_called_names(self):
+        redigir = self.snapshot.redigir_comando_cron
+        self.assertEqual(redigir(self.comando_com_segredo("public.snapshot_cron_health")),
+                          "chama: net.http_post, public.snapshot_cron_health")
+        # Duas funções: ordem estável (alfabética), sem repetir.
+        self.assertEqual(redigir(self.comando_com_segredo("cron.foo", "public.foo", "cron.foo")),
+                          "chama: cron.foo, net.http_post, public.foo")
+        self.assertEqual(redigir("select 1;"), "(sem chamada reconhecida)")
+        self.assertEqual(redigir(None), "(sem chamada reconhecida)")
+
+    def test_pure_function_never_echoes_the_url_or_the_secret_value(self):
+        redigir = self.snapshot.redigir_comando_cron
+        _, valor_do_segredo = self.SEGREDO
+        saida = redigir(self.comando_com_segredo("public.demo"))
+        self.assertNotIn(valor_do_segredo, saida)
+        self.assertNotIn(self.URL, saida)
+        self.assertIn("net.http_post", saida)  # o NOME da função é informação legítima, fica
+
+    def test_main_never_writes_the_raw_command_to_cron_md_or_snapshot_json(self):
+        _, valor_do_segredo = self.SEGREDO
+        cron = {"installed": True, "jobs": [{
+            "jobid": 1, "jobname": "cron-alert-email-every-30min", "schedule": "*/30 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        cron_md = (self.out / "cron.md").read_text(encoding="utf-8")
+        snapshot_json = (self.out / "snapshot.json").read_text(encoding="utf-8")
+        for saida in (cron_md, snapshot_json):
+            self.assertNotIn(valor_do_segredo, saida, "o segredo do command vazou para a saída publicada")
+            self.assertNotIn(self.URL, saida, "a URL do command vazou para a saída publicada")
+        self.assertIn("chama: net.http_post, public.demo", cron_md)
+
+    def test_redaction_does_not_break_the_cron_cross_reference(self):
+        # build_function_callers roda ANTES da redação: a função ainda precisa aparecer como
+        # chamada pelo job em callers["cron"], mesmo depois do command ter sido redigido.
+        cron = {"installed": True, "jobs": [{
+            "jobid": 7, "jobname": "job-de-teste", "schedule": "*/5 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        callers = self.metadata()["db"]["functions"][0]["callers"]
+        self.assertEqual(callers["cron"], ["7:job-de-teste"])
+
+    def test_carried_cron_is_not_redacted_a_second_time(self):
+        # O resumo "chama: f()" não termina em "(" — redigir de novo não bateria no regex e
+        # apagaria a informação ("(sem chamada reconhecida)") numa seção que não tem nada de
+        # errado, só está reaproveitada por falha de coleta.
+        cron = {"installed": True, "jobs": [{
+            "jobid": 1, "jobname": "job", "schedule": "*/5 * * * *",
+            "command": self.comando_com_segredo("public.demo"), "database": "postgres",
+            "username": "postgres", "active": True,
+        }]}
+        self.assertEqual(self.collect(cron=cron), 0)
+        primeira = (self.out / "cron.md").read_text(encoding="utf-8")
+        self.assertIn("chama: net.http_post, public.demo", primeira)
+
+        self.assertEqual(self.collect(cron=cron, failures=("cron",)), 0)
+        self.assertIn("cron", self.snapshot.CARRIED)
+        segunda = (self.out / "cron.md").read_text(encoding="utf-8")
+        self.assertIn("chama: net.http_post, public.demo", segunda,
+                       "a seção reaproveitada perdeu a redação já feita na publicação anterior")
+        self.assertNotIn("sem chamada reconhecida", segunda)
+
+    def test_pre_fix_snapshot_on_disk_is_not_trusted_even_if_cron_fails_right_after_deploy(self):
+        # Achado por auditoria adversarial (não visto em produção): um snapshot.json em disco
+        # ESCRITO POR UMA VERSAO ANTERIOR do script (format_version velho, sem a redação) ainda
+        # tem o command cru com o segredo. Se a coleta de "cron" falhar no primeiro run DEPOIS do
+        # deploy deste fix, introspect_db reaproveitaria esse previous_db["cron"] cru, e o guard
+        # "cron" not in CARRIED pularia a redação — pensado pra não redigir de novo um resumo já
+        # seguro, mas aqui reaproveitaria um dado que NUNCA foi redigido. O bump de FORMAT_VERSION
+        # é o que impede isto: um snapshot de versão antiga nunca é aceito como `previous`.
+        _, valor_do_segredo = self.SEGREDO
+        pre_fix = {
+            "format_version": 2,  # versao anterior a este fix (FORMAT_VERSION atual é 3)
+            "db": {"cron": {"installed": True, "jobs": [{
+                "jobid": 1, "jobname": "job-antigo", "schedule": "*/5 * * * *",
+                "command": self.comando_com_segredo("public.demo"),  # CRU: nunca foi redigido
+                "database": "postgres", "username": "postgres", "active": True,
+            }]}},
+            "api": {}, "errors": [], "carried": [],
+        }
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "snapshot.json").write_text(json.dumps(pre_fix), encoding="utf-8")
+
+        # A coleta de cron falha logo nesse primeiro run pós-deploy — justo o cenário que faria
+        # o código vazar o dado reaproveitado, se o format_version não tivesse sido invalidado.
+        # collect()==0 (não 2) também prova que prepare_output_directory() não travou o job só
+        # por achar a pasta não-vazia com um snapshot.json de versão antiga e sem marcador —
+        # achado colateral do mesmo bump: exigir a versão EXATA ali faria o job recusar a própria
+        # pasta pra sempre (nenhum run geraria o marcador novo, então nenhum run subsequente
+        # passaria). valid_previous_snapshot() agora só confere a forma, não a versão.
+        self.assertEqual(self.collect(failures=("cron",)), 0)
+
+        self.assertNotIn("cron", self.snapshot.CARRIED,
+                          "snapshot pre-fix nao pode ser aceito como `previous` para carry-over")
+        self.assertEqual(self.metadata()["format_version"], self.snapshot.FORMAT_VERSION)
+        cron_md = (self.out / "cron.md").read_text(encoding="utf-8")
+        snapshot_json = (self.out / "snapshot.json").read_text(encoding="utf-8")
+        for saida in (cron_md, snapshot_json):
+            self.assertNotIn(valor_do_segredo, saida, "o segredo do snapshot pre-fix vazou pelo carry-over")
+            self.assertNotIn(self.URL, saida, "a URL do snapshot pre-fix vazou pelo carry-over")
+            self.assertNotIn("job-antigo", saida, "o job antigo nao deveria ter sobrevivido ao reset de versao")
 
 
 class SnapshotCallerFreshnessTests(SnapshotFixture):

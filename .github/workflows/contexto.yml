@@ -195,6 +195,9 @@ jobs:
           python3 -m pip install --quiet --break-system-packages --only-binary :all: -r scripts/supabase_snapshot/requirements.txt
           command -v psql >/dev/null || sudo apt-get install -y -qq --no-install-recommends postgresql-client
 
+      - name: Testar o coletor (inclusive a redação de segredo do command do cron)
+        run: python3 -m unittest scripts.supabase_snapshot.test_snapshot -v
+
       - name: Resolver a connection string (mesma descoberta do db-admin.yml)
         id: conn
         env:
@@ -280,14 +283,18 @@ jobs:
           output = pathlib.Path(sys.argv[1])
           snapshot = output / "snapshot.json"
           data = json.loads(snapshot.read_text(encoding="utf-8"))
+          # So confere a FORMA (e' nosso, seguro de apagar), nao a versao exata -- mesmo motivo
+          # de valid_previous_snapshot() em snapshot.py: exigir a versao atual aqui recusaria um
+          # --force logo depois de um bump de FORMAT_VERSION, bem quando ele seria mais util.
           if not (
               isinstance(data, dict)
-              and data.get("format_version") == 2
+              and isinstance(data.get("format_version"), int)
               and isinstance(data.get("db"), dict)
               and isinstance(data.get("api"), dict)
           ):
               raise SystemExit("snapshot anterior inválido; regeneração forçada recusada")
-          (output / ".supabase-snapshot-output").write_text("supabase-snapshot-v2\n", encoding="utf-8")
+          # v3 = FORMAT_VERSION atual de snapshot.py; mantenha os dois em sincronia.
+          (output / ".supabase-snapshot-output").write_text("supabase-snapshot-v3\n", encoding="utf-8")
           snapshot.unlink()
           PY
           fi
@@ -334,6 +341,7 @@ jobs:
           name: contexto-supabase
           path: docs/contexto/supabase
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 1
 
   regras:
@@ -350,6 +358,16 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 60 # o último commit não-bot vira o `commit` do manifest
+
+      - name: Trazer docs/contexto/supabase (último publicado) para --schema-snapshot
+        run: |
+          mkdir -p "$CONTEXTO_DIR"
+          if git fetch --depth=1 origin "$CONTEXTO_BRANCH" 2>/dev/null \
+             && git archive "origin/$CONTEXTO_BRANCH" -- "$CONTEXTO_DIR/supabase" 2>/dev/null | tar -x; then
+            echo "schema-snapshot: $(find "$CONTEXTO_DIR/supabase" -type f 2>/dev/null | wc -l) arquivo(s) de origin/$CONTEXTO_BRANCH"
+          else
+            echo "::warning::origin/$CONTEXTO_BRANCH sem $CONTEXTO_DIR/supabase ainda — generate.py roda sem --schema-snapshot útil."
+          fi
 
       - name: Gerar regras/
         run: |
