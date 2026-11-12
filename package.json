@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "maintenance:doctor": "node scripts/maintenance/run.mjs doctor --root .",
+    "maintenance:check": "node scripts/maintenance/run.mjs check --root . --ref origin/main",
+    "maintenance:heal": "node scripts/maintenance/run.mjs heal --root . --ref origin/main",
+    "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "prepare": "husky",
     "dev": "vite",
     "build": "vite build",
@@ -44,7 +48,11 @@
     "settings:guard": "node scripts/ci/github-settings-guard.mjs",
     "ci:docs": "node scripts/ci/render-workflow-docs.mjs",
     "ci:docs:check": "node scripts/ci/render-workflow-docs.mjs --check",
-    "ci:test": "node --test 'scripts/ci/*.unit.mjs'"
+    "ci:test": "node --test 'scripts/ci/*.unit.mjs'",
+    "autofix": "node scripts/autofix/run.mjs",
+    "autofix:apply": "node scripts/autofix/run.mjs --apply",
+    "autofix:test": "node --test scripts/autofix.test.mjs",
+    "audit": "node scripts/audit/run.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
