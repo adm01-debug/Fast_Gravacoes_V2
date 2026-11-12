@@ -334,6 +334,7 @@ jobs:
           name: contexto-supabase
           path: docs/contexto/supabase
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 1
 
   regras:
@@ -350,6 +351,16 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 60 # o último commit não-bot vira o `commit` do manifest
+
+      - name: Trazer docs/contexto/supabase (último publicado) para --schema-snapshot
+        run: |
+          mkdir -p "$CONTEXTO_DIR"
+          if git fetch --depth=1 origin "$CONTEXTO_BRANCH" 2>/dev/null \
+             && git archive "origin/$CONTEXTO_BRANCH" -- "$CONTEXTO_DIR/supabase" 2>/dev/null | tar -x; then
+            echo "schema-snapshot: $(find "$CONTEXTO_DIR/supabase" -type f 2>/dev/null | wc -l) arquivo(s) de origin/$CONTEXTO_BRANCH"
+          else
+            echo "::warning::origin/$CONTEXTO_BRANCH sem $CONTEXTO_DIR/supabase ainda — generate.py roda sem --schema-snapshot útil."
+          fi
 
       - name: Gerar regras/
         run: |
