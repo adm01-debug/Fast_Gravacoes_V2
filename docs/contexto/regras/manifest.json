@@ -2,9 +2,9 @@
  "produtor": "ai-context-sync",
  "versao": "1.3.2",
  "perfil": "regras",
- "gerado_em": "2026-11-12 11:08 UTC",
- "commit": "3fae94c5746d476c5664ad4d59f7b9794d5530c8",
- "fonte": "código + migrations/types + manual/ (regras de negócio)",
+ "gerado_em": "2026-11-12 12:10 UTC",
+ "commit": "047e75b71cf08fb3db6ddbae7a665fd737bcf844",
+ "fonte": "código + banco real (snapshot) + manual/ (regras de negócio)",
  "entrada": "07-REGRAS-DE-NEGOCIO.md",
  "arquivos": [
   "07-REGRAS-DE-NEGOCIO.md",
@@ -12,16 +12,11 @@
   "11-GLOSSARIO-E-LACUNAS.md",
   "context.json"
  ],
- "schema_real_em": "",
- "fonte_schema": "migrations",
- "snapshot_gerado_em": "",
- "erros": [
-  "snapshot `docs/contexto/supabase/` não existe nesta execução — RLS, restrições, triggers e colunas de status foram derivados de migrations e podem divergir do banco"
- ],
- "avisos": [
-  "17 migration(s) com DDL dinâmico (EXECUTE format/loop) que não dá para reconstruir estaticamente: supabase/migrations/20260512143124_14e8e4ef-8a62-4abf-b154-aa95b8d01649.sql, supabase/migrations/20260512213123_cde65308-0c68-43ec-ab86-334d186a3b6d.sql, supabase/migrations/20260512213154_c63162d3-4250-46dc-8e13-665679808192.sql, supabase/migrations/20260512213230_3372d43f-d27b-4c27-97eb-766465a5b053.sql, supabase/migrations/20260512213257_f490c815-b7ca-4a1a-b2ec-a5037ceb33f0.sql …",
-  "SQL solto em supabase/ fora de migrations/ não entra na reconstrução do schema: supabase/_check_fn.sql, supabase/create_operator_fn.sql, supabase/fix_audit_hash.sql, supabase/fix_calculate_audit_hash.sql, supabase/fix_rls_recursion.sql, supabase/fix_staff_view_policies.sql"
- ],
- "inconsistencias": 63,
+ "schema_real_em": "docs/contexto/supabase",
+ "fonte_schema": "snapshot",
+ "snapshot_gerado_em": "2026-11-12T11:17:03Z",
+ "erros": [],
+ "avisos": [],
+ "inconsistencias": 58,
  "lacunas": 20
 }

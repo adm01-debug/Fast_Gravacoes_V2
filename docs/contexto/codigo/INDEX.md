@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3fae94c5746d476c5664ad4d59f7b9794d5530c8` (2026-11-12T08:03:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `047e75b71cf08fb3db6ddbae7a665fd737bcf844` (2026-11-12T08:41:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6928 nós · 20908 arestas · 633 comunidades · grafo do commit `3fae94c5`
-- comunidades maiores: card.tsx (213), skeleton.tsx (131), analytics/index.ts (122), KPIDashboard.tsx (117), input.tsx (111), badge.tsx (108), createAppError (105), snapshot.py (103), generate.py (101), cn (100), gerar.mjs (96), .write (96)
+- 6928 nós · 20908 arestas · 636 comunidades · grafo do commit `047e75b7`
+- comunidades maiores: card.tsx (213), skeleton.tsx (131), analytics/index.ts (122), KPIDashboard.tsx (117), input.tsx (111), badge.tsx (108), snapshot.py (103), generate.py (101), cn (100), gerar.mjs (96), .write (96), Button (94)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -336,6 +336,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-12 `047e75b` fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)
 - 2026-11-12 `3fae94c` fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)
 - 2026-11-11 `854fc23` fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)
 - 2026-11-11 `2f1c7bf` fix(ci): bundle-diff.mjs mostra "undefined KB" com totals antigo (#168)
@@ -350,7 +351,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `dfdb331` fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)
 - 2026-11-10 `d39d646` fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)
 - 2026-11-10 `7a712fb` fix(regras): usa o snapshot do banco como fonte (#154)
-- 2026-11-10 `9df0dd4` fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

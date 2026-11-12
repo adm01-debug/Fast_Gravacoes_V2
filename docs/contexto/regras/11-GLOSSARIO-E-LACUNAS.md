@@ -1,146 +1,145 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3fae94c574` · branch `main` · 2026-11-12 11:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `047e75b71c` · branch `main` · 2026-11-12 12:10 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> ⚠️ Tabelas do glossário e schema usado na auditoria código × schema: **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-12T11:17:03Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
 | Termo | Significado / valores | Tamanho | Origem |
 |---|---|---|---|
-| `abc_activities` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `abc_activity_rates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `abc_cost_pools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `abc_job_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `app_private.runtime_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
-| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
-| `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `backup_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
-| `bitrix24_field_mappings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `bitrix24_oauth_states` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
-| `bitrix24_oauth_tokens` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `bitrix24_sync_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `blocked_ips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `business_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `chat_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `cron_health_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `cron_p95_daily` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `csp_violation_reports` | Relatórios de violação de CSP coletados pela edge function csp-report (report-uri). Sem policy de INSERT: apenas service role grava. | 15 colunas | migration |
-| `daily_summaries` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `dashboard_layouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `dashboard_presets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `document_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `edge_health_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `efficiency_alert_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `energy_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `energy_consumption` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `energy_targets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `erp_api_keys` | Stores SHA-256 hashed API keys for ERP integration authentication. | 7 colunas | migration |
-| `error_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `feature_flags` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `gamification_rewards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `geo_blocking_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `geo_blocking_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `geo_blocking_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `inventory_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `inventory_movements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `ip_allowlist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `job_status_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `job_status_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 32 colunas | migration |
-| `kpi_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `login_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `login_lockouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `lot_components` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `lot_movements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `lot_quality_inspections` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `machine_downtime` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `machine_event_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `machine_health_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `machine_predictions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `machines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `maintenance_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `maintenance_checklist_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `maintenance_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `maintenance_item_responses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `maintenance_records` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
-| `maintenance_schedules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `maintenance_types` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `materials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `new_device_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `operator_achievements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `operator_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `operator_machines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `operator_rankings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `operator_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `operator_status_audit` | Audit log tracking operator status changes (activation, deactivation, removal) | 8 colunas | migration |
-| `packaging_checklist_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `packaging_defects` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `packaging_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `packaging_sla_overrides` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `packaging_task_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `packaging_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
-| `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `pre_production_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `prediction_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `product_categories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `production_losses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `production_lots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `profiles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `push_notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `push_subscriptions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `qr_scan_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `query_telemetry` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `rate_limit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `rate_limit_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `report_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `reward_redemptions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `rls_test_results` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `role_permissions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `security_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `shift_checklist_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `shift_handover_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `shift_handovers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `shift_occurrences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `shift_pending_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `shipments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `shipping_providers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `spc_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `spc_capability_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `spc_control_parameters` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `spc_measurements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `system_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
-| `technical_conversations` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `technical_documents` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `technical_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `technical_sheet_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `technical_sheet_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `technical_sheet_favorites` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
-| `technical_sheet_materials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `technical_sheet_steps` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `technical_sheet_tips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `technical_sheet_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `technical_sheets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
-| `techniques` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `telemetry_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `tpm_execution_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `tpm_execution_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `tpm_execution_parts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `tpm_execution_supplies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `tpm_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
-| `tpm_notification_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `tpm_notification_queue` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `tpm_notification_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `tpm_notification_templates_published` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `tpm_parameter_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `tpm_severity_configs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `user_devices` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `user_favorites` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `user_mfa_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `user_notification_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `user_roles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `webhook_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
+| `abc_activities` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `abc_activity_rates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `abc_cost_pools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `abc_job_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `app_private.runtime_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | banco real |
+| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 33 colunas | banco real |
+| `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `backup_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | banco real |
+| `bitrix24_field_mappings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `bitrix24_oauth_states` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | banco real |
+| `bitrix24_oauth_tokens` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `bitrix24_sync_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `blocked_ips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `business_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `chat_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `cron_health_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `cron_p95_daily` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `csp_violation_reports` | Relatórios de violação de CSP coletados pela edge function csp-report (report-uri). Sem policy de INSERT: apenas service role grava. | 15 colunas | banco real |
+| `daily_summaries` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `dashboard_layouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `dashboard_presets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `document_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `edge_health_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `efficiency_alert_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `energy_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `energy_consumption` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `energy_targets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `error_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `feature_flags` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `gamification_rewards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `geo_blocking_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `geo_blocking_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `geo_blocking_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `inventory_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `inventory_movements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `ip_allowlist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `job_status_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `job_status_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 32 colunas | banco real |
+| `kpi_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `login_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `login_lockouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `lot_components` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `lot_movements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `lot_quality_inspections` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `machine_downtime` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `machine_event_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `machine_health_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `machine_predictions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `machines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `maintenance_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `maintenance_checklist_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `maintenance_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `maintenance_item_responses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `maintenance_records` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | banco real |
+| `maintenance_schedules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `maintenance_types` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `materials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `new_device_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `operator_achievements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `operator_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `operator_machines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `operator_rankings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `operator_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `operator_status_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `packaging_checklist_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `packaging_defects` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `packaging_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `packaging_sla_overrides` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `packaging_task_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `packaging_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | banco real |
+| `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `pre_production_checklists` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | banco real |
+| `prediction_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `product_categories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `production_losses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `production_lots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `profiles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `push_notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `push_subscriptions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `qr_scan_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `query_telemetry` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `rate_limit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `rate_limit_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `report_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `reward_redemptions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `rls_test_results` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `role_permissions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `security_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `shift_checklist_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `shift_handover_checklist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `shift_handovers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `shift_occurrences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `shift_pending_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `shipments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | banco real |
+| `shipping_providers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `spc_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `spc_capability_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `spc_control_parameters` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | banco real |
+| `spc_measurements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | banco real |
+| `system_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | banco real |
+| `technical_conversations` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `technical_documents` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | banco real |
+| `technical_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `technical_sheet_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `technical_sheet_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `technical_sheet_favorites` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | banco real |
+| `technical_sheet_materials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `technical_sheet_steps` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `technical_sheet_tips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `technical_sheet_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
+| `technical_sheets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | banco real |
+| `techniques` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `telemetry_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `tpm_execution_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
+| `tpm_execution_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `tpm_execution_parts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `tpm_execution_supplies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `tpm_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | banco real |
+| `tpm_notification_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `tpm_notification_queue` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `tpm_notification_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
+| `tpm_notification_templates_published` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `tpm_parameter_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
+| `tpm_severity_configs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
+| `user_devices` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | banco real |
+| `user_favorites` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `user_mfa_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
+| `user_notification_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `user_roles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
+| `webhook_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
 | `app_role` (enum) | coordinator, operator, manager, admin |  | banco |
 | `sheet_status` (enum) | draft, published, review_needed |  | banco |
 | `skill_level` (enum) | basic, advanced, expert |  | banco |
@@ -242,55 +241,50 @@
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `failed` para `login_status` usado no código não existe em nenhum enum do banco/TS | `filtra:src/features/admin/hooks/useMonitoringData.ts` |
 | coluna | coluna `processed` usada no código não existe no schema de `tpm_notification_queue` |  |
-| tabela | tabela `backups` usada no código não existe nas migrations/types do repo | `supabase/functions/backup-scheduler/index.ts` |
-| rls | `erp_api_keys`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| tabela | tabela `backups` usada no código não existe no banco real (snapshot) | `supabase/functions/backup-scheduler/index.ts` |
+| tabela | tabela `erp_api_keys` usada no código não existe no banco real (snapshot) | `supabase/functions/erp-api/index.ts` |
 | rls | `inventory_movements`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
 | rls | `inventory_movements`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
 | rls | `profiles`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |
 | rls | `tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/maintenance/components/TPMNotificationTemplates.tsx` |
+| rpc | RPC `count_active_operators_since` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
+| rpc | RPC `count_running_machines` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
+| rpc | RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot) | `src/features/production/hooks/useProductionLosses.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataExport.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataImport.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useBulkActions.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/ReportBuilderPage.tsx` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup-scheduler/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/excel-export/index.ts` |
-| segurança | função `trigger_send_tpm_email` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261019140000_validation_hardening.sql` |
-| segurança | função `audit_tpm_execution_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260508130112_1bb71df0-47bb-4121-9d87-b4c184c45325.sql` |
-| segurança | função `notify_loss_risk` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
-| segurança | função `increment_sheet_view_count` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260509121953_b8753901-5152-47a8-9b24-9de24614e2cb.sql` |
-| segurança | função `update_inventory_stock` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260509124023_04666a2c-f77e-47dc-88f8-dd50f6615c3d.sql` |
-| segurança | função `check_job_overlap` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql` |
-| segurança | função `trigger_auto_promotion` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
-| segurança | função `create_technical_sheet_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260512163310_dd03391e-12f0-470b-9f53-6e6371248d69.sql` |
-| segurança | função `audit_logistics_changes` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260512174222_10c215dd-dab4-4535-9789-a63c68021a74.sql` |
-| segurança | função `update_audit_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260520000001_security_rls_indexes_fixes.sql` |
-| segurança | função `increment_job_lost_pieces` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20260531000001_add_increment_job_lost_pieces_rpc.sql` |
-| segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
-| segurança | função `app_private.runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) — NÃO VERIFICADO: há DDL dinâmico (EXECUTE format) nas migrations que pode ter fixado o search_path; confirme no banco | `supabase/migrations/20261008160000_runtime_config_edge_auth.sql` |
+| segurança | função `app_private.runtime_config_get` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `docs/contexto/supabase/functions/app_private/runtime_config_get__8ddb4bac95115aff.sql` |
+| segurança | função `auto_reassign_stale_packaging_tasks` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `docs/contexto/supabase/functions/public/auto_reassign_stale_packaging_tasks__12ae32cb1ec02d01.sql` |
+| segurança | função `notify_loss_risk` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `docs/contexto/supabase/functions/public/notify_loss_risk__12ae32cb1ec02d01.sql` |
+| segurança | função `trigger_auto_promotion` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `docs/contexto/supabase/functions/public/trigger_auto_promotion__12ae32cb1ec02d01.sql` |
+| segurança | função `trigger_send_tpm_email` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `docs/contexto/supabase/functions/public/trigger_send_tpm_email__12ae32cb1ec02d01.sql` |
 | webhook | edge function `external-db-bridge` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/external-db-bridge/index.ts` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
+- `archived_jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `bitrix24_oauth_states.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `cron_health_history.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `job_status_audit.old_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `job_status_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `job_status_history.previous_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `job_status_history.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `technical_sheet_steps.step_number` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `login_audit.login_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `maintenance_records.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `production_lots.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `push_notifications.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `login_audit.login_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `reward_redemptions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `shipments.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `job_status_history.previous_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `job_status_history.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `technical_sheet_steps.step_number` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `telemetry_traces.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `job_status_audit.old_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `job_status_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `cron_health_history.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `bitrix24_oauth_states.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `archived_jobs.shipping_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `techniques`, `machines`, `jobs`, `profiles`, `user_roles`, `efficiency_alert_history`, `technical_conversations`, `technical_messages`, `qr_scan_history`, `bitrix24_sync_history`, `bitrix24_oauth_tokens`, `bitrix24_field_mappings` …
-- Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
+- `tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- 130/131 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …
+- Há tabelas usadas no código que não existem no banco real (snapshot) — a chamada falha em produção ou a tabela ainda não foi criada.
 
 ## Regras manuais presentes
 

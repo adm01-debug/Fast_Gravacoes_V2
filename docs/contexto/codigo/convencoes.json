@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)",
    "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)",
    "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)",
    "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)",
-   "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)",
-   "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)"
+   "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

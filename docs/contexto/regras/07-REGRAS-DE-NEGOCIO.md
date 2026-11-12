@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3fae94c574` · branch `main` · 2026-11-12 11:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `047e75b71c` · branch `main` · 2026-11-12 12:10 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> ⚠️ Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **derivado de migrations — pode divergir do banco** (snapshot `docs/contexto/supabase/` não existe nesta execução). Migration é histórico, não estado: antes de confiar numa policy, constraint ou trigger daqui, confirme no banco real (`docs/contexto/supabase/`).
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-12T11:17:03Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,410 +107,492 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — derivado de migrations — pode divergir do banco)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-12T11:17:03Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
-341 política(s) em 131 tabela(s), agrupadas por tabela — lista completa, sem cortes.
+309 política(s) em 130 tabela(s), agrupadas por tabela — lista completa, sem cortes.
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
-| `abc_activities` | Coordinators can manage activities | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `abc_activities` | Authenticated users can view activities | SELECT | authenticated | permissive | `true` |  |
-| `abc_activity_rates` | Coordinators can manage activity rates | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `abc_activity_rates` | Active users can view activity rates | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `abc_cost_pools` | Coordinators can manage cost pools | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `abc_cost_pools` | Active users can view cost pools | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `abc_job_costs` | Coordinators can manage job costs | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `abc_job_costs` | Active users can view job costs | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `archived_jobs` | Managers and admins can read archived jobs | SELECT | public | permissive | `app_private.has_role(auth.uid(), 'manager'::public.app_role) OR app_private.has_role(auth.uid(), 'admin'::public.app_role)` |  |
+| `abc_activities` | Coordinators can manage activities | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `abc_activities` | Authenticated users can view activities | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `abc_activity_rates` | Coordinators can manage activity rates | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `abc_activity_rates` | Authenticated users can view activity rates | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `abc_cost_pools` | Coordinators can manage cost pools | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `abc_cost_pools` | Authenticated users can view cost pools | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `abc_job_costs` | Coordinators can manage job costs | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `abc_job_costs` | Authenticated users can view job costs | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `archived_jobs` | Managers and admins can read archived jobs | SELECT | public | permissive | `(app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
 | `audit_log` | Deny all changes to audit logs | ALL | public | permissive | `false` | `false` |
-| `audit_log` | Coordinators and managers can view audit log | SELECT | authenticated | permissive | `app_private.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR app_private.has_role((SELECT auth.uid()), 'manager'::app_role)` |  |
-| `backup_logs` | Managers and admins can read backup logs | SELECT | public | permissive | `app_private.has_role(auth.uid(), 'manager'::public.app_role) OR app_private.has_role(auth.uid(), 'admin'::public.app_role)` |  |
-| `bitrix24_field_mappings` | Coordinators can manage mappings | ALL | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role)` |
-| `bitrix24_field_mappings` | Authenticated users can view field mappings | SELECT | authenticated | permissive | `true` |  |
+| `audit_log` | Coordinators and managers can view audit log | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `backup_logs` | Managers and admins can read backup logs | SELECT | public | permissive | `(app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `bitrix24_field_mappings` | Coordinators can manage mappings | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `bitrix24_field_mappings` | Authenticated users can view field mappings | SELECT | authenticated | permissive | `has_any_active_role()` |  |
 | `bitrix24_oauth_states` | Service role only access | ALL | public | permissive | `false` | `false` |
 | `bitrix24_oauth_tokens` | Service role only access | ALL | public | permissive | `false` | `false` |
-| `bitrix24_sync_history` | Coordinators and managers can view sync history | SELECT | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `bitrix24_sync_history` | Elevated can insert sync records | INSERT | authenticated | permissive |  | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `bitrix24_sync_history` | Elevated can update sync records | UPDATE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `blocked_ips` | Coordinators can manage blocked IPs | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `blocked_ips` | Managers can view blocked IPs | SELECT | public | permissive | `has_role((select auth.uid()), 'manager')` |  |
-| `business_config` | Configs são visíveis por todos autenticados | SELECT | authenticated | permissive | `true` |  |
-| `business_config` | Gestores podem inserir configs | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'manager')` |
-| `business_config` | Apenas gestores podem atualizar configs | UPDATE | authenticated | permissive | `public.has_role((select auth.uid()), 'manager')` | `public.has_role((select auth.uid()), 'manager')` |
-| `chat_messages` | Authenticated users can view chat messages | SELECT | authenticated | permissive | `true` |  |
-| `chat_messages` | Authenticated users can send chat messages | INSERT | authenticated | permissive |  | `(select auth.uid()) = sender_id` |
-| `chat_messages` | Users can update own messages | UPDATE | authenticated | permissive | `(select auth.uid()) = sender_id` | _= USING_ |
-| `cron_health_history` | Coordenadores e gestores leem historico de cron | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |  |
-| `cron_p95_daily` | Coordenadores e gestores leem tendencia p95 | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |  |
-| `csp_violation_reports` | Coordinators and managers can view csp reports | SELECT | public | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` |  |
-| `daily_summaries` | Coordinators can manage summaries | ALL | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |
-| `daily_summaries` | Active role users can view summaries | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `dashboard_layouts` | Users can view their own dashboard layout | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `dashboard_layouts` | Users can view their own layouts | SELECT | authenticated | permissive | `(select auth.uid()) = user_id` |  |
-| `dashboard_layouts` | Users can insert their own dashboard layout | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `dashboard_layouts` | Users can update their own dashboard layout | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `dashboard_presets` | Users can view their own presets | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `dashboard_presets` | Users can create their own presets | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `dashboard_presets` | Users can update their own presets | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `dashboard_presets` | Users can delete their own presets | DELETE | public | permissive | `(select auth.uid()) = user_id` |  |
-| `document_versions` | Coordinators can manage versions | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role)` |
-| `document_versions` | Active roles can view approved document versions | SELECT | authenticated | permissive | `public.has_any_active_role() AND EXISTS ( SELECT 1 FROM public.technical_documents td WHERE td.id = document_versions.document_id AND ( td.status = 'approved' OR app_private.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR app_private.has_role((SELECT auth.uid()), 'manager'::app_role) ) )` |  |
-| `edge_health_history` | Coordinators and managers can view edge health | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |  |
-| `efficiency_alert_history` | Active role users can view efficiency alerts | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `efficiency_alert_history` | Elevated can insert efficiency alerts | INSERT | authenticated | permissive |  | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `efficiency_alert_history` | Elevated can update efficiency alerts | UPDATE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `energy_alerts` | Active roles can manage energy alerts | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `energy_alerts` | Active users can view energy alerts | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `energy_consumption` | Coordinators can manage energy consumption | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role)` |
-| `energy_consumption` | Active users can view energy consumption | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `energy_targets` | Coordinators can manage energy targets | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role)` |
-| `energy_targets` | Active users can view energy targets | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `error_logs` | Users can view their own error logs | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `error_logs` | Users can insert error logs | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `feature_flags` | Apenas administradores gerenciam flags | ALL | authenticated | permissive | `public.has_role((select auth.uid()), 'manager')` | `public.has_role((select auth.uid()), 'manager')` |
-| `feature_flags` | Flags visíveis por todos autenticados | SELECT | authenticated | permissive | `true` |  |
-| `gamification_rewards` | Active roles can view active rewards | SELECT | authenticated | permissive | `is_active = true AND public.has_any_active_role()` |  |
-| `geo_blocking_logs` | Coordinators and managers can view geo logs | SELECT | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` |  |
-| `geo_blocking_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR user_id IS NULL OR app_private.has_role(auth.uid(),'coordinator'::app_role) OR app_private.has_role(auth.uid(),'manager'::app_role) OR app_private.has_role(auth.uid(),'admin'::app_role)` |
-| `geo_blocking_rules` | Coordinators and managers can manage geo rules | ALL | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` |
-| `geo_blocking_rules` | Coordinators and managers can view geo blocking rules | SELECT | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `geo_blocking_settings` | Coordinators and managers can manage geo settings | ALL | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)` |
-| `geo_blocking_settings` | Coordinators and managers can view geo settings | SELECT | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `inventory_items` | Inventory items managed by managers/coordinators | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` |
-| `inventory_items` | Active roles can view inventory items | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `inventory_movements` | Active roles can view inventory movements | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `ip_allowlist` | Coordinators can manage IP allowlist | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `ip_allowlist` | Coordinators can view IP allowlist | SELECT | public | permissive | `has_role((select auth.uid()), 'coordinator') OR has_role((select auth.uid()), 'manager')` |  |
-| `job_status_audit` | Deny direct client writes to job_status_audit | ALL | authenticated, anon | permissive | `false` | `false` |
-| `job_status_audit` | Staff can view job status audit | SELECT | authenticated | permissive | `public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role)` |  |
-| `job_status_history` | Authenticated users can view job status history | SELECT | authenticated | permissive | `true` |  |
-| `jobs` | Authenticated users can view jobs | SELECT | authenticated | permissive | `true` |  |
-| `jobs` | Authenticated users can insert jobs | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `jobs` | Coordinators and managers can insert jobs | INSERT | public | permissive |  | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |
-| `jobs` | Coordinators and managers can update jobs | UPDATE | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` | _= USING_ |
-| `jobs` | Operators can update jobs on assigned machines | UPDATE | authenticated | permissive | `has_role(auth.uid(), 'operator'::app_role) AND machine_id IN ( SELECT machine_id FROM public.operator_machines WHERE operator_id = auth.uid() )` | _= USING_ |
-| `jobs` | Coordinators and managers can delete jobs | DELETE | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `kpi_alerts` | Admins can view all alerts | SELECT | authenticated | permissive | `public.has_role((select auth.uid()), 'admin') OR public.has_role((select auth.uid()), 'manager')` |  |
-| `login_audit` | Coordinators can view all login audit | SELECT | public | permissive | `has_role(auth.uid(), 'coordinator') OR has_role(auth.uid(), 'manager')` |  |
-| `login_audit` | Users can view own login audit | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `login_audit` | Authenticated can insert audit records | INSERT | authenticated | permissive |  | `auth.uid() IS NOT NULL` |
-| `login_audit` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
+| `bitrix24_sync_history` | Coordinators and managers can view sync history | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `bitrix24_sync_history` | Elevated can insert sync records | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `bitrix24_sync_history` | Elevated can update sync records | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `blocked_ips` | Coordinators can manage blocked IPs | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `blocked_ips` | Managers can view blocked IPs | SELECT | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
+| `business_config` | Configs são visíveis por todos autenticados | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `business_config` | Gestores podem inserir configs | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'manager'::app_role)` |
+| `business_config` | Apenas gestores podem atualizar configs | UPDATE | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
+| `chat_messages` | Authenticated users can view chat messages | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `chat_messages` | Authenticated users can send chat messages | INSERT | authenticated | permissive |  | `(( SELECT auth.uid() AS uid) = sender_id)` |
+| `chat_messages` | Users can update own messages | UPDATE | authenticated | permissive | `(( SELECT auth.uid() AS uid) = sender_id)` | _= USING_ |
+| `cron_health_history` | Coordenadores e gestores leem historico de cron | SELECT | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |  |
+| `cron_p95_daily` | Coordenadores e gestores leem tendencia p95 | SELECT | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |  |
+| `csp_violation_reports` | Coordinators and managers can view csp reports | SELECT | public | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `daily_summaries` | Coordinators can manage summaries | ALL | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `daily_summaries` | Authenticated users can view summaries | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `dashboard_layouts` | Users can view their own dashboard layout | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `dashboard_layouts` | Users can view their own layouts | SELECT | authenticated | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `dashboard_layouts` | Users can insert their own dashboard layout | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `dashboard_layouts` | Users can update their own dashboard layout | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `dashboard_presets` | Users can view their own presets | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `dashboard_presets` | Users can create their own presets | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `dashboard_presets` | Users can update their own presets | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `dashboard_presets` | Users can delete their own presets | DELETE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `document_versions` | Coordinators can manage versions | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `document_versions` | Active roles can view approved document versions | SELECT | authenticated | permissive | `(has_any_active_role() AND (EXISTS ( SELECT 1 FROM technical_documents td WHERE ((td.id = document_versions.document_id) AND ((td.status = 'approved'::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))))))` |  |
+| `edge_health_history` | Coordinators and managers can view edge health | SELECT | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |  |
+| `efficiency_alert_history` | Authenticated users can view efficiency alert history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `efficiency_alert_history` | Elevated can insert efficiency alerts | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `efficiency_alert_history` | Elevated can update efficiency alerts | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `energy_alerts` | Active roles can manage energy alerts | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `energy_alerts` | Authenticated users can view energy alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `energy_consumption` | Coordinators can manage energy consumption | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `energy_consumption` | Authenticated users can view energy consumption | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `energy_targets` | Coordinators can manage energy targets | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `energy_targets` | Authenticated users can view energy targets | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `error_logs` | Users can view their own error logs | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `error_logs` | Users can insert error logs | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
+| `feature_flags` | Apenas administradores gerenciam flags | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
+| `feature_flags` | Flags visíveis por todos autenticados | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `gamification_rewards` | Active roles can view active rewards | SELECT | authenticated | permissive | `((is_active = true) AND has_any_active_role())` |  |
+| `geo_blocking_logs` | Coordinators and managers can view geo logs | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `geo_blocking_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR (user_id IS NULL) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `geo_blocking_rules` | Coordinators and managers can manage geo rules | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `geo_blocking_rules` | Coordinators can manage geo blocking rules | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `geo_blocking_rules` | Coordinators and managers can view geo blocking rules | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `geo_blocking_settings` | Coordinators and managers can manage geo settings | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `geo_blocking_settings` | Coordinators can manage geo settings | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `geo_blocking_settings` | Coordinators and managers can view geo settings | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `inventory_items` | Inventory items managed by managers/coordinators | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` |
+| `inventory_items` | Active roles can view inventory items | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `inventory_movements` | Active roles can view inventory movements | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `ip_allowlist` | Coordinators can manage IP allowlist | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `ip_allowlist` | Coordinators can view IP allowlist | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `job_status_audit` | Deny direct client writes to job_status_audit | ALL | anon, authenticated | permissive | `false` | `false` |
+| `job_status_audit` | Staff can view job status audit | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `job_status_history` | Authenticated users can view job status history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `jobs` | Authenticated users can view jobs | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `jobs` | Coordinators and managers can insert jobs | INSERT | public | permissive |  | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `jobs` | Coordinators and managers can update jobs | UPDATE | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | _= USING_ |
+| `jobs` | Operators can update jobs on assigned machines | UPDATE | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'operator'::app_role) AND (machine_id IN ( SELECT operator_machines.machine_id FROM operator_machines WHERE (operator_machines.operator_id = ( SELECT auth.uid() AS uid)))))` | _= USING_ |
+| `jobs` | Coordinators and managers can delete jobs | DELETE | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `kpi_alerts` | Admins can view all alerts | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `login_audit` | Coordinators can view all login audit | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `login_audit` | Users can view own login audit | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `login_audit` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
 | `login_lockouts` | Service role only | ALL | public | permissive | `false` | _= USING_ |
-| `lot_components` | Coordinators can manage lot components | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` |
-| `lot_components` | Active users can view lot components | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `lot_movements` | Active users can view lot movements | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `lot_movements` | Active roles can insert movements | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `lot_quality_inspections` | Active roles can manage inspections | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `lot_quality_inspections` | Coordinators can manage quality inspections | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `lot_quality_inspections` | Active users can view quality inspections | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `machine_downtime` | Active roles can manage machine downtime | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `machine_downtime` | Authenticated users can view machine downtime | SELECT | authenticated | permissive | `true` |  |
-| `machine_event_audit` | Staff can view machine event audit | SELECT | authenticated | permissive | `public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role)` |  |
-| `machine_health_metrics` | Only coordinators can manage health metrics | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `machine_health_metrics` | Active users can view health metrics | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `machine_predictions` | Only coordinators can manage predictions | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `machine_predictions` | Active users can view predictions | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `machine_predictions` | Authenticated users can insert machine_predictions | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `machines` | Coordinators can manage machines | ALL | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role)` |
-| `machines` | Authenticated users can view machines | SELECT | authenticated | permissive | `true` |  |
-| `maintenance_alerts` | Active users can view maintenance alerts | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `maintenance_alerts` | Elevated can insert maintenance alerts | INSERT | authenticated | permissive |  | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `maintenance_alerts` | Elevated can update maintenance alerts | UPDATE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `maintenance_checklist_items` | Coordinators can manage checklist items | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `maintenance_checklist_items` | Authenticated users can view maintenance checklist items | SELECT | authenticated | permissive | `true` |  |
-| `maintenance_checklists` | Coordinators can manage maintenance checklists | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `maintenance_checklists` | Authenticated users can view maintenance checklists | SELECT | authenticated | permissive | `true` |  |
-| `maintenance_item_responses` | Active roles can manage item responses | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `maintenance_item_responses` | Active users can view item responses | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `maintenance_records` | Active users can view maintenance records | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `maintenance_records` | Active roles can insert maintenance records | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `maintenance_records` | Owner or elevated can update maintenance records | UPDATE | authenticated | permissive | `performed_by = auth.uid() OR approver_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `performed_by = auth.uid() OR approver_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `maintenance_schedules` | Admins can manage maintenance schedules | ALL | public | permissive | `app_private.has_role(auth.uid(), 'admin'::public.app_role)` | `app_private.has_role(auth.uid(), 'admin'::public.app_role)` |
-| `maintenance_schedules` | Coordinators can manage maintenance schedules | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `maintenance_schedules` | Managers can manage maintenance schedules | ALL | public | permissive | `app_private.has_role(auth.uid(), 'manager'::public.app_role)` | `app_private.has_role(auth.uid(), 'manager'::public.app_role)` |
-| `maintenance_schedules` | Authenticated users can view maintenance schedules | SELECT | authenticated | permissive | `true` |  |
-| `maintenance_types` | Coordinators can manage maintenance types | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `maintenance_types` | Authenticated users can view maintenance types | SELECT | authenticated | permissive | `true` |  |
-| `materials` | Coordinators can manage materials | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `materials` | Authenticated users can view materials | SELECT | authenticated | permissive | `true` |  |
-| `new_device_alerts` | Users can view their own alerts | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `new_device_alerts` | Authenticated can insert device alerts | INSERT | authenticated | permissive |  | `auth.uid() = user_id` |
-| `new_device_alerts` | Authenticated can update device alerts | UPDATE | authenticated | permissive | `auth.uid() = user_id` | _= USING_ |
-| `operator_achievements` | Coordinators can manage achievements | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `operator_achievements` | Only coordinators can manage achievements | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `operator_achievements` | Active users can view operator achievements | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `operator_goals` | Coordinators can manage operator goals | ALL | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role)` |
-| `operator_goals` | Active users can view operator goals | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `operator_machines` | Coordinators can manage operator machines | ALL | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role)` |
-| `operator_machines` | Active users can view operator machines | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `operator_rankings` | Coordinators can manage rankings | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `operator_rankings` | Only coordinators can manage rankings | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `operator_rankings` | Active users can view operator rankings | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `operator_skills` | Coordinators can manage operator skills | ALL | public | permissive | `public.has_role((select auth.uid()), 'coordinator')` | _= USING_ |
-| `operator_skills` | Authenticated users can view operator skills | SELECT | authenticated | permissive | `true` |  |
-| `operator_skills` | Authenticated users can insert operator_skills | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `operator_status_audit` | Coordinators can view operator audit logs | SELECT | public | permissive | `has_role(auth.uid(), 'coordinator') OR has_role(auth.uid(), 'manager')` |  |
-| `operator_status_audit` | Coordinators can insert operator audit logs | INSERT | public | permissive |  | `has_role(auth.uid(), 'coordinator')` |
-| `packaging_checklist_items` | checklist_items_manage | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |
-| `packaging_checklist_items` | checklist_items_read | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `packaging_defects` | Authorized defect management | ALL | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.packaging_tasks WHERE id = packaging_task_id AND (assigned_to = auth.uid() OR public.has_role(auth.uid(), 'coordinator')) )` | _= USING_ |
-| `packaging_defects` | Staff manage all defects | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
+| `lot_components` | Coordinators can manage lot components | ALL | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `lot_components` | Authenticated users can view lot components | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `lot_movements` | Authenticated users can view lot movements | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `lot_movements` | Active roles can insert movements | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `lot_quality_inspections` | Active roles can manage inspections | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `lot_quality_inspections` | Coordinators can manage quality inspections | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `lot_quality_inspections` | Authenticated users can view quality inspections | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `machine_downtime` | Active roles can manage machine downtime | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `machine_downtime` | Authenticated users can view machine downtime | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `machine_event_audit` | Staff can view machine event audit | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `machine_health_metrics` | Only coordinators can manage health metrics | ALL | public | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `machine_health_metrics` | Authenticated users can view health metrics | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `machine_predictions` | Only coordinators can manage predictions | ALL | public | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `machine_predictions` | Authenticated users can view predictions | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `machines` | Coordinators can manage machines | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `machines` | Authenticated users can view machines | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_alerts` | Authenticated users can view maintenance alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_alerts` | Elevated can insert maintenance alerts | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `maintenance_alerts` | Elevated can update maintenance alerts | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `maintenance_checklist_items` | Coordinators can manage checklist items | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `maintenance_checklist_items` | Authenticated users can view maintenance checklist items | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_checklists` | Coordinators can manage maintenance checklists | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `maintenance_checklists` | Authenticated users can view maintenance checklists | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_item_responses` | Active roles can manage item responses | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `maintenance_item_responses` | Authenticated users can view item responses | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_records` | Authenticated users can view maintenance records | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_records` | Active roles can insert maintenance records | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `maintenance_records` | Owner or elevated can update maintenance records | UPDATE | authenticated | permissive | `((performed_by = auth.uid()) OR (approver_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `((performed_by = auth.uid()) OR (approver_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `maintenance_schedules` | Admins can manage maintenance schedules | ALL | public | permissive | `app_private.has_role(auth.uid(), 'admin'::app_role)` | `app_private.has_role(auth.uid(), 'admin'::app_role)` |
+| `maintenance_schedules` | Coordinators can manage maintenance schedules | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `maintenance_schedules` | Managers can manage maintenance schedules | ALL | public | permissive | `app_private.has_role(auth.uid(), 'manager'::app_role)` | `app_private.has_role(auth.uid(), 'manager'::app_role)` |
+| `maintenance_schedules` | Authenticated users can view maintenance schedules | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `maintenance_types` | Coordinators can manage maintenance types | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `maintenance_types` | Authenticated users can view maintenance types | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `materials` | Coordinators can manage materials | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `materials` | Authenticated users can view materials | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `new_device_alerts` | Users can view their own alerts | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `new_device_alerts` | Authenticated can insert device alerts | INSERT | authenticated | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `new_device_alerts` | Authenticated can update device alerts | UPDATE | authenticated | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `operator_achievements` | Coordinators can manage achievements | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `operator_achievements` | Authenticated users can view achievements | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `operator_goals` | Coordinators can manage operator goals | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `operator_goals` | Authenticated users can view operator goals | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `operator_machines` | Coordinators can manage operator machines | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `operator_machines` | Authenticated users can view operator machines | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `operator_rankings` | Coordinators can manage rankings | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `operator_rankings` | Authenticated users can view rankings | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `operator_skills` | Coordinators can manage operator skills | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | _= USING_ |
+| `operator_skills` | Authenticated users can view operator skills | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `operator_status_audit` | Coordinators can view operator audit logs | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `operator_status_audit` | Coordinators can insert operator audit logs | INSERT | public | permissive |  | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `packaging_checklist_items` | checklist_items_manage | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |
+| `packaging_checklist_items` | checklist_items_read | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `packaging_defects` | Authorized defect management | ALL | authenticated | permissive | `(EXISTS ( SELECT 1 FROM packaging_tasks WHERE ((packaging_tasks.id = packaging_defects.packaging_task_id) AND ((packaging_tasks.assigned_to = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role)))))` | _= USING_ |
+| `packaging_defects` | Staff manage all defects | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
 | `packaging_defects` | Anyone can see defects | SELECT | authenticated | permissive | `true` |  |
-| `packaging_defects` | Operators view defects of accessible tasks | SELECT | authenticated | permissive | `public.has_any_active_role() AND EXISTS ( SELECT 1 FROM public.packaging_tasks t WHERE t.id = packaging_defects.packaging_task_id AND (t.assigned_to IS NULL OR t.assigned_to = auth.uid()) )` |  |
-| `packaging_defects` | Operators insert defects on their tasks | INSERT | authenticated | permissive |  | `public.has_role(auth.uid(), 'operator') AND reported_by = auth.uid() AND EXISTS ( SELECT 1 FROM public.packaging_tasks t WHERE t.id = packaging_task_id AND (t.assigned_to IS NULL OR t.assigned_to = auth.uid()) )` |
-| `packaging_settings` | Staff manage settings | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `packaging_settings` | All active users read settings | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `packaging_sla_overrides` | packaging_sla_overrides_select_authenticated | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `packaging_sla_overrides` | packaging_sla_overrides_insert_coord | INSERT | authenticated | permissive |  | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |
-| `packaging_sla_overrides` | packaging_sla_overrides_update_coord | UPDATE | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |
-| `packaging_sla_overrides` | packaging_sla_overrides_delete_coord | DELETE | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager')` |  |
-| `packaging_task_checklist` | pkg_task_checklist_write | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'operator')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'operator')` |
-| `packaging_task_checklist` | pkg_task_checklist_read | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `packaging_tasks` | Staff manage all packaging tasks | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `packaging_tasks` | Operators view unassigned or own packaging tasks | SELECT | authenticated | permissive | `public.has_any_active_role() AND (assigned_to IS NULL OR assigned_to = auth.uid())` |  |
-| `packaging_tasks` | Operators update their own packaging tasks | UPDATE | authenticated | permissive | `public.has_role(auth.uid(), 'operator') AND (assigned_to IS NULL OR assigned_to = auth.uid())` | `public.has_role(auth.uid(), 'operator') AND (assigned_to IS NULL OR assigned_to = auth.uid())` |
-| `password_reset_requests` | Coordinators and managers can view all requests | SELECT | public | permissive | `has_role((select auth.uid()), 'coordinator') OR has_role((select auth.uid()), 'manager')` |  |
-| `password_reset_requests` | Anyone can request password reset | INSERT | anon, authenticated | permissive |  | `status = 'pending'` |
-| `password_reset_requests` | Coordinators and managers can update requests | UPDATE | authenticated | permissive | `app_private.has_role(auth.uid(),'coordinator') OR app_private.has_role(auth.uid(),'manager')` | `app_private.has_role(auth.uid(),'coordinator') OR app_private.has_role(auth.uid(),'manager')` |
-| `password_reset_requests` | Coordinators can update password reset requests | UPDATE | authenticated | permissive | `public.has_role((select auth.uid()), 'coordinator')` | `public.has_role((select auth.uid()), 'coordinator')` |
-| `pre_production_checklists` | Anyone can view checklists | SELECT | authenticated | permissive | `true` |  |
-| `pre_production_checklists` | Active roles can insert pre-prod checklists | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `pre_production_checklists` | Active roles can update pre-prod checklists | UPDATE | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `prediction_history` | Coordinators can manage prediction history | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `prediction_history` | Only coordinators can manage prediction history | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `prediction_history` | Active users can view prediction history | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `product_categories` | Coordinators can manage product categories | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `product_categories` | Authenticated users can view product categories | SELECT | authenticated | permissive | `true` |  |
-| `production_losses` | Authenticated users can view production losses | SELECT | authenticated | permissive | `true` |  |
-| `production_losses` | Active roles can insert losses | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `production_losses` | Authenticated users can insert production_losses | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `production_lots` | Coordinators can manage production lots | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` |
-| `production_lots` | Active users can view production lots | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `profiles` | Coordinators can view all profiles | SELECT | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `profiles` | Users can view own profile | SELECT | public | permissive | `(select auth.uid()) = id` |  |
-| `profiles` | Users view own profile or staff view all | SELECT | authenticated | permissive | `id = (SELECT auth.uid()) OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role)` |  |
-| `profiles` | Users can insert own profile | INSERT | public | permissive |  | `(select auth.uid()) = id` |
-| `profiles` | Users can update own profile | UPDATE | public | permissive | `(select auth.uid()) = id` | _= USING_ |
-| `profiles` | Users can update their own profile | UPDATE | public | permissive | `(select auth.uid()) = id` | _= USING_ |
-| `push_notifications` | Users can view their own notifications | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `push_notifications` | Users can insert own notifications | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `push_notifications` | Users can update their own notifications | UPDATE | public | permissive | `(select auth.uid()) = user_id` | `(select auth.uid()) = user_id` |
-| `push_notifications` | Users can delete their own notifications | DELETE | public | permissive | `(select auth.uid()) = user_id` |  |
-| `push_subscriptions` | Users can manage their own subscriptions | ALL | public | permissive | `auth.uid() = user_id` | `auth.uid() = user_id` |
-| `qr_scan_history` | Authenticated users can view scan history | SELECT | authenticated | permissive | `true` |  |
-| `qr_scan_history` | Users can insert their own scans | INSERT | authenticated | permissive |  | `auth.uid() = operator_id` |
-| `query_telemetry` | Coordinators and managers can view telemetry | SELECT | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |  |
-| `query_telemetry` | Authenticated can insert telemetry | INSERT | authenticated | permissive |  | `auth.uid() IS NOT NULL` |
-| `query_telemetry` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `query_telemetry` | Coordinators can delete telemetry | DELETE | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` |  |
-| `rate_limit_logs` | Coordinators and managers can view rate limit logs | SELECT | public | permissive | `has_role((select auth.uid()), 'coordinator') OR has_role((select auth.uid()), 'manager')` |  |
-| `rate_limit_logs` | Authenticated can insert rate limit logs | INSERT | authenticated | permissive |  | `auth.uid() IS NOT NULL` |
-| `rate_limit_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `rate_limit_settings` | Coordinators can manage rate limit settings | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `rate_limit_settings` | Managers can view rate limit settings | SELECT | public | permissive | `has_role((select auth.uid()), 'manager')` |  |
-| `report_templates` | Users can view their own templates | SELECT | public | permissive | `(select auth.uid()) = user_id OR is_public = true` |  |
-| `report_templates` | Users can create their own templates | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `report_templates` | Users can update their own templates | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `report_templates` | Users can delete their own templates | DELETE | public | permissive | `(select auth.uid()) = user_id` |  |
-| `reward_redemptions` | Users can view their redemptions | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `reward_redemptions` | Users can create redemptions | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `rls_test_results` | Allow authenticated to view test results | SELECT | authenticated | permissive | `true` |  |
-| `role_permissions` | Coordinators can manage permissions | ALL | public | permissive | `has_role(auth.uid(), 'coordinator')` | `has_role(auth.uid(), 'coordinator')` |
-| `role_permissions` | Authenticated users can view permissions | SELECT | authenticated | permissive | `true` |  |
-| `security_events` | Coordinators and managers can view security events | SELECT | public | permissive | `has_role((select auth.uid()), 'coordinator') OR has_role((select auth.uid()), 'manager')` |  |
-| `security_events` | Authenticated can insert security events | INSERT | authenticated | permissive |  | `auth.uid() IS NOT NULL` |
-| `security_events` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `shift_checklist_templates` | Coordinators can manage templates | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role)` |
-| `shift_checklist_templates` | Active users can view shift templates | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `shift_checklist_templates` | Authenticated users can view shift checklist templates | SELECT | authenticated | permissive | `true` |  |
-| `shift_handover_checklist` | Active roles can manage handover checklist | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `shift_handover_checklist` | Coordinators can manage shift handover checklist | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `shift_handover_checklist` | Active users can view shift handover checklist | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `shift_handovers` | Active users can view shift handovers | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `shift_handovers` | Authenticated users can create handovers | INSERT | public | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `shift_handovers` | Operators can update their handovers | UPDATE | public | permissive | `outgoing_operator_id = auth.uid() OR incoming_operator_id = auth.uid() OR has_role(auth.uid(), 'coordinator'::app_role)` | _= USING_ |
-| `shift_occurrences` | Active roles can manage occurrences | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `shift_occurrences` | Active roles can view shift occurrences | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `shift_occurrences` | Active users can view shift occurrences | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `shift_occurrences` | Handover participants can insert occurrences | INSERT | authenticated | permissive |  | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `shift_occurrences` | Handover participants can update occurrences | UPDATE | authenticated | permissive | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `shift_occurrences` | Elevated can delete occurrences | DELETE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |  |
-| `shift_pending_tasks` | Active roles can manage pending tasks | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `shift_pending_tasks` | Coordinators can manage shift pending tasks | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator')` | `public.has_role(auth.uid(), 'coordinator')` |
-| `shift_pending_tasks` | Active roles can view shift pending tasks | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `shift_pending_tasks` | Active users can view pending tasks | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `shift_pending_tasks` | Handover participants can insert tasks | INSERT | authenticated | permissive |  | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `shift_pending_tasks` | Handover participants can update tasks | UPDATE | authenticated | permissive | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR completed_by = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `EXISTS (SELECT 1 FROM public.shift_handovers h WHERE h.id = handover_id AND (h.outgoing_operator_id = auth.uid() OR h.incoming_operator_id = auth.uid())) OR completed_by = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `shift_pending_tasks` | Elevated can delete tasks | DELETE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |  |
-| `shipments` | Coordinators and above can manage shipments | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` |
-| `shipments` | Active roles can view shipments | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `shipping_providers` | Managers and admins can manage shipping providers | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role)` | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role)` |
-| `shipping_providers` | Active roles can view shipping providers | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `spc_alerts` | Coordinators can manage SPC alerts | ALL | authenticated | permissive | `public.has_role((select auth.uid()), 'coordinator')` | `public.has_role((select auth.uid()), 'coordinator')` |
-| `spc_alerts` | Active users can view SPC alerts | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `spc_capability_history` | Only coordinators can manage capability history | ALL | public | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `spc_capability_history` | Active role users can view capability history | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `spc_control_parameters` | Coordinators can manage SPC parameters | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` | `has_role((select auth.uid()), 'coordinator'::app_role) OR has_role((select auth.uid()), 'manager'::app_role)` |
-| `spc_control_parameters` | Active users can view SPC parameters | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `spc_measurements` | Active users can view SPC measurements | SELECT | authenticated | permissive | `EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true )` |  |
-| `spc_measurements` | Authenticated users can view SPC measurements | SELECT | authenticated | permissive | `true` |  |
-| `spc_measurements` | Active roles can insert measurements | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `spc_measurements` | Operators insert own spc measurements | INSERT | authenticated | permissive |  | `operator_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `storage.objects` | Anyone can view production photos | SELECT | public | permissive | `bucket_id = 'production-photos'` |  |
-| `storage.objects` | Anyone can view technical documents | SELECT | public | permissive | `bucket_id = 'technical-documents'` |  |
-| `storage.objects` | Evidências públicas | SELECT | public | permissive | `bucket_id = 'tpm-evidences'` |  |
-| `storage.objects` | Owner or staff can view production photos | SELECT | authenticated | permissive | `bucket_id = 'production-photos' AND public.has_any_active_role() AND ( owner = (SELECT auth.uid()) OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) )` |  |
-| `storage.objects` | Owner or staff view execution evidence | SELECT | authenticated | permissive | `bucket_id = 'execution-evidence' AND public.has_any_active_role() AND ( owner = (SELECT auth.uid()) OR (storage.foldername(name))[1] = (SELECT auth.uid())::text OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) )` |  |
-| `storage.objects` | Owner or staff view tpm evidences | SELECT | authenticated | permissive | `bucket_id = 'tpm-evidences' AND public.has_any_active_role() AND ( owner = (SELECT auth.uid()) OR (storage.foldername(name))[1] = (SELECT auth.uid())::text OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) )` |  |
-| `storage.objects` | Owner or staff view tpm signatures | SELECT | authenticated | permissive | `bucket_id = 'tpm_signatures' AND public.has_any_active_role() AND ( owner = (SELECT auth.uid()) OR (storage.foldername(name))[1] = (SELECT auth.uid())::text OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) )` |  |
-| `storage.objects` | Staff or approved-only view technical documents | SELECT | authenticated | permissive | `bucket_id = 'technical-documents' AND public.has_any_active_role() AND ( owner = (SELECT auth.uid()) OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) )` |  |
-| `storage.objects` | Active roles can upload own execution evidence | INSERT | authenticated | permissive |  | `bucket_id = 'execution-evidence' AND public.has_any_active_role() AND (storage.foldername(name))[1] = (SELECT auth.uid())::text` |
-| `storage.objects` | Active roles can upload own production photos | INSERT | authenticated | permissive |  | `bucket_id = 'production-photos' AND public.has_any_active_role() AND (storage.foldername(name))[1] = (SELECT auth.uid())::text` |
-| `storage.objects` | Active roles can upload own technical documents | INSERT | authenticated | permissive |  | `bucket_id = 'technical-documents' AND public.has_any_active_role() AND (storage.foldername(name))[1] = (SELECT auth.uid())::text` |
-| `storage.objects` | Active roles can upload own tpm evidences | INSERT | authenticated | permissive |  | `bucket_id = 'tpm-evidences' AND public.has_any_active_role() AND (storage.foldername(name))[1] = (SELECT auth.uid())::text` |
-| `storage.objects` | Active roles can upload own tpm signatures | INSERT | authenticated | permissive |  | `bucket_id = 'tpm_signatures' AND public.has_any_active_role() AND (storage.foldername(name))[1] = (SELECT auth.uid())::text` |
-| `storage.objects` | Upload de evidências TPM | INSERT | public | permissive |  | `bucket_id = 'tpm-evidences'` |
-| `storage.objects` | Coordinators can update technical documents | UPDATE | authenticated | permissive | `bucket_id = 'technical-documents' AND (public.has_role((select auth.uid()), 'coordinator') OR public.has_role((select auth.uid()), 'manager'))` | _= USING_ |
-| `storage.objects` | Owners and staff can update execution-evidence | UPDATE | authenticated | permissive | `bucket_id = 'execution-evidence' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` | _= USING_ |
-| `storage.objects` | Owners and staff can update tpm-evidences | UPDATE | authenticated | permissive | `bucket_id = 'tpm-evidences' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` | _= USING_ |
-| `storage.objects` | Owners and staff can update tpm_signatures | UPDATE | authenticated | permissive | `bucket_id = 'tpm_signatures' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` | _= USING_ |
-| `storage.objects` | Coordinators can delete production photos | DELETE | authenticated | permissive | `bucket_id = 'production-photos' AND public.has_role(auth.uid(), 'coordinator')` |  |
-| `storage.objects` | Coordinators can delete technical documents | DELETE | authenticated | permissive | `bucket_id = 'technical-documents' AND has_role((select auth.uid()), 'coordinator')` |  |
-| `storage.objects` | Owners and staff can delete execution-evidence | DELETE | authenticated | permissive | `bucket_id = 'execution-evidence' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` |  |
-| `storage.objects` | Owners and staff can delete tpm-evidences | DELETE | authenticated | permissive | `bucket_id = 'tpm-evidences' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` |  |
-| `storage.objects` | Owners and staff can delete tpm_signatures | DELETE | authenticated | permissive | `bucket_id = 'tpm_signatures' AND (owner = auth.uid() OR public.has_role(auth.uid(),'coordinator'::app_role) OR public.has_role(auth.uid(),'manager'::app_role))` |  |
-| `system_metrics` | Managers and admins can read system metrics | SELECT | public | permissive | `app_private.has_role(auth.uid(), 'manager'::public.app_role) OR app_private.has_role(auth.uid(), 'admin'::public.app_role)` |  |
-| `technical_conversations` | Users can view their own conversations | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `technical_conversations` | Users can create their own conversations | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `technical_conversations` | Users can update their own conversations | UPDATE | public | permissive | `auth.uid() = user_id` | _= USING_ |
-| `technical_conversations` | Users can delete their own conversations | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `technical_documents` | Coordinators can manage documents | ALL | public | permissive | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)` |
-| `technical_documents` | Active roles can view approved documents | SELECT | authenticated | permissive | `public.has_any_active_role() AND ( status = 'approved' OR app_private.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR app_private.has_role((SELECT auth.uid()), 'manager'::app_role) )` |  |
-| `technical_messages` | Users can view messages from their conversations | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM public.technical_conversations WHERE id = conversation_id AND user_id = auth.uid() )` |  |
-| `technical_messages` | Users can insert messages to their conversations | INSERT | public | permissive |  | `EXISTS ( SELECT 1 FROM public.technical_conversations WHERE id = conversation_id AND user_id = auth.uid() )` |
-| `technical_sheet_audit` | Technical sheet audit visible to active roles | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `technical_sheet_audit_logs` | Elevated or published sheets audit visibility | SELECT | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin') OR EXISTS ( SELECT 1 FROM public.technical_sheets ts WHERE ts.id = technical_sheet_id AND ts.status = 'published' )` |  |
-| `technical_sheet_favorites` | Users can manage their own favorites | ALL | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `technical_sheet_materials` | Coordinators can manage sheet materials | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `technical_sheet_materials` | Authenticated users can view technical sheet materials | SELECT | authenticated | permissive | `true` |  |
-| `technical_sheet_steps` | Coordinators can manage sheet steps | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `technical_sheet_steps` | Authenticated users can view technical sheet steps | SELECT | authenticated | permissive | `true` |  |
-| `technical_sheet_tips` | Coordinators can manage sheet tips | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `technical_sheet_tips` | Authenticated users can view technical sheet tips | SELECT | authenticated | permissive | `true` |  |
-| `technical_sheet_versions` | Role-based technical sheet versions visibility | SELECT | authenticated | permissive | `public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role) OR ( public.has_role((SELECT auth.uid()), 'operator'::app_role) AND EXISTS ( SELECT 1 FROM public.technical_sheets ts WHERE ts.id = technical_sheet_versions.sheet_id AND ts.status = 'published'::sheet_status ) )` |  |
-| `technical_sheet_versions` | Versions can be inserted by coordinators | INSERT | public | permissive |  | `public.has_role((select auth.uid()), 'coordinator')` |
-| `technical_sheets` | Coordinators can manage technical sheets | ALL | public | permissive | `has_role((select auth.uid()), 'coordinator')` | `has_role((select auth.uid()), 'coordinator')` |
-| `technical_sheets` | Authenticated users can view technical sheets | SELECT | authenticated | permissive | `true` |  |
-| `technical_sheets` | Role-based technical sheets visibility | SELECT | authenticated | permissive | `(public.has_role((SELECT auth.uid()), 'operator'::app_role) AND status = 'published'::sheet_status) OR public.has_role((SELECT auth.uid()), 'coordinator'::app_role) OR public.has_role((SELECT auth.uid()), 'manager'::app_role) OR public.has_role((SELECT auth.uid()), 'admin'::app_role)` |  |
-| `techniques` | Coordinators can manage techniques | ALL | authenticated | permissive | `has_role(auth.uid(), 'coordinator'::app_role)` | `has_role(auth.uid(), 'coordinator'::app_role)` |
-| `techniques` | Authenticated users can view techniques | SELECT | authenticated | permissive | `true` |  |
-| `telemetry_traces` | Apenas administradores veem traces | SELECT | authenticated | permissive | `public.has_role((select auth.uid()), 'manager')` |  |
-| `telemetry_traces` | Authenticated users can insert traces | INSERT | authenticated | permissive |  | `(select auth.uid()) IS NOT NULL` |
-| `tpm_execution_alerts` | Active roles can manage tpm execution alerts | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `tpm_execution_alerts` | Authenticated users can view tpm execution alerts | SELECT | authenticated | permissive | `true` |  |
-| `tpm_execution_audit_logs` | Active roles can view tpm execution audit logs | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `tpm_execution_parts` | Active roles can manage tpm parts | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `tpm_execution_parts` | Active roles can view tpm parts | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `tpm_execution_supplies` | Active roles can manage execution supplies | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `tpm_execution_supplies` | Authenticated users can view tpm execution supplies | SELECT | authenticated | permissive | `true` |  |
-| `tpm_execution_supplies` | Active roles can insert execution supplies | INSERT | authenticated | permissive |  | `public.has_any_active_role()` |
-| `tpm_executions` | Active roles can view tpm executions | SELECT | authenticated | permissive | `public.has_any_active_role()` |  |
-| `tpm_executions` | Technicians can insert own tpm executions | INSERT | authenticated | permissive |  | `technician_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `tpm_executions` | Technician or elevated can update tpm executions | UPDATE | authenticated | permissive | `technician_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` | `technician_id = auth.uid() OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `tpm_executions` | Elevated can delete tpm executions | DELETE | authenticated | permissive | `public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |  |
-| `tpm_notification_logs` | Logs viewable by authenticated users | SELECT | authenticated | permissive | `true` |  |
-| `tpm_notification_logs` | Logs insertable by system | INSERT | authenticated | permissive |  | `true` |
-| `tpm_notification_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `user_id = auth.uid() OR user_id IS NULL OR public.has_role(auth.uid(),'coordinator') OR public.has_role(auth.uid(),'manager') OR public.has_role(auth.uid(),'admin')` |
-| `tpm_notification_queue` | Active roles can access tpm notification queue | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `tpm_notification_templates` | tpm_notification_templates_write | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'coordinator') OR public.has_role(auth.uid(), 'manager') OR public.has_role(auth.uid(), 'admin')` |
-| `tpm_notification_templates` | Templates viewable by authenticated users | SELECT | authenticated | permissive | `true` |  |
-| `tpm_notification_templates_published` | Published templates viewable by everyone | SELECT | authenticated | permissive | `true` |  |
-| `tpm_parameter_alerts` | Coordinators and admins can manage alerts | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'coordinator'::app_role)` |
-| `tpm_parameter_alerts` | Authenticated users can view parameter alerts | SELECT | authenticated | permissive | `true` |  |
+| `packaging_defects` | Operators view defects of accessible tasks | SELECT | authenticated | permissive | `(has_any_active_role() AND (EXISTS ( SELECT 1 FROM packaging_tasks t WHERE ((t.id = packaging_defects.packaging_task_id) AND ((t.assigned_to IS NULL) OR (t.assigned_to = auth.uid()))))))` |  |
+| `packaging_defects` | Operators insert defects on their tasks | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'operator'::app_role) AND (reported_by = auth.uid()) AND (EXISTS ( SELECT 1 FROM packaging_tasks t WHERE ((t.id = packaging_defects.packaging_task_id) AND ((t.assigned_to IS NULL) OR (t.assigned_to = auth.uid()))))))` |
+| `packaging_settings` | Staff manage settings | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `packaging_settings` | All active users read settings | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `packaging_sla_overrides` | packaging_sla_overrides_select_authenticated | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `packaging_sla_overrides` | packaging_sla_overrides_insert_coord | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |
+| `packaging_sla_overrides` | packaging_sla_overrides_update_coord | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |
+| `packaging_sla_overrides` | packaging_sla_overrides_delete_coord | DELETE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |  |
+| `packaging_task_checklist` | pkg_task_checklist_write | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role))` |
+| `packaging_task_checklist` | pkg_task_checklist_read | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `packaging_tasks` | Staff manage all packaging tasks | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `packaging_tasks` | Operators view unassigned or own packaging tasks | SELECT | authenticated | permissive | `(has_any_active_role() AND ((assigned_to IS NULL) OR (assigned_to = auth.uid())))` |  |
+| `packaging_tasks` | Operators update their own packaging tasks | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'operator'::app_role) AND ((assigned_to IS NULL) OR (assigned_to = auth.uid())))` | `(app_private.has_role(auth.uid(), 'operator'::app_role) AND ((assigned_to IS NULL) OR (assigned_to = auth.uid())))` |
+| `password_reset_requests` | Coordinators and managers can view all requests | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `password_reset_requests` | Anyone can request password reset | INSERT | anon, authenticated | permissive |  | `(status = 'pending'::text)` |
+| `password_reset_requests` | Coordinators and managers can update requests | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |
+| `password_reset_requests` | Coordinators can update password reset requests | UPDATE | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `pre_production_checklists` | Anyone can view checklists | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `pre_production_checklists` | Active roles can insert pre-prod checklists | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `pre_production_checklists` | Active roles can update pre-prod checklists | UPDATE | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `prediction_history` | Coordinators can manage prediction history | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `prediction_history` | Authenticated users can view prediction history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `product_categories` | Coordinators can manage product categories | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `product_categories` | Authenticated users can view product categories | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `production_losses` | Authenticated users can view production losses | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `production_losses` | Active roles can insert losses | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `production_lots` | Coordinators can manage production lots | ALL | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `production_lots` | Authenticated users can view production lots | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `profiles` | Coordinators can view all profiles | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `profiles` | Staff can view all profiles | SELECT | authenticated | permissive | `((id = auth.uid()) OR is_staff())` |  |
+| `profiles` | Users can view own profile | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = id)` |  |
+| `profiles` | Users view own profile or staff view all | SELECT | authenticated | permissive | `((id = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role))` |  |
+| `profiles` | Users can insert own profile | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = id)` |
+| `profiles` | Users can update own profile | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = id)` | _= USING_ |
+| `profiles` | Users can update their own profile | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = id)` | _= USING_ |
+| `push_notifications` | Users can view their own notifications | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `push_notifications` | Users can insert own notifications | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `push_notifications` | Users can update their own notifications | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `push_notifications` | Users can delete their own notifications | DELETE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `push_subscriptions` | Users can manage their own subscriptions | ALL | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `qr_scan_history` | Authenticated users can view scan history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `qr_scan_history` | Users can insert their own scans | INSERT | authenticated | permissive |  | `(( SELECT auth.uid() AS uid) = operator_id)` |
+| `query_telemetry` | Coordinators and managers can view telemetry | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `query_telemetry` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR (user_id IS NULL) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `query_telemetry` | Coordinators can delete telemetry | DELETE | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |  |
+| `rate_limit_logs` | Coordinators and managers can view rate limit logs | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `rate_limit_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR (user_id IS NULL) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `rate_limit_settings` | Coordinators can manage rate limit settings | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `rate_limit_settings` | Managers can view rate limit settings | SELECT | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
+| `report_templates` | Users can view their own templates | SELECT | public | permissive | `((( SELECT auth.uid() AS uid) = user_id) OR (is_public = true))` |  |
+| `report_templates` | Users can create their own templates | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `report_templates` | Users can update their own templates | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `report_templates` | Users can delete their own templates | DELETE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `reward_redemptions` | Users can view their redemptions | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `reward_redemptions` | Users can create redemptions | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `rls_test_results` | Allow authenticated to view test results | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `role_permissions` | Coordinators can manage permissions | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `role_permissions` | Authenticated users can view permissions | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `security_events` | Coordinators and managers can view security events | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `security_events` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `shift_checklist_templates` | Coordinators can manage templates | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `shift_checklist_templates` | Authenticated users can view shift checklist templates | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_handover_checklist` | Active roles can manage handover checklist | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `shift_handover_checklist` | Coordinators can manage shift handover checklist | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `shift_handover_checklist` | Authenticated users can view checklist items | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_handovers` | Authenticated users can view shift handovers | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_handovers` | Authenticated users can create handovers | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
+| `shift_handovers` | Operators can update their handovers | UPDATE | public | permissive | `((outgoing_operator_id = ( SELECT auth.uid() AS uid)) OR (incoming_operator_id = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role))` | _= USING_ |
+| `shift_occurrences` | Active roles can manage occurrences | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `shift_occurrences` | Active roles can view shift occurrences | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_occurrences` | Authenticated users can view occurrences | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_occurrences` | Handover participants can insert occurrences | INSERT | authenticated | permissive |  | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_occurrences.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `shift_occurrences` | Handover participants can update occurrences | UPDATE | authenticated | permissive | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_occurrences.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_occurrences.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `shift_occurrences` | Elevated can delete occurrences | DELETE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `shift_pending_tasks` | Active roles can manage pending tasks | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `shift_pending_tasks` | Coordinators can manage shift pending tasks | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `shift_pending_tasks` | Active roles can view shift pending tasks | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_pending_tasks` | Authenticated users can view pending tasks | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shift_pending_tasks` | Handover participants can insert tasks | INSERT | authenticated | permissive |  | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_pending_tasks.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `shift_pending_tasks` | Handover participants can update tasks | UPDATE | authenticated | permissive | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_pending_tasks.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR (completed_by = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `((EXISTS ( SELECT 1 FROM shift_handovers h WHERE ((h.id = shift_pending_tasks.handover_id) AND ((h.outgoing_operator_id = auth.uid()) OR (h.incoming_operator_id = auth.uid()))))) OR (completed_by = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `shift_pending_tasks` | Elevated can delete tasks | DELETE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `shipments` | Coordinators and above can manage shipments | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` |
+| `shipments` | Active roles can view shipments | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `shipping_providers` | Managers and admins can manage shipping providers | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role))` |
+| `shipping_providers` | Active roles can view shipping providers | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `spc_alerts` | Coordinators can manage SPC alerts | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `spc_alerts` | Authenticated users can view spc alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `spc_capability_history` | Only coordinators can manage capability history | ALL | public | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `spc_capability_history` | Authenticated users can view capability history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `spc_control_parameters` | Coordinators can manage SPC parameters | ALL | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `spc_control_parameters` | Authenticated users can view control parameters | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `spc_measurements` | Authenticated users can view SPC measurements | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `spc_measurements` | Active roles can insert measurements | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `spc_measurements` | Operators insert own spc measurements | INSERT | authenticated | permissive |  | `((operator_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `system_metrics` | Managers and admins can read system metrics | SELECT | public | permissive | `(app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `technical_conversations` | Users can view their own conversations | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `technical_conversations` | Users can create their own conversations | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `technical_conversations` | Users can update their own conversations | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `technical_conversations` | Users can delete their own conversations | DELETE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `technical_documents` | Coordinators can manage documents | ALL | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |
+| `technical_documents` | Active roles can view approved documents | SELECT | authenticated | permissive | `(has_any_active_role() AND ((status = 'approved'::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)))` |  |
+| `technical_messages` | Users can view messages from their conversations | SELECT | public | permissive | `(EXISTS ( SELECT 1 FROM technical_conversations WHERE ((technical_conversations.id = technical_messages.conversation_id) AND (technical_conversations.user_id = ( SELECT auth.uid() AS uid)))))` |  |
+| `technical_messages` | Users can insert messages to their conversations | INSERT | public | permissive |  | `(EXISTS ( SELECT 1 FROM technical_conversations WHERE ((technical_conversations.id = technical_messages.conversation_id) AND (technical_conversations.user_id = ( SELECT auth.uid() AS uid)))))` |
+| `technical_sheet_audit` | Technical sheet audit visible to active roles | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `technical_sheet_audit_logs` | Elevated or published sheets audit visibility | SELECT | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role) OR (EXISTS ( SELECT 1 FROM technical_sheets ts WHERE ((ts.id = technical_sheet_audit_logs.technical_sheet_id) AND (ts.status = 'published'::sheet_status)))))` |  |
+| `technical_sheet_favorites` | Users can manage their own favorites | ALL | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `technical_sheet_materials` | Coordinators can manage sheet materials | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `technical_sheet_materials` | Authenticated users can view technical sheet materials | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `technical_sheet_steps` | Coordinators can manage sheet steps | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `technical_sheet_steps` | Authenticated users can view technical sheet steps | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `technical_sheet_tips` | Coordinators can manage sheet tips | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `technical_sheet_tips` | Authenticated users can view technical sheet tips | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `technical_sheet_versions` | Role-based technical sheet versions visibility | SELECT | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role) OR (app_private.has_role(( SELECT auth.uid() AS uid), 'operator'::app_role) AND (EXISTS ( SELECT 1 FROM technical_sheets ts WHERE ((ts.id = technical_sheet_versions.sheet_id) AND (ts.status = 'published'::sheet_status))))))` |  |
+| `technical_sheet_versions` | Versions can be inserted by coordinators | INSERT | public | permissive |  | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `technical_sheets` | Coordinators can manage technical sheets | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `technical_sheets` | Authenticated users can view technical sheets | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `technical_sheets` | Role-based technical sheets visibility | SELECT | authenticated | permissive | `((app_private.has_role(( SELECT auth.uid() AS uid), 'operator'::app_role) AND (status = 'published'::sheet_status)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role))` |  |
+| `techniques` | Coordinators can manage techniques | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `techniques` | Authenticated users can view techniques | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `telemetry_traces` | Apenas administradores veem traces | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
+| `telemetry_traces` | Authenticated users can insert traces | INSERT | authenticated | permissive |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
+| `tpm_execution_alerts` | Active roles can manage tpm execution alerts | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `tpm_execution_alerts` | Authenticated users can view tpm execution alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_execution_audit_logs` | Active roles can view tpm execution audit logs | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_execution_parts` | Active roles can manage tpm parts | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `tpm_execution_parts` | Active roles can view tpm parts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_execution_supplies` | Active roles can manage execution supplies | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `tpm_execution_supplies` | Authenticated users can view tpm execution supplies | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_execution_supplies` | Active roles can insert execution supplies | INSERT | authenticated | permissive |  | `has_any_active_role()` |
+| `tpm_executions` | Active roles can view tpm executions | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_executions` | Technicians can insert own tpm executions | INSERT | authenticated | permissive |  | `((technician_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `tpm_executions` | Technician or elevated can update tpm executions | UPDATE | authenticated | permissive | `((technician_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `((technician_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `tpm_executions` | Elevated can delete tpm executions | DELETE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
+| `tpm_notification_logs` | Logs viewable by authenticated users | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_notification_logs` | Users can insert own log entries | INSERT | authenticated | permissive |  | `((user_id = auth.uid()) OR (user_id IS NULL) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `tpm_notification_queue` | Active roles can access tpm notification queue | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `tpm_notification_templates` | Templates editable by admins | ALL | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` | _= USING_ |
+| `tpm_notification_templates` | Templates viewable by authenticated users | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_notification_templates_published` | Published templates viewable by everyone | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `tpm_parameter_alerts` | Coordinators and admins can manage alerts | ALL | authenticated | permissive | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))` |
+| `tpm_parameter_alerts` | Authenticated users can view parameter alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
 | `tpm_parameter_alerts` | Managers can create parameter alerts | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'manager'::app_role)` |
-| `tpm_severity_configs` | Active roles can manage severity configs | ALL | authenticated | permissive | `public.has_any_active_role()` | `public.has_any_active_role()` |
-| `tpm_severity_configs` | Severity configs viewable by authenticated users | SELECT | authenticated | permissive | `true` |  |
-| `user_devices` | Users can view their own devices | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `user_devices` | Authenticated can insert own devices | INSERT | authenticated | permissive |  | `auth.uid() = user_id` |
-| `user_devices` | Authenticated can update own devices | UPDATE | authenticated | permissive | `auth.uid() = user_id` | _= USING_ |
-| `user_devices` | Users can delete their own devices | DELETE | public | permissive | `(select auth.uid()) = user_id` |  |
-| `user_favorites` | Users can view own favorites | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `user_favorites` | Users can insert own favorites | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `user_favorites` | Users can update own favorites | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `user_mfa_settings` | Coordinators can view all MFA settings | SELECT | public | permissive | `has_role((select auth.uid()), 'coordinator') OR has_role((select auth.uid()), 'manager')` |  |
-| `user_mfa_settings` | Users can view own MFA settings | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `user_mfa_settings` | Users can insert own MFA settings | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `user_mfa_settings` | Users can update own MFA settings | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `user_notification_settings` | Users can view their own settings | SELECT | public | permissive | `(select auth.uid()) = user_id` |  |
-| `user_notification_settings` | Users can insert their own settings | INSERT | public | permissive |  | `(select auth.uid()) = user_id` |
-| `user_notification_settings` | Users can update their own settings | UPDATE | public | permissive | `(select auth.uid()) = user_id` | _= USING_ |
-| `user_roles` | Admins can manage all user roles | ALL | authenticated | permissive | `app_private.has_role((SELECT auth.uid()), 'admin'::app_role)` | `app_private.has_role((SELECT auth.uid()), 'admin'::app_role)` |
-| `user_roles` | Coordinators can manage operator roles | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'coordinator'::app_role) AND role = 'operator'::app_role` | `public.has_role(auth.uid(), 'coordinator'::app_role) AND role = 'operator'::app_role` |
-| `user_roles` | Managers can manage non-privileged roles | ALL | authenticated | permissive | `app_private.has_role((SELECT auth.uid()), 'manager'::app_role) AND role NOT IN ('admin'::app_role, 'manager'::app_role)` | `app_private.has_role((SELECT auth.uid()), 'manager'::app_role) AND role NOT IN ('admin'::app_role, 'manager'::app_role)` |
-| `user_roles` | Coordinators can view all roles | SELECT | public | permissive | `public.has_role((select auth.uid()), 'coordinator')` |  |
-| `user_roles` | Users can view their own roles | SELECT | authenticated | permissive | `(select auth.uid()) = user_id` |  |
-| `user_roles` | AAL2 required for user_roles inserts | INSERT | authenticated | **RESTRICTIVE (E obrigatório)** |  | `coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'` |
-| `user_roles` | Staff can update non-privileged roles | UPDATE | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR ( (public.has_role(auth.uid(), 'coordinator'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role)) AND role NOT IN ('admin'::app_role, 'manager'::app_role) )` | `public.has_role(auth.uid(), 'admin'::app_role) OR ( (public.has_role(auth.uid(), 'coordinator'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role)) AND role NOT IN ('admin'::app_role, 'manager'::app_role) )` |
-| `user_roles` | AAL2 required for user_roles updates | UPDATE | authenticated | **RESTRICTIVE (E obrigatório)** | `coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'` | `coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'` |
-| `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `coalesce(auth.jwt() ->> 'aal', 'aal1') = 'aal2'` |  |
-| `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `public.has_role((select auth.uid()), 'manager')` |  |
+| `tpm_severity_configs` | Active roles can manage severity configs | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
+| `tpm_severity_configs` | Severity configs viewable by authenticated users | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `user_devices` | Users can view their own devices | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_devices` | Authenticated can insert own devices | INSERT | authenticated | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `user_devices` | Authenticated can update own devices | UPDATE | authenticated | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `user_devices` | Users can delete their own devices | DELETE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_favorites` | Users can view own favorites | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_favorites` | Users can insert own favorites | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `user_favorites` | Users can update own favorites | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `user_mfa_settings` | Coordinators can view all MFA settings | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `user_mfa_settings` | Users can view own MFA settings | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_mfa_settings` | Users can insert own MFA settings | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `user_mfa_settings` | Users can update own MFA settings | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `user_notification_settings` | Users can view their own settings | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_notification_settings` | Users can insert their own settings | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
+| `user_notification_settings` | Users can update their own settings | UPDATE | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` | _= USING_ |
+| `user_roles` | Admins can manage all user roles | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)` |
+| `user_roles` | Coordinators can manage operator roles | ALL | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) AND (role = 'operator'::app_role))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) AND (role = 'operator'::app_role))` |
+| `user_roles` | Managers can manage non-privileged roles | ALL | authenticated | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) AND (role <> ALL (ARRAY['admin'::app_role, 'manager'::app_role])))` | `(app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) AND (role <> ALL (ARRAY['admin'::app_role, 'manager'::app_role])))` |
+| `user_roles` | Coordinators can view all roles | SELECT | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |  |
+| `user_roles` | Managers can view all roles | SELECT | public | permissive | `(app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))` |  |
+| `user_roles` | Staff can view all user_roles | SELECT | authenticated | permissive | `((user_id = auth.uid()) OR is_staff())` |  |
+| `user_roles` | Users can view their own roles | SELECT | authenticated | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
+| `user_roles` | AAL2 required for user_roles inserts | INSERT | authenticated | **RESTRICTIVE (E obrigatório)** |  | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |
+| `user_roles` | Staff can update non-privileged roles | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR ((app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)) AND (role <> ALL (ARRAY['admin'::app_role, 'manager'::app_role]))))` | `(app_private.has_role(auth.uid(), 'admin'::app_role) OR ((app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)) AND (role <> ALL (ARRAY['admin'::app_role, 'manager'::app_role]))))` |
+| `user_roles` | AAL2 required for user_roles updates | UPDATE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |
+| `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
+| `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — derivado de migrations — pode divergir do banco)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-12T11:17:03Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
-| `techniques` | `id` | PK |
-| `techniques` | `name` | obrigatório |
-| `techniques` | `short_name` | obrigatório |
-| `techniques` | `color` | default '#3b82f6' |
-| `techniques` | `setup_time` | default 10 |
-| `techniques` | `created_at` | default now() |
-| `techniques` | `low_threshold` | default 30 |
-| `techniques` | `medium_threshold` | default 70 |
-| `techniques` | `high_threshold` | default 90 |
-| `machines` | `id` | PK; default gen_random_uuid() |
-| `machines` | `code` | obrigatório; único |
-| `machines` | `name` | obrigatório |
-| `machines` | `technique_id` | obrigatório; FK → techniques.id |
-| `machines` | `is_active` | default true |
-| `machines` | `created_at` | default now() |
-| `jobs` | `id` | PK; default gen_random_uuid() |
-| `jobs` | `order_number` | obrigatório |
-| `jobs` | `client` | obrigatório |
-| `jobs` | `product` | obrigatório |
-| `jobs` | `quantity` | obrigatório |
-| `jobs` | `technique_id` | obrigatório; FK → techniques.id |
-| `jobs` | `machine_id` | FK → machines.id |
-| `jobs` | `estimated_duration` | default 60 |
-| `jobs` | `status` | default 'queue'; CHECK status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework') |
-| `jobs` | `lost_pieces` | default 0 |
-| `jobs` | `priority` | default 'medium'; CHECK priority IN ('low', 'medium', 'high', 'urgent') |
-| `jobs` | `created_at` | default now() |
-| `jobs` | `updated_at` | default now() |
-| `jobs` | `production_photos` | default '{}' |
-| `jobs` | `produced_quantity` | default 0 |
-| `jobs` | `sort_order` | default 0 |
-| `jobs` | `operator_id` | FK → users.id |
-| `jobs` | `shipment_id` | FK → shipments.id |
-| `jobs` | `parent_job_id` | FK → jobs.id ON DELETE SET NULL |
-| `jobs` | `(tabela)` | constraint quantity_non_negative CHECK (quantity >= 0) |
-| `jobs` | `(tabela)` | constraint produced_quantity_non_negative CHECK (produced_quantity >= 0) |
-| `jobs` | `(tabela)` | constraint lost_pieces_non_negative CHECK (lost_pieces >= 0) |
-| `jobs` | `(tabela)` | constraint check_job_times CHECK (end_time >= start_time) |
-| `jobs` | `(tabela)` | constraint jobs_quantity_positive CHECK (quantity >= 0) |
-| `jobs` | `(tabela)` | constraint jobs_status_check CHECK (status IN ('queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework','buffer','packaging')) |
-| `profiles` | `id` | PK; FK → users.id ON DELETE CASCADE |
-| `profiles` | `created_at` | default now() |
-| `profiles` | `updated_at` | default now() |
-| `user_roles` | `id` | PK; default gen_random_uuid() |
-| `user_roles` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `user_roles` | `role` | default 'operator' |
-| `user_roles` | `created_at` | default now() |
-| `user_roles` | `is_active` | default true |
-| `user_roles` | `(tabela)` | UNIQUE(user_id, role) |
-| `user_roles` | `(tabela)` | constraint user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE |
+| `abc_activities` | `id` | PK; default gen_random_uuid() |
+| `abc_activities` | `name` | obrigatório |
+| `abc_activities` | `cost_driver` | obrigatório |
+| `abc_activities` | `technique_id` | FK → techniques.id |
+| `abc_activities` | `is_active` | default true |
+| `abc_activities` | `created_at` | default now() |
+| `abc_activities` | `updated_at` | default now() |
+| `abc_activity_rates` | `id` | PK; default gen_random_uuid() |
+| `abc_activity_rates` | `activity_id` | obrigatório; FK → abc_activities.id on delete cascade |
+| `abc_activity_rates` | `cost_pool_id` | obrigatório; FK → abc_cost_pools.id on delete cascade |
+| `abc_activity_rates` | `rate_per_unit` | default 0 |
+| `abc_activity_rates` | `period_start` | obrigatório |
+| `abc_activity_rates` | `period_end` | obrigatório |
+| `abc_activity_rates` | `created_at` | default now() |
+| `abc_activity_rates` | `updated_at` | default now() |
+| `abc_activity_rates` | `(tabela)` | constraint abc_activity_rates_activity_id_cost_pool_id_period_start_key UNIQUE (activity_id, cost_pool_id, period_start) |
+| `abc_cost_pools` | `id` | PK; default gen_random_uuid() |
+| `abc_cost_pools` | `name` | obrigatório |
+| `abc_cost_pools` | `pool_type` | obrigatório |
+| `abc_cost_pools` | `monthly_budget` | default 0 |
+| `abc_cost_pools` | `is_active` | default true |
+| `abc_cost_pools` | `created_at` | default now() |
+| `abc_cost_pools` | `updated_at` | default now() |
+| `abc_job_costs` | `id` | PK; default gen_random_uuid() |
+| `abc_job_costs` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `abc_job_costs` | `activity_id` | obrigatório; FK → abc_activities.id |
+| `abc_job_costs` | `cost_pool_id` | obrigatório; FK → abc_cost_pools.id |
+| `abc_job_costs` | `driver_quantity` | default 0 |
+| `abc_job_costs` | `unit_rate` | default 0 |
+| `abc_job_costs` | `total_cost` | default 0 |
+| `abc_job_costs` | `calculated_at` | default now() |
+| `abc_job_costs` | `created_at` | default now() |
+| `app_private.runtime_config` | `key` | PK |
+| `app_private.runtime_config` | `value` | obrigatório |
+| `archived_jobs` | `id` | PK; default gen_random_uuid() |
+| `archived_jobs` | `order_number` | obrigatório; único |
+| `archived_jobs` | `client` | obrigatório |
+| `archived_jobs` | `product` | obrigatório |
+| `archived_jobs` | `quantity` | obrigatório |
+| `archived_jobs` | `technique_id` | obrigatório |
+| `archived_jobs` | `estimated_duration` | default 60 |
+| `archived_jobs` | `status` | default 'queue'::text |
+| `archived_jobs` | `lost_pieces` | default 0 |
+| `archived_jobs` | `priority` | default 'medium'::text |
+| `archived_jobs` | `created_at` | default now() |
+| `archived_jobs` | `updated_at` | default now() |
+| `archived_jobs` | `production_photos` | default '{}'::text[] |
+| `archived_jobs` | `produced_quantity` | default 0 |
+| `archived_jobs` | `sort_order` | default 0 |
+| `archived_jobs` | `archived_at` | default now() |
+| `archived_jobs` | `children` | default '{}'::jsonb |
+| `archived_jobs` | `(tabela)` | constraint check_job_times CHECK (end_time >= start_time) |
+| `archived_jobs` | `(tabela)` | constraint jobs_priority_check CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])) |
+| `archived_jobs` | `(tabela)` | constraint jobs_quantity_positive CHECK (quantity >= 0) |
+| `archived_jobs` | `(tabela)` | constraint jobs_status_check CHECK (status = ANY (ARRAY['queue'::text, 'ready'::text, 'scheduled'::text, 'production'::text, 'finished'::text, 'paused'::text, 'cancelled'::text, 'delayed'::text, 'rework'::text, 'buffer'::text, 'packaging'::text])) |
+| `archived_jobs` | `(tabela)` | constraint lost_pieces_non_negative CHECK (lost_pieces >= 0) |
+| `archived_jobs` | `(tabela)` | constraint produced_quantity_non_negative CHECK (produced_quantity >= 0) |
+| `archived_jobs` | `(tabela)` | constraint quantity_non_negative CHECK (quantity >= 0) |
+| `audit_log` | `id` | PK; default gen_random_uuid() |
+| `audit_log` | `entity_type` | obrigatório |
+| `audit_log` | `entity_id` | obrigatório |
+| `audit_log` | `action` | obrigatório |
+| `audit_log` | `metadata` | default '{}'::jsonb |
+| `audit_log` | `created_at` | default now() |
+| `audit_log` | `(tabela)` | constraint audit_log_action_check CHECK (action = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text, 'CREATE'::text])) |
+| `backup_logs` | `id` | PK; default gen_random_uuid() |
+| `backup_logs` | `backup_id` | obrigatório |
+| `backup_logs` | `tables_backed_up` | default '{}'::jsonb |
+| `backup_logs` | `created_at` | default now() |
+| `bitrix24_field_mappings` | `id` | PK; default gen_random_uuid() |
+| `bitrix24_field_mappings` | `mapping_type` | obrigatório |
+| `bitrix24_field_mappings` | `source_key` | obrigatório |
+| `bitrix24_field_mappings` | `target_key` | obrigatório |
+| `bitrix24_field_mappings` | `priority` | default 0 |
+| `bitrix24_field_mappings` | `is_active` | default true |
+| `bitrix24_field_mappings` | `created_at` | default now() |
+| `bitrix24_field_mappings` | `updated_at` | default now() |
+| `bitrix24_field_mappings` | `(tabela)` | constraint bitrix24_field_mappings_mapping_type_source_key_target_key_key UNIQUE (mapping_type, source_key, target_key) |
+| `bitrix24_oauth_states` | `state` | PK |
+| `bitrix24_oauth_states` | `created_at` | default now() |
+| `bitrix24_oauth_tokens` | `id` | PK; default gen_random_uuid() |
+| `bitrix24_oauth_tokens` | `access_token` | obrigatório |
+| `bitrix24_oauth_tokens` | `refresh_token` | obrigatório |
+| `bitrix24_oauth_tokens` | `expires_at` | obrigatório |
+| `bitrix24_oauth_tokens` | `created_at` | default now() |
+| `bitrix24_oauth_tokens` | `updated_at` | default now() |
+| `bitrix24_sync_history` | `id` | PK; default gen_random_uuid() |
+| `bitrix24_sync_history` | `sync_type` | obrigatório |
+| `bitrix24_sync_history` | `status` | obrigatório |
+| `bitrix24_sync_history` | `jobs_synced` | default 0 |
+| `bitrix24_sync_history` | `jobs_failed` | default 0 |
+| `bitrix24_sync_history` | `details` | default '{}'::jsonb |
+| `bitrix24_sync_history` | `started_at` | default now() |
+| `bitrix24_sync_history` | `triggered_by` | default 'manual'::text |
+| `bitrix24_sync_history` | `(tabela)` | constraint bitrix24_sync_history_status_check CHECK (status = ANY (ARRAY['success'::text, 'partial'::text, 'error'::text])) |
+| `bitrix24_sync_history` | `(tabela)` | constraint bitrix24_sync_history_sync_type_check CHECK (sync_type = ANY (ARRAY['pull'::text, 'push'::text, 'webhook'::text])) |
+| `blocked_ips` | `id` | PK; default gen_random_uuid() |
+| `blocked_ips` | `ip_address` | obrigatório |
+| `blocked_ips` | `reason` | obrigatório |
+| `blocked_ips` | `blocked_at` | default now() |
+| `blocked_ips` | `is_permanent` | default false |
+| `blocked_ips` | `blocked_by` | FK → users.id on delete set null |
+| `blocked_ips` | `unblocked_by` | FK → users.id on delete set null |
+| `blocked_ips` | `created_at` | default now() |
+| `business_config` | `key` | PK |
+| `business_config` | `value` | obrigatório |
+| `business_config` | `updated_at` | default now() |
+| `business_config` | `updated_by` | FK → users.id |
+| `chat_messages` | `id` | PK; default gen_random_uuid() |
+| `chat_messages` | `sender_id` | obrigatório |
+| `chat_messages` | `sender_name` | obrigatório |
+| `chat_messages` | `message` | obrigatório |
+| `chat_messages` | `channel` | default 'general'::text |
+| `chat_messages` | `is_read` | default false |
+| `chat_messages` | `created_at` | default now() |
+| `cron_health_history` | `id` | PK; default gen_random_uuid() |
+| `cron_health_history` | `jobid` | obrigatório |
+| `cron_health_history` | `consecutive_failures` | default 0 |
+| `cron_health_history` | `captured_at` | default now() |
+| `cron_health_history` | `created_at` | default now() |
+| `cron_health_history` | `is_stale` | default false |
+| `cron_p95_daily` | `id` | PK; default gen_random_uuid() |
+| `cron_p95_daily` | `day` | obrigatório |
+| `cron_p95_daily` | `jobid` | obrigatório |
+| `cron_p95_daily` | `samples` | default 0 |
+| `cron_p95_daily` | `failure_rate_pct` | default 0 |
+| `cron_p95_daily` | `created_at` | default now() |
+| `cron_p95_daily` | `updated_at` | default now() |
+| `cron_p95_daily` | `(tabela)` | constraint cron_p95_daily_jobid_day_key UNIQUE (jobid, day) |
+| `csp_violation_reports` | `id` | PK; default gen_random_uuid() |
+| `csp_violation_reports` | `raw` | default '{}'::jsonb |
+| `csp_violation_reports` | `created_at` | default now() |
+| `daily_summaries` | `id` | PK; default gen_random_uuid() |
+| `daily_summaries` | `date` | obrigatório |
+| `daily_summaries` | `summary_type` | obrigatório |
+| `daily_summaries` | `data` | default '{}'::jsonb |
+| `daily_summaries` | `created_at` | default now() |
+| `dashboard_layouts` | `id` | PK; default gen_random_uuid() |
+| `dashboard_layouts` | `user_id` | obrigatório; único |
+| `dashboard_layouts` | `layout` | obrigatório |
+| `dashboard_layouts` | `created_at` | default now() |
+| `dashboard_layouts` | `updated_at` | default now() |
+| `dashboard_presets` | `id` | PK; default gen_random_uuid() |
+| `dashboard_presets` | `user_id` | obrigatório; FK → users.id on delete cascade |
+| `dashboard_presets` | `name` | obrigatório |
+| `dashboard_presets` | `dashboard_id` | obrigatório |
+| `dashboard_presets` | `filters` | default '{}'::jsonb |
+| `dashboard_presets` | `is_default` | default false |
+| `dashboard_presets` | `created_at` | default now() |
+| `dashboard_presets` | `updated_at` | default now() |
+| `document_versions` | `id` | PK; default gen_random_uuid() |
+| `document_versions` | `document_id` | obrigatório; FK → technical_documents.id on delete cascade |
+| `document_versions` | `version` | obrigatório |
+| `document_versions` | `file_url` | obrigatório |
+| `document_versions` | `file_name` | obrigatório |
+| `document_versions` | `file_size` | default 0 |
+| `document_versions` | `created_at` | default now() |
+| `edge_health_history` | `id` | PK; default gen_random_uuid() |
+| `edge_health_history` | `status` | obrigatório |
+| `edge_health_history` | `checks` | default '{}'::jsonb |
+| `edge_health_history` | `source` | default 'health-monitor'::text |
+| `edge_health_history` | `captured_at` | default now() |
+| `edge_health_history` | `created_at` | default now() |
+| `edge_health_history` | `(tabela)` | constraint edge_health_history_status_check CHECK (status = ANY (ARRAY['pass'::text, 'warn'::text, 'fail'::text])) |
 | `efficiency_alert_history` | `id` | PK; default gen_random_uuid() |
 | `efficiency_alert_history` | `alert_type` | obrigatório |
 | `efficiency_alert_history` | `severity` | obrigatório |
@@ -520,52 +602,705 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `efficiency_alert_history` | `detected_at` | default now() |
 | `efficiency_alert_history` | `metadata` | default '{}'::jsonb |
 | `efficiency_alert_history` | `created_at` | default now() |
+| `energy_alerts` | `id` | PK; default gen_random_uuid() |
+| `energy_alerts` | `machine_id` | FK → machines.id |
+| `energy_alerts` | `alert_type` | obrigatório |
+| `energy_alerts` | `threshold_value` | obrigatório |
+| `energy_alerts` | `current_value` | obrigatório |
+| `energy_alerts` | `severity` | default 'warning'::text |
+| `energy_alerts` | `message` | obrigatório |
+| `energy_alerts` | `is_resolved` | default false |
+| `energy_alerts` | `created_at` | default now() |
+| `energy_consumption` | `id` | PK; default gen_random_uuid() |
+| `energy_consumption` | `machine_id` | FK → machines.id |
+| `energy_consumption` | `recorded_at` | default now() |
+| `energy_consumption` | `consumption_kwh` | default 0 |
+| `energy_consumption` | `cost_per_kwh` | default 0.65 |
+| `energy_consumption` | `reading_type` | default 'automatic'::text |
+| `energy_consumption` | `created_at` | default now() |
+| `energy_targets` | `id` | PK; default gen_random_uuid() |
+| `energy_targets` | `machine_id` | FK → machines.id |
+| `energy_targets` | `target_type` | obrigatório |
+| `energy_targets` | `target_value` | obrigatório |
+| `energy_targets` | `period_start` | obrigatório |
+| `energy_targets` | `period_end` | obrigatório |
+| `energy_targets` | `is_active` | default true |
+| `energy_targets` | `created_at` | default now() |
+| `energy_targets` | `updated_at` | default now() |
+| `error_logs` | `id` | PK; default gen_random_uuid() |
+| `error_logs` | `message` | obrigatório |
+| `error_logs` | `metadata` | default '{}'::jsonb |
+| `error_logs` | `created_at` | default timezone('utc'::text |
+| `feature_flags` | `id` | PK; default gen_random_uuid() |
+| `feature_flags` | `name` | obrigatório; único |
+| `feature_flags` | `is_enabled` | default false |
+| `feature_flags` | `rules` | default '{}'::jsonb |
+| `feature_flags` | `created_at` | default now() |
+| `feature_flags` | `updated_at` | default now() |
+| `gamification_rewards` | `id` | PK; default gen_random_uuid() |
+| `gamification_rewards` | `name` | obrigatório |
+| `gamification_rewards` | `cost_points` | obrigatório |
+| `gamification_rewards` | `icon` | default 'star'::text |
+| `gamification_rewards` | `stock` | default '-1'::integer |
+| `gamification_rewards` | `is_active` | default true |
+| `gamification_rewards` | `created_at` | default now() |
+| `geo_blocking_logs` | `id` | PK; default gen_random_uuid() |
+| `geo_blocking_logs` | `ip_address` | obrigatório |
+| `geo_blocking_logs` | `action` | obrigatório |
+| `geo_blocking_logs` | `created_at` | default now() |
+| `geo_blocking_logs` | `(tabela)` | constraint geo_blocking_logs_action_check CHECK (action = ANY (ARRAY['blocked'::text, 'allowed'::text])) |
+| `geo_blocking_rules` | `id` | PK; default gen_random_uuid() |
+| `geo_blocking_rules` | `country_code` | obrigatório; único |
+| `geo_blocking_rules` | `country_name` | obrigatório |
+| `geo_blocking_rules` | `is_blocked` | default true |
+| `geo_blocking_rules` | `block_type` | default 'block'::text |
+| `geo_blocking_rules` | `created_at` | default now() |
+| `geo_blocking_rules` | `updated_at` | default now() |
+| `geo_blocking_rules` | `created_by` | FK → users.id |
+| `geo_blocking_rules` | `(tabela)` | constraint geo_blocking_rules_block_type_check CHECK (block_type = ANY (ARRAY['block'::text, 'allow'::text])) |
+| `geo_blocking_settings` | `id` | PK; default gen_random_uuid() |
+| `geo_blocking_settings` | `is_enabled` | default false |
+| `geo_blocking_settings` | `mode` | default 'blocklist'::text |
+| `geo_blocking_settings` | `log_blocked_attempts` | default true |
+| `geo_blocking_settings` | `block_unknown_countries` | default false |
+| `geo_blocking_settings` | `updated_at` | default now() |
+| `geo_blocking_settings` | `updated_by` | FK → users.id |
+| `geo_blocking_settings` | `(tabela)` | constraint geo_blocking_settings_mode_check CHECK (mode = ANY (ARRAY['blocklist'::text, 'allowlist'::text])) |
+| `geo_blocking_settings` | `(tabela)` | constraint geo_blocking_settings_mode_chk CHECK (mode = ANY (ARRAY['blocklist'::text, 'allowlist'::text])) |
+| `inventory_items` | `id` | PK; default gen_random_uuid() |
+| `inventory_items` | `name` | obrigatório |
+| `inventory_items` | `category` | obrigatório |
+| `inventory_items` | `current_stock` | default 0 |
+| `inventory_items` | `unit` | obrigatório |
+| `inventory_items` | `min_stock_level` | default 0 |
+| `inventory_items` | `created_at` | default now() |
+| `inventory_items` | `updated_at` | default now() |
+| `inventory_items` | `price_per_unit` | default 0 |
+| `inventory_items` | `daily_usage_avg` | default 0 |
+| `inventory_items` | `days_of_supply` | default 0 |
+| `inventory_items` | `(tabela)` | constraint check_positive_stock CHECK (current_stock >= 0::numeric) |
+| `inventory_items` | `(tabela)` | constraint inventory_stock_positive CHECK (current_stock >= 0::numeric) |
+| `inventory_items` | `(tabela)` | constraint stock_non_negative CHECK (current_stock >= 0::numeric) |
+| `inventory_movements` | `id` | PK; default gen_random_uuid() |
+| `inventory_movements` | `item_id` | FK → inventory_items.id on delete cascade |
+| `inventory_movements` | `user_id` | FK → profiles.id on delete set null |
+| `inventory_movements` | `type` | obrigatório |
+| `inventory_movements` | `quantity` | obrigatório |
+| `inventory_movements` | `job_id` | FK → jobs.id on delete set null |
+| `inventory_movements` | `created_at` | default now() |
+| `ip_allowlist` | `id` | PK; default gen_random_uuid() |
+| `ip_allowlist` | `ip_address` | obrigatório |
+| `ip_allowlist` | `is_global` | default false |
+| `ip_allowlist` | `user_id` | FK → users.id on delete cascade |
+| `ip_allowlist` | `created_at` | default now() |
+| `ip_allowlist` | `is_active` | default true |
+| `ip_allowlist` | `(tabela)` | constraint ip_or_global CHECK (is_global = true OR user_id IS NOT NULL) |
+| `job_status_audit` | `id` | PK; default gen_random_uuid() |
+| `job_status_audit` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `job_status_audit` | `changed_by` | FK → users.id |
+| `job_status_audit` | `changed_at` | default now() |
+| `job_status_history` | `id` | PK; default gen_random_uuid() |
+| `job_status_history` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `job_status_history` | `new_status` | obrigatório |
+| `job_status_history` | `changed_by` | FK → users.id |
+| `job_status_history` | `created_at` | default now() |
+| `jobs` | `id` | PK; default gen_random_uuid() |
+| `jobs` | `order_number` | obrigatório; único |
+| `jobs` | `client` | obrigatório |
+| `jobs` | `product` | obrigatório |
+| `jobs` | `quantity` | obrigatório |
+| `jobs` | `technique_id` | obrigatório; FK → techniques.id |
+| `jobs` | `machine_id` | FK → machines.id |
+| `jobs` | `estimated_duration` | default 60 |
+| `jobs` | `status` | default 'queue'::text |
+| `jobs` | `lost_pieces` | default 0 |
+| `jobs` | `priority` | default 'medium'::text |
+| `jobs` | `created_at` | default now() |
+| `jobs` | `updated_at` | default now() |
+| `jobs` | `production_photos` | default '{}'::text[] |
+| `jobs` | `produced_quantity` | default 0 |
+| `jobs` | `product_category_id` | FK → product_categories.id |
+| `jobs` | `sort_order` | default 0 |
+| `jobs` | `operator_id` | FK → users.id |
+| `jobs` | `shipment_id` | FK → shipments.id |
+| `jobs` | `parent_job_id` | FK → jobs.id on delete set null |
+| `jobs` | `(tabela)` | constraint check_job_times CHECK (end_time >= start_time) |
+| `jobs` | `(tabela)` | constraint jobs_priority_check CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])) |
+| `jobs` | `(tabela)` | constraint jobs_quantity_positive CHECK (quantity >= 0) |
+| `jobs` | `(tabela)` | constraint jobs_status_check CHECK (status = ANY (ARRAY['queue'::text, 'ready'::text, 'scheduled'::text, 'production'::text, 'finished'::text, 'paused'::text, 'cancelled'::text, 'delayed'::text, 'rework'::text, 'buffer'::text, 'packaging'::text])) |
+| `jobs` | `(tabela)` | constraint lost_pieces_non_negative CHECK (lost_pieces >= 0) |
+| `jobs` | `(tabela)` | constraint produced_quantity_non_negative CHECK (produced_quantity >= 0) |
+| `jobs` | `(tabela)` | constraint quantity_non_negative CHECK (quantity >= 0) |
+| `kpi_alerts` | `id` | PK; default gen_random_uuid() |
+| `kpi_alerts` | `machine_id` | FK → machines.id on delete cascade |
+| `kpi_alerts` | `metric_name` | obrigatório |
+| `kpi_alerts` | `metric_value` | obrigatório |
+| `kpi_alerts` | `threshold` | obrigatório |
+| `kpi_alerts` | `is_resolved` | default false |
+| `kpi_alerts` | `created_at` | default now() |
+| `kpi_alerts` | `(tabela)` | constraint kpi_alerts_severity_check CHECK (severity = ANY (ARRAY['WARNING'::text, 'CRITICAL'::text])) |
+| `login_audit` | `id` | PK; default gen_random_uuid() |
+| `login_audit` | `user_id` | FK → users.id on delete cascade |
+| `login_audit` | `user_email` | obrigatório |
+| `login_audit` | `login_status` | obrigatório |
+| `login_audit` | `created_at` | default now() |
+| `login_lockouts` | `id` | PK; default gen_random_uuid() |
+| `login_lockouts` | `identifier` | obrigatório |
+| `login_lockouts` | `identifier_type` | obrigatório |
+| `login_lockouts` | `failed_attempts` | default 0 |
+| `login_lockouts` | `lockout_count` | default 0 |
+| `login_lockouts` | `created_at` | default now() |
+| `login_lockouts` | `updated_at` | default now() |
+| `login_lockouts` | `(tabela)` | constraint login_lockouts_identifier_identifier_type_key UNIQUE (identifier, identifier_type) |
+| `login_lockouts` | `(tabela)` | constraint login_lockouts_identifier_type_check CHECK (identifier_type = ANY (ARRAY['email'::text, 'ip'::text])) |
+| `lot_components` | `id` | PK; default gen_random_uuid() |
+| `lot_components` | `lot_id` | obrigatório; FK → production_lots.id on delete cascade |
+| `lot_components` | `component_lot_id` | FK → production_lots.id on delete set null |
+| `lot_components` | `material_id` | FK → materials.id on delete set null |
+| `lot_components` | `component_name` | obrigatório |
+| `lot_components` | `quantity_used` | default 0 |
+| `lot_components` | `unit` | default 'un'::text |
+| `lot_components` | `created_at` | default now() |
+| `lot_movements` | `id` | PK; default gen_random_uuid() |
+| `lot_movements` | `lot_id` | obrigatório; FK → production_lots.id on delete cascade |
+| `lot_movements` | `movement_type` | obrigatório |
+| `lot_movements` | `quantity` | obrigatório |
+| `lot_movements` | `job_id` | FK → jobs.id on delete set null |
+| `lot_movements` | `created_at` | default now() |
+| `lot_quality_inspections` | `id` | PK; default gen_random_uuid() |
+| `lot_quality_inspections` | `lot_id` | obrigatório; FK → production_lots.id on delete cascade |
+| `lot_quality_inspections` | `inspection_type` | obrigatório |
+| `lot_quality_inspections` | `result` | obrigatório |
+| `lot_quality_inspections` | `defects_found` | default 0 |
+| `lot_quality_inspections` | `photos` | default '{}'::text[] |
+| `lot_quality_inspections` | `inspected_at` | default now() |
+| `lot_quality_inspections` | `created_at` | default now() |
+| `machine_downtime` | `id` | PK; default gen_random_uuid() |
+| `machine_downtime` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `machine_downtime` | `job_id` | FK → jobs.id |
+| `machine_downtime` | `downtime_type` | obrigatório |
+| `machine_downtime` | `start_time` | default now() |
+| `machine_downtime` | `operator_id` | FK → users.id |
+| `machine_downtime` | `created_at` | default now() |
+| `machine_downtime` | `(tabela)` | constraint machine_downtime_downtime_type_check CHECK (downtime_type = ANY (ARRAY['setup'::text, 'maintenance'::text, 'breakdown'::text, 'idle'::text, 'other'::text])) |
+| `machine_event_audit` | `id` | PK; default gen_random_uuid() |
+| `machine_event_audit` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `machine_event_audit` | `event_type` | obrigatório |
+| `machine_event_audit` | `performed_by` | FK → users.id |
+| `machine_event_audit` | `performed_at` | default now() |
+| `machine_health_metrics` | `id` | PK; default gen_random_uuid() |
+| `machine_health_metrics` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `machine_health_metrics` | `period_start` | obrigatório |
+| `machine_health_metrics` | `period_end` | obrigatório |
+| `machine_health_metrics` | `total_jobs` | default 0 |
+| `machine_health_metrics` | `total_produced` | default 0 |
+| `machine_health_metrics` | `total_losses` | default 0 |
+| `machine_health_metrics` | `total_production_hours` | default 0 |
+| `machine_health_metrics` | `maintenance_count` | default 0 |
+| `machine_health_metrics` | `corrective_maintenance_count` | default 0 |
+| `machine_health_metrics` | `calculated_at` | default now() |
+| `machine_health_metrics` | `(tabela)` | constraint machine_health_metrics_machine_id_period_start_period_end_key UNIQUE (machine_id, period_start, period_end) |
+| `machine_predictions` | `id` | PK; default gen_random_uuid() |
+| `machine_predictions` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `machine_predictions` | `prediction_type` | obrigatório |
+| `machine_predictions` | `risk_score` | obrigatório |
+| `machine_predictions` | `confidence` | obrigatório |
+| `machine_predictions` | `factors` | default '[]'::jsonb |
+| `machine_predictions` | `model_version` | default 'v1.0'::text |
+| `machine_predictions` | `is_active` | default true |
+| `machine_predictions` | `created_at` | default now() |
+| `machine_predictions` | `expires_at` | default (now() |
+| `machines` | `id` | PK; default gen_random_uuid() |
+| `machines` | `code` | obrigatório; único |
+| `machines` | `name` | obrigatório |
+| `machines` | `technique_id` | obrigatório; FK → techniques.id |
+| `machines` | `is_active` | default true |
+| `machines` | `created_at` | default now() |
+| `maintenance_alerts` | `id` | PK; default gen_random_uuid() |
+| `maintenance_alerts` | `schedule_id` | obrigatório; FK → maintenance_schedules.id on delete cascade |
+| `maintenance_alerts` | `machine_id` | obrigatório; FK → machines.id |
+| `maintenance_alerts` | `alert_type` | obrigatório |
+| `maintenance_alerts` | `message` | obrigatório |
+| `maintenance_alerts` | `is_read` | default false |
+| `maintenance_alerts` | `is_resolved` | default false |
+| `maintenance_alerts` | `created_at` | default now() |
+| `maintenance_checklist_items` | `id` | PK; default gen_random_uuid() |
+| `maintenance_checklist_items` | `checklist_id` | obrigatório; FK → maintenance_checklists.id on delete cascade |
+| `maintenance_checklist_items` | `item_order` | default 0 |
+| `maintenance_checklist_items` | `description` | obrigatório |
+| `maintenance_checklist_items` | `is_critical` | default false |
+| `maintenance_checklist_items` | `requires_photo` | default false |
+| `maintenance_checklist_items` | `requires_measurement` | default false |
+| `maintenance_checklist_items` | `created_at` | default now() |
+| `maintenance_checklists` | `id` | PK; default gen_random_uuid() |
+| `maintenance_checklists` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
+| `maintenance_checklists` | `name` | obrigatório |
+| `maintenance_checklists` | `is_active` | default true |
+| `maintenance_checklists` | `created_at` | default now() |
+| `maintenance_checklists` | `updated_at` | default now() |
+| `maintenance_checklists` | `version` | default 1 |
+| `maintenance_checklists` | `technique_id` | FK → techniques.id |
+| `maintenance_item_responses` | `id` | PK; default gen_random_uuid() |
+| `maintenance_item_responses` | `record_id` | obrigatório; FK → maintenance_records.id on delete cascade |
+| `maintenance_item_responses` | `checklist_item_id` | obrigatório; FK → maintenance_checklist_items.id |
+| `maintenance_item_responses` | `is_checked` | default false |
+| `maintenance_item_responses` | `responded_at` | default now() |
+| `maintenance_records` | `id` | PK; default gen_random_uuid() |
+| `maintenance_records` | `schedule_id` | obrigatório; FK → maintenance_schedules.id on delete cascade |
+| `maintenance_records` | `machine_id` | obrigatório; FK → machines.id |
+| `maintenance_records` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
+| `maintenance_records` | `started_at` | default now() |
+| `maintenance_records` | `status` | default 'in_progress'::text |
+| `maintenance_records` | `photos` | default '{}'::text[] |
+| `maintenance_records` | `total_cost` | default 0 |
+| `maintenance_records` | `downtime_minutes` | default 0 |
+| `maintenance_records` | `created_at` | default now() |
+| `maintenance_records` | `approver_id` | FK → users.id |
+| `maintenance_records` | `technical_sheet_id` | FK → technical_sheets.id |
+| `maintenance_records` | `adjustment_parameters` | default '{}'::jsonb |
+| `maintenance_records` | `quality_responses` | default '[]'::jsonb |
+| `maintenance_records` | `override_by` | FK → users.id |
+| `maintenance_schedules` | `id` | PK; default gen_random_uuid() |
+| `maintenance_schedules` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `maintenance_schedules` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
+| `maintenance_schedules` | `name` | obrigatório |
+| `maintenance_schedules` | `interval_days` | default 30 |
+| `maintenance_schedules` | `next_due_at` | obrigatório |
+| `maintenance_schedules` | `estimated_duration_minutes` | default 60 |
+| `maintenance_schedules` | `is_active` | default true |
+| `maintenance_schedules` | `created_at` | default now() |
+| `maintenance_schedules` | `updated_at` | default now() |
+| `maintenance_schedules` | `(tabela)` | constraint maintenance_schedule_dates_valid CHECK (next_due_at >= created_at) |
+| `maintenance_types` | `id` | PK |
+| `maintenance_types` | `name` | obrigatório |
+| `maintenance_types` | `default_interval_days` | default 30 |
+| `maintenance_types` | `color` | default '#3b82f6'::text |
+| `maintenance_types` | `created_at` | default now() |
+| `materials` | `id` | PK; default gen_random_uuid() |
+| `materials` | `name` | obrigatório |
+| `materials` | `created_at` | default now() |
+| `materials` | `updated_at` | default now() |
+| `new_device_alerts` | `id` | PK; default gen_random_uuid() |
+| `new_device_alerts` | `user_id` | obrigatório |
+| `new_device_alerts` | `device_id` | FK → user_devices.id |
+| `new_device_alerts` | `email_sent` | default false |
+| `new_device_alerts` | `acknowledged` | default false |
+| `new_device_alerts` | `created_at` | default now() |
+| `operator_achievements` | `id` | PK; default gen_random_uuid() |
+| `operator_achievements` | `operator_id` | obrigatório |
+| `operator_achievements` | `achievement_type` | obrigatório |
+| `operator_achievements` | `achievement_name` | obrigatório |
+| `operator_achievements` | `icon` | default 'trophy'::text |
+| `operator_achievements` | `points` | default 0 |
+| `operator_achievements` | `achieved_at` | default now() |
+| `operator_achievements` | `metadata` | default '{}'::jsonb |
+| `operator_achievements` | `created_at` | default now() |
+| `operator_goals` | `id` | PK; default gen_random_uuid() |
+| `operator_goals` | `operator_id` | obrigatório |
+| `operator_goals` | `goal_type` | obrigatório |
+| `operator_goals` | `target_value` | obrigatório |
+| `operator_goals` | `period_start` | obrigatório |
+| `operator_goals` | `period_end` | obrigatório |
+| `operator_goals` | `created_at` | default now() |
+| `operator_goals` | `updated_at` | default now() |
+| `operator_goals` | `(tabela)` | constraint valid_goal_type CHECK (goal_type = ANY (ARRAY['efficiency'::text, 'jobs_completed'::text, 'pieces_produced'::text, 'loss_rate'::text])) |
+| `operator_goals` | `(tabela)` | constraint valid_period CHECK (period_end >= period_start) |
+| `operator_machines` | `id` | PK; default gen_random_uuid() |
+| `operator_machines` | `operator_id` | obrigatório; FK → users.id on delete cascade |
+| `operator_machines` | `machine_id` | obrigatório; FK → machines.id on delete cascade |
+| `operator_machines` | `assigned_at` | default now() |
+| `operator_machines` | `assigned_by` | FK → users.id |
+| `operator_machines` | `(tabela)` | constraint operator_machines_operator_id_machine_id_key UNIQUE (operator_id, machine_id) |
+| `operator_rankings` | `id` | PK; default gen_random_uuid() |
+| `operator_rankings` | `operator_id` | obrigatório |
+| `operator_rankings` | `ranking_type` | obrigatório |
+| `operator_rankings` | `period_start` | obrigatório |
+| `operator_rankings` | `period_end` | obrigatório |
+| `operator_rankings` | `position` | obrigatório |
+| `operator_rankings` | `total_points` | default 0 |
+| `operator_rankings` | `total_produced` | default 0 |
+| `operator_rankings` | `efficiency_rate` | default 0 |
+| `operator_rankings` | `quality_rate` | default 0 |
+| `operator_rankings` | `calculated_at` | default now() |
+| `operator_rankings` | `(tabela)` | constraint operator_rankings_operator_id_ranking_type_period_start_per_key UNIQUE (operator_id, ranking_type, period_start, period_end) |
+| `operator_skills` | `id` | PK; default gen_random_uuid() |
+| `operator_skills` | `operator_id` | obrigatório; FK → users.id on delete cascade |
+| `operator_skills` | `technique_id` | obrigatório |
+| `operator_skills` | `skill_level` | default 'basic'::skill_level |
+| `operator_skills` | `certified_at` | default now() |
+| `operator_skills` | `created_at` | default now() |
+| `operator_skills` | `updated_at` | default now() |
+| `operator_skills` | `(tabela)` | constraint operator_skills_operator_id_technique_id_key UNIQUE (operator_id, technique_id) |
+| `operator_status_audit` | `id` | PK; default gen_random_uuid() |
+| `operator_status_audit` | `operator_id` | obrigatório |
+| `operator_status_audit` | `action` | obrigatório |
+| `operator_status_audit` | `performed_by` | obrigatório |
+| `operator_status_audit` | `created_at` | default now() |
+| `operator_status_audit` | `(tabela)` | constraint operator_status_audit_action_check CHECK (action = ANY (ARRAY['activated'::text, 'deactivated'::text, 'removed'::text])) |
+| `packaging_checklist_items` | `id` | PK; default gen_random_uuid() |
+| `packaging_checklist_items` | `label` | obrigatório |
+| `packaging_checklist_items` | `is_required` | default true |
+| `packaging_checklist_items` | `item_order` | default 0 |
+| `packaging_checklist_items` | `is_active` | default true |
+| `packaging_checklist_items` | `created_at` | default now() |
+| `packaging_checklist_items` | `updated_at` | default now() |
+| `packaging_defects` | `id` | PK; default gen_random_uuid() |
+| `packaging_defects` | `packaging_task_id` | obrigatório; FK → packaging_tasks.id on delete cascade |
+| `packaging_defects` | `quantity` | obrigatório |
+| `packaging_defects` | `defect_type` | obrigatório |
+| `packaging_defects` | `severity` | default 'minor'::text |
+| `packaging_defects` | `decision` | default 'discard'::text |
+| `packaging_defects` | `reported_by` | FK → users.id on delete set null |
+| `packaging_defects` | `created_at` | default now() |
+| `packaging_defects` | `updated_at` | default now() |
+| `packaging_defects` | `(tabela)` | constraint packaging_defects_decision_check CHECK (decision = ANY (ARRAY['rework'::text, 'discard'::text, 'accept_with_note'::text])) |
+| `packaging_defects` | `(tabela)` | constraint packaging_defects_defect_type_check CHECK (defect_type = ANY (ARRAY['print_misalignment'::text, 'color_deviation'::text, 'scratch'::text, 'contamination'::text, 'wrong_material'::text, 'dimensional'::text, 'other'::text])) |
+| `packaging_defects` | `(tabela)` | constraint packaging_defects_quantity_check CHECK (quantity > 0) |
+| `packaging_defects` | `(tabela)` | constraint packaging_defects_severity_check CHECK (severity = ANY (ARRAY['minor'::text, 'major'::text, 'critical'::text])) |
+| `packaging_settings` | `id` | PK; default gen_random_uuid() |
+| `packaging_settings` | `package_types` | default ARRAY['caixa'::text |
+| `packaging_settings` | `defect_reasons` | default ARRAY['print_misalignment'::text |
+| `packaging_settings` | `weight_unit` | default 'kg'::text |
+| `packaging_settings` | `created_at` | default now() |
+| `packaging_settings` | `updated_at` | default now() |
+| `packaging_settings` | `sla_triage_hours` | default 4 |
+| `packaging_settings` | `sla_packaging_hours` | default 8 |
+| `packaging_settings` | `sla_total_hours` | default 24 |
+| `packaging_settings` | `warning_threshold_pct` | default 75 |
+| `packaging_settings` | `(tabela)` | constraint packaging_settings_weight_unit_check CHECK (weight_unit = ANY (ARRAY['kg'::text, 'g'::text, 'lb'::text])) |
+| `packaging_sla_overrides` | `id` | PK; default gen_random_uuid() |
+| `packaging_sla_overrides` | `technique_id` | FK → techniques.id on delete cascade |
+| `packaging_sla_overrides` | `sla_triage_hours` | default 4 |
+| `packaging_sla_overrides` | `sla_packaging_hours` | default 8 |
+| `packaging_sla_overrides` | `sla_total_hours` | default 24 |
+| `packaging_sla_overrides` | `warning_threshold_pct` | default 75 |
+| `packaging_sla_overrides` | `is_active` | default true |
+| `packaging_sla_overrides` | `created_at` | default now() |
+| `packaging_sla_overrides` | `updated_at` | default now() |
+| `packaging_sla_overrides` | `(tabela)` | constraint packaging_sla_overrides_scope_check CHECK (technique_id IS NOT NULL OR client IS NOT NULL) |
+| `packaging_task_checklist` | `id` | PK; default gen_random_uuid() |
+| `packaging_task_checklist` | `packaging_task_id` | obrigatório; FK → packaging_tasks.id on delete cascade |
+| `packaging_task_checklist` | `item_id` | obrigatório; FK → packaging_checklist_items.id on delete cascade |
+| `packaging_task_checklist` | `is_checked` | default false |
+| `packaging_task_checklist` | `checked_by` | FK → users.id on delete set null |
+| `packaging_task_checklist` | `created_at` | default now() |
+| `packaging_task_checklist` | `updated_at` | default now() |
+| `packaging_task_checklist` | `(tabela)` | constraint packaging_task_checklist_packaging_task_id_item_id_key UNIQUE (packaging_task_id, item_id) |
+| `packaging_tasks` | `id` | PK; default gen_random_uuid() |
+| `packaging_tasks` | `job_id` | obrigatório; único; FK → jobs.id on delete cascade |
+| `packaging_tasks` | `status` | default 'pending'::text |
+| `packaging_tasks` | `assigned_to` | FK → users.id on delete set null |
+| `packaging_tasks` | `received_quantity` | default 0 |
+| `packaging_tasks` | `approved_quantity` | default 0 |
+| `packaging_tasks` | `rejected_quantity` | default 0 |
+| `packaging_tasks` | `created_at` | default now() |
+| `packaging_tasks` | `updated_at` | default now() |
+| `packaging_tasks` | `was_overdue_on_complete` | default false |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_approved_quantity_check CHECK (approved_quantity >= 0) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_job_id_fkey FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_packages_count_check CHECK (packages_count IS NULL OR packages_count >= 0 AND packages_count <= 500) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_qty_sum CHECK ((approved_quantity + rejected_quantity) <= received_quantity) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_received_quantity_check CHECK (received_quantity >= 0) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_rejected_quantity_check CHECK (rejected_quantity >= 0) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_status_check CHECK (status = ANY (ARRAY['pending'::text, 'in_triage'::text, 'packaging'::text, 'ready_to_ship'::text, 'on_hold'::text])) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_total_weight_kg_check CHECK (total_weight_kg IS NULL OR total_weight_kg >= 0::numeric) |
+| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_weight_per_package_check CHECK (total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count::numeric) <= 30::numeric) |
+| `password_reset_requests` | `id` | PK; default gen_random_uuid() |
+| `password_reset_requests` | `user_email` | obrigatório |
+| `password_reset_requests` | `status` | default 'pending'::text |
+| `password_reset_requests` | `reviewed_by` | FK → users.id |
+| `password_reset_requests` | `created_at` | default now() |
+| `password_reset_requests` | `expires_at` | default (now() |
+| `password_reset_requests` | `(tabela)` | constraint password_reset_requests_status_check CHECK (status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])) |
+| `pre_production_checklists` | `id` | PK; default gen_random_uuid() |
+| `pre_production_checklists` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `pre_production_checklists` | `material_verified` | default false |
+| `pre_production_checklists` | `color_verified` | default false |
+| `pre_production_checklists` | `machine_clean` | default false |
+| `pre_production_checklists` | `tools_ready` | default false |
+| `pre_production_checklists` | `created_at` | default now() |
+| `pre_production_checklists` | `consumables_confirmed` | default '[]'::jsonb |
+| `prediction_history` | `id` | PK; default gen_random_uuid() |
+| `prediction_history` | `prediction_id` | obrigatório; FK → machine_predictions.id on delete cascade |
+| `prediction_history` | `machine_id` | obrigatório; FK → machines.id |
+| `prediction_history` | `predicted_risk_score` | obrigatório |
+| `prediction_history` | `created_at` | default now() |
+| `product_categories` | `id` | PK; default gen_random_uuid() |
+| `product_categories` | `name` | obrigatório |
+| `product_categories` | `created_at` | default now() |
+| `product_categories` | `updated_at` | default now() |
+| `production_losses` | `id` | PK; default gen_random_uuid() |
+| `production_losses` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `production_losses` | `quantity` | default 1 |
+| `production_losses` | `operator_id` | FK → users.id |
+| `production_losses` | `created_at` | default now() |
+| `production_losses` | `loss_type` | default 'availability'::text |
+| `production_losses` | `(tabela)` | constraint production_losses_loss_type_check CHECK (loss_type = ANY (ARRAY['availability'::text, 'performance'::text, 'quality'::text])) |
+| `production_losses` | `(tabela)` | constraint production_losses_quantity_positive CHECK (quantity >= 0) |
+| `production_lots` | `id` | PK; default gen_random_uuid() |
+| `production_lots` | `lot_number` | obrigatório; único |
+| `production_lots` | `job_id` | FK → jobs.id on delete set null |
+| `production_lots` | `product_name` | obrigatório |
+| `production_lots` | `quantity` | default 0 |
+| `production_lots` | `produced_quantity` | default 0 |
+| `production_lots` | `status` | default 'active'::text |
+| `production_lots` | `production_date` | default CURRENT_DATE |
+| `production_lots` | `created_at` | default now() |
+| `production_lots` | `updated_at` | default now() |
+| `profiles` | `id` | PK; FK → users.id on delete cascade |
+| `profiles` | `created_at` | default now() |
+| `profiles` | `updated_at` | default now() |
+| `profiles` | `(tabela)` | constraint profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE |
+| `push_notifications` | `id` | PK; default gen_random_uuid() |
+| `push_notifications` | `user_id` | FK → users.id on delete cascade |
+| `push_notifications` | `title` | obrigatório |
+| `push_notifications` | `body` | obrigatório |
+| `push_notifications` | `data` | default '{}'::jsonb |
+| `push_notifications` | `status` | default 'pending'::text |
+| `push_notifications` | `created_at` | default now() |
+| `push_subscriptions` | `id` | PK; default gen_random_uuid() |
+| `push_subscriptions` | `user_id` | obrigatório; FK → users.id on delete cascade |
+| `push_subscriptions` | `endpoint` | obrigatório |
+| `push_subscriptions` | `p256dh` | obrigatório |
+| `push_subscriptions` | `auth` | obrigatório |
+| `push_subscriptions` | `created_at` | default now() |
+| `push_subscriptions` | `updated_at` | default now() |
+| `push_subscriptions` | `(tabela)` | constraint push_subscriptions_user_id_endpoint_key UNIQUE (user_id, endpoint) |
+| `qr_scan_history` | `id` | PK; default gen_random_uuid() |
+| `qr_scan_history` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `qr_scan_history` | `operator_id` | obrigatório; FK → users.id on delete cascade |
+| `qr_scan_history` | `action` | obrigatório |
+| `qr_scan_history` | `scanned_at` | default now() |
+| `query_telemetry` | `id` | PK; default gen_random_uuid() |
+| `query_telemetry` | `operation` | obrigatório |
+| `query_telemetry` | `duration_ms` | default 0 |
+| `query_telemetry` | `severity` | default 'normal'::text |
+| `query_telemetry` | `created_at` | default now() |
+| `rate_limit_logs` | `id` | PK; default gen_random_uuid() |
+| `rate_limit_logs` | `ip_address` | obrigatório |
+| `rate_limit_logs` | `endpoint` | obrigatório |
+| `rate_limit_logs` | `user_id` | FK → users.id on delete set null |
+| `rate_limit_logs` | `request_count` | default 1 |
+| `rate_limit_logs` | `window_start` | default now() |
+| `rate_limit_logs` | `window_end` | default (now() |
+| `rate_limit_logs` | `is_blocked` | default false |
+| `rate_limit_logs` | `created_at` | default now() |
+| `rate_limit_settings` | `id` | PK; default gen_random_uuid() |
+| `rate_limit_settings` | `endpoint_pattern` | obrigatório |
+| `rate_limit_settings` | `max_requests` | default 100 |
+| `rate_limit_settings` | `window_seconds` | default 60 |
+| `rate_limit_settings` | `block_duration_minutes` | default 15 |
+| `rate_limit_settings` | `is_active` | default true |
+| `rate_limit_settings` | `created_by` | FK → users.id on delete set null |
+| `rate_limit_settings` | `created_at` | default now() |
+| `rate_limit_settings` | `updated_at` | default now() |
+| `report_templates` | `id` | PK; default gen_random_uuid() |
+| `report_templates` | `user_id` | obrigatório; FK → users.id on delete cascade |
+| `report_templates` | `name` | obrigatório |
+| `report_templates` | `table_name` | obrigatório |
+| `report_templates` | `columns` | obrigatório |
+| `report_templates` | `filters` | default '{}'::jsonb |
+| `report_templates` | `format_type` | default 'pdf'::text |
+| `report_templates` | `is_public` | default false |
+| `report_templates` | `created_at` | default now() |
+| `report_templates` | `updated_at` | default now() |
+| `reward_redemptions` | `id` | PK; default gen_random_uuid() |
+| `reward_redemptions` | `user_id` | obrigatório; FK → users.id |
+| `reward_redemptions` | `reward_id` | obrigatório; FK → gamification_rewards.id |
+| `reward_redemptions` | `points_spent` | obrigatório |
+| `reward_redemptions` | `status` | default 'pending'::text |
+| `reward_redemptions` | `created_at` | default now() |
+| `rls_test_results` | `id` | PK; default gen_random_uuid() |
+| `rls_test_results` | `test_name` | obrigatório |
+| `rls_test_results` | `table_name` | obrigatório |
+| `rls_test_results` | `role` | obrigatório |
+| `rls_test_results` | `operation` | obrigatório |
+| `rls_test_results` | `passed` | obrigatório |
+| `rls_test_results` | `created_at` | default now() |
+| `role_permissions` | `id` | PK; default gen_random_uuid() |
+| `role_permissions` | `role` | obrigatório |
+| `role_permissions` | `permission` | obrigatório |
+| `role_permissions` | `resource` | obrigatório |
+| `role_permissions` | `action` | obrigatório |
+| `role_permissions` | `is_granted` | default true |
+| `role_permissions` | `created_at` | default now() |
+| `role_permissions` | `updated_at` | default now() |
+| `role_permissions` | `created_by` | FK → users.id |
+| `role_permissions` | `(tabela)` | constraint role_permissions_role_permission_key UNIQUE (role, permission) |
+| `security_events` | `id` | PK; default gen_random_uuid() |
+| `security_events` | `event_type` | obrigatório |
+| `security_events` | `severity` | default 'info'::text |
+| `security_events` | `user_id` | FK → users.id on delete set null |
+| `security_events` | `details` | default '{}'::jsonb |
+| `security_events` | `created_at` | default now() |
+| `shift_checklist_templates` | `id` | PK; default gen_random_uuid() |
+| `shift_checklist_templates` | `name` | obrigatório |
+| `shift_checklist_templates` | `items` | default '[]'::jsonb |
+| `shift_checklist_templates` | `machine_id` | FK → machines.id |
+| `shift_checklist_templates` | `is_active` | default true |
+| `shift_checklist_templates` | `created_at` | default now() |
+| `shift_checklist_templates` | `updated_at` | default now() |
+| `shift_handover_checklist` | `id` | PK; default gen_random_uuid() |
+| `shift_handover_checklist` | `handover_id` | obrigatório; FK → shift_handovers.id on delete cascade |
+| `shift_handover_checklist` | `item_description` | obrigatório |
+| `shift_handover_checklist` | `is_checked` | default false |
+| `shift_handover_checklist` | `item_order` | default 0 |
+| `shift_handover_checklist` | `created_at` | default now() |
+| `shift_handovers` | `id` | PK; default gen_random_uuid() |
+| `shift_handovers` | `shift_date` | default CURRENT_DATE |
+| `shift_handovers` | `shift_type` | obrigatório |
+| `shift_handovers` | `outgoing_operator_id` | obrigatório |
+| `shift_handovers` | `machine_id` | FK → machines.id |
+| `shift_handovers` | `status` | default 'open'::text |
+| `shift_handovers` | `started_at` | default now() |
+| `shift_handovers` | `created_at` | default now() |
+| `shift_handovers` | `updated_at` | default now() |
+| `shift_handovers` | `(tabela)` | constraint shift_handovers_shift_type_check CHECK (shift_type = ANY (ARRAY['morning'::text, 'afternoon'::text, 'night'::text])) |
+| `shift_handovers` | `(tabela)` | constraint shift_handovers_status_check CHECK (status = ANY (ARRAY['open'::text, 'pending_acceptance'::text, 'completed'::text, 'cancelled'::text])) |
+| `shift_occurrences` | `id` | PK; default gen_random_uuid() |
+| `shift_occurrences` | `handover_id` | obrigatório; FK → shift_handovers.id on delete cascade |
+| `shift_occurrences` | `occurrence_type` | obrigatório |
+| `shift_occurrences` | `severity` | default 'info'::text |
+| `shift_occurrences` | `title` | obrigatório |
+| `shift_occurrences` | `description` | obrigatório |
+| `shift_occurrences` | `machine_id` | FK → machines.id |
+| `shift_occurrences` | `job_id` | FK → jobs.id |
+| `shift_occurrences` | `occurred_at` | default now() |
+| `shift_occurrences` | `photos` | default '{}'::text[] |
+| `shift_occurrences` | `created_at` | default now() |
+| `shift_occurrences` | `(tabela)` | constraint shift_occurrences_occurrence_type_check CHECK (occurrence_type = ANY (ARRAY['incident'::text, 'maintenance'::text, 'quality'::text, 'safety'::text, 'production'::text, 'other'::text])) |
+| `shift_occurrences` | `(tabela)` | constraint shift_occurrences_severity_check CHECK (severity = ANY (ARRAY['info'::text, 'warning'::text, 'error'::text, 'critical'::text])) |
+| `shift_pending_tasks` | `id` | PK; default gen_random_uuid() |
+| `shift_pending_tasks` | `handover_id` | obrigatório; FK → shift_handovers.id on delete cascade |
+| `shift_pending_tasks` | `title` | obrigatório |
+| `shift_pending_tasks` | `priority` | default 'medium'::text |
+| `shift_pending_tasks` | `status` | default 'pending'::text |
+| `shift_pending_tasks` | `machine_id` | FK → machines.id |
+| `shift_pending_tasks` | `job_id` | FK → jobs.id |
+| `shift_pending_tasks` | `created_at` | default now() |
+| `shift_pending_tasks` | `updated_at` | default now() |
+| `shift_pending_tasks` | `(tabela)` | constraint shift_pending_tasks_priority_check CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])) |
+| `shift_pending_tasks` | `(tabela)` | constraint shift_pending_tasks_status_check CHECK (status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])) |
+| `shipments` | `id` | PK; default gen_random_uuid() |
+| `shipments` | `job_id` | FK → jobs.id on delete cascade |
+| `shipments` | `provider_id` | FK → shipping_providers.id |
+| `shipments` | `status` | default 'pending'::text |
+| `shipments` | `created_at` | default now() |
+| `shipments` | `updated_at` | default now() |
+| `shipments` | `freight_cost` | default 0 |
+| `shipments` | `insurance_cost` | default 0 |
+| `shipments` | `tax_cost` | default 0 |
+| `shipments` | `cost_currency` | default 'BRL'::text |
+| `shipping_providers` | `id` | PK; default gen_random_uuid() |
+| `shipping_providers` | `name` | obrigatório |
+| `shipping_providers` | `is_active` | default true |
+| `shipping_providers` | `created_at` | default now() |
+| `shipping_providers` | `updated_at` | default now() |
+| `spc_alerts` | `id` | PK; default gen_random_uuid() |
+| `spc_alerts` | `parameter_id` | obrigatório; FK → spc_control_parameters.id on delete cascade |
+| `spc_alerts` | `measurement_id` | FK → spc_measurements.id on delete set null |
+| `spc_alerts` | `alert_type` | obrigatório |
+| `spc_alerts` | `severity` | default 'warning'::text |
+| `spc_alerts` | `title` | obrigatório |
+| `spc_alerts` | `description` | obrigatório |
+| `spc_alerts` | `is_acknowledged` | default false |
+| `spc_alerts` | `created_at` | default now() |
+| `spc_capability_history` | `id` | PK; default gen_random_uuid() |
+| `spc_capability_history` | `parameter_id` | obrigatório; FK → spc_control_parameters.id on delete cascade |
+| `spc_capability_history` | `period_start` | obrigatório |
+| `spc_capability_history` | `period_end` | obrigatório |
+| `spc_capability_history` | `sample_count` | obrigatório |
+| `spc_capability_history` | `mean` | obrigatório |
+| `spc_capability_history` | `std_deviation` | obrigatório |
+| `spc_capability_history` | `calculated_at` | default now() |
+| `spc_control_parameters` | `id` | PK; default gen_random_uuid() |
+| `spc_control_parameters` | `name` | obrigatório |
+| `spc_control_parameters` | `machine_id` | FK → machines.id on delete set null |
+| `spc_control_parameters` | `measurement_type` | obrigatório |
+| `spc_control_parameters` | `unit` | default 'mm'::text |
+| `spc_control_parameters` | `target_value` | obrigatório |
+| `spc_control_parameters` | `upper_spec_limit` | obrigatório |
+| `spc_control_parameters` | `lower_spec_limit` | obrigatório |
+| `spc_control_parameters` | `sample_size` | default 5 |
+| `spc_control_parameters` | `frequency_minutes` | default 60 |
+| `spc_control_parameters` | `is_active` | default true |
+| `spc_control_parameters` | `created_at` | default now() |
+| `spc_control_parameters` | `updated_at` | default now() |
+| `spc_measurements` | `id` | PK; default gen_random_uuid() |
+| `spc_measurements` | `parameter_id` | obrigatório; FK → spc_control_parameters.id on delete cascade |
+| `spc_measurements` | `job_id` | FK → jobs.id on delete set null |
+| `spc_measurements` | `lot_id` | FK → production_lots.id on delete set null |
+| `spc_measurements` | `sample_number` | obrigatório |
+| `spc_measurements` | `values` | obrigatório |
+| `spc_measurements` | `mean_value` | obrigatório |
+| `spc_measurements` | `range_value` | obrigatório |
+| `spc_measurements` | `is_in_control` | default true |
+| `spc_measurements` | `measured_at` | default now() |
+| `spc_measurements` | `created_at` | default now() |
+| `system_metrics` | `id` | PK; default gen_random_uuid() |
+| `system_metrics` | `collected_at` | default now() |
+| `system_metrics` | `metrics` | default '{}'::jsonb |
 | `technical_conversations` | `id` | PK; default gen_random_uuid() |
 | `technical_conversations` | `user_id` | obrigatório |
 | `technical_conversations` | `title` | default 'Nova |
 | `technical_conversations` | `created_at` | default now() |
 | `technical_conversations` | `updated_at` | default now() |
+| `technical_documents` | `id` | PK; default gen_random_uuid() |
+| `technical_documents` | `technical_sheet_id` | FK → technical_sheets.id on delete cascade |
+| `technical_documents` | `title` | obrigatório |
+| `technical_documents` | `file_url` | obrigatório |
+| `technical_documents` | `file_name` | obrigatório |
+| `technical_documents` | `file_size` | default 0 |
+| `technical_documents` | `file_type` | default 'application/pdf'::text |
+| `technical_documents` | `version` | default 1 |
+| `technical_documents` | `is_current` | default true |
+| `technical_documents` | `status` | default 'pending'::text |
+| `technical_documents` | `created_at` | default now() |
+| `technical_documents` | `updated_at` | default now() |
+| `technical_documents` | `(tabela)` | constraint technical_documents_status_check CHECK (status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])) |
 | `technical_messages` | `id` | PK; default gen_random_uuid() |
-| `technical_messages` | `conversation_id` | obrigatório; FK → technical_conversations.id ON DELETE CASCADE |
-| `technical_messages` | `role` | obrigatório; CHECK role IN ('user', 'assistant') |
+| `technical_messages` | `conversation_id` | obrigatório; FK → technical_conversations.id on delete cascade |
+| `technical_messages` | `role` | obrigatório |
 | `technical_messages` | `content` | obrigatório |
 | `technical_messages` | `created_at` | default now() |
-| `qr_scan_history` | `id` | PK; default gen_random_uuid() |
-| `qr_scan_history` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `qr_scan_history` | `operator_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `qr_scan_history` | `action` | obrigatório |
-| `qr_scan_history` | `scanned_at` | default now() |
-| `bitrix24_sync_history` | `id` | PK; default gen_random_uuid() |
-| `bitrix24_sync_history` | `sync_type` | obrigatório; CHECK sync_type IN ('pull', 'push', 'webhook') |
-| `bitrix24_sync_history` | `status` | obrigatório; CHECK status IN ('success', 'partial', 'error') |
-| `bitrix24_sync_history` | `jobs_synced` | default 0 |
-| `bitrix24_sync_history` | `jobs_failed` | default 0 |
-| `bitrix24_sync_history` | `details` | default '{}' |
-| `bitrix24_sync_history` | `started_at` | default now() |
-| `bitrix24_sync_history` | `triggered_by` | default 'manual' |
-| `bitrix24_oauth_tokens` | `id` | PK; default gen_random_uuid() |
-| `bitrix24_oauth_tokens` | `access_token` | obrigatório |
-| `bitrix24_oauth_tokens` | `refresh_token` | obrigatório |
-| `bitrix24_oauth_tokens` | `expires_at` | obrigatório |
-| `bitrix24_oauth_tokens` | `created_at` | default now() |
-| `bitrix24_oauth_tokens` | `updated_at` | default now() |
-| `bitrix24_field_mappings` | `id` | PK; default gen_random_uuid() |
-| `bitrix24_field_mappings` | `mapping_type` | obrigatório |
-| `bitrix24_field_mappings` | `source_key` | obrigatório |
-| `bitrix24_field_mappings` | `target_key` | obrigatório |
-| `bitrix24_field_mappings` | `priority` | default 0 |
-| `bitrix24_field_mappings` | `is_active` | default true |
-| `bitrix24_field_mappings` | `created_at` | default now() |
-| `bitrix24_field_mappings` | `updated_at` | default now() |
-| `bitrix24_field_mappings` | `(tabela)` | UNIQUE(mapping_type, source_key, target_key) |
-| `product_categories` | `id` | PK; default gen_random_uuid() |
-| `product_categories` | `name` | obrigatório |
-| `product_categories` | `created_at` | default now() |
-| `product_categories` | `updated_at` | default now() |
-| `materials` | `id` | PK; default gen_random_uuid() |
-| `materials` | `name` | obrigatório |
-| `materials` | `created_at` | default now() |
-| `materials` | `updated_at` | default now() |
+| `technical_messages` | `(tabela)` | constraint technical_messages_role_check CHECK (role = ANY (ARRAY['user'::text, 'assistant'::text])) |
+| `technical_sheet_audit` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_audit` | `technical_sheet_id` | FK → technical_sheets.id on delete cascade |
+| `technical_sheet_audit` | `user_id` | FK → users.id |
+| `technical_sheet_audit` | `action` | obrigatório |
+| `technical_sheet_audit` | `created_at` | default now() |
+| `technical_sheet_audit_logs` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_audit_logs` | `technical_sheet_id` | FK → technical_sheets.id on delete cascade |
+| `technical_sheet_audit_logs` | `user_id` | FK → users.id |
+| `technical_sheet_audit_logs` | `action` | obrigatório |
+| `technical_sheet_audit_logs` | `created_at` | default now() |
+| `technical_sheet_favorites` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_favorites` | `user_id` | FK → users.id on delete cascade |
+| `technical_sheet_favorites` | `technical_sheet_id` | FK → technical_sheets.id on delete cascade |
+| `technical_sheet_favorites` | `created_at` | default now() |
+| `technical_sheet_favorites` | `(tabela)` | constraint technical_sheet_favorites_user_id_technical_sheet_id_key UNIQUE (user_id, technical_sheet_id) |
+| `technical_sheet_materials` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_materials` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id on delete cascade |
+| `technical_sheet_materials` | `name` | obrigatório |
+| `technical_sheet_materials` | `created_at` | default now() |
+| `technical_sheet_materials` | `inventory_item_id` | FK → inventory_items.id on delete set null |
+| `technical_sheet_steps` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_steps` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id on delete cascade |
+| `technical_sheet_steps` | `step_number` | obrigatório |
+| `technical_sheet_steps` | `title` | obrigatório |
+| `technical_sheet_steps` | `description` | obrigatório |
+| `technical_sheet_steps` | `created_at` | default now() |
+| `technical_sheet_tips` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_tips` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id on delete cascade |
+| `technical_sheet_tips` | `tip_type` | default 'tip'::text |
+| `technical_sheet_tips` | `content` | obrigatório |
+| `technical_sheet_tips` | `created_at` | default now() |
+| `technical_sheet_versions` | `id` | PK; default gen_random_uuid() |
+| `technical_sheet_versions` | `sheet_id` | obrigatório; FK → technical_sheets.id on delete cascade |
+| `technical_sheet_versions` | `version_number` | obrigatório |
+| `technical_sheet_versions` | `data` | obrigatório |
+| `technical_sheet_versions` | `created_by` | FK → users.id |
+| `technical_sheet_versions` | `created_at` | default now() |
 | `technical_sheets` | `id` | PK; default gen_random_uuid() |
 | `technical_sheets` | `technique_id` | obrigatório; FK → techniques.id |
 | `technical_sheets` | `product_category_id` | FK → product_categories.id |
@@ -581,1046 +1316,315 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `technical_sheets` | `version` | default 1 |
 | `technical_sheets` | `settings_ranges` | default '{}'::jsonb |
 | `technical_sheets` | `quality_checklist` | default '[]'::jsonb |
-| `technical_sheets` | `status` | default 'draft' |
+| `technical_sheets` | `consumables` | default '[]'::jsonb |
+| `technical_sheets` | `status` | default 'draft'::sheet_status |
 | `technical_sheets` | `view_count` | default 0 |
-| `technical_sheet_steps` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_steps` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_steps` | `step_number` | obrigatório |
-| `technical_sheet_steps` | `title` | obrigatório |
-| `technical_sheet_steps` | `description` | obrigatório |
-| `technical_sheet_steps` | `created_at` | default now() |
-| `technical_sheet_materials` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_materials` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_materials` | `name` | obrigatório |
-| `technical_sheet_materials` | `created_at` | default now() |
-| `technical_sheet_materials` | `inventory_item_id` | FK → inventory_items.id ON DELETE SET NULL |
-| `technical_sheet_tips` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_tips` | `technical_sheet_id` | obrigatório; FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_tips` | `tip_type` | default 'tip' |
-| `technical_sheet_tips` | `content` | obrigatório |
-| `technical_sheet_tips` | `created_at` | default now() |
-| `operator_machines` | `id` | PK; default gen_random_uuid() |
-| `operator_machines` | `operator_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `operator_machines` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `operator_machines` | `assigned_at` | default now() |
-| `operator_machines` | `assigned_by` | FK → users.id |
-| `operator_machines` | `(tabela)` | UNIQUE (operator_id, machine_id) |
-| `operator_status_audit` | `id` | PK; default gen_random_uuid() |
-| `operator_status_audit` | `operator_id` | obrigatório |
-| `operator_status_audit` | `action` | obrigatório; CHECK action IN ('activated', 'deactivated', 'removed') |
-| `operator_status_audit` | `performed_by` | obrigatório |
-| `operator_status_audit` | `created_at` | default now() |
-| `user_favorites` | `id` | PK; default gen_random_uuid() |
-| `user_favorites` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `user_favorites` | `favorites` | default '[]'::jsonb |
-| `user_favorites` | `created_at` | default now() |
-| `user_favorites` | `updated_at` | default now() |
-| `user_favorites` | `(tabela)` | UNIQUE (user_id) |
-| `operator_goals` | `id` | PK; default gen_random_uuid() |
-| `operator_goals` | `operator_id` | obrigatório |
-| `operator_goals` | `goal_type` | obrigatório |
-| `operator_goals` | `target_value` | obrigatório |
-| `operator_goals` | `period_start` | obrigatório |
-| `operator_goals` | `period_end` | obrigatório |
-| `operator_goals` | `created_at` | default now() |
-| `operator_goals` | `updated_at` | default now() |
-| `operator_goals` | `(tabela)` | CONSTRAINT valid_period CHECK (period_end >= period_start) |
-| `operator_goals` | `(tabela)` | CONSTRAINT valid_goal_type CHECK (goal_type IN ('efficiency', 'jobs_completed', 'pieces_produced', 'loss_rate')) |
-| `abc_activities` | `id` | PK; default gen_random_uuid() |
-| `abc_activities` | `name` | obrigatório |
-| `abc_activities` | `cost_driver` | obrigatório |
-| `abc_activities` | `technique_id` | FK → techniques.id |
-| `abc_activities` | `is_active` | default true |
-| `abc_activities` | `created_at` | default now() |
-| `abc_activities` | `updated_at` | default now() |
-| `abc_cost_pools` | `id` | PK; default gen_random_uuid() |
-| `abc_cost_pools` | `name` | obrigatório |
-| `abc_cost_pools` | `pool_type` | obrigatório |
-| `abc_cost_pools` | `monthly_budget` | default 0 |
-| `abc_cost_pools` | `is_active` | default true |
-| `abc_cost_pools` | `created_at` | default now() |
-| `abc_cost_pools` | `updated_at` | default now() |
-| `abc_activity_rates` | `id` | PK; default gen_random_uuid() |
-| `abc_activity_rates` | `activity_id` | obrigatório; FK → abc_activities.id ON DELETE CASCADE |
-| `abc_activity_rates` | `cost_pool_id` | obrigatório; FK → abc_cost_pools.id ON DELETE CASCADE |
-| `abc_activity_rates` | `rate_per_unit` | default 0 |
-| `abc_activity_rates` | `period_start` | obrigatório |
-| `abc_activity_rates` | `period_end` | obrigatório |
-| `abc_activity_rates` | `created_at` | default now() |
-| `abc_activity_rates` | `updated_at` | default now() |
-| `abc_activity_rates` | `(tabela)` | UNIQUE(activity_id, cost_pool_id, period_start) |
-| `abc_job_costs` | `id` | PK; default gen_random_uuid() |
-| `abc_job_costs` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `abc_job_costs` | `activity_id` | obrigatório; FK → abc_activities.id |
-| `abc_job_costs` | `cost_pool_id` | obrigatório; FK → abc_cost_pools.id |
-| `abc_job_costs` | `driver_quantity` | default 0 |
-| `abc_job_costs` | `unit_rate` | default 0 |
-| `abc_job_costs` | `total_cost` | default 0 |
-| `abc_job_costs` | `calculated_at` | default now() |
-| `abc_job_costs` | `created_at` | default now() |
-| `abc_job_costs` | `(tabela)` | constraint abc_job_costs_job_activity_pool_unique UNIQUE (job_id, activity_id, cost_pool_id) |
-| `maintenance_types` | `id` | PK |
-| `maintenance_types` | `name` | obrigatório |
-| `maintenance_types` | `default_interval_days` | default 30 |
-| `maintenance_types` | `color` | default '#3b82f6' |
-| `maintenance_types` | `created_at` | default now() |
-| `maintenance_schedules` | `id` | PK; default gen_random_uuid() |
-| `maintenance_schedules` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `maintenance_schedules` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
-| `maintenance_schedules` | `name` | obrigatório |
-| `maintenance_schedules` | `interval_days` | default 30 |
-| `maintenance_schedules` | `next_due_at` | obrigatório |
-| `maintenance_schedules` | `estimated_duration_minutes` | default 60 |
-| `maintenance_schedules` | `is_active` | default true |
-| `maintenance_schedules` | `created_at` | default now() |
-| `maintenance_schedules` | `updated_at` | default now() |
-| `maintenance_schedules` | `(tabela)` | constraint maintenance_schedule_dates_valid CHECK (next_due_at >= created_at) |
-| `maintenance_checklists` | `id` | PK; default gen_random_uuid() |
-| `maintenance_checklists` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
-| `maintenance_checklists` | `name` | obrigatório |
-| `maintenance_checklists` | `is_active` | default true |
-| `maintenance_checklists` | `created_at` | default now() |
-| `maintenance_checklists` | `updated_at` | default now() |
-| `maintenance_checklists` | `version` | default 1 |
-| `maintenance_checklists` | `technique_id` | FK → techniques.id |
-| `maintenance_checklist_items` | `id` | PK; default gen_random_uuid() |
-| `maintenance_checklist_items` | `checklist_id` | obrigatório; FK → maintenance_checklists.id ON DELETE CASCADE |
-| `maintenance_checklist_items` | `item_order` | default 0 |
-| `maintenance_checklist_items` | `description` | obrigatório |
-| `maintenance_checklist_items` | `is_critical` | default false |
-| `maintenance_checklist_items` | `requires_photo` | default false |
-| `maintenance_checklist_items` | `requires_measurement` | default false |
-| `maintenance_checklist_items` | `created_at` | default now() |
-| `maintenance_records` | `id` | PK; default gen_random_uuid() |
-| `maintenance_records` | `schedule_id` | obrigatório; FK → maintenance_schedules.id ON DELETE CASCADE |
-| `maintenance_records` | `machine_id` | obrigatório; FK → machines.id |
-| `maintenance_records` | `maintenance_type_id` | obrigatório; FK → maintenance_types.id |
-| `maintenance_records` | `started_at` | default now() |
-| `maintenance_records` | `status` | default 'in_progress' |
-| `maintenance_records` | `photos` | default '{}' |
-| `maintenance_records` | `total_cost` | default 0 |
-| `maintenance_records` | `downtime_minutes` | default 0 |
-| `maintenance_records` | `created_at` | default now() |
-| `maintenance_records` | `approver_id` | FK → users.id |
-| `maintenance_records` | `technical_sheet_id` | FK → technical_sheets.id |
-| `maintenance_records` | `adjustment_parameters` | default '{}'::jsonb |
-| `maintenance_records` | `quality_responses` | default '[]'::jsonb |
-| `maintenance_records` | `override_by` | FK → users.id |
-| `maintenance_item_responses` | `id` | PK; default gen_random_uuid() |
-| `maintenance_item_responses` | `record_id` | obrigatório; FK → maintenance_records.id ON DELETE CASCADE |
-| `maintenance_item_responses` | `checklist_item_id` | obrigatório; FK → maintenance_checklist_items.id |
-| `maintenance_item_responses` | `is_checked` | default false |
-| `maintenance_item_responses` | `responded_at` | default now() |
-| `maintenance_alerts` | `id` | PK; default gen_random_uuid() |
-| `maintenance_alerts` | `schedule_id` | obrigatório; FK → maintenance_schedules.id ON DELETE CASCADE |
-| `maintenance_alerts` | `machine_id` | obrigatório; FK → machines.id |
-| `maintenance_alerts` | `alert_type` | obrigatório |
-| `maintenance_alerts` | `message` | obrigatório |
-| `maintenance_alerts` | `is_read` | default false |
-| `maintenance_alerts` | `is_resolved` | default false |
-| `maintenance_alerts` | `created_at` | default now() |
-| `machine_predictions` | `id` | PK; default gen_random_uuid() |
-| `machine_predictions` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `machine_predictions` | `prediction_type` | obrigatório |
-| `machine_predictions` | `risk_score` | obrigatório |
-| `machine_predictions` | `confidence` | obrigatório |
-| `machine_predictions` | `factors` | default '[]' |
-| `machine_predictions` | `model_version` | default 'v1.0' |
-| `machine_predictions` | `is_active` | default true |
-| `machine_predictions` | `created_at` | default now() |
-| `machine_predictions` | `expires_at` | default (now() |
-| `prediction_history` | `id` | PK; default gen_random_uuid() |
-| `prediction_history` | `prediction_id` | obrigatório; FK → machine_predictions.id ON DELETE CASCADE |
-| `prediction_history` | `machine_id` | obrigatório; FK → machines.id |
-| `prediction_history` | `predicted_risk_score` | obrigatório |
-| `prediction_history` | `created_at` | default now() |
-| `machine_health_metrics` | `id` | PK; default gen_random_uuid() |
-| `machine_health_metrics` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `machine_health_metrics` | `period_start` | obrigatório |
-| `machine_health_metrics` | `period_end` | obrigatório |
-| `machine_health_metrics` | `total_jobs` | default 0 |
-| `machine_health_metrics` | `total_produced` | default 0 |
-| `machine_health_metrics` | `total_losses` | default 0 |
-| `machine_health_metrics` | `total_production_hours` | default 0 |
-| `machine_health_metrics` | `maintenance_count` | default 0 |
-| `machine_health_metrics` | `corrective_maintenance_count` | default 0 |
-| `machine_health_metrics` | `calculated_at` | default now() |
-| `machine_health_metrics` | `(tabela)` | UNIQUE(machine_id, period_start, period_end) |
-| `daily_summaries` | `id` | PK; default gen_random_uuid() |
-| `daily_summaries` | `date` | obrigatório |
-| `daily_summaries` | `summary_type` | obrigatório |
-| `daily_summaries` | `data` | default '{}'::jsonb |
-| `daily_summaries` | `created_at` | default now() |
-| `shift_handovers` | `id` | PK; default gen_random_uuid() |
-| `shift_handovers` | `shift_date` | default CURRENT_DATE |
-| `shift_handovers` | `shift_type` | obrigatório; CHECK shift_type IN ('morning', 'afternoon', 'night') |
-| `shift_handovers` | `outgoing_operator_id` | obrigatório |
-| `shift_handovers` | `machine_id` | FK → machines.id |
-| `shift_handovers` | `status` | default 'open'; CHECK status IN ('open', 'pending_acceptance', 'completed', 'cancelled') |
-| `shift_handovers` | `started_at` | default now() |
-| `shift_handovers` | `created_at` | default now() |
-| `shift_handovers` | `updated_at` | default now() |
-| `shift_handover_checklist` | `id` | PK; default gen_random_uuid() |
-| `shift_handover_checklist` | `handover_id` | obrigatório; FK → shift_handovers.id ON DELETE CASCADE |
-| `shift_handover_checklist` | `item_description` | obrigatório |
-| `shift_handover_checklist` | `is_checked` | default false |
-| `shift_handover_checklist` | `item_order` | default 0 |
-| `shift_handover_checklist` | `created_at` | default now() |
-| `shift_pending_tasks` | `id` | PK; default gen_random_uuid() |
-| `shift_pending_tasks` | `handover_id` | obrigatório; FK → shift_handovers.id ON DELETE CASCADE |
-| `shift_pending_tasks` | `title` | obrigatório |
-| `shift_pending_tasks` | `priority` | default 'medium'; CHECK priority IN ('low', 'medium', 'high', 'critical') |
-| `shift_pending_tasks` | `status` | default 'pending'; CHECK status IN ('pending', 'in_progress', 'completed', 'cancelled') |
-| `shift_pending_tasks` | `machine_id` | FK → machines.id |
-| `shift_pending_tasks` | `job_id` | FK → jobs.id |
-| `shift_pending_tasks` | `created_at` | default now() |
-| `shift_pending_tasks` | `updated_at` | default now() |
-| `shift_occurrences` | `id` | PK; default gen_random_uuid() |
-| `shift_occurrences` | `handover_id` | obrigatório; FK → shift_handovers.id ON DELETE CASCADE |
-| `shift_occurrences` | `occurrence_type` | obrigatório; CHECK occurrence_type IN ('incident', 'maintenance', 'quality', 'safety', 'production', 'other') |
-| `shift_occurrences` | `severity` | default 'info'; CHECK severity IN ('info', 'warning', 'error', 'critical') |
-| `shift_occurrences` | `title` | obrigatório |
-| `shift_occurrences` | `description` | obrigatório |
-| `shift_occurrences` | `machine_id` | FK → machines.id |
-| `shift_occurrences` | `job_id` | FK → jobs.id |
-| `shift_occurrences` | `occurred_at` | default now() |
-| `shift_occurrences` | `photos` | default '{}' |
-| `shift_occurrences` | `created_at` | default now() |
-| `shift_checklist_templates` | `id` | PK; default gen_random_uuid() |
-| `shift_checklist_templates` | `name` | obrigatório |
-| `shift_checklist_templates` | `items` | default '[]' |
-| `shift_checklist_templates` | `machine_id` | FK → machines.id |
-| `shift_checklist_templates` | `is_active` | default true |
-| `shift_checklist_templates` | `created_at` | default now() |
-| `shift_checklist_templates` | `updated_at` | default now() |
-| `production_lots` | `id` | PK; default gen_random_uuid() |
-| `production_lots` | `lot_number` | obrigatório; único |
-| `production_lots` | `job_id` | FK → jobs.id ON DELETE SET NULL |
-| `production_lots` | `product_name` | obrigatório |
-| `production_lots` | `quantity` | default 0 |
-| `production_lots` | `produced_quantity` | default 0 |
-| `production_lots` | `status` | default 'active' |
-| `production_lots` | `production_date` | default CURRENT_DATE |
-| `production_lots` | `created_at` | default now() |
-| `production_lots` | `updated_at` | default now() |
-| `lot_components` | `id` | PK; default gen_random_uuid() |
-| `lot_components` | `lot_id` | obrigatório; FK → production_lots.id ON DELETE CASCADE |
-| `lot_components` | `component_lot_id` | FK → production_lots.id ON DELETE SET NULL |
-| `lot_components` | `material_id` | FK → materials.id ON DELETE SET NULL |
-| `lot_components` | `component_name` | obrigatório |
-| `lot_components` | `quantity_used` | default 0 |
-| `lot_components` | `unit` | default 'un' |
-| `lot_components` | `created_at` | default now() |
-| `lot_movements` | `id` | PK; default gen_random_uuid() |
-| `lot_movements` | `lot_id` | obrigatório; FK → production_lots.id ON DELETE CASCADE |
-| `lot_movements` | `movement_type` | obrigatório |
-| `lot_movements` | `quantity` | obrigatório |
-| `lot_movements` | `job_id` | FK → jobs.id ON DELETE SET NULL |
-| `lot_movements` | `created_at` | default now() |
-| `lot_quality_inspections` | `id` | PK; default gen_random_uuid() |
-| `lot_quality_inspections` | `lot_id` | obrigatório; FK → production_lots.id ON DELETE CASCADE |
-| `lot_quality_inspections` | `inspection_type` | obrigatório |
-| `lot_quality_inspections` | `result` | obrigatório |
-| `lot_quality_inspections` | `defects_found` | default 0 |
-| `lot_quality_inspections` | `photos` | default '{}' |
-| `lot_quality_inspections` | `inspected_at` | default now() |
-| `lot_quality_inspections` | `created_at` | default now() |
-| `spc_control_parameters` | `id` | PK; default gen_random_uuid() |
-| `spc_control_parameters` | `name` | obrigatório |
-| `spc_control_parameters` | `machine_id` | FK → machines.id ON DELETE SET NULL |
-| `spc_control_parameters` | `measurement_type` | obrigatório |
-| `spc_control_parameters` | `unit` | default 'mm' |
-| `spc_control_parameters` | `target_value` | obrigatório |
-| `spc_control_parameters` | `upper_spec_limit` | obrigatório |
-| `spc_control_parameters` | `lower_spec_limit` | obrigatório |
-| `spc_control_parameters` | `sample_size` | default 5 |
-| `spc_control_parameters` | `frequency_minutes` | default 60 |
-| `spc_control_parameters` | `is_active` | default true |
-| `spc_control_parameters` | `created_at` | default now() |
-| `spc_control_parameters` | `updated_at` | default now() |
-| `spc_measurements` | `id` | PK; default gen_random_uuid() |
-| `spc_measurements` | `parameter_id` | obrigatório; FK → spc_control_parameters.id ON DELETE CASCADE |
-| `spc_measurements` | `job_id` | FK → jobs.id ON DELETE SET NULL |
-| `spc_measurements` | `lot_id` | FK → production_lots.id ON DELETE SET NULL |
-| `spc_measurements` | `sample_number` | obrigatório |
-| `spc_measurements` | `values` | obrigatório |
-| `spc_measurements` | `mean_value` | obrigatório |
-| `spc_measurements` | `range_value` | obrigatório |
-| `spc_measurements` | `is_in_control` | default true |
-| `spc_measurements` | `measured_at` | default now() |
-| `spc_measurements` | `created_at` | default now() |
-| `spc_alerts` | `id` | PK; default gen_random_uuid() |
-| `spc_alerts` | `parameter_id` | obrigatório; FK → spc_control_parameters.id ON DELETE CASCADE |
-| `spc_alerts` | `measurement_id` | FK → spc_measurements.id ON DELETE SET NULL |
-| `spc_alerts` | `alert_type` | obrigatório |
-| `spc_alerts` | `severity` | default 'warning' |
-| `spc_alerts` | `title` | obrigatório |
-| `spc_alerts` | `description` | obrigatório |
-| `spc_alerts` | `is_acknowledged` | default false |
-| `spc_alerts` | `created_at` | default now() |
-| `spc_capability_history` | `id` | PK; default gen_random_uuid() |
-| `spc_capability_history` | `parameter_id` | obrigatório; FK → spc_control_parameters.id ON DELETE CASCADE |
-| `spc_capability_history` | `period_start` | obrigatório |
-| `spc_capability_history` | `period_end` | obrigatório |
-| `spc_capability_history` | `sample_count` | obrigatório |
-| `spc_capability_history` | `mean` | obrigatório |
-| `spc_capability_history` | `std_deviation` | obrigatório |
-| `spc_capability_history` | `calculated_at` | default now() |
-| `operator_achievements` | `id` | PK; default gen_random_uuid() |
-| `operator_achievements` | `operator_id` | obrigatório |
-| `operator_achievements` | `achievement_type` | obrigatório |
-| `operator_achievements` | `achievement_name` | obrigatório |
-| `operator_achievements` | `icon` | default 'trophy' |
-| `operator_achievements` | `points` | default 0 |
-| `operator_achievements` | `achieved_at` | default now() |
-| `operator_achievements` | `metadata` | default '{}'::jsonb |
-| `operator_achievements` | `created_at` | default now() |
-| `operator_rankings` | `id` | PK; default gen_random_uuid() |
-| `operator_rankings` | `operator_id` | obrigatório |
-| `operator_rankings` | `ranking_type` | obrigatório |
-| `operator_rankings` | `period_start` | obrigatório |
-| `operator_rankings` | `period_end` | obrigatório |
-| `operator_rankings` | `position` | obrigatório |
-| `operator_rankings` | `total_points` | default 0 |
-| `operator_rankings` | `total_produced` | default 0 |
-| `operator_rankings` | `efficiency_rate` | default 0 |
-| `operator_rankings` | `quality_rate` | default 0 |
-| `operator_rankings` | `calculated_at` | default now() |
-| `operator_rankings` | `(tabela)` | UNIQUE(operator_id, ranking_type, period_start, period_end) |
-| `operator_rankings` | `(tabela)` | constraint operator_rankings_operator_type_period_unique UNIQUE (operator_id, ranking_type, period_start) NOT VALID |
-| `energy_consumption` | `id` | PK; default gen_random_uuid() |
-| `energy_consumption` | `machine_id` | FK → machines.id |
-| `energy_consumption` | `recorded_at` | default now() |
-| `energy_consumption` | `consumption_kwh` | default 0 |
-| `energy_consumption` | `cost_per_kwh` | default 0.65 |
-| `energy_consumption` | `total_cost` | CALCULADA = consumption_kwh * cost_per_kwh |
-| `energy_consumption` | `reading_type` | default 'automatic' |
-| `energy_consumption` | `created_at` | default now() |
-| `energy_alerts` | `id` | PK; default gen_random_uuid() |
-| `energy_alerts` | `machine_id` | FK → machines.id |
-| `energy_alerts` | `alert_type` | obrigatório |
-| `energy_alerts` | `threshold_value` | obrigatório |
-| `energy_alerts` | `current_value` | obrigatório |
-| `energy_alerts` | `severity` | default 'warning' |
-| `energy_alerts` | `message` | obrigatório |
-| `energy_alerts` | `is_resolved` | default false |
-| `energy_alerts` | `created_at` | default now() |
-| `energy_targets` | `id` | PK; default gen_random_uuid() |
-| `energy_targets` | `machine_id` | FK → machines.id |
-| `energy_targets` | `target_type` | obrigatório |
-| `energy_targets` | `target_value` | obrigatório |
-| `energy_targets` | `period_start` | obrigatório |
-| `energy_targets` | `period_end` | obrigatório |
-| `energy_targets` | `is_active` | default true |
-| `energy_targets` | `created_at` | default now() |
-| `energy_targets` | `updated_at` | default now() |
-| `technical_documents` | `id` | PK; default gen_random_uuid() |
-| `technical_documents` | `technical_sheet_id` | FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_documents` | `title` | obrigatório |
-| `technical_documents` | `file_url` | obrigatório |
-| `technical_documents` | `file_name` | obrigatório |
-| `technical_documents` | `file_size` | default 0 |
-| `technical_documents` | `file_type` | default 'application/pdf' |
-| `technical_documents` | `version` | default 1 |
-| `technical_documents` | `is_current` | default true |
-| `technical_documents` | `status` | default 'pending'; CHECK status IN ('pending', 'approved', 'rejected') |
-| `technical_documents` | `created_at` | default now() |
-| `technical_documents` | `updated_at` | default now() |
-| `document_versions` | `id` | PK; default gen_random_uuid() |
-| `document_versions` | `document_id` | obrigatório; FK → technical_documents.id ON DELETE CASCADE |
-| `document_versions` | `version` | obrigatório |
-| `document_versions` | `file_url` | obrigatório |
-| `document_versions` | `file_name` | obrigatório |
-| `document_versions` | `file_size` | default 0 |
-| `document_versions` | `created_at` | default now() |
-| `push_subscriptions` | `id` | PK; default gen_random_uuid() |
-| `push_subscriptions` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `push_subscriptions` | `endpoint` | obrigatório |
-| `push_subscriptions` | `p256dh` | obrigatório |
-| `push_subscriptions` | `auth` | obrigatório |
-| `push_subscriptions` | `created_at` | default now() |
-| `push_subscriptions` | `updated_at` | default now() |
-| `push_subscriptions` | `(tabela)` | UNIQUE(user_id, endpoint) |
-| `push_notifications` | `id` | PK; default gen_random_uuid() |
-| `push_notifications` | `user_id` | FK → users.id ON DELETE CASCADE |
-| `push_notifications` | `title` | obrigatório |
-| `push_notifications` | `body` | obrigatório |
-| `push_notifications` | `data` | default '{}' |
-| `push_notifications` | `status` | default 'pending' |
-| `push_notifications` | `created_at` | default now() |
-| `password_reset_requests` | `id` | PK; default gen_random_uuid() |
-| `password_reset_requests` | `user_email` | obrigatório |
-| `password_reset_requests` | `status` | default 'pending'; CHECK status IN ('pending', 'approved', 'rejected') |
-| `password_reset_requests` | `reviewed_by` | FK → users.id |
-| `password_reset_requests` | `created_at` | default now() |
-| `password_reset_requests` | `expires_at` | default (now() |
-| `ip_allowlist` | `id` | PK; default gen_random_uuid() |
-| `ip_allowlist` | `ip_address` | obrigatório |
-| `ip_allowlist` | `is_global` | default false |
-| `ip_allowlist` | `user_id` | FK → users.id ON DELETE CASCADE |
-| `ip_allowlist` | `created_at` | default now() |
-| `ip_allowlist` | `is_active` | default true |
-| `ip_allowlist` | `(tabela)` | CONSTRAINT ip_or_global CHECK (is_global = true OR user_id IS NOT NULL) |
-| `user_mfa_settings` | `id` | PK; default gen_random_uuid() |
-| `user_mfa_settings` | `user_id` | obrigatório; único; FK → users.id ON DELETE CASCADE |
-| `user_mfa_settings` | `totp_enabled` | default false |
-| `user_mfa_settings` | `created_at` | default now() |
-| `user_mfa_settings` | `updated_at` | default now() |
-| `login_audit` | `id` | PK; default gen_random_uuid() |
-| `login_audit` | `user_id` | FK → users.id ON DELETE CASCADE |
-| `login_audit` | `user_email` | obrigatório |
-| `login_audit` | `login_status` | obrigatório |
-| `login_audit` | `created_at` | default now() |
-| `rate_limit_logs` | `id` | PK; default gen_random_uuid() |
-| `rate_limit_logs` | `ip_address` | obrigatório |
-| `rate_limit_logs` | `endpoint` | obrigatório |
-| `rate_limit_logs` | `user_id` | FK → users.id ON DELETE SET NULL |
-| `rate_limit_logs` | `request_count` | default 1 |
-| `rate_limit_logs` | `window_start` | default now() |
-| `rate_limit_logs` | `window_end` | default (now() |
-| `rate_limit_logs` | `is_blocked` | default false |
-| `rate_limit_logs` | `created_at` | default now() |
-| `blocked_ips` | `id` | PK; default gen_random_uuid() |
-| `blocked_ips` | `ip_address` | obrigatório |
-| `blocked_ips` | `reason` | obrigatório |
-| `blocked_ips` | `blocked_at` | default now() |
-| `blocked_ips` | `is_permanent` | default false |
-| `blocked_ips` | `blocked_by` | FK → users.id ON DELETE SET NULL |
-| `blocked_ips` | `unblocked_by` | FK → users.id ON DELETE SET NULL |
-| `blocked_ips` | `created_at` | default now() |
-| `rate_limit_settings` | `id` | PK; default gen_random_uuid() |
-| `rate_limit_settings` | `endpoint_pattern` | obrigatório |
-| `rate_limit_settings` | `max_requests` | default 100 |
-| `rate_limit_settings` | `window_seconds` | default 60 |
-| `rate_limit_settings` | `block_duration_minutes` | default 15 |
-| `rate_limit_settings` | `is_active` | default true |
-| `rate_limit_settings` | `created_by` | FK → users.id ON DELETE SET NULL |
-| `rate_limit_settings` | `created_at` | default now() |
-| `rate_limit_settings` | `updated_at` | default now() |
-| `security_events` | `id` | PK; default gen_random_uuid() |
-| `security_events` | `event_type` | obrigatório |
-| `security_events` | `severity` | default 'info' |
-| `security_events` | `user_id` | FK → users.id ON DELETE SET NULL |
-| `security_events` | `details` | default '{}'::jsonb |
-| `security_events` | `created_at` | default now() |
-| `user_devices` | `id` | PK; default gen_random_uuid() |
-| `user_devices` | `user_id` | obrigatório |
-| `user_devices` | `device_fingerprint` | obrigatório |
-| `user_devices` | `device_type` | default 'desktop' |
-| `user_devices` | `is_trusted` | default false |
-| `user_devices` | `first_seen_at` | default now() |
-| `user_devices` | `last_seen_at` | default now() |
-| `user_devices` | `created_at` | default now() |
-| `new_device_alerts` | `id` | PK; default gen_random_uuid() |
-| `new_device_alerts` | `user_id` | obrigatório |
-| `new_device_alerts` | `device_id` | FK → user_devices.id |
-| `new_device_alerts` | `email_sent` | default false |
-| `new_device_alerts` | `acknowledged` | default false |
-| `new_device_alerts` | `created_at` | default now() |
-| `role_permissions` | `id` | PK; default gen_random_uuid() |
-| `role_permissions` | `role` | obrigatório |
-| `role_permissions` | `permission` | obrigatório |
-| `role_permissions` | `resource` | obrigatório |
-| `role_permissions` | `action` | obrigatório |
-| `role_permissions` | `is_granted` | default true |
-| `role_permissions` | `created_at` | default now() |
-| `role_permissions` | `updated_at` | default now() |
-| `role_permissions` | `created_by` | FK → users.id |
-| `role_permissions` | `(tabela)` | UNIQUE(role, permission) |
-| `login_lockouts` | `id` | PK; default gen_random_uuid() |
-| `login_lockouts` | `identifier` | obrigatório |
-| `login_lockouts` | `identifier_type` | obrigatório; CHECK identifier_type IN ('email', 'ip') |
-| `login_lockouts` | `failed_attempts` | default 0 |
-| `login_lockouts` | `lockout_count` | default 0 |
-| `login_lockouts` | `created_at` | default now() |
-| `login_lockouts` | `updated_at` | default now() |
-| `login_lockouts` | `(tabela)` | UNIQUE(identifier, identifier_type) |
-| `chat_messages` | `id` | PK; default gen_random_uuid() |
-| `chat_messages` | `sender_id` | obrigatório |
-| `chat_messages` | `sender_name` | obrigatório |
-| `chat_messages` | `message` | obrigatório |
-| `chat_messages` | `channel` | default 'general' |
-| `chat_messages` | `is_read` | default false |
-| `chat_messages` | `created_at` | default now() |
-| `pre_production_checklists` | `id` | PK; default gen_random_uuid() |
-| `pre_production_checklists` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `pre_production_checklists` | `material_verified` | default false |
-| `pre_production_checklists` | `color_verified` | default false |
-| `pre_production_checklists` | `machine_clean` | default false |
-| `pre_production_checklists` | `tools_ready` | default false |
-| `pre_production_checklists` | `created_at` | default now() |
-| `query_telemetry` | `id` | PK; default gen_random_uuid() |
-| `query_telemetry` | `operation` | obrigatório |
-| `query_telemetry` | `duration_ms` | default 0 |
-| `query_telemetry` | `severity` | default 'normal' |
-| `query_telemetry` | `created_at` | default now() |
-| `audit_log` | `id` | PK; default gen_random_uuid() |
-| `audit_log` | `entity_type` | obrigatório |
-| `audit_log` | `entity_id` | obrigatório |
-| `audit_log` | `action` | obrigatório; CHECK action IN ('INSERT','UPDATE','DELETE') |
-| `audit_log` | `hash` | obrigatório |
-| `audit_log` | `metadata` | default '{}'::jsonb |
-| `audit_log` | `created_at` | default now() |
-| `audit_log` | `(tabela)` | constraint audit_log_action_check CHECK (action = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text, 'CREATE'::text])) |
-| `user_notification_settings` | `id` | PK; default gen_random_uuid() |
-| `user_notification_settings` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `user_notification_settings` | `email_enabled` | default true |
-| `user_notification_settings` | `push_enabled` | default true |
-| `user_notification_settings` | `whatsapp_enabled` | default false |
-| `user_notification_settings` | `notification_types` | default ARRAY['upcoming' |
-| `user_notification_settings` | `machine_filters` | default ARRAY[]::UUID[] |
-| `user_notification_settings` | `created_at` | default now() |
-| `user_notification_settings` | `updated_at` | default now() |
-| `user_notification_settings` | `event_configs` | default '{ |
-| `user_notification_settings` | `(tabela)` | UNIQUE(user_id) |
-| `tpm_notification_templates` | `id` | PK; default gen_random_uuid() |
-| `tpm_notification_templates` | `channel` | obrigatório; CHECK channel IN ('email', 'whatsapp', 'push') |
-| `tpm_notification_templates` | `severity` | obrigatório; CHECK severity IN ('upcoming', 'due', 'overdue', 'critical') |
-| `tpm_notification_templates` | `template_body` | obrigatório |
-| `tpm_notification_templates` | `is_active` | default true |
-| `tpm_notification_templates` | `created_at` | default now() |
-| `tpm_notification_templates` | `updated_at` | default now() |
-| `tpm_notification_templates` | `status` | default 'published'; CHECK status IN ('draft', 'published') |
-| `tpm_notification_logs` | `id` | PK; default gen_random_uuid() |
-| `tpm_notification_logs` | `machine_id` | FK → machines.id ON DELETE SET NULL |
-| `tpm_notification_logs` | `user_id` | FK → users.id ON DELETE SET NULL |
-| `tpm_notification_logs` | `channel` | obrigatório |
-| `tpm_notification_logs` | `severity` | obrigatório |
-| `tpm_notification_logs` | `status` | obrigatório; CHECK status IN ('success', 'failure') |
-| `tpm_notification_logs` | `sent_at` | default now() |
-| `tpm_notification_logs` | `retry_attempts` | default 0 |
-| `tpm_severity_configs` | `id` | PK; default gen_random_uuid() |
-| `tpm_severity_configs` | `machine_id` | FK → machines.id ON DELETE CASCADE |
-| `tpm_severity_configs` | `severity` | obrigatório; CHECK severity IN ('upcoming', 'due', 'overdue', 'critical') |
-| `tpm_severity_configs` | `days_threshold` | default 0 |
-| `tpm_severity_configs` | `is_enabled` | default true |
-| `tpm_severity_configs` | `created_at` | default now() |
-| `tpm_severity_configs` | `updated_at` | default now() |
-| `tpm_severity_configs` | `(tabela)` | UNIQUE(machine_id, severity) |
-| `tpm_notification_templates_published` | `id` | PK; default gen_random_uuid() |
-| `tpm_notification_templates_published` | `template_id` | FK → tpm_notification_templates.id ON DELETE CASCADE |
-| `tpm_notification_templates_published` | `channel` | obrigatório |
-| `tpm_notification_templates_published` | `severity` | obrigatório |
-| `tpm_notification_templates_published` | `template_body` | obrigatório |
-| `tpm_notification_templates_published` | `published_at` | default now() |
-| `tpm_notification_queue` | `id` | PK; default gen_random_uuid() |
-| `tpm_notification_queue` | `machine_id` | FK → machines.id ON DELETE CASCADE |
-| `tpm_notification_queue` | `template_id` | FK → tpm_notification_templates_published.id |
-| `tpm_notification_queue` | `channel` | obrigatório |
-| `tpm_notification_queue` | `severity` | obrigatório |
-| `tpm_notification_queue` | `recipient` | obrigatório |
-| `tpm_notification_queue` | `payload` | default '{}' |
-| `tpm_notification_queue` | `status` | default 'pending' |
-| `tpm_notification_queue` | `retry_count` | default 0 |
-| `tpm_notification_queue` | `max_retries` | default 3 |
-| `tpm_notification_queue` | `next_retry_at` | default now() |
-| `tpm_notification_queue` | `created_at` | default now() |
-| `tpm_executions` | `id` | PK; default gen_random_uuid() |
-| `tpm_executions` | `schedule_id` | FK → maintenance_schedules.id ON DELETE CASCADE |
-| `tpm_executions` | `machine_id` | FK → machines.id ON DELETE CASCADE |
-| `tpm_executions` | `technician_id` | FK → users.id |
-| `tpm_executions` | `started_at` | default now() |
-| `tpm_executions` | `status` | default 'in_progress' |
-| `tpm_executions` | `created_at` | default now() |
-| `tpm_executions` | `updated_at` | default now() |
-| `tpm_executions` | `technical_sheet_id` | FK → technical_sheets.id |
-| `tpm_executions` | `adjustment_parameters` | default '{}'::jsonb |
-| `tpm_executions` | `quality_checklist_results` | default '[]'::jsonb |
-| `tpm_executions` | `failure_risk_detected` | default false |
-| `tpm_execution_parts` | `id` | PK; default gen_random_uuid() |
-| `tpm_execution_parts` | `execution_id` | FK → tpm_executions.id ON DELETE CASCADE |
-| `tpm_execution_parts` | `part_name` | obrigatório |
-| `tpm_execution_parts` | `quantity` | default 1 |
-| `tpm_execution_parts` | `unit` | default 'un' |
-| `tpm_execution_parts` | `created_at` | default now() |
-| `tpm_execution_audit_logs` | `id` | PK; default gen_random_uuid() |
-| `tpm_execution_audit_logs` | `execution_id` | obrigatório; FK → maintenance_records.id ON DELETE CASCADE |
-| `tpm_execution_audit_logs` | `changed_by` | FK → users.id |
-| `tpm_execution_audit_logs` | `field_name` | obrigatório |
-| `tpm_execution_audit_logs` | `created_at` | default now() |
-| `tpm_parameter_alerts` | `id` | PK; default gen_random_uuid() |
-| `tpm_parameter_alerts` | `execution_id` | FK → tpm_executions.id ON DELETE CASCADE |
-| `tpm_parameter_alerts` | `parameter_name` | obrigatório |
-| `tpm_parameter_alerts` | `severity` | default 'warning' |
-| `tpm_parameter_alerts` | `is_resolved` | default false |
-| `tpm_parameter_alerts` | `created_at` | default now() |
-| `tpm_parameter_alerts` | `risk_level` | default 'medium' |
-| `tpm_parameter_alerts` | `is_critical` | default false |
-| `tpm_execution_supplies` | `id` | PK; default gen_random_uuid() |
-| `tpm_execution_supplies` | `execution_id` | obrigatório; FK → tpm_executions.id ON DELETE CASCADE |
-| `tpm_execution_supplies` | `name` | obrigatório |
-| `tpm_execution_supplies` | `quantity` | obrigatório |
-| `tpm_execution_supplies` | `alternative_used` | default false |
-| `tpm_execution_supplies` | `created_at` | default now() |
-| `tpm_execution_alerts` | `id` | PK; default gen_random_uuid() |
-| `tpm_execution_alerts` | `execution_id` | obrigatório; FK → tpm_executions.id ON DELETE CASCADE |
-| `tpm_execution_alerts` | `alert_type` | obrigatório |
-| `tpm_execution_alerts` | `severity` | default 'warning' |
-| `tpm_execution_alerts` | `evidence_urls` | default '{}' |
-| `tpm_execution_alerts` | `resolved` | default false |
-| `tpm_execution_alerts` | `created_at` | default now() |
-| `tpm_execution_alerts` | `is_critical` | default false |
-| `error_logs` | `id` | PK; default gen_random_uuid() |
-| `error_logs` | `message` | obrigatório |
-| `error_logs` | `metadata` | default '{}'::jsonb |
-| `error_logs` | `created_at` | default timezone('utc'::text |
-| `technical_sheet_audit_logs` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_audit_logs` | `technical_sheet_id` | FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_audit_logs` | `user_id` | FK → users.id |
-| `technical_sheet_audit_logs` | `action` | obrigatório |
-| `technical_sheet_audit_logs` | `created_at` | default now() |
-| `technical_sheet_audit` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_audit` | `technical_sheet_id` | FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_audit` | `user_id` | FK → users.id |
-| `technical_sheet_audit` | `action` | obrigatório |
-| `technical_sheet_audit` | `created_at` | default now() |
-| `technical_sheet_favorites` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_favorites` | `user_id` | FK → users.id ON DELETE CASCADE |
-| `technical_sheet_favorites` | `technical_sheet_id` | FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_favorites` | `created_at` | default now() |
-| `technical_sheet_favorites` | `(tabela)` | UNIQUE(user_id, technical_sheet_id) |
-| `inventory_items` | `id` | PK; default gen_random_uuid() |
-| `inventory_items` | `name` | obrigatório |
-| `inventory_items` | `category` | obrigatório |
-| `inventory_items` | `current_stock` | default 0 |
-| `inventory_items` | `unit` | obrigatório |
-| `inventory_items` | `min_stock_level` | default 0 |
-| `inventory_items` | `created_at` | default now() |
-| `inventory_items` | `updated_at` | default now() |
-| `inventory_items` | `price_per_unit` | default 0 |
-| `inventory_items` | `daily_usage_avg` | default 0 |
-| `inventory_items` | `days_of_supply` | default 0 |
-| `inventory_items` | `(tabela)` | constraint stock_non_negative CHECK (current_stock >= 0) |
-| `inventory_items` | `(tabela)` | constraint check_positive_stock CHECK (current_stock >= 0) |
-| `inventory_items` | `(tabela)` | constraint inventory_stock_positive CHECK (current_stock >= 0) |
-| `inventory_movements` | `id` | PK; default gen_random_uuid() |
-| `inventory_movements` | `item_id` | FK → inventory_items.id ON DELETE CASCADE |
-| `inventory_movements` | `user_id` | FK → users.id |
-| `inventory_movements` | `type` | obrigatório |
-| `inventory_movements` | `quantity` | obrigatório |
-| `inventory_movements` | `job_id` | FK → jobs.id ON DELETE SET NULL |
-| `inventory_movements` | `created_at` | default now() |
-| `inventory_movements` | `(tabela)` | constraint inventory_movements_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE SET NULL |
-| `dashboard_layouts` | `id` | PK; default gen_random_uuid() |
-| `dashboard_layouts` | `user_id` | obrigatório; único; FK → users.id ON DELETE CASCADE |
-| `dashboard_layouts` | `layout` | obrigatório |
-| `dashboard_layouts` | `created_at` | default now() |
-| `dashboard_layouts` | `updated_at` | default now() |
-| `gamification_rewards` | `id` | PK; default gen_random_uuid() |
-| `gamification_rewards` | `name` | obrigatório |
-| `gamification_rewards` | `cost_points` | obrigatório |
-| `gamification_rewards` | `icon` | default 'star' |
-| `gamification_rewards` | `stock` | default -1 |
-| `gamification_rewards` | `is_active` | default true |
-| `gamification_rewards` | `created_at` | default now() |
-| `reward_redemptions` | `id` | PK; default gen_random_uuid() |
-| `reward_redemptions` | `user_id` | obrigatório; FK → users.id |
-| `reward_redemptions` | `reward_id` | obrigatório; FK → gamification_rewards.id |
-| `reward_redemptions` | `points_spent` | obrigatório |
-| `reward_redemptions` | `status` | default 'pending' |
-| `reward_redemptions` | `created_at` | default now() |
-| `report_templates` | `id` | PK; default gen_random_uuid() |
-| `report_templates` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `report_templates` | `name` | obrigatório |
-| `report_templates` | `table_name` | obrigatório |
-| `report_templates` | `columns` | obrigatório |
-| `report_templates` | `filters` | default '{}'::jsonb |
-| `report_templates` | `format_type` | default 'pdf' |
-| `report_templates` | `is_public` | default false |
-| `report_templates` | `created_at` | default now() |
-| `report_templates` | `updated_at` | default now() |
-| `technical_sheet_versions` | `id` | PK; default gen_random_uuid() |
-| `technical_sheet_versions` | `sheet_id` | obrigatório; FK → technical_sheets.id ON DELETE CASCADE |
-| `technical_sheet_versions` | `version_number` | obrigatório |
-| `technical_sheet_versions` | `data` | obrigatório |
-| `technical_sheet_versions` | `created_by` | FK → users.id |
-| `technical_sheet_versions` | `created_at` | default now() |
-| `operator_skills` | `id` | PK; default gen_random_uuid() |
-| `operator_skills` | `operator_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `operator_skills` | `technique_id` | obrigatório |
-| `operator_skills` | `skill_level` | default 'basic' |
-| `operator_skills` | `certified_at` | default now() |
-| `operator_skills` | `created_at` | default now() |
-| `operator_skills` | `updated_at` | default now() |
-| `operator_skills` | `(tabela)` | UNIQUE(operator_id, technique_id) |
-| `shipping_providers` | `id` | PK; default gen_random_uuid() |
-| `shipping_providers` | `name` | obrigatório |
-| `shipping_providers` | `is_active` | default true |
-| `shipping_providers` | `created_at` | default now() |
-| `shipping_providers` | `updated_at` | default now() |
-| `shipments` | `id` | PK; default gen_random_uuid() |
-| `shipments` | `job_id` | FK → jobs.id ON DELETE CASCADE |
-| `shipments` | `provider_id` | FK → shipping_providers.id |
-| `shipments` | `status` | default 'pending' |
-| `shipments` | `created_at` | default now() |
-| `shipments` | `updated_at` | default now() |
-| `shipments` | `freight_cost` | default 0 |
-| `shipments` | `insurance_cost` | default 0 |
-| `shipments` | `tax_cost` | default 0 |
-| `shipments` | `cost_currency` | default 'BRL' |
-| `production_losses` | `id` | PK; default gen_random_uuid() |
-| `production_losses` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `production_losses` | `quantity` | default 1 |
-| `production_losses` | `operator_id` | FK → users.id |
-| `production_losses` | `created_at` | default now() |
-| `production_losses` | `loss_type` | default 'availability'; CHECK loss_type IN ('availability', 'performance', 'quality') |
-| `production_losses` | `(tabela)` | constraint production_losses_quantity_positive CHECK (quantity >= 0) |
-| `production_losses` | `(tabela)` | constraint production_losses_operator_id_fkey FOREIGN KEY (operator_id) REFERENCES auth.users(id) ON DELETE SET NULL |
-| `machine_downtime` | `id` | PK; default gen_random_uuid() |
-| `machine_downtime` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `machine_downtime` | `job_id` | FK → jobs.id |
-| `machine_downtime` | `downtime_type` | obrigatório; CHECK downtime_type IN ('setup', 'maintenance', 'breakdown', 'idle', 'other') |
-| `machine_downtime` | `start_time` | default now() |
-| `machine_downtime` | `operator_id` | FK → users.id |
-| `machine_downtime` | `created_at` | default now() |
-| `job_status_history` | `id` | PK; default gen_random_uuid() |
-| `job_status_history` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `job_status_history` | `new_status` | obrigatório |
-| `job_status_history` | `changed_by` | FK → users.id |
-| `job_status_history` | `created_at` | default now() |
-| `rls_test_results` | `id` | PK; default gen_random_uuid() |
-| `rls_test_results` | `test_name` | obrigatório |
-| `rls_test_results` | `table_name` | obrigatório |
-| `rls_test_results` | `role` | obrigatório |
-| `rls_test_results` | `operation` | obrigatório |
-| `rls_test_results` | `passed` | obrigatório |
-| `rls_test_results` | `created_at` | default now() |
-| `business_config` | `key` | PK |
-| `business_config` | `value` | obrigatório |
-| `business_config` | `updated_at` | default now() |
-| `business_config` | `updated_by` | FK → users.id |
-| `feature_flags` | `id` | PK; default gen_random_uuid() |
-| `feature_flags` | `name` | obrigatório; único |
-| `feature_flags` | `is_enabled` | default false |
-| `feature_flags` | `rules` | default '{}' |
-| `feature_flags` | `created_at` | default now() |
-| `feature_flags` | `updated_at` | default now() |
+| `techniques` | `id` | PK |
+| `techniques` | `name` | obrigatório |
+| `techniques` | `short_name` | obrigatório |
+| `techniques` | `color` | default '#3b82f6'::text |
+| `techniques` | `setup_time` | default 10 |
+| `techniques` | `created_at` | default now() |
+| `techniques` | `low_threshold` | default 30 |
+| `techniques` | `medium_threshold` | default 70 |
+| `techniques` | `high_threshold` | default 90 |
 | `telemetry_traces` | `id` | PK; default gen_random_uuid() |
 | `telemetry_traces` | `trace_id` | obrigatório |
 | `telemetry_traces` | `span_id` | obrigatório |
 | `telemetry_traces` | `name` | obrigatório |
 | `telemetry_traces` | `service_name` | obrigatório |
 | `telemetry_traces` | `created_at` | default now() |
+| `tpm_execution_alerts` | `id` | PK; default gen_random_uuid() |
+| `tpm_execution_alerts` | `execution_id` | obrigatório; FK → maintenance_records.id on delete cascade |
+| `tpm_execution_alerts` | `alert_type` | obrigatório |
+| `tpm_execution_alerts` | `severity` | default 'warning'::text |
+| `tpm_execution_alerts` | `evidence_urls` | default '{}'::text[] |
+| `tpm_execution_alerts` | `resolved` | default false |
+| `tpm_execution_alerts` | `created_at` | default now() |
+| `tpm_execution_alerts` | `is_critical` | default false |
+| `tpm_execution_audit_logs` | `id` | PK; default gen_random_uuid() |
+| `tpm_execution_audit_logs` | `execution_id` | obrigatório; FK → maintenance_records.id on delete cascade |
+| `tpm_execution_audit_logs` | `changed_by` | FK → users.id |
+| `tpm_execution_audit_logs` | `field_name` | obrigatório |
+| `tpm_execution_audit_logs` | `created_at` | default now() |
+| `tpm_execution_parts` | `id` | PK; default gen_random_uuid() |
+| `tpm_execution_parts` | `execution_id` | FK → maintenance_records.id on delete cascade |
+| `tpm_execution_parts` | `part_name` | obrigatório |
+| `tpm_execution_parts` | `quantity` | default 1 |
+| `tpm_execution_parts` | `unit` | default 'un'::text |
+| `tpm_execution_parts` | `created_at` | default now() |
+| `tpm_execution_supplies` | `id` | PK; default gen_random_uuid() |
+| `tpm_execution_supplies` | `execution_id` | obrigatório; FK → maintenance_records.id on delete cascade |
+| `tpm_execution_supplies` | `name` | obrigatório |
+| `tpm_execution_supplies` | `quantity` | obrigatório |
+| `tpm_execution_supplies` | `alternative_used` | default false |
+| `tpm_execution_supplies` | `created_at` | default now() |
+| `tpm_executions` | `id` | PK; default gen_random_uuid() |
+| `tpm_executions` | `schedule_id` | FK → maintenance_schedules.id on delete cascade |
+| `tpm_executions` | `machine_id` | FK → machines.id on delete cascade |
+| `tpm_executions` | `technician_id` | FK → users.id |
+| `tpm_executions` | `started_at` | default now() |
+| `tpm_executions` | `status` | default 'in_progress'::text |
+| `tpm_executions` | `created_at` | default now() |
+| `tpm_executions` | `updated_at` | default now() |
+| `tpm_executions` | `technical_sheet_id` | FK → technical_sheets.id |
+| `tpm_executions` | `adjustment_parameters` | default '{}'::jsonb |
+| `tpm_executions` | `quality_checklist_results` | default '[]'::jsonb |
+| `tpm_executions` | `failure_risk_detected` | default false |
+| `tpm_notification_logs` | `id` | PK; default gen_random_uuid() |
+| `tpm_notification_logs` | `machine_id` | FK → machines.id on delete set null |
+| `tpm_notification_logs` | `user_id` | FK → users.id on delete set null |
+| `tpm_notification_logs` | `channel` | obrigatório |
+| `tpm_notification_logs` | `severity` | obrigatório |
+| `tpm_notification_logs` | `status` | obrigatório |
+| `tpm_notification_logs` | `sent_at` | default now() |
+| `tpm_notification_logs` | `retry_attempts` | default 0 |
+| `tpm_notification_logs` | `(tabela)` | constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text])) |
+| `tpm_notification_queue` | `id` | PK; default gen_random_uuid() |
+| `tpm_notification_queue` | `machine_id` | FK → machines.id on delete cascade |
+| `tpm_notification_queue` | `template_id` | FK → tpm_notification_templates_published.id |
+| `tpm_notification_queue` | `channel` | obrigatório |
+| `tpm_notification_queue` | `severity` | obrigatório |
+| `tpm_notification_queue` | `recipient` | obrigatório |
+| `tpm_notification_queue` | `payload` | default '{}'::jsonb |
+| `tpm_notification_queue` | `status` | default 'pending'::text |
+| `tpm_notification_queue` | `retry_count` | default 0 |
+| `tpm_notification_queue` | `max_retries` | default 3 |
+| `tpm_notification_queue` | `next_retry_at` | default now() |
+| `tpm_notification_queue` | `created_at` | default now() |
+| `tpm_notification_templates` | `id` | PK; default gen_random_uuid() |
+| `tpm_notification_templates` | `channel` | obrigatório |
+| `tpm_notification_templates` | `severity` | obrigatório |
+| `tpm_notification_templates` | `template_body` | obrigatório |
+| `tpm_notification_templates` | `is_active` | default true |
+| `tpm_notification_templates` | `created_at` | default now() |
+| `tpm_notification_templates` | `updated_at` | default now() |
+| `tpm_notification_templates` | `status` | default 'published'::text |
+| `tpm_notification_templates` | `(tabela)` | constraint tpm_notification_templates_channel_check CHECK (channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'push'::text])) |
+| `tpm_notification_templates` | `(tabela)` | constraint tpm_notification_templates_severity_check CHECK (severity = ANY (ARRAY['upcoming'::text, 'due'::text, 'overdue'::text, 'critical'::text])) |
+| `tpm_notification_templates` | `(tabela)` | constraint tpm_notification_templates_status_check CHECK (status = ANY (ARRAY['draft'::text, 'published'::text])) |
+| `tpm_notification_templates_published` | `id` | PK; default gen_random_uuid() |
+| `tpm_notification_templates_published` | `template_id` | FK → tpm_notification_templates.id on delete cascade |
+| `tpm_notification_templates_published` | `channel` | obrigatório |
+| `tpm_notification_templates_published` | `severity` | obrigatório |
+| `tpm_notification_templates_published` | `template_body` | obrigatório |
+| `tpm_notification_templates_published` | `published_at` | default now() |
+| `tpm_parameter_alerts` | `id` | PK; default gen_random_uuid() |
+| `tpm_parameter_alerts` | `execution_id` | FK → maintenance_records.id on delete cascade |
+| `tpm_parameter_alerts` | `parameter_name` | obrigatório |
+| `tpm_parameter_alerts` | `severity` | default 'warning'::text |
+| `tpm_parameter_alerts` | `is_resolved` | default false |
+| `tpm_parameter_alerts` | `created_at` | default now() |
+| `tpm_parameter_alerts` | `risk_level` | default 'medium'::text |
+| `tpm_parameter_alerts` | `is_critical` | default false |
+| `tpm_severity_configs` | `id` | PK; default gen_random_uuid() |
+| `tpm_severity_configs` | `machine_id` | FK → machines.id on delete cascade |
+| `tpm_severity_configs` | `severity` | obrigatório |
+| `tpm_severity_configs` | `days_threshold` | default 0 |
+| `tpm_severity_configs` | `is_enabled` | default true |
+| `tpm_severity_configs` | `created_at` | default now() |
+| `tpm_severity_configs` | `updated_at` | default now() |
+| `tpm_severity_configs` | `(tabela)` | constraint tpm_severity_configs_machine_id_severity_key UNIQUE (machine_id, severity) |
+| `tpm_severity_configs` | `(tabela)` | constraint tpm_severity_configs_severity_check CHECK (severity = ANY (ARRAY['upcoming'::text, 'due'::text, 'overdue'::text, 'critical'::text])) |
+| `user_devices` | `id` | PK; default gen_random_uuid() |
+| `user_devices` | `user_id` | obrigatório |
+| `user_devices` | `device_fingerprint` | obrigatório |
+| `user_devices` | `device_type` | default 'desktop'::text |
+| `user_devices` | `is_trusted` | default false |
+| `user_devices` | `first_seen_at` | default now() |
+| `user_devices` | `last_seen_at` | default now() |
+| `user_devices` | `created_at` | default now() |
+| `user_favorites` | `id` | PK; default gen_random_uuid() |
+| `user_favorites` | `user_id` | obrigatório; único; FK → users.id on delete cascade |
+| `user_favorites` | `favorites` | default '[]'::jsonb |
+| `user_favorites` | `created_at` | default now() |
+| `user_favorites` | `updated_at` | default now() |
+| `user_favorites` | `(tabela)` | constraint user_favorites_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE |
+| `user_mfa_settings` | `id` | PK; default gen_random_uuid() |
+| `user_mfa_settings` | `user_id` | obrigatório; único; FK → users.id on delete cascade |
+| `user_mfa_settings` | `totp_enabled` | default false |
+| `user_mfa_settings` | `created_at` | default now() |
+| `user_mfa_settings` | `updated_at` | default now() |
+| `user_mfa_settings` | `(tabela)` | constraint user_mfa_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE |
+| `user_notification_settings` | `id` | PK; default gen_random_uuid() |
+| `user_notification_settings` | `user_id` | obrigatório; único; FK → users.id on delete cascade |
+| `user_notification_settings` | `email_enabled` | default true |
+| `user_notification_settings` | `push_enabled` | default true |
+| `user_notification_settings` | `whatsapp_enabled` | default false |
+| `user_notification_settings` | `notification_types` | default ARRAY['upcoming'::text |
+| `user_notification_settings` | `machine_filters` | default ARRAY[]::uuid[] |
+| `user_notification_settings` | `created_at` | default now() |
+| `user_notification_settings` | `updated_at` | default now() |
+| `user_notification_settings` | `event_configs` | default '{"awaiting_correction": |
+| `user_notification_settings` | `(tabela)` | constraint user_notification_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE |
+| `user_roles` | `id` | PK; default gen_random_uuid() |
+| `user_roles` | `user_id` | obrigatório; FK → profiles.id on delete cascade |
+| `user_roles` | `role` | default 'operator'::app_role |
+| `user_roles` | `created_at` | default now() |
+| `user_roles` | `is_active` | default true |
+| `user_roles` | `(tabela)` | constraint user_roles_user_id_role_key UNIQUE (user_id, role) |
 | `webhook_logs` | `id` | PK; default gen_random_uuid() |
 | `webhook_logs` | `source` | obrigatório |
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
-| `kpi_alerts` | `id` | PK; default gen_random_uuid() |
-| `kpi_alerts` | `machine_id` | FK → machines.id ON DELETE CASCADE |
-| `kpi_alerts` | `metric_name` | obrigatório |
-| `kpi_alerts` | `metric_value` | obrigatório |
-| `kpi_alerts` | `threshold` | obrigatório |
-| `kpi_alerts` | `severity` | CHECK severity IN ('WARNING', 'CRITICAL') |
-| `kpi_alerts` | `is_resolved` | default FALSE |
-| `kpi_alerts` | `created_at` | default now() |
-| `job_status_audit` | `id` | PK; default gen_random_uuid() |
-| `job_status_audit` | `job_id` | obrigatório; FK → jobs.id ON DELETE CASCADE |
-| `job_status_audit` | `changed_by` | FK → users.id |
-| `job_status_audit` | `changed_at` | default now() |
-| `machine_event_audit` | `id` | PK; default gen_random_uuid() |
-| `machine_event_audit` | `machine_id` | obrigatório; FK → machines.id ON DELETE CASCADE |
-| `machine_event_audit` | `event_type` | obrigatório |
-| `machine_event_audit` | `performed_by` | FK → users.id |
-| `machine_event_audit` | `performed_at` | default now() |
-| `dashboard_presets` | `id` | PK; default gen_random_uuid() |
-| `dashboard_presets` | `user_id` | obrigatório; FK → users.id ON DELETE CASCADE |
-| `dashboard_presets` | `name` | obrigatório |
-| `dashboard_presets` | `dashboard_id` | obrigatório |
-| `dashboard_presets` | `filters` | default '{}'::jsonb |
-| `dashboard_presets` | `is_default` | default false |
-| `dashboard_presets` | `created_at` | default now() |
-| `dashboard_presets` | `updated_at` | default now() |
-| `erp_api_keys` | `id` | PK; default gen_random_uuid() |
-| `erp_api_keys` | `name` | obrigatório |
-| `erp_api_keys` | `key_hash` | obrigatório; único |
-| `erp_api_keys` | `is_active` | default true |
-| `erp_api_keys` | `created_by` | FK → users.id |
-| `erp_api_keys` | `created_at` | default now() |
-| `packaging_tasks` | `id` | PK; default gen_random_uuid() |
-| `packaging_tasks` | `job_id` | obrigatório; único; FK → jobs.id ON DELETE CASCADE |
-| `packaging_tasks` | `status` | default 'pending'; CHECK status IN ('pending','in_triage','packaging','ready_to_ship','on_hold') |
-| `packaging_tasks` | `assigned_to` | FK → users.id ON DELETE SET NULL |
-| `packaging_tasks` | `received_quantity` | default 0; CHECK received_quantity >= 0 |
-| `packaging_tasks` | `approved_quantity` | default 0; CHECK approved_quantity >= 0 |
-| `packaging_tasks` | `rejected_quantity` | default 0; CHECK rejected_quantity >= 0 |
-| `packaging_tasks` | `packages_count` | CHECK packages_count IS NULL OR packages_count >= 0 |
-| `packaging_tasks` | `total_weight_kg` | CHECK total_weight_kg IS NULL OR total_weight_kg >= 0 |
-| `packaging_tasks` | `created_at` | default now() |
-| `packaging_tasks` | `updated_at` | default now() |
-| `packaging_tasks` | `was_overdue_on_complete` | default false |
-| `packaging_tasks` | `(tabela)` | CONSTRAINT packaging_tasks_qty_sum CHECK (approved_quantity + rejected_quantity <= received_quantity) |
-| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_weight_per_package_check CHECK ( total_weight_kg IS NULL OR packages_count IS NULL OR packages_count = 0 OR (total_weight_kg / packages_count) <= 30 ) |
-| `packaging_tasks` | `(tabela)` | constraint packaging_tasks_packages_count_check CHECK (packages_count IS NULL OR (packages_count >= 0 AND packages_count <= 500)) |
-| `packaging_defects` | `id` | PK; default gen_random_uuid() |
-| `packaging_defects` | `packaging_task_id` | obrigatório; FK → packaging_tasks.id ON DELETE CASCADE |
-| `packaging_defects` | `quantity` | obrigatório; CHECK quantity > 0 |
-| `packaging_defects` | `defect_type` | obrigatório; CHECK defect_type IN ('print_misalignment','color_deviation','scratch','contamination','wrong_material','dimensional','other') |
-| `packaging_defects` | `severity` | default 'minor'; CHECK severity IN ('minor','major','critical') |
-| `packaging_defects` | `decision` | default 'discard'; CHECK decision IN ('rework','discard','accept_with_note') |
-| `packaging_defects` | `reported_by` | FK → users.id ON DELETE SET NULL |
-| `packaging_defects` | `created_at` | default now() |
-| `packaging_defects` | `updated_at` | default now() |
-| `packaging_settings` | `id` | PK; default gen_random_uuid() |
-| `packaging_settings` | `package_types` | default ARRAY['caixa' |
-| `packaging_settings` | `defect_reasons` | default ARRAY['print_misalignment' |
-| `packaging_settings` | `weight_unit` | default 'kg'; CHECK weight_unit IN ('kg','g','lb') |
-| `packaging_settings` | `created_at` | default now() |
-| `packaging_settings` | `updated_at` | default now() |
-| `packaging_settings` | `sla_triage_hours` | default 4 |
-| `packaging_settings` | `sla_packaging_hours` | default 8 |
-| `packaging_settings` | `sla_total_hours` | default 24 |
-| `packaging_settings` | `warning_threshold_pct` | default 75 |
-| `packaging_checklist_items` | `id` | PK; default gen_random_uuid() |
-| `packaging_checklist_items` | `label` | obrigatório |
-| `packaging_checklist_items` | `is_required` | default true |
-| `packaging_checklist_items` | `item_order` | default 0 |
-| `packaging_checklist_items` | `is_active` | default true |
-| `packaging_checklist_items` | `created_at` | default now() |
-| `packaging_checklist_items` | `updated_at` | default now() |
-| `packaging_task_checklist` | `id` | PK; default gen_random_uuid() |
-| `packaging_task_checklist` | `packaging_task_id` | obrigatório; FK → packaging_tasks.id ON DELETE CASCADE |
-| `packaging_task_checklist` | `item_id` | obrigatório; FK → packaging_checklist_items.id ON DELETE CASCADE |
-| `packaging_task_checklist` | `is_checked` | default false |
-| `packaging_task_checklist` | `checked_by` | FK → users.id ON DELETE SET NULL |
-| `packaging_task_checklist` | `created_at` | default now() |
-| `packaging_task_checklist` | `updated_at` | default now() |
-| `packaging_task_checklist` | `(tabela)` | UNIQUE (packaging_task_id, item_id) |
-| `packaging_sla_overrides` | `id` | PK; default gen_random_uuid() |
-| `packaging_sla_overrides` | `technique_id` | FK → techniques.id ON DELETE CASCADE |
-| `packaging_sla_overrides` | `sla_triage_hours` | default 4 |
-| `packaging_sla_overrides` | `sla_packaging_hours` | default 8 |
-| `packaging_sla_overrides` | `sla_total_hours` | default 24 |
-| `packaging_sla_overrides` | `warning_threshold_pct` | default 75 |
-| `packaging_sla_overrides` | `is_active` | default true |
-| `packaging_sla_overrides` | `created_at` | default now() |
-| `packaging_sla_overrides` | `updated_at` | default now() |
-| `packaging_sla_overrides` | `(tabela)` | CONSTRAINT packaging_sla_overrides_scope_check CHECK (technique_id IS NOT NULL OR client IS NOT NULL) |
-| `cron_health_history` | `id` | PK; default gen_random_uuid() |
-| `cron_health_history` | `jobid` | obrigatório |
-| `cron_health_history` | `consecutive_failures` | default 0 |
-| `cron_health_history` | `captured_at` | default now() |
-| `cron_health_history` | `created_at` | default now() |
-| `cron_health_history` | `is_stale` | default false |
-| `cron_p95_daily` | `id` | PK; default gen_random_uuid() |
-| `cron_p95_daily` | `day` | obrigatório |
-| `cron_p95_daily` | `jobid` | obrigatório |
-| `cron_p95_daily` | `samples` | default 0 |
-| `cron_p95_daily` | `failure_rate_pct` | default 0 |
-| `cron_p95_daily` | `created_at` | default now() |
-| `cron_p95_daily` | `updated_at` | default now() |
-| `cron_p95_daily` | `(tabela)` | UNIQUE (jobid, day) |
-| `edge_health_history` | `id` | PK; default gen_random_uuid() |
-| `edge_health_history` | `status` | obrigatório; CHECK status IN ('pass','warn','fail') |
-| `edge_health_history` | `checks` | default '{}'::jsonb |
-| `edge_health_history` | `source` | default 'health-monitor' |
-| `edge_health_history` | `captured_at` | default now() |
-| `edge_health_history` | `created_at` | default now() |
-| `geo_blocking_settings` | `id` | PK; default gen_random_uuid() |
-| `geo_blocking_settings` | `is_enabled` | default false |
-| `geo_blocking_settings` | `mode` | default 'blocklist' |
-| `geo_blocking_settings` | `block_unknown_countries` | default false |
-| `geo_blocking_settings` | `log_blocked_attempts` | default true |
-| `geo_blocking_settings` | `updated_at` | default now() |
-| `geo_blocking_settings` | `(tabela)` | constraint geo_blocking_settings_mode_chk CHECK (mode IN ('blocklist', 'allowlist')) |
-| `geo_blocking_rules` | `id` | PK; default gen_random_uuid() |
-| `geo_blocking_rules` | `country_code` | obrigatório |
-| `geo_blocking_rules` | `country_name` | obrigatório |
-| `geo_blocking_rules` | `is_blocked` | default true |
-| `geo_blocking_rules` | `block_type` | default 'country' |
-| `geo_blocking_rules` | `created_at` | default now() |
-| `geo_blocking_rules` | `updated_at` | default now() |
-| `geo_blocking_rules` | `(tabela)` | UNIQUE (country_code) |
-| `geo_blocking_logs` | `id` | PK; default gen_random_uuid() |
-| `geo_blocking_logs` | `ip_address` | obrigatório |
-| `geo_blocking_logs` | `action` | obrigatório |
-| `geo_blocking_logs` | `created_at` | default now() |
-| `csp_violation_reports` | `id` | PK; default gen_random_uuid() |
-| `csp_violation_reports` | `raw` | default '{}'::jsonb |
-| `csp_violation_reports` | `created_at` | default now() |
-| `app_private.runtime_config` | `key` | PK |
-| `app_private.runtime_config` | `value` | obrigatório |
-| `bitrix24_oauth_states` | `state` | PK |
-| `bitrix24_oauth_states` | `created_at` | default now() |
-| `archived_jobs` | `id` | PK; default gen_random_uuid() |
-| `archived_jobs` | `order_number` | obrigatório |
-| `archived_jobs` | `client` | obrigatório |
-| `archived_jobs` | `product` | obrigatório |
-| `archived_jobs` | `quantity` | obrigatório |
-| `archived_jobs` | `technique_id` | obrigatório; FK → techniques.id |
-| `archived_jobs` | `machine_id` | FK → machines.id |
-| `archived_jobs` | `estimated_duration` | default 60 |
-| `archived_jobs` | `status` | default 'queue'; CHECK status IN ('queue', 'ready', 'scheduled', 'production', 'finished', 'paused', 'cancelled', 'delayed', 'rework') |
-| `archived_jobs` | `lost_pieces` | default 0 |
-| `archived_jobs` | `priority` | default 'medium'; CHECK priority IN ('low', 'medium', 'high', 'urgent') |
-| `archived_jobs` | `created_at` | default now() |
-| `archived_jobs` | `updated_at` | default now() |
-| `archived_jobs` | `production_photos` | default '{}' |
-| `archived_jobs` | `produced_quantity` | default 0 |
-| `archived_jobs` | `sort_order` | default 0 |
-| `archived_jobs` | `operator_id` | FK → users.id |
-| `archived_jobs` | `shipment_id` | FK → shipments.id |
-| `archived_jobs` | `parent_job_id` | FK → jobs.id ON DELETE SET NULL |
-| `archived_jobs` | `archived_at` | default now() |
-| `archived_jobs` | `children` | default '{}'::jsonb |
-| `archived_jobs` | `(tabela)` | constraint quantity_non_negative CHECK (quantity >= 0) |
-| `archived_jobs` | `(tabela)` | constraint produced_quantity_non_negative CHECK (produced_quantity >= 0) |
-| `archived_jobs` | `(tabela)` | constraint lost_pieces_non_negative CHECK (lost_pieces >= 0) |
-| `archived_jobs` | `(tabela)` | constraint check_job_times CHECK (end_time >= start_time) |
-| `archived_jobs` | `(tabela)` | constraint jobs_quantity_positive CHECK (quantity >= 0) |
-| `archived_jobs` | `(tabela)` | constraint jobs_status_check CHECK (status IN ('queue','ready','scheduled','production','finished','paused','cancelled','delayed','rework','buffer','packaging')) |
-| `backup_logs` | `id` | PK; default gen_random_uuid() |
-| `backup_logs` | `backup_id` | obrigatório |
-| `backup_logs` | `tables_backed_up` | default '{}'::jsonb |
-| `backup_logs` | `created_at` | default now() |
-| `system_metrics` | `id` | PK; default gen_random_uuid() |
-| `system_metrics` | `collected_at` | default now() |
-| `system_metrics` | `metrics` | default '{}'::jsonb |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; derivado de migrations — pode divergir do banco)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-12T11:17:03Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
-| update_jobs_updated_at | BEFORE UPDATE | `jobs` | `update_updated_at_column` |  |
-| on_auth_user_created | AFTER INSERT | `auth.users` | `handle_new_user` |  |
-| update_profiles_updated_at | BEFORE UPDATE | `profiles` | `update_updated_at_column` |  |
-| update_technical_conversations_updated_at | BEFORE UPDATE | `technical_conversations` | `update_updated_at_column` |  |
-| update_bitrix24_oauth_tokens_updated_at | BEFORE UPDATE | `bitrix24_oauth_tokens` | `update_updated_at_column` |  |
-| update_bitrix24_field_mappings_updated_at | BEFORE UPDATE | `bitrix24_field_mappings` | `update_updated_at_column` |  |
-| update_product_categories_updated_at | BEFORE UPDATE | `product_categories` | `update_updated_at_column` |  |
-| update_materials_updated_at | BEFORE UPDATE | `materials` | `update_updated_at_column` |  |
-| update_technical_sheets_updated_at | BEFORE UPDATE | `technical_sheets` | `update_updated_at_column` |  |
-| update_user_favorites_updated_at | BEFORE UPDATE | `user_favorites` | `update_updated_at_column` |  |
-| update_operator_goals_updated_at | BEFORE UPDATE | `operator_goals` | `update_updated_at_column` |  |
 | update_abc_activities_updated_at | BEFORE UPDATE | `abc_activities` | `update_updated_at_column` |  |
-| update_abc_cost_pools_updated_at | BEFORE UPDATE | `abc_cost_pools` | `update_updated_at_column` |  |
 | update_abc_activity_rates_updated_at | BEFORE UPDATE | `abc_activity_rates` | `update_updated_at_column` |  |
-| update_maintenance_schedules_updated_at | BEFORE UPDATE | `maintenance_schedules` | `update_updated_at_column` |  |
-| update_maintenance_checklists_updated_at | BEFORE UPDATE | `maintenance_checklists` | `update_updated_at_column` |  |
-| update_shift_handovers_updated_at | BEFORE UPDATE | `shift_handovers` | `update_updated_at_column` |  |
-| update_shift_pending_tasks_updated_at | BEFORE UPDATE | `shift_pending_tasks` | `update_updated_at_column` |  |
-| update_shift_checklist_templates_updated_at | BEFORE UPDATE | `shift_checklist_templates` | `update_updated_at_column` |  |
-| update_production_lots_updated_at | BEFORE UPDATE | `production_lots` | `update_updated_at_column` |  |
-| update_spc_control_parameters_updated_at | BEFORE UPDATE | `spc_control_parameters` | `update_updated_at_column` |  |
-| update_energy_targets_updated_at | BEFORE UPDATE | `energy_targets` | `update_updated_at_column` |  |
-| update_technical_documents_updated_at | BEFORE UPDATE | `technical_documents` | `update_updated_at_column` |  |
-| update_push_subscriptions_updated_at | BEFORE UPDATE | `push_subscriptions` | `update_updated_at_column` |  |
-| update_role_permissions_updated_at | BEFORE UPDATE | `role_permissions` | `update_updated_at_column` |  |
-| update_login_lockouts_updated_at | BEFORE UPDATE | `login_lockouts` | `update_updated_at_column` |  |
-| audit_log_no_update | BEFORE UPDATE | `audit_log` | `audit_log_immutable` |  |
+| update_abc_cost_pools_updated_at | BEFORE UPDATE | `abc_cost_pools` | `update_updated_at_column` |  |
 | audit_log_no_delete | BEFORE DELETE | `audit_log` | `audit_log_immutable` |  |
-| audit_jobs | AFTER INSERT OR UPDATE OR DELETE | `jobs` | `audit_trigger_func` |  |
-| audit_lot_components | AFTER INSERT OR UPDATE OR DELETE | `lot_components` | `audit_trigger_func` |  |
-| audit_lot_quality_inspections | AFTER INSERT OR UPDATE OR DELETE | `lot_quality_inspections` | `audit_trigger_func` |  |
-| update_user_notification_settings_updated_at | BEFORE UPDATE | `user_notification_settings` | `update_updated_at_column` |  |
-| on_maintenance_alert_insert | AFTER INSERT | `maintenance_alerts` | `trigger_send_tpm_email` |  |
-| set_tpm_executions_updated_at | BEFORE UPDATE | `tpm_executions` | `handle_tpm_updated_at` |  |
-| trigger_audit_tpm_execution | AFTER UPDATE | `maintenance_records` | `audit_tpm_execution_changes` |  |
-| trigger_save_checklist_snapshot | BEFORE UPDATE | `maintenance_records` | `save_tpm_checklist_snapshot` | `OLD.status = 'in_progress' AND NEW.status IN ('completed', 'approved')` |
-| tr_increment_tech_sheet_version | BEFORE UPDATE | `technical_sheets` | `increment_technical_sheet_version` |  |
-| tr_parameter_alert_notification | AFTER INSERT | `tpm_parameter_alerts` | `handle_parameter_alert_notification` |  |
-| tr_maintenance_correction_notification | AFTER UPDATE | `maintenance_records` | `handle_maintenance_correction_notification` |  |
-| on_tpm_execution_alert | AFTER INSERT | `tpm_execution_alerts` | `notify_loss_risk` |  |
-| tr_log_technical_sheet_changes | AFTER INSERT OR UPDATE OR DELETE | `technical_sheets` | `log_technical_sheet_change` |  |
-| tr_audit_technical_sheets | AFTER INSERT OR UPDATE OR DELETE | `technical_sheets` | `audit_technical_sheet_changes` |  |
-| tr_update_inventory_stock | AFTER INSERT | `inventory_movements` | `update_inventory_stock` |  |
-| update_dashboard_layouts_updated_at | BEFORE UPDATE | `dashboard_layouts` | `update_updated_at_column` |  |
-| trigger_check_job_overlap | BEFORE INSERT OR UPDATE | `jobs` | `check_job_overlap` |  |
-| on_job_finished_promote | AFTER UPDATE OF STATUS | `jobs` | `trigger_auto_promotion` | `NEW.status = 'finished' AND OLD.status != 'finished'` |
-| update_report_templates_updated_at | BEFORE UPDATE | `report_templates` | `update_updated_at_column` |  |
-| on_technical_sheet_save | AFTER INSERT OR UPDATE | `technical_sheets` | `create_technical_sheet_version` |  |
-| update_operator_skills_updated_at | BEFORE UPDATE | `operator_skills` | `update_updated_at_column` |  |
-| update_shipping_providers_updated_at | BEFORE UPDATE | `shipping_providers` | `update_updated_at_column` |  |
-| update_shipments_updated_at | BEFORE UPDATE | `shipments` | `update_updated_at_column` |  |
-| audit_shipments_trigger | AFTER INSERT OR UPDATE OR DELETE | `shipments` | `audit_logistics_changes` |  |
-| audit_shipping_providers_trigger | AFTER INSERT OR UPDATE OR DELETE | `shipping_providers` | `audit_logistics_changes` |  |
-| tr_audit_profile_change | AFTER UPDATE | `profiles` | `audit_profile_change` |  |
-| tr_calculate_days_of_supply | BEFORE INSERT OR UPDATE | `inventory_items` | `calculate_days_of_supply` |  |
+| audit_log_no_update | BEFORE UPDATE | `audit_log` | `audit_log_immutable` |  |
 | tr_audit_log_hashing | BEFORE INSERT | `audit_log` | `process_audit_log_hashing` |  |
-| tr_rollback_inventory_stock | BEFORE DELETE | `inventory_movements` | `rollback_inventory_stock` |  |
-| tr_validate_inventory_stock | BEFORE INSERT | `inventory_movements` | `validate_inventory_stock` |  |
+| update_bitrix24_field_mappings_updated_at | BEFORE UPDATE | `bitrix24_field_mappings` | `update_updated_at_column` |  |
+| update_bitrix24_oauth_tokens_updated_at | BEFORE UPDATE | `bitrix24_oauth_tokens` | `update_updated_at_column` |  |
 | tr_update_business_config_timestamp | BEFORE UPDATE | `business_config` | `update_updated_at_column` |  |
-| trigger_validate_stock_movement | BEFORE INSERT | `inventory_movements` | `validate_stock_before_movement` |  |
-| trigger_log_job_status_change | AFTER UPDATE | `jobs` | `log_job_status_change` |  |
-| tr_audit_job_status | AFTER UPDATE | `jobs` | `audit_job_status_change` |  |
-| tr_audit_job_changes | AFTER UPDATE | `jobs` | `audit_job_changes` |  |
-| tr_audit_machine_changes | AFTER UPDATE | `machines` | `audit_machine_changes` |  |
+| update_cron_p95_daily_updated_at | BEFORE UPDATE | `cron_p95_daily` | `update_updated_at_column` |  |
+| update_dashboard_layouts_updated_at | BEFORE UPDATE | `dashboard_layouts` | `update_updated_at_column` |  |
 | update_dashboard_presets_updated_at | BEFORE UPDATE | `dashboard_presets` | `update_updated_at_column` |  |
-| trg_packaging_tasks_updated_at | BEFORE UPDATE | `packaging_tasks` | `update_updated_at_column` |  |
+| update_energy_targets_updated_at | BEFORE UPDATE | `energy_targets` | `update_updated_at_column` |  |
+| update_geo_blocking_rules_updated_at | BEFORE UPDATE | `geo_blocking_rules` | `update_updated_at_column` |  |
+| tr_calculate_days_of_supply | BEFORE INSERT OR UPDATE | `inventory_items` | `calculate_days_of_supply` |  |
+| tr_rollback_inventory_stock | BEFORE DELETE | `inventory_movements` | `rollback_inventory_stock` |  |
+| tr_update_inventory_stock | AFTER INSERT | `inventory_movements` | `update_inventory_stock` |  |
+| tr_validate_inventory_stock | BEFORE INSERT | `inventory_movements` | `validate_inventory_stock` |  |
+| trigger_validate_stock_movement | BEFORE INSERT | `inventory_movements` | `validate_stock_before_movement` |  |
+| audit_jobs | AFTER INSERT OR DELETE OR UPDATE | `jobs` | `audit_trigger_func` |  |
+| on_job_finished_promote | AFTER UPDATE OF status | `jobs` | `trigger_auto_promotion` | `new.status = 'finished'::text AND old.status <> 'finished'::text` |
+| tr_audit_job_changes | AFTER UPDATE | `jobs` | `audit_job_changes` |  |
+| tr_audit_job_status | AFTER UPDATE | `jobs` | `audit_job_status_change` |  |
+| trg_job_cancelled_hold_packaging | AFTER UPDATE OF status | `jobs` | `on_job_cancelled_hold_packaging` |  |
+| trg_on_job_finished_create_packaging_task | AFTER UPDATE | `jobs` | `on_job_finished_create_packaging_task` |  |
+| trg_validate_job_cancel_reason | BEFORE INSERT OR UPDATE OF status, cancel_reason | `jobs` | `validate_job_cancel_reason` |  |
+| trg_validate_job_rework_depth | BEFORE INSERT OR UPDATE OF parent_job_id | `jobs` | `validate_job_rework_depth` |  |
+| trigger_check_job_overlap | BEFORE INSERT OR UPDATE | `jobs` | `check_job_overlap` |  |
+| trigger_log_job_status_change | AFTER UPDATE | `jobs` | `log_job_status_change` |  |
+| update_jobs_updated_at | BEFORE UPDATE | `jobs` | `update_updated_at_column` |  |
+| update_login_lockouts_updated_at | BEFORE UPDATE | `login_lockouts` | `update_updated_at_column` |  |
+| audit_lot_components | AFTER INSERT OR DELETE OR UPDATE | `lot_components` | `audit_trigger_func` |  |
+| audit_lot_quality_inspections | AFTER INSERT OR DELETE OR UPDATE | `lot_quality_inspections` | `audit_trigger_func` |  |
+| tr_audit_machine_changes | AFTER UPDATE | `machines` | `audit_machine_changes` |  |
+| on_maintenance_alert_insert | AFTER INSERT | `maintenance_alerts` | `trigger_send_tpm_email` |  |
+| update_maintenance_checklists_updated_at | BEFORE UPDATE | `maintenance_checklists` | `update_updated_at_column` |  |
+| tr_maintenance_correction_notification | AFTER UPDATE | `maintenance_records` | `handle_maintenance_correction_notification` |  |
+| trigger_audit_tpm_execution | AFTER UPDATE | `maintenance_records` | `audit_tpm_execution_changes` |  |
+| trigger_save_checklist_snapshot | BEFORE UPDATE | `maintenance_records` | `save_tpm_checklist_snapshot` | `old.status = 'in_progress'::text AND (new.status = ANY (ARRAY['completed'::text, 'approved'::text]))` |
+| update_maintenance_schedules_updated_at | BEFORE UPDATE | `maintenance_schedules` | `update_updated_at_column` |  |
+| update_materials_updated_at | BEFORE UPDATE | `materials` | `update_updated_at_column` |  |
+| update_operator_goals_updated_at | BEFORE UPDATE | `operator_goals` | `update_updated_at_column` |  |
+| update_operator_skills_updated_at | BEFORE UPDATE | `operator_skills` | `update_updated_at_column` |  |
+| trg_pkg_checklist_items_updated_at | BEFORE UPDATE | `packaging_checklist_items` | `update_updated_at_column` |  |
+| trg_audit_packaging_defects | AFTER INSERT OR DELETE OR UPDATE | `packaging_defects` | `audit_trigger_func` |  |
+| trg_notify_packaging_defect_critical | AFTER INSERT | `packaging_defects` | `notify_packaging_defect_critical` |  |
+| trg_packaging_defect_create_rework | AFTER INSERT | `packaging_defects` | `on_packaging_defect_create_rework_job` |  |
 | trg_packaging_defects_updated_at | BEFORE UPDATE | `packaging_defects` | `update_updated_at_column` |  |
 | trg_packaging_settings_updated_at | BEFORE UPDATE | `packaging_settings` | `update_updated_at_column` |  |
-| trg_on_job_finished_create_packaging_task | AFTER UPDATE | `jobs` | `on_job_finished_create_packaging_task` |  |
-| trg_packaging_ready_create_shipment | AFTER UPDATE | `packaging_tasks` | `on_packaging_ready_create_shipment` |  |
-| trg_packaging_defect_create_rework | AFTER INSERT | `packaging_defects` | `on_packaging_defect_create_rework_job` |  |
-| trg_pkg_checklist_items_updated_at | BEFORE UPDATE | `packaging_checklist_items` | `update_updated_at_column` |  |
+| trg_packaging_sla_overrides_updated_at | BEFORE UPDATE | `packaging_sla_overrides` | `update_updated_at_column` |  |
+| trg_audit_packaging_task_checklist | AFTER INSERT OR DELETE OR UPDATE | `packaging_task_checklist` | `audit_trigger_func` |  |
 | trg_pkg_task_checklist_updated_at | BEFORE UPDATE | `packaging_task_checklist` | `update_updated_at_column` |  |
+| trg_audit_packaging_tasks | AFTER INSERT OR DELETE OR UPDATE | `packaging_tasks` | `audit_trigger_func` |  |
 | trg_enforce_pkg_checklist | BEFORE UPDATE | `packaging_tasks` | `enforce_packaging_checklist_before_ship` |  |
 | trg_notify_packaging_task_created | AFTER INSERT | `packaging_tasks` | `notify_packaging_task_created` |  |
-| trg_notify_packaging_defect_critical | AFTER INSERT | `packaging_defects` | `notify_packaging_defect_critical` |  |
-| trg_audit_packaging_tasks | AFTER INSERT OR UPDATE OR DELETE | `packaging_tasks` | `audit_trigger_func` |  |
-| trg_audit_packaging_defects | AFTER INSERT OR UPDATE OR DELETE | `packaging_defects` | `audit_trigger_func` |  |
-| trg_audit_packaging_task_checklist | AFTER INSERT OR UPDATE OR DELETE | `packaging_task_checklist` | `audit_trigger_func` |  |
-| trg_packaging_sla_overrides_updated_at | BEFORE UPDATE | `packaging_sla_overrides` | `update_updated_at_column` |  |
-| update_cron_p95_daily_updated_at | BEFORE UPDATE | `cron_p95_daily` | `update_updated_at_column` |  |
-| trg_validate_job_cancel_reason | BEFORE INSERT OR UPDATE OF STATUS, CANCEL_REASON | `jobs` | `validate_job_cancel_reason` |  |
-| trg_job_cancelled_hold_packaging | AFTER UPDATE OF STATUS | `jobs` | `on_job_cancelled_hold_packaging` |  |
-| trg_validate_packaging_loss_reason | BEFORE INSERT OR UPDATE OF REJECTED_QUANTITY, RECEIVED_QUANTITY, LOSS_REASON | `packaging_tasks` | `validate_packaging_loss_reason` |  |
-| trg_validate_job_rework_depth | BEFORE INSERT OR UPDATE OF PARENT_JOB_ID | `jobs` | `validate_job_rework_depth` |  |
+| trg_packaging_ready_create_shipment | AFTER UPDATE | `packaging_tasks` | `on_packaging_ready_create_shipment` |  |
+| trg_packaging_tasks_updated_at | BEFORE UPDATE | `packaging_tasks` | `update_updated_at_column` |  |
+| trg_validate_packaging_loss_reason | BEFORE INSERT OR UPDATE OF rejected_quantity, received_quantity, loss_reason | `packaging_tasks` | `validate_packaging_loss_reason` |  |
+| update_product_categories_updated_at | BEFORE UPDATE | `product_categories` | `update_updated_at_column` |  |
+| update_production_lots_updated_at | BEFORE UPDATE | `production_lots` | `update_updated_at_column` |  |
+| tr_audit_profile_change | AFTER UPDATE | `profiles` | `audit_profile_change` |  |
+| update_profiles_updated_at | BEFORE UPDATE | `profiles` | `update_updated_at_column` |  |
+| update_push_subscriptions_updated_at | BEFORE UPDATE | `push_subscriptions` | `update_updated_at_column` |  |
+| update_report_templates_updated_at | BEFORE UPDATE | `report_templates` | `update_updated_at_column` |  |
+| update_role_permissions_updated_at | BEFORE UPDATE | `role_permissions` | `update_updated_at_column` |  |
+| update_shift_checklist_templates_updated_at | BEFORE UPDATE | `shift_checklist_templates` | `update_updated_at_column` |  |
+| update_shift_handovers_updated_at | BEFORE UPDATE | `shift_handovers` | `update_updated_at_column` |  |
+| update_shift_pending_tasks_updated_at | BEFORE UPDATE | `shift_pending_tasks` | `update_updated_at_column` |  |
+| audit_shipments_trigger | AFTER INSERT OR DELETE OR UPDATE | `shipments` | `audit_logistics_changes` |  |
+| update_shipments_updated_at | BEFORE UPDATE | `shipments` | `update_updated_at_column` |  |
+| audit_shipping_providers_trigger | AFTER INSERT OR DELETE OR UPDATE | `shipping_providers` | `audit_logistics_changes` |  |
+| update_shipping_providers_updated_at | BEFORE UPDATE | `shipping_providers` | `update_updated_at_column` |  |
+| update_spc_control_parameters_updated_at | BEFORE UPDATE | `spc_control_parameters` | `update_updated_at_column` |  |
+| enforce_bucket_name_length_trigger | BEFORE INSERT OR UPDATE OF name | `storage.buckets` | `storage.enforce_bucket_name_length` |  |
+| enforce_versioning_status_transition | BEFORE UPDATE OF versioning_status | `storage.buckets` | `storage.enforce_versioning_status_transition` |  |
+| protect_active_lifecycle_states | BEFORE DELETE | `storage.buckets` | `storage.protect_active_lifecycle_states` |  |
+| protect_bucket_control_insert | BEFORE INSERT | `storage.buckets` | `storage.protect_bucket_control_columns` |  |
+| protect_bucket_control_update | BEFORE UPDATE OF lifecycle_configuration, lifecycle_configuration_generation | `storage.buckets` | `storage.protect_bucket_control_columns` |  |
+| protect_bucket_control_update_role | AFTER UPDATE OF lifecycle_configuration, lifecycle_configuration_generation | `storage.buckets` | `storage.enforce_bucket_lifecycle_service_role` |  |
+| protect_buckets_delete | BEFORE DELETE | `storage.buckets` | `storage.protect_delete` |  |
+| wake_lifecycle_on_policy_write | AFTER INSERT OR UPDATE OF lifecycle_configuration_generation | `storage.buckets` | `storage.wake_lifecycle_state` |  |
+| wake_lifecycle_on_versioning_enable | AFTER UPDATE OF versioning_status | `storage.buckets` | `storage.wake_lifecycle_state` | `new.lifecycle_configuration IS NOT NULL` |
+| protect_objects_delete | BEFORE DELETE | `storage.objects` | `storage.protect_delete` |  |
+| update_objects_updated_at | BEFORE UPDATE | `storage.objects` | `storage.update_updated_at_column` |  |
+| update_technical_conversations_updated_at | BEFORE UPDATE | `technical_conversations` | `update_updated_at_column` |  |
+| update_technical_documents_updated_at | BEFORE UPDATE | `technical_documents` | `update_updated_at_column` |  |
+| on_technical_sheet_save | AFTER INSERT OR UPDATE | `technical_sheets` | `create_technical_sheet_version` |  |
+| tr_audit_technical_sheets | AFTER INSERT OR DELETE OR UPDATE | `technical_sheets` | `audit_technical_sheet_changes` |  |
+| tr_increment_tech_sheet_version | BEFORE UPDATE | `technical_sheets` | `increment_technical_sheet_version` |  |
+| tr_log_technical_sheet_changes | AFTER INSERT OR DELETE OR UPDATE | `technical_sheets` | `log_technical_sheet_change` |  |
+| update_technical_sheets_updated_at | BEFORE UPDATE | `technical_sheets` | `update_updated_at_column` |  |
+| on_tpm_execution_alert | AFTER INSERT | `tpm_execution_alerts` | `notify_loss_risk` |  |
+| set_tpm_executions_updated_at | BEFORE UPDATE | `tpm_executions` | `handle_tpm_updated_at` |  |
+| tr_parameter_alert_notification | AFTER INSERT | `tpm_parameter_alerts` | `handle_parameter_alert_notification` |  |
+| update_user_favorites_updated_at | BEFORE UPDATE | `user_favorites` | `update_updated_at_column` |  |
+| update_user_notification_settings_updated_at | BEFORE UPDATE | `user_notification_settings` | `update_updated_at_column` |  |
+| tr_audit_role_changes | AFTER INSERT OR UPDATE | `user_roles` | `log_role_changes` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
 | Função | Mensagem | Origem |
 |---|---|---|
-| `audit_log_immutable` | audit_log is append-only and cannot be modified or deleted (record %) | `supabase/migrations/20260421004937_5207cda2-0f4b-42d5-92fd-f81b9f873ab3.sql` |
-| `check_job_overlap` | Conflito de agendamento: A máquina % já possui um job agendado entre % e % nesta data. | `supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql` |
-| `validate_inventory_stock` | Estoque insuficiente para o item %: solicitado %, disponível % | `supabase/migrations/20260513191015_060e8cb0-85d2-4700-91be-8e25b86ac040.sql` |
-| `validate_stock_before_movement` | Saldo insuficiente em estoque para o item % | `supabase/migrations/20260514211903_477568e2-65ad-42f1-ba19-c4d35bc22e9f.sql` |
-| `verify_audit_chain` | Access denied | `supabase/migrations/20260619160053_f360994f-c4a8-4301-b10f-b32c6cc8edd4.sql` |
-| `enforce_packaging_checklist_before_ship` | Existem % item(ns) obrigatório(s) do checklist de conferência ainda não marcados. Conclua o checklist antes de liberar para envio. | `supabase/migrations/20260723150514_21fd854c-ed0c-4ee1-8b29-52977bc475fa.sql` |
-| `get_cron_health` | Access denied | `supabase/migrations/20260726150724_ee3d2224-0878-43f3-8186-b76c4c61dc9a.sql` |
-| `get_system_status_summary` | Access denied | `supabase/migrations/20260726165835_441f51a4-fda0-44bd-9395-849d58bcdb2b.sql` |
-| `complete_maintenance_record` | record_id ausente no payload | `supabase/migrations/20261019140000_validation_hardening.sql` |
-| `complete_maintenance_record` | Registro de manutenção não encontrado, já concluído ou já aprovado. | `supabase/migrations/20261019140000_validation_hardening.sql` |
-| `approve_maintenance_record` | Registro já foi processado por outra aprovação/correção | `supabase/migrations/20261028233000_approve_maintenance_atomic.sql` |
-| `validate_job_cancel_reason` | cancel_reason é obrigatório ao cancelar um job | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
-| `validate_packaging_loss_reason` | loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
-| `validate_job_rework_depth` | Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai) | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
+| `approve_maintenance_record` | Registro já foi processado por outra aprovação/correção | `docs/contexto/supabase/functions/public/approve_maintenance_record__5db177f44d48f661.sql` |
+| `audit_log_immutable` | audit_log is append-only and cannot be modified or deleted (record %) | `docs/contexto/supabase/functions/public/audit_log_immutable__12ae32cb1ec02d01.sql` |
+| `check_job_overlap` | Conflito de agendamento: A máquina % já possui um job agendado entre % e % nesta data. | `docs/contexto/supabase/functions/public/check_job_overlap__12ae32cb1ec02d01.sql` |
+| `complete_maintenance_record` | record_id ausente no payload | `docs/contexto/supabase/functions/public/complete_maintenance_record__d2762f2fe9095c6b.sql` |
+| `complete_maintenance_record` | Registro de manutenção não encontrado, já concluído ou já aprovado. | `docs/contexto/supabase/functions/public/complete_maintenance_record__d2762f2fe9095c6b.sql` |
+| `enforce_packaging_checklist_before_ship` | Existem % item(ns) obrigatório(s) do checklist de conferência ainda não marcados. Conclua o checklist antes de liberar para envio. | `docs/contexto/supabase/functions/public/enforce_packaging_checklist_before_ship__12ae32cb1ec02d01.sql` |
+| `get_cron_health` | Access denied | `docs/contexto/supabase/functions/public/get_cron_health__12ae32cb1ec02d01.sql` |
+| `get_system_status_summary` | Access denied | `docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql` |
+| `validate_inventory_stock` | Estoque insuficiente para o item %: solicitado %, disponível % | `docs/contexto/supabase/functions/public/validate_inventory_stock__12ae32cb1ec02d01.sql` |
+| `validate_job_cancel_reason` | cancel_reason é obrigatório ao cancelar um job | `docs/contexto/supabase/functions/public/validate_job_cancel_reason__12ae32cb1ec02d01.sql` |
+| `validate_job_rework_depth` | Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai) | `docs/contexto/supabase/functions/public/validate_job_rework_depth__12ae32cb1ec02d01.sql` |
+| `validate_packaging_loss_reason` | loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida | `docs/contexto/supabase/functions/public/validate_packaging_loss_reason__12ae32cb1ec02d01.sql` |
+| `validate_stock_before_movement` | Saldo insuficiente em estoque para o item % | `docs/contexto/supabase/functions/public/validate_stock_before_movement__12ae32cb1ec02d01.sql` |
+| `verify_audit_chain(_limit integer)` | Access denied | `docs/contexto/supabase/functions/public/verify_audit_chain__150fe0300b13032f.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (derivado de migrations — pode divergir do banco)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-12T11:17:03Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
-| `jobs` | `status` | `buffer`, `cancelled`, `delayed`, `finished`, `packaging`, `paused`, `production`, `queue`, `ready`, `rework`, `scheduled` | `queue` |
-| `jobs` | `shipping_status` | **livre (sem enum/CHECK)** |  |
-| `bitrix24_sync_history` | `status` | `error`, `partial`, `success` |  |
-| `technical_sheets` | `status` | `draft`, `published`, `review_needed` | `draft` |
-| `technical_sheet_steps` | `step_number` | **livre (sem enum/CHECK)** |  |
-| `maintenance_records` | `status` | **livre (sem enum/CHECK)** | `in_progress` |
-| `shift_handovers` | `status` | `cancelled`, `completed`, `open`, `pending_acceptance` | `open` |
-| `shift_pending_tasks` | `status` | `cancelled`, `completed`, `in_progress`, `pending` | `pending` |
-| `production_lots` | `status` | **livre (sem enum/CHECK)** | `active` |
-| `technical_documents` | `status` | `approved`, `pending`, `rejected` | `pending` |
-| `push_notifications` | `status` | **livre (sem enum/CHECK)** | `pending` |
-| `password_reset_requests` | `status` | `approved`, `pending`, `rejected` | `pending` |
-| `login_audit` | `login_status` | **livre (sem enum/CHECK)** |  |
-| `tpm_notification_templates` | `status` | `draft`, `published` | `published` |
-| `tpm_notification_logs` | `status` | `failure`, `success` |  |
-| `tpm_notification_queue` | `status` | **livre (sem enum/CHECK)** | `pending` |
-| `tpm_executions` | `status` | **livre (sem enum/CHECK)** | `in_progress` |
-| `reward_redemptions` | `status` | **livre (sem enum/CHECK)** | `pending` |
-| `shipments` | `status` | **livre (sem enum/CHECK)** | `pending` |
-| `job_status_history` | `previous_status` | **livre (sem enum/CHECK)** |  |
-| `job_status_history` | `new_status` | **livre (sem enum/CHECK)** |  |
-| `telemetry_traces` | `status` | **livre (sem enum/CHECK)** |  |
-| `job_status_audit` | `old_status` | **livre (sem enum/CHECK)** |  |
-| `job_status_audit` | `new_status` | **livre (sem enum/CHECK)** |  |
-| `packaging_tasks` | `status` | `in_triage`, `on_hold`, `packaging`, `pending`, `ready_to_ship` | `pending` |
-| `cron_health_history` | `last_status` | **livre (sem enum/CHECK)** |  |
-| `edge_health_history` | `status` | `fail`, `pass`, `warn` |  |
-| `bitrix24_oauth_states` | `state` | **livre (sem enum/CHECK)** |  |
 | `archived_jobs` | `status` | `buffer`, `cancelled`, `delayed`, `finished`, `packaging`, `paused`, `production`, `queue`, `ready`, `rework`, `scheduled` | `queue` |
 | `archived_jobs` | `shipping_status` | **livre (sem enum/CHECK)** |  |
+| `bitrix24_oauth_states` | `state` | **livre (sem enum/CHECK)** |  |
+| `bitrix24_sync_history` | `status` | `error`, `partial`, `success` |  |
+| `cron_health_history` | `last_status` | **livre (sem enum/CHECK)** |  |
+| `edge_health_history` | `status` | `fail`, `pass`, `warn` |  |
+| `job_status_audit` | `old_status` | **livre (sem enum/CHECK)** |  |
+| `job_status_audit` | `new_status` | **livre (sem enum/CHECK)** |  |
+| `job_status_history` | `previous_status` | **livre (sem enum/CHECK)** |  |
+| `job_status_history` | `new_status` | **livre (sem enum/CHECK)** |  |
+| `jobs` | `status` | `buffer`, `cancelled`, `delayed`, `finished`, `packaging`, `paused`, `production`, `queue`, `ready`, `rework`, `scheduled` | `queue` |
+| `jobs` | `shipping_status` | **livre (sem enum/CHECK)** |  |
+| `login_audit` | `login_status` | **livre (sem enum/CHECK)** |  |
+| `maintenance_records` | `status` | **livre (sem enum/CHECK)** | `in_progress` |
+| `packaging_tasks` | `status` | `in_triage`, `on_hold`, `packaging`, `pending`, `ready_to_ship` | `pending` |
+| `password_reset_requests` | `status` | `approved`, `pending`, `rejected` | `pending` |
+| `production_lots` | `status` | **livre (sem enum/CHECK)** | `active` |
+| `push_notifications` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `reward_redemptions` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `shift_handovers` | `status` | `cancelled`, `completed`, `open`, `pending_acceptance` | `open` |
+| `shift_pending_tasks` | `status` | `cancelled`, `completed`, `in_progress`, `pending` | `pending` |
+| `shipments` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `technical_documents` | `status` | `approved`, `pending`, `rejected` | `pending` |
+| `technical_sheet_steps` | `step_number` | **livre (sem enum/CHECK)** |  |
+| `technical_sheets` | `status` | `draft`, `published`, `review_needed` | `draft` |
+| `telemetry_traces` | `status` | **livre (sem enum/CHECK)** |  |
+| `tpm_executions` | `status` | **livre (sem enum/CHECK)** | `in_progress` |
+| `tpm_notification_logs` | `status` | `failure`, `success` |  |
+| `tpm_notification_queue` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `tpm_notification_templates` | `status` | `draft`, `published` | `published` |
 
 ### E.2 Mapas de transição declarados no código
 
@@ -2236,9 +2240,7 @@ _nenhum item encontrado_
 
 ### G.1 Colunas calculadas no banco
 
-| Tabela | Coluna | Expressão |
-|---|---|---|
-| `energy_consumption` | `total_cost` | `consumption_kwh * cost_per_kwh` |
+_nenhum item encontrado_
 
 ### G.2 Views (consultas derivadas)
 
