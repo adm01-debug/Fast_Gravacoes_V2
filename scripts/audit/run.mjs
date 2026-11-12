@@ -51,6 +51,7 @@ const redactEvidence = (text) => text
   .replace(/postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]+@?/g, redact)
   .replace(/https:\/\/[\w.-]+\.bitrix24\.[a-z.]+\/rest\/\d+\/[a-z0-9]*/gi, redact);
 
+const escRegex = (s) => s.replace(/[.+^${}()|[\]\\]/g, '\\$&');
 const globRx = (g) =>
   new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$');
 
@@ -169,7 +170,7 @@ const fnFiles = (n) => tracked.filter((f) => f.startsWith(`${fnDir}/${n}/`) && /
 defCheck('edge-sem-config', 'Edge function sem entrada em supabase/config.toml', 'Só confere a presença da seção [functions.x].', () => {
   const cfg = read('supabase/config.toml');
   for (const n of fnNames)
-    if (!new RegExp(`\\[functions\\.${n.replace(/[-]/g, '\\-')}\\]`).test(cfg))
+    if (!new RegExp(`\\[functions\\.${escRegex(n)}\\]`).test(cfg))
       add('edge-sem-config', 'media', `Function ${n} sem [functions.${n}] no config.toml`, `${fnDir}/${n}`, 1, 'sem seção', `Declarar verify_jwt explícito para ${n}.`);
 });
 
@@ -207,7 +208,7 @@ defCheck('pagina-orfa', 'Página em src/pages que nada importa (sem rota)', 'Imp
   const pages = tracked.filter((f) => /^src\/pages\/.*\.tsx$/.test(f) && !isTest(f));
   const corpus = srcFiles.filter((f) => !pages.includes(f) || true);
   for (const p of pages) {
-    const rel = p.replace(/^src\//, '').replace(/\.tsx$/, '');
+    const rel = escRegex(p.replace(/^src\//, '').replace(/\.tsx$/, ''));
     const nm = basename(rel);
     const rx = new RegExp(`(@/${rel.replace(/\//g, '\\/')}|['"]\\./${nm}['"]|pages/${rel.replace(/^pages\//, '').replace(/\//g, '\\/')}['"])`);
     if (!corpus.some((f) => f !== p && rx.test(read(f))))
