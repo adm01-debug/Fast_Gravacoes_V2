@@ -41,7 +41,7 @@ export const SortableWidgetSection = memo(function SortableWidgetSection({
   const keyboardSensor = useSensor(KeyboardSensor, {
     coordinateGetter: sortableKeyboardCoordinates,
   });
-  
+
   const sensors = useSensors(pointerSensor, keyboardSensor);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {

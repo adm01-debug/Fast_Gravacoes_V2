@@ -7,7 +7,7 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  Tooltip as RechartsTooltip} from '@/lib/recharts';
+  Tooltip as RechartsTooltip } from '@/lib/recharts';
 
 interface JobCostsTabProps {
   jobId: string;
