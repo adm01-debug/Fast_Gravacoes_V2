@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 16:12 UTC
+
+- **config: storage_config** alterado (1): `storage_config`
+
 ## 2026-11-12 12:49 UTC
 
 - Snapshot inicial.

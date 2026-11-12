@@ -39,6 +39,6 @@ _nenhum_
     }
   },
   "fileSizeLimit": 52428800,
-  "migrationVersion": "lifecycle-writer-coordination"
+  "migrationVersion": "revoke-extra-lifecycle-postgres-grants"
 }
 ```
