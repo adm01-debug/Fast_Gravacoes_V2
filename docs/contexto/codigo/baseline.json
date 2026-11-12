@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
+  "commit": "3fae94c5746d476c5664ad4d59f7b9794d5530c8",
   "branch": "main",
-  "data_commit": "2026-11-11T19:13:37-03:00",
+  "data_commit": "2026-11-12T08:03:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3fae94c",
+    "data": "2026-11-12",
+    "assunto": "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)"
+   },
    {
     "sha": "854fc23",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "5db90ba",
     "data": "2026-11-08",
     "assunto": "feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)"
-   },
-   {
-    "sha": "3720de3",
-    "data": "2026-11-08",
-    "assunto": "fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -200,7 +200,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "AGENTS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 44
+    "commits": 45
    },
    {
     "autor": "devin-ai-integration[bot]",

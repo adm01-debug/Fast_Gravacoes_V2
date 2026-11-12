@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
+  "sha": "3fae94c5746d476c5664ad4d59f7b9794d5530c8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-11 23:16 UTC",
+  "generated_at": "2026-11-12 11:08 UTC",
   "files_total": 1469,
   "code_files": 1339,
   "code_lines": 190224
@@ -92431,10 +92431,19 @@
   }
  },
  "git": {
-  "sha": "854fc2341bbfe5726dd14ab2e44143bd89c17a37",
+  "sha": "3fae94c5746d476c5664ad4d59f7b9794d5530c8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3fae94c",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "854fc23",
     "date": "2026-11-11",
@@ -93027,20 +93036,6 @@
     "files": [
      "supabase/migrations/20261107000000_fix_permissive_insert_policies.sql"
     ]
-   },
-   {
-    "sha": "c98b362",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "chore: instruções enxutas para agentes (#130)",
-    "files": [
-     ".agents/skills/fast-grava-es-v2/SKILL.md",
-     ".claude/skills/fast-grava-es-v2/SKILL.md",
-     "AGENTS.md",
-     "CLAUDE.md",
-     "docs/agentes/arquitetura.md",
-     "docs/agentes/graphify.md"
-    ]
    }
   ],
   "hot_files": [
@@ -93069,6 +93064,10 @@
     4
    ],
    [
+    ".github/workflows/ci.yml",
+    3
+   ],
+   [
     "scripts/supabase_snapshot/README.md",
     3
    ],
@@ -93085,19 +93084,11 @@
     3
    ],
    [
-    "AGENTS.md",
-    3
-   ],
-   [
     "scripts/bundle-diff.mjs",
     2
    ],
    [
     "scripts/bundle.test.mjs",
-    2
-   ],
-   [
-    ".github/workflows/ci.yml",
     2
    ],
    [
@@ -93122,6 +93113,10 @@
    ],
    [
     "docs/agentes/mapa-repo.md",
+    2
+   ],
+   [
+    "scripts/ci/check-claude-md-integrity.mjs",
     2
    ]
   ]
