@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
+  "sha": "9685302e7649ac667376d50974d5b6801f67a196",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-12 14:35 UTC",
+  "generated_at": "2026-11-12 18:15 UTC",
   "files_total": 1495,
   "code_files": 1357,
   "code_lines": 194142
@@ -93881,10 +93881,19 @@
   }
  },
  "git": {
-  "sha": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
+  "sha": "9685302e7649ac667376d50974d5b6801f67a196",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9685302",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)",
+    "files": [
+     ".github/workflows/db-admin.yml"
+    ]
+   },
    {
     "sha": "dd1b467",
     "date": "2026-11-12",
@@ -94505,15 +94514,6 @@
     "files": [
      "scripts/supabase_snapshot/snapshot.py"
     ]
-   },
-   {
-    "sha": "c9814e8",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix(contexto): guard de segredos por ocorrência (#137)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -94524,10 +94524,6 @@
    [
     "scripts/supabase_snapshot/test_snapshot.py",
     4
-   ],
-   [
-    ".github/workflows/contexto.yml",
-    3
    ],
    [
     ".github/workflows/ci.yml",
@@ -94591,6 +94587,10 @@
    ],
    [
     "src/components/knowledge/TechnicalSheetViewer.tsx",
+    2
+   ],
+   [
+    ".github/workflows/contexto.yml",
     2
    ],
    [

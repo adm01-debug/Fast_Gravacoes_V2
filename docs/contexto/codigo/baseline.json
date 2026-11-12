@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dd1b4671aa8dbc85beee14823b6ab21900d00d90",
+  "commit": "9685302e7649ac667376d50974d5b6801f67a196",
   "branch": "main",
-  "data_commit": "2026-11-12T10:21:56-03:00",
+  "data_commit": "2026-11-12T13:33:21-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9685302",
+    "data": "2026-11-12",
+    "assunto": "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)"
+   },
    {
     "sha": "dd1b467",
     "data": "2026-11-12",
@@ -126,15 +131,10 @@
     "sha": "961751a",
     "data": "2026-11-08",
     "assunto": "docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)"
-   },
-   {
-    "sha": "45a5eb9",
-    "data": "2026-11-08",
-    "assunto": "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 407,
+  "arquivos_mudados_7d": 408,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -211,16 +211,16 @@
     "mudancas": 9
    },
    {
+    "arquivo": ".github/workflows/db-admin.yml",
+    "mudancas": 8
+   },
+   {
     "arquivo": "deno.lock",
     "mudancas": 8
    },
    {
     "arquivo": "package.json",
     "mudancas": 8
-   },
-   {
-    "arquivo": ".github/workflows/db-admin.yml",
-    "mudancas": 7
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 48
+    "commits": 49
    },
    {
     "autor": "devin-ai-integration[bot]",
