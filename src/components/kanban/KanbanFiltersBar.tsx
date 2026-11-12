@@ -134,8 +134,8 @@ export function KanbanFiltersBar({
         <div className="flex-1" />
 
         <div className="flex items-center gap-2">
-          <Button 
-            className="gap-2 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20 group relative overflow-hidden h-9" 
+          <Button
+            className="gap-2 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20 group relative overflow-hidden h-9"
             variant="outline"
             onClick={handleSmartOptimization}
           >

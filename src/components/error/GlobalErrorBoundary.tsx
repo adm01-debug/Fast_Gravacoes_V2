@@ -51,10 +51,10 @@ export class GlobalErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      const isTelemetryError = this.state.error?.message?.toLowerCase().includes('telemetry') || 
+      const isTelemetryError = this.state.error?.message?.toLowerCase().includes('telemetry') ||
                                this.state.error?.message?.toLowerCase().includes('postgrest') ||
                                this.state.error?.message?.toLowerCase().includes('inventory');
-      const isRealtimeError = this.state.error?.message?.toLowerCase().includes('realtime') || 
+      const isRealtimeError = this.state.error?.message?.toLowerCase().includes('realtime') ||
                               this.state.error?.message?.toLowerCase().includes('websocket') ||
                               this.state.error?.message?.toLowerCase().includes('network');
 
@@ -71,13 +71,13 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </CardHeader>
             <CardContent className="space-y-6 text-center">
               <p className="text-muted-foreground font-medium">
-                {isTelemetryError 
+                {isTelemetryError
                   ? 'Detectamos uma instabilidade nos nossos serviços de telemetria. O sistema principal continua operando, mas algumas métricas podem estar indisponíveis.'
                   : isRealtimeError
                   ? 'A conexão em tempo real foi interrompida. Tente recarregar a página para restabelecer o fluxo de dados.'
                   : 'Ocorreu um erro inesperado na interface. Nossa equipe técnica já foi notificada automaticamente via telemetria.'}
               </p>
-              
+
               <div className="bg-muted/50 p-4 rounded-xl text-left overflow-auto max-h-40 text-[10px] font-mono text-muted-foreground/80 border shadow-inner">
                 <div className="flex items-center gap-2 mb-2 text-destructive/70 font-bold uppercase tracking-widest">
                   <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
@@ -87,15 +87,15 @@ export class GlobalErrorBoundary extends Component<Props, State> {
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={this.handleGoHome}
                   className="flex items-center gap-2 h-11 font-bold uppercase tracking-widest text-[10px]"
                 >
                   <Home className="h-4 w-4" />
                   Início
                 </Button>
-                <Button 
+                <Button
                   onClick={this.handleReset}
                   className="flex items-center gap-2 h-11 font-bold uppercase tracking-widest text-[10px] shadow-glow-primary"
                 >
@@ -103,7 +103,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                   Recarregar
                 </Button>
               </div>
-              
+
               <div className="pt-4 flex flex-col items-center gap-2">
                 <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.3em] font-black">
                   FAST GRAVAÇÕES - SISTEMA DE GESTÃO

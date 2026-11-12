@@ -66,8 +66,8 @@ export function EditorMaterialsSection({ materials, sheetId, onAdd, onDelete, is
       <div className="p-4 rounded-lg border border-dashed border-border/50 space-y-3">
         <p className="text-xs text-muted-foreground">Adicionar material:</p>
         <div className="grid grid-cols-2 gap-2">
-          <Input placeholder="Nome do material" value={newMaterial.name} onChange={(e) => setNewMaterial({...newMaterial, name: e.target.value})} />
-          <Input placeholder="Quantidade" value={newMaterial.quantity} onChange={(e) => setNewMaterial({...newMaterial, quantity: e.target.value})} />
+          <Input placeholder="Nome do material" value={newMaterial.name} onChange={(e) => setNewMaterial({ ...newMaterial, name: e.target.value })} />
+          <Input placeholder="Quantidade" value={newMaterial.quantity} onChange={(e) => setNewMaterial({ ...newMaterial, quantity: e.target.value })} />
         </div>
         <Button size="sm" onClick={handleAdd} disabled={isAdding}>
           <Plus className="h-4 w-4 mr-1" />Adicionar Material

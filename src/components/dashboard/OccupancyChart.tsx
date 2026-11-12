@@ -73,7 +73,7 @@ function OccupancyChartComponent() {
                 <span className="font-medium truncate max-w-[60%]">{machine.name} ({machine.code})</span>
                 <span className="text-muted-foreground">{machine.occupancy}%</span>
               </div>
-              <div 
+              <div
                 className="h-2 rounded-full bg-muted overflow-hidden"
                 role="progressbar"
                 aria-valuenow={machine.occupancy}

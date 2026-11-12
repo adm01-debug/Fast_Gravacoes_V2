@@ -176,7 +176,7 @@ export function DraggableJobCard({ job, technique, machine, onClick, viewMode = 
       }}
     >
       {/* Background Glow Effect */}
-      <div 
+      <div
         className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
         style={{ background: `radial-gradient(circle at 50% 0%, ${technique?.color || 'var(--primary)'}, transparent 70%)` }}
       />

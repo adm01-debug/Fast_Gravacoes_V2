@@ -20,7 +20,7 @@ interface AuthLoginFormProps {
   onSubmit: (e: React.FormEvent) => void;
   onGoogleLogin: () => void;
   onForgotPassword: () => void;
-  
+
 }
 
 export function AuthLoginForm({

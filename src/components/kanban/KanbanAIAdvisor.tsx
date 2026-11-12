@@ -12,14 +12,14 @@ import { cn } from '@/lib/utils';
 import {
   BrainCircuit, ArrowRight, Zap, AlertTriangle,
   Sparkles, ChevronRight, Bell, Settings,
-  Clock, Info, LayoutList, Split, TrendingUp} from 'lucide-react';
+  Clock, Info, LayoutList, Split, TrendingUp } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog';
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
-  SheetDescription, SheetFooter} from '@/components/ui/sheet';
+  SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -34,7 +34,7 @@ export function KanbanAIAdvisor() {
   const { suggestions: sequenceSuggestions, totalSavings, applySequencing, isApplying: isApplyingSequencing } = useSmartSequencingWithActions();
   const { suggestions: balancingSuggestions, applySuggestion: applyBalancingSuggestion, isApplying: isApplyingBalancing } = useLoadBalancingWithActions();
   const { alerts: bottleneckAlerts } = useBottleneckPrediction();
-  
+
   const [healthScore, setHealthScore] = useState(100);
 
   useEffect(() => {
@@ -42,10 +42,10 @@ export function KanbanAIAdvisor() {
     let score = 100;
     if (bottleneckAlerts.some(a => a.severity === 'critical')) score -= 30;
     else if (bottleneckAlerts.some(a => a.severity === 'warning')) score -= 15;
-    
+
     if (balancingSuggestions.length > 5) score -= 10;
     if (totalSavings > 120) score -= 5; // Indica que há muito setup a otimizar
-    
+
     setHealthScore(Math.max(0, score));
   }, [bottleneckAlerts, balancingSuggestions, totalSavings]);
 
@@ -94,9 +94,9 @@ export function KanbanAIAdvisor() {
               </Badge>
             </h2>
           </div>
-          
+
           <Separator orientation="vertical" className="h-4 bg-border/50" />
-          
+
           <div className="flex items-center gap-2">
             <TrendingUp className={cn(
               "h-3.5 w-3.5",

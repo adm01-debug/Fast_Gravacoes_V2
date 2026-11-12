@@ -85,7 +85,7 @@ export function ActivityLog({
       groups[groupKey].push(entry);
       return groups;
     }, {} as Record<string, ActivityLogEntry[]>);
-   
+
   }, [entries, showGrouping, todayStr, yesterdayStr]);
 
   return (
