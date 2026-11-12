@@ -23,14 +23,14 @@
   "testes": [
    "co-localizado (*.test) (82)",
    "tests/ (18)",
-   "outro (6)"
+   "outro (14)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
   "scripts": [
+   "scripts/ci (6)",
    "scripts/graphify (5)",
-   "scripts/regras_negocio (3)",
-   "scripts/ai-context (2)"
+   "scripts/inventario (5)"
   ],
   "docs": [
    "(raiz) (10)",
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)",
    "fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)",
    "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)",
    "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)",
-   "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)",
-   "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)"
+   "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

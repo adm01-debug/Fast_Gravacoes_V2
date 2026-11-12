@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `047e75b71cf08fb3db6ddbae7a665fd737bcf844` (2026-11-12T08:41:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `df3c54d3f41410d22f9d33db11d2392baad159fa` (2026-11-12T09:18:11-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1051), SQL (252), Markdown (68), JavaScript (23), JSON (20), Python (13), YAML (9), CSS (2)
+- linguagens: TypeScript (1051), SQL (253), Markdown (70), JavaScript (40), JSON (23), Python (13), YAML (12), CSS (2)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1472 |
-| arquivos_codigo | 1084 |
-| linhas_codigo | 175295 |
+| arquivos_total | 1498 |
+| arquivos_codigo | 1101 |
+| linhas_codigo | 179009 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,20 +48,20 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 245 |
 | cron_jobs | 4 |
-| testes | 106 |
-| workflows | 7 |
-| scripts | 18 |
-| docs_md | 68 |
+| testes | 114 |
+| workflows | 10 |
+| scripts | 28 |
+| docs_md | 70 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (41), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (82), tests/ (18), outro (6)
+- testes: co-localizado (*.test) (82), tests/ (18), outro (14)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
-- scripts: scripts/graphify (5), scripts/regras_negocio (3), scripts/ai-context (2)
+- scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
 - docs: (raiz) (10), docs (7), .github (1)
 - nomenclatura: {"componentes":"PascalCase (90%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (100%)","tabelas":"snake_case (95%)"}
 - instruções para agentes no repo: AGENTS.md, CLAUDE.md
@@ -247,9 +247,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 6928 nós · 20908 arestas · 636 comunidades · grafo do commit `047e75b7`
-- comunidades maiores: card.tsx (213), skeleton.tsx (131), analytics/index.ts (122), KPIDashboard.tsx (117), input.tsx (111), badge.tsx (108), snapshot.py (103), generate.py (101), cn (100), gerar.mjs (96), .write (96), Button (94)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
+- 7146 nós · 21294 arestas · 670 comunidades · grafo do commit `df3c54d3`
+- comunidades maiores: card.tsx (249), Button (199), snapshot.py (111), cn (102), generate.py (101), gerar.mjs (96), .write (96), useAuth (95), skeleton.tsx (87), select.tsx (86), KanbanBoard.tsx (85), OperatorProductivityPage.tsx (81)
+- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
@@ -257,25 +257,28 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - AGENTS.md (10)
 - package-lock.json (9)
 - deno.lock (8)
+- package.json (8)
 - .github/workflows/db-admin.yml (7)
 - PENDENCIAS.md (7)
-- package.json (7)
 - .github/workflows/deploy.yml (6)
 - CLAUDE.md (6)
 - index.html (6)
 - scripts/audit-gate.mjs (6)
 - scripts/rls-regression.mjs (5)
+- scripts/supabase_snapshot/snapshot.py (5)
+- scripts/supabase_snapshot/test_snapshot.py (5)
 - src/components/layout/AppSidebar.tsx (5)
-- supabase/config.toml (5)
-- tests/e2e/offline.spec.ts (5)
 
 ## Workflows
+- `branch-hygiene-audit.yml` — Branch Hygiene Audit (schedule, workflow_dispatch; cron 56 7 * * 1)
 - `ci.yml` — CI — Quality Gates (pull_request, push, workflow_dispatch)
 - `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
 - `db-admin.yml` — DB Admin (workflow_dispatch)
 - `deploy.yml` — Deploy (push, workflow_dispatch)
 - `graphify.yml` — Architecture graph (pull_request, workflow_dispatch)
+- `inventario-estado-semanal.yml` — Inventário do estado real (semanal) (schedule, workflow_dispatch; cron 27 10 * * 1)
 - `migration-repair.yml` — Migration repair (workflow_dispatch)
+- `settings-guard.yml` — Settings Guard (schedule, workflow_dispatch; cron 15 7 * * *)
 - `visual-baselines.yml` — Visual Baselines Generator (workflow_dispatch)
 
 ## Scripts npm
@@ -312,6 +315,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `graph:benchmark`: `node scripts/graphify.mjs benchmark`
 - `graph:test`: `node scripts/graphify.mjs test`
 - `ci`: `npm run quality:any && npm run build && npm run test:e2e`
+- `inventario:rotas`: `node scripts/inventario/gerar-rotas.mjs`
+- `inventario:edges`: `node scripts/inventario/gerar-repo.mjs`
+- `inventario:banco`: `node scripts/inventario/gerar-banco.mjs`
+- `inventario:test`: `node --test 'scripts/inventario/*.unit.mjs'`
+- `settings:guard`: `node scripts/ci/github-settings-guard.mjs`
+- `ci:docs`: `node scripts/ci/render-workflow-docs.mjs`
+- `ci:docs:check`: `node scripts/ci/render-workflow-docs.mjs --check`
+- `ci:test`: `node --test 'scripts/ci/*.unit.mjs'`
 
 ## Documentos (raiz e docs/)
 - `.github/PULL_REQUEST_TEMPLATE.md` (18 linhas)
@@ -332,10 +343,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/plano-50-etapas-consolidacao.md` — Plano de consolidação em 50 etapas — FAST GRAVAÇÕES ES v2 (819 linhas)
 - `docs/plano-graphify-50-etapas.md` — Plano de implementação Graphify — 50 etapas (647 linhas)
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
-- subpastas de docs/: docs/estado (20), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/post-mortems (1)
+- subpastas de docs/: docs/estado (20), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/ci (1), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-12 `df3c54d` chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)
 - 2026-11-12 `047e75b` fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)
 - 2026-11-12 `3fae94c` fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)
 - 2026-11-11 `854fc23` fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)
@@ -350,7 +362,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `346947d` fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)
 - 2026-11-10 `dfdb331` fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)
 - 2026-11-10 `d39d646` fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)
-- 2026-11-10 `7a712fb` fix(regras): usa o snapshot do banco como fonte (#154)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

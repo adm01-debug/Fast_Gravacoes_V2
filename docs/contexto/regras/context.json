@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "047e75b71cf08fb3db6ddbae7a665fd737bcf844",
+  "sha": "df3c54d3f41410d22f9d33db11d2392baad159fa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-12 12:10 UTC",
-  "files_total": 1469,
-  "code_files": 1339,
-  "code_lines": 190224
+  "generated_at": "2026-11-12 12:37 UTC",
+  "files_total": 1495,
+  "code_files": 1357,
+  "code_lines": 194138
  },
  "version": "1.3.2",
- "facts_hash": "623b6f8a380177ca",
+ "facts_hash": "b15759f90267ee33",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -140,7 +140,15 @@
    "graph:diff": "node scripts/graphify.mjs diff",
    "graph:benchmark": "node scripts/graphify.mjs benchmark",
    "graph:test": "node scripts/graphify.mjs test",
-   "ci": "npm run quality:any && npm run build && npm run test:e2e"
+   "ci": "npm run quality:any && npm run build && npm run test:e2e",
+   "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
+   "inventario:edges": "node scripts/inventario/gerar-repo.mjs",
+   "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
+   "inventario:test": "node --test 'scripts/inventario/*.unit.mjs'",
+   "settings:guard": "node scripts/ci/github-settings-guard.mjs",
+   "ci:docs": "node scripts/ci/render-workflow-docs.mjs",
+   "ci:docs:check": "node scripts/ci/render-workflow-docs.mjs --check",
+   "ci:test": "node --test 'scripts/ci/*.unit.mjs'"
   },
   "infra": [
    {
@@ -157,6 +165,14 @@
    }
   ],
   "ci": [
+   {
+    "file": ".github/workflows/branch-hygiene-audit.yml",
+    "name": "Branch Hygiene Audit",
+    "triggers": [
+     "schedule",
+     "workflow_dispatch"
+    ]
+   },
    {
     "file": ".github/workflows/ci.yml",
     "name": "CI — Quality Gates",
@@ -199,9 +215,25 @@
     ]
    },
    {
+    "file": ".github/workflows/inventario-estado-semanal.yml",
+    "name": "Inventário do estado real (semanal)",
+    "triggers": [
+     "schedule",
+     "workflow_dispatch"
+    ]
+   },
+   {
     "file": ".github/workflows/migration-repair.yml",
     "name": "Migration repair",
     "triggers": [
+     "workflow_dispatch"
+    ]
+   },
+   {
+    "file": ".github/workflows/settings-guard.yml",
+    "name": "Settings Guard",
+    "triggers": [
+     "schedule",
      "workflow_dispatch"
     ]
    },
@@ -217,8 +249,8 @@
   "languages": {
    ".tsx": 656,
    ".ts": 395,
-   ".sql": 252,
-   ".mjs": 19,
+   ".sql": 253,
+   ".mjs": 36,
    ".py": 13,
    ".js": 4
   },
@@ -21815,83 +21847,6 @@
    },
    {
     "path": "",
-    "file": "src/pages/Index.tsx",
-    "component": "Index",
-    "tables_transitive": [
-     "abc_job_costs",
-     "audit_log",
-     "bitrix24_field_mappings",
-     "bitrix24_sync_history",
-     "blocked_ips",
-     "business_config",
-     "daily_summaries",
-     "dashboard_layouts",
-     "dashboard_presets",
-     "efficiency_alert_history",
-     "error_logs",
-     "feature_flags",
-     "gamification_rewards",
-     "geo_blocking_logs",
-     "geo_blocking_rules",
-     "geo_blocking_settings",
-     "job_status_audit",
-     "job_status_history",
-     "jobs",
-     "machine_downtime",
-     "machine_event_audit",
-     "machine_health_metrics",
-     "machine_predictions",
-     "machines",
-     "maintenance_alerts",
-     "maintenance_records",
-     "maintenance_schedules",
-     "operator_achievements",
-     "operator_goals",
-     "operator_machines",
-     "operator_rankings",
-     "operator_skills",
-     "operator_status_audit",
-     "packaging_settings",
-     "packaging_sla_overrides",
-     "packaging_tasks",
-     "prediction_history",
-     "production_losses",
-     "profiles",
-     "push_notifications",
-     "push_subscriptions",
-     "qr_scan_history",
-     "rate_limit_logs",
-     "rate_limit_settings",
-     "reward_redemptions",
-     "role_permissions",
-     "security_events",
-     "technical_sheet_materials",
-     "technical_sheets",
-     "techniques",
-     "telemetry_traces",
-     "tpm_notification_logs",
-     "user_notification_settings",
-     "user_roles"
-    ],
-    "invokes_transitive": [
-     "auto-promote-jobs",
-     "bitrix24-sync",
-     "calculate-rankings",
-     "check-login-lockout",
-     "daily-maintenance-summary",
-     "ml-predictions",
-     "new-device-alert",
-     "send-push-notification"
-    ],
-    "rpc_transitive": [
-     "check_and_notify_kpi_alert",
-     "increment_job_lost_pieces",
-     "verify_audit_chain"
-    ],
-    "deps_count": 205
-   },
-   {
-    "path": "",
     "file": "src/pages/InstallAppPage.tsx",
     "component": "InstallAppPage",
     "tables_transitive": [],
@@ -24190,6 +24145,83 @@
      "verify_audit_chain"
     ],
     "deps_count": 232
+   },
+   {
+    "path": "/rota-fantasma-que-nao-devia-contar",
+    "file": "src/pages/Index.tsx",
+    "component": "Index",
+    "tables_transitive": [
+     "abc_job_costs",
+     "audit_log",
+     "bitrix24_field_mappings",
+     "bitrix24_sync_history",
+     "blocked_ips",
+     "business_config",
+     "daily_summaries",
+     "dashboard_layouts",
+     "dashboard_presets",
+     "efficiency_alert_history",
+     "error_logs",
+     "feature_flags",
+     "gamification_rewards",
+     "geo_blocking_logs",
+     "geo_blocking_rules",
+     "geo_blocking_settings",
+     "job_status_audit",
+     "job_status_history",
+     "jobs",
+     "machine_downtime",
+     "machine_event_audit",
+     "machine_health_metrics",
+     "machine_predictions",
+     "machines",
+     "maintenance_alerts",
+     "maintenance_records",
+     "maintenance_schedules",
+     "operator_achievements",
+     "operator_goals",
+     "operator_machines",
+     "operator_rankings",
+     "operator_skills",
+     "operator_status_audit",
+     "packaging_settings",
+     "packaging_sla_overrides",
+     "packaging_tasks",
+     "prediction_history",
+     "production_losses",
+     "profiles",
+     "push_notifications",
+     "push_subscriptions",
+     "qr_scan_history",
+     "rate_limit_logs",
+     "rate_limit_settings",
+     "reward_redemptions",
+     "role_permissions",
+     "security_events",
+     "technical_sheet_materials",
+     "technical_sheets",
+     "techniques",
+     "telemetry_traces",
+     "tpm_notification_logs",
+     "user_notification_settings",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "auto-promote-jobs",
+     "bitrix24-sync",
+     "calculate-rankings",
+     "check-login-lockout",
+     "daily-maintenance-summary",
+     "ml-predictions",
+     "new-device-alert",
+     "send-push-notification"
+    ],
+    "rpc_transitive": [
+     "check_and_notify_kpi_alert",
+     "increment_job_lost_pieces",
+     "verify_audit_chain"
+    ],
+    "deps_count": 205
    }
   ],
   "edge_functions": [
@@ -25230,6 +25262,13 @@
     "component": "Navigate",
     "guard": "",
     "roles": [],
+    "file": "scripts/inventario/gerar-rotas.unit.mjs"
+   },
+   {
+    "path": "/abc",
+    "component": "Navigate",
+    "guard": "",
+    "roles": [],
     "file": "src/routes/AppRoutes.tsx"
    },
    {
@@ -25464,6 +25503,13 @@
     "file": "scripts/ai-context/gerar.unit.mjs"
    },
    {
+    "path": "/rota-fantasma-que-nao-devia-contar",
+    "component": "Index",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/inventario/gerar-rotas.unit.mjs"
+   },
+   {
     "path": "/x",
     "component": "L",
     "guard": "",
@@ -25555,8 +25601,23 @@
    },
    {
     "kind": "GitHub Actions cron",
+    "detail": "56 7 * * 1",
+    "file": ".github/workflows/branch-hygiene-audit.yml"
+   },
+   {
+    "kind": "GitHub Actions cron",
     "detail": "3-59/10 * * * *",
     "file": ".github/workflows/contexto.yml"
+   },
+   {
+    "kind": "GitHub Actions cron",
+    "detail": "27 10 * * 1",
+    "file": ".github/workflows/inventario-estado-semanal.yml"
+   },
+   {
+    "kind": "GitHub Actions cron",
+    "detail": "15 7 * * *",
+    "file": ".github/workflows/settings-guard.yml"
    }
   ],
   "components_count": 568,
@@ -26626,6 +26687,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "scripts/inventario/gerar-rotas.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/routes/AppRoutes.tsx"
    }
   ]
@@ -26686,10 +26751,13 @@
   },
   {
    "module": "scripts",
-   "files": 31,
-   "lines": 13911,
+   "files": 49,
+   "lines": 17825,
    "tables": [
     "a",
+    "c1",
+    "c2",
+    "c3_longe_demais",
     "constructor",
     "contacts",
     "dashboard_table",
@@ -26697,11 +26765,16 @@
     "fantasma",
     "fixture_table",
     "ghost_table",
+    "h1",
+    "h2",
+    "h3_longe_demais",
     "jobs",
+    "nunca",
     "orders",
     "payments",
     "real_missing",
     "runtime_table",
+    "so_no_teste",
     "so_teste",
     "t",
     "t1",
@@ -26712,6 +26785,7 @@
     "tab_e",
     "tab_g",
     "tab_h",
+    "tabela",
     "tabela_do_fundo",
     "technical_conversations",
     "tools_runtime",
@@ -26723,12 +26797,20 @@
     "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
     "rls-regression.mjs: signInWithRetry",
     "gerar.unit.mjs: AppRoutes, useContacts, Publicas, router, useDeFerramenta, a",
+    "actions-kpi.mjs: duracaoMinutos, runsNaJanela, agregar, paginaTemMais, maisLentos, tabela",
+    "branch-podaveis.mjs: DIAS_MINIMOS, SEMPRE_FORA, motivoNomeInseguro, nomeVisivel, selecionarPodaveis, relatorio",
+    "github-settings-guard.mjs: assinaturaDe",
+    "workflow-test-support.mjs: jobsOf, jobOf, stepsOf, valueOf, nestedValue, permission",
     "corpus.py: load_config, digest, inventory, output_dir, validate_graph, check_snapshot",
     "enrich.py: _write, _relative, _text, _matches, _source_paths, _routes",
     "pipeline.py: build_lock, write_json, git_value, build",
     "quality.py: _read, _overview, _metric_snapshot, ratchet, graph_diff, audit",
     "run.py: _terminate, main",
     "test_integration.py: GraphifyIntegrationTests, GraphifyCliTests",
+    "gerar-banco.mjs: PROJETO_OFICIAL, LIMIARES, PARECE_CREDENCIAL, extrairInventario, contarUsoNoCodigo, tabelasDosTypes",
+    "gerar-rotas.mjs: resolverImport, extrairImports, extrairChamadas, MAX_SALTOS, fechoDaPagina, lerUrls",
+    "gerar-rotas.unit.mjs: AnimatedRoutes, AnimatedRoutes, AnimatedRoutes, f",
+    "mudou-conteudo.mjs: PADRAO, semCarimbos, mudou",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
     "test_generate.py: CurrentSqlSourcesTests, RepoFixture, PolicyParsingTests, MigrationReplayTests, SqlLexingTests, SqlIdentityTests",
@@ -26775,6 +26857,7 @@
     "src/b",
     "src/components",
     "src/config",
+    "src/features/auth",
     "src/features/f",
     "src/features/g",
     "src/hooks",
@@ -26801,15 +26884,33 @@
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/actions-kpi.unit.mjs",
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/branch-podaveis.unit.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/ci/check-claude-md-integrity.test.mjs",
+    "scripts/ci/github-settings-guard.mjs",
+    "scripts/ci/github-settings-guard.unit.mjs",
+    "scripts/ci/render-workflow-docs.mjs",
+    "scripts/ci/render-workflow-docs.unit.mjs",
     "scripts/ci/session-start.test.mjs",
+    "scripts/ci/workflow-test-support.mjs",
     "scripts/graphify/corpus.py",
     "scripts/graphify/enrich.py",
     "scripts/graphify/pipeline.py",
     "scripts/graphify/quality.py",
     "scripts/graphify/run.py",
     "scripts/graphify/tests/test_integration.py",
+    "scripts/inventario/banco.sql",
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-banco.unit.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/gerar-repo.unit.mjs",
+    "scripts/inventario/gerar-rotas.mjs",
+    "scripts/inventario/gerar-rotas.unit.mjs",
+    "scripts/inventario/mudou-conteudo.mjs",
+    "scripts/inventario/mudou-conteudo.unit.mjs",
     "scripts/regras_negocio/generate.py",
     "scripts/regras_negocio/indice.py",
     "scripts/regras_negocio/test_generate.py",
@@ -29256,6 +29357,21 @@
      "src/features/admin/hooks/useBusinessConfig.ts"
     ]
    },
+   "c1": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
+   "c2": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
+   "c3_longe_demais": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
    "chat_messages": {
     "select": [
      "src/components/chat/QuickChat.tsx"
@@ -29456,6 +29572,21 @@
      "scripts/regras_negocio/test_generate.py"
     ]
    },
+   "h1": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
+   "h2": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
+   "h3_longe_demais": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
    "inventory_items": {
     "select": [
      "src/components/digital-twin/SupplyChainPanel.tsx",
@@ -29509,10 +29640,38 @@
    "jobs": {
     "ref": [
      "scripts/graphify/tests/test_integration.py",
+     "scripts/inventario/gerar-banco.unit.mjs",
+     "scripts/inventario/gerar-rotas.unit.mjs",
      "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
      "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
      "src/hooks/useOfflineSync.test.ts",
      "src/test/jobsService.test.ts"
+    ],
+    "select": [
+     "scripts/inventario/gerar-rotas.unit.mjs",
+     "src/components/digital-twin/FactoryFloorMap.tsx",
+     "src/components/qrcode/QRScanner.tsx",
+     "src/features/analytics/hooks/useExecutiveDashboard.ts",
+     "src/features/jobs/hooks/useDuplicateJob.ts",
+     "src/features/jobs/hooks/usePaginatedJobs.ts",
+     "src/features/jobs/services/jobsService.ts",
+     "src/features/production/hooks/useMachineStatusHub.ts",
+     "src/features/production/hooks/useOperatorEvolution.ts",
+     "src/features/production/hooks/useProductionLosses.ts",
+     "src/hooks/abc/useABCData.ts",
+     "src/hooks/useGamification.ts",
+     "src/hooks/useOfflineSync.ts",
+     "src/lib/fetchAllRows.ts",
+     "src/lib/retryWithBackoff.ts",
+     "src/pages/PublicTrackingPage.tsx",
+     "src/pages/SettingsPage.tsx",
+     "supabase/functions/auto-promote-jobs/index.ts",
+     "supabase/functions/bitrix24-sync/index.ts",
+     "supabase/functions/calculate-rankings/index.ts",
+     "supabase/functions/erp-api/index.ts",
+     "supabase/functions/metrics-collector/index.ts",
+     "supabase/functions/ml-predictions/index.ts",
+     "supabase/functions/send-email-report/index.ts"
     ],
     "insert": [
      "src/components/calendar/QuickJobDrawer.tsx",
@@ -29542,31 +29701,6 @@
      "supabase/functions/auto-promote-jobs/index.ts",
      "supabase/functions/bitrix24-sync/index.ts",
      "supabase/functions/erp-api/index.ts"
-    ],
-    "select": [
-     "src/components/digital-twin/FactoryFloorMap.tsx",
-     "src/components/qrcode/QRScanner.tsx",
-     "src/features/analytics/hooks/useExecutiveDashboard.ts",
-     "src/features/jobs/hooks/useDuplicateJob.ts",
-     "src/features/jobs/hooks/usePaginatedJobs.ts",
-     "src/features/jobs/services/jobsService.ts",
-     "src/features/production/hooks/useMachineStatusHub.ts",
-     "src/features/production/hooks/useOperatorEvolution.ts",
-     "src/features/production/hooks/useProductionLosses.ts",
-     "src/hooks/abc/useABCData.ts",
-     "src/hooks/useGamification.ts",
-     "src/hooks/useOfflineSync.ts",
-     "src/lib/fetchAllRows.ts",
-     "src/lib/retryWithBackoff.ts",
-     "src/pages/PublicTrackingPage.tsx",
-     "src/pages/SettingsPage.tsx",
-     "supabase/functions/auto-promote-jobs/index.ts",
-     "supabase/functions/bitrix24-sync/index.ts",
-     "supabase/functions/calculate-rankings/index.ts",
-     "supabase/functions/erp-api/index.ts",
-     "supabase/functions/metrics-collector/index.ts",
-     "supabase/functions/ml-predictions/index.ts",
-     "supabase/functions/send-email-report/index.ts"
     ],
     "upsert": [
      "src/features/jobs/hooks/useKanbanDragDrop.ts"
@@ -29794,6 +29928,11 @@
     ],
     "insert": [
      "supabase/functions/new-device-alert/index.ts"
+    ]
+   },
+   "nunca": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
     ]
    },
    "operator_achievements": {
@@ -30251,6 +30390,11 @@
      "src/features/inventory/hooks/useLogistics.ts"
     ]
    },
+   "so_no_teste": {
+    "ref": [
+     "scripts/inventario/gerar-rotas.unit.mjs"
+    ]
+   },
    "so_teste": {
     "ref": [
      "scripts/ai-context/cenarios.mjs"
@@ -30343,6 +30487,12 @@
    "tab_h": {
     "ref": [
      "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "tabela": {
+    "ref": [
+     "scripts/inventario/gerar-banco.mjs",
+     "scripts/inventario/gerar-repo.mjs"
     ]
    },
    "tabela_do_fundo": {
@@ -31172,6 +31322,9 @@
    ]
   },
   "env": {
+   "ADMIN_READ_TOKEN": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
    "AI_CONTEXT_DIR": [
     "scripts/ai-context/gerar.mjs"
    ],
@@ -31284,21 +31437,48 @@
    "GEN_TYPES": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
+   "GH_TOKEN": [
+    "scripts/ci/actions-kpi.mjs"
+   ],
+   "GITHUB_API_URL": [
+    "scripts/ci/actions-kpi.mjs"
+   ],
    "GITHUB_REF_NAME": [
     "scripts/bundle-report.mjs"
+   ],
+   "GITHUB_REPOSITORY": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/github-settings-guard.mjs"
+   ],
+   "GITHUB_RUN_ID": [
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "GITHUB_SHA": [
     "scripts/bundle-report.mjs"
    ],
    "GITHUB_STEP_SUMMARY": [
-    "scripts/bundle-report.mjs"
+    "scripts/bundle-report.mjs",
+    "scripts/ci/actions-kpi.mjs"
+   ],
+   "GITHUB_TOKEN": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "GRAPHIFY_PYTHON": [
     "scripts/graphify.mjs"
    ],
+   "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "JANELA_DIAS": [
+    "scripts/ci/actions-kpi.mjs"
+   ],
    "LOVABLE_API_KEY": [
     "supabase/functions/ml-predictions/index.ts",
     "supabase/functions/technical-assistant/index.ts"
+   ],
+   "MINHA_CHAVE": [
+    "scripts/inventario/gerar-repo.unit.mjs"
    ],
    "NODE_ENV": [
     "scripts/ai-context/cenarios.mjs",
@@ -31307,6 +31487,9 @@
    "PATH": [
     "scripts/audit-gate.test.mjs",
     "scripts/regras_negocio/test_publish.py"
+   ],
+   "PERIMETER_SNAPSHOT_PATH": [
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -31358,6 +31541,9 @@
    "SENTRY_DSN": [
     "supabase/functions/health-monitor/index.ts"
    ],
+   "SETTINGS_GUARD_AUTOR": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
    "SNAPSHOT_DIR": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -31371,6 +31557,7 @@
     "scripts/ai-context/cenarios.mjs"
    ],
    "SUPABASE_ACCESS_TOKEN": [
+    "scripts/inventario/gerar-banco.mjs",
     "scripts/supabase_snapshot/snapshot.py",
     "supabase/seed-users.mjs"
    ],
@@ -31395,6 +31582,9 @@
     "supabase/functions/technical-assistant/index.ts",
     "supabase/functions/update-operator/index.ts"
    ],
+   "SUPABASE_API_URL": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
    "SUPABASE_DB_URL": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -31402,6 +31592,7 @@
     "supabase/seed-users.mjs"
    ],
    "SUPABASE_PROJECT_REF": [
+    "scripts/inventario/gerar-banco.mjs",
     "scripts/supabase_snapshot/snapshot.py",
     "supabase/seed-users.mjs"
    ],
@@ -31448,6 +31639,7 @@
    ],
    "SUPABASE_URL": [
     "scripts/ai-context/cenarios.mjs",
+    "scripts/inventario/gerar-repo.unit.mjs",
     "supabase/functions/approve-password-reset/index.ts",
     "supabase/functions/auto-promote-jobs/index.ts",
     "supabase/functions/backup-scheduler/index.ts",
@@ -31557,6 +31749,9 @@
    "archive_finished_jobs": [
     "supabase/functions/cron-cleanup/index.ts"
    ],
+   "calcular_oee": [
+    "scripts/inventario/gerar-rotas.unit.mjs"
+   ],
    "check_and_notify_kpi_alert": [
     "src/features/production/hooks/useOEEAlerts.ts"
    ],
@@ -31639,6 +31834,7 @@
     "src/features/inventory/hooks/useInventory.ts"
    ],
    "calculate-rankings": [
+    "scripts/inventario/gerar-rotas.unit.mjs",
     "src/hooks/useGamification.ts"
    ],
    "check-login-lockout": [
@@ -31710,8 +31906,14 @@
    "update-operator": [
     "src/components/operators/EditOperatorModal.tsx"
    ],
+   "usada": [
+    "scripts/inventario/gerar-repo.unit.mjs"
+   ],
    "webhook-handler": [
     "src/lib/simulation.ts"
+   ],
+   "x": [
+    "scripts/inventario/gerar-rotas.mjs"
    ]
   },
   "storage": {
@@ -31724,7 +31926,11 @@
    "execution-evidence": [
     "src/features/maintenance/components/MaintenanceExecutionModal.tsx"
    ],
+   "jobs": [
+    "scripts/inventario/gerar-banco.unit.mjs"
+   ],
    "production-photos": [
+    "scripts/inventario/gerar-rotas.unit.mjs",
     "src/components/operator/ProductionRegistrationModal.tsx",
     "src/components/traceability/LotInspectionsTab.tsx",
     "src/features/packaging/services/packagingService.ts"
@@ -31792,6 +31998,14 @@
    ]
   },
   "dynamic_from": [
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "count": 1
+   },
+   {
+    "file": "scripts/inventario/gerar-rotas.unit.mjs",
+    "count": 2
+   },
    {
     "file": "scripts/regras_negocio/generate.py",
     "count": 2
@@ -33048,6 +33262,34 @@
     "msg": "/><Tabs role={"
    },
    {
+    "file": "scripts/ci/actions-kpi.mjs",
+    "msg": "${metodo} ${caminho} -> ${r.status}"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "PR sem headRefName"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "a lista de PRs abertas não é um array"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "argumento inválido: ${chave}"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "falta --${obrigatorio}"
+   },
+   {
+    "file": "scripts/ci/github-settings-guard.mjs",
+    "msg": "GitHub API ${method} ${path} → ${res.status}: ${text}"
+   },
+   {
     "file": "scripts/graphify/corpus.py",
     "msg": "Aresta sem endpoint no grafo exportado."
    },
@@ -33118,6 +33360,70 @@
    {
     "file": "scripts/graphify/run.py",
     "msg": "ratchet só existe para o perfil all (a baseline é do snapshot completo)."
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "--entrada exige o caminho do arquivo com a resposta do banco.sql"
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "Management API ${caminho} respondeu HTTP ${res.status}"
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "SUPABASE_PROJECT_REF=${ref} nao e o banco oficial (${PROJETO_OFICIAL})."
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "a resposta nao parece ser do banco oficial: ${comuns} tabelas em comum com types.ts "
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; "
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual."
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql."
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "entrada sem as chaves: ${faltando.join("
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "entrada sem tabelas"
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "format_version ${dado.format_version} desconhecido (esperado 1)"
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "sem --entrada e sem SUPABASE_ACCESS_TOKEN: nada para ler (veja o cabecalho do script)."
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "src/integrations/supabase/types.ts sem o bloco "
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "src/integrations/supabase/types.ts: bloco "
+   },
+   {
+    "file": "scripts/inventario/gerar-repo.mjs",
+    "msg": "ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado."
+   },
+   {
+    "file": "scripts/inventario/gerar-repo.mjs",
+    "msg": "ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança."
+   },
+   {
+    "file": "scripts/inventario/gerar-rotas.mjs",
+    "msg": "${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca."
    },
    {
     "file": "scripts/regras_negocio/test_generate.py",
@@ -63001,6 +63307,7 @@
    "scripts/ai-context/cenarios.mjs",
    "scripts/ai-context/gerar.unit.mjs",
    "scripts/graphify/enrich.py",
+   "scripts/inventario/gerar-banco.mjs",
    "scripts/regras_negocio/generate.py",
    "scripts/supabase_snapshot/snapshot.py",
    "supabase/create_operator_fn.sql",
@@ -64633,6 +64940,10 @@
    {
     "guard": "ProtectedRoute",
     "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
+    "guard": "ProtectedRoute",
+    "file": "scripts/inventario/gerar-rotas.mjs"
    },
    {
     "guard": "ProtectedRoute",
@@ -66844,6 +67155,106 @@
    ],
    "uses_service_role": true
   },
+  "scripts/ci/actions-kpi.mjs": {
+   "path": "scripts/ci/actions-kpi.mjs",
+   "lines": 246,
+   "exports": [
+    "function duracaoMinutos",
+    "function runsNaJanela",
+    "function agregar",
+    "function paginaTemMais",
+    "function maisLentos",
+    "function tabela",
+    "function tabelaLentos",
+    "function corpoDoKpi",
+    "function coletarRuns",
+    "function coletarJobs",
+    "function publicarIssue"
+   ],
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_API_URL",
+    "GITHUB_REPOSITORY",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN",
+    "JANELA_DIAS"
+   ],
+   "errors": [
+    "${metodo} ${caminho} -> ${r.status}"
+   ],
+   "params": [
+    {
+     "name": "UM_DIA",
+     "value": "24"
+    },
+    {
+     "name": "POR_PAGINA",
+     "value": "100"
+    }
+   ],
+   "doc": "!/usr/bin/env node KPI de uso do GitHub Actions, para o branch-hygiene-audit semanal. A API devolve `run_started_at` e `updated_at` por run, e o `/timing` devolve `billable: {}` em repositorio publico -- por isso a duracao sai da diferenca entre os dois carimbos, e nao do endpoint de faturamento (qu …",
+   "calc_fns": [
+    {
+     "name": "maisLentos",
+     "params": "jobs, { limite = 5 } = {}",
+     "body": "return (jobs ?? []) .map((j) => ({ job: j.name, workflow: j.workflow_name ?? '', minutos: Math.round(duracaoMinutos({ run_started_at: j.started_at, updated_at: j.completed_at }) * 10) / 10, })) .sort((a, b) => b.minutos - a.minutos) .slice(0, limite);"
+    }
+   ],
+   "temporal": [
+    "const UM_DIA = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "scripts/ci/actions-kpi.unit.mjs": {
+   "path": "scripts/ci/actions-kpi.unit.mjs",
+   "lines": 195
+  },
+  "scripts/ci/branch-podaveis.mjs": {
+   "path": "scripts/ci/branch-podaveis.mjs",
+   "lines": 192,
+   "exports": [
+    "const DIAS_MINIMOS",
+    "const SEMPRE_FORA",
+    "function motivoNomeInseguro",
+    "function nomeVisivel",
+    "function selecionarPodaveis",
+    "function relatorio",
+    "function relatorioIndisponivel",
+    "function lerEquivalentes",
+    "function lerPrsAbertas",
+    "function lerProtegidas",
+    "function executar"
+   ],
+   "errors": [
+    "PR sem headRefName",
+    "a lista de PRs abertas não é um array",
+    "a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio",
+    "argumento inválido: ${chave}",
+    "falta --${obrigatorio}"
+   ],
+   "params": [
+    {
+     "name": "DIAS_MINIMOS",
+     "value": "7"
+    }
+   ],
+   "rule_comments": [
+    "pronto, um por linha, com a regra explicada.",
+    "// Regra de elegibilidade (todas ao mesmo tempo):",
+    "se a lista de PRs vier cheia até o limite (pode haver mais PRs que não vieram),",
+    "--protegidas <txt> [--limite-prs N]",
+    "## Comando pronto para poda', '', REGRA, ''];",
+    "## Comando pronto para poda\\n\\n${REGRA}\\n\\nComando não gerado: ${motivo}. `"
+   ],
+   "doc": "!/usr/bin/env node Comando pronto de poda de branches (usado pelo branch-hygiene-audit.yml). Apagar branch é decisão do dono, então este script NUNCA apaga nada: ele escreve no relatório (e, por ele, na issue [branch-hygiene]) um bloco `git push origin --delete` pronto, um por linha, com a regra exp …"
+  },
+  "scripts/ci/branch-podaveis.unit.mjs": {
+   "path": "scripts/ci/branch-podaveis.unit.mjs",
+   "lines": 181,
+   "rule_comments": [
+    "relatório. Os testes cobrem a regra (elegível, com PR, recente, main, protegida),"
+   ],
+   "doc": "Comando pronto de poda (scripts/ci/branch-podaveis.mjs). O script nunca apaga nada: só escreve o bloco `git push origin --delete` no relatório. Os testes cobrem a regra (elegível, com PR, recente, main, protegida), a recusa de nome perigoso e a falha fechada quando falta informação."
+  },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
    "lines": 149,
@@ -66902,6 +67313,83 @@
     "crescer ou criar doc novo passa"
    ]
   },
+  "scripts/ci/github-settings-guard.mjs": {
+   "path": "scripts/ci/github-settings-guard.mjs",
+   "lines": 623,
+   "exports": [
+    "function assinaturaDe"
+   ],
+   "env": [
+    "ADMIN_READ_TOKEN",
+    "GITHUB_REPOSITORY",
+    "GITHUB_RUN_ID",
+    "GITHUB_TOKEN",
+    "PERIMETER_SNAPSHOT_PATH",
+    "SETTINGS_GUARD_AUTOR"
+   ],
+   "errors": [
+    "GitHub API ${method} ${path} → ${res.status}: ${text}"
+   ],
+   "params": [
+    {
+     "name": "RUNBOOK_SEGREDOS",
+     "value": "'docs/operacoes/RUNBOOK.md'"
+    },
+    {
+     "name": "ISSUE_LABEL",
+     "value": "'settings-guard'"
+    },
+    {
+     "name": "ISSUE_TITLE",
+     "value": "'[settings-guard] perimeter regression detected'"
+    },
+    {
+     "name": "BRANCH",
+     "value": "'main'"
+    },
+    {
+     "name": "SEIS_HORAS_MS",
+     "value": "6"
+    },
+    {
+     "name": "SETE_DIAS_MS",
+     "value": "7"
+    }
+   ],
+   "rule_comments": [
+    "etc. para quem nao tem permissao push/admin. Campo ausente nao e divergencia.",
+    "W04: o GET /repos so devolve os campos de merge para quem tem permissao",
+    ")`, 200, 'resposta sem os campos de merge: o token nao tem permissao push/admin para le-los');",
+    "comentario humano ou de outro bot depois do marcador nao pode zerar o dedupe, e um",
+    "marcador colado por terceiros nao pode acioná-lo (achados do Codex na PR #1920)."
+   ],
+   "doc": "!/usr/bin/env node",
+   "temporal": [
+    "const SEIS_HORAS_MS = 6 * 60 * 60 * 1000;",
+    "const SETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "scripts/ci/github-settings-guard.unit.mjs": {
+   "path": "scripts/ci/github-settings-guard.unit.mjs",
+   "lines": 126,
+   "params": [
+    {
+     "name": "RUNBOOK_SEGREDOS",
+     "value": "'([^'"
+    }
+   ],
+   "doc": "Testes do guarda do perimetro do GitHub. Roda com: node --test 'scripts/ci/*.unit.mjs' Nao faz rede: cobre o baseline (contrato com o script) e a assinatura de causa (dedupe)."
+  },
+  "scripts/ci/render-workflow-docs.mjs": {
+   "path": "scripts/ci/render-workflow-docs.mjs",
+   "lines": 231,
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/ci/render-workflow-docs.unit.mjs": {
+   "path": "scripts/ci/render-workflow-docs.unit.mjs",
+   "lines": 81,
+   "doc": "Testes do gerador da documentação dos workflows. Roda com: node --test 'scripts/ci/*.unit.mjs'"
+  },
   "scripts/ci/session-start.test.mjs": {
    "path": "scripts/ci/session-start.test.mjs",
    "lines": 109,
@@ -66916,6 +67404,29 @@
     "sem CLAUDE_PROJECT_DIR usa a raiz do repo do próprio hook, não o cwd",
     "build que falha não carimba (a próxima sessão refaz)"
    ]
+  },
+  "scripts/ci/workflow-test-support.mjs": {
+   "path": "scripts/ci/workflow-test-support.mjs",
+   "lines": 134,
+   "exports": [
+    "function jobsOf",
+    "function jobOf",
+    "function stepsOf",
+    "function valueOf",
+    "const nestedValue",
+    "const permission",
+    "const runOf",
+    "const scriptOf",
+    "const shellCode",
+    "const conditionOf",
+    "function onlyStep",
+    "function assertBlocking",
+    "function conditionAllows"
+   ],
+   "rule_comments": [
+    "Avalia apenas o subconjunto booleano usado nos guards sob teste. Identificadores"
+   ],
+   "doc": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos. Isolar job/step evita que comentarios e passos vizinhos satisfaçam garantias."
   },
   "scripts/graphify/corpus.py": {
    "path": "scripts/graphify/corpus.py",
@@ -67067,6 +67578,313 @@
    "side_effects": [
     "invoke("
    ]
+  },
+  "scripts/inventario/banco.sql": {
+   "path": "scripts/inventario/banco.sql",
+   "lines": 200,
+   "temporal": [
+    "'jobs_7d', (SELECT count(*) FROM public.jobs WHERE created_at > now() - interval '7 days'),",
+    "'mais_de_7_dias', (SELECT count(*) FROM cron.job_run_details WHERE start_time <= now() - interval '7 days'),",
+    "WHERE d.start_time > now() - interval '7 days'",
+    "WHERE h.captured_at > now() - interval '7 days'",
+    "count(*) FILTER (WHERE e.start_time > now() - interval '24 hours' AND e.status = 'failed')::int AS falhas_24h,",
+    "count(*) FILTER (WHERE e.start_time > now() - interval '24 hours')::int AS exec_24h,"
+   ]
+  },
+  "scripts/inventario/gerar-banco.mjs": {
+   "path": "scripts/inventario/gerar-banco.mjs",
+   "lines": 334,
+   "exports": [
+    "const PROJETO_OFICIAL",
+    "const LIMIARES",
+    "const PARECE_CREDENCIAL",
+    "function extrairInventario",
+    "function contarUsoNoCodigo",
+    "function tabelasDosTypes",
+    "const LEDGER_TOLERANCIA",
+    "function conferirOrigem",
+    "const versoesDoRepo",
+    "function edgesNoRepo",
+    "function compararEdges",
+    "function rodaTodoDia",
+    "function montarInventario"
+   ],
+   "tables": [
+    {
+     "table": "tabela",
+     "op": "ref"
+    },
+    {
+     "table": "tabela",
+     "op": "ref"
+    }
+   ],
+   "dyn_from": 1,
+   "env": [
+    "INVENTARIO_PERMITIR_OUTRO_PROJETO",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_API_URL",
+    "SUPABASE_PROJECT_REF"
+   ],
+   "errors": [
+    "--entrada exige o caminho do arquivo com a resposta do banco.sql",
+    "Management API ${caminho} respondeu HTTP ${res.status}",
+    "SUPABASE_PROJECT_REF=${ref} nao e o banco oficial (${PROJETO_OFICIAL}).",
+    "a resposta nao parece ser do banco oficial: ${comuns} tabelas em comum com types.ts ",
+    "a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; ",
+    "a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual.",
+    "a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql.",
+    "entrada sem as chaves: ${faltando.join(",
+    "entrada sem tabelas",
+    "format_version ${dado.format_version} desconhecido (esperado 1)",
+    "sem --entrada e sem SUPABASE_ACCESS_TOKEN: nada para ler (veja o cabecalho do script).",
+    "src/integrations/supabase/types.ts sem o bloco ",
+    "src/integrations/supabase/types.ts: bloco "
+   ],
+   "params": [
+    {
+     "name": "PROJETO_OFICIAL",
+     "value": "'uoujzvpecohinketylud'"
+    }
+   ],
+   "rule_comments": [
+    "Limite conhecido: `.from(variavel)` nao e resolvido."
+   ],
+   "doc": "!/usr/bin/env node",
+   "percents": [
+    "* do arquivo de entrada): pelo menos 90% das tabelas de la tem de estar na resposta, e vice-versa.",
+    "// Cron 100% parado nao grava linha em job_run_details: some de horas_paradas_7d e a taxa fica 0.",
+    "// SILENCIO, e o erro que acabava saindo (via conferirOrigem, 0% de cobertura) culpava o"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/inventario/gerar-banco.unit.mjs": {
+   "path": "scripts/inventario/gerar-banco.unit.mjs",
+   "lines": 291,
+   "tables": [
+    {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
+     "op": "ref"
+    }
+   ],
+   "storage": [
+    "jobs"
+   ],
+   "rule_comments": [
+    "* types.ts minimo, com a indentacao de `espacos` espacos nas entradas de tabela. */"
+   ],
+   "doc": "Testes do gerador do inventario do banco. Roda com: node --test scripts/inventario/"
+  },
+  "scripts/inventario/gerar-repo.mjs": {
+   "path": "scripts/inventario/gerar-repo.mjs",
+   "lines": 91,
+   "tables": [
+    {
+     "table": "tabela",
+     "op": "ref"
+    }
+   ],
+   "errors": [
+    "ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado.",
+    "ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança."
+   ],
+   "doc": "!/usr/bin/env node Inventario gerado do lado do repositorio (sem acesso ao banco): - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI) - tabelas: para cada nome recebido em stdin (uma por linha), quantos .from('tabela') ha em src/ e supab …"
+  },
+  "scripts/inventario/gerar-repo.unit.mjs": {
+   "path": "scripts/inventario/gerar-repo.unit.mjs",
+   "lines": 76,
+   "invokes": [
+    "usada"
+   ],
+   "env": [
+    "MINHA_CHAVE",
+    "SUPABASE_URL"
+   ],
+   "doc": "Teste do inventario de edge functions lido do repositorio. Roda com: node --test scripts/inventario/",
+   "side_effects": [
+    "invoke("
+   ]
+  },
+  "scripts/inventario/gerar-rotas.mjs": {
+   "path": "scripts/inventario/gerar-rotas.mjs",
+   "lines": 274,
+   "exports": [
+    "function resolverImport",
+    "function extrairImports",
+    "function extrairChamadas",
+    "const MAX_SALTOS",
+    "function fechoDaPagina",
+    "function lerUrls",
+    "function gerarRotas",
+    "const serializar"
+   ],
+   "invokes": [
+    "x"
+   ],
+   "errors": [
+    "${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca."
+   ],
+   "params": [
+    {
+     "name": "SAIDA_REL",
+     "value": "'inventario/estado/rotas.json'"
+    },
+    {
+     "name": "ROTAS_REL",
+     "value": "'src/routes/AppRoutes.tsx'"
+    },
+    {
+     "name": "NOME",
+     "value": "'literal'"
+    },
+    {
+     "name": "MAX_SALTOS",
+     "value": "2"
+    }
+   ],
+   "guards": [
+    "ProtectedRoute"
+   ],
+   "rule_comments": [
+    "formam um grafo conectado (hook importa hook importa servico). Seguir essas pastas sem limite"
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "gerarRotas",
+     "params": "raiz = RAIZ_PADRAO",
+     "body": "const urls = lerUrls(raiz).map((u) => ({ ...u, ...(u.arquivo ? fechoDaPagina(raiz, path.join(raiz, u.arquivo)) : { arquivos_lidos: 0, hooks: [], buckets: [], edges: [], rpcs: [], tabelas: [], imports_quebrados: [] }), })); const hooks = {}; for (const u of urls) for (const h of u.hooks) { hooks[h.nome] ??= { arquivo: h.arquivo, rotas: [] }; hooks[h.nome].rotas.push(u.caminho); } const problemas = [ ...urls.filter((u) => u.componente && !u.arquivo && !u.redireciona) .map((u) => ({ tipo: 'url_sem_ …"
+    }
+   ],
+   "side_effects": [
+    "invoke("
+   ]
+  },
+  "scripts/inventario/gerar-rotas.unit.mjs": {
+   "path": "scripts/inventario/gerar-rotas.unit.mjs",
+   "lines": 252,
+   "exports": [
+    "function AnimatedRoutes",
+    "function AnimatedRoutes",
+    "function AnimatedRoutes",
+    "function f"
+   ],
+   "tables": [
+    {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
+     "op": "select"
+    },
+    {
+     "table": "h1",
+     "op": "ref"
+    },
+    {
+     "table": "h2",
+     "op": "ref"
+    },
+    {
+     "table": "h3_longe_demais",
+     "op": "ref"
+    },
+    {
+     "table": "c1",
+     "op": "ref"
+    },
+    {
+     "table": "c2",
+     "op": "ref"
+    },
+    {
+     "table": "c3_longe_demais",
+     "op": "ref"
+    },
+    {
+     "table": "nunca",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
+     "table": "so_no_teste",
+     "op": "ref"
+    }
+   ],
+   "dyn_from": 2,
+   "rpc": [
+    "calcular_oee"
+   ],
+   "invokes": [
+    "calculate-rankings"
+   ],
+   "storage": [
+    "production-photos"
+   ],
+   "routes": [
+    {
+     "path": "/abc",
+     "component": "Navigate",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/rota-fantasma-que-nao-devia-contar",
+     "component": "Index",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'production-photos'"
+    },
+    {
+     "name": "TABELA",
+     "value": "'jobs'"
+    },
+    {
+     "name": "OUTRA",
+     "value": "'nao_resolve'"
+    }
+   ],
+   "rule_comments": [
+    "Cadeia de hooks e cadeia de componentes com a mesma profundidade: o limite tem de valer",
+    "para as duas. Seguir hooks sem limite fazia o fecho de cada rota virar o repo inteiro.",
+    "O rotas.json existe para caber no contexto de um agente. Antes de calibrar o limite de"
+   ],
+   "doc": "Testes do gerador do inventario de rotas. Roda com: node --test scripts/inventario/",
+   "side_effects": [
+    "invoke("
+   ]
+  },
+  "scripts/inventario/mudou-conteudo.mjs": {
+   "path": "scripts/inventario/mudou-conteudo.mjs",
+   "lines": 92,
+   "exports": [
+    "const PADRAO",
+    "function semCarimbos",
+    "function mudou"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/inventario/mudou-conteudo.unit.mjs": {
+   "path": "scripts/inventario/mudou-conteudo.unit.mjs",
+   "lines": 103,
+   "doc": "Testes do detector de mudanca real no inventario. Roda com: node --test scripts/inventario/"
   },
   "scripts/regras_negocio/generate.py": {
    "path": "scripts/regras_negocio/generate.py",
@@ -67342,7 +68160,7 @@
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
-   "lines": 1961,
+   "lines": 2011,
    "exports": [
     "def env_int",
     "def log",
@@ -67359,6 +68177,7 @@
     "def md_fence",
     "def human_bytes",
     "def approx",
+    "def redigir_comando_cron",
     "def slug",
     "def uslug",
     "def write",
@@ -67402,8 +68221,7 @@
     "def introspect_db",
     "def api",
     "def api_error_hint",
-    "def api_section",
-    "def api_shape"
+    "def api_section"
    ],
    "rpc": [
     "fn",
@@ -67450,6 +68268,7 @@
    ],
    "rule_comments": [
     "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout).",
+    "passa a validacao de format_version e e aceito como `previous`; se a coleta de \"cron\" falhar no",
     "A regra acima exige ':' ou '=' entre nome e valor; aqui o separador é vírgula e o segredo do",
     "password = 'x' / password := 'x' (sem exigir dígito: a regra de \"parece token\" deixava senha só de letras)",
     "Role sem SELECT em auth.* (ex.: role de leitura do workflow) nao pode derrubar a secao inteira:",
@@ -67475,7 +68294,7 @@
   },
   "scripts/supabase_snapshot/test_snapshot.py": {
    "path": "scripts/supabase_snapshot/test_snapshot.py",
-   "lines": 1623,
+   "lines": 1765,
    "exports": [
     "class OfflineConnection",
     "def function",
@@ -67486,6 +68305,7 @@
     "class SnapshotFailureMatrixTests",
     "def recovery_case",
     "class SnapshotFunctionCallerTests",
+    "class SnapshotCronSecretRedactionTests",
     "class SnapshotCallerFreshnessTests",
     "class SnapshotHeartbeatTests",
     "def source_freshness_case",
@@ -93061,10 +93881,48 @@
   }
  },
  "git": {
-  "sha": "047e75b71cf08fb3db6ddbae7a665fd737bcf844",
+  "sha": "df3c54d3f41410d22f9d33db11d2392baad159fa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "df3c54d",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)",
+    "files": [
+     ".github/workflows/branch-hygiene-audit.yml",
+     ".github/workflows/contexto.yml",
+     ".github/workflows/inventario-estado-semanal.yml",
+     ".github/workflows/settings-guard.yml",
+     "docs/ci/README.md",
+     "inventario/estado/README.md",
+     "inventario/estado/edges.json",
+     "inventario/estado/rotas.json",
+     "package.json",
+     "scripts/ci/actions-kpi.mjs",
+     "scripts/ci/actions-kpi.unit.mjs",
+     "scripts/ci/branch-podaveis.mjs",
+     "scripts/ci/branch-podaveis.unit.mjs",
+     "scripts/ci/github-settings-baseline.json",
+     "scripts/ci/github-settings-guard.mjs",
+     "scripts/ci/github-settings-guard.unit.mjs",
+     "scripts/ci/render-workflow-docs.mjs",
+     "scripts/ci/render-workflow-docs.unit.mjs",
+     "scripts/ci/workflow-test-support.mjs",
+     "scripts/inventario/banco.sql",
+     "scripts/inventario/gerar-banco.mjs",
+     "scripts/inventario/gerar-banco.unit.mjs",
+     "scripts/inventario/gerar-repo.mjs",
+     "scripts/inventario/gerar-repo.unit.mjs",
+     "scripts/inventario/gerar-rotas.mjs",
+     "scripts/inventario/gerar-rotas.unit.mjs",
+     "scripts/inventario/mudou-conteudo.mjs",
+     "scripts/inventario/mudou-conteudo.unit.mjs",
+     "scripts/supabase_snapshot/snapshot.py",
+     "scripts/supabase_snapshot/test_snapshot.py"
+    ]
+   },
    {
     "sha": "047e75b",
     "date": "2026-11-12",
@@ -93656,25 +94514,19 @@
      "scripts/supabase_snapshot/snapshot.py",
      "scripts/supabase_snapshot/test_snapshot.py"
     ]
-   },
-   {
-    "sha": "92a5fee",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: reordena verify RLS reforcada para depois do drop da policy permissiva (#135)",
-    "files": [
-     "supabase/migrations/20261106011000_verify_no_using_true_write_policies.sql",
-     "supabase/migrations/20261107010000_verify_no_using_true_write_policies.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/supabase_snapshot/snapshot.py",
-    4
+    5
    ],
    [
     "scripts/supabase_snapshot/test_snapshot.py",
+    5
+   ],
+   [
+    ".github/workflows/contexto.yml",
     4
    ],
    [
@@ -93692,10 +94544,6 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     4
-   ],
-   [
-    ".github/workflows/contexto.yml",
-    3
    ],
    [
     ".github/workflows/ci.yml",
@@ -93716,6 +94564,10 @@
    [
     "scripts/regras_negocio/publish.sh",
     3
+   ],
+   [
+    "package.json",
+    2
    ],
    [
     "scripts/bundle-diff.mjs",
@@ -93743,10 +94595,6 @@
    ],
    [
     "docs/agentes/github-ci.md",
-    2
-   ],
-   [
-    "docs/agentes/mapa-repo.md",
     2
    ]
   ]

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 972,
+ "nos": 981,
  "arestas": 4534,
  "hubs": [
   {
@@ -37,11 +37,11 @@
    "importado_por": 94
   },
   {
-   "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 82
+   "arquivo": "src/features/auth/index.ts",
+   "importado_por": 83
   },
   {
-   "arquivo": "src/features/auth/index.ts",
+   "arquivo": "src/components/ui/select.tsx",
    "importado_por": 82
   },
   {

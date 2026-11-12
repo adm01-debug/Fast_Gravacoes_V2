@@ -4,12 +4,12 @@
  "stack": {
   "linguagens": [
    "TypeScript (1051)",
-   "SQL (252)",
-   "Markdown (68)",
-   "JavaScript (23)",
-   "JSON (20)",
+   "SQL (253)",
+   "Markdown (70)",
+   "JavaScript (40)",
+   "JSON (23)",
    "Python (13)",
-   "YAML (9)",
+   "YAML (12)",
    "CSS (2)"
   ],
   "linguagem_principal": "TypeScript",
@@ -52,6 +52,9 @@
    "bundle:diff": "node scripts/bundle-diff.mjs",
    "bundle:report": "node scripts/bundle-report.mjs",
    "ci": "npm run quality:any && npm run build && npm run test:e2e",
+   "ci:docs": "node scripts/ci/render-workflow-docs.mjs",
+   "ci:docs:check": "node scripts/ci/render-workflow-docs.mjs --check",
+   "ci:test": "node --test 'scripts/ci/*.unit.mjs'",
    "dev": "vite",
    "graph:affected": "node scripts/graphify.mjs affected",
    "graph:audit": "node scripts/graphify.mjs audit",
@@ -68,12 +71,17 @@
    "graph:query": "node scripts/graphify.mjs query",
    "graph:ratchet": "node scripts/graphify.mjs ratchet",
    "graph:test": "node scripts/graphify.mjs test",
+   "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
+   "inventario:edges": "node scripts/inventario/gerar-repo.mjs",
+   "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
+   "inventario:test": "node --test 'scripts/inventario/*.unit.mjs'",
    "lint": "eslint .",
    "prepare": "husky",
    "preview": "vite preview",
    "quality:any": "node scripts/check-any-baseline.mjs",
    "quality:any:update": "node scripts/check-any-baseline.mjs --update",
    "quality:gate": "npm run lint && npm run quality:any && npm run test && npm run test:scripts",
+   "settings:guard": "node scripts/ci/github-settings-guard.mjs",
    "test": "vitest run",
    "test:coverage": "vitest run --coverage",
    "test:e2e": "playwright test",
@@ -140,6 +148,34 @@
   "vitest.config.ts"
  ],
  "workflows": [
+  {
+   "arquivo": ".github/workflows/branch-hygiene-audit.yml",
+   "nome": "Branch Hygiene Audit",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "56 7 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "audit"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/branch-podaveis.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
   {
    "arquivo": ".github/workflows/ci.yml",
    "nome": "CI — Quality Gates",
@@ -361,6 +397,41 @@
    ]
   },
   {
+   "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+   "nome": "Inventário do estado real (semanal)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "27 10 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/gerar-rotas.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/github-script",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "peter-evans/create-pull-request"
+   ]
+  },
+  {
    "arquivo": ".github/workflows/migration-repair.yml",
    "nome": "Migration repair",
    "gatilhos": [
@@ -385,6 +456,37 @@
     "actions/checkout",
     "actions/upload-artifact",
     "supabase/setup-cli"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/settings-guard.yml",
+   "nome": "Settings Guard",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "15 7 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "guard"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN",
+    "SETTINGS_GUARD_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
    ]
   },
   {
@@ -553,6 +655,10 @@
    "arquivos_md": 2
   },
   {
+   "pasta": "docs/ci",
+   "arquivos_md": 1
+  },
+  {
    "pasta": "docs/post-mortems",
    "arquivos_md": 1
   }
@@ -651,6 +757,8 @@
    "E2E_OPERATOR_PASSWORD",
    "E2E_PASSWORD",
    "E2E_TOTP_SECRET",
+   "GITHUB_TOKEN",
+   "SETTINGS_GUARD_TOKEN",
    "SUPABASE_ACCESS_TOKEN",
    "SUPABASE_DB_PASSWORD",
    "SUPABASE_DB_URL",

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `047e75b71c` · branch `main` · 2026-11-12 12:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `df3c54d3f4` · branch `main` · 2026-11-12 12:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-12T11:17:03Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-12T12:03:30Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-12T11:17:03Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-12T12:03:30Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-12T11:17:03Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-12T12:03:30Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-12T11:17:03Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-12T12:03:30Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-12T11:17:03Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-12T12:03:30Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2923,6 +2923,13 @@ _nenhum item encontrado_
 | GRAPHIFY_PYTHON não pôde ser executado (${explicitly}): ${probe.error.message} | `scripts/graphify.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
 | /><Tabs role={ | `scripts/ai-context/gerar.unit.mjs` |
+| ${metodo} ${caminho} -> ${r.status} | `scripts/ci/actions-kpi.mjs` |
+| PR sem headRefName | `scripts/ci/branch-podaveis.mjs` |
+| a lista de PRs abertas não é um array | `scripts/ci/branch-podaveis.mjs` |
+| a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio | `scripts/ci/branch-podaveis.mjs` |
+| argumento inválido: ${chave} | `scripts/ci/branch-podaveis.mjs` |
+| falta --${obrigatorio} | `scripts/ci/branch-podaveis.mjs` |
+| GitHub API ${method} ${path} → ${res.status}: ${text} | `scripts/ci/github-settings-guard.mjs` |
 | Aresta sem endpoint no grafo exportado. | `scripts/graphify/corpus.py` |
 | Artefato inconsistente: graph.json. Execute graph:build. | `scripts/graphify/corpus.py` |
 | Direção das relações perdida. | `scripts/graphify/corpus.py` |
@@ -2941,6 +2948,22 @@ _nenhum item encontrado_
 | Ratchet encontrou regressão sem exceção válida. | `scripts/graphify/run.py` |
 | diff exige --baseline CAMINHO_PARA_graph.json. | `scripts/graphify/run.py` |
 | ratchet só existe para o perfil all (a baseline é do snapshot completo). | `scripts/graphify/run.py` |
+| --entrada exige o caminho do arquivo com a resposta do banco.sql | `scripts/inventario/gerar-banco.mjs` |
+| Management API ${caminho} respondeu HTTP ${res.status} | `scripts/inventario/gerar-banco.mjs` |
+| SUPABASE_PROJECT_REF=${ref} nao e o banco oficial (${PROJETO_OFICIAL}). | `scripts/inventario/gerar-banco.mjs` |
+| a resposta nao parece ser do banco oficial: ${comuns} tabelas em comum com types.ts  | `scripts/inventario/gerar-banco.mjs` |
+| a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max};  | `scripts/inventario/gerar-banco.mjs` |
+| a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual. | `scripts/inventario/gerar-banco.mjs` |
+| a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql. | `scripts/inventario/gerar-banco.mjs` |
+| entrada sem as chaves: ${faltando.join( | `scripts/inventario/gerar-banco.mjs` |
+| entrada sem tabelas | `scripts/inventario/gerar-banco.mjs` |
+| format_version ${dado.format_version} desconhecido (esperado 1) | `scripts/inventario/gerar-banco.mjs` |
+| sem --entrada e sem SUPABASE_ACCESS_TOKEN: nada para ler (veja o cabecalho do script). | `scripts/inventario/gerar-banco.mjs` |
+| src/integrations/supabase/types.ts sem o bloco  | `scripts/inventario/gerar-banco.mjs` |
+| src/integrations/supabase/types.ts: bloco  | `scripts/inventario/gerar-banco.mjs` |
+| ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado. | `scripts/inventario/gerar-repo.mjs` |
+| ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança. | `scripts/inventario/gerar-repo.mjs` |
+| ${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca. | `scripts/inventario/gerar-rotas.mjs` |
 | Falha ao autenticar com {secret} | `scripts/regras_negocio/test_generate.py` |
 | resposta inesperada da API: edge function sem slug | `scripts/supabase_snapshot/snapshot.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -3184,30 +3207,7 @@ _nenhum item encontrado_
 | Saldo insuficiente. Você tem ${currentBalance} pontos, mas este resgate custa ${reward.cost_points}. | `src/hooks/useGamification.ts` |
 | Usuário não autenticado. | `src/hooks/useGamification.ts` |
 | useNetworkStatus must be used within NetworkStatusProvider | `src/hooks/useNetworkStatus.tsx` |
-| ${newlyFailed.length} ação(ões) não puderam ser sincronizadas | `src/hooks/useOfflineSync.ts` |
-| Sem conexão | `src/hooks/useOfflineSync.ts` |
-| Erro ao salvar favoritos | `src/hooks/useQuickFavorites.ts` |
-| Erro na migração | `src/hooks/useQuickFavorites.ts` |
-| User not authenticated | `src/hooks/useQuickFavorites.ts` |
-| Conversa não encontrada | `src/hooks/useTechnicalConversations.ts` |
-| No conversation selected | `src/hooks/useTechnicalConversations.ts` |
-| User not authenticated | `src/hooks/useTechnicalConversations.ts` |
-| Erro ao atualizar dispositivo | `src/hooks/useUserDevices.ts` |
-| Erro ao marcar dispositivo como confiável | `src/hooks/useUserDevices.ts` |
-| Erro ao remover dispositivo | `src/hooks/useUserDevices.ts` |
-| Job não encontrado | `src/hooks/abc/useABCMutations.ts` |
-| Passagem não está aguardando aceite (status atual: ${handover.status}). | `src/hooks/shift-handover/useShiftHandoverMutations.ts` |
-| Usuário não autenticado | `src/hooks/shift-handover/useShiftHandoverMutations.ts` |
-| Você não pode aceitar sua própria passagem de turno. | `src/hooks/shift-handover/useShiftHandoverMutations.ts` |
-| Erro ao adicionar dica | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao adicionar etapa | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao adicionar material | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao atualizar | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao atualizar etapa | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao atualizar favorito | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao criar ficha | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| Erro ao remover | `src/hooks/technical-sheets/useTechnicalSheetMutations.ts` |
-| … +172 linhas — lista completa em `context.json` | |
+| … +195 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

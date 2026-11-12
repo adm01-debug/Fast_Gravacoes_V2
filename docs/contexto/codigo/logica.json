@@ -341,6 +341,7 @@
     "q",
     "record_error",
     "redact",
+    "redigir_comando_cron",
     "render_edge_function_readmes",
     "render_readme",
     "render_relationships",
@@ -364,7 +365,7 @@
     "valid_previous_snapshot",
     "write"
    ],
-   "linhas": 1961,
+   "linhas": 2011,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

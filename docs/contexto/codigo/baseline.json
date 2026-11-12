@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "047e75b71cf08fb3db6ddbae7a665fd737bcf844",
+  "commit": "df3c54d3f41410d22f9d33db11d2392baad159fa",
   "branch": "main",
-  "data_commit": "2026-11-12T08:41:12-03:00",
+  "data_commit": "2026-11-12T09:18:11-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "df3c54d",
+    "data": "2026-11-12",
+    "assunto": "chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)"
+   },
    {
     "sha": "047e75b",
     "data": "2026-11-12",
@@ -126,15 +131,10 @@
     "sha": "94c39a5",
     "data": "2026-11-08",
     "assunto": "chore(agentes): padrão enxuto de instruções com referência por tema (#141)"
-   },
-   {
-    "sha": "a376146",
-    "data": "2026-11-08",
-    "assunto": "feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 372,
+  "arquivos_mudados_7d": 398,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -215,15 +215,15 @@
     "mudancas": 8
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 8
+   },
+   {
     "arquivo": ".github/workflows/db-admin.yml",
     "mudancas": 7
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 7
    },
    {
@@ -247,6 +247,14 @@
     "mudancas": 5
    },
    {
+    "arquivo": "scripts/supabase_snapshot/snapshot.py",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 5
    },
@@ -261,6 +269,10 @@
    {
     "arquivo": "tests/e2e/visual-regression.spec.ts",
     "mudancas": 5
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
@@ -285,24 +297,12 @@
    {
     "arquivo": "scripts/regras_negocio/generate.py",
     "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/regras_negocio/test_generate.py",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 46
+    "commits": 47
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -311,9 +311,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1472,
-  "arquivos_codigo": 1084,
-  "linhas_codigo": 175295,
+  "arquivos_total": 1498,
+  "arquivos_codigo": 1101,
+  "linhas_codigo": 179009,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -325,10 +325,10 @@
   "tabelas": 133,
   "migrations": 245,
   "cron_jobs": 4,
-  "testes": 106,
-  "workflows": 7,
-  "scripts": 18,
-  "docs_md": 68
+  "testes": 114,
+  "workflows": 10,
+  "scripts": 28,
+  "docs_md": 70
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -384,8 +384,8 @@
    "linhas": 185
   },
   "scripts/ci": {
-   "arquivos": 3,
-   "linhas": 362
+   "arquivos": 12,
+   "linhas": 2371
   },
   "scripts/graphify": {
    "arquivos": 6,
@@ -398,6 +398,10 @@
   "scripts/graphify.test.mjs": {
    "arquivos": 1,
    "linhas": 76
+  },
+  "scripts/inventario": {
+   "arquivos": 8,
+   "linhas": 1513
   },
   "scripts/regras_negocio": {
    "arquivos": 5,
@@ -417,7 +421,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 3584
+   "linhas": 3776
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -519,7 +523,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1961
+   "linhas": 2011
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
@@ -536,6 +540,10 @@
   {
    "arquivo": "src/components/ui/sidebar.tsx",
    "linhas": 639
+  },
+  {
+   "arquivo": "scripts/ci/github-settings-guard.mjs",
+   "linhas": 623
   },
   {
    "arquivo": "src/pages/AdminTelemetriaPage.tsx",
@@ -604,19 +612,15 @@
   {
    "arquivo": "src/pages/TraceabilityPage.tsx",
    "linhas": 478
-  },
-  {
-   "arquivo": "src/components/operator/ProductionRegistrationModal.tsx",
-   "linhas": 473
   }
  ],
  "qualidade": {
   "any": 116,
-  "console_log": 116,
+  "console_log": 142,
   "ts_ignore": 0,
   "eslint_disable": 2,
-  "todos": 7,
-  "arquivos_acima_500_linhas": 20
+  "todos": 8,
+  "arquivos_acima_500_linhas": 21
  },
  "todos": [
   {
@@ -642,6 +646,12 @@
    "linha": 46,
    "tipo": "TODO",
    "texto": "any follow-up',"
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.mjs",
+   "linha": 120,
+   "tipo": "TODO",
+   "texto": "salto, inclusive hooks: neste repo src/hooks, src/lib e src/features"
   },
   {
    "arquivo": "src/components/design-system/sections/modals/SheetExamples.tsx",

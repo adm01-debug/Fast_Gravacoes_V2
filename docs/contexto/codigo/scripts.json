@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 18,
+ "total": 28,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -91,6 +91,35 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/ci/actions-kpi.mjs",
+   "descricao": "KPI de uso do GitHub Actions, para o branch-hygiene-audit semanal. A API devolve `run_started_at` e",
+   "linhas": 246,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_API_URL",
+    "GITHUB_REPOSITORY",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN",
+    "JANELA_DIAS"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.mjs",
+   "descricao": "Comando pronto de poda de branches (usado pelo branch-hygiene-audit.yml). Apagar branch é decisão do dono, então este script NUNCA apaga nada: ele escreve no relatório",
+   "linhas": 192,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
    "descricao": "* Garante que as instrucoes para agentes nao foram apagadas ou esvaziadas por outra sessao.",
    "linhas": 149,
@@ -101,6 +130,47 @@
    "workflows": [
     "ci.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/github-settings-guard.mjs",
+   "descricao": "* Confere o perimetro do GitHub deste repo contra o baseline versionado",
+   "linhas": 623,
+   "env": [
+    "ADMIN_READ_TOKEN",
+    "GITHUB_REPOSITORY",
+    "GITHUB_RUN_ID",
+    "GITHUB_TOKEN",
+    "PERIMETER_SNAPSHOT_PATH",
+    "SETTINGS_GUARD_AUTOR"
+   ],
+   "npm_scripts": [
+    "settings:guard"
+   ],
+   "workflows": [
+    "settings-guard.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/render-workflow-docs.mjs",
+   "descricao": "* Gera `docs/ci/README.md` a partir dos blocos `# docs:` e `# nao-e-bug:` de cada workflow.",
+   "linhas": 231,
+   "env": [],
+   "npm_scripts": [
+    "ci:docs",
+    "ci:docs:check"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/workflow-test-support.mjs",
+   "descricao": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos.",
+   "linhas": 134,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
    "orfao": false
   },
   {
@@ -179,6 +249,70 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/inventario/banco.sql",
+   "descricao": null,
+   "linhas": 200,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "descricao": "* Inventario do banco oficial -> inventario/estado/banco.json (fonte de consulta dos agentes).",
+   "linhas": 334,
+   "env": [
+    "INVENTARIO_PERMITIR_OUTRO_PROJETO",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_API_URL",
+    "SUPABASE_PROJECT_REF"
+   ],
+   "npm_scripts": [
+    "inventario:banco"
+   ],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-repo.mjs",
+   "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco):  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI)",
+   "linhas": 91,
+   "env": [],
+   "npm_scripts": [
+    "inventario:edges"
+   ],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.mjs",
+   "descricao": "* Inventario das rotas do front -> inventario/estado/rotas.json (fonte de consulta dos agentes).",
+   "linhas": 274,
+   "env": [],
+   "npm_scripts": [
+    "inventario:rotas"
+   ],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/mudou-conteudo.mjs",
+   "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
+   "linhas": 92,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/regras_negocio/generate.py",
    "descricao": null,
    "linhas": 2802,
@@ -226,7 +360,7 @@
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
    "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
-   "linhas": 1961,
+   "linhas": 2011,
    "env": [],
    "npm_scripts": [],
    "workflows": [

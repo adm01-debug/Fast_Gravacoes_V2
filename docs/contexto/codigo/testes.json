@@ -5,13 +5,13 @@
   "vitest",
   "playwright"
  ],
- "total": 106,
+ "total": 114,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 82
+  "unit": 90
  },
  "onde_ficam": [
   {
@@ -24,7 +24,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 6
+   "arquivos": 14
   }
  ],
  "arquivos": [
@@ -66,11 +66,51 @@
    "suporte": false
   },
   {
+   "arquivo": "scripts/ci/actions-kpi.unit.mjs",
+   "tipo": "unit",
+   "linhas": 195,
+   "testa": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 13,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.unit.mjs",
+   "tipo": "unit",
+   "linhas": 181,
+   "testa": [
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 16,
+   "suporte": false
+  },
+  {
    "arquivo": "scripts/ci/check-claude-md-integrity.test.mjs",
    "tipo": "unit",
    "linhas": 104,
    "testa": [],
    "casos": 8,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/ci/github-settings-guard.unit.mjs",
+   "tipo": "unit",
+   "linhas": 126,
+   "testa": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
+   "casos": 11,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/ci/render-workflow-docs.unit.mjs",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [],
+   "casos": 9,
    "suporte": false
   },
   {
@@ -101,6 +141,44 @@
     "scripts/graphify/run.py"
    ],
    "casos": 31,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.unit.mjs",
+   "tipo": "unit",
+   "linhas": 291,
+   "testa": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "casos": 24,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-repo.unit.mjs",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [],
+   "casos": 3,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.unit.mjs",
+   "tipo": "unit",
+   "linhas": 252,
+   "testa": [
+    "scripts/inventario/gerar-rotas.mjs"
+   ],
+   "casos": 12,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/inventario/mudou-conteudo.unit.mjs",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "casos": 13,
    "suporte": false
   },
   {
@@ -152,11 +230,11 @@
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
    "tipo": "pytest",
-   "linhas": 1623,
+   "linhas": 1765,
    "testa": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
-   "casos": 89,
+   "casos": 96,
    "suporte": false
   },
   {
@@ -1128,11 +1206,18 @@
   "scripts/bundle-diff.mjs": 1,
   "scripts/bundle-report.mjs": 1,
   "scripts/check-any-baseline.mjs": 1,
+  "scripts/ci/actions-kpi.mjs": 1,
+  "scripts/ci/branch-podaveis.mjs": 1,
+  "scripts/ci/github-settings-guard.mjs": 1,
+  "scripts/ci/workflow-test-support.mjs": 2,
   "scripts/graphify/corpus.py": 1,
   "scripts/graphify/enrich.py": 1,
   "scripts/graphify/pipeline.py": 1,
   "scripts/graphify/quality.py": 1,
   "scripts/graphify/run.py": 1,
+  "scripts/inventario/gerar-banco.mjs": 1,
+  "scripts/inventario/gerar-rotas.mjs": 1,
+  "scripts/inventario/mudou-conteudo.mjs": 1,
   "scripts/regras_negocio/generate.py": 1,
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
