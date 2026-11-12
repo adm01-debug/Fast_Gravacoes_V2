@@ -400,7 +400,7 @@ jobs:
           CRON_SECRET="$(openssl rand -hex 32)"
           echo "::add-mask::$CRON_SECRET"
           [ -n "$OLD_CRON" ] && echo "::add-mask::$OLD_CRON"
-          supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
+          supabase secrets set "CRON_SECRET=$CRON_SECRET" --project-ref "$SUPABASE_PROJECT_ID" --yes
 
           echo "== 3/5 tx: runtime_config + ALTER FUNCTION (best-effort) + cron =="
           # Um único DO block: cria/atualiza app_private.runtime_config, anexa
@@ -521,9 +521,9 @@ jobs:
           then
             echo "::error::transação falhou após edge secret ser atualizado — revertendo CRON_SECRET."
             if [ -n "$OLD_CRON" ]; then
-              supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" || true
+              supabase secrets set "CRON_SECRET=$OLD_CRON" --project-ref "$SUPABASE_PROJECT_ID" --yes || true
             else
-              supabase secrets unset CRON_SECRET --project-ref "$SUPABASE_PROJECT_ID" || true
+              supabase secrets unset CRON_SECRET --project-ref "$SUPABASE_PROJECT_ID" --yes || true
             fi
             exit 1
           fi
@@ -531,7 +531,7 @@ jobs:
           echo "== 4/5 CSP_REPORT_ALLOWED_HOSTS =="
           supabase secrets set \
             "CSP_REPORT_ALLOWED_HOSTS=fastgravacoes.com.br,fast-gravacoes-v2.vercel.app" \
-            --project-ref "$SUPABASE_PROJECT_ID"
+            --project-ref "$SUPABASE_PROJECT_ID" --yes
 
           echo "== 5/5 verificação =="
           run_sql -v ON_ERROR_STOP=1 -At <<'SQL'
