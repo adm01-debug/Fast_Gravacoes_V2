@@ -14,11 +14,11 @@ for (const [k, v] of Object.entries(TEST_ENV_DEFAULTS)) {
   if (!process.env[k]) process.env[k] = v;
 }
 
-// Pin the timezone so date assertions are identical on every machine.
-// CI runs in UTC; a dev machine in America/Sao_Paulo rendered
-// '01/02 07:00' instead of '01/02 10:00' in spcExport.test.ts.
-// Workers inherit this env, so every test file sees UTC.
-process.env.TZ = 'UTC';
+// Pin the timezone so date assertions are identical on every machine and in
+// CI. We pin the USERS' timezone (Brazil): in UTC, date-only bugs that show
+// the previous day to Brazilian users stay invisible.
+// Workers inherit this env, so every test file sees America/Sao_Paulo.
+process.env.TZ = 'America/Sao_Paulo';
 
 export default defineConfig({
   plugins: [react()],
