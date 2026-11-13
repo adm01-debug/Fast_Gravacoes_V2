@@ -132,6 +132,7 @@ Sem chamador no repositorio (chamadas de cron/API externa/interna): backup-sched
 automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify, inventario-estado-semanal, migration-repair, settings-guard, visual-baselines
 
 ## 3. Qualidade local (main HEAD)
+- `npm run build` -> **exit 0** (vite build, 37.62s) - confirmado com LASTEXITCODE=0
 - `npm run test` -> **922 testes, 65 arquivos, exit 0**
 - `npm run lint` -> **0 erros / 22 warnings, exit 0** (warnings pre-existentes)
 - `inventario:test` -> exit 0
