@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9685302e7649ac667376d50974d5b6801f67a196",
+  "commit": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
   "branch": "main",
-  "data_commit": "2026-11-12T13:33:21-03:00",
+  "data_commit": "2026-11-13T02:09:28-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "358f079",
+    "data": "2026-11-13",
+    "assunto": "fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, U"
+   },
    {
     "sha": "9685302",
     "data": "2026-11-12",
@@ -126,15 +131,10 @@
     "sha": "dcdf3a3",
     "data": "2026-11-08",
     "assunto": "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)"
-   },
-   {
-    "sha": "961751a",
-    "data": "2026-11-08",
-    "assunto": "docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 408,
+  "arquivos_mudados_7d": 438,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -189,11 +189,11 @@
     "mudancas": 8
    },
    {
-    "pasta": "PENDENCIAS.md",
+    "pasta": "AGENTS.md",
     "mudancas": 7
    },
    {
-    "pasta": "src/components/layout",
+    "pasta": "PENDENCIAS.md",
     "mudancas": 7
    }
   ],
@@ -204,10 +204,14 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "arquivo": "package-lock.json",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "package.json",
     "mudancas": 9
    },
    {
@@ -216,10 +220,6 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 8
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 49
+    "commits": 50
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -311,9 +311,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1498,
-  "arquivos_codigo": 1101,
-  "linhas_codigo": 179013,
+  "arquivos_total": 1528,
+  "arquivos_codigo": 1115,
+  "linhas_codigo": 187380,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -325,10 +325,10 @@
   "tabelas": 133,
   "migrations": 245,
   "cron_jobs": 4,
-  "testes": 114,
-  "workflows": 10,
-  "scripts": 28,
-  "docs_md": 70
+  "testes": 119,
+  "workflows": 11,
+  "scripts": 41,
+  "docs_md": 75
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -355,6 +355,10 @@
    "arquivos": 3,
    "linhas": 2141
   },
+  "scripts/audit": {
+   "arquivos": 2,
+   "linhas": 512
+  },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
    "linhas": 235
@@ -362,6 +366,22 @@
   "scripts/audit-gate.test.mjs": {
    "arquivos": 1,
    "linhas": 107
+  },
+  "scripts/autofix": {
+   "arquivos": 2,
+   "linhas": 465
+  },
+  "scripts/autofix.test.mjs": {
+   "arquivos": 1,
+   "linhas": 406
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 1183
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 729
   },
   "scripts/bundle-diff.mjs": {
    "arquivos": 1,
@@ -391,6 +411,14 @@
    "arquivos": 6,
    "linhas": 1318
   },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1271
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 614
+  },
   "scripts/graphify.mjs": {
    "arquivos": 1,
    "linhas": 103
@@ -403,6 +431,10 @@
    "arquivos": 8,
    "linhas": 1513
   },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 3038
+  },
   "scripts/regras_negocio": {
    "arquivos": 5,
    "linhas": 4418
@@ -414,6 +446,10 @@
   "scripts/rls-regression.test.mjs": {
    "arquivos": 1,
    "linhas": 150
+  },
+  "scripts/rotina": {
+   "arquivos": 1,
+   "linhas": 149
   },
   "scripts/seed-users.test.mjs": {
    "arquivos": 1,
@@ -530,8 +566,24 @@
    "linhas": 1306
   },
   {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1271
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 1183
+  },
+  {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "linhas": 1132
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 937
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "linhas": 899
   },
   {
    "arquivo": "src/hooks/useOfflineSync.ts",
@@ -596,31 +648,15 @@
   {
    "arquivo": "src/pages/ShiftHandoverPage.tsx",
    "linhas": 501
-  },
-  {
-   "arquivo": "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
-   "linhas": 500
-  },
-  {
-   "arquivo": "src/components/ui/empty-state.tsx",
-   "linhas": 487
-  },
-  {
-   "arquivo": "src/pages/WeeklyCalendar.tsx",
-   "linhas": 485
-  },
-  {
-   "arquivo": "src/pages/TraceabilityPage.tsx",
-   "linhas": 478
   }
  ],
  "qualidade": {
   "any": 116,
-  "console_log": 142,
-  "ts_ignore": 0,
+  "console_log": 177,
+  "ts_ignore": 3,
   "eslint_disable": 2,
-  "todos": 8,
-  "arquivos_acima_500_linhas": 21
+  "todos": 10,
+  "arquivos_acima_500_linhas": 25
  },
  "todos": [
   {
@@ -640,6 +676,18 @@
    "linha": 179,
    "tipo": "TODO",
    "texto": "`via` é um advisory conhecido (objeto com"
+  },
+  {
+   "arquivo": "scripts/audit/run.mjs",
+   "linha": 311,
+   "tipo": "TODO",
+   "texto": "/FIXME/\"em breve\"/\"não implementado\" no código', 'Texto de interface \"em breve\" conta como funcional"
+  },
+  {
+   "arquivo": "scripts/audit/run.mjs",
+   "linha": 315,
+   "tipo": "TODO",
+   "texto": "|FIXME|XXX|HACK)\\b/.exec(ln) || /em breve|coming soon|not implemented|n[ãa]o implementad/i.exec(ln);"
   },
   {
    "arquivo": "scripts/check-any-baseline.test.mjs",

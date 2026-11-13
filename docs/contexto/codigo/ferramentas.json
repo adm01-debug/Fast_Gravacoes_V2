@@ -5,12 +5,12 @@
   "linguagens": [
    "TypeScript (1051)",
    "SQL (253)",
-   "Markdown (70)",
-   "JavaScript (40)",
-   "JSON (23)",
+   "Markdown (75)",
+   "JavaScript (54)",
+   "JSON (29)",
    "Python (13)",
-   "YAML (12)",
-   "CSS (2)"
+   "YAML (13)",
+   "Shell (6)"
   ],
   "linguagem_principal": "TypeScript",
   "framework": "React",
@@ -46,7 +46,20 @@
   "nome": "vite_react_shadcn_ts",
   "versao": "0.0.0",
   "scripts": {
+   "audit": "node scripts/audit/run.mjs",
    "audit:pdf": "echo 'AUDITORIA_ENTERPRISE_2026.md not found' && exit 0",
+   "autofix": "node scripts/autofix/run.mjs",
+   "autofix:apply": "node scripts/autofix/run.mjs --apply",
+   "autofix:test": "node --test scripts/autofix.test.mjs",
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks",
    "build": "vite build",
    "build:dev": "vite build --mode development",
    "bundle:diff": "node scripts/bundle-diff.mjs",
@@ -76,6 +89,9 @@
    "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
    "inventario:test": "node --test 'scripts/inventario/*.unit.mjs'",
    "lint": "eslint .",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
    "prepare": "husky",
    "preview": "vite preview",
    "quality:any": "node scripts/check-any-baseline.mjs",
@@ -85,6 +101,7 @@
    "test": "vitest run",
    "test:coverage": "vitest run --coverage",
    "test:e2e": "playwright test",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
    "test:scripts": "node --test scripts/*.test.mjs scripts/ci/*.test.mjs",
    "test:watch": "vitest"
   },
@@ -148,6 +165,36 @@
   "vitest.config.ts"
  ],
  "workflows": [
+  {
+   "arquivo": ".github/workflows/automation-local.yml",
+   "nome": "Automação local",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "contracts"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/automation.mjs"
+   ],
+   "npm_scripts": [
+    "ci"
+   ],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
   {
    "arquivo": ".github/workflows/branch-hygiene-audit.yml",
    "nome": "Branch Hygiene Audit",
@@ -546,7 +593,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Fast Gravações V2",
-   "linhas": 139
+   "linhas": 142
   },
   {
    "arquivo": "ANALISE_TECNICA_SISTEMA.md",
@@ -597,6 +644,11 @@
    "arquivo": "docs/ARCHITECTURE.md",
    "titulo": "Guia de Arquitetura e Documentação Técnica",
    "linhas": 244
+  },
+  {
+   "arquivo": "docs/AUTOMACAO_LOCAL.md",
+   "titulo": "Automação local — Fast_Gravacoes_V2",
+   "linhas": 107
   },
   {
    "arquivo": "docs/QA_AUDIT_2026-06-14.md",

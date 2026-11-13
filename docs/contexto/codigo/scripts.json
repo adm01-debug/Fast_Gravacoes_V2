@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 28,
+ "total": 41,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -47,6 +47,68 @@
    "workflows": [
     "ci.yml",
     "deploy.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit/run.mjs",
+   "descricao": "* Audit — detecta falhas e gaps por regra MECÂNICA, sem IA e sem custo de token.",
+   "linhas": 446,
+   "env": [
+    "AUDIT_BASELINE"
+   ],
+   "npm_scripts": [
+    "autofix",
+    "autofix:apply",
+    "audit"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/run.mjs",
+   "descricao": "* Derivado do motor local e11bc583/f331b977: correções determinísticas, sem IA.",
+   "linhas": 225,
+   "env": [
+    "AUTOFIX_BRANCH"
+   ],
+   "npm_scripts": [
+    "autofix",
+    "autofix:apply",
+    "audit"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/unused.mjs",
+   "descricao": "* Fixer \"unused\" — remove código não usado SEM mudar comportamento, usando o",
+   "linhas": 240,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "descricao": null,
+   "linhas": 1183,
+   "env": [
+    "REPO_AUTOMATION_CHAINING"
+   ],
+   "npm_scripts": [
+    "automation:doctor",
+    "automation:test",
+    "automation:check",
+    "automation:heal",
+    "automation:nightly",
+    "automation:graph",
+    "automation:status",
+    "automation:install-hooks",
+    "automation:uninstall-hooks"
+   ],
+   "workflows": [
+    "automation-local.yml"
    ],
    "orfao": false
   },
@@ -168,6 +230,15 @@
    "arquivo": "scripts/ci/workflow-test-support.mjs",
    "descricao": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos.",
    "linhas": 134,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "descricao": null,
+   "linhas": 1271,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -313,6 +384,52 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "descricao": null,
+   "linhas": 937,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "descricao": null,
+   "linhas": 899,
+   "env": [
+    "XDG_STATE_HOME"
+   ],
+   "npm_scripts": [
+    "autofix",
+    "autofix:apply",
+    "audit"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/run.sh",
+   "descricao": null,
+   "linhas": 16,
+   "env": [],
+   "npm_scripts": [
+    "maintenance:doctor",
+    "maintenance:check",
+    "maintenance:heal"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/typecheck.mjs",
+   "descricao": null,
+   "linhas": 107,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/regras_negocio/generate.py",
    "descricao": null,
    "linhas": 2802,
@@ -358,6 +475,28 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/rotina/instalar.sh",
+   "descricao": "Instala a rotina diária (timer systemd de usuário, 08:15). Idempotente. Copia os scripts para um local ESTÁVEL fora do repo, para o timer não depender da branch ativa.",
+   "linhas": 45,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/rotina/rotina.mjs",
+   "descricao": "* Rotina diária (sem IA): audita o origin/main, corrige o que é mecânico e escreve o relatório.",
+   "linhas": 149,
+   "env": [
+    "FG_HOME",
+    "FG_REPO",
+    "ROTINA_SCRIPTS"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
    "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
    "linhas": 2011,
@@ -366,6 +505,24 @@
    "workflows": [
     "contexto.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/instalar.sh",
+   "descricao": "Instala a versão revisada do espelho, com a mesma trava Git da rotina diária.",
+   "linhas": 32,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/sincronizar.sh",
+   "descricao": "Espelha o clone local no GitHub: o estado COMMITADO local fica EXATAMENTE igual ao do GitHub. Sem IA, sem custo, sem intervenção. Roda de hora em hora (timer systemd).",
+   "linhas": 149,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
    "orfao": false
   }
  ]

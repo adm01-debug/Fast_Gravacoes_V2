@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9685302e76` · branch `main` · 2026-11-12 18:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `358f0798db` · branch `main` · 2026-11-13 05:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-12T16:12:54Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-13T04:04:53Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-12T16:12:54Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-13T04:04:53Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-12T16:12:54Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-13T04:04:53Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-12T16:12:54Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-13T04:04:53Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-12T16:12:54Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-13T04:04:53Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2908,6 +2908,7 @@ _nenhum item encontrado_
 | Mensagem | Arquivo |
 |---|---|
 | ,     renotify: true,     requireInteraction: true,     data: data.data,     actions: [       {         action:  | `public/sw.js` |
+| falha fixture | `scripts/automation.unit.mjs` |
 | ❌ ${label} está sem  | `scripts/bundle-diff.mjs` |
 | ❌ ${label} não é um object JSON válido (esperado bundle-report.json). | `scripts/bundle-diff.mjs` |
 | ❌ ${label} tem entrada inválida em files[${i}] (faltam  | `scripts/bundle-diff.mjs` |
@@ -2923,6 +2924,30 @@ _nenhum item encontrado_
 | GRAPHIFY_PYTHON não pôde ser executado (${explicitly}): ${probe.error.message} | `scripts/graphify.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
 | /><Tabs role={ | `scripts/ai-context/gerar.unit.mjs` |
+| --commit exige --apply | `scripts/autofix/run.mjs` |
+| --only aceita unused ou eslint | `scripts/autofix/run.mjs` |
+| ESLint encontrou erros em ${invalid.length} arquivo(s) | `scripts/autofix/run.mjs` |
+| ESLint indisponível (exit ${r.status}): ${r.stderr} | `scripts/autofix/run.mjs` |
+| ESLint não retornou JSON válido | `scripts/autofix/run.mjs` |
+| ESLint retornou relatório vazio, inválido ou erro fatal | `scripts/autofix/run.mjs` |
+| HEAD mudou durante a execução | `scripts/autofix/run.mjs` |
+| Vitest falhou ao carregar uma suíte | `scripts/autofix/run.mjs` |
+| Vitest falhou sem teste identificado | `scripts/autofix/run.mjs` |
+| Vitest indisponível (exit ${r.status}) | `scripts/autofix/run.mjs` |
+| Vitest não gerou relatório válido | `scripts/autofix/run.mjs` |
+| Vitest não mediu testes | `scripts/autofix/run.mjs` |
+| alvo não autorizado: ${change.file} | `scripts/autofix/run.mjs` |
+| autofix recusa symlink: ${relative(ROOT, cursor)} | `scripts/autofix/run.mjs` |
+| baseline any ausente; não será criada implicitamente | `scripts/autofix/run.mjs` |
+| branch de correção já existe; reutilização recusada | `scripts/autofix/run.mjs` |
+| ferramenta ${p} falhou: ${r.error?.message \|\| r.signal} | `scripts/autofix/run.mjs` |
+| gate any falhou: ${r.stdout}${r.stderr} | `scripts/autofix/run.mjs` |
+| git ${a[0]} falhou: ${r.stderr \|\| r.error?.message \|\| r.status} | `scripts/autofix/run.mjs` |
+| testes regrediram; alterações serão revertidas | `scripts/autofix/run.mjs` |
+| tsconfig.app.json ausente | `scripts/autofix/run.mjs` |
+| typecheck falhou em ${cfg}:\n${r.stdout}${r.stderr} | `scripts/autofix/run.mjs` |
+| índice Git contém alterações; execução não pode incorporar staging de terceiros | `scripts/autofix/run.mjs` |
+| autofix recusa symlink: ${relative(root, cursor)} | `scripts/autofix/unused.mjs` |
 | ${metodo} ${caminho} -> ${r.status} | `scripts/ci/actions-kpi.mjs` |
 | PR sem headRefName | `scripts/ci/branch-podaveis.mjs` |
 | a lista de PRs abertas não é um array | `scripts/ci/branch-podaveis.mjs` |
@@ -2964,7 +2989,14 @@ _nenhum item encontrado_
 | ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado. | `scripts/inventario/gerar-repo.mjs` |
 | ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança. | `scripts/inventario/gerar-repo.mjs` |
 | ${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca. | `scripts/inventario/gerar-rotas.mjs` |
+| failed | `scripts/maintenance/lib.mjs` |
+| missing_dependencies | `scripts/maintenance/lib.mjs` |
+| skipped_busy | `scripts/maintenance/lib.mjs` |
+| formatter fixture failed | `scripts/maintenance/maintenance.unit.mjs` |
+| blocked_network_sandbox | `scripts/maintenance/run.mjs` |
+| pending_patch | `scripts/maintenance/run.mjs` |
 | Falha ao autenticar com {secret} | `scripts/regras_negocio/test_generate.py` |
+| findings inválido | `scripts/rotina/rotina.mjs` |
 | resposta inesperada da API: edge function sem slug | `scripts/supabase_snapshot/snapshot.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -3175,39 +3207,7 @@ _nenhum item encontrado_
 | Máquina não encontrada | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | Nenhum destinatário configurado para este canal e máquina. | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | Erro ao ativar notificações push | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Erro ao desativar notificações | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Erro ao enviar notificação de teste | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Permissão para notificações negada | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Push notifications não são suportadas neste navegador | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Subscription keys not available | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| Falha ao reatribuir tarefas. | `src/features/packaging/components/BulkReassignDialog.tsx` |
-| Informe uma técnica, cliente ou ambos. | `src/features/packaging/components/PackagingSlaOverridesManager.tsx` |
-| Os prazos devem ser maiores que zero. | `src/features/packaging/components/PackagingSlaOverridesManager.tsx` |
-| Tarefa inválida | `src/features/packaging/hooks/usePackagingChecklist.ts` |
-| Não autenticado | `src/features/packaging/services/packagingService.ts` |
-|  }         });          // Persist in DB         await supabase.rpc( | `src/features/production/hooks/useOEEAlerts.ts` |
-| ⚠️ QUEDA DE PERFORMANCE: ${machine.machineName} | `src/features/production/hooks/useOEEAlerts.ts` |
-| Usuário não autenticado | `src/features/production/hooks/useOperatorMachines.ts` |
-| Erro ao alterar status do operador | `src/features/production/hooks/useOperators.ts` |
-| Erro ao remover operador | `src/features/production/hooks/useOperators.ts` |
-| User not authenticated | `src/features/production/hooks/useOperators.ts` |
-| Erro ao registrar perda. Tente novamente. | `src/features/production/hooks/useProductionLosses.ts` |
-| ${completed} atualizados, ${failed} falharam | `src/hooks/useBulkActions.ts` |
-| ${completed} excluídos, ${failed} falharam | `src/hooks/useBulkActions.ts` |
-| Nenhum item selecionado | `src/hooks/useBulkActions.ts` |
-| Erro ao salvar layout na nuvem. Mantido localmente. | `src/hooks/useDashboardLayout.ts` |
-| Erro ao aprovar documento | `src/hooks/useDocuments.ts` |
-| Erro ao criar versão | `src/hooks/useDocuments.ts` |
-| Erro ao enviar documento | `src/hooks/useDocuments.ts` |
-| Erro ao rejeitar documento | `src/hooks/useDocuments.ts` |
-| Erro ao remover documento | `src/hooks/useDocuments.ts` |
-| Erro ao calcular rankings | `src/hooks/useGamification.ts` |
-| Erro ao solicitar resgate. Tente novamente. | `src/hooks/useGamification.ts` |
-| Este prêmio está esgotado. | `src/hooks/useGamification.ts` |
-| Saldo insuficiente. Você tem ${currentBalance} pontos, mas este resgate custa ${reward.cost_points}. | `src/hooks/useGamification.ts` |
-| Usuário não autenticado. | `src/hooks/useGamification.ts` |
-| useNetworkStatus must be used within NetworkStatusProvider | `src/hooks/useNetworkStatus.tsx` |
-| … +195 linhas — lista completa em `context.json` | |
+| … +227 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1215 testes em 99 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1239 testes em 100 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3282,6 +3282,7 @@ _nenhum item encontrado_
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/webhookFuzz.test.ts` | 25 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
+| `scripts/autofix.test.mjs` | 24 | getter na desestruturação permanece avaliado e entra na fila manual · iterador e valor padrão de desestruturação ficam na fila manual · incremento, coerção e nome computado não são tratados como puros · import de valor preserva execução do módulo … |
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
 | `src/test/sanitize.test.ts` | 21 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |

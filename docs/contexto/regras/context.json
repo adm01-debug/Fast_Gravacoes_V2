@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9685302e7649ac667376d50974d5b6801f67a196",
+  "sha": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-12 18:15 UTC",
-  "files_total": 1495,
-  "code_files": 1357,
-  "code_lines": 194142
+  "generated_at": "2026-11-13 05:28 UTC",
+  "files_total": 1525,
+  "code_files": 1371,
+  "code_lines": 202509
  },
  "version": "1.3.2",
- "facts_hash": "99845d32adc2ff3e",
+ "facts_hash": "73991312d3c319e6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -108,6 +108,10 @@
    }
   },
   "scripts": {
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
    "prepare": "husky",
    "dev": "vite",
    "build": "vite build",
@@ -148,7 +152,20 @@
    "settings:guard": "node scripts/ci/github-settings-guard.mjs",
    "ci:docs": "node scripts/ci/render-workflow-docs.mjs",
    "ci:docs:check": "node scripts/ci/render-workflow-docs.mjs --check",
-   "ci:test": "node --test 'scripts/ci/*.unit.mjs'"
+   "ci:test": "node --test 'scripts/ci/*.unit.mjs'",
+   "autofix": "node scripts/autofix/run.mjs",
+   "autofix:apply": "node scripts/autofix/run.mjs --apply",
+   "autofix:test": "node --test scripts/autofix.test.mjs",
+   "audit": "node scripts/audit/run.mjs",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
   },
   "infra": [
    {
@@ -165,6 +182,15 @@
    }
   ],
   "ci": [
+   {
+    "file": ".github/workflows/automation-local.yml",
+    "name": "Automação local",
+    "triggers": [
+     "pull_request",
+     "push",
+     "workflow_dispatch"
+    ]
+   },
    {
     "file": ".github/workflows/branch-hygiene-audit.yml",
     "name": "Branch Hygiene Audit",
@@ -250,7 +276,7 @@
    ".tsx": 656,
    ".ts": 395,
    ".sql": 253,
-   ".mjs": 36,
+   ".mjs": 50,
    ".py": 13,
    ".js": 4
   },
@@ -26751,8 +26777,8 @@
   },
   {
    "module": "scripts",
-   "files": 49,
-   "lines": 17825,
+   "files": 63,
+   "lines": 26192,
    "tables": [
     "a",
     "c1",
@@ -26792,11 +26818,14 @@
     "tx"
    ],
    "exports": [
+    "automation.mjs: parseArgs, validateConfig, execute, appendExclude, removeExclude, main",
     "bundle-diff.mjs: validateReport, loadReport, buildDiffMarkdown, main",
     "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, measureFiles",
     "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
+    "graphify-local.mjs: GraphError, run, acquire, validateConfig, fingerprint, validateGraph",
     "rls-regression.mjs: signInWithRetry",
     "gerar.unit.mjs: AppRoutes, useContacts, Publicas, router, useDeFerramenta, a",
+    "unused.mjs: runUnused",
     "actions-kpi.mjs: duracaoMinutos, runsNaJanela, agregar, paginaTemMais, maisLentos, tabela",
     "branch-podaveis.mjs: DIAS_MINIMOS, SEMPRE_FORA, motivoNomeInseguro, nomeVisivel, selecionarPodaveis, relatorio",
     "github-settings-guard.mjs: assinaturaDe",
@@ -26811,6 +26840,8 @@
     "gerar-rotas.mjs: resolverImport, extrairImports, extrairChamadas, MAX_SALTOS, fechoDaPagina, lerUrls",
     "gerar-rotas.unit.mjs: AnimatedRoutes, AnimatedRoutes, AnimatedRoutes, f",
     "mudou-conteudo.mjs: PADRAO, semCarimbos, mudou",
+    "lib.mjs: MaintenanceError, fail, digest, exists, safeEnv, stopChildren",
+    "run.mjs: parseArgs, networkPrefix, allowedSourceFiles, prettierCandidates, main",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
     "test_generate.py: CurrentSqlSourcesTests, RepoFixture, PolicyParsingTests, MigrationReplayTests, SqlLexingTests, SqlIdentityTests",
@@ -26822,10 +26853,10 @@
    "docs": [
     "audit-gate.mjs: Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA e documentada para advisories que não afetam este app. Por que um wrapper? `npm audit --audit-level=high` falha em advisories inalcançáveis no nosso contexto (ex.: bug de hidratação SSR num SPA puro) e não sabe expressar e …",
     "audit-gate.test.mjs: Testes do audit gate — `node --test scripts/audit-gate.test.mjs`. O gate roda `npm audit --json`; aqui um `npm` falso no PATH devolve o JSON do cenário.",
+    "automation.mjs: !/usr/bin/env node",
     "bundle-diff.mjs: !/usr/bin/env node",
     "bundle-report.mjs: !/usr/bin/env node",
-    "bundle.test.mjs: Testes de unidade dos scripts de bundle (bundle-report.mjs/bundle-diff.mjs) usando node:test (stdlib, sem devDependency nova). Cenários cobertos (gaps 1-3): - hashes Vite de 8/16/20 chars, hash com '-' interno, sem hash - entrypoints com prefixo exato ('/' nao casa 'index-page'/'auth-index') - valid …",
-    "check-any-baseline.mjs: !/usr/bin/env node"
+    "bundle.test.mjs: Testes de unidade dos scripts de bundle (bundle-report.mjs/bundle-diff.mjs) usando node:test (stdlib, sem devDependency nova). Cenários cobertos (gaps 1-3): - hashes Vite de 8/16/20 chars, hash com '-' interno, sem hash - entrypoints com prefixo exato ('/' nao casa 'index-page'/'auth-index') - valid …"
    ],
    "deps": [
     "#",
@@ -26836,22 +26867,23 @@
     "@testing-library/jest-dom",
     "drizzle-orm",
     "express",
+    "fs",
     "lib",
     "lodash",
     "node:assert",
     "node:child_process",
     "node:crypto",
+    "node:events",
     "node:fs",
+    "node:module",
     "node:os",
     "node:path",
+    "node:string_decoder",
     "node:test",
     "node:url",
     "node:zlib",
-    "react",
-    "react-router-dom",
-    "typescript",
-    "vue-router",
-    "zod"
+    "path",
+    "react"
    ],
    "imports_modules": [
     "src/b",
@@ -26871,11 +26903,16 @@
    "file_list": [
     "scripts/audit-gate.mjs",
     "scripts/audit-gate.test.mjs",
+    "scripts/autofix.test.mjs",
+    "scripts/automation.mjs",
+    "scripts/automation.unit.mjs",
     "scripts/bundle-diff.mjs",
     "scripts/bundle-report.mjs",
     "scripts/bundle.test.mjs",
     "scripts/check-any-baseline.mjs",
     "scripts/check-any-baseline.test.mjs",
+    "scripts/graphify-local.mjs",
+    "scripts/graphify-local.unit.mjs",
     "scripts/graphify.mjs",
     "scripts/graphify.test.mjs",
     "scripts/rls-regression.mjs",
@@ -26884,6 +26921,10 @@
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/audit/audit.unit.mjs",
+    "scripts/audit/run.mjs",
+    "scripts/autofix/run.mjs",
+    "scripts/autofix/unused.mjs",
     "scripts/ci/actions-kpi.mjs",
     "scripts/ci/actions-kpi.unit.mjs",
     "scripts/ci/branch-podaveis.mjs",
@@ -26911,11 +26952,16 @@
     "scripts/inventario/gerar-rotas.unit.mjs",
     "scripts/inventario/mudou-conteudo.mjs",
     "scripts/inventario/mudou-conteudo.unit.mjs",
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
+    "scripts/maintenance/run.mjs",
+    "scripts/maintenance/typecheck.mjs",
     "scripts/regras_negocio/generate.py",
     "scripts/regras_negocio/indice.py",
     "scripts/regras_negocio/test_generate.py",
     "scripts/regras_negocio/test_indice.py",
     "scripts/regras_negocio/test_publish.py",
+    "scripts/rotina/rotina.mjs",
     "scripts/supabase_snapshot/snapshot.py",
     "scripts/supabase_snapshot/test_snapshot.py"
    ]
@@ -31359,6 +31405,12 @@
    "APP_VERSION": [
     "supabase/functions/health-check/index.ts"
    ],
+   "AUDIT_BASELINE": [
+    "scripts/audit/run.mjs"
+   ],
+   "AUTOFIX_BRANCH": [
+    "scripts/autofix/run.mjs"
+   ],
    "BACKUP_API_KEY": [
     "supabase/functions/backup-scheduler/index.ts"
    ],
@@ -31434,6 +31486,27 @@
    "EXTRA_ALLOWED_ORIGINS": [
     "supabase/functions/_shared/cors.ts"
    ],
+   "FAIL_AUDIT": [
+    "scripts/autofix.test.mjs"
+   ],
+   "FAIL_ESLINT": [
+    "scripts/autofix.test.mjs"
+   ],
+   "FAIL_ESLINT_AFTER": [
+    "scripts/autofix.test.mjs"
+   ],
+   "FAIL_TEST_AFTER": [
+    "scripts/autofix.test.mjs"
+   ],
+   "FG_HOME": [
+    "scripts/rotina/rotina.mjs"
+   ],
+   "FG_REPO": [
+    "scripts/rotina/rotina.mjs"
+   ],
+   "FIXTURE_GRAPH_EXIT": [
+    "scripts/automation.unit.mjs"
+   ],
    "GEN_TYPES": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -31464,8 +31537,17 @@
     "scripts/ci/actions-kpi.mjs",
     "scripts/ci/github-settings-guard.mjs"
    ],
+   "GRAPHIFY_FIXTURE_": [
+    "scripts/graphify-local.unit.mjs"
+   ],
+   "GRAPHIFY_FIXTURE_SECRET": [
+    "scripts/graphify-local.unit.mjs"
+   ],
    "GRAPHIFY_PYTHON": [
     "scripts/graphify.mjs"
+   ],
+   "INVALID_ESLINT": [
+    "scripts/autofix.test.mjs"
    ],
    "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
     "scripts/inventario/gerar-banco.mjs"
@@ -31477,15 +31559,24 @@
     "supabase/functions/ml-predictions/index.ts",
     "supabase/functions/technical-assistant/index.ts"
    ],
+   "MAINTENANCE_TEST_": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
+   "MAINTENANCE_TEST_SECRET": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
    "MINHA_CHAVE": [
     "scripts/inventario/gerar-repo.unit.mjs"
    ],
    "NODE_ENV": [
     "scripts/ai-context/cenarios.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
     "src/features/notifications/hooks/useNotifications.ts"
    ],
    "PATH": [
     "scripts/audit-gate.test.mjs",
+    "scripts/autofix.test.mjs",
+    "scripts/graphify-local.unit.mjs",
     "scripts/regras_negocio/test_publish.py"
    ],
    "PERIMETER_SNAPSHOT_PATH": [
@@ -31514,6 +31605,9 @@
    "PYTHONHASHSEED": [
     "scripts/graphify.mjs"
    ],
+   "REPO_AUTOMATION_CHAINING": [
+    "scripts/automation.mjs"
+   ],
    "REPO_ROOT": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -31532,11 +31626,17 @@
    "RLS_LOGIN_RETRY_DELAY_MS": [
     "scripts/rls-regression.mjs"
    ],
+   "ROTINA_SCRIPTS": [
+    "scripts/rotina/rotina.mjs"
+   ],
    "SCRIPT_ONLY": [
     "scripts/ai-context/cenarios.mjs"
    ],
    "SECRET": [
     "src/test/webhookFuzz.test.ts"
+   ],
+   "SECRET_KEY": [
+    "scripts/maintenance/maintenance.unit.mjs"
    ],
    "SENTRY_DSN": [
     "supabase/functions/health-monitor/index.ts"
@@ -31716,9 +31816,11 @@
     "src/main.tsx"
    ],
    "VITE_SUPABASE_PROJECT_ID": [
+    "scripts/maintenance/maintenance.unit.mjs",
     "vitest.config.ts"
    ],
    "VITE_SUPABASE_PUBLISHABLE_KEY": [
+    "scripts/maintenance/maintenance.unit.mjs",
     "src/hooks/useNetworkStatus.tsx",
     "src/integrations/supabase/client.ts",
     "src/lib/edgeFunctionFetch.ts",
@@ -31727,6 +31829,7 @@
    ],
    "VITE_SUPABASE_URL": [
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
     "src/hooks/useNetworkStatus.tsx",
     "src/integrations/supabase/client.ts",
     "src/lib/edgeFunctionFetch.ts",
@@ -31740,6 +31843,9 @@
     "supabase/functions/send-loss-risk-alert/index.ts",
     "supabase/functions/send-tpm-email/index.ts",
     "supabase/functions/validate-login-ip/index.ts"
+   ],
+   "XDG_STATE_HOME": [
+    "scripts/maintenance/run.mjs"
    ]
   },
   "rpc": {
@@ -31966,6 +32072,9 @@
    ]
   },
   "external": {
+   "http://192.0.2.1:9": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
    "https://ai.gateway.lovable.dev": [
     "supabase/functions/ml-predictions/index.ts",
     "supabase/functions/technical-assistant/index.ts"
@@ -33202,6 +33311,10 @@
     "msg": ",\n    renotify: true,\n    requireInteraction: true,\n    data: data.data,\n    actions: [\n      {\n        action: "
    },
    {
+    "file": "scripts/automation.unit.mjs",
+    "msg": "falha fixture"
+   },
+   {
     "file": "scripts/bundle-diff.mjs",
     "msg": "❌ ${label} está sem "
    },
@@ -33260,6 +33373,102 @@
    {
     "file": "scripts/ai-context/gerar.unit.mjs",
     "msg": "/><Tabs role={"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "--commit exige --apply"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "--only aceita unused ou eslint"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "ESLint encontrou erros em ${invalid.length} arquivo(s)"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "ESLint indisponível (exit ${r.status}): ${r.stderr}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "ESLint não retornou JSON válido"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "ESLint retornou relatório vazio, inválido ou erro fatal"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "HEAD mudou durante a execução"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "Vitest falhou ao carregar uma suíte"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "Vitest falhou sem teste identificado"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "Vitest indisponível (exit ${r.status})"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "Vitest não gerou relatório válido"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "Vitest não mediu testes"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "alvo não autorizado: ${change.file}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "autofix recusa symlink: ${relative(ROOT, cursor)}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "baseline any ausente; não será criada implicitamente"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "branch de correção já existe; reutilização recusada"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "ferramenta ${p} falhou: ${r.error?.message || r.signal}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "gate any falhou: ${r.stdout}${r.stderr}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "git ${a[0]} falhou: ${r.stderr || r.error?.message || r.status}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "testes regrediram; alterações serão revertidas"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "tsconfig.app.json ausente"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "typecheck falhou em ${cfg}:\\n${r.stdout}${r.stderr}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "índice Git contém alterações; execução não pode incorporar staging de terceiros"
+   },
+   {
+    "file": "scripts/autofix/unused.mjs",
+    "msg": "autofix recusa symlink: ${relative(root, cursor)}"
    },
    {
     "file": "scripts/ci/actions-kpi.mjs",
@@ -33426,8 +33635,36 @@
     "msg": "${ROTAS_REL}: nao achei um bloco <Routes>...</Routes> bem formado; rotas.json nao pode ser gerado com seguranca."
    },
    {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "failed"
+   },
+   {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "missing_dependencies"
+   },
+   {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "skipped_busy"
+   },
+   {
+    "file": "scripts/maintenance/maintenance.unit.mjs",
+    "msg": "formatter fixture failed"
+   },
+   {
+    "file": "scripts/maintenance/run.mjs",
+    "msg": "blocked_network_sandbox"
+   },
+   {
+    "file": "scripts/maintenance/run.mjs",
+    "msg": "pending_patch"
+   },
+   {
     "file": "scripts/regras_negocio/test_generate.py",
     "msg": "Falha ao autenticar com {secret}"
+   },
+   {
+    "file": "scripts/rotina/rotina.mjs",
+    "msg": "findings inválido"
    },
    {
     "file": "scripts/supabase_snapshot/snapshot.py",
@@ -49460,6 +49697,102 @@
     "name": "sem vulnerabilidades passa e lista exceções sem uso"
    },
    {
+    "file": "scripts/autofix.test.mjs",
+    "name": "getter na desestruturação permanece avaliado e entra na fila manual"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "iterador e valor padrão de desestruturação ficam na fila manual"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "incremento, coerção e nome computado não são tratados como puros"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "import de valor preserva execução do módulo"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "regressão de testes restaura arquivos e não cria commit nem branch"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "falha do ESLint durante os gates desfaz a proposta e falha"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "ESLint indisponível ou relatório vazio não vira nenhuma correção"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "staging de terceiros é recusado e preservado integralmente"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "arquivo dirty é preservado ao reverter outra correção"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "sucesso valida testes e cria commit próprio em branch nova"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "branch automática existente nunca é reutilizada"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "sync preserva untracked mesmo quando upstream passa a rastrear o mesmo caminho"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "sync com árvore limpa avança até upstream"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "rotina retorna falha de auditoria ao agendador e não cria branch de correção"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "rotina retorna regressão de teste ao agendador sem commit de correção"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "audit com checagem quebrada não devolve sucesso"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "apply sem commit isola antes dos gates e preserva branch e arquivos locais"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "audit redige credenciais em todas as evidencias e trechos"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "sync preserva colisao ignored: ${kind}"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "rotina respeita FG_REPO fora do caminho padrao"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "instalador grava clone escolhido com espacos, aspas e percentuais sem iniciar servico real"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "falha antes de propor correcoes remove somente branch criada e preserva staging de terceiro"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "apply sem proposta nao deixa branch vazia bloqueando a proxima execucao"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "symlink para fora da raiz é recusado sem tocar no alvo externo"
+   },
+   {
     "file": "scripts/bundle.test.mjs",
     "name": "remove hash Vite de 8 chars"
    },
@@ -63306,6 +63639,7 @@
   "service_role_files": [
    "scripts/ai-context/cenarios.mjs",
    "scripts/ai-context/gerar.unit.mjs",
+   "scripts/audit/run.mjs",
    "scripts/graphify/enrich.py",
    "scripts/inventario/gerar-banco.mjs",
    "scripts/regras_negocio/generate.py",
@@ -66232,6 +66566,96 @@
     "sem vulnerabilidades passa e lista exceções sem uso"
    ]
   },
+  "scripts/autofix.test.mjs": {
+   "path": "scripts/autofix.test.mjs",
+   "lines": 406,
+   "is_test": true,
+   "env": [
+    "FAIL_AUDIT",
+    "FAIL_ESLINT",
+    "FAIL_ESLINT_AFTER",
+    "FAIL_TEST_AFTER",
+    "INVALID_ESLINT",
+    "PATH"
+   ],
+   "rule_comments": [
+    "Falta regras.json: a checagem deve registrar falha e propagá-la ao agendador."
+   ],
+   "temporal": [
+    "cwd, env: { ...process.env, ...env }, encoding: 'utf8', timeout: 60000,"
+   ],
+   "tests": [
+    "getter na desestruturação permanece avaliado e entra na fila manual",
+    "iterador e valor padrão de desestruturação ficam na fila manual",
+    "incremento, coerção e nome computado não são tratados como puros",
+    "import de valor preserva execução do módulo",
+    "regressão de testes restaura arquivos e não cria commit nem branch",
+    "falha do ESLint durante os gates desfaz a proposta e falha",
+    "ESLint indisponível ou relatório vazio não vira nenhuma correção",
+    "staging de terceiros é recusado e preservado integralmente",
+    "arquivo dirty é preservado ao reverter outra correção",
+    "sucesso valida testes e cria commit próprio em branch nova",
+    "branch automática existente nunca é reutilizada",
+    "sync preserva untracked mesmo quando upstream passa a rastrear o mesmo caminho",
+    "sync com árvore limpa avança até upstream",
+    "rotina retorna falha de auditoria ao agendador e não cria branch de correção",
+    "rotina retorna regressão de teste ao agendador sem commit de correção",
+    "audit com checagem quebrada não devolve sucesso",
+    "apply sem commit isola antes dos gates e preserva branch e arquivos locais",
+    "audit redige credenciais em todas as evidencias e trechos",
+    "sync preserva colisao ignored: ${kind}",
+    "rotina respeita FG_REPO fora do caminho padrao",
+    "instalador grava clone escolhido com espacos, aspas e percentuais sem iniciar servico real",
+    "falha antes de propor correcoes remove somente branch criada e preserva staging de terceiro",
+    "apply sem proposta nao deixa branch vazia bloqueando a proxima execucao",
+    "symlink para fora da raiz é recusado sem tocar no alvo externo"
+   ]
+  },
+  "scripts/automation.mjs": {
+   "path": "scripts/automation.mjs",
+   "lines": 1183,
+   "exports": [
+    "function parseArgs",
+    "function validateConfig",
+    "function execute",
+    "function appendExclude",
+    "function removeExclude",
+    "function main"
+   ],
+   "env": [
+    "REPO_AUTOMATION_CHAINING"
+   ],
+   "rule_comments": [
+    "Não trunque: um append concorrente deve sobreviver à reversão.",
+    "Remove somente os arquivos conhecidos criados por esta instalação."
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "onlyKeys( c, [ 'version', 'name', 'entrypoint', 'testSuites', 'motor', 'graph', 'graphConfig', 'aliases', 'registrations', 'ci', 'nightly', 'timeoutMs', 'toolingPatterns', 'sourcePatterns', 'requirements', 'snapshot', 'motorConfig', 'motorSource', ], 'config' ); if (c.version !== 1 || typeof c.name !== 'string' || !c.name) throw fail('config: version 1 e name obrigatórios'); if (typeof c.entrypoint !== 'string' || !c.entrypoint) throw fail('entrypoint obrigatório'); if ( !Array.isArray(c.testSui …"
+    }
+   ],
+   "temporal": [
+    "timeout: 15000,",
+    "{ cwd, timeout = 300000, capture = false, env = process.env } = {}"
+   ]
+  },
+  "scripts/automation.unit.mjs": {
+   "path": "scripts/automation.unit.mjs",
+   "lines": 729,
+   "env": [
+    "FIXTURE_GRAPH_EXIT"
+   ],
+   "errors": [
+    "falha fixture"
+   ],
+   "temporal": [
+    "timeout: 15000,",
+    "{ timeout: 100, capture: true }"
+   ]
+  },
   "scripts/bundle-diff.mjs": {
    "path": "scripts/bundle-diff.mjs",
    "lines": 180,
@@ -66388,6 +66812,59 @@
     "CLI: --update só reduz; --force aceita aumento; cria quando ausente",
     "CLI: sem src/ ou com argumento desconhecido sai 2 (gate não rodou)",
     "repo real: contagem bate com o baseline versionado"
+   ]
+  },
+  "scripts/graphify-local.mjs": {
+   "path": "scripts/graphify-local.mjs",
+   "lines": 1271,
+   "exports": [
+    "class GraphError",
+    "function run",
+    "function acquire",
+    "function validateConfig",
+    "function fingerprint",
+    "function validateGraph",
+    "function assertResources",
+    "function adoptInitial",
+    "function main",
+    "function acquireGlobal"
+   ],
+   "params": [
+    {
+     "name": "STALE_MS",
+     "value": "30"
+    }
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "const keys = [ 'version', 'project', 'environment', 'pin', 'pythonVersion', 'state', 'output', 'adapter', 'scope', 'partial', 'timeoutMs', 'minAvailableMb', 'metadata', ]; if ( !c || c.version !== 1 || Object.keys(c).some((k) => !keys.includes(k)) || !/^[A-Za-z0-9_.-]+$/.test(c.project || '') || !/^\\d+\\.\\d+\\.\\d+$/.test(c.pin || '') ) fail('Configuração Graphify inválida'); for (const key of ['environment', 'state', 'output']) if (!safeRelative(c[key])) fail('Caminho da configuração deve ser rela …"
+    },
+    {
+     "name": "validateGraph",
+     "params": "file, partial = false",
+     "body": "const descriptor = await open( file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK ); try { const info = await descriptor.stat({ bigint: true }); if (!info.isFile() || info.size > 512n * 1024n * 1024n) fail('Artefato do grafo não é arquivo regular ou excede512MB'); const bytes = await descriptor.readFile(), after = await descriptor.stat({ bigint: true }); if ( BigInt(bytes.length) !== info.size || after.size !== info.size || after.mtimeNs !== info.mtimeNs || after.ctimeNs !== …"
+    },
+    {
+     "name": "generate",
+     "params": "ctx, fp, expectedGraph",
+     "body": "await resources(ctx); const prefix = await offline(ctx); const job = path.join(ctx.state, 'runs', `${Date.now()}-${randomUUID()}`); await mkdir(job, { recursive: true, mode: 0o700 }); let step = 0; const execute = async (argv, env = ctx.env) => { if (ctx.interrupted()) fail('Execução interrompida'); const result = await run( [...prefix, ...argv], ctx.root, env, ctx.config.timeoutMs ); const log = path.join(job, `${step++}.log`); await writeFile(log, redact(result.output), { mode: 0o600 }); if ( …"
+    }
+   ],
+   "temporal": [
+    "const timeout = setTimeout(() => { kill(); done(); }, 1500);",
+    "hard ||= setTimeout(() => { kill('SIGKILL'); finish(1); }, 1000);"
+   ]
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "path": "scripts/graphify-local.unit.mjs",
+   "lines": 614,
+   "env": [
+    "GRAPHIFY_FIXTURE_",
+    "GRAPHIFY_FIXTURE_SECRET",
+    "PATH"
    ]
   },
   "scripts/graphify.mjs": {
@@ -67155,6 +67632,98 @@
    ],
    "uses_service_role": true
   },
+  "scripts/audit/audit.unit.mjs": {
+   "path": "scripts/audit/audit.unit.mjs",
+   "lines": 66,
+   "doc": "Testes de regressão do audit, em repositórios git descartáveis. Rodar: node --test scripts/audit/audit.unit.mjs"
+  },
+  "scripts/audit/run.mjs": {
+   "path": "scripts/audit/run.mjs",
+   "lines": 446,
+   "env": [
+    "AUDIT_BASELINE"
+   ],
+   "role_checks": [
+    "service_role"
+   ],
+   "rule_comments": [
+    "* Audit — detecta falhas e gaps por regra MECÂNICA, sem IA e sem custo de token.",
+    "fila-para-decisao.md    só crítico/alto, com trecho de código — é o que um humano/IA deve olhar",
+    "ao vivo nem a intenção de negócio. Cada checagem declara seu limite em `limite`.",
+    "{id, titulo, limite, total}",
+    "---------- 9. Regras de negócio declarativas ----------",
+    "# Por checagem', '', '| Checagem | Achados | Limite |', '|---|---|---|',",
+    "Fila para decisão (crítico e alto) — o que um humano ou IA deve olhar', '',"
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "balanced",
+     "params": "text, openIdx",
+     "body": "let d = 0; for (let i = openIdx; i < text.length; i++) { if (text[i] === '(') d++; else if (text[i] === ')' && --d === 0) return text.slice(openIdx + 1, i); } return null;"
+    }
+   ],
+   "uses_service_role": true
+  },
+  "scripts/autofix/run.mjs": {
+   "path": "scripts/autofix/run.mjs",
+   "lines": 225,
+   "env": [
+    "AUTOFIX_BRANCH"
+   ],
+   "errors": [
+    "--commit exige --apply",
+    "--only aceita unused ou eslint",
+    "ESLint encontrou erros em ${invalid.length} arquivo(s)",
+    "ESLint indisponível (exit ${r.status}): ${r.stderr}",
+    "ESLint não retornou JSON válido",
+    "ESLint retornou relatório vazio, inválido ou erro fatal",
+    "HEAD mudou durante a execução",
+    "Vitest falhou ao carregar uma suíte",
+    "Vitest falhou sem teste identificado",
+    "Vitest indisponível (exit ${r.status})",
+    "Vitest não gerou relatório válido",
+    "Vitest não mediu testes",
+    "alvo não autorizado: ${change.file}",
+    "autofix recusa symlink: ${relative(ROOT, cursor)}",
+    "baseline any ausente; não será criada implicitamente",
+    "branch de correção já existe; reutilização recusada",
+    "ferramenta ${p} falhou: ${r.error?.message || r.signal}",
+    "gate any falhou: ${r.stdout}${r.stderr}",
+    "git ${a[0]} falhou: ${r.stderr || r.error?.message || r.status}",
+    "testes regrediram; alterações serão revertidas",
+    "tsconfig.app.json ausente",
+    "typecheck falhou em ${cfg}:\\n${r.stdout}${r.stderr}",
+    "índice Git contém alterações; execução não pode incorporar staging de terceiros"
+   ],
+   "rule_comments": [
+    "nunca deve seguir link que aponta para fora da raiz nem sobrescrever destino alheio."
+   ],
+   "doc": "!/usr/bin/env node",
+   "temporal": [
+    "encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, timeout: 15 * 60 * 1000, ...opts,"
+   ]
+  },
+  "scripts/autofix/unused.mjs": {
+   "path": "scripts/autofix/unused.mjs",
+   "lines": 240,
+   "exports": [
+    "function runUnused"
+   ],
+   "errors": [
+    "autofix recusa symlink: ${relative(root, cursor)}"
+   ],
+   "params": [
+    {
+     "name": "MAX_PASSES",
+     "value": "8"
+    }
+   ],
+   "rule_comments": [
+    "nunca deve seguir link que aponta para fora da raiz nem sobrescrever destino alheio."
+   ],
+   "doc": "Fixer \"unused\" — remove código não usado SEM mudar comportamento, usando o language service do próprio TypeScript (mesmos code-fixes do VS Code). Remove tipos, funções locais e variáveis com inicializador comprovadamente inerte. Imports de valor, desestruturações e expressões com coerção/avaliação d …"
+  },
   "scripts/ci/actions-kpi.mjs": {
    "path": "scripts/ci/actions-kpi.mjs",
    "lines": 246,
@@ -67886,6 +68455,92 @@
    "lines": 103,
    "doc": "Testes do detector de mudanca real no inventario. Roda com: node --test scripts/inventario/"
   },
+  "scripts/maintenance/lib.mjs": {
+   "path": "scripts/maintenance/lib.mjs",
+   "lines": 937,
+   "exports": [
+    "class MaintenanceError",
+    "const fail",
+    "const digest",
+    "const exists",
+    "const safeEnv",
+    "function stopChildren",
+    "function run",
+    "function checked",
+    "const git",
+    "function commitWithHooks",
+    "function readRegularDependency",
+    "function dependencyFingerprint",
+    "function reuseDependencies",
+    "const localRequire",
+    "function tool",
+    "function validateConfig",
+    "function inspect",
+    "function acquire",
+    "function writeJson"
+   ],
+   "errors": [
+    "failed",
+    "missing_dependencies",
+    "skipped_busy"
+   ],
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "const keys = [ 'version', 'manager', 'tsconfigs', 'gates', 'fix', 'timeoutMs', 'maxFiles', 'maxChangedLines', ]; if ( !c || typeof c !== 'object' || Object.keys(c).some((k) => !keys.includes(k)) || c.version !== 1 ) fail('Configuração inválida ou versão desconhecida'); if (!['npm', 'bun'].includes(c.manager)) fail('Gerenciador deve ser npm ou bun'); const relative = (x) => typeof x === 'string' && x.length && !path.isAbsolute(x) && !x.split(/[\\\\/]/).includes('..') && !x.startsWith('-'); if ( !Ar …"
+    }
+   ],
+   "webhook_events": [
+    "string"
+   ]
+  },
+  "scripts/maintenance/maintenance.unit.mjs": {
+   "path": "scripts/maintenance/maintenance.unit.mjs",
+   "lines": 1095,
+   "external_urls": [
+    "http://192.0.2.1:9"
+   ],
+   "env": [
+    "MAINTENANCE_TEST_",
+    "MAINTENANCE_TEST_SECRET",
+    "NODE_ENV",
+    "SECRET_KEY",
+    "VITE_SUPABASE_PROJECT_ID",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "errors": [
+    "formatter fixture failed"
+   ],
+   "temporal": [
+    "const gates = `import fs from 'node:fs';import {spawnSync} from 'node:child_process';\\nconst text=fs.readFileSync('src/value.ts','utf8'); const phase=process.ar …"
+   ]
+  },
+  "scripts/maintenance/run.mjs": {
+   "path": "scripts/maintenance/run.mjs",
+   "lines": 899,
+   "exports": [
+    "function parseArgs",
+    "function networkPrefix",
+    "function allowedSourceFiles",
+    "function prettierCandidates",
+    "function main"
+   ],
+   "env": [
+    "XDG_STATE_HOME"
+   ],
+   "errors": [
+    "blocked_network_sandbox",
+    "pending_patch"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/maintenance/typecheck.mjs": {
+   "path": "scripts/maintenance/typecheck.mjs",
+   "lines": 107,
+   "doc": "!/usr/bin/env node"
+  },
   "scripts/regras_negocio/generate.py": {
    "path": "scripts/regras_negocio/generate.py",
    "lines": 2802,
@@ -68157,6 +68812,19 @@
    "side_effects": [
     "publish("
    ]
+  },
+  "scripts/rotina/rotina.mjs": {
+   "path": "scripts/rotina/rotina.mjs",
+   "lines": 149,
+   "env": [
+    "FG_HOME",
+    "FG_REPO",
+    "ROTINA_SCRIPTS"
+   ],
+   "errors": [
+    "findings inválido"
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
@@ -93881,10 +94549,51 @@
   }
  },
  "git": {
-  "sha": "9685302e7649ac667376d50974d5b6801f67a196",
+  "sha": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "358f079",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, UTF-8) (#157)",
+    "files": [
+     ".github/workflows/automation-local.yml",
+     ".gitignore",
+     "AGENTS.md",
+     "docs/AUTOMACAO_LOCAL.md",
+     "graphify.local.json",
+     "package.json",
+     "scripts/audit/audit.unit.mjs",
+     "scripts/audit/baseline.json",
+     "scripts/audit/regras.json",
+     "scripts/audit/run.mjs",
+     "scripts/autofix.test.mjs",
+     "scripts/autofix/README.md",
+     "scripts/autofix/run.mjs",
+     "scripts/autofix/unused.mjs",
+     "scripts/automation.config.json",
+     "scripts/automation.mjs",
+     "scripts/automation.unit.mjs",
+     "scripts/graphify-local.mjs",
+     "scripts/graphify-local.unit.mjs",
+     "scripts/maintenance/README.md",
+     "scripts/maintenance/config.example.json",
+     "scripts/maintenance/config.json",
+     "scripts/maintenance/lib.mjs",
+     "scripts/maintenance/maintenance.unit.mjs",
+     "scripts/maintenance/run.mjs",
+     "scripts/maintenance/run.sh",
+     "scripts/maintenance/typecheck.mjs",
+     "scripts/rotina/README.md",
+     "scripts/rotina/instalar.sh",
+     "scripts/rotina/rotina.mjs",
+     "scripts/sync/README.md",
+     "scripts/sync/instalar.sh",
+     "scripts/sync/sincronizar.sh"
+    ]
+   },
    {
     "sha": "9685302",
     "date": "2026-11-12",
@@ -94505,25 +95214,20 @@
      "src/features/packaging/types/packaging.schema.ts",
      "src/pages/PublicTrackingPage.tsx"
     ]
-   },
-   {
-    "sha": "3720de3",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix(contexto): grants por coluna pelo catálogo, sem estourar o timeout (#138)",
-    "files": [
-     "scripts/supabase_snapshot/snapshot.py"
-    ]
    }
   ],
   "hot_files": [
    [
-    "scripts/supabase_snapshot/snapshot.py",
+    "scripts/supabase_snapshot/test_snapshot.py",
     4
    ],
    [
-    "scripts/supabase_snapshot/test_snapshot.py",
-    4
+    "package.json",
+    3
+   ],
+   [
+    "scripts/supabase_snapshot/snapshot.py",
+    3
    ],
    [
     ".github/workflows/ci.yml",
@@ -94544,6 +95248,10 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     3
+   ],
+   [
+    "AGENTS.md",
+    2
    ],
    [
     "src/components/activity/ActivityLog.tsx",
@@ -94587,14 +95295,6 @@
    ],
    [
     "src/components/knowledge/TechnicalSheetViewer.tsx",
-    2
-   ],
-   [
-    ".github/workflows/contexto.yml",
-    2
-   ],
-   [
-    "package.json",
     2
    ]
   ]

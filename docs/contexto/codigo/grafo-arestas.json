@@ -2,6 +2,9 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "arestas": {
+  "scripts/autofix/run.mjs": [
+   "scripts/autofix/unused.mjs"
+  ],
   "scripts/graphify/pipeline.py": [
    "scripts/graphify/corpus.py",
    "scripts/graphify/enrich.py"
@@ -10,6 +13,12 @@
    "scripts/graphify/corpus.py",
    "scripts/graphify/pipeline.py",
    "scripts/graphify/quality.py"
+  ],
+  "scripts/maintenance/run.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
+  "scripts/maintenance/typecheck.mjs": [
+   "scripts/maintenance/lib.mjs"
   ],
   "src/App.tsx": [
    "src/components/error/GlobalErrorBoundary.tsx",

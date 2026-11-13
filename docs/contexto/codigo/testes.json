@@ -5,26 +5,26 @@
   "vitest",
   "playwright"
  ],
- "total": 114,
+ "total": 119,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 90
+  "unit": 95
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 82
+   "arquivos": 83
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 18
   },
   {
    "padrao": "tests/",
    "arquivos": 18
-  },
-  {
-   "padrao": "outro",
-   "arquivos": 14
   }
  ],
  "arquivos": [
@@ -42,6 +42,34 @@
    "linhas": 107,
    "testa": [],
    "casos": 12,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/audit/audit.unit.mjs",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [],
+   "casos": 6,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/autofix.test.mjs",
+   "tipo": "unit",
+   "linhas": 406,
+   "testa": [
+    "scripts/autofix/unused.mjs"
+   ],
+   "casos": 24,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/automation.unit.mjs",
+   "tipo": "unit",
+   "linhas": 729,
+   "testa": [
+    "scripts/automation.mjs"
+   ],
+   "casos": 33,
    "suporte": false
   },
   {
@@ -122,6 +150,16 @@
    "suporte": false
   },
   {
+   "arquivo": "scripts/graphify-local.unit.mjs",
+   "tipo": "unit",
+   "linhas": 614,
+   "testa": [
+    "scripts/graphify-local.mjs"
+   ],
+   "casos": 26,
+   "suporte": false
+  },
+  {
    "arquivo": "scripts/graphify.test.mjs",
    "tipo": "unit",
    "linhas": 76,
@@ -179,6 +217,17 @@
     "scripts/inventario/mudou-conteudo.mjs"
    ],
    "casos": 13,
+   "suporte": false
+  },
+  {
+   "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+   "tipo": "unit",
+   "linhas": 1095,
+   "testa": [
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/run.mjs"
+   ],
+   "casos": 44,
    "suporte": false
   },
   {
@@ -1203,6 +1252,8 @@
  ],
  "sql": [],
  "cobertura_por_arquivo": {
+  "scripts/autofix/unused.mjs": 1,
+  "scripts/automation.mjs": 1,
   "scripts/bundle-diff.mjs": 1,
   "scripts/bundle-report.mjs": 1,
   "scripts/check-any-baseline.mjs": 1,
@@ -1210,6 +1261,7 @@
   "scripts/ci/branch-podaveis.mjs": 1,
   "scripts/ci/github-settings-guard.mjs": 1,
   "scripts/ci/workflow-test-support.mjs": 2,
+  "scripts/graphify-local.mjs": 1,
   "scripts/graphify/corpus.py": 1,
   "scripts/graphify/enrich.py": 1,
   "scripts/graphify/pipeline.py": 1,
@@ -1218,6 +1270,8 @@
   "scripts/inventario/gerar-banco.mjs": 1,
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/maintenance/lib.mjs": 1,
+  "scripts/maintenance/run.mjs": 1,
   "scripts/regras_negocio/generate.py": 1,
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
