@@ -328,6 +328,18 @@ for (const kind of ['arquivo', 'pasta local', 'pasta remota', 'nome especial']) 
   });
 }
 
+test('rotina roda de novo no mesmo dia depois que a branch automática foi integrada (nome livre)', (t) => {
+  const { dir, home } = routineFixture(t);
+  const hoje = new Date().toLocaleDateString('sv-SE');
+  git(dir, 'branch', `autofix/auto-${hoje}`);   // integrada: aponta para a própria main
+  const r = run(process.execPath, [join(root, 'scripts/rotina/rotina.mjs')], dir,
+    { FG_HOME: home, ROTINA_SCRIPTS: join(dir, 'scripts') });
+  const report = read(join(home, 'relatorios/fast-gravacoes-v2/ULTIMO.md'));
+  assert.doesNotMatch(r.stdout + r.stderr + report, /reutilização recusada/);
+  assert.doesNotMatch(report, /NÃO aplicado/);
+  assert.equal(r.status, 0, r.stdout + r.stderr + report);
+});
+
 test('rotina respeita FG_REPO fora do caminho padrao', (t) => {
   const { dir, home } = routineFixture(t);
   rmSync(join(home, 'projetos/Fast_Gravacoes_V2'));
