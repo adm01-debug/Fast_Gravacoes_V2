@@ -145,8 +145,12 @@ if (codigo) {
 } else if (pendentes.length) {
   autofixResumo = `NÃO aplicado: já existe branch automática sem merge (${pendentes.join(', ')}). Revise/mescle ou apague para a rotina voltar a corrigir.`;
 } else {
+  // Nome LIVRE: se a branch de hoje já foi integrada (squash) e a rotina roda de novo no mesmo dia, o ref local ainda
+  // existe e o run.mjs recusa reutilizar — usa auto-AAAA-MM-DD-2, -3…
+  let nomeBranch = `autofix/auto-${HOJE}`;
+  for (let i = 2; git('show-ref', '--verify', '--quiet', `refs/heads/${nomeBranch}`).status === 0; i++) nomeBranch = `autofix/auto-${HOJE}-${i}`;
   const fx = run(NODE, ['scripts/autofix/run.mjs', '--apply', '--commit', '--tests', '--only=unused'], {
-    cwd: WT, env: { ...process.env, ...NO_HOOKS, AUTOFIX_BRANCH: `autofix/auto-${HOJE}` },
+    cwd: WT, env: { ...process.env, ...NO_HOOKS, AUTOFIX_BRANCH: nomeBranch },
   });
   let rel = null;
   try { rel = JSON.parse(readFileSync(join(WT, '.autofix/relatorio.json'), 'utf8')); } catch { /* sem relatório */ }
@@ -154,7 +158,7 @@ if (codigo) {
     mkdirSync(join(DIA, 'autofix'), { recursive: true });
     for (const f of ['relatorio.md', 'relatorio.json']) cpSync(join(WT, '.autofix', f), join(DIA, 'autofix', f));
     const r = rel.resultados[0] || {};
-    const branch = git('branch', '--list', `autofix/auto-${HOJE}`).stdout.trim() ? `autofix/auto-${HOJE}` : null;
+    const branch = git('branch', '--list', nomeBranch).stdout.trim() ? nomeBranch : null;
     autofixResumo = branch
       ? `**${r.arquivosMantidos ?? 0} arquivo(s) corrigidos** na branch local \`${branch}\` (${(r.arquivosRevertidos || []).length} revertidos pelo gate). Testes: ${rel.testes?.resumo ?? 'não medidos'}. Fila manual: ${r.manual?.length ?? 0}.`
       : `Nada a corrigir automaticamente. Fila manual: ${r.manual?.length ?? 0}.`;
