@@ -20,7 +20,7 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
-  BarChart3} from 'lucide-react';
+  BarChart3 } from 'lucide-react';
 import { format, parseISO, isBefore, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {

@@ -1,4 +1,4 @@
- 
+
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { endOfDay } from 'date-fns';
@@ -8,9 +8,9 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  BarChart3, Target, Zap, Clock, 
+  BarChart3, Target, Zap, Clock,
   ArrowUpRight, AlertTriangle, Sparkles, ChevronDown, ChevronUp, Activity,
-  LayoutGrid, BrainCircuit} from 'lucide-react';
+  LayoutGrid, BrainCircuit } from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { useSmartSequencingWithActions } from '@/features/jobs';
 import { useLoadBalancingWithActions } from '@/features/analytics/hooks/useLoadBalancingWithActions';

@@ -73,7 +73,7 @@ export function AppSidebar() {
     return navGroups
       .map(group => ({
         ...group,
-        items: group.items.filter(item => 
+        items: group.items.filter(item =>
           !item.allowedRoles || (role && item.allowedRoles.includes(role))
         )
       }))
@@ -81,7 +81,7 @@ export function AppSidebar() {
   }, [role]);
 
   const filteredAdminNavItems = useMemo(() => {
-    return adminNavItems.filter(item => 
+    return adminNavItems.filter(item =>
       !item.allowedRoles || (role && item.allowedRoles.includes(role))
     );
   }, [role]);
@@ -151,9 +151,9 @@ export function AppSidebar() {
                   exit={{ width: 0, opacity: 0 }}
                   className="flex-shrink-0"
                 >
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     aria-label={t('common.back', 'Voltar')}
                     onClick={() => {
                       SoundFeedback.navBack();
@@ -175,11 +175,11 @@ export function AppSidebar() {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             <div className="flex-shrink-0">
-              <BrandLogo 
-                collapsed={collapsed && !isMobile} 
-                size={collapsed && !isMobile ? "sm" : "md"} 
+              <BrandLogo
+                collapsed={collapsed && !isMobile}
+                size={collapsed && !isMobile ? "sm" : "md"}
                 showSubtitle={!collapsed || isMobile}
               />
             </div>
@@ -300,7 +300,7 @@ export function AppSidebar() {
               </div>
             </div>
           )}
-          
+
           {collapsed && !isMobile ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>

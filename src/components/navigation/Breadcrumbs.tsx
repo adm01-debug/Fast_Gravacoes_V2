@@ -152,7 +152,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
   // Truncamento inteligente: se a trilha for muito longa, colapsamos os itens
   // intermediários em um botão "..." que abre um menu com o caminho completo.
   const shouldCollapse = breadcrumbs.length > MAX_VISIBLE_ITEMS;
-  
+
   const collapsedItems: BreadcrumbItem[] = shouldCollapse
     ? breadcrumbs.slice(1, breadcrumbs.length - 2)
     : [];
@@ -240,7 +240,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
           {(shouldCollapse ? lastTwoItems : breadcrumbs.slice(1)).map((item, index) => (
             <div key={`${item.href ?? 'last'}-${index}`} className="flex items-center gap-1">
               <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 opacity-40 text-muted-foreground/60" />
-              
+
               {item.href ? (
                 <Tooltip>
                   <TooltipTrigger asChild>

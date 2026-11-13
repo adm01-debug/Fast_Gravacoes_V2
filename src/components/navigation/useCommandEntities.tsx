@@ -39,8 +39,8 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
     }
 
     // Search Inventory
-    inventoryItems.filter(item => 
-      item.name.toLowerCase().includes(lowerQuery) || 
+    inventoryItems.filter(item =>
+      item.name.toLowerCase().includes(lowerQuery) ||
       item.category.toLowerCase().includes(lowerQuery)
     ).slice(0, 2).forEach(item => {
       results.push({
@@ -55,8 +55,8 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
     });
 
     // Search Machines
-    machines.filter(m => 
-      m.name.toLowerCase().includes(lowerQuery) || 
+    machines.filter(m =>
+      m.name.toLowerCase().includes(lowerQuery) ||
       m.code.toLowerCase().includes(lowerQuery)
     ).slice(0, 2).forEach(machine => {
       results.push({
@@ -71,8 +71,8 @@ export function useCommandEntities(query: string, setOpen: (open: boolean) => vo
     });
 
     // Search Jobs (OPs)
-    jobs.filter(j => 
-      j.order_number?.toLowerCase().includes(lowerQuery) || 
+    jobs.filter(j =>
+      j.order_number?.toLowerCase().includes(lowerQuery) ||
       j.client?.toLowerCase().includes(lowerQuery)
     ).slice(0, 3).forEach(job => {
       results.push({

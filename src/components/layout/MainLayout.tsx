@@ -61,7 +61,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   // Dynamic page title for SEO
   usePageTitle();
-  
+
   // Navigation global hotkeys
   useNavigationHotkeys();
 
@@ -227,14 +227,14 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <Suspense fallback={null}>
                   <BackButton className="shadow-sm" />
                 </Suspense>
-                
+
                 <div className="flex flex-col gap-1">
                   <Suspense fallback={<div className="h-6 bg-muted/40 animate-pulse rounded-md w-48" />}>
                     <Breadcrumbs />
                   </Suspense>
                 </div>
               </div>
-              
+
               <div className="hidden sm:flex items-center gap-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-foreground/70 bg-muted/30 px-3 py-1.5 rounded-full border border-border/40 shadow-inner">
                   <span className="relative flex h-2 w-2" aria-hidden="true">

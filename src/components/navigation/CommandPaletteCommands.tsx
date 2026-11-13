@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Calendar, Kanban, BarChart3, Users, Settings, Clock, FileText,
   Shield, Factory, ScanLine, Bell, Gauge, TrendingUp, Sparkles,
   Moon, Sun, LogOut, Plus, RefreshCw, Download, Filter,
-  Keyboard, HelpCircle, Activity, Package, Layers} from "lucide-react";
+  Keyboard, HelpCircle, Activity, Package, Layers } from "lucide-react";
 
 export type CommandCategory = "navigation" | "actions" | "settings" | "recent" | "contextual" | "jobs" | "search";
 

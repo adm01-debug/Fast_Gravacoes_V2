@@ -160,7 +160,7 @@ export function ChatArea({
               </div>
             </div>
           ) : messages.length === 0 && !isLoadingMessages ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="space-y-8 max-w-3xl mx-auto py-12"
@@ -174,7 +174,7 @@ export function ChatArea({
                   Seu especialista técnico em gravação industrial, pronto para otimizar seus parâmetros e processos.
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {suggestions.map((suggestion, index) => (
                   <motion.div
@@ -182,9 +182,9 @@ export function ChatArea({
                     whileHover={{ y: -4 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button 
-                      variant="outline" 
-                      className="w-full h-auto py-4 px-5 flex flex-col items-start gap-2 text-left hover:bg-primary/5 hover:border-primary/30 group transition-all rounded-2xl border-border/40" 
+                    <Button
+                      variant="outline"
+                      className="w-full h-auto py-4 px-5 flex flex-col items-start gap-2 text-left hover:bg-primary/5 hover:border-primary/30 group transition-all rounded-2xl border-border/40"
                       onClick={() => onSend(suggestion.question)}
                     >
                       <div className="p-2 rounded-xl bg-muted group-hover:bg-primary/10 transition-colors">
@@ -205,7 +205,7 @@ export function ChatArea({
                 {messages.map((message, index) => {
                   const isMatch = matchingMessageIndices.includes(index);
                   if (messageSearchQuery.trim() && !isMatch) return null;
-                  
+
                   return (
                     <ChatMessage
                       key={message.id || index}
@@ -217,9 +217,9 @@ export function ChatArea({
                   );
                 })}
               </AnimatePresence>
-              
+
               {isStreaming && messages[messages.length - 1]?.role === "user" && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex gap-4"
@@ -251,20 +251,20 @@ export function ChatArea({
                     <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                     <span className="text-[8px] font-black uppercase text-success/70 tracking-tighter">Secure Link</span>
                   </div>
-                  <Textarea 
-                    value={input} 
-                    onChange={(e) => onInputChange(e.target.value)} 
-                    onKeyDown={handleKeyDown} 
-                    placeholder="Solicite diagnósticos, parâmetros ou análise de manuais..." 
-                    className="min-h-[52px] max-h-40 resize-none pl-24 pr-24 py-3.5 rounded-2xl border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all bg-black/20 backdrop-blur-md text-sm font-medium" 
-                    disabled={isStreaming} 
+                  <Textarea
+                    value={input}
+                    onChange={(e) => onInputChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Solicite diagnósticos, parâmetros ou análise de manuais..."
+                    className="min-h-[52px] max-h-40 resize-none pl-24 pr-24 py-3.5 rounded-2xl border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all bg-black/20 backdrop-blur-md text-sm font-medium"
+                    disabled={isStreaming}
                   />
                   <div className="absolute right-3 bottom-3 flex items-center gap-1.5">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
                           title="Anexar documentação técnica"
                         >
@@ -277,9 +277,9 @@ export function ChatArea({
                         }} />
                       </PopoverContent>
                     </Popover>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
                       title="Entrada por Voz (Industrial Mode)"
                     >
@@ -287,9 +287,9 @@ export function ChatArea({
                     </Button>
                   </div>
                 </div>
-                <Button 
-                  onClick={() => onSend()} 
-                  disabled={isStreaming || !input.trim()} 
+                <Button
+                  onClick={() => onSend()}
+                  disabled={isStreaming || !input.trim()}
                   className="h-[52px] px-6 rounded-2xl shrink-0 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95 group overflow-hidden relative"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />

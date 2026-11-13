@@ -1,7 +1,7 @@
 import {
   Calendar, CalendarDays, CalendarRange, LayoutGrid, List, AlertTriangle, Settings, Users, Home,
   BarChart3, Gauge, Coins, Wrench, Brain, Code2, Zap, Bot, QrCode, RefreshCw,
-  BookOpen, Palette, Download, Bell, ArrowRightLeft, Package, Activity, 
+  BookOpen, Palette, Download, Bell, ArrowRightLeft, Package, Activity,
   Trophy, BatteryCharging, FileText, Cog, TrendingUp, Cpu, UserCircle, ShieldCheck,
   Factory, PackageCheck
 } from 'lucide-react';
@@ -15,19 +15,19 @@ const STAFF_ONLY: AppRole[] = ['coordinator', 'manager', 'admin'];
 const COORD_ONLY: AppRole[] = ['coordinator', 'admin'];
 
 export const navGroups: NavGroup[] = [
-  { 
-    id: 'home', 
-    icon: Home, 
-    label: 'Principal', 
+  {
+    id: 'home',
+    icon: Home,
+    label: 'Principal',
     items: [
       { icon: Home, label: 'Dashboard', href: '/', allowedRoles: ALL_ROLES }
-    ], 
-    defaultOpen: true 
+    ],
+    defaultOpen: true
   },
-  { 
-    id: 'planning', 
-    icon: Calendar, 
-    label: 'Planejamento', 
+  {
+    id: 'planning',
+    icon: Calendar,
+    label: 'Planejamento',
     items: [
       { icon: Calendar, label: 'Calendário Diário', href: '/calendar/daily', allowedRoles: STAFF_ONLY },
       { icon: CalendarDays, label: 'Calendário Semanal', href: '/calendar/weekly', allowedRoles: STAFF_ONLY },
@@ -36,10 +36,10 @@ export const navGroups: NavGroup[] = [
       { icon: List, label: 'Pendências', href: '/pending', allowedRoles: COORD_ONLY },
     ]
   },
-  { 
-    id: 'analytics', 
-    icon: BarChart3, 
-    label: 'Analytics', 
+  {
+    id: 'analytics',
+    icon: BarChart3,
+    label: 'Analytics',
     items: [
       { icon: BarChart3, label: 'BI Executivo', href: '/bi', allowedRoles: STAFF_ONLY },
       { icon: Factory, label: 'Produção 10/10', href: '/executive', allowedRoles: STAFF_ONLY },
@@ -51,10 +51,10 @@ export const navGroups: NavGroup[] = [
       { icon: Coins, label: 'Custeio ABC', href: '/abc', allowedRoles: STAFF_ONLY },
     ]
   },
-  { 
-    id: 'operations', 
-    icon: Wrench, 
-    label: 'Operações', 
+  {
+    id: 'operations',
+    icon: Wrench,
+    label: 'Operações',
     items: [
       { icon: Wrench, label: 'TPM', href: '/tpm', allowedRoles: STAFF_ONLY },
       { icon: Cpu, label: 'Máquinas', href: '/machines', allowedRoles: STAFF_ONLY },
@@ -65,10 +65,10 @@ export const navGroups: NavGroup[] = [
       { icon: Package, label: 'Rastreabilidade', href: '/traceability', allowedRoles: STAFF_ONLY },
     ]
   },
-  { 
-    id: 'team', 
-    icon: Users, 
-    label: 'Equipe', 
+  {
+    id: 'team',
+    icon: Users,
+    label: 'Equipe',
     items: [
       { icon: Users, label: 'Operadores', href: '/operators', allowedRoles: STAFF_ONLY },
       { icon: TrendingUp, label: 'Produtividade', href: '/operators/productivity', allowedRoles: STAFF_ONLY },
@@ -78,10 +78,10 @@ export const navGroups: NavGroup[] = [
       { icon: UserCircle, label: 'Visão Operador', href: '/operator', allowedRoles: ALL_ROLES },
     ]
   },
-  { 
-    id: 'intelligence', 
-    icon: Brain, 
-    label: 'Inteligência', 
+  {
+    id: 'intelligence',
+    icon: Brain,
+    label: 'Inteligência',
     items: [
       { icon: Brain, label: 'ML Preditivo', href: '/ml-predictions', allowedRoles: STAFF_ONLY },
       { icon: Cpu, label: 'Digital Twin', href: '/digital-twin', allowedRoles: STAFF_ONLY },
@@ -90,10 +90,10 @@ export const navGroups: NavGroup[] = [
       { icon: FileText, label: 'Documentos', href: '/documents', allowedRoles: STAFF_ONLY },
     ]
   },
-  { 
-    id: 'system', 
-    icon: Cog, 
-    label: 'Sistema', 
+  {
+    id: 'system',
+    icon: Cog,
+    label: 'Sistema',
     items: [
       { icon: AlertTriangle, label: 'Alertas', href: '/alerts', allowedRoles: ALL_ROLES },
       { icon: Bell, label: 'Notificações', href: '/notifications', allowedRoles: ALL_ROLES },
