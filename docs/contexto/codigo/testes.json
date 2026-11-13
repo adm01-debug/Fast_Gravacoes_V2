@@ -55,11 +55,11 @@
   {
    "arquivo": "scripts/autofix.test.mjs",
    "tipo": "unit",
-   "linhas": 406,
+   "linhas": 418,
    "testa": [
     "scripts/autofix/unused.mjs"
    ],
-   "casos": 24,
+   "casos": 25,
    "suporte": false
   },
   {

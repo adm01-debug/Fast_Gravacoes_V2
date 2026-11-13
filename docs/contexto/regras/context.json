@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1fc2844699141687476f5f67b8403d1f3ecb87f7",
+  "sha": "4cad7a11543dd568fbf37517279b4f1e98ea5328",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-13 13:59 UTC",
+  "generated_at": "2026-11-13 15:27 UTC",
   "files_total": 1526,
   "code_files": 1371,
-  "code_lines": 202527
+  "code_lines": 202582
  },
  "version": "1.3.2",
- "facts_hash": "3b982373a9171533",
+ "facts_hash": "0b93cc62a7113564",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26778,7 +26778,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26210,
+   "lines": 26265,
    "tables": [
     "a",
     "c1",
@@ -31499,6 +31499,12 @@
     "scripts/autofix.test.mjs"
    ],
    "FG_HOME": [
+    "scripts/rotina/rotina.mjs"
+   ],
+   "FG_MAX_LOAD": [
+    "scripts/rotina/rotina.mjs"
+   ],
+   "FG_MIN_MEM_GB": [
     "scripts/rotina/rotina.mjs"
    ],
    "FG_REPO": [
@@ -49774,6 +49780,10 @@
    },
    {
     "file": "scripts/autofix.test.mjs",
+    "name": "rotina roda de novo no mesmo dia depois que a branch automática foi integrada (nome livre)"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
     "name": "rotina respeita FG_REPO fora do caminho padrao"
    },
    {
@@ -66568,7 +66578,7 @@
   },
   "scripts/autofix.test.mjs": {
    "path": "scripts/autofix.test.mjs",
-   "lines": 406,
+   "lines": 418,
    "is_test": true,
    "env": [
     "FAIL_AUDIT",
@@ -66604,6 +66614,7 @@
     "apply sem commit isola antes dos gates e preserva branch e arquivos locais",
     "audit redige credenciais em todas as evidencias e trechos",
     "sync preserva colisao ignored: ${kind}",
+    "rotina roda de novo no mesmo dia depois que a branch automática foi integrada (nome livre)",
     "rotina respeita FG_REPO fora do caminho padrao",
     "instalador grava clone escolhido com espacos, aspas e percentuais sem iniciar servico real",
     "falha antes de propor correcoes remove somente branch criada e preserva staging de terceiro",
@@ -68815,14 +68826,19 @@
   },
   "scripts/rotina/rotina.mjs": {
    "path": "scripts/rotina/rotina.mjs",
-   "lines": 149,
+   "lines": 192,
    "env": [
     "FG_HOME",
+    "FG_MAX_LOAD",
+    "FG_MIN_MEM_GB",
     "FG_REPO",
     "ROTINA_SCRIPTS"
    ],
    "errors": [
     "findings inválido"
+   ],
+   "rule_comments": [
+    "Limite de carga proporcional aos núcleos (antes: 6 fixos numa máquina de 24 núcleos => pulava à toa)."
    ],
    "doc": "!/usr/bin/env node"
   },
@@ -94549,10 +94565,20 @@
   }
  },
  "git": {
-  "sha": "1fc2844699141687476f5f67b8403d1f3ecb87f7",
+  "sha": "4cad7a11543dd568fbf37517279b4f1e98ea5328",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4cad7a1",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)",
+    "files": [
+     "scripts/autofix.test.mjs",
+     "scripts/rotina/rotina.mjs"
+    ]
+   },
    {
     "sha": "1fc2844",
     "date": "2026-11-13",
@@ -95203,15 +95229,6 @@
      "scripts/ci/check-claude-md-integrity.mjs",
      "scripts/supabase_snapshot/README.md"
     ]
-   },
-   {
-    "sha": "a376146",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat(migrations): regras de negócio DDL — R1.2, R1.4, R2.3, R3.3, R5.1–R5.4",
-    "files": [
-     "supabase/migrations/20261108000001_business_rules_ddl.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -95252,6 +95269,14 @@
     3
    ],
    [
+    "scripts/autofix.test.mjs",
+    2
+   ],
+   [
+    "scripts/rotina/rotina.mjs",
+    2
+   ],
+   [
     "scripts/automation.mjs",
     2
    ],
@@ -95285,14 +95310,6 @@
    ],
    [
     "src/components/error/GlobalErrorBoundary.tsx",
-    2
-   ],
-   [
-    "src/components/jobs/JobCostsTab.tsx",
-    2
-   ],
-   [
-    "src/components/kanban/DraggableJobCard.tsx",
     2
    ]
   ]

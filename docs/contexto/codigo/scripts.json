@@ -486,9 +486,11 @@
   {
    "arquivo": "scripts/rotina/rotina.mjs",
    "descricao": "* Rotina diária (sem IA): audita o origin/main, corrige o que é mecânico e escreve o relatório.",
-   "linhas": 149,
+   "linhas": 192,
    "env": [
     "FG_HOME",
+    "FG_MAX_LOAD",
+    "FG_MIN_MEM_GB",
     "FG_REPO",
     "ROTINA_SCRIPTS"
    ],
