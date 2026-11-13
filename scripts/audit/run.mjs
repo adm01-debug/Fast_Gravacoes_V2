@@ -213,7 +213,7 @@ defCheck('pagina-orfa', 'Página em src/pages que nada importa (sem rota)', 'Imp
     const rel = escRegex(relRaw);
     const nmQ = escRegex(nm);
     const pubQ = escRegex(relRaw.replace(/^pages\//, ''));
-    const rx = new RegExp(`(@/${rel.replace(/\//g, '\\/')}|['"]\\./${nmQ}['"]|pages/${pubQ.replace(/\//g, '\\/')}['"])`);
+    const rx = new RegExp(`(@/${rel}|['"]\\./${nmQ}['"]|pages/${pubQ}['"])`);
     if (!corpus.some((f) => f !== p && rx.test(read(f))))
       add('pagina-orfa', 'media', `Página ${nm} não é importada por ninguém`, p, 1, 'sem import/rota', 'Registrar a rota em AppRoutes.tsx ou remover a página.');
   }
