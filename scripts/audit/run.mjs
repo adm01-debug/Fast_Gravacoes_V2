@@ -208,9 +208,12 @@ defCheck('pagina-orfa', 'Página em src/pages que nada importa (sem rota)', 'Imp
   const pages = tracked.filter((f) => /^src\/pages\/.*\.tsx$/.test(f) && !isTest(f));
   const corpus = srcFiles.filter((f) => !pages.includes(f) || true);
   for (const p of pages) {
-    const rel = escRegex(p.replace(/^src\//, '').replace(/\.tsx$/, ''));
-    const nm = basename(rel);
-    const rx = new RegExp(`(@/${rel.replace(/\//g, '\\/')}|['"]\\./${nm}['"]|pages/${rel.replace(/^pages\//, '').replace(/\//g, '\\/')}['"])`);
+    const relRaw = p.replace(/^src\//, '').replace(/\.tsx$/, '');
+    const nm = basename(relRaw);
+    const rel = escRegex(relRaw);
+    const nmQ = escRegex(nm);
+    const pubQ = escRegex(relRaw.replace(/^pages\//, ''));
+    const rx = new RegExp(`(@/${rel.replace(/\//g, '\\/')}|['"]\\./${nmQ}['"]|pages/${pubQ.replace(/\//g, '\\/')}['"])`);
     if (!corpus.some((f) => f !== p && rx.test(read(f))))
       add('pagina-orfa', 'media', `Página ${nm} não é importada por ninguém`, p, 1, 'sem import/rota', 'Registrar a rota em AppRoutes.tsx ou remover a página.');
   }
