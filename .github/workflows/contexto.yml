@@ -1,5 +1,5 @@
 # docs:
-#   gatilho: push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada 10 min (minuto 3); dispatch
+#   gatilho: push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada 30 min (minutos 3 e 33); dispatch
 #   prova: branch contexto com docs/contexto/{codigo,supabase,regras}/ regerados das três fontes de verdade (código em main, banco oficial, código+migrations+manual/) e docs/contexto/00-INDEX.md montado a partir dos manifests
 #   falha: falha fatal de produtor reprova o workflow; fontes com artefato publicam e as demais mantêm a última versão; erro de download impede a publicação
 #   avisa: ninguém (a branch contexto é a prova; errors.md em supabase/ e erros_do_gerador em codigo/ listam seções com falha)
@@ -7,7 +7,7 @@
 #   - sem-commit: "nada mudou" no publicar significa que nenhuma das três fontes mudou desde a última publicação
 #   - metricas: métricas/manifests do banco aguardam 60 min desde a coleta publicada; commits de código não reiniciam o prazo; data ausente/inválida/futura e mudanças de saúde/estado do índice publicam sem espera
 #   - banco-pulado: sem credencial de banco utilizável o job do banco sai verde com aviso e a pasta supabase/ fica como estava
-name: Contexto para agentes de IA (10 min)
+name: Contexto para agentes de IA (30 min)
 
 # UM workflow, TRÊS produtores independentes (um job cada), UM índice, UMA branch:
 # Falha fatal deixa o workflow vermelho; publicar ainda reúne as fontes disponíveis via !cancelled().
@@ -43,7 +43,7 @@ on:
       - '.env.example'
       - '.github/workflows/**'
   schedule:
-    - cron: '3-59/10 * * * *' # minuto 3: fora do minuto 0 (fila do GitHub) e dos outros crons do repo
+    - cron: '3,33 * * * *' # minutos 3 e 33: fora do minuto 0 (fila do GitHub) e dos outros crons do repo
   workflow_dispatch:
     inputs:
       graphify:
