@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4cad7a11543dd568fbf37517279b4f1e98ea5328",
+  "sha": "2f4326c7dd96af6df1345ead1907f315aec7006b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-13 15:27 UTC",
+  "generated_at": "2026-11-13 17:57 UTC",
   "files_total": 1526,
   "code_files": 1371,
-  "code_lines": 202582
+  "code_lines": 202589
  },
  "version": "1.3.2",
- "facts_hash": "0b93cc62a7113564",
+ "facts_hash": "4e2d1a2b57f82a31",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26725,7 +26725,7 @@
   {
    "module": "(raiz)",
    "files": 7,
-   "lines": 689,
+   "lines": 695,
    "tables": [],
    "exports": [
     "eslint.config.js: tseslint",
@@ -28509,7 +28509,7 @@
   {
    "module": "src/lib",
    "files": 51,
-   "lines": 6377,
+   "lines": 6378,
    "tables": [
     "audit_log",
     "error_logs",
@@ -31782,7 +31782,8 @@
     "supabase/functions/webhook-handler/index.ts"
    ],
    "TZ": [
-    "src/test/dateUtils.test.ts"
+    "src/test/dateUtils.test.ts",
+    "vitest.config.ts"
    ],
    "VAPID_PRIVATE_KEY": [
     "supabase/functions/send-push-notification/index.ts"
@@ -66473,11 +66474,12 @@
   },
   "vitest.config.ts": {
    "path": "vitest.config.ts",
-   "lines": 63,
+   "lines": 69,
    "exports": [
     "default defineConfig"
    ],
    "env": [
+    "TZ",
     "VITE_SUPABASE_PROJECT_ID",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
@@ -87364,7 +87366,7 @@
   },
   "src/lib/spcExport.test.ts": {
    "path": "src/lib/spcExport.test.ts",
-   "lines": 159,
+   "lines": 160,
    "is_test": true,
    "rule_comments": [
     "factory below would hit a TDZ error — everything the factories need must"
@@ -94565,10 +94567,20 @@
   }
  },
  "git": {
-  "sha": "4cad7a11543dd568fbf37517279b4f1e98ea5328",
+  "sha": "2f4326c7dd96af6df1345ead1907f315aec7006b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "2f4326c",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)",
+    "files": [
+     "src/lib/spcExport.test.ts",
+     "vitest.config.ts"
+    ]
+   },
    {
     "sha": "4cad7a1",
     "date": "2026-11-13",
@@ -95211,24 +95223,6 @@
      ".claude/hooks/session-start.sh",
      ".claude/settings.json"
     ]
-   },
-   {
-    "sha": "94c39a5",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore(agentes): padrão enxuto de instruções com referência por tema (#141)",
-    "files": [
-     ".agents/skills/fast-grava-es-v2/SKILL.md",
-     ".claude/skills/fast-grava-es-v2/SKILL.md",
-     "AGENTS.md",
-     "docs/agentes/arquitetura.md",
-     "docs/agentes/banco.md",
-     "docs/agentes/github-ci.md",
-     "docs/agentes/mapa-repo.md",
-     "docs/agentes/vercel-deploy.md",
-     "scripts/ci/check-claude-md-integrity.mjs",
-     "scripts/supabase_snapshot/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95285,10 +95279,6 @@
     2
    ],
    [
-    "AGENTS.md",
-    2
-   ],
-   [
     "src/components/activity/ActivityLog.tsx",
     2
    ],
@@ -95310,6 +95300,10 @@
    ],
    [
     "src/components/error/GlobalErrorBoundary.tsx",
+    2
+   ],
+   [
+    "src/components/jobs/JobCostsTab.tsx",
     2
    ]
   ]

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)",
    "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)",
    "fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)",
    "fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, UTF-8) (#157)",
-   "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)",
-   "style(manutencao): aplica correcoes locais verificadas (#169)"
+   "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

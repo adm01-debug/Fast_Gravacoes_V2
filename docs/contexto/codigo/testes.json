@@ -682,7 +682,7 @@
   {
    "arquivo": "src/lib/spcExport.test.ts",
    "tipo": "unit",
-   "linhas": 159,
+   "linhas": 160,
    "testa": [
     "src/features/analytics/hooks/useSPC.ts",
     "src/lib/spcExport.ts"
