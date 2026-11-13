@@ -65,11 +65,11 @@
   {
    "arquivo": "scripts/automation.unit.mjs",
    "tipo": "unit",
-   "linhas": 729,
+   "linhas": 739,
    "testa": [
     "scripts/automation.mjs"
    ],
-   "casos": 33,
+   "casos": 34,
    "suporte": false
   },
   {

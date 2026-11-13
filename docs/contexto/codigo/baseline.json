@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
+  "commit": "1fc2844699141687476f5f67b8403d1f3ecb87f7",
   "branch": "main",
-  "data_commit": "2026-11-13T02:09:28-03:00",
+  "data_commit": "2026-11-13T10:16:16-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "1fc2844",
+    "data": "2026-11-13",
+    "assunto": "fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)"
+   },
    {
     "sha": "358f079",
     "data": "2026-11-13",
@@ -126,15 +131,10 @@
     "sha": "d61122a",
     "data": "2026-11-09",
     "assunto": "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)"
-   },
-   {
-    "sha": "dcdf3a3",
-    "data": "2026-11-08",
-    "assunto": "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 438,
+  "arquivos_mudados_7d": 439,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -200,7 +200,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "AGENTS.md",
@@ -243,6 +243,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 5
+   },
+   {
     "arquivo": "scripts/rls-regression.mjs",
     "mudancas": 5
    },
@@ -269,10 +273,6 @@
    {
     "arquivo": "tests/e2e/visual-regression.spec.ts",
     "mudancas": 5
-   },
-   {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 50
+    "commits": 51
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -313,7 +313,7 @@
  "contagens": {
   "arquivos_total": 1528,
   "arquivos_codigo": 1115,
-  "linhas_codigo": 187380,
+  "linhas_codigo": 187398,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -377,11 +377,11 @@
   },
   "scripts/automation.mjs": {
    "arquivos": 1,
-   "linhas": 1183
+   "linhas": 1191
   },
   "scripts/automation.unit.mjs": {
    "arquivos": 1,
-   "linhas": 729
+   "linhas": 739
   },
   "scripts/bundle-diff.mjs": {
    "arquivos": 1,
@@ -571,7 +571,7 @@
   },
   {
    "arquivo": "scripts/automation.mjs",
-   "linhas": 1183
+   "linhas": 1191
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",

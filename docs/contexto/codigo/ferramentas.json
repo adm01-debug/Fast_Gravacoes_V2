@@ -288,14 +288,14 @@
   },
   {
    "arquivo": ".github/workflows/contexto.yml",
-   "nome": "Contexto para agentes de IA (10 min)",
+   "nome": "Contexto para agentes de IA (30 min)",
    "gatilhos": [
     "push",
     "schedule",
     "workflow_dispatch"
    ],
    "crons": [
-    "3-59/10 * * * *"
+    "3,33 * * * *"
    ],
    "branches": [
     "main"

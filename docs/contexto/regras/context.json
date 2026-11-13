@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
+  "sha": "1fc2844699141687476f5f67b8403d1f3ecb87f7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-13 05:28 UTC",
-  "files_total": 1525,
+  "generated_at": "2026-11-13 13:59 UTC",
+  "files_total": 1526,
   "code_files": 1371,
-  "code_lines": 202509
+  "code_lines": 202527
  },
  "version": "1.3.2",
- "facts_hash": "73991312d3c319e6",
+ "facts_hash": "3b982373a9171533",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -210,7 +210,7 @@
    },
    {
     "file": ".github/workflows/contexto.yml",
-    "name": "Contexto para agentes de IA (10 min)",
+    "name": "Contexto para agentes de IA (30 min)",
     "triggers": [
      "push",
      "schedule",
@@ -25632,7 +25632,7 @@
    },
    {
     "kind": "GitHub Actions cron",
-    "detail": "3-59/10 * * * *",
+    "detail": "3,33 * * * *",
     "file": ".github/workflows/contexto.yml"
    },
    {
@@ -26778,7 +26778,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26192,
+   "lines": 26210,
    "tables": [
     "a",
     "c1",
@@ -66613,7 +66613,7 @@
   },
   "scripts/automation.mjs": {
    "path": "scripts/automation.mjs",
-   "lines": 1183,
+   "lines": 1191,
    "exports": [
     "function parseArgs",
     "function validateConfig",
@@ -66644,7 +66644,7 @@
   },
   "scripts/automation.unit.mjs": {
    "path": "scripts/automation.unit.mjs",
-   "lines": 729,
+   "lines": 739,
    "env": [
     "FIXTURE_GRAPH_EXIT"
    ],
@@ -94549,10 +94549,23 @@
   }
  },
  "git": {
-  "sha": "358f0798db1f56cb1c8fa957add0f3dd26f40bed",
+  "sha": "1fc2844699141687476f5f67b8403d1f3ecb87f7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "1fc2844",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)",
+    "files": [
+     ".gitattributes",
+     ".github/workflows/ci.yml",
+     ".github/workflows/contexto.yml",
+     "scripts/automation.mjs",
+     "scripts/automation.unit.mjs"
+    ]
+   },
    {
     "sha": "358f079",
     "date": "2026-11-13",
@@ -95199,27 +95212,20 @@
     "files": [
      "supabase/migrations/20261108000001_business_rules_ddl.sql"
     ]
-   },
-   {
-    "sha": "5db90ba",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: regras de negócio Nov 2026 (R1.1, R1.5, R2.4, R3.2, R4.2–R4.4)",
-    "files": [
-     "docs/contexto/regras/manual/regras-implementadas-2026-11.md",
-     "src/components/jobs/JobDetailsModal.tsx",
-     "src/components/operator/PreProductionChecklistModal.tsx",
-     "src/features/packaging/components/DefectTriageForm.tsx",
-     "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
-     "src/features/packaging/types/packaging.schema.ts",
-     "src/pages/PublicTrackingPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
+    ".github/workflows/ci.yml",
+    4
+   ],
+   [
     "scripts/supabase_snapshot/test_snapshot.py",
     4
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    3
    ],
    [
     "package.json",
@@ -95227,10 +95233,6 @@
    ],
    [
     "scripts/supabase_snapshot/snapshot.py",
-    3
-   ],
-   [
-    ".github/workflows/ci.yml",
     3
    ],
    [
@@ -95248,6 +95250,14 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     3
+   ],
+   [
+    "scripts/automation.mjs",
+    2
+   ],
+   [
+    "scripts/automation.unit.mjs",
+    2
    ],
    [
     "AGENTS.md",
@@ -95283,18 +95293,6 @@
    ],
    [
     "src/components/kanban/DraggableJobCard.tsx",
-    2
-   ],
-   [
-    "src/components/kanban/KanbanAIAdvisor.tsx",
-    2
-   ],
-   [
-    "src/components/kanban/KanbanFiltersBar.tsx",
-    2
-   ],
-   [
-    "src/components/knowledge/TechnicalSheetViewer.tsx",
     2
    ]
   ]
