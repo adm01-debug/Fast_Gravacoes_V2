@@ -217,6 +217,16 @@ test('doctor não confunde comentário de workflow com execução', (t) => {
   assert.match(r.stdout, /sem run encadeado/);
 });
 
+  test('doctor aceita workflow com fim de linha CRLF (worktree Windows)', (t) => {
+    const f = fixture(t);
+    f.write(
+      '.github/workflows/ci.yml',
+      'name: fixture\r\non:\r\n  pull_request: {}\r\n  push:\r\n    branches: [main]\r\njobs:\r\n  tools:\r\n    runs-on: ubuntu-latest\r\n    steps:\r\n      - run: node scripts/automation.mjs test\r\n'
+    );
+    const r = f.cli('doctor', '--static');
+    assert.equal(r.status, 0, r.stdout);
+  });
+
 test('CLI/config desconhecidos falham e check/heal exigem ref explícita', (t) => {
   const f = fixture(t);
   for (const args of [

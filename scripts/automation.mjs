@@ -12,7 +12,7 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
-  realpathSync,
+  realpathSync as realpathNativeSync,
   renameSync,
   rmSync,
   statSync,
@@ -31,6 +31,14 @@ import {
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash, randomUUID } from 'node:crypto';
+
+// No Windows o mkdtemp/paths podem conter nome curto 8.3 (ex.: JOAQUI~1),
+// enquanto o git resolve para o nome longo. realpathSync.native expande 8.3;
+// fica com o JS puro como fallback defensivo.
+const realpathSync =
+  typeof realpathNativeSync.native === 'function'
+    ? realpathNativeSync.native
+    : realpathNativeSync;
 
 const SELF = fileURLToPath(import.meta.url);
 const APPROVED = join(homedir(), '.local/share/repo-maintenance');
@@ -616,7 +624,7 @@ async function doctor(ctx, staticOnly) {
       issues.push(`testes sem gatilho CI ${event}`);
   for (const item of c.ci) {
     const path = check(() => locate(root, c, config, item.file));
-    const text = path ? readFileSync(path, 'utf8') : '';
+        const text = path ? readFileSync(path, 'utf8').replace(/\r\n/g, '\n') : '';
     for (const event of item.events)
       if (!workflowEvent(text, event))
         issues.push(`workflow sem evento ${event}: ${item.file}`);
