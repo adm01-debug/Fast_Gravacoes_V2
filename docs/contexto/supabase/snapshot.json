@@ -301,7 +301,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379406199,
@@ -313,7 +313,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379407600,
@@ -325,7 +325,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379395547,
@@ -337,7 +337,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": false,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379404067,
@@ -349,7 +349,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379379734,
@@ -361,7 +361,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379387034,
@@ -373,7 +373,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379382183,
@@ -385,7 +385,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379380426,
@@ -397,7 +397,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379403284,
@@ -409,7 +409,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379391021,
@@ -421,7 +421,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379394898,
@@ -433,7 +433,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": false,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379382723,
@@ -445,7 +445,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379398594,
@@ -457,7 +457,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379391931,
@@ -469,7 +469,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379385545,
@@ -481,7 +481,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 25
       },
       {
         "created_at": 1791379381627,
@@ -493,7 +493,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379381034,
@@ -505,7 +505,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379408255,
@@ -517,7 +517,7 @@
         "status": "ACTIVE",
         "updated_at": 1793993799701,
         "verify_jwt": true,
-        "version": 21
+        "version": 23
       },
       {
         "created_at": 1791379393018,
@@ -529,7 +529,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379400193,
@@ -541,7 +541,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379401186,
@@ -553,7 +553,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 31
+        "version": 33
       },
       {
         "created_at": 1791379393997,
@@ -565,7 +565,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 25
       },
       {
         "created_at": 1791379396096,
@@ -577,7 +577,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379399176,
@@ -589,7 +589,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379406866,
@@ -601,7 +601,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 26
+        "version": 28
       },
       {
         "created_at": 1791379396879,
@@ -613,7 +613,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379405390,
@@ -625,7 +625,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379388973,
@@ -637,7 +637,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379397843,
@@ -649,7 +649,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379384889,
@@ -661,7 +661,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 24
+        "version": 26
       },
       {
         "created_at": 1791379384221,
@@ -673,7 +673,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 23
+        "version": 25
       },
       {
         "created_at": 1791379383546,
@@ -685,7 +685,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       },
       {
         "created_at": 1791379386183,
@@ -697,7 +697,7 @@
         "status": "ACTIVE",
         "updated_at": 1794437658168,
         "verify_jwt": true,
-        "version": 25
+        "version": 27
       }
     ],
     "enabled": true,
@@ -24566,19 +24566,19 @@
         },
         {
           "active": true,
-          "command": "chama: net.http_post",
+          "command": "chama: public.auto_reassign_stale_packaging_tasks",
           "database": "postgres",
-          "jobid": 11,
-          "jobname": "auto-promote-jobs-fallback",
+          "jobid": 12,
+          "jobname": "auto-reassign-packaging-30min",
           "schedule": "*/5 * * * *",
           "username": "postgres"
         },
         {
           "active": true,
-          "command": "chama: public.auto_reassign_stale_packaging_tasks",
+          "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 12,
-          "jobname": "auto-reassign-packaging-30min",
+          "jobid": 13,
+          "jobname": "auto-promote-jobs-fallback",
           "schedule": "*/5 * * * *",
           "username": "postgres"
         }

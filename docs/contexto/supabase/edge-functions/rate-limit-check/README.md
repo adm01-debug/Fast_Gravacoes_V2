@@ -4,7 +4,7 @@
 |---|---|
 | nome | rate-limit-check |
 | status | ACTIVE |
-| versão | 24 |
+| versão | 26 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/rate-limit-check/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

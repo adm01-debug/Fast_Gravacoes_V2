@@ -4,7 +4,7 @@
 |---|---|
 | nome | csp-report |
 | status | ACTIVE |
-| versão | 25 |
+| versão | 27 |
 | verify_jwt | não |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/csp-report/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
