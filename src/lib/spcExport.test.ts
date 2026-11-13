@@ -101,7 +101,8 @@ describe('spcExport', () => {
       'Amostra', 'Data', 'Valores', 'Média', 'Amplitude', 'Status',
     ]);
     expect((measurementsCall[1] as { body: unknown[][] }).body[0]).toEqual([
-      1, '01/02 10:00', '10.1, 10.2, 9.9', '10.070', '0.300', 'EM CONTROLE',
+      // measured_at 10:00Z = 07:00 em America/Sao_Paulo (fuso fixado no vitest)
+      1, '01/02 07:00', '10.1, 10.2, 9.9', '10.070', '0.300', 'EM CONTROLE',
     ]);
 
     expect(jsPdfSave).toHaveBeenCalledTimes(1);

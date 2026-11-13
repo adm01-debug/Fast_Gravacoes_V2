@@ -14,6 +14,12 @@ for (const [k, v] of Object.entries(TEST_ENV_DEFAULTS)) {
   if (!process.env[k]) process.env[k] = v;
 }
 
+// Pin the timezone so date assertions are identical on every machine and in
+// CI. We pin the USERS' timezone (Brazil): in UTC, date-only bugs that show
+// the previous day to Brazilian users stay invisible.
+// Workers inherit this env, so every test file sees America/Sao_Paulo.
+process.env.TZ = 'America/Sao_Paulo';
+
 export default defineConfig({
   plugins: [react()],
   define: {
