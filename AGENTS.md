@@ -134,5 +134,8 @@ Escrita em repos `adm01-debug`: MCP **`GITHUB - MCP - FOREVER`** (o padrão dá 
 `npm run graph:doctor|build|check`. Antes de mudança cross-file:
 `npm run graph:query -- "símbolo módulo" --budget 1500` e confira as linhas citadas; `graph:affected`,
 `graph:path`, `graph:explain`; `--profile security|frontend|backend` para escopo menor. Mudou código →
-`graph:build`. Artefatos e venv locais/ignorados; sem hooks nativos sobre o Husky. Limites:
+`graph:build`. Artefatos e venv locais/ignorados; sem hooks nativos sobre o Husky. O snapshot do
+árvore Python (`graph:build`) vive em `graphify-out/`, e o do motor local (`graphify-local.mjs`,
+disparado por `automation graph`) em `graphify-local-out/` — são independentes e ambos ignorados.
+Limites:
 `docs/agentes/graphify.md`.
