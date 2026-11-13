@@ -55,11 +55,11 @@ jobs:
         with:
           node-version: 24
 
-      - name: Testar os geradores antes de rodar
-        run: node --test 'scripts/inventario/*.unit.mjs'
-
       - name: Instalar ripgrep (usado pelo gerar-repo.mjs)
         run: command -v rg || sudo apt-get install -y --no-install-recommends ripgrep
+
+      - name: Testar os geradores antes de rodar
+        run: node --test 'scripts/inventario/*.unit.mjs'
 
       - name: Inventário do banco (somente leitura)
         env:
