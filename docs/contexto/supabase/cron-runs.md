@@ -7,27 +7,27 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-13 22:15:00 | succeeded | 3.54 | 1 row |
-| 2026-11-13 22:00:00 | succeeded | 3.49 | 1 row |
-| 2026-11-13 21:45:00 | succeeded | 3.54 | 1 row |
+| 2026-11-13 23:15:00 | succeeded | 3.65 | 1 row |
+| 2026-11-13 23:00:00 | succeeded | 3.33 | 1 row |
+| 2026-11-13 22:45:00 | succeeded | 3.49 | 1 row |
 
 
 ## 5 · cron-alert-email-every-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-13 23:00:00 | succeeded | 0.04 | 1 row |
+| 2026-11-13 22:30:00 | succeeded | 0.03 | 1 row |
 | 2026-11-13 22:00:00 | succeeded | 0.01 | 1 row |
-| 2026-11-13 21:30:00 | succeeded | 0.01 | 1 row |
-| 2026-11-13 21:00:00 | succeeded | 0.01 | 1 row |
 
 
 ## 6 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-13 22:20:00 | succeeded | 0.02 | 1 row |
-| 2026-11-13 22:15:00 | succeeded | 0.03 | 1 row |
-| 2026-11-13 22:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-13 23:25:00 | succeeded | 0.01 | 1 row |
+| 2026-11-13 23:20:00 | succeeded | 0.03 | 1 row |
+| 2026-11-13 23:15:00 | succeeded | 0.05 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -52,15 +52,15 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-13 22:20:00 | succeeded | 0.01 | 1 row |
-| 2026-11-13 22:15:00 | succeeded | 0.01 | 1 row |
-| 2026-11-13 22:10:00 | succeeded | 0.01 | 1 row |
+| 2026-11-13 23:25:00 | succeeded | 0.01 | 1 row |
+| 2026-11-13 23:20:00 | succeeded | 0.01 | 1 row |
+| 2026-11-13 23:15:00 | succeeded | 0.05 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-13 22:20:00 | succeeded | 0.02 | 1 row |
-| 2026-11-13 22:15:00 | succeeded | 0.02 | 1 row |
-| 2026-11-13 22:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-13 23:25:00 | succeeded | 0.02 | 1 row |
+| 2026-11-13 23:20:00 | succeeded | 0.03 | 1 row |
+| 2026-11-13 23:15:00 | succeeded | 0.04 | 1 row |
