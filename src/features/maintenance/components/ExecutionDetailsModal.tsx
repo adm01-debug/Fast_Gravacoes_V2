@@ -107,17 +107,11 @@ export function ExecutionDetailsModal({ isOpen, onClose, recordId }: ExecutionDe
       return;
     }
 
-    try {
-      await requestCorrection.mutateAsync({
-        record_id: recordId,
-        notes
-      });
-      loadDetails();
-    } catch (error) {
-      // Erro já exibido pela mutation; propaga para o formulário não fechar
-      // e perder o texto digitado.
-      throw error;
-    }
+    await requestCorrection.mutateAsync({
+      record_id: recordId,
+      notes
+    });
+    loadDetails();
   };
 
   const handleExportZIP = async () => {
