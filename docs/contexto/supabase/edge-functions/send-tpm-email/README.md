@@ -4,7 +4,7 @@
 |---|---|
 | nome | send-tpm-email |
 | status | ACTIVE |
-| versão | 28 |
+| versão | 31 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-tpm-email/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
