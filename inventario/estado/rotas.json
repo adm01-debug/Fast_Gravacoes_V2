@@ -6,7 +6,7 @@
     "protegidas": 50,
     "publicas": 6,
     "redirecionamentos": 2,
-    "hooks_distintos": 192,
+    "hooks_distintos": 191,
     "problemas": 0
   },
   "urls": [
@@ -244,10 +244,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingConflicts",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -472,10 +468,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -601,10 +593,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -717,10 +705,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -755,7 +739,7 @@
       "protegida": true,
       "papeis": [],
       "redireciona": null,
-      "arquivos_lidos": 181,
+      "arquivos_lidos": 177,
       "hooks": [
         {
           "nome": "useABCCosts",
@@ -966,10 +950,6 @@
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -1177,10 +1157,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -1321,10 +1297,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -1421,7 +1393,7 @@
         "coordinator"
       ],
       "redireciona": null,
-      "arquivos_lidos": 113,
+      "arquivos_lidos": 108,
       "hooks": [
         {
           "nome": "useABCCalculations",
@@ -1568,10 +1540,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -1625,7 +1593,6 @@
         "increment_job_lost_pieces"
       ],
       "tabelas": [
-        "error_logs",
         "job_status_history",
         "jobs",
         "machine_downtime",
@@ -1851,10 +1818,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingConflicts",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -2062,10 +2025,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -2117,7 +2076,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 89,
+      "arquivos_lidos": 88,
       "hooks": [
         {
           "nome": "useABCCosts",
@@ -2274,10 +2233,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingConflicts",
@@ -2454,10 +2409,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -2588,10 +2539,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -2727,10 +2674,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -2861,10 +2804,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -3048,10 +2987,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -3132,7 +3067,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 43,
+      "arquivos_lidos": 41,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -3205,10 +3140,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -3352,10 +3283,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -3484,10 +3411,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -3648,10 +3571,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -3784,10 +3703,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -4019,10 +3934,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -4233,10 +4144,6 @@
         {
           "nome": "useTPMNotifications",
           "arquivo": "src/features/notifications/hooks/useTPMNotifications.ts"
-        },
-        {
-          "nome": "useUpdateJobStatus",
-          "arquivo": "src/features/jobs/index.ts"
         }
       ],
       "buckets": [
@@ -4278,7 +4185,7 @@
       "protegida": true,
       "papeis": [],
       "redireciona": null,
-      "arquivos_lidos": 92,
+      "arquivos_lidos": 90,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -4381,10 +4288,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -4470,7 +4373,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 138,
+      "arquivos_lidos": 137,
       "hooks": [
         {
           "nome": "useABCCalculations",
@@ -4651,10 +4554,6 @@
         {
           "nome": "useRealtimeResetRequests",
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -4853,10 +4752,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -4902,7 +4797,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 149,
+      "arquivos_lidos": 140,
       "hooks": [
         {
           "nome": "useABCCosts",
@@ -5033,10 +4928,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -5157,7 +5048,6 @@
         "tpm_execution_alerts",
         "tpm_execution_parts",
         "tpm_execution_supplies",
-        "tpm_severity_configs",
         "user_roles"
       ],
       "imports_quebrados": []
@@ -5281,10 +5171,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -5425,10 +5311,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -5529,10 +5411,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -5708,10 +5586,6 @@
         {
           "nome": "useRealtimeResetRequests",
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -5904,10 +5778,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -6089,10 +5959,6 @@
         {
           "nome": "useRealtimeResetRequests",
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -6300,10 +6166,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -6403,7 +6265,7 @@
       "protegida": true,
       "papeis": [],
       "redireciona": null,
-      "arquivos_lidos": 148,
+      "arquivos_lidos": 147,
       "hooks": [
         {
           "nome": "useABCCosts",
@@ -6612,10 +6474,6 @@
         {
           "nome": "useRealtimeResetRequests",
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -6836,10 +6694,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -7013,10 +6867,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -7074,7 +6924,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 110,
+      "arquivos_lidos": 109,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -7215,10 +7065,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -7457,10 +7303,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -7565,7 +7407,7 @@
         "coordinator"
       ],
       "redireciona": null,
-      "arquivos_lidos": 111,
+      "arquivos_lidos": 109,
       "hooks": [
         {
           "nome": "useABCCosts",
@@ -7718,10 +7560,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -7899,10 +7737,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -7953,7 +7787,7 @@
       "protegida": true,
       "papeis": [],
       "redireciona": null,
-      "arquivos_lidos": 49,
+      "arquivos_lidos": 48,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -8032,10 +7866,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -8050,10 +7880,6 @@
         {
           "nome": "useThemeSound",
           "arquivo": "src/hooks/useThemeSound.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
         }
       ],
       "buckets": [],
@@ -8227,10 +8053,6 @@
         {
           "nome": "useRemoveCountryRule",
           "arquivo": "src/features/admin/hooks/useGeoBlocking.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useRolePermissions",
@@ -8432,10 +8254,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useSchedulingData",
           "arquivo": "src/features/jobs/index.ts"
         },
@@ -8570,10 +8388,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -8716,10 +8530,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -8826,10 +8636,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useScrollDirection",
@@ -8954,10 +8760,6 @@
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -8996,7 +8798,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 107,
+      "arquivos_lidos": 103,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -9139,10 +8941,6 @@
           "arquivo": "src/hooks/useRealtimeResetRequests.tsx"
         },
         {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
-        },
-        {
           "nome": "useScrollDirection",
           "arquivo": "src/hooks/use-scroll-direction.tsx"
         },
@@ -9258,7 +9056,7 @@
         "manager"
       ],
       "redireciona": null,
-      "arquivos_lidos": 88,
+      "arquivos_lidos": 87,
       "hooks": [
         {
           "nome": "useAlertCount",
@@ -9383,10 +9181,6 @@
         {
           "nome": "useRealtimeConnection",
           "arquivo": "src/features/analytics/hooks/useRealtimeConnection.ts"
-        },
-        {
-          "nome": "useRipple",
-          "arquivo": "src/components/ui/micro-interactions.tsx"
         },
         {
           "nome": "useSchedulingData",
@@ -11565,60 +11359,6 @@
         "/security"
       ]
     },
-    "useRipple": {
-      "arquivo": "src/components/ui/micro-interactions.tsx",
-      "rotas": [
-        "/",
-        "/abc-costing",
-        "/admin/monitoring",
-        "/admin/telemetria",
-        "/alerts",
-        "/assistant",
-        "/audit",
-        "/bi",
-        "/calendar/daily",
-        "/calendar/monthly",
-        "/calendar/weekly",
-        "/code-quality",
-        "/design-system",
-        "/digital-twin",
-        "/documents",
-        "/efficiency",
-        "/energy",
-        "/executive",
-        "/gamification",
-        "/integrations/bitrix24",
-        "/inventory",
-        "/kanban",
-        "/knowledge",
-        "/kpis",
-        "/logistics",
-        "/machines",
-        "/machines/compare",
-        "/master-api",
-        "/mfa-enrollment",
-        "/ml-predictions",
-        "/new-job",
-        "/notifications",
-        "/oee",
-        "/operator",
-        "/operator-history",
-        "/operator-productivity",
-        "/operators",
-        "/packaging",
-        "/pending",
-        "/report-builder",
-        "/scanner",
-        "/security",
-        "/settings",
-        "/shift-handover",
-        "/simulation",
-        "/spc",
-        "/status",
-        "/tpm",
-        "/traceability"
-      ]
-    },
     "useRolePermissions": {
       "arquivo": "src/features/auth/index.ts",
       "rotas": [
@@ -12228,7 +11968,6 @@
         "/operator",
         "/operators",
         "/pending",
-        "/scanner",
         "/security",
         "/tpm",
         "/traceability"
@@ -12275,7 +12014,6 @@
       "rotas": [
         "/calendar/daily",
         "/calendar/weekly",
-        "/kiosk",
         "/operator"
       ]
     },
