@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9afb1a20adc6d19f8fe1827d11aa24d6dde8f152",
+  "commit": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
   "branch": "main",
-  "data_commit": "2026-11-14T11:00:06-03:00",
+  "data_commit": "2026-11-14T12:01:34-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "4991121",
+    "data": "2026-11-14",
+    "assunto": "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)"
+   },
    {
     "sha": "9afb1a2",
     "data": "2026-11-14",
@@ -126,23 +131,18 @@
     "sha": "a220f13",
     "data": "2026-11-10",
     "assunto": "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)"
-   },
-   {
-    "sha": "346947d",
-    "data": "2026-11-10",
-    "assunto": "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 398,
+  "arquivos_mudados_7d": 408,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "pasta": "src/features/maintenance",
-    "mudancas": 19
+    "mudancas": 21
    },
    {
     "pasta": "src/features/notifications",
@@ -161,6 +161,14 @@
     "mudancas": 13
    },
    {
+    "pasta": "src/components/navigation",
+    "mudancas": 10
+   },
+   {
+    "pasta": "src/features/production",
+    "mudancas": 10
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 10
    },
@@ -173,7 +181,7 @@
     "mudancas": 9
    },
    {
-    "pasta": "src/components/navigation",
+    "pasta": "src/features/packaging",
     "mudancas": 9
    },
    {
@@ -185,16 +193,8 @@
     "mudancas": 8
    },
    {
-    "pasta": "src/features/inventory",
+    "pasta": "src/components/ui",
     "mudancas": 8
-   },
-   {
-    "pasta": "AGENTS.md",
-    "mudancas": 7
-   },
-   {
-    "pasta": "PENDENCIAS.md",
-    "mudancas": 7
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 57
+    "commits": 58
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -317,7 +317,7 @@
  "contagens": {
   "arquivos_total": 1529,
   "arquivos_codigo": 1115,
-  "linhas_codigo": 187460,
+  "linhas_codigo": 187466,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -469,7 +469,7 @@
   },
   "src/components": {
    "arquivos": 415,
-   "linhas": 58552
+   "linhas": 58554
   },
   "src/constants": {
    "arquivos": 2,
@@ -477,15 +477,15 @@
   },
   "src/contexts": {
    "arquivos": 14,
-   "linhas": 1129
+   "linhas": 1130
   },
   "src/features": {
    "arquivos": 327,
-   "linhas": 45340
+   "linhas": 45342
   },
   "src/hooks": {
    "arquivos": 61,
-   "linhas": 7768
+   "linhas": 7769
   },
   "src/i18n": {
    "arquivos": 1,

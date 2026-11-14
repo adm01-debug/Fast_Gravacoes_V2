@@ -5786,7 +5786,7 @@
     "ErrorBoundary"
    ],
    "export_default": null,
-   "linhas": 143,
+   "linhas": 144,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [
@@ -6456,7 +6456,7 @@
     "DirtyGuardProvider"
    ],
    "export_default": null,
-   "linhas": 170,
+   "linhas": 171,
    "dominio": "contexts",
    "hooks_locais": [
     "useDirtyForm",
@@ -8136,7 +8136,7 @@
     "ExecutionRow"
    ],
    "export_default": null,
-   "linhas": 320,
+   "linhas": 314,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useAuth",
@@ -8377,7 +8377,7 @@
     "TPMParameterAlerts"
    ],
    "export_default": null,
-   "linhas": 138,
+   "linhas": 139,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useRealtimeChannel"

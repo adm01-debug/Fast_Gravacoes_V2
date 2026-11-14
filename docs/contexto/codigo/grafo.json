@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 990,
- "arestas": 4537,
+ "arestas": 4538,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/lib/logger.ts",
-   "importado_por": 58
+   "importado_por": 59
   },
   {
    "arquivo": "src/components/ui/progress.tsx",

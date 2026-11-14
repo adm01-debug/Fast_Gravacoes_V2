@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9afb1a20adc6d19f8fe1827d11aa24d6dde8f152",
+  "sha": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 14:20 UTC",
+  "generated_at": "2026-11-14 15:15 UTC",
   "files_total": 1527,
   "code_files": 1371,
-  "code_lines": 202589
+  "code_lines": 202595
  },
  "version": "1.3.2",
- "facts_hash": "70f57b8ebdc1c23d",
+ "facts_hash": "425002ff033b1f28",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -27002,7 +27002,7 @@
   {
    "module": "src/components",
    "files": 415,
-   "lines": 58552,
+   "lines": 58554,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -27220,7 +27220,7 @@
   {
    "module": "src/contexts",
    "files": 14,
-   "lines": 1129,
+   "lines": 1130,
    "tables": [
     "security_events"
    ],
@@ -27434,7 +27434,7 @@
   {
    "module": "src/features/analytics",
    "files": 78,
-   "lines": 11916,
+   "lines": 11917,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -27832,7 +27832,7 @@
   {
    "module": "src/features/maintenance",
    "files": 41,
-   "lines": 7333,
+   "lines": 7328,
    "tables": [
     "machine_predictions",
     "machines",
@@ -28071,7 +28071,7 @@
   {
    "module": "src/features/packaging",
    "files": 35,
-   "lines": 3550,
+   "lines": 3555,
    "tables": [
     "audit_log",
     "packaging_checklist_items",
@@ -28179,7 +28179,7 @@
   {
    "module": "src/features/production",
    "files": 31,
-   "lines": 3551,
+   "lines": 3552,
    "tables": [
     "jobs",
     "machine_downtime",
@@ -28289,7 +28289,7 @@
   {
    "module": "src/hooks",
    "files": 61,
-   "lines": 7768,
+   "lines": 7769,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -32563,7 +32563,7 @@
     "file": "src/features/production/types/operator.schema.ts",
     "name": "operatorSchema",
     "kind": "object",
-    "body": "{ id: z.string().uuid(), name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100, 'Nome muito longo'), email: z.string().email('Email inválido').max(254, 'Email muito longo'), role: z.enum(['operator', 'coordinator', 'manager']), is_active: z.boolean().default(true), phone: z.string().regex(/^[\\d\\s\\-\\(\\)\\+]{0,20}$/, 'Telefone inválido').nullable().optional(), badge_number: z.string().max(20, 'Número de crachá muito longo').nullable().optional(), }",
+    "body": "{ id: z.string().uuid(), name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100, 'Nome muito longo'), email: z.string().email('Email inválido').max(254, 'Email muito longo'), role: z.enum(['operator', 'coordinator', 'manager']), is_active: z.boolean().default(true), phone: z.string().regex(/^[\\d\\s\\-()+]{0,20}$/, 'Telefone inválido').nullable().optional(), badge_number: z.string().max(20, 'Número de crachá muito longo').nullable().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -34542,6 +34542,10 @@
    {
     "file": "src/features/packaging/hooks/usePackagingChecklist.ts",
     "msg": "Tarefa inválida"
+   },
+   {
+    "file": "src/features/packaging/hooks/usePackagingTask.ts",
+    "msg": "Tarefa não selecionada"
    },
    {
     "file": "src/features/packaging/services/packagingService.ts",
@@ -72877,7 +72881,7 @@
   },
   "src/components/navigation/DialogHistoryGuard.tsx": {
    "path": "src/components/navigation/DialogHistoryGuard.tsx",
-   "lines": 195,
+   "lines": 196,
    "exports": [
     "const SENTINEL_KEY",
     "const hasActiveDialogSentinel",
@@ -75396,7 +75400,7 @@
   },
   "src/components/ui/error-boundary.tsx": {
    "path": "src/components/ui/error-boundary.tsx",
-   "lines": 143,
+   "lines": 144,
    "exports": [
     "class ErrorBoundary"
    ],
@@ -75731,7 +75735,7 @@
   },
   "src/contexts/DirtyFormContext.tsx": {
    "path": "src/contexts/DirtyFormContext.tsx",
-   "lines": 170,
+   "lines": 171,
    "exports": [
     "function DirtyGuardProvider",
     "function useDirtyGuard",
@@ -78542,7 +78546,7 @@
   },
   "src/features/analytics/hooks/useMLPredictions.ts": {
    "path": "src/features/analytics/hooks/useMLPredictions.ts",
-   "lines": 218,
+   "lines": 219,
    "exports": [
     "interface MachinePrediction",
     "interface PredictionFactor",
@@ -80687,7 +80691,7 @@
   },
   "src/features/maintenance/components/ExecutionDetailsModal.tsx": {
    "path": "src/features/maintenance/components/ExecutionDetailsModal.tsx",
-   "lines": 320,
+   "lines": 314,
    "exports": [
     "type ExecutionRecord",
     "type ExecutionRow",
@@ -81111,7 +81115,7 @@
   },
   "src/features/maintenance/components/TPMParameterAlerts.tsx": {
    "path": "src/features/maintenance/components/TPMParameterAlerts.tsx",
-   "lines": 138,
+   "lines": 139,
    "exports": [
     "function TPMParameterAlerts"
    ],
@@ -83181,9 +83185,12 @@
   },
   "src/features/packaging/hooks/usePackagingTask.ts": {
    "path": "src/features/packaging/hooks/usePackagingTask.ts",
-   "lines": 85,
+   "lines": 90,
    "exports": [
     "function usePackagingTask"
+   ],
+   "errors": [
+    "Tarefa não selecionada"
    ],
    "hooks": [
     "usePackagingTask"
@@ -83553,7 +83560,7 @@
   },
   "src/features/production/hooks/useMachineStatusHub.ts": {
    "path": "src/features/production/hooks/useMachineStatusHub.ts",
-   "lines": 70,
+   "lines": 71,
    "exports": [
     "interface MachineStatus",
     "function useMachineStatusHub"
@@ -84513,7 +84520,7 @@
     {
      "name": "operatorSchema",
      "kind": "object",
-     "body": "{ id: z.string().uuid(), name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100, 'Nome muito longo'), email: z.string().email('Email inválido').max(254, 'Email muito longo'), role: z.enum(['operator', 'coordinator', 'manager']), is_active: z.boolean().default(true), phone: z.string().regex(/^[\\d\\s\\-\\(\\)\\+]{0,20}$/, 'Telefone inválido').nullable().optional(), badge_number: z.string().max(20, 'Número de crachá muito longo').nullable().optional(), }",
+     "body": "{ id: z.string().uuid(), name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100, 'Nome muito longo'), email: z.string().email('Email inválido').max(254, 'Email muito longo'), role: z.enum(['operator', 'coordinator', 'manager']), is_active: z.boolean().default(true), phone: z.string().regex(/^[\\d\\s\\-()+]{0,20}$/, 'Telefone inválido').nullable().optional(), badge_number: z.string().max(20, 'Número de crachá muito longo').nullable().optional(), }",
      "refines": [],
      "chain": []
     },
@@ -85744,7 +85751,7 @@
   },
   "src/hooks/useThemeSound.ts": {
    "path": "src/hooks/useThemeSound.ts",
-   "lines": 192,
+   "lines": 193,
    "exports": [
     "function useThemeSound"
    ],
@@ -94568,10 +94575,33 @@
   }
  },
  "git": {
-  "sha": "9afb1a20adc6d19f8fe1827d11aa24d6dde8f152",
+  "sha": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4991121",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)",
+    "files": [
+     "src/components/navigation/DialogHistoryGuard.tsx",
+     "src/components/ui/error-boundary.tsx",
+     "src/contexts/DirtyFormContext.tsx",
+     "src/features/analytics/hooks/useMLPredictions.ts",
+     "src/features/maintenance/components/ExecutionDetailsModal.tsx",
+     "src/features/maintenance/components/TPMParameterAlerts.tsx",
+     "src/features/packaging/components/DefectTriageForm.tsx",
+     "src/features/packaging/components/PackagingRegisterForm.tsx",
+     "src/features/packaging/hooks/usePackagingTask.ts",
+     "src/features/production/hooks/useMachineStatusHub.ts",
+     "src/features/production/hooks/useOEE.ts",
+     "src/features/production/types/operator.schema.ts",
+     "src/hooks/useThemeSound.ts",
+     "src/lib/realtimeChannel.ts",
+     "src/pages/OEEDashboard.tsx"
+    ]
+   },
    {
     "sha": "9afb1a2",
     "date": "2026-11-14",
@@ -94936,31 +94966,6 @@
      "scripts/supabase_snapshot/snapshot.py",
      "scripts/supabase_snapshot/test_snapshot.py"
     ]
-   },
-   {
-    "sha": "6701c3d",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)",
-    "files": [
-     ".any-baseline.json",
-     ".husky/commit-msg",
-     "docs/agentes/github-ci.md",
-     "docs/agentes/mapa-repo.md",
-     "package.json",
-     "scripts/audit-gate.mjs",
-     "scripts/audit-gate.test.mjs",
-     "scripts/bundle-diff.mjs",
-     "scripts/bundle-report.mjs",
-     "scripts/bundle.test.mjs",
-     "scripts/check-any-baseline.mjs",
-     "scripts/check-any-baseline.test.mjs",
-     "scripts/ci/check-claude-md-integrity.mjs",
-     "scripts/ci/check-claude-md-integrity.test.mjs",
-     "scripts/rls-regression.mjs",
-     "scripts/seed-users.test.mjs",
-     "supabase/seed-users.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -94974,10 +94979,6 @@
    ],
    [
     ".github/workflows/contexto.yml",
-    3
-   ],
-   [
-    "package.json",
     3
    ],
    [
@@ -95025,15 +95026,7 @@
     2
    ],
    [
-    "scripts/bundle-diff.mjs",
-    2
-   ],
-   [
-    "scripts/bundle.test.mjs",
-    2
-   ],
-   [
-    "scripts/rls-regression.mjs",
+    "package.json",
     2
    ],
    [
@@ -95043,6 +95036,18 @@
    [
     "scripts/regras_negocio/README.md",
     2
+   ],
+   [
+    "scripts/regras_negocio/publish.sh",
+    2
+   ],
+   [
+    "scripts/regras_negocio/test_publish.py",
+    2
+   ],
+   [
+    "src/components/navigation/DialogHistoryGuard.tsx",
+    1
    ]
   ]
  }

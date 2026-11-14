@@ -3479,6 +3479,7 @@
   "src/features/analytics/hooks/useMLPredictions.ts": [
    "src/integrations/supabase/client.ts",
    "src/lib/errorHandling.ts",
+   "src/lib/logger.ts",
    "src/lib/queryConfig.ts"
   ],
   "src/features/analytics/hooks/useRealtimeConnection.ts": [
