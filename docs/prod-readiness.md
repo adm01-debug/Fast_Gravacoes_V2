@@ -152,23 +152,28 @@ automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify
 
 ## 6. Banco / RLS
 - RLS Regression e check do CI (`ci.yml:469-514`) e passa.
-- Chave anonima no PostgREST contra `operators` -> **HTTP 401** (acesso negado a nao-autenticado) = RLS restringindo corretamente (prova de hardening).
+- Chave anonima no PostgREST contra `operators` -> **HTTP 404** (rota nao exposta ao schema publico; acesso negado a nao-autenticado). Contra `profiles` -> **HTTP 401 `permission denied`** (RLS ativa). Evidencia coletada ao vivo em 2026-11-14 (3x estavel).
 - Migrations de controle presentes: `20261107010000_verify_no_using_true_write_policies.sql`, R3.3 `20261109000001_fix_r3_3_revoke_public.sql` (PR #146 integrada).
 - **BLOQUEADO**: security advisors e comparacao migrations x banco exigem Management API (`SUPABASE_ACCESS_TOKEN`) - token indisponivel no ambiente; nao afirmo sem evidencia.
 
 ## 7. Producao (ao vivo)
-- health-check ao vivo: **HTTP 200**. Checks: database:read=pass (448ms), storage:list=pass (162ms), auth:session=pass, config:secrets=pass (0 missing); queue:tpm_notifications=**warn** (0 itens) -> status agregado 'degraded' apenas por esse warn (sem itens pendentes, nao e erro de codigo).
+- health-check ao vivo: **HTTP 200**. Checks: database:read=pass, storage:list=pass, auth:session=pass, config:secrets=pass (0 missing); queue:tpm_notifications=**warn (0 itens, `output: "[object Object]"`)** -> status agregado 'degraded'.
+- **Causa raiz diagnosticada**: `supabase/functions/health-check/index.ts:98` filtrava `.eq("processed", false)` mas a tabela `tpm_notification_queue` nao tem coluna `processed` (schema: `status` + `processed_at`; `tpm-notifications/index.ts:59` usa `.eq('status','pending')`). A query falhava sempre e o error era serializado como `[object Object]`.
+- **Fix implementado = PR #182** (troca para `.eq("status","pending")`, diff 1 linha); `deno check --frozen` exit 0. Pos-merge precisara confirmar `queue:tpm_notifications=pass` ao vivo.
 - **BLOQUEADO**: logs de edge functions/banco/deploy pos-ultimo-deploy - exige telemetria/access token indisponivel.
 
 ## 8. Entrega
 - PR **#180** aberta (claude/fix-inventario-rg-order-*) - fix do workflow de inventario (regra 8, aguardando dono).
+- PR **#182** aberta (claude/fix-healthcheck-queue-*) - fix de causa raiz no health-check (coluna inexistente na fila TPM). Edge function => deploy automatico => regra 8, aguardando dono.
 - Fixes ja integrados na main: #163 (db-admin `--yes`), #156 (concurrency E2E), #170 (ubuntu-24.04), #146 (R3.3 revoke public).
 
 ## BLOQUEADO / aguardando o dono
 1. **PR #180** - workflow de inventario (ordering ripgrep). Aguarda merge do dono (regra 8).
-2. **db-admin** - confirmar novo run verde quando runner disponivel.
-3. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
-4. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
-5. **Logs de producao pos-deploy** - precisa telemetria/access token.
-
+2. **PR #182** - health-check fila TPM (edge function, deploy automatico). Aguarda merge do dono (regra 8).
+3. **db-admin** - confirmar novo run verde quando runner disponivel (run 43510093330 ficou queued).
+4. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
+5. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
+6. **Logs de producao pos-deploy** - precisa telemetria/access token.
+7. **Workflows orfaos ativos sem arquivo na main** - 14 workflows `_tmp-*`/`tmp probe*`/`TEMP regenerate deno.lock` ainda ativos na API mas sem arquivo no main; nao executam (0 runs). Requer limpeza manual na UI (Settings > Actions > General > disabled/remover) - fora do escopo de codigo.
+8. **branch-hygiene-audit.yml e graphify.yml (main)** - sem run no branch main no periodo recente (branch-hygiene-audit: 0 runs; graphify: so PR-trigger, runs verdes). Nao configuram falha, mas nao ha execucao de agendado em main a certificar.
 _fim_
