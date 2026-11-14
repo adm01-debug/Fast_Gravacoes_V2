@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
       const { count, error } = await supabase
         .from("tpm_notification_queue")
         .select("id", { count: "exact", head: true })
-        .eq("processed", false);
+        .eq("status", "pending");
       if (error) throw error;
       return count ?? 0;
     });
