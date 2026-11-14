@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "a28848f06a8a22b61767321b1c5057e31f7005d0",
+  "sha": "144be3e34937308b0a61c554c2ded1ac521360a3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 11:37 UTC",
+  "generated_at": "2026-11-14 12:00 UTC",
   "files_total": 1527,
   "code_files": 1371,
   "code_lines": 202589
@@ -94567,10 +94567,17 @@
   }
  },
  "git": {
-  "sha": "a28848f06a8a22b61767321b1c5057e31f7005d0",
+  "sha": "144be3e34937308b0a61c554c2ded1ac521360a3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "144be3e",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856",
+    "files": []
+   },
    {
     "sha": "a28848f",
     "date": "2026-11-14",
@@ -94578,6 +94585,15 @@
     "subject": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)",
     "files": [
      "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "1ee7704",
+    "date": "2026-11-13",
+    "author": "Copilot",
+    "subject": "fix(ci): instala ripgrep antes dos testes dos geradores no inventario",
+    "files": [
+     ".github/workflows/inventario-estado-semanal.yml"
     ]
    },
    {
@@ -95201,27 +95217,6 @@
     "files": [
      ".github/workflows/ci.yml"
     ]
-   },
-   {
-    "sha": "dcdf3a3",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix(vercel): aponta CSP report-uri para o Supabase Cloud oficial (#145)",
-    "files": [
-     "docs/operacoes/openapi-edge-functions.yaml",
-     "index.html",
-     "vercel.json"
-    ]
-   },
-   {
-    "sha": "961751a",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "docs(adr): oficializa Supabase Cloud como backend, supera ADR 0001 (#143)",
-    "files": [
-     "docs/adr/0001-supabase-self-hosted-unico.md",
-     "docs/adr/0005-supabase-cloud-e-o-backend-oficial.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95262,6 +95257,10 @@
     3
    ],
    [
+    ".github/workflows/inventario-estado-semanal.yml",
+    2
+   ],
+   [
     "scripts/autofix.test.mjs",
     2
    ],
@@ -95299,10 +95298,6 @@
    ],
    [
     "src/components/error/GlobalErrorBoundary.tsx",
-    2
-   ],
-   [
-    "src/components/jobs/JobCostsTab.tsx",
     2
    ]
   ]

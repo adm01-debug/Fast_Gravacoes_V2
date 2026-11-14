@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a28848f06a8a22b61767321b1c5057e31f7005d0` (2026-11-14T08:22:45-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `144be3e34937308b0a61c554c2ded1ac521360a3` (2026-11-14T08:55:45-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7429 nós · 21890 arestas · 660 comunidades · grafo do commit `a28848f0`
-- comunidades maiores: card.tsx (247), button.tsx (168), select.tsx (128), analytics/index.ts (123), skeleton.tsx (116), snapshot.py (107), errorHandling.ts (103), generate.py (101), DailyCalendar.tsx (99), gerar.mjs (96), .write (96), progress.tsx (94)
+- 7429 nós · 21890 arestas · 662 comunidades · grafo do commit `144be3e3`
+- comunidades maiores: card.tsx (242), Button (164), analytics/index.ts (143), select.tsx (127), skeleton.tsx (113), snapshot.py (107), useAuth (104), generate.py (101), DailyCalendar.tsx (99), gerar.mjs (96), .write (96), cn (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,7 +367,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-14 `144be3e` Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856
 - 2026-11-14 `a28848f` docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)
+- 2026-11-13 `1ee7704` fix(ci): instala ripgrep antes dos testes dos geradores no inventario
 - 2026-11-13 `2f4326c` test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)
 - 2026-11-13 `4cad7a1` fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)
 - 2026-11-13 `1fc2844` fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)
@@ -380,8 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `854fc23` fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)
 - 2026-11-11 `2f1c7bf` fix(ci): bundle-diff.mjs mostra "undefined KB" com totals antigo (#168)
 - 2026-11-11 `78b8006` fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)
-- 2026-11-11 `a19a8bb` fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)
-- 2026-11-11 `c9c9f66` fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

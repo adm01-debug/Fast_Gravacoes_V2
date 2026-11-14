@@ -2,15 +2,25 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a28848f06a8a22b61767321b1c5057e31f7005d0",
+  "commit": "144be3e34937308b0a61c554c2ded1ac521360a3",
   "branch": "main",
-  "data_commit": "2026-11-14T08:22:45-03:00",
+  "data_commit": "2026-11-14T08:55:45-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "144be3e",
+    "data": "2026-11-14",
+    "assunto": "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856"
+   },
    {
     "sha": "a28848f",
     "data": "2026-11-14",
     "assunto": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
+   },
+   {
+    "sha": "1ee7704",
+    "data": "2026-11-13",
+    "assunto": "fix(ci): instala ripgrep antes dos testes dos geradores no inventario"
    },
    {
     "sha": "2f4326c",
@@ -121,16 +131,6 @@
     "sha": "7a712fb",
     "data": "2026-11-10",
     "assunto": "fix(regras): usa o snapshot do banco como fonte (#154)"
-   },
-   {
-    "sha": "9df0dd4",
-    "data": "2026-11-10",
-    "assunto": "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)"
-   },
-   {
-    "sha": "6701c3d",
-    "data": "2026-11-10",
-    "assunto": "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,11 +302,15 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 54
+    "commits": 55
    },
    {
     "autor": "devin-ai-integration[bot]",
     "commits": 13
+   },
+   {
+    "autor": "Copilot",
+    "commits": 1
    }
   ]
  },
