@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "144be3e34937308b0a61c554c2ded1ac521360a3",
+  "sha": "c65ff2e0692e9cf096e9362c7a32859f3a787dba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 12:00 UTC",
+  "generated_at": "2026-11-14 12:21 UTC",
   "files_total": 1527,
   "code_files": 1371,
   "code_lines": 202589
  },
  "version": "1.3.2",
- "facts_hash": "4e2d1a2b57f82a31",
+ "facts_hash": "70f57b8ebdc1c23d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -31330,7 +31330,6 @@
    "tpm_notification_queue": [
     "id",
     "next_retry_at",
-    "processed",
     "retry_count",
     "status"
    ],
@@ -32299,12 +32298,7 @@
    "technical_sheet_versions",
    "tpm_execution_audit_logs"
   ],
-  "columns_unknown": [
-   {
-    "table": "tpm_notification_queue",
-    "column": "processed"
-   }
-  ]
+  "columns_unknown": []
  },
  "rules": {
   "validation_schemas": [
@@ -48030,6 +48024,12 @@
     "kind": "escreve"
    },
    {
+    "file": "supabase/functions/health-check/index.ts",
+    "field": "status",
+    "value": "pending",
+    "kind": "filtra"
+   },
+   {
     "file": "supabase/functions/health-monitor/index.ts",
     "field": "status",
     "value": "pass",
@@ -61298,6 +61298,7 @@
       "escreve:src/pages/AuthPage.tsx",
       "filtra:src/features/packaging/hooks/usePackagingOverdueCount.ts",
       "filtra:src/hooks/shift-handover/useShiftHandoverQueries.ts",
+      "filtra:supabase/functions/health-check/index.ts",
       "filtra:supabase/functions/tpm-notifications/index.ts"
      ],
      "overdue": [
@@ -66245,11 +66246,6 @@
     "where": [
      "filtra:src/features/admin/hooks/useMonitoringData.ts"
     ]
-   },
-   {
-    "kind": "coluna",
-    "msg": "coluna `processed` usada no código não existe no schema de `tpm_notification_queue`",
-    "where": []
    },
    {
     "kind": "tabela",
@@ -92142,7 +92138,7 @@
     ],
     "tpm_notification_queue": [
      "id",
-     "processed"
+     "status"
     ]
    },
    "env": [
@@ -92155,6 +92151,11 @@
      "field": "status",
      "value": "pass",
      "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "filtra"
     }
    ],
    "doc": "Consolidated health-check — inspired by RFC \"Health Check Response Format for HTTP APIs\" (draft-inadarei-api-health-check). Returns per-component status with latency and observation timestamps, without leaking secrets.",
@@ -94567,10 +94568,17 @@
   }
  },
  "git": {
-  "sha": "144be3e34937308b0a61c554c2ded1ac521360a3",
+  "sha": "c65ff2e0692e9cf096e9362c7a32859f3a787dba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c65ff2e",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804",
+    "files": []
+   },
    {
     "sha": "144be3e",
     "date": "2026-11-14",
@@ -94585,6 +94593,15 @@
     "subject": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)",
     "files": [
      "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "d588826",
+    "date": "2026-11-14",
+    "author": "Copilot",
+    "subject": "fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)",
+    "files": [
+     "supabase/functions/health-check/index.ts"
     ]
    },
    {
@@ -94954,279 +94971,16 @@
      "scripts/graphify/run.py",
      "scripts/graphify/tests/test_integration.py"
     ]
-   },
-   {
-    "sha": "6c96376",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "chore(src): remove imports e declarações não usados (#149)",
-    "files": [
-     "src/components/abc/ABCTechniqueChart.tsx",
-     "src/components/activity/ActivityLog.tsx",
-     "src/components/alerts/AlertViewAllModals.tsx",
-     "src/components/assistant/TechnicalAssistant.tsx",
-     "src/components/auth/AuthErrorBoundary.tsx",
-     "src/components/auth/AuthLoginForm.tsx",
-     "src/components/auth/PasswordStrengthIndicator.tsx",
-     "src/components/autonomous/AutonomousEventLog.tsx",
-     "src/components/calendar/AgendaView.tsx",
-     "src/components/calendar/CalendarFilters.tsx",
-     "src/components/calendar/ConflictResolutionPanel.tsx",
-     "src/components/calendar/OptimizationAssistant.tsx",
-     "src/components/dashboard/AlertScheduleModal.tsx",
-     "src/components/dashboard/AlertsWidget.tsx",
-     "src/components/dashboard/BottleneckWidget.tsx",
-     "src/components/dashboard/BufferPromotionStatus.tsx",
-     "src/components/dashboard/CompactTimeline.tsx",
-     "src/components/dashboard/DashboardExport.tsx",
-     "src/components/dashboard/EnergyWidget.tsx",
-     "src/components/dashboard/InventoryAlertsWidget.tsx",
-     "src/components/dashboard/LeaderboardWidget.tsx",
-     "src/components/dashboard/LiveMachineStatusPanel.tsx",
-     "src/components/dashboard/LoadBalancingWidget.tsx",
-     "src/components/dashboard/OEELoadTrendWidget.tsx",
-     "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
-     "src/components/dashboard/ShiftHandoverWidget.tsx",
-     "src/components/design-system/hooks/EfficiencyHooksDemos.tsx",
-     "src/components/design-system/sections/BackToOverviewButton.tsx",
-     "src/components/design-system/sections/ButtonsSection.tsx",
-     "src/components/design-system/sections/ChangelogSection.tsx",
-     "src/components/design-system/sections/FeedbackSection.tsx",
-     "src/components/design-system/sections/IconsSection.tsx",
-     "src/components/design-system/sections/cards/CardDashboardExample.tsx",
-     "src/components/design-system/sections/tables/InteractiveTables.tsx",
-     "src/components/digital-twin/CostSimulationCard.tsx",
-     "src/components/digital-twin/FactoryFloorMap.tsx",
-     "src/components/error/GlobalErrorBoundary.tsx",
-     "src/components/feedback/CelebrationMoment.tsx",
-     "src/components/integrations/Bitrix24SyncHistory.tsx",
-     "src/components/jobs/JobCostsTab.tsx",
-     "src/components/jobs/JobDetailsModal.tsx",
-     "src/components/jobs/JobInfoGrid.tsx",
-     "src/components/jobs/JobInstructionsTab.tsx",
-     "src/components/jobs/JobQualityTab.tsx",
-     "src/components/jobs/JobQuickActions.tsx",
-     "src/components/jobs/JobTraceabilityTab.tsx",
-     "src/components/kanban/DraggableJobCard.tsx",
-     "src/components/kanban/KanbanAIAdvisor.tsx",
-     "src/components/kanban/KanbanFiltersBar.tsx",
-     "src/components/kanban/KanbanMetricsBar.tsx",
-     "src/components/kiosk/KioskMode.tsx",
-     "src/components/knowledge/KnowledgeBaseStats.tsx",
-     "src/components/knowledge/KnowledgeSheetList.tsx",
-     "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
-     "src/components/knowledge/TechnicalSheetViewer.tsx",
-     "src/components/layout/AppSidebar.tsx",
-     "src/components/layout/MainLayout.tsx",
-     "src/components/layout/QuickFavoritesBar.tsx",
-     "src/components/layout/sidebar/sidebarNavConfig.ts",
-     "src/components/machines/FactoryHeatmap.tsx",
-     "src/components/machines/MachineBulkActions.tsx",
-     "src/components/machines/MachineReliabilityTab.tsx",
-     "src/components/machines/MachineStatsCards.tsx",
-     "src/components/ml/MLRiskDistributionChart.tsx",
-     "src/components/mobile/PullToRefresh.tsx",
-     "src/components/mobile/SwipeActions.tsx",
-     "src/components/navigation/BackButton.tsx",
-     "src/components/navigation/Breadcrumbs.tsx",
-     "src/components/navigation/CommandPaletteAdvanced.tsx",
-     "src/components/navigation/CommandPaletteCommands.tsx",
-     "src/components/navigation/SwipeIndicator.tsx",
-     "src/components/navigation/useCommandEntities.tsx",
-     "src/components/offline/OfflineReadyIndicator.tsx",
-     "src/components/offline/OfflineStatusBanner.tsx",
-     "src/components/operator/OperatorProductionCard.tsx",
-     "src/components/operator/OperatorQuickHistory.tsx",
-     "src/components/operator/ProductionRegistrationModal.tsx",
-     "src/components/operator/ShiftSummaryCard.tsx",
-     "src/components/operators/GoalsHistoryCard.tsx",
-     "src/components/operators/OperatorGoalsCard.tsx",
-     "src/components/operators/OperatorLeaderboard.tsx",
-     "src/components/operators/OperatorSkillsModal.tsx",
-     "src/components/operators/SkillsMatrix.tsx",
-     "src/components/planning/LoadBalancingPanel.tsx",
-     "src/components/planning/PlanningEfficiencyDashboard.tsx",
-     "src/components/planning/SmartSequencingPanel.tsx",
-     "src/components/production/ProductionPhotos.tsx",
-     "src/components/qrcode/ScanHistory.tsx",
-     "src/components/qrcode/ScanStatsChart.tsx",
-     "src/components/scheduling/CapacityHealthPanel.tsx",
-     "src/components/scheduling/MachineSuggestionPanel.tsx",
-     "src/components/scheduling/StuckJobsPanel.tsx",
-     "src/components/scheduling/UtilizationHeatmap.tsx",
-     "src/components/settings/IPAllowlist.tsx",
-     "src/components/settings/TechniqueManagement.tsx",
-     "src/components/shift/OccurrencesPanel.tsx",
-     "src/components/shift/occurrences/OccurrenceItem.tsx",
-     "src/components/technical-assistant/BiometricSecurity.tsx",
-     "src/components/technical-assistant/ChatArea.tsx",
-     "src/components/technical-assistant/ChatMessage.tsx",
-     "src/components/technical-assistant/FileAnalyzer.tsx",
-     "src/components/technical-assistant/SafetyAlert.tsx",
-     "src/components/technical-assistant/TechnicalArtifacts.tsx",
-     "src/components/technical-assistant/TechnicalTelemetryPanel.tsx",
-     "src/components/traceability/BlockchainIntegrityCard.tsx",
-     "src/components/traceability/ElectronicSignatureDialog.tsx",
-     "src/components/traceability/LotDetailsModal.tsx",
-     "src/components/traceability/LotLabelPrint.tsx",
-     "src/components/ui/DashboardSkeleton.tsx",
-     "src/components/ui/button.tsx",
-     "src/components/ui/empty-state.tsx",
-     "src/components/ui/error-boundary.tsx",
-     "src/components/ui/section-error-boundary.tsx",
-     "src/components/ui/stepper.tsx",
-     "src/contexts/ReauthContext.tsx",
-     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
-     "src/features/admin/components/security/GeoBlockingSettings.tsx",
-     "src/features/admin/components/security/PermissionManager.tsx",
-     "src/features/admin/components/security/SecurityAlertsPanel.tsx",
-     "src/features/admin/components/security/SecurityOverviewCard.tsx",
-     "src/features/admin/hooks/useDataExport.ts",
-     "src/features/admin/hooks/useOrphanedDataDetection.ts",
-     "src/features/analytics/components/bi/AIInsights.tsx",
-     "src/features/analytics/components/bi/BIAIInsights.tsx",
-     "src/features/analytics/components/bi/BIComparisonView.tsx",
-     "src/features/analytics/components/bi/BINormalView.tsx",
-     "src/features/analytics/components/bi/BIPredictiveROI.tsx",
-     "src/features/analytics/components/bi/BITooltip.tsx",
-     "src/features/analytics/components/bi/FuturisticBI.tsx",
-     "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
-     "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx",
-     "src/features/analytics/components/bi/executive/KPIOperatorsTab.tsx",
-     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
-     "src/features/analytics/components/efficiency/BottlenecksTab.tsx",
-     "src/features/analytics/components/energy/EnergyChartTabs.tsx",
-     "src/features/analytics/components/oee/HyperInsights.tsx",
-     "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
-     "src/features/analytics/components/oee/OEECalculationAudit.tsx",
-     "src/features/analytics/components/oee/OEEGaugeCard.tsx",
-     "src/features/analytics/components/oee/OEEHeatmap.tsx",
-     "src/features/analytics/components/oee/OEELossDrilldown.tsx",
-     "src/features/analytics/components/oee/OEEMachineTable.tsx",
-     "src/features/analytics/components/oee/OEEOverviewTab.tsx",
-     "src/features/analytics/components/oee/OEERankingGap.tsx",
-     "src/features/analytics/components/oee/OEERecommendations.tsx",
-     "src/features/analytics/components/oee/OEEStudiosTab.tsx",
-     "src/features/analytics/components/oee/PredictiveAlerts.tsx",
-     "src/features/analytics/components/oee/StudioEfficiencyGrid.tsx",
-     "src/features/analytics/components/spc/SPCControlChart.tsx",
-     "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
-     "src/features/analytics/hooks/useEnergy.ts",
-     "src/features/analytics/hooks/useExecutiveDashboard.ts",
-     "src/features/analytics/hooks/useLoadBalancing.ts",
-     "src/features/analytics/hooks/useMLPredictions.ts",
-     "src/features/analytics/hooks/useRealtimeConnection.test.ts",
-     "src/features/auth/components/AuthProvider.test.tsx",
-     "src/features/inventory/components/inventory-page/AIPredictionValidationModal.tsx",
-     "src/features/inventory/hooks/useInventory.ts",
-     "src/features/jobs/hooks/useDailyDragDrop.ts",
-     "src/features/jobs/hooks/useJobs.ts",
-     "src/features/jobs/hooks/usePaginatedJobs.ts",
-     "src/features/jobs/hooks/useSchedulingData.ts",
-     "src/features/jobs/hooks/useSmartSequencing.ts",
-     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
-     "src/features/jobs/hooks/useTechniques.ts",
-     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-     "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
-     "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx",
-     "src/features/maintenance/components/ExecutionDetailsModal.tsx",
-     "src/features/maintenance/components/ExecutionSupplies.tsx",
-     "src/features/maintenance/components/MachineTPMTimeline.tsx",
-     "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
-     "src/features/maintenance/components/TPMExecutionHistory.tsx",
-     "src/features/maintenance/components/TPMNotificationLogs.tsx",
-     "src/features/maintenance/components/TPMNotificationQueue.tsx",
-     "src/features/maintenance/components/TPMNotificationSettings.tsx",
-     "src/features/maintenance/components/TPMNotificationTemplates.tsx",
-     "src/features/maintenance/components/TPMReports.tsx",
-     "src/features/maintenance/components/TPMScheduleList.tsx",
-     "src/features/maintenance/components/TPMSeverityConfigs.tsx",
-     "src/features/maintenance/components/VirtualSensorPanel.tsx",
-     "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
-     "src/features/maintenance/components/execution/ReplacementParts.tsx",
-     "src/features/notifications/components/DailySummaryCard.tsx",
-     "src/features/notifications/components/InAppNotificationWatcher.tsx",
-     "src/features/notifications/hooks/useGoalAlerts.ts",
-     "src/features/notifications/hooks/useNotificationSounds.ts",
-     "src/features/notifications/hooks/useTPMNotifications.ts",
-     "src/features/packaging/components/PackagingLeaderboard.tsx",
-     "src/features/packaging/hooks/usePackagingDelayPareto.ts",
-     "src/features/production/hooks/useMachines.ts",
-     "src/features/production/hooks/useOperatorGoals.ts",
-     "src/features/production/hooks/useOperatorMachines.ts",
-     "src/features/production/hooks/useOperatorPresence.ts",
-     "src/features/production/hooks/useOperatorProductivity.ts",
-     "src/features/production/hooks/useOperators.ts",
-     "src/features/production/services/oeeCalculations.ts",
-     "src/hooks/abc/useABCData.ts",
-     "src/hooks/abc/useABCMutations.ts",
-     "src/hooks/useOfflineSync.ts",
-     "src/hooks/useQuickFavorites.ts",
-     "src/hooks/useTechnicalConversations.ts",
-     "src/hooks/useThemeSound.ts",
-     "src/lib/offlineStorage.ts",
-     "src/lib/pdfExport.ts",
-     "src/pages/AdminTelemetriaPage.tsx",
-     "src/pages/AlertsDashboard.tsx",
-     "src/pages/AuditTrailPage.tsx",
-     "src/pages/AuthPage.tsx",
-     "src/pages/BIDashboard.tsx",
-     "src/pages/EfficiencyDashboard.tsx",
-     "src/pages/EnergyDashboard.tsx",
-     "src/pages/ExecutiveDashboard.tsx",
-     "src/pages/GamificationPage.tsx",
-     "src/pages/Index.tsx",
-     "src/pages/InventoryPage.tsx",
-     "src/pages/KPIDashboard.tsx",
-     "src/pages/KanbanBoard.tsx",
-     "src/pages/KioskPage.tsx",
-     "src/pages/LogisticsPage.tsx",
-     "src/pages/MachineComparisonPage.tsx",
-     "src/pages/MachinesPage.tsx",
-     "src/pages/MasterAPIPage.tsx",
-     "src/pages/NotificationsPage.tsx",
-     "src/pages/OperatorProductivityPage.tsx",
-     "src/pages/OperatorView.tsx",
-     "src/pages/OperatorsPage.tsx",
-     "src/pages/PackagingDashboard.tsx",
-     "src/pages/PendingQueue.tsx",
-     "src/pages/PublicTrackingPage.tsx",
-     "src/pages/SPCDashboard.tsx",
-     "src/pages/SecurityDashboard.tsx",
-     "src/pages/SettingsPage.tsx",
-     "src/pages/ShiftHandoverPage.tsx",
-     "src/pages/SimulationDashboard.tsx",
-     "src/pages/TPMDashboard.tsx",
-     "src/pages/TechnicalAssistantPage.tsx",
-     "src/pages/TraceabilityPage.tsx",
-     "src/pages/WeeklyCalendar.tsx",
-     "src/routes/AppRoutes.tsx",
-     "src/test/authFlow.test.ts",
-     "src/test/loadStress.test.ts",
-     "src/test/offlineStorage.test.ts",
-     "src/test/rateLimiterAdvanced.test.ts",
-     "src/test/sanitize.test.ts",
-     "src/types/job.ts"
-    ]
-   },
-   {
-    "sha": "d61122a",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "ci: adiciona AGENTS.md integrity guard no job lint do ci.yml (#147)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
    }
   ],
   "hot_files": [
    [
-    ".github/workflows/ci.yml",
+    "scripts/supabase_snapshot/test_snapshot.py",
     4
    ],
    [
-    "scripts/supabase_snapshot/test_snapshot.py",
-    4
+    ".github/workflows/ci.yml",
+    3
    ],
    [
     ".github/workflows/contexto.yml",
@@ -95277,27 +95031,27 @@
     2
    ],
    [
-    "src/components/activity/ActivityLog.tsx",
+    "scripts/bundle-diff.mjs",
     2
    ],
    [
-    "src/components/assistant/TechnicalAssistant.tsx",
+    "scripts/bundle.test.mjs",
     2
    ],
    [
-    "src/components/auth/AuthLoginForm.tsx",
+    "scripts/rls-regression.mjs",
     2
    ],
    [
-    "src/components/autonomous/AutonomousEventLog.tsx",
+    "scripts/ai-context/README.md",
     2
    ],
    [
-    "src/components/digital-twin/CostSimulationCard.tsx",
+    "scripts/regras_negocio/README.md",
     2
    ],
    [
-    "src/components/error/GlobalErrorBoundary.tsx",
+    "scripts/regras_negocio/publish.sh",
     2
    ]
   ]

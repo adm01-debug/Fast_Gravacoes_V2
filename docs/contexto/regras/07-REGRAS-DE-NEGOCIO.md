@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `144be3e349` · branch `main` · 2026-11-14 12:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c65ff2e069` · branch `main` · 2026-11-14 12:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-14T11:37:38Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1822,7 +1822,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `partial` | compara, escreve | `src/components/integrations/Bitrix24SyncHistory.tsx`<br>`supabase/functions/webhook-handler/index.ts` |
 | `status` | `pass` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/maintenance/components/MaintenanceExecutionModal.tsx`<br>`src/features/maintenance/hooks/types.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>… +2 |
 | `status` | `paused` | compara, escreve | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/dashboard/LiveMachineStatusPanel.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/kanban/DraggableJobCard.tsx`<br>`src/components/kiosk/KioskMode.tsx`<br>… +8 |
-| `status` | `pending` | compara, escreve, filtra | `src/components/dashboard/ShiftHandoverWidget.tsx`<br>`src/components/documents/DocumentViewer.tsx`<br>`src/components/logistics/CreateShipmentModal.tsx`<br>`src/components/settings/PasswordResetRequests.tsx`<br>`src/components/shift/HandoverDetailsModal.tsx`<br>… +17 |
+| `status` | `pending` | compara, escreve, filtra | `src/components/dashboard/ShiftHandoverWidget.tsx`<br>`src/components/documents/DocumentViewer.tsx`<br>`src/components/logistics/CreateShipmentModal.tsx`<br>`src/components/settings/PasswordResetRequests.tsx`<br>`src/components/shift/HandoverDetailsModal.tsx`<br>… +18 |
 | `status` | `pending_acceptance` | compara, escreve | `src/components/shift/HandoverDetailsModal.tsx`<br>`src/hooks/shift-handover/useShiftHandoverMutations.ts`<br>`src/pages/ShiftHandoverPage.tsx` |
 | `status` | `processing` | compara | `src/features/maintenance/components/TPMNotificationQueue.tsx` |
 | `status` | `producing` | compara | `src/components/dashboard/LiveMachineStatusPanel.tsx` |

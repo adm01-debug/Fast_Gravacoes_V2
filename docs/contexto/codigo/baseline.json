@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "144be3e34937308b0a61c554c2ded1ac521360a3",
+  "commit": "c65ff2e0692e9cf096e9362c7a32859f3a787dba",
   "branch": "main",
-  "data_commit": "2026-11-14T08:55:45-03:00",
+  "data_commit": "2026-11-14T08:55:53-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c65ff2e",
+    "data": "2026-11-14",
+    "assunto": "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804"
+   },
    {
     "sha": "144be3e",
     "data": "2026-11-14",
@@ -16,6 +21,11 @@
     "sha": "a28848f",
     "data": "2026-11-14",
     "assunto": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
+   },
+   {
+    "sha": "d588826",
+    "data": "2026-11-14",
+    "assunto": "fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)"
    },
    {
     "sha": "1ee7704",
@@ -121,20 +131,10 @@
     "sha": "dfdb331",
     "data": "2026-11-10",
     "assunto": "fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)"
-   },
-   {
-    "sha": "d39d646",
-    "data": "2026-11-10",
-    "assunto": "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)"
-   },
-   {
-    "sha": "7a712fb",
-    "data": "2026-11-10",
-    "assunto": "fix(regras): usa o snapshot do banco como fonte (#154)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 397,
+  "arquivos_mudados_7d": 398,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 55
+    "commits": 56
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -310,7 +310,7 @@
    },
    {
     "autor": "Copilot",
-    "commits": 1
+    "commits": 2
    }
   ]
  },

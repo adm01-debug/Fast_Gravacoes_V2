@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `144be3e349` · branch `main` · 2026-11-14 12:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c65ff2e069` · branch `main` · 2026-11-14 12:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-14T11:37:38Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -240,7 +240,6 @@
 | status | valor `suspended` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/layout/QuickFavoritesBar.tsx`<br>`compara:src/features/notifications/hooks/useNotificationSounds.ts`<br>`compara:src/hooks/useThemeSound.ts`<br>`compara:src/lib/soundFeedback.ts` |
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `failed` para `login_status` usado no código não existe em nenhum enum do banco/TS | `filtra:src/features/admin/hooks/useMonitoringData.ts` |
-| coluna | coluna `processed` usada no código não existe no schema de `tpm_notification_queue` |  |
 | tabela | tabela `backups` usada no código não existe no banco real (snapshot) | `supabase/functions/backup-scheduler/index.ts` |
 | tabela | tabela `erp_api_keys` usada no código não existe no banco real (snapshot) | `supabase/functions/erp-api/index.ts` |
 | rls | `inventory_movements`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |

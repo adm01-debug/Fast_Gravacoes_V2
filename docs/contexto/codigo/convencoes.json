@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804",
    "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856",
    "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)",
-   "fix(ci): instala ripgrep antes dos testes dos geradores no inventario",
-   "test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)",
-   "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)"
+   "fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)",
+   "fix(ci): instala ripgrep antes dos testes dos geradores no inventario"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
