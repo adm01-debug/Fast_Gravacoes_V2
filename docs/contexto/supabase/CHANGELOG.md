@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 11:37 UTC
+
+- **edge functions** alterado (1): `new-device-alert`
+
 ## 2026-11-13 22:24 UTC
 
 - **cron jobs** adicionado (1): `13:auto-promote-jobs-fallback`

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "2f4326c7dd96af6df1345ead1907f315aec7006b",
+  "sha": "a28848f06a8a22b61767321b1c5057e31f7005d0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-13 17:57 UTC",
-  "files_total": 1526,
+  "generated_at": "2026-11-14 11:37 UTC",
+  "files_total": 1527,
   "code_files": 1371,
   "code_lines": 202589
  },
@@ -94567,10 +94567,19 @@
   }
  },
  "git": {
-  "sha": "2f4326c7dd96af6df1345ead1907f315aec7006b",
+  "sha": "a28848f06a8a22b61767321b1c5057e31f7005d0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a28848f",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "2f4326c",
     "date": "2026-11-13",
@@ -95212,16 +95221,6 @@
     "files": [
      "docs/adr/0001-supabase-self-hosted-unico.md",
      "docs/adr/0005-supabase-cloud-e-o-backend-oficial.md"
-    ]
-   },
-   {
-    "sha": "45a5eb9",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat(agentes): instala grafo e liga hook-guard em sessão na nuvem (#142)",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     ".claude/settings.json"
     ]
    }
   ],

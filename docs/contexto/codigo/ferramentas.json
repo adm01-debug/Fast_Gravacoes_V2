@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1051)",
    "SQL (253)",
-   "Markdown (75)",
+   "Markdown (76)",
    "JavaScript (54)",
    "JSON (29)",
    "Python (13)",
@@ -679,6 +679,11 @@
    "arquivo": "docs/plano-mestre-10-10.md",
    "titulo": "Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10",
    "linhas": 831
+  },
+  {
+   "arquivo": "docs/prod-readiness.md",
+   "titulo": "Fast Gravacoes V2 - Prontidao para Producao",
+   "linhas": 180
   }
  ],
  "docs_em_subpastas": [

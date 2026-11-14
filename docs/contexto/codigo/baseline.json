@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2f4326c7dd96af6df1345ead1907f315aec7006b",
+  "commit": "a28848f06a8a22b61767321b1c5057e31f7005d0",
   "branch": "main",
-  "data_commit": "2026-11-13T13:54:33-03:00",
+  "data_commit": "2026-11-14T08:22:45-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a28848f",
+    "data": "2026-11-14",
+    "assunto": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
+   },
    {
     "sha": "2f4326c",
     "data": "2026-11-13",
@@ -126,15 +131,10 @@
     "sha": "6701c3d",
     "data": "2026-11-10",
     "assunto": "fix(scripts): fecha falhas silenciosas nos gates de audit, any, bundle, guard e seed (#150)"
-   },
-   {
-    "sha": "136dd36",
-    "data": "2026-11-09",
-    "assunto": "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 440,
+  "arquivos_mudados_7d": 397,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 53
+    "commits": 54
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -311,7 +311,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1528,
+  "arquivos_total": 1529,
   "arquivos_codigo": 1115,
   "linhas_codigo": 187460,
   "rotas": 58,
@@ -328,7 +328,7 @@
   "testes": 119,
   "workflows": 11,
   "scripts": 41,
-  "docs_md": 75
+  "docs_md": 76
  },
  "por_pasta": {
   "commitlint.config.js": {
