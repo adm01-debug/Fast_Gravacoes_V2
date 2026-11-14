@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "c65ff2e0692e9cf096e9362c7a32859f3a787dba",
+  "sha": "9afb1a20adc6d19f8fe1827d11aa24d6dde8f152",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 12:21 UTC",
+  "generated_at": "2026-11-14 14:20 UTC",
   "files_total": 1527,
   "code_files": 1371,
   "code_lines": 202589
@@ -94568,10 +94568,19 @@
   }
  },
  "git": {
-  "sha": "c65ff2e0692e9cf096e9362c7a32859f3a787dba",
+  "sha": "9afb1a20adc6d19f8fe1827d11aa24d6dde8f152",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9afb1a2",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "c65ff2e",
     "date": "2026-11-14",
@@ -94952,25 +94961,6 @@
      "scripts/seed-users.test.mjs",
      "supabase/seed-users.mjs"
     ]
-   },
-   {
-    "sha": "136dd36",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix(graphify): lock por flock, dead-code sem falso positivo e gates que reprovam (#152)",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     "docs/graphify/README.md",
-     "scripts/ci/session-start.test.mjs",
-     "scripts/graphify.mjs",
-     "scripts/graphify.test.mjs",
-     "scripts/graphify/corpus.py",
-     "scripts/graphify/enrich.py",
-     "scripts/graphify/pipeline.py",
-     "scripts/graphify/quality.py",
-     "scripts/graphify/run.py",
-     "scripts/graphify/tests/test_integration.py"
-    ]
    }
   ],
   "hot_files": [
@@ -95011,6 +95001,10 @@
     3
    ],
    [
+    "docs/prod-readiness.md",
+    2
+   ],
+   [
     ".github/workflows/inventario-estado-semanal.yml",
     2
    ],
@@ -95048,10 +95042,6 @@
    ],
    [
     "scripts/regras_negocio/README.md",
-    2
-   ],
-   [
-    "scripts/regras_negocio/publish.sh",
     2
    ]
   ]
