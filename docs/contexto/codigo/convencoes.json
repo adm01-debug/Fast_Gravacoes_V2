@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(inventario): estado real do projeto [auto] (#186)",
    "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)",
    "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)",
    "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804",
-   "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856",
-   "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
+   "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
+  "commit": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
   "branch": "main",
-  "data_commit": "2026-11-14T12:01:34-03:00",
+  "data_commit": "2026-11-14T12:17:33-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9ed883f",
+    "data": "2026-11-14",
+    "assunto": "chore(inventario): estado real do projeto [auto] (#186)"
+   },
    {
     "sha": "4991121",
     "data": "2026-11-14",
@@ -126,15 +131,10 @@
     "sha": "86e59b4",
     "data": "2026-11-10",
     "assunto": "fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)"
-   },
-   {
-    "sha": "a220f13",
-    "data": "2026-11-10",
-    "assunto": "fix(ai-context): fecho de rota/módulo resolve barrel pelos nomes importados (#162)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 408,
+  "arquivos_mudados_7d": 409,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -311,11 +311,15 @@
    {
     "autor": "Copilot",
     "commits": 2
+   },
+   {
+    "autor": "github-actions[bot]",
+    "commits": 1
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 1529,
+  "arquivos_total": 1530,
   "arquivos_codigo": 1115,
   "linhas_codigo": 187466,
   "rotas": 58,

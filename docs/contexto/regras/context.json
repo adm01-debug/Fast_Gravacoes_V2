@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
+  "sha": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 15:15 UTC",
-  "files_total": 1527,
+  "generated_at": "2026-11-14 17:14 UTC",
+  "files_total": 1528,
   "code_files": 1371,
   "code_lines": 202595
  },
@@ -94575,10 +94575,21 @@
   }
  },
  "git": {
-  "sha": "49911214a1ed1600f6782ab8306d00a42a6dbb47",
+  "sha": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9ed883f",
+    "date": "2026-11-14",
+    "author": "github-actions[bot]",
+    "subject": "chore(inventario): estado real do projeto [auto] (#186)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json",
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "4991121",
     "date": "2026-11-14",
@@ -94956,23 +94967,9 @@
      "scripts/regras_negocio/test_indice.py",
      "scripts/regras_negocio/test_publish.py"
     ]
-   },
-   {
-    "sha": "9df0dd4",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(snapshot): redige segredo em par 'nome','valor' e no snapshot anterior (#151)",
-    "files": [
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "scripts/supabase_snapshot/test_snapshot.py",
-    4
-   ],
    [
     ".github/workflows/ci.yml",
     3
@@ -94982,7 +94979,7 @@
     3
    ],
    [
-    "scripts/supabase_snapshot/snapshot.py",
+    "scripts/supabase_snapshot/test_snapshot.py",
     3
    ],
    [
@@ -95000,6 +94997,14 @@
    [
     "scripts/ai-context/gerar.unit.mjs",
     3
+   ],
+   [
+    "inventario/estado/edges.json",
+    2
+   ],
+   [
+    "inventario/estado/rotas.json",
+    2
    ],
    [
     "docs/prod-readiness.md",
@@ -95030,6 +95035,10 @@
     2
    ],
    [
+    "scripts/supabase_snapshot/snapshot.py",
+    2
+   ],
+   [
     "scripts/ai-context/README.md",
     2
    ],
@@ -95040,14 +95049,6 @@
    [
     "scripts/regras_negocio/publish.sh",
     2
-   ],
-   [
-    "scripts/regras_negocio/test_publish.py",
-    2
-   ],
-   [
-    "src/components/navigation/DialogHistoryGuard.tsx",
-    1
    ]
   ]
  }
