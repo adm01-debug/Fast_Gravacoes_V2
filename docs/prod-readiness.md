@@ -1,6 +1,6 @@
 # Fast Gravacoes V2 - Prontidao para Producao
 
-**Data:** 2026-11-13  |  **main HEAD:** 2f4326c
+**Data:** 2026-11-14  |  **main HEAD:** a28848f
 **Metodo:** auditoria por evidencia real - testes/typecheck/lint locais, execucao e logs do GitHub Actions, chamadas HTTP reais as edge functions do projeto `uoujzvpecohinketylud`, leitura do codigo em clone de `main`. Inventario de linha de base commitado em `inventario/estado/` (`rotas.json`, `edges.json`).
 
 ## Resumo dos 9 criterios
@@ -10,7 +10,7 @@
 | 1 | Inventario | OK - rotas.json (58) e edges.json (34) commitados; banco via types.ts + migrations |
 | 2 | Cobertura | OK - itens OK com prova; BLOQUEADO marcado com erro exato |
 | 3 | Qualidade local | OK - 922 testes exit 0; lint 0 erros exit 0 |
-| 4 | GitHub Actions | BLOQUEADO parcial - db-admin historico vermelho (fix #163 na main) e inventario-semanal vermelho (fix PR #180 aguardando dono) |
+| 4 | GitHub Actions | BLOQUEADO parcial - so inventario-semanal vermelho (fix PR #180 aguardando dono); db-admin 43510093330 success |
 | 5 | Sem pela metade | BLOQUEADO - image-optimizer e stub 501 (sem chamador no repo) |
 | 6 | Banco / RLS | PARCIAL - RLS Regression CI verde + anon 401; advisors/migrations x banco BLOQUEADO (sem access token) |
 | 7 | Producao | OK parcial - health-check 200 ao vivo; logs BLOQUEADO (sem telemetria/access token) |
@@ -140,7 +140,7 @@ automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify
 
 ## 4. GitHub Actions (estado real)
 - **ci.yml**: ultima execucao em main verde.
-- **db-admin.yml**: run historico (11-10) vermelho diagnosticado = `supabase secrets set` sem `--yes`; **fix #163 ja integrado na main** (`--yes` em db-admin.yml:403/524/526/534). Run de verificacao 43510093330 ficou `queued` (fila de runners degradada) -> BLOQUEADO ate runner.
+- **db-admin.yml**: run historico (11-10) vermelho diagnosticado = `supabase secrets set` sem `--yes`; **fix #163 ja integrado na main** (`--yes` em db-admin.yml:403/524/526/534). Run de verificacao 43510093330: **success** (concluido, head 2f4326c, main) - migrations aplicadas em dia.
 - **inventario-estado-semanal.yml**: run 43510111468 vermelho, causa raiz = `gerar-repo.mjs:24` emite `ripgrep (rg) nao encontrado` porque o step `Testar os geradores` roda ANTES do `Instalar ripgrep`. **Fix = PR #180** (reverte ordem; actionlint OK). Workflow => regra 8 => aguardando dono.
 
 ## 5. Sem "pela metade"
@@ -170,7 +170,7 @@ automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify
 ## BLOQUEADO / aguardando o dono
 1. **PR #180** - workflow de inventario (ordering ripgrep). Aguarda merge do dono (regra 8).
 2. **PR #182** - health-check fila TPM (edge function, deploy automatico). Aguarda merge do dono (regra 8).
-3. **db-admin** - confirmar novo run verde quando runner disponivel (run 43510093330 ficou queued).
+3. ~~**db-admin** - run 43510093330 sucesso (head 2f4326c)~~ -> resolvido.
 4. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
 5. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
 6. **Logs de producao pos-deploy** - precisa telemetria/access token.
