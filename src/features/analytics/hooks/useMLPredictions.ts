@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
+import { logger } from '@/lib/logger';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
 
 // Error context for debugging
@@ -131,7 +132,7 @@ export function useMLPredictions() {
             metadata: { machine_id: variables, severity: 'high' }
           });
         } catch (logErr: unknown) {
-          console.error('Failed to write error_log', logErr);
+          logger.error('Falha ao registrar erro em error_log', logErr, 'useMLPredictions');
         }
       })();
 

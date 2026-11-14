@@ -52,6 +52,7 @@ export function useMachineStatusHub() {
   }, [fetchInitialStatus]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState so apos o await (fetch inicial, sistema externo).
     void fetchInitialStatus();
     return () => {
       if (refreshTimeoutRef.current) window.clearTimeout(refreshTimeoutRef.current);

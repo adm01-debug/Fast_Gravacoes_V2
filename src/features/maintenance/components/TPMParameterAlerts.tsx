@@ -53,6 +53,7 @@ export function TPMParameterAlerts() {
 
   useEffect(() => {
     isMountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState so apos o await; fetch inicial no mount (sistema externo Supabase).
     fetchAlerts();
     return () => { isMountedRef.current = false; };
   }, []);
