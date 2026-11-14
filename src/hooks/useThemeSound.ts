@@ -179,6 +179,7 @@ export function useThemeSound() {
   // `prefsVersion` na dependência re-lê os opt-outs quando outra aba muda.
   const effectiveSoundEnabled = useMemo(
     () => soundEnabled && isSoundEnabled(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `prefsVersion` re-le os opt-outs quando outra aba muda
     [soundEnabled, prefsVersion],
   );
   return {

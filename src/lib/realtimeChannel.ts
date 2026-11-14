@@ -92,7 +92,7 @@ export function useRealtimeChannel(
       entry.listeners.delete(onChange);
       drop(resolvedName);
     };
-  }, [typeof name === 'function' ? name : name]);
+  }, [name]); // eslint-disable-line react-hooks/exhaustive-deps -- `onChange`/`specs` sao frequentemente inline no caller; re-subscribing recriaria o canal compartilhado. A inscricao e idempotente por nome.
 }
 
 export function __resetRealtimeRegistryForTests() {

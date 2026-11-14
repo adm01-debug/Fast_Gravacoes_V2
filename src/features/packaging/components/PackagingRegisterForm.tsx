@@ -49,7 +49,7 @@ export function PackagingRegisterForm({ received, defaultPackageTypes = DEFAULT_
         <div>
           <Label>Tipo de embalagem</Label>
           <Select
-            value={form.watch('package_type')}
+            value={form.watch('package_type')} /* eslint-disable-line react-hooks/incompatible-library -- RHF watch() nao memoizavel por design */
             onValueChange={(v) => form.setValue('package_type', v)}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
