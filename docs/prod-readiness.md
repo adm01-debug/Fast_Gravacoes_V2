@@ -1,6 +1,6 @@
 # Fast Gravacoes V2 - Prontidao para Producao
 
-**Data:** 2026-11-14  |  **main HEAD:** a28848f
+**Data:** 2026-11-14  |  **main HEAD:** 9ed883f2 (pós-merge #185/#186)
 **Metodo:** auditoria por evidencia real - testes/typecheck/lint locais, execucao e logs do GitHub Actions, chamadas HTTP reais as edge functions do projeto `uoujzvpecohinketylud`, leitura do codigo em clone de `main`. Inventario de linha de base commitado em `inventario/estado/` (`rotas.json`, `edges.json`).
 
 ## Resumo dos 9 criterios
@@ -13,8 +13,8 @@
 | 4 | GitHub Actions | BLOQUEADO parcial - so inventario-semanal vermelho (fix PR #180 aguardando dono); db-admin 43510093330 success |
 | 5 | Sem pela metade | BLOQUEADO - image-optimizer e stub 501 (sem chamador no repo) |
 | 6 | Banco / RLS | PARCIAL - RLS Regression CI verde + anon 401; advisors/migrations x banco BLOQUEADO (sem access token) |
-| 7 | Producao | OK parcial - health-check 200 ao vivo; logs BLOQUEADO (sem telemetria/access token) |
-| 8 | Entrega | PR #180 aberta (workflow, regra 8 aguardando dono) |
+| 7 | Producao | OK - app 200 com URL/key embutidas (envs corrigidas) + health-check 200 ao vivo; logs BLOQUEADO (sem telemetria/access token) |
+| 8 | Entrega | #185 e #186 mergeadas; #184 (dependabot) aberta (workflow, regra 8 aguardando dono) |
 | 9 | Relatorio | este documento |
 
 ## 1. Inventario de funcionalidades (baseline)
@@ -157,23 +157,23 @@ automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify
 - **BLOQUEADO**: security advisors e comparacao migrations x banco exigem Management API (`SUPABASE_ACCESS_TOKEN`) - token indisponivel no ambiente; nao afirmo sem evidencia.
 
 ## 7. Producao (ao vivo)
-- health-check ao vivo: **HTTP 200**. Checks: database:read=pass, storage:list=pass, auth:session=pass, config:secrets=pass (0 missing); queue:tpm_notifications=**warn (0 itens, `output: "[object Object]"`)** -> status agregado 'degraded'.
-- **Causa raiz diagnosticada**: `supabase/functions/health-check/index.ts:98` filtrava `.eq("processed", false)` mas a tabela `tpm_notification_queue` nao tem coluna `processed` (schema: `status` + `processed_at`; `tpm-notifications/index.ts:59` usa `.eq('status','pending')`). A query falhava sempre e o error era serializado como `[object Object]`.
-- **Fix implementado = PR #182** (troca para `.eq("status","pending")`, diff 1 linha); `deno check --frozen` exit 0. Pos-merge precisara confirmar `queue:tpm_notifications=pass` ao vivo.
+- **12:40Z - producao restaurada**: bundle antigo (`index-BDsnRvH6.js`, deploy `dpl_J11s`) quebrava com `Uncaught Error: Configuração ausente: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY` (`src/lib/envGuard.ts:11-16`). Causa raiz: as envs `VITE_*` na Vercel estavam `type=sensitive` e chegavam **vazias** ao build do Vite (`VITE_SUPABASE_URL:""` no bundle). Fix: removidas e recriadas como `type=plain` (target production/preview) com os valores públicos reais via API Vercel, seguido de redeploy de producao.
+- **Evidencia (atual):** bundle `index-D-4TLgjB.js` (deploy `dpl_Fo57g2ZCW6T71G52cDsG9tCNJyqB`, sha `49911214`, pós-#185) contem `VITE_SUPABASE_URL:"https://uoujzvpecohinketylud.supabase.co"` e `VITE_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_..."`; `auth/v1/settings` responde **200** com a publishable key; login invalido responde **400** (fluxo auth ativo). `profile` de anon responde **401 42501** (RLS).
+- health-check ao vivo: **HTTP 200**. Checks: database:read=pass, storage:list=pass, auth:session=pass, config:secrets=pass; queue:tpm_notifications sera confirmado pos-merge da #182.
 - **BLOQUEADO**: logs de edge functions/banco/deploy pos-ultimo-deploy - exige telemetria/access token indisponivel.
 
 ## 8. Entrega
-- PR **#180** aberta (claude/fix-inventario-rg-order-*) - fix do workflow de inventario (regra 8, aguardando dono).
-- PR **#182** aberta (claude/fix-healthcheck-queue-*) - fix de causa raiz no health-check (coluna inexistente na fila TPM). Edge function => deploy automatico => regra 8, aguardando dono.
-- Fixes ja integrados na main: #163 (db-admin `--yes`), #156 (concurrency E2E), #170 (ubuntu-24.04), #146 (R3.3 revoke public).
+- PR **#184** aberta (chore/dependabot `.github/dependabot.yml`, regra 8 aguardando dono).
+- Mergeadas nesta sessao: **#185** (lint: 22 warnings -> 0; sha `49911214`) e **#186** (inventario; sha `9ed883f2`). Fixes ja integrados na main: #163 (db-admin `--yes`), #156 (concurrency E2E), #170 (ubuntu-24.04), #146 (R3.3 revoke public), #180 (inventario rg order), #182 (health-check fila TPM).
 
 ## BLOQUEADO / aguardando o dono
-1. **PR #180** - workflow de inventario (ordering ripgrep). Aguarda merge do dono (regra 8).
-2. **PR #182** - health-check fila TPM (edge function, deploy automatico). Aguarda merge do dono (regra 8).
-3. ~~**db-admin** - run 43510093330 sucesso (head 2f4326c)~~ -> resolvido.
+1. **PR #184** - dependabot mensal (`.github/dependabot.yml`). Aguarda merge do dono (regra 8).
+2. ~~**PR #180** - inventario rg order~~ -> mergeada (144be3e3).
+3. ~~**PR #182** - health-check fila TPM~~ -> mergeada (c65ff2e0); confirmar `queue:tpm_notifications=pass` ao vivo.
 4. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
 5. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
 6. **Logs de producao pos-deploy** - precisa telemetria/access token.
-7. **Workflows orfaos ativos sem arquivo na main** - 14 workflows `_tmp-*`/`tmp probe*`/`TEMP regenerate deno.lock` ainda ativos na API mas sem arquivo no main; nao executam (0 runs). Requer limpeza manual na UI (Settings > Actions > General > disabled/remover) - fora do escopo de codigo.
-8. **branch-hygiene-audit.yml e graphify.yml (main)** - sem run no branch main no periodo recente (branch-hygiene-audit: 0 runs; graphify: so PR-trigger, runs verdes). Nao configuram falha, mas nao ha execucao de agendado em main a certificar.
+7. **Env `VITE_SUPABASE_ANON_KEY` fora do repo** - as envs `VITE_*` vivem so no dashboard Vercel (recriadas como `plain`); `.env.production` versionado tem placeholders. Recomendado: mover para secret do GitHub Actions/CI e injetar no build, para fuentes futuras nao dependerem de recriacao manual.
+8. **Workflows orfaos ativos sem arquivo na main** - 14 workflows `_tmp-*`/`tmp probe*`/`TEMP regenerate deno.lock` ainda ativos na API mas sem arquivo no main; nao executam (0 runs). Requer limpeza manual na UI (Settings > Actions > General > disabled/remover) - fora do escopo de codigo.
+9. **branch-hygiene-audit.yml e graphify.yml (main)** - sem run no branch main no periodo recente (branch-hygiene-audit: 0 runs; graphify: so PR-trigger, runs verdes). Nao configuram falha, mas nao ha execucao de agendado em main a certificar.
 _fim_
