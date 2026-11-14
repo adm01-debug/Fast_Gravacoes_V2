@@ -78,7 +78,7 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
         <div>
           <Label>Tipo de defeito</Label>
           <Select
-            value={form.watch('defect_type')}
+            value={form.watch('defect_type')} /* eslint-disable-line react-hooks/incompatible-library -- RHF watch() nao memoizavel por design */
             onValueChange={(v) => form.setValue('defect_type', v as PackagingDefectType)}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>

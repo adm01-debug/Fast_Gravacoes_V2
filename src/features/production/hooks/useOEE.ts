@@ -528,7 +528,7 @@ export function useOEE(daysBack: number = 30, comparisonDaysBack: number = 30, f
         previousQuality: prevQual,
       }
     };
-  }, [jobs, machines, techniques, effectiveDaysBack, daysBack, comparisonDaysBack, filters, PLANNED_MINUTES_PER_DAY]);
+  }, [jobs, machines, techniques, effectiveDaysBack, comparisonDaysBack, filters, PLANNED_MINUTES_PER_DAY]);
 
   const downloadReport = async (format: 'excel' | 'pdf' | 'csv') => {
     // Basic implementation

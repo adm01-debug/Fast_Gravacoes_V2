@@ -32,6 +32,7 @@ export class ErrorBoundary extends Component<Props, State> {
     // falha silenciosamente offline, então sem isso o erro real nunca chega
     // a lugar nenhum (nem console, nem trace do Playwright, nem o DOM do
     // fallback, que só mostra uma mensagem genérica).
+    // eslint-disable-next-line no-console -- canal de emergencia: o insert em error_logs abaixo e best-effort e falha silenciosamente offline; sem esse log sincrono o erro real nunca chega a lugar nenhum.
     console.error(
       `[ErrorBoundary${this.props.componentName ? `:${this.props.componentName}` : ''}]`,
       error,

@@ -10,6 +10,11 @@ import type {
 export function usePackagingTask(taskId: string | null) {
   const queryClient = useQueryClient();
 
+  const requireTaskId = (): string => {
+    if (!taskId) throw new Error('Tarefa não selecionada');
+    return taskId;
+  };
+
   const taskQuery = useQuery({
     queryKey: ['packaging-task', taskId],
     queryFn: () => (taskId ? packagingService.getTask(taskId) : null),
@@ -31,7 +36,7 @@ export function usePackagingTask(taskId: string | null) {
   };
 
   const assign = useMutation({
-    mutationFn: () => packagingService.assignToMe(taskId!),
+    mutationFn: () => packagingService.assignToMe(requireTaskId()),
     onSuccess: () => {
       toast.success('Tarefa assumida');
       invalidate();
@@ -43,9 +48,9 @@ export function usePackagingTask(taskId: string | null) {
     mutationFn: (
       input: PackagingTaskStatus | { status: PackagingTaskStatus; delay_reason?: string; delay_category?: string; was_overdue?: boolean },
     ) => {
-      if (typeof input === 'string') return packagingService.updateStatus(taskId!, input);
+      if (typeof input === 'string') return packagingService.updateStatus(requireTaskId(), input);
       const { status, ...extra } = input;
-      return packagingService.updateStatus(taskId!, status, extra);
+      return packagingService.updateStatus(requireTaskId(), status, extra);
     },
     onSuccess: () => {
       toast.success('Status atualizado');
@@ -55,7 +60,7 @@ export function usePackagingTask(taskId: string | null) {
   });
 
   const registerPackaging = useMutation({
-    mutationFn: (values: PackagingRegisterForm) => packagingService.registerPackaging(taskId!, values),
+    mutationFn: (values: PackagingRegisterForm) => packagingService.registerPackaging(requireTaskId(), values),
     onSuccess: () => {
       toast.success('Embalagem registrada');
       invalidate();
@@ -64,7 +69,7 @@ export function usePackagingTask(taskId: string | null) {
   });
 
   const recordDefect = useMutation({
-    mutationFn: (form: DefectTriageForm) => packagingService.recordDefect(taskId!, form),
+    mutationFn: (form: DefectTriageForm) => packagingService.recordDefect(requireTaskId(), form),
     onSuccess: () => {
       toast.success('Defeito registrado');
       invalidate();

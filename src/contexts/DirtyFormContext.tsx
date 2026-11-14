@@ -66,6 +66,7 @@ export function DirtyGuardProvider({ children }: { children: ReactNode }) {
   // executar a navegação pendente.
   useEffect(() => {
     pendingRef.current = null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resetar o pendente em mudanca de navegacao e o efeito desejado (sistema externo).
     setPending(null);
   }, [location.key]);
 
