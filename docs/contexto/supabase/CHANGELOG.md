@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 13:03 UTC
+
+- **edge functions** alterado (1): `health-check`
+
 ## 2026-11-14 11:37 UTC
 
 - **edge functions** alterado (1): `new-device-alert`

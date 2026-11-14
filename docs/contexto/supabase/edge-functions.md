@@ -20,7 +20,7 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | erp-api | erp-api | ACTIVE | 26 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/erp-api/index.ts |
 | excel-export | excel-export | ACTIVE | 27 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/excel-export/index.ts |
 | external-db-bridge | external-db-bridge | ACTIVE | 25 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/external-db-bridge/index.ts |
-| health-check | health-check | ACTIVE | 26 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-check/index.ts |
+| health-check | health-check | ACTIVE | 27 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-check/index.ts |
 | health-monitor | health-monitor | ACTIVE | 26 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts |
 | image-optimizer | image-optimizer | ACTIVE | 23 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts |
 | metrics-collector | metrics-collector | ACTIVE | 26 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts |
