@@ -260,7 +260,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                       <Save className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div role="region" aria-label="Presets salvos" tabIndex={0} className="space-y-2 max-h-40 overflow-auto">
+                  <div role="region" aria-label="Presets salvos" className="space-y-2 max-h-40 overflow-auto">
                     {presets && presets.length === 0 ? (
                       <p className="text-[10px] text-muted-foreground text-center py-4 italic">Nenhum preset salvo</p>
                     ) : (

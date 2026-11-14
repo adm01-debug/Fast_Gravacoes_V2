@@ -5,6 +5,7 @@ import { subscribeNavHistory } from '@/lib/navHistory';
 export const SENTINEL_KEY = 'dialog-guard';
 
 /** A entrada atual é a sentinela de um dialog (Back consome/fecha o dialog). */
+// eslint-disable-next-line react-refresh/only-export-components -- const/funcao utilitaria num arquivo que tambem exporta componente; mover quebraria imports dos callers.
 export const hasActiveDialogSentinel = (): boolean =>
   Boolean((history.state as Record<string, unknown> | null)?.[SENTINEL_KEY]);
 // Diálogos com data-history-guard="off" (ex.: confirmação de saída do

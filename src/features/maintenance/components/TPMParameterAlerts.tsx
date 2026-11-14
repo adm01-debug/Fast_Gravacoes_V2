@@ -53,6 +53,7 @@ export function TPMParameterAlerts() {
 
   useEffect(() => {
     isMountedRef.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount de fonte externa (Supabase); o fetch alem disso e retriggerado pelo channel, nao por props/state.
     fetchAlerts();
     return () => { isMountedRef.current = false; };
   }, []);
