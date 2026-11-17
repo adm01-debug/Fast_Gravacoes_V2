@@ -1,6 +1,6 @@
 # Fast Gravacoes V2 - Prontidao para Producao
 
-**Data:** 2026-11-14  |  **main HEAD:** a28848f
+**Data:** 2026-11-17  |  **main HEAD:** 32c02f03 (pós-merge #190/#188)
 **Metodo:** auditoria por evidencia real - testes/typecheck/lint locais, execucao e logs do GitHub Actions, chamadas HTTP reais as edge functions do projeto `uoujzvpecohinketylud`, leitura do codigo em clone de `main`. Inventario de linha de base commitado em `inventario/estado/` (`rotas.json`, `edges.json`).
 
 ## Resumo dos 9 criterios
@@ -13,8 +13,8 @@
 | 4 | GitHub Actions | BLOQUEADO parcial - so inventario-semanal vermelho (fix PR #180 aguardando dono); db-admin 43510093330 success |
 | 5 | Sem pela metade | BLOQUEADO - image-optimizer e stub 501 (sem chamador no repo) |
 | 6 | Banco / RLS | PARCIAL - RLS Regression CI verde + anon 401; advisors/migrations x banco BLOQUEADO (sem access token) |
-| 7 | Producao | OK parcial - health-check 200 ao vivo; logs BLOQUEADO (sem telemetria/access token) |
-| 8 | Entrega | PR #180 aberta (workflow, regra 8 aguardando dono) |
+| 7 | Producao | OK - app 200 com URL/key embutidas (envs corrigidas) + health-check 200 ao vivo; logs BLOQUEADO (sem telemetria/access token) |
+| 8 | Entrega | #185, #186, #190 e #188 mergeadas; #184 e #189 abertas (workflow, regra 8 aguardando dono) |
 | 9 | Relatorio | este documento |
 
 ## 1. Inventario de funcionalidades (baseline)
@@ -157,23 +157,32 @@ automation-local, branch-hygiene-audit, ci, contexto, db-admin, deploy, graphify
 - **BLOQUEADO**: security advisors e comparacao migrations x banco exigem Management API (`SUPABASE_ACCESS_TOKEN`) - token indisponivel no ambiente; nao afirmo sem evidencia.
 
 ## 7. Producao (ao vivo)
-- health-check ao vivo: **HTTP 200**. Checks: database:read=pass, storage:list=pass, auth:session=pass, config:secrets=pass (0 missing); queue:tpm_notifications=**warn (0 itens, `output: "[object Object]"`)** -> status agregado 'degraded'.
-- **Causa raiz diagnosticada**: `supabase/functions/health-check/index.ts:98` filtrava `.eq("processed", false)` mas a tabela `tpm_notification_queue` nao tem coluna `processed` (schema: `status` + `processed_at`; `tpm-notifications/index.ts:59` usa `.eq('status','pending')`). A query falhava sempre e o error era serializado como `[object Object]`.
-- **Fix implementado = PR #182** (troca para `.eq("status","pending")`, diff 1 linha); `deno check --frozen` exit 0. Pos-merge precisara confirmar `queue:tpm_notifications=pass` ao vivo.
+- **12:40Z - producao restaurada**: bundle antigo (`index-BDsnRvH6.js`, deploy `dpl_J11s`) quebrava com `Uncaught Error: Configuração ausente: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY` (`src/lib/envGuard.ts:11-16`). Causa raiz: as envs `VITE_*` na Vercel estavam `type=sensitive` e chegavam **vazias** ao build do Vite (`VITE_SUPABASE_URL:""` no bundle). Fix: removidas e recriadas como `type=plain` (target production/preview) com os valores públicos reais via API Vercel, seguido de redeploy de producao.
+- **Evidencia (atual):** bundle `index-D-4TLgjB.js` (deploy `dpl_Fo57g2ZCW6T71G52cDsG9tCNJyqB`, sha `49911214`, pós-#185) contem `VITE_SUPABASE_URL:"https://uoujzvpecohinketylud.supabase.co"` e `VITE_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_..."`; `auth/v1/settings` responde **200** com a publishable key; login invalido responde **400** (fluxo auth ativo). `profile` de anon responde **401 42501** (RLS).
+- health-check ao vivo: **HTTP 200**. Checks: database:read=pass, storage:list=pass, auth:session=pass, config:secrets=pass; queue:tpm_notifications sera confirmado pos-merge da #182.
 - **BLOQUEADO**: logs de edge functions/banco/deploy pos-ultimo-deploy - exige telemetria/access token indisponivel.
 
 ## 8. Entrega
-- PR **#180** aberta (claude/fix-inventario-rg-order-*) - fix do workflow de inventario (regra 8, aguardando dono).
-- PR **#182** aberta (claude/fix-healthcheck-queue-*) - fix de causa raiz no health-check (coluna inexistente na fila TPM). Edge function => deploy automatico => regra 8, aguardando dono.
-- Fixes ja integrados na main: #163 (db-admin `--yes`), #156 (concurrency E2E), #170 (ubuntu-24.04), #146 (R3.3 revoke public).
+- PR **#184** aberta (chore/dependabot `.github/dependabot.yml`, regra 8 aguardando dono). **Suplantada pela #189**, que traz o mesmo arquivo em versao superior (agrupamento production/development, timezone, commit-message) — so uma das duas pode entrar.
+- PR **#189** aberta (infra/dependency-review + dependabot, regra 8 aguardando dono).
+- Mergeadas em 2026-11-14: **#185** (lint: 22 warnings -> 0; sha `49911214`) e **#186** (inventario; sha `9ed883f2`). Mergeadas em 2026-11-17: **#190** (redacao de chave `sk_live` em documento versionado; sha `64c3b0c0`) e **#188** (restaura guardas `using` e `let`/`var` no autofix; sha `32c02f03`). Fixes ja integrados na main: #163 (db-admin `--yes`), #156 (concurrency E2E), #170 (ubuntu-24.04), #146 (R3.3 revoke public), #180 (inventario rg order), #182 (health-check fila TPM).
+
+### Incidente de CI — 2026-11-17 (resolvido)
+- **Sintoma:** 100% dos workflows em `startup_failure` com 0s, em todas as branches e tambem nos agendados de `main`. Ultimo run saudavel: 2026-11-14 (`43609384963`). Efeito pratico: o check obrigatorio `Quality Gate ✅` nunca reportava, entao **nenhuma PR podia ser mergeada**, e a branch gerada `contexto` parou de ser atualizada.
+- **Causa raiz:** `GET /repos/adm01-debug/Fast_Gravacoes_V2/actions/permissions` retornava `allowed_actions="local_only"`, politica que bloqueia qualquer action de terceiros (`actions/checkout`, `actions/setup-node`, ...) no arranque do job. O baseline versionado em `scripts/ci/github-settings-baseline.json` (medido 2026-11-08) declara `allowed_actions="all"`; `git grep local_only` em todas as 39 refs do repositorio nao retorna nada — ou seja, a mudanca foi feita fora do versionamento, nunca foi decisao documentada.
+- **Correcao:** `PUT /actions/permissions` com `allowed_actions=all`, restaurando o baseline. CI voltou a executar no mesmo minuto.
+- **Achado colateral:** o `dependency-graph` do repositorio estava desligado (o job Dependency Review falhava com *"Dependency review is not supported on this repository"*). Habilitado via `PUT /vulnerability-alerts` + `PUT /automated-security-fixes`.
+- **Licao:** o `github-settings-guard.mjs` existe justamente para detectar esse desvio, mas roda **dentro** do Actions — quando a politica de Actions e quebrada, o proprio guarda morre junto. Monitorar `allowed_actions` por fora do Actions fecharia o ponto cego.
 
 ## BLOQUEADO / aguardando o dono
-1. **PR #180** - workflow de inventario (ordering ripgrep). Aguarda merge do dono (regra 8).
-2. **PR #182** - health-check fila TPM (edge function, deploy automatico). Aguarda merge do dono (regra 8).
-3. ~~**db-admin** - run 43510093330 sucesso (head 2f4326c)~~ -> resolvido.
-4. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
-5. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
-6. **Logs de producao pos-deploy** - precisa telemetria/access token.
-7. **Workflows orfaos ativos sem arquivo na main** - 14 workflows `_tmp-*`/`tmp probe*`/`TEMP regenerate deno.lock` ainda ativos na API mas sem arquivo no main; nao executam (0 runs). Requer limpeza manual na UI (Settings > Actions > General > disabled/remover) - fora do escopo de codigo.
-8. **branch-hygiene-audit.yml e graphify.yml (main)** - sem run no branch main no periodo recente (branch-hygiene-audit: 0 runs; graphify: so PR-trigger, runs verdes). Nao configuram falha, mas nao ha execucao de agendado em main a certificar.
+1. **PR #184** - dependabot mensal (`.github/dependabot.yml`). Aguarda merge do dono (regra 8).
+2. ~~**PR #180** - inventario rg order~~ -> mergeada (144be3e3).
+3. ~~**PR #182** - health-check fila TPM~~ -> mergeada (c65ff2e0); confirmar `queue:tpm_notifications=pass` ao vivo.
+4. **Chave `sk_live_***` exposta** - redigida do arquivo versionado pela #190, mas **permanece no historico do Git** (repositorio e publico). Redacao nao e revogacao: a chave precisa ser **rotacionada no provedor**. Unica ocorrencia versionada era `analise-prs/auditorias-anteriores.md` (4x); o codigo (`MasterAPIPage.tsx`) ja lia `import.meta.env.VITE_MASTER_API_DISPLAY_KEY`. O valor completo nao e repetido aqui de proposito - recupere-o no commit anterior a #190 apenas se precisar identificar qual chave rotacionar.
+5. **image-optimizer** - stub 501; decisao de negocio (implementar ou remover).
+6. **Security advisors + comparacao migrations x banco** - precisa `SUPABASE_ACCESS_TOKEN`.
+7. **Logs de producao pos-deploy** - precisa telemetria/access token.
+8. **Env `VITE_SUPABASE_PUBLISHABLE_KEY` fora do repo** - as envs `VITE_*` vivem so no dashboard Vercel (recriadas como `plain`); `.env.production` versionado tem placeholders. Quem gera o bundle de producao e a Vercel, nao a CI do GitHub (`docs/agentes/vercel-deploy.md`), entao a configuracao precisa continuar no projeto Vercel. Recomendado: documentar o conjunto obrigatorio (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) e versionar a conferencia, para que uma recriacao manual futura nao derrube a producao de novo.
+9. ~~**Workflows orfaos ativos sem arquivo na main**~~ -> resolvido em 2026-11-17. Eram 10 (`_tmp-fix-deno-lock`, `-r2`, `-r3`, `_tmp-probe` a `_tmp-probe6`, `_tmp-regenerate-deno-lock`), todos sem arquivo em `main` e com 0 runs. Desativados via `PUT /actions/workflows/{id}/disable`; estado atual `disabled_manually`. Reversivel pelo endpoint `/enable`.
+10. **branch-hygiene-audit.yml e graphify.yml (main)** - sem run no branch main no periodo recente (branch-hygiene-audit: 0 runs; graphify: so PR-trigger, runs verdes). Nao configuram falha, mas nao ha execucao de agendado em main a certificar.
 _fim_
