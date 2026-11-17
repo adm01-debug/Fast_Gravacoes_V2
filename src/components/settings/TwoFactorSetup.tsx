@@ -49,9 +49,25 @@ export function TwoFactorSetup() {
     }
   };
 
+  // Toda tentativa de enroll que nao chega ao verify deixa um fator TOTP
+  // `unverified` na conta. Ele nao aparece em `listFactors().data.totp`
+  // (que so retorna `verified`), mas o GoTrue ainda recusa um novo enroll com
+  // 422 "a factor with the friendly name ... already exists". Sem limpar esses
+  // orfaos o 2FA fica permanentemente impossivel de ativar.
+  const removeStaleTotpFactors = async () => {
+    const { data, error } = await supabase.auth.mfa.listFactors();
+    if (error) return;
+    const stale = (data?.all ?? []).filter(f => f.factor_type === 'totp' && f.status !== 'verified');
+    for (const factor of stale) {
+      await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    }
+  };
+
   const handleStartEnroll = async () => {
     setIsEnrolling(true);
     try {
+      await removeStaleTotpFactors();
+
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
         friendlyName: 'FastGrava TOTP',
