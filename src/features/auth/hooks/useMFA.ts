@@ -59,9 +59,25 @@ export function useMFA() {
     refreshFactors();
   }, [refreshFactors]);
 
+  // `cancelEnrollment` so roda quando o usuario cancela de forma explicita. Se
+  // ele fechar a aba ou navegar no meio do cadastro, sobra um fator TOTP
+  // `unverified` na conta e o GoTrue passa a recusar todo novo enroll com
+  // 422 "a factor with the friendly name ... already exists", travando o MFA
+  // de vez. Limpar os pendentes antes de criar e a unica saida pela interface.
+  const removeStaleTotpFactors = async () => {
+    const { data, error } = await supabase.auth.mfa.listFactors();
+    if (error) return;
+    const stale = (data?.all ?? []).filter(f => f.factor_type === 'totp' && f.status !== 'verified');
+    for (const factor of stale) {
+      await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    }
+  };
+
   const startEnrollment = async (friendlyNameArg?: string) => {
     setIsEnrolling(true);
     try {
+      await removeStaleTotpFactors();
+
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
         issuer: 'Fast Gravações',

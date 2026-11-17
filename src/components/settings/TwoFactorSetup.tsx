@@ -23,7 +23,10 @@ export function TwoFactorSetup() {
   const [mfaFactors, setMfaFactors] = useState<Array<{ id: string; status: string; factor_type: string; friendly_name?: string }>>([]);
   const [showEnrollDialog, setShowEnrollDialog] = useState(false);
   const [showDisableDialog, setShowDisableDialog] = useState(false);
-  const [enrollData, setEnrollData] = useState<{ qr: string; secret: string; id: string } | null>(null);
+  // `uri` guarda o otpauth:// do fator. Nunca use `totp.qr_code` aqui: ele é um
+  // SVG pronto (vários KB) e o QRCodeSVG tenta codificá-lo como payload,
+  // estourando `RangeError: Data too long` e derrubando a tela no ErrorBoundary.
+  const [enrollData, setEnrollData] = useState<{ uri: string; secret: string; id: string } | null>(null);
   const [verifyCode, setVerifyCode] = useState('');
   const [disableCode, setDisableCode] = useState('');
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -46,9 +49,25 @@ export function TwoFactorSetup() {
     }
   };
 
+  // Toda tentativa de enroll que nao chega ao verify deixa um fator TOTP
+  // `unverified` na conta. Ele nao aparece em `listFactors().data.totp`
+  // (que so retorna `verified`), mas o GoTrue ainda recusa um novo enroll com
+  // 422 "a factor with the friendly name ... already exists". Sem limpar esses
+  // orfaos o 2FA fica permanentemente impossivel de ativar.
+  const removeStaleTotpFactors = async () => {
+    const { data, error } = await supabase.auth.mfa.listFactors();
+    if (error) return;
+    const stale = (data?.all ?? []).filter(f => f.factor_type === 'totp' && f.status !== 'verified');
+    for (const factor of stale) {
+      await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    }
+  };
+
   const handleStartEnroll = async () => {
     setIsEnrolling(true);
     try {
+      await removeStaleTotpFactors();
+
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
         friendlyName: 'FastGrava TOTP',
@@ -58,7 +77,7 @@ export function TwoFactorSetup() {
 
       if (data?.totp) {
         setEnrollData({
-          qr: data.totp.qr_code,
+          uri: data.totp.uri,
           secret: data.totp.secret,
           id: data.id,
         });
@@ -264,7 +283,7 @@ export function TwoFactorSetup() {
           {enrollData && (
             <div className="space-y-4">
               <div className="flex justify-center p-4 bg-white rounded-lg">
-                <QRCodeSVG value={enrollData.qr} size={200} />
+                <QRCodeSVG value={enrollData.uri} size={200} />
               </div>
 
               <div className="space-y-2">
