@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9ed883f2fa792151f00f5b4bbff61fb648ec91c6` (2026-11-14T12:17:33-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `64c3b0c07a0da1bb66ba86d5bb91738235729dff` (2026-11-17T10:28:54-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,14 +247,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `9ed883f2`
-- comunidades maiores: card.tsx (256), Button (182), analytics/index.ts (111), snapshot.py (107), generate.py (101), skeleton.tsx (99), gerar.mjs (96), .write (96), cn (96), DailyCalendar.tsx (96), scroll-area.tsx (93), showErrorToast (83)
+- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `64c3b0c0`
+- comunidades maiores: card.tsx (234), Button (164), analytics/index.ts (111), snapshot.py (107), generate.py (101), skeleton.tsx (99), gerar.mjs (96), .write (96), utils.ts (96), cn (96), DailyCalendar.tsx (96), IPAllowlist.tsx (87)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (19)
-- AGENTS.md (11)
+- AGENTS.md (10)
 - package-lock.json (9)
 - package.json (9)
 - .github/workflows/db-admin.yml (8)
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `64c3b0c` fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)
 - 2026-11-14 `9ed883f` chore(inventario): estado real do projeto [auto] (#186)
 - 2026-11-14 `4991121` chore(lint): zera warnings do eslint no src (22 -> 0) (#185)
 - 2026-11-14 `9afb1a2` docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `358f079` fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, U
 - 2026-11-12 `9685302` fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)
 - 2026-11-12 `dd1b467` style(manutencao): aplica correcoes locais verificadas (#169)
-- 2026-11-12 `df3c54d` chore: porta automações de estado real do Zapp_Web_V2 + redige command do cron secret (#165)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

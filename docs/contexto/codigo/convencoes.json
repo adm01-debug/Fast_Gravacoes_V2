@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)",
    "chore(inventario): estado real do projeto [auto] (#186)",
    "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)",
    "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)",
-   "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804",
-   "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856"
+   "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

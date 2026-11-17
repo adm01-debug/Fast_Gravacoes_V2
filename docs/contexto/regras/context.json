@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
+  "sha": "64c3b0c07a0da1bb66ba86d5bb91738235729dff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-14 17:14 UTC",
+  "generated_at": "2026-11-17 13:38 UTC",
   "files_total": 1528,
   "code_files": 1371,
   "code_lines": 202595
@@ -94575,10 +94575,19 @@
   }
  },
  "git": {
-  "sha": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
+  "sha": "64c3b0c07a0da1bb66ba86d5bb91738235729dff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "64c3b0c",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)",
+    "files": [
+     "analise-prs/auditorias-anteriores.md"
+    ]
+   },
    {
     "sha": "9ed883f",
     "date": "2026-11-14",
@@ -94951,22 +94960,6 @@
      "scripts/ai-context/gerar.mjs",
      "scripts/ai-context/gerar.unit.mjs"
     ]
-   },
-   {
-    "sha": "7a712fb",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(regras): usa o snapshot do banco como fonte (#154)",
-    "files": [
-     "docs/agentes/contexto.md",
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/regras_negocio/test_indice.py",
-     "scripts/regras_negocio/test_publish.py"
-    ]
    }
   ],
   "hot_files": [
@@ -94980,14 +94973,6 @@
    ],
    [
     "scripts/supabase_snapshot/test_snapshot.py",
-    3
-   ],
-   [
-    "scripts/regras_negocio/generate.py",
-    3
-   ],
-   [
-    "scripts/regras_negocio/test_generate.py",
     3
    ],
    [
@@ -95039,16 +95024,24 @@
     2
    ],
    [
+    "scripts/regras_negocio/generate.py",
+    2
+   ],
+   [
+    "scripts/regras_negocio/test_generate.py",
+    2
+   ],
+   [
     "scripts/ai-context/README.md",
     2
    ],
    [
-    "scripts/regras_negocio/README.md",
-    2
+    "analise-prs/auditorias-anteriores.md",
+    1
    ],
    [
-    "scripts/regras_negocio/publish.sh",
-    2
+    "inventario/estado/banco.json",
+    1
    ]
   ]
  }

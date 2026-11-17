@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9ed883f2fa792151f00f5b4bbff61fb648ec91c6",
+  "commit": "64c3b0c07a0da1bb66ba86d5bb91738235729dff",
   "branch": "main",
-  "data_commit": "2026-11-14T12:17:33-03:00",
+  "data_commit": "2026-11-17T10:28:54-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "64c3b0c",
+    "data": "2026-11-17",
+    "assunto": "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)"
+   },
    {
     "sha": "9ed883f",
     "data": "2026-11-14",
@@ -126,15 +131,10 @@
     "sha": "6907bc4",
     "data": "2026-11-11",
     "assunto": "fix(ci): rls-regression.mjs reaplica login com retry e não dispara ao importar (#167)"
-   },
-   {
-    "sha": "86e59b4",
-    "data": "2026-11-10",
-    "assunto": "fix(snapshot): teste de índice alinhado ao contrato documentado de 'não verificável' (#166)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 409,
+  "arquivos_mudados_7d": 124,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -204,7 +204,7 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": "package-lock.json",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 58
+    "commits": 59
    },
    {
     "autor": "devin-ai-integration[bot]",
