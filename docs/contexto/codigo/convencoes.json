@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)",
    "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)",
    "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)",
    "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)",
-   "fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)",
-   "fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)"
+   "fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

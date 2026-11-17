@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "a334acf4dd60a7d22cfd3cbae65e0ec14d208454",
+ "commit_do_grafo": "343ed147b4e85aee7b5150588ce6122ef2186c8e",
  "grafo_atual": true,
  "nos": 7451,
  "arestas": 21916,
- "comunidades_total": 649,
+ "comunidades_total": 650,
  "relacoes": {
   "calls": 3196,
   "cites": 6,
@@ -157,23 +157,6 @@
   },
   {
    "id": 8,
-   "nome": "showErrorToast",
-   "nos": 97,
-   "callables": 65,
-   "arquivos": 25,
-   "exemplos_arquivos": [
-    "src/components/assistant/TechnicalAssistant.tsx",
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/technical-assistant/ConversationSidebar.tsx",
-    "src/features/admin/components/security/GeoBlockingSettings.tsx",
-    "src/features/admin/hooks/useBitrix24Sync.ts",
-    "src/features/admin/hooks/useDashboardPresets.ts",
-    "src/features/admin/hooks/useDataImport.ts",
-    "src/features/admin/hooks/useGeoBlocking.ts"
-   ]
-  },
-  {
-   "id": 9,
    "nome": "gerar.mjs",
    "nos": 96,
    "callables": 19,
@@ -183,7 +166,7 @@
    ]
   },
   {
-   "id": 10,
+   "id": 9,
    "nome": ".write",
    "nos": 96,
    "callables": 90,
@@ -193,7 +176,7 @@
    ]
   },
   {
-   "id": 11,
+   "id": 10,
    "nome": "skeleton.tsx",
    "nos": 96,
    "callables": 47,
@@ -210,24 +193,24 @@
    ]
   },
   {
-   "id": 12,
-   "nome": "useAuth",
-   "nos": 89,
-   "callables": 65,
-   "arquivos": 37,
+   "id": 11,
+   "nome": "showErrorToast",
+   "nos": 94,
+   "callables": 63,
+   "arquivos": 24,
    "exemplos_arquivos": [
-    "src/components/dashboard/GamificationBanner.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/onboarding/SystemOnboarding.tsx",
-    "src/components/operators/OperatorLeaderboard.tsx",
-    "src/components/settings/IPAllowlist.tsx",
-    "src/components/settings/LoginAuditLog.tsx",
-    "src/contexts/PermissionsContext.tsx",
-    "src/features/admin/components/security/ActiveDevicesPanel.tsx"
+    "src/components/assistant/TechnicalAssistant.tsx",
+    "src/components/technical-assistant/ConversationSidebar.tsx",
+    "src/features/admin/components/security/GeoBlockingSettings.tsx",
+    "src/features/admin/hooks/useBitrix24Sync.ts",
+    "src/features/admin/hooks/useBusinessConfig.ts",
+    "src/features/admin/hooks/useDashboardPresets.ts",
+    "src/features/admin/hooks/useDataImport.ts",
+    "src/features/admin/hooks/useGeoBlocking.ts"
    ]
   },
   {
-   "id": 13,
+   "id": 12,
    "nome": "DailyCalendar.tsx",
    "nos": 86,
    "callables": 53,
@@ -241,6 +224,23 @@
     "src/components/calendar/CalendarToolbar.tsx",
     "src/components/calendar/ConflictResolutionPanel.tsx",
     "src/components/calendar/JobBlock.tsx"
+   ]
+  },
+  {
+   "id": 13,
+   "nome": "useAuth",
+   "nos": 86,
+   "callables": 63,
+   "arquivos": 36,
+   "exemplos_arquivos": [
+    "src/components/dashboard/GamificationBanner.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/onboarding/SystemOnboarding.tsx",
+    "src/components/operators/OperatorLeaderboard.tsx",
+    "src/components/settings/IPAllowlist.tsx",
+    "src/components/settings/LoginAuditLog.tsx",
+    "src/contexts/PermissionsContext.tsx",
+    "src/features/admin/components/security/ActiveDevicesPanel.tsx"
    ]
   },
   {
@@ -398,23 +398,6 @@
   },
   {
    "id": 23,
-   "nome": "queryConfig.ts",
-   "nos": 70,
-   "callables": 41,
-   "arquivos": 24,
-   "exemplos_arquivos": [
-    "src/components/abc/ABCActivityRatesCard.tsx",
-    "src/components/abc/ABCCostBreakdownChart.tsx",
-    "src/components/abc/ABCCostPoolsCard.tsx",
-    "src/components/abc/ABCJobCostsTable.tsx",
-    "src/components/abc/ABCTechniqueChart.tsx",
-    "src/components/documents/DocumentUploadModal.tsx",
-    "src/components/documents/DocumentsList.tsx",
-    "src/components/jobs/JobInstructionsTab.tsx"
-   ]
-  },
-  {
-   "id": 24,
    "nome": "auth/index.ts",
    "nos": 65,
    "callables": 41,
@@ -431,24 +414,7 @@
    ]
   },
   {
-   "id": 25,
-   "nome": "lib/logger.ts",
-   "nos": 61,
-   "callables": 38,
-   "arquivos": 16,
-   "exemplos_arquivos": [
-    "src/components/chat/QuickChat.tsx",
-    "src/components/error/GlobalErrorBoundary.tsx",
-    "src/components/qrcode/QRScanner.tsx",
-    "src/contexts/OfflineSyncContext.tsx",
-    "src/features/notifications/hooks/useNotifications.test.ts",
-    "src/features/notifications/hooks/useNotifications.ts",
-    "src/features/notifications/hooks/useWebPushNotifications.ts",
-    "src/features/notifications/types/index.ts"
-   ]
-  },
-  {
-   "id": 26,
+   "id": 24,
    "nome": "useTechniques",
    "nos": 60,
    "callables": 49,
@@ -465,7 +431,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 25,
    "nome": "useTPM",
    "nos": 60,
    "callables": 46,
@@ -482,7 +448,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 26,
    "nome": "scripts",
    "nos": 59,
    "callables": 0,
@@ -492,7 +458,24 @@
    ]
   },
   {
-   "id": 29,
+   "id": 27,
+   "nome": "lib/logger.ts",
+   "nos": 59,
+   "callables": 39,
+   "arquivos": 16,
+   "exemplos_arquivos": [
+    "src/components/chat/QuickChat.tsx",
+    "src/components/error/GlobalErrorBoundary.tsx",
+    "src/components/qrcode/QRScanner.tsx",
+    "src/components/settings/SettingsNotificationsTab.tsx",
+    "src/contexts/OfflineSyncContext.tsx",
+    "src/features/notifications/hooks/useNotifications.ts",
+    "src/features/notifications/hooks/usePushSubscription.ts",
+    "src/features/notifications/hooks/useWebPushNotifications.ts"
+   ]
+  },
+  {
+   "id": 28,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 45,
@@ -505,7 +488,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 29,
    "nome": "AppSidebar.tsx",
    "nos": 58,
    "callables": 25,
@@ -522,7 +505,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 30,
    "nome": "actions-kpi.unit.mjs",
    "nos": 57,
    "callables": 46,
@@ -536,7 +519,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 31,
    "nome": "notifications/index.ts",
    "nos": 57,
    "callables": 38,
@@ -550,6 +533,23 @@
     "src/features/notifications/components/NotificationIntegrator.tsx",
     "src/features/notifications/components/PushNotificationManager.tsx",
     "src/features/notifications/components/PushNotificationPrompt.tsx"
+   ]
+  },
+  {
+   "id": 32,
+   "nome": "queryConfig.ts",
+   "nos": 56,
+   "callables": 28,
+   "arquivos": 19,
+   "exemplos_arquivos": [
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/documents/DocumentsList.tsx",
+    "src/components/jobs/JobInstructionsTab.tsx",
+    "src/features/analytics/hooks/useMLPredictions.ts",
+    "src/features/jobs/hooks/useJobs.ts",
+    "src/features/jobs/hooks/useSchedulingData.ts",
+    "src/features/jobs/hooks/useTechniques.ts"
    ]
   },
   {
@@ -605,6 +605,23 @@
   },
   {
    "id": 36,
+   "nome": "useRealtimeChannel",
+   "nos": 48,
+   "callables": 33,
+   "arquivos": 10,
+   "exemplos_arquivos": [
+    "src/contexts/WebSocketContext.tsx",
+    "src/features/maintenance/components/TPMParameterAlerts.tsx",
+    "src/features/notifications/components/RealtimeNotificationsProvider.tsx",
+    "src/features/notifications/hooks/useNotifications.test.ts",
+    "src/features/notifications/hooks/useNotifications.ts",
+    "src/features/notifications/types/index.ts",
+    "src/features/production/hooks/useMachineStatusHub.ts",
+    "src/features/production/hooks/useOperatorPresence.ts"
+   ]
+  },
+  {
+   "id": 37,
    "nome": "OperatorView.tsx",
    "nos": 46,
    "callables": 24,
@@ -621,7 +638,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 38,
    "nome": "AppRoutes.tsx",
    "nos": 46,
    "callables": 7,
@@ -633,7 +650,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 39,
    "nome": "_shared/logger.ts",
    "nos": 46,
    "callables": 27,
@@ -650,7 +667,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 40,
    "nome": "MainLayout.tsx",
    "nos": 44,
    "callables": 28,
@@ -664,23 +681,6 @@
     "src/hooks/use-deeplink-focus.ts",
     "src/hooks/use-swipe-gesture.tsx",
     "src/hooks/useNetworkStatus.tsx"
-   ]
-  },
-  {
-   "id": 40,
-   "nome": "useRealtimeChannel",
-   "nos": 44,
-   "callables": 31,
-   "arquivos": 8,
-   "exemplos_arquivos": [
-    "src/contexts/WebSocketContext.tsx",
-    "src/features/maintenance/components/TPMParameterAlerts.tsx",
-    "src/features/notifications/components/RealtimeNotificationsProvider.tsx",
-    "src/features/production/hooks/useMachineStatusHub.ts",
-    "src/features/production/hooks/useOperatorMachines.ts",
-    "src/features/production/hooks/useOperatorPresence.ts",
-    "src/hooks/useRealtimeResetRequests.tsx",
-    "src/lib/realtimeChannel.ts"
    ]
   },
   {
@@ -2129,11 +2129,11 @@
   "sonner": "sonner",
   "src/App.tsx": "App.tsx",
   "src/components/a/A": "cenarios.mjs",
-  "src/components/abc/ABCActivityRatesCard.tsx": "queryConfig.ts",
-  "src/components/abc/ABCCostBreakdownChart.tsx": "queryConfig.ts",
-  "src/components/abc/ABCCostPoolsCard.tsx": "queryConfig.ts",
-  "src/components/abc/ABCJobCostsTable.tsx": "queryConfig.ts",
-  "src/components/abc/ABCTechniqueChart.tsx": "queryConfig.ts",
+  "src/components/abc/ABCActivityRatesCard.tsx": "useABCMutations.ts",
+  "src/components/abc/ABCCostBreakdownChart.tsx": "useABCMutations.ts",
+  "src/components/abc/ABCCostPoolsCard.tsx": "useABCMutations.ts",
+  "src/components/abc/ABCJobCostsTable.tsx": "useABCMutations.ts",
+  "src/components/abc/ABCTechniqueChart.tsx": "useABCMutations.ts",
   "src/components/abc/AIFinancialAdvisor.tsx": "FuturisticBI.tsx",
   "src/components/accessibility/AccessibilityProvider.tsx": "App.tsx",
   "src/components/accessibility/AccessibleIconButton.tsx": "cn",
@@ -2181,7 +2181,7 @@
   "src/components/dashboard/AlertsWidget.tsx": "badge.tsx",
   "src/components/dashboard/BottleneckWidget.tsx": "badge.tsx",
   "src/components/dashboard/BufferPromotionStatus.tsx": "OperatorView.tsx",
-  "src/components/dashboard/BufferStatusWidget.tsx": "showErrorToast",
+  "src/components/dashboard/BufferStatusWidget.tsx": "queryConfig.ts",
   "src/components/dashboard/CompactTimeline.tsx": "useSchedulingData",
   "src/components/dashboard/ConflictAlertsWidget.tsx": "useSchedulingConflicts",
   "src/components/dashboard/DashboardEditControls.tsx": "cn",
@@ -2591,7 +2591,7 @@
   "src/features/admin/hooks/useAuditTrail.ts": "skeleton.tsx",
   "src/features/admin/hooks/useBIExport.ts": "ReportBuilderPage.tsx",
   "src/features/admin/hooks/useBitrix24Sync.ts": "showErrorToast",
-  "src/features/admin/hooks/useBusinessConfig.ts": "useAuth",
+  "src/features/admin/hooks/useBusinessConfig.ts": "showErrorToast",
   "src/features/admin/hooks/useCodeQualityMetrics.ts": "useCodeQualityMetrics.ts",
   "src/features/admin/hooks/useCronHealth.ts": "CronHealthCard.tsx",
   "src/features/admin/hooks/useCronHealthHistory.test.ts": "useCronHealthHistory.ts",
@@ -2688,7 +2688,7 @@
   "src/features/analytics/hooks/useKPIs.ts": "badge.tsx",
   "src/features/analytics/hooks/useLoadBalancing.ts": "useTechniques",
   "src/features/analytics/hooks/useLoadBalancingWithActions.ts": "showErrorToast",
-  "src/features/analytics/hooks/useMLPredictions.ts": "queryConfig.ts",
+  "src/features/analytics/hooks/useMLPredictions.ts": "badge.tsx",
   "src/features/analytics/hooks/useOEE.test.ts": "client.ts",
   "src/features/analytics/hooks/useOEEDashboardFilters.ts": "useOEEDashboardFilters.ts",
   "src/features/analytics/hooks/useRealtimeConnection.test.ts": "client.ts",
@@ -2730,7 +2730,7 @@
   "src/features/jobs/hooks/useJobInventoryCheck.ts": "parseDateOnly",
   "src/features/jobs/hooks/useJobStatusHistory.ts": "client.ts",
   "src/features/jobs/hooks/useJobs.realtime.test.tsx": "useJobs.realtime.test.tsx",
-  "src/features/jobs/hooks/useJobs.ts": "showErrorToast",
+  "src/features/jobs/hooks/useJobs.ts": "queryConfig.ts",
   "src/features/jobs/hooks/useKanbanDragDrop.ts": "client.ts",
   "src/features/jobs/hooks/usePaginatedJobs.ts": "client.ts",
   "src/features/jobs/hooks/usePriorityEscalation.ts": "usePriorityEscalation.ts",
@@ -2754,7 +2754,7 @@
   "src/features/jobs/services/jobsService.ts": "client.ts",
   "src/features/jobs/services/scheduling.test.ts": "client.ts",
   "src/features/jobs/services/scheduling.ts": "client.ts",
-  "src/features/jobs/services/techniquesService.ts": "showErrorToast",
+  "src/features/jobs/services/techniquesService.ts": "queryConfig.ts",
   "src/features/jobs/types/job.schema.ts": "client.ts",
   "src/features/jobs/types/lot.schema.ts": "schemas/index.ts",
   "src/features/jobs/types/sequencing.ts": "client.ts",
@@ -2818,14 +2818,14 @@
   "src/features/notifications/hooks/useNotificationPreferences.ts": "useNotificationPreferences.ts",
   "src/features/notifications/hooks/useNotificationSettings.ts": "useTPM",
   "src/features/notifications/hooks/useNotificationSounds.ts": "notifications/index.ts",
-  "src/features/notifications/hooks/useNotifications.test.ts": "lib/logger.ts",
+  "src/features/notifications/hooks/useNotifications.test.ts": "useRealtimeChannel",
   "src/features/notifications/hooks/useNotifications.ts": "NotificationsPage.tsx",
   "src/features/notifications/hooks/usePushNotifications.ts": "notifications/index.ts",
-  "src/features/notifications/hooks/usePushSubscription.ts": "SettingsPage.tsx",
+  "src/features/notifications/hooks/usePushSubscription.ts": "lib/logger.ts",
   "src/features/notifications/hooks/useTPMNotifications.ts": "notifications/index.ts",
   "src/features/notifications/hooks/useWebPushNotifications.ts": "lib/logger.ts",
   "src/features/notifications/index.ts": "notifications/index.ts",
-  "src/features/notifications/types/index.ts": "lib/logger.ts",
+  "src/features/notifications/types/index.ts": "useRealtimeChannel",
   "src/features/packaging/components/BulkReassignDialog.tsx": "Button",
   "src/features/packaging/components/DefectTriageForm.tsx": "PackagingTaskDetail.tsx",
   "src/features/packaging/components/DelayReasonDialog.tsx": "Button",
@@ -2874,12 +2874,12 @@
   "src/features/production/hooks/useOperatorDashboardData.ts": "OperatorsPage.tsx",
   "src/features/production/hooks/useOperatorEvolution.ts": "auth/index.ts",
   "src/features/production/hooks/useOperatorGoals.ts": "production/index.ts",
-  "src/features/production/hooks/useOperatorMachines.ts": "useRealtimeChannel",
+  "src/features/production/hooks/useOperatorMachines.ts": "showErrorToast",
   "src/features/production/hooks/useOperatorPresence.ts": "useRealtimeChannel",
   "src/features/production/hooks/useOperatorProductivity.test.ts": "client.ts",
   "src/features/production/hooks/useOperatorProductivity.ts": "client.ts",
   "src/features/production/hooks/useOperatorRankings.ts": "useAuth",
-  "src/features/production/hooks/useOperatorSkills.ts": "scroll-area.tsx",
+  "src/features/production/hooks/useOperatorSkills.ts": "showErrorToast",
   "src/features/production/hooks/useOperators.ts": "Button",
   "src/features/production/hooks/usePerformanceMetrics.ts": "lib/logger.ts",
   "src/features/production/hooks/useProductionLosses.ts": "client.ts",
@@ -2892,11 +2892,11 @@
   "src/features/production/types/machine.schema.ts": "schemas/index.ts",
   "src/features/production/types/maintenance.schema.ts": "schemas/index.ts",
   "src/features/production/types/operator.schema.ts": "schemas/index.ts",
-  "src/hooks/abc/index.ts": "queryConfig.ts",
-  "src/hooks/abc/types.ts": "queryConfig.ts",
-  "src/hooks/abc/useABCCalculations.ts": "queryConfig.ts",
+  "src/hooks/abc/index.ts": "useABCMutations.ts",
+  "src/hooks/abc/types.ts": "useABCMutations.ts",
+  "src/hooks/abc/useABCCalculations.ts": "useABCMutations.ts",
   "src/hooks/abc/useABCData.ts": "FuturisticBI.tsx",
-  "src/hooks/abc/useABCMutations.ts": "queryConfig.ts",
+  "src/hooks/abc/useABCMutations.ts": "useABCMutations.ts",
   "src/hooks/shift-handover/shiftHandoverTypes.ts": "ShiftHandoverPage.tsx",
   "src/hooks/shift-handover/useShiftHandoverMutations.ts": "ShiftHandoverPage.tsx",
   "src/hooks/shift-handover/useShiftHandoverQueries.ts": "ShiftHandoverPage.tsx",

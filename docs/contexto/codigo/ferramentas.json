@@ -8,8 +8,8 @@
    "Markdown (76)",
    "JavaScript (54)",
    "JSON (30)",
+   "YAML (15)",
    "Python (13)",
-   "YAML (13)",
    "Shell (6)"
   ],
   "linguagem_principal": "TypeScript",
@@ -145,6 +145,7 @@
  },
  "configs": [
   ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/dependabot.yml",
   ".husky/commit-msg",
   ".husky/pre-commit",
   ".prettierrc",
@@ -359,6 +360,30 @@
    "actions": [
     "actions/checkout",
     "supabase/setup-cli"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/dependency-review.yml",
+   "nome": "Dependency Review",
+   "gatilhos": [
+    "pull_request"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "dependency-review"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/dependency-review-action"
    ]
   },
   {
