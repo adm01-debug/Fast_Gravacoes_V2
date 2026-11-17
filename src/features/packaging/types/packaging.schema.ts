@@ -53,6 +53,9 @@ export const packagingRegisterFormSchema = z.object({
   notes: z.string().max(2000).optional(),
 });
 export type PackagingRegisterForm = z.infer<typeof packagingRegisterFormSchema>;
+// Input do formulário antes da coerção do zod (campos numéricos chegam como
+// string do <input>); o react-hook-form precisa dele para tipar o resolver.
+export type PackagingRegisterFormInput = z.input<typeof packagingRegisterFormSchema>;
 
 export const defectTriageFormSchema = z
   .object({
@@ -84,6 +87,7 @@ export const defectTriageFormSchema = z
     }
   });
 export type DefectTriageForm = z.infer<typeof defectTriageFormSchema>;
+export type DefectTriageFormInput = z.input<typeof defectTriageFormSchema>;
 
 export const DEFECT_TYPE_LABELS: Record<PackagingDefectType, string> = {
   print_misalignment: 'Desalinhamento de impressão',

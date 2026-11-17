@@ -11,6 +11,7 @@ import {
   SEVERITY_LABELS,
   DECISION_LABELS,
   type DefectTriageForm,
+  type DefectTriageFormInput,
   type PackagingDefectType,
   type PackagingDefectSeverity,
   type PackagingDefectDecision,
@@ -27,7 +28,7 @@ interface Props {
 
 export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
   const [uploading, setUploading] = useState(false);
-  const form = useForm<DefectTriageForm>({
+  const form = useForm<DefectTriageFormInput, unknown, DefectTriageForm>({
     resolver: zodResolver(defectTriageFormSchema),
     defaultValues: {
       quantity: 1,

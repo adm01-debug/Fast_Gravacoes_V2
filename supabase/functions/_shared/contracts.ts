@@ -13,7 +13,7 @@ export const WebhookSourceSchema = z.enum(["bitrix24", "stripe", "external_syste
 export const WebhookPayloadSchema = z.object({
   source: WebhookSourceSchema,
   event: z.string(),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   timestamp: z.string().datetime().optional(),
 });
 

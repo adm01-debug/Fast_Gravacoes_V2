@@ -49,7 +49,7 @@
         "npm:@dnd-kit/sortable@10",
         "npm:@dnd-kit/utilities@^3.2.2",
         "npm:@eslint/js@^9.32.0",
-        "npm:@hookform/resolvers@^3.10.0",
+        "npm:@hookform/resolvers@^7.0.7",
         "npm:@lovable.dev/cloud-auth-js@1",
         "npm:@playwright/test@^1.60.0",
         "npm:@radix-ui/react-accordion@^1.2.11",
@@ -157,7 +157,7 @@
         "npm:vite@^7.3.7",
         "npm:vitest@^4.1.11",
         "npm:web-vitals@^4.2.4",
-        "npm:zod@^3.25.76",
+        "npm:zod@^4.6.7",
         "npm:zustand@^5.0.9"
       ],
       "overrides": {

@@ -24,9 +24,11 @@ const BRACES_ADVISORY = 'GHSA-vfj7-8cjw-p6xm';
 // GHSA-rj75-hqrm-r3gf = postcss-selector-parser complexidade quadrática no
 // parsing de seletores.
 const POSTCSS_PARSER_ADVISORY = 'GHSA-rj75-hqrm-r3gf';
-// GHSA-mrhx-c7xc-m3w5 = zod: DoS por bound astronômico em schemas
-// .min()/.max() declarados pelo próprio código.
-const ZOD_ADVISORY = 'GHSA-mrhx-c7xc-m3w5';
+// GHSA-fc5q-39xc-vjpf = picomatch ReDoS por extglob repetido de ramo único.
+const PICOMATCH_ADVISORY = 'GHSA-fc5q-39xc-vjpf';
+// @vitest/mocker: injeção de código via registro manual de mock não
+// autenticado e bypass do allowlist de redirect por backslash no Windows.
+const VITEST_MOCKER_ADVISORIES = ['GHSA-qxg6-89mg-rqv8', 'GHSA-xp26-3454-mjgp'];
 
 /** GHSA de um `via` do npm audit (último segmento da URL), ou null se ausente/malformado. */
 const ghsaOf = (via) => {
@@ -115,21 +117,68 @@ const ALLOWED_PACKAGES = new Map([
       advisories: new Set([POSTCSS_PARSER_ADVISORY]),
     },
   ],
-  // zod (GHSA-mrhx-c7xc-m3w5: DoS por bound astronômico em coleções):
-  // para ser explorada, um schema NOSSO precisaria declarar .max() com
-  // valor irreal — os bounds vêm do próprio código, não de input externo.
-  // Não existe backport para a linha 3.x; o fix só está na v4, que é
-  // major breaking (API de schemas, zod-validation-error compat).
-  // Remoção: migração zod v4 com revisão do zod-validation-error.
+  // picomatch (GHSA-fc5q-39xc-vjpf: ReDoS por extglob repetido): NÃO existe
+  // versão corrigida (o advisory cobre o range `*`). Só é alcançado por
+  // tooling de build/dev (vite, vitest, tailwind, chokidar, lint-staged,
+  // workbox-build) e os padrões de glob vêm das nossas próprias configs —
+  // nunca de input de usuário em runtime. Nenhum desses pacotes entra no
+  // bundle servido ao navegador. Remoção: assim que o upstream publicar
+  // uma release corrigida de picomatch.
   [
-    'zod',
+    'picomatch',
     {
       reason:
-        'DoS por bound astronômico em coleções exige schema nosso declarar .max() irreal; fix só existe na v4 (major breaking). Remoção: migração zod v4 com revisão do zod-validation-error.',
-      advisories: new Set([ZOD_ADVISORY]),
+        'ReDoS sem release corrigida upstream (range `*`); alcançado só por tooling de build/dev com globs das nossas configs. Remoção: quando houver release corrigida de picomatch.',
+      advisories: new Set([PICOMATCH_ADVISORY]),
+    },
+  ],
+  // @vitest/mocker: ambos os advisories exigem que um atacante alcance o
+  // servidor do test runner (mock manual não autenticado / traversal no
+  // redirect). O vitest só roda em dev e na CI, nunca em produção, e não é
+  // exposto em rede. O fix exige vitest v4 (major).
+  // Remoção: upgrade do vitest para a linha 4.x.
+  [
+    '@vitest/mocker',
+    {
+      reason:
+        'Exige acesso ao servidor do test runner, que só existe em dev/CI e não é exposto em rede; fix só na linha vitest 4.x (major). Remoção: upgrade do vitest para 4.x.',
+      advisories: new Set(VITEST_MOCKER_ADVISORIES),
     },
   ],
 ]);
+
+// Pacotes sem advisory próprio: só aparecem no audit por dependerem de um
+// pacote já isento acima (picomatch, @vitest/mocker, minimatch, glob).
+// Todos são devDependencies ou plugins de build — nenhum é código enviado ao
+// navegador. Mantêm `advisories` vazio de propósito: se um advisory DIRETO
+// surgir em qualquer um deles, o gate volta a falhar.
+for (const pkg of [
+  '@rollup/plugin-babel',
+  '@rollup/plugin-node-resolve',
+  '@rollup/plugin-replace',
+  '@rollup/pluginutils',
+  '@typescript-eslint/typescript-estree',
+  '@vitest/coverage-v8',
+  'anymatch',
+  'fdir',
+  'glob',
+  'lint-staged',
+  'minimatch',
+  'readdirp',
+  'rollup-plugin-visualizer',
+  'sucrase',
+  'tinyglobby',
+  'vite',
+  'vite-plugin-pwa',
+  'vitest',
+  'workbox-build',
+]) {
+  ALLOWED_PACKAGES.set(pkg, {
+    reason:
+      'Sem advisory próprio — herda a vuln de um pacote já isento (picomatch/@vitest/mocker/minimatch/glob); é tooling de build/dev, fora do bundle de produção.',
+    advisories: new Set(),
+  });
+}
 
 // `npm audit` sai com código != 0 quando há vulnerabilidades — spawnSync
 // (em vez de execSync) para capturar o JSON independentemente do exit code.

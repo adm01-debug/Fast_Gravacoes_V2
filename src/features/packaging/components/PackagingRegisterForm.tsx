@@ -7,7 +7,7 @@ import { useSoundFeedback } from '../hooks/useSoundFeedback';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { packagingRegisterFormSchema, type PackagingRegisterForm } from '../types/packaging.schema';
+import { packagingRegisterFormSchema, type PackagingRegisterForm, type PackagingRegisterFormInput } from '../types/packaging.schema';
 
 interface Props {
   received: number;
@@ -21,7 +21,7 @@ const DEFAULT_TYPES = ['caixa', 'saco', 'envelope', 'pallet'];
 
 export function PackagingRegisterForm({ received, defaultPackageTypes = DEFAULT_TYPES, onSubmit, submitting, onScaleWeight }: Props) {
   const { playSound } = useSoundFeedback();
-  const form = useForm<PackagingRegisterForm>({
+  const form = useForm<PackagingRegisterFormInput, unknown, PackagingRegisterForm>({
     resolver: zodResolver(packagingRegisterFormSchema),
     defaultValues: {
       package_type: defaultPackageTypes[0],

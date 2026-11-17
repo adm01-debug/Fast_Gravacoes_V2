@@ -9,6 +9,9 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const GATE = join(dirname(fileURLToPath(import.meta.url)), 'audit-gate.mjs');
+// PICO = advisory isento de picomatch; ZOD = advisory que deixou de ser isento
+// (corrigido no zod 4) e por isso serve de contraexemplo.
+const PICO = 'https://github.com/advisories/GHSA-fc5q-39xc-vjpf';
 const ZOD = 'https://github.com/advisories/GHSA-mrhx-c7xc-m3w5';
 const BRACES = 'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm';
 
@@ -34,41 +37,47 @@ const vuln = (severity, via) => ({ severity, via });
 const adv = (url, source = 1) => ({ source, url, title: 't', severity: 'high' });
 
 test('advisory isento passa', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv(ZOD, 1243066)]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv(PICO, 1243066)]) }));
   assert.equal(r.code, 0, r.out);
-  assert.match(r.out, /↷ zod/);
+  assert.match(r.out, /↷ picomatch/);
 });
 
 test('source renumerado pelo npm com a mesma GHSA continua isento', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv(ZOD, 9999999)]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv(PICO, 9999999)]) }));
   assert.equal(r.code, 0, r.out);
 });
 
 test('GHSA em caixa diferente na URL continua isenta', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv(ZOD.toUpperCase().replace('HTTPS://GITHUB.COM/ADVISORIES/', 'https://github.com/advisories/'))]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv(PICO.toUpperCase().replace('HTTPS://GITHUB.COM/ADVISORIES/', 'https://github.com/advisories/'))]) }));
   assert.equal(r.code, 0, r.out);
 });
 
 test('GHSA nova em pacote isento reprova', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv(ZOD), adv('https://github.com/advisories/GHSA-aaaa-bbbb-cccc')]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv(PICO), adv('https://github.com/advisories/GHSA-aaaa-bbbb-cccc')]) }));
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /✗ picomatch \[high\]/);
+});
+
+test('zod vulnerável não é mais isento (corrigido no zod 4)', () => {
+  const r = runGate(audit({ zod: vuln('high', [adv(ZOD, 1243066)]) }));
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /✗ zod \[high\]/);
 });
 
 test('mesmo source antigo com outra GHSA reprova (source não é mais a chave)', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv('https://github.com/advisories/GHSA-aaaa-bbbb-cccc', 1243066)]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv('https://github.com/advisories/GHSA-aaaa-bbbb-cccc', 1243066)]) }));
   assert.equal(r.code, 1, r.out);
 });
 
 test('via sem URL ou com URL que não é GHSA reprova (falha fechada)', () => {
-  for (const via of [{ source: 1243066 }, { source: 1, url: '' }, { source: 1, url: 'https://example.com/zod' }, null]) {
-    const r = runGate(audit({ zod: vuln('high', [via]) }));
+  for (const via of [{ source: 1243066 }, { source: 1, url: '' }, { source: 1, url: 'https://example.com/picomatch' }, null]) {
+    const r = runGate(audit({ picomatch: vuln('high', [via]) }));
     assert.equal(r.code, 1, JSON.stringify(via) + r.out);
   }
 });
 
 test('GHSA de outro pacote não isenta este', () => {
-  const r = runGate(audit({ zod: vuln('high', [adv(BRACES)]) }));
+  const r = runGate(audit({ picomatch: vuln('high', [adv(BRACES)]) }));
   assert.equal(r.code, 1, r.out);
 });
 
@@ -88,8 +97,8 @@ test('pacote fora da allowlist reprova em high e critical; moderate só informa'
 });
 
 test('via vazio ou ausente em pacote isento reprova', () => {
-  assert.equal(runGate(audit({ zod: vuln('high', []) })).code, 1);
-  assert.equal(runGate(audit({ zod: { severity: 'high' } })).code, 1);
+  assert.equal(runGate(audit({ picomatch: vuln('high', []) })).code, 1);
+  assert.equal(runGate(audit({ picomatch: { severity: 'high' } })).code, 1);
 });
 
 test('auditoria que não rodou não é "zero vulnerabilidades"', () => {
@@ -102,5 +111,5 @@ test('auditoria que não rodou não é "zero vulnerabilidades"', () => {
 test('sem vulnerabilidades passa e lista exceções sem uso', () => {
   const r = runGate(audit({}), { exit: 0 });
   assert.equal(r.code, 0, r.out);
-  assert.match(r.out, /exceção\(ões\) sem uso neste run .*zod/);
+  assert.match(r.out, /exceção\(ões\) sem uso neste run .*picomatch/);
 });
