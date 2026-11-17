@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `381fe2ec2b77947c116a160c41c7f9b9d4508bc2` (2026-11-17T16:59:31-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a334acf4dd60a7d22cfd3cbae65e0ec14d208454` (2026-11-17T17:27:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1534 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 187862 |
+| linhas_codigo | 187895 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7451 nós · 21916 arestas · 652 comunidades · grafo do commit `381fe2ec`
-- comunidades maiores: card.tsx (195), cn (151), input.tsx (137), badge.tsx (131), analytics/index.ts (127), KPIDashboard.tsx (120), snapshot.py (111), generate.py (101), gerar.mjs (96), .write (96), skeleton.tsx (96), showErrorToast (93)
+- 7451 nós · 21916 arestas · 649 comunidades · grafo do commit `a334acf4`
+- comunidades maiores: card.tsx (195), cn (151), input.tsx (144), badge.tsx (131), analytics/index.ts (127), KPIDashboard.tsx (120), snapshot.py (111), generate.py (101), showErrorToast (97), gerar.mjs (96), .write (96), skeleton.tsx (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `a334acf` fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)
 - 2026-11-17 `381fe2e` chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)
 - 2026-11-17 `6714971` chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)
 - 2026-11-17 `a132a36` fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `64c3b0c` fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)
 - 2026-11-14 `9ed883f` chore(inventario): estado real do projeto [auto] (#186)
 - 2026-11-14 `4991121` chore(lint): zera warnings do eslint no src (22 -> 0) (#185)
-- 2026-11-14 `9afb1a2` docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

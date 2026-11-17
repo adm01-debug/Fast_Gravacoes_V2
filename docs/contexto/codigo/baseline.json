@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "381fe2ec2b77947c116a160c41c7f9b9d4508bc2",
+  "commit": "a334acf4dd60a7d22cfd3cbae65e0ec14d208454",
   "branch": "main",
-  "data_commit": "2026-11-17T16:59:31-03:00",
+  "data_commit": "2026-11-17T17:27:42-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a334acf",
+    "data": "2026-11-17",
+    "assunto": "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)"
+   },
    {
     "sha": "381fe2e",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "358f079",
     "data": "2026-11-13",
     "assunto": "fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, U"
-   },
-   {
-    "sha": "9685302",
-    "data": "2026-11-12",
-    "assunto": "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 70
+    "commits": 71
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -321,7 +321,7 @@
  "contagens": {
   "arquivos_total": 1534,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187862,
+  "linhas_codigo": 187895,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -365,7 +365,7 @@
   },
   "scripts/audit": {
    "arquivos": 2,
-   "linhas": 512
+   "linhas": 545
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
@@ -687,13 +687,13 @@
   },
   {
    "arquivo": "scripts/audit/run.mjs",
-   "linha": 311,
+   "linha": 320,
    "tipo": "TODO",
    "texto": "/FIXME/\"em breve\"/\"não implementado\" no código', 'Texto de interface \"em breve\" conta como funcional"
   },
   {
    "arquivo": "scripts/audit/run.mjs",
-   "linha": 315,
+   "linha": 324,
    "tipo": "TODO",
    "texto": "|FIXME|XXX|HACK)\\b/.exec(ln) || /em breve|coming soon|not implemented|n[ãa]o implementad/i.exec(ln);"
   },

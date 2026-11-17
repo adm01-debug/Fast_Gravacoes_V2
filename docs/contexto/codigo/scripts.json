@@ -53,7 +53,7 @@
   {
    "arquivo": "scripts/audit/run.mjs",
    "descricao": "* Audit — detecta falhas e gaps por regra MECÂNICA, sem IA e sem custo de token.",
-   "linhas": 446,
+   "linhas": 455,
    "env": [
     "AUDIT_BASELINE"
    ],

@@ -47,9 +47,9 @@
   {
    "arquivo": "scripts/audit/audit.unit.mjs",
    "tipo": "unit",
-   "linhas": 66,
+   "linhas": 90,
    "testa": [],
-   "casos": 6,
+   "casos": 11,
    "suporte": false
   },
   {

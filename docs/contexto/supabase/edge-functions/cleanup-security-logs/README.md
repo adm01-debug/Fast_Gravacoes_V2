@@ -4,9 +4,9 @@
 |---|---|
 | nome | cleanup-security-logs |
 | status | ACTIVE |
-| versão | 51 |
+| versão | 53 |
 | verify_jwt | sim |
-| entrypoint | file:///app/supabase/functions/cleanup-security-logs/index.ts |
+| entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cleanup-security-logs/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
 | URL | https://uoujzvpecohinketylud.supabase.co/functions/v1/cleanup-security-logs |
 | fonte no repo | `supabase/functions/cleanup-security-logs/` |
