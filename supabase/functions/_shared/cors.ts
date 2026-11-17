@@ -13,8 +13,13 @@
 // domain) previously lived only in this unused shared module and were never
 // part of any deployed function's allowlist — dropped rather than widening
 // every function's CORS exposure the moment they adopt this shared helper.
+// `fast-gravacoes-v2.vercel.app` e o dominio de producao servido hoje pela
+// Vercel (campo `homepage` do repo; ver docs/agentes/vercel-deploy.md). Sem ele
+// aqui, `pickAllowedOrigin` caia no fallback e devolvia o dominio custom,
+// fazendo o browser bloquear toda chamada vinda da Vercel — inclusive o login.
 const DEFAULT_ORIGINS = [
   Deno.env.get("APP_URL") || "https://fastgravacoes.com.br",
+  "https://fast-gravacoes-v2.vercel.app",
   "https://xxroejpvloldkmqdydar.lovableproject.com",
 ].filter(Boolean) as string[];
 
