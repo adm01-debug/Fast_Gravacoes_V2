@@ -21,14 +21,8 @@ import { spawnSync } from 'node:child_process';
 // vermelho sem nenhuma mudança de código.
 // GHSA-vfj7-8cjw-p6xm = braces stack-exhaustion.
 const BRACES_ADVISORY = 'GHSA-vfj7-8cjw-p6xm';
-// GHSA-rj75-hqrm-r3gf = postcss-selector-parser complexidade quadrática no
-// parsing de seletores.
-const POSTCSS_PARSER_ADVISORY = 'GHSA-rj75-hqrm-r3gf';
 // GHSA-fc5q-39xc-vjpf = picomatch ReDoS por extglob repetido de ramo único.
 const PICOMATCH_ADVISORY = 'GHSA-fc5q-39xc-vjpf';
-// @vitest/mocker: injeção de código via registro manual de mock não
-// autenticado e bypass do allowlist de redirect por backslash no Windows.
-const VITEST_MOCKER_ADVISORIES = ['GHSA-qxg6-89mg-rqv8', 'GHSA-xp26-3454-mjgp'];
 
 /** GHSA de um `via` do npm audit (último segmento da URL), ou null se ausente/malformado. */
 const ghsaOf = (via) => {
@@ -94,29 +88,6 @@ const ALLOWED_PACKAGES = new Map([
       advisories: new Set([BRACES_ADVISORY]),
     },
   ],
-  // Cadeia postcss-selector-parser (GHSA-rj75-hqrm-r3gf: complexidade
-  // quadrática no parsing de seletores — CPU exhaustion): só roda em
-  // build-time sobre o CSS gerado dos NOSSOS arquivos (tailwind.config +
-  // classes do repo) — input controlado, não explorável em runtime.
-  // Remoção: migração tailwindcss v4 (troca a cadeia postcss-selector-parser
-  // pela da v4) ou bump de postcss-selector-parser >=7.1.6 quando o
-  // tailwindcss 3.x declarar range compatível.
-  [
-    'postcss-selector-parser',
-    {
-      reason:
-        'CPU exhaustion só em build-time sobre CSS próprio; versão fix 7.1.6 não coberta pelo range do tailwindcss 3.x. Remoção: migração tailwindcss v4.',
-      advisories: new Set([POSTCSS_PARSER_ADVISORY]),
-    },
-  ],
-  [
-    'postcss-nested',
-    {
-      reason:
-        'Vuln transitiva via postcss-selector-parser, só build-time sobre CSS próprio. Remoção: migração tailwindcss v4.',
-      advisories: new Set([POSTCSS_PARSER_ADVISORY]),
-    },
-  ],
   // picomatch (GHSA-fc5q-39xc-vjpf: ReDoS por extglob repetido): NÃO existe
   // versão corrigida (o advisory cobre o range `*`). Só é alcançado por
   // tooling de build/dev (vite, vitest, tailwind, chokidar, lint-staged,
@@ -132,23 +103,11 @@ const ALLOWED_PACKAGES = new Map([
       advisories: new Set([PICOMATCH_ADVISORY]),
     },
   ],
-  // @vitest/mocker: ambos os advisories exigem que um atacante alcance o
-  // servidor do test runner (mock manual não autenticado / traversal no
-  // redirect). O vitest só roda em dev e na CI, nunca em produção, e não é
-  // exposto em rede. O fix exige vitest v4 (major).
-  // Remoção: upgrade do vitest para a linha 4.x.
-  [
-    '@vitest/mocker',
-    {
-      reason:
-        'Exige acesso ao servidor do test runner, que só existe em dev/CI e não é exposto em rede; fix só na linha vitest 4.x (major). Remoção: upgrade do vitest para 4.x.',
-      advisories: new Set(VITEST_MOCKER_ADVISORIES),
-    },
-  ],
 ]);
 
 // Pacotes sem advisory próprio: só aparecem no audit por dependerem de um
-// pacote já isento acima (picomatch, @vitest/mocker, minimatch, glob).
+// pacote já isento acima (picomatch) ou por terem só advisory moderate
+// (minimatch), que não é avaliado por este gate.
 // Todos são devDependencies ou plugins de build — nenhum é código enviado ao
 // navegador. Mantêm `advisories` vazio de propósito: se um advisory DIRETO
 // surgir em qualquer um deles, o gate volta a falhar.
@@ -159,9 +118,9 @@ for (const pkg of [
   '@rollup/pluginutils',
   '@typescript-eslint/typescript-estree',
   '@vitest/coverage-v8',
+  '@vitest/mocker',
   'anymatch',
   'fdir',
-  'glob',
   'lint-staged',
   'minimatch',
   'readdirp',
@@ -175,7 +134,7 @@ for (const pkg of [
 ]) {
   ALLOWED_PACKAGES.set(pkg, {
     reason:
-      'Sem advisory próprio — herda a vuln de um pacote já isento (picomatch/@vitest/mocker/minimatch/glob); é tooling de build/dev, fora do bundle de produção.',
+      'Sem advisory high/critical próprio — herda a vuln do picomatch, já isento acima; é tooling de build/dev, fora do bundle de produção.',
     advisories: new Set(),
   });
 }
