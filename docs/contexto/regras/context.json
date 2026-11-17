@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "a132a365a1d23bea8679f14ba80ef1685961cc35",
+  "sha": "67149711ce01b5c7d6d43b209aac489b71585b1d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 18:49 UTC",
+  "generated_at": "2026-11-17 19:32 UTC",
   "files_total": 1532,
   "code_files": 1375,
   "code_lines": 203032
@@ -94761,10 +94761,22 @@
   }
  },
  "git": {
-  "sha": "a132a365a1d23bea8679f14ba80ef1685961cc35",
+  "sha": "67149711ce01b5c7d6d43b209aac489b71585b1d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6714971",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)",
+    "files": [
+     "bundle-budget.json",
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "a132a36",
     "date": "2026-11-17",
@@ -95145,25 +95157,16 @@
      "scripts/bundle-diff.mjs",
      "scripts/bundle.test.mjs"
     ]
-   },
-   {
-    "sha": "78b8006",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)",
-    "files": [
-     "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "scripts/autofix.test.mjs",
+    "package.json",
     4
    ],
    [
-    "package.json",
-    3
+    "scripts/autofix.test.mjs",
+    4
    ],
    [
     "docs/prod-readiness.md",
@@ -95172,6 +95175,14 @@
    [
     ".github/workflows/contexto.yml",
     3
+   ],
+   [
+    "deno.lock",
+    2
+   ],
+   [
+    "package-lock.json",
+    2
    ],
    [
     "src/features/packaging/components/DefectTriageForm.tsx",
@@ -95222,19 +95233,11 @@
     2
    ],
    [
-    "deno.lock",
-    1
-   ],
-   [
-    "package-lock.json",
+    "bundle-budget.json",
     1
    ],
    [
     "scripts/audit-gate.mjs",
-    1
-   ],
-   [
-    "scripts/audit-gate.test.mjs",
     1
    ]
   ]
