@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "599203e210b7f623abfbb2292638aed9030ee28b",
+  "sha": "36befe45f5cf3afdf4c3c98d11d737b06d7cff44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 16:16 UTC",
-  "files_total": 1530,
-  "code_files": 1373,
-  "code_lines": 202828
+  "generated_at": "2026-11-17 16:27 UTC",
+  "files_total": 1531,
+  "code_files": 1374,
+  "code_lines": 202929
  },
  "version": "1.3.2",
- "facts_hash": "5c8cdd6b7e1ae558",
+ "facts_hash": "bcd5dbda44030ecb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -273,7 +273,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 657,
+   ".tsx": 658,
    ".ts": 396,
    ".sql": 253,
    ".mjs": 50,
@@ -27608,8 +27608,8 @@
   },
   {
    "module": "src/features/auth",
-   "files": 13,
-   "lines": 1608,
+   "files": 14,
+   "lines": 1709,
    "tables": [
     "profiles",
     "role_permissions",
@@ -27655,6 +27655,7 @@
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+    "src/features/auth/hooks/useMFA.test.tsx",
     "src/features/auth/hooks/useMFA.ts",
     "src/features/auth/hooks/useRBAC.tsx",
     "src/features/auth/hooks/useRolePermissions.ts",
@@ -45307,6 +45308,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/features/auth/hooks/useMFA.ts",
+    "field": "status",
+    "value": "verified",
+    "kind": "compara"
+   },
+   {
     "file": "src/features/auth/hooks/useRBAC.tsx",
     "field": "role",
     "value": "admin",
@@ -50335,6 +50342,18 @@
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
     "name": "should sign out successfully"
+   },
+   {
+    "file": "src/features/auth/hooks/useMFA.test.tsx",
+    "name": "useMFA.startEnrollment"
+   },
+   {
+    "file": "src/features/auth/hooks/useMFA.test.tsx",
+    "name": "remove fatores TOTP nao verificados antes de criar um novo (evita 422)"
+   },
+   {
+    "file": "src/features/auth/hooks/useMFA.test.tsx",
+    "name": "nao remove um fator TOTP ja verificado"
    },
    {
     "file": "src/features/auth/types/admin_bypass.test.ts",
@@ -79072,9 +79091,19 @@
     "useAuthenticatorAssuranceLevel"
    ]
   },
+  "src/features/auth/hooks/useMFA.test.tsx": {
+   "path": "src/features/auth/hooks/useMFA.test.tsx",
+   "lines": 85,
+   "is_test": true,
+   "tests": [
+    "useMFA.startEnrollment",
+    "remove fatores TOTP nao verificados antes de criar um novo (evita 422)",
+    "nao remove um fator TOTP ja verificado"
+   ]
+  },
   "src/features/auth/hooks/useMFA.ts": {
    "path": "src/features/auth/hooks/useMFA.ts",
-   "lines": 153,
+   "lines": 169,
    "exports": [
     "function useMFA"
    ],
@@ -79093,6 +79122,11 @@
      "field": "type",
      "value": "totp",
      "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "verified",
+     "kind": "compara"
     },
     {
      "field": "status",
@@ -94682,10 +94716,20 @@
   }
  },
  "git": {
-  "sha": "599203e210b7f623abfbb2292638aed9030ee28b",
+  "sha": "36befe45f5cf3afdf4c3c98d11d737b06d7cff44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "36befe4",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)",
+    "files": [
+     "src/features/auth/hooks/useMFA.test.tsx",
+     "src/features/auth/hooks/useMFA.ts"
+    ]
+   },
    {
     "sha": "599203e",
     "date": "2026-11-17",
@@ -95051,17 +95095,6 @@
     "files": [
      ".github/workflows/ci.yml"
     ]
-   },
-   {
-    "sha": "c9c9f66",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)",
-    "files": [
-     "scripts/supabase_snapshot/README.md",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py"
-    ]
    }
   ],
   "hot_files": [
@@ -95122,12 +95155,12 @@
     2
    ],
    [
-    "scripts/supabase_snapshot/snapshot.py",
-    2
+    "src/features/auth/hooks/useMFA.test.tsx",
+    1
    ],
    [
-    "scripts/supabase_snapshot/test_snapshot.py",
-    2
+    "src/features/auth/hooks/useMFA.ts",
+    1
    ],
    [
     "index.html",

@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 121,
+ "total": 122,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 97
+  "unit": 98
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 85
+   "arquivos": 86
   },
   {
    "padrao": "outro",
@@ -381,6 +381,16 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 3,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useMFA.test.tsx",
+   "tipo": "unit",
+   "linhas": 85,
+   "testa": [
+    "src/features/auth/hooks/useMFA.ts"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -1306,6 +1316,7 @@
   "src/features/analytics/hooks/useSPC.ts": 1,
   "src/features/auth/components/AuthProvider.tsx": 1,
   "src/features/auth/hooks/useAuth.ts": 1,
+  "src/features/auth/hooks/useMFA.ts": 1,
   "src/features/auth/index.ts": 1,
   "src/features/auth/services/authService.ts": 1,
   "src/features/auth/types/auth.types.ts": 1,
@@ -1477,7 +1488,6 @@
    "src/features/analytics/hooks/useMLPredictions.ts",
    "src/features/analytics/hooks/useOEEDashboardFilters.ts",
    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
-   "src/features/auth/hooks/useMFA.ts",
    "src/features/auth/hooks/useRBAC.tsx",
    "src/features/auth/hooks/useRolePermissions.ts",
    "src/features/auth/hooks/useSessionManager.tsx",

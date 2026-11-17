@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `599203e210b7f623abfbb2292638aed9030ee28b` (2026-11-17T13:02:03-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `36befe45f5cf3afdf4c3c98d11d737b06d7cff44` (2026-11-17T13:26:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1053), SQL (253), Markdown (76), JavaScript (54), JSON (30), Python (13), YAML (13), Shell (6)
+- linguagens: TypeScript (1054), SQL (253), Markdown (76), JavaScript (54), JSON (30), Python (13), YAML (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1532 |
-| arquivos_codigo | 1117 |
-| linhas_codigo | 187699 |
+| arquivos_total | 1533 |
+| arquivos_codigo | 1118 |
+| linhas_codigo | 187800 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 245 |
 | cron_jobs | 4 |
-| testes | 121 |
+| testes | 122 |
 | workflows | 11 |
 | scripts | 41 |
 | docs_md | 76 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (41), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (85), outro (18), tests/ (18)
+- testes: co-localizado (*.test) (86), outro (18), tests/ (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7438 nós · 21901 arestas · 656 comunidades · grafo do commit `599203e2`
-- comunidades maiores: card.tsx (245), input.tsx (181), Button (136), useAuth (122), cn (108), snapshot.py (107), client.ts (103), generate.py (101), gerar.mjs (96), .write (96), notifications/index.ts (91), scroll-area.tsx (88)
+- 7444 nós · 21908 arestas · 650 comunidades · grafo do commit `36befe45`
+- comunidades maiores: card.tsx (172), cn (135), analytics/index.ts (125), FuturisticBI.tsx (117), Button (112), snapshot.py (107), DailyCalendar.tsx (107), MainLayout.tsx (102), generate.py (101), OperatorsPage.tsx (101), label.tsx (99), gerar.mjs (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `36befe4` fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)
 - 2026-11-17 `599203e` fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)
 - 2026-11-17 `f07be16` fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)
 - 2026-11-17 `bff18e0` fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `c65ff2e` Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804
 - 2026-11-14 `144be3e` Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856
 - 2026-11-14 `a28848f` docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)
-- 2026-11-14 `d588826` fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

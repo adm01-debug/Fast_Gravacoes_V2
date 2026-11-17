@@ -1627,7 +1627,7 @@
    "hooks_exportados": [
     "useMFA"
    ],
-   "linhas": 153,
+   "linhas": 169,
    "dominio": "features/auth",
    "tabelas": [],
    "rpcs": [],
@@ -1643,7 +1643,7 @@
    "usado_por_arquivos": [
     "src/features/auth/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/auth/hooks/useRBAC.tsx",
