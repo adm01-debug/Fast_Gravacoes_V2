@@ -83,7 +83,7 @@
   {
    "arquivo": "scripts/autofix/unused.mjs",
    "descricao": "* Fixer \"unused\" — remove código não usado SEM mudar comportamento, usando o",
-   "linhas": 240,
+   "linhas": 244,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

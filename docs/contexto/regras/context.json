@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "64c3b0c07a0da1bb66ba86d5bb91738235729dff",
+  "sha": "ab7d1594e08aa782b04a6aee214d74b6eb909521",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 13:38 UTC",
+  "generated_at": "2026-11-17 14:16 UTC",
   "files_total": 1528,
   "code_files": 1371,
-  "code_lines": 202595
+  "code_lines": 202640
  },
  "version": "1.3.2",
- "facts_hash": "425002ff033b1f28",
+ "facts_hash": "b53179fd29e68bae",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26778,7 +26778,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26265,
+   "lines": 26310,
    "tables": [
     "a",
     "c1",
@@ -49721,6 +49721,26 @@
    },
    {
     "file": "scripts/autofix.test.mjs",
+    "name": "inicializador que é chamada fica na fila manual: a chamada pode ter efeito"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "let/var sem uso fica na fila manual: atribuição posterior pode ter efeito"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "var sem uso fica na fila manual: atribuição posterior pode ter efeito"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "declaração using fica na fila manual: remover descarta o dispose"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
+    "name": "declaração await using fica na fila manual: remover descarta o dispose"
+   },
+   {
+    "file": "scripts/autofix.test.mjs",
     "name": "import de valor preserva execução do módulo"
    },
    {
@@ -66580,7 +66600,7 @@
   },
   "scripts/autofix.test.mjs": {
    "path": "scripts/autofix.test.mjs",
-   "lines": 418,
+   "lines": 459,
    "is_test": true,
    "env": [
     "FAIL_AUDIT",
@@ -66600,6 +66620,11 @@
     "getter na desestruturação permanece avaliado e entra na fila manual",
     "iterador e valor padrão de desestruturação ficam na fila manual",
     "incremento, coerção e nome computado não são tratados como puros",
+    "inicializador que é chamada fica na fila manual: a chamada pode ter efeito",
+    "let/var sem uso fica na fila manual: atribuição posterior pode ter efeito",
+    "var sem uso fica na fila manual: atribuição posterior pode ter efeito",
+    "declaração using fica na fila manual: remover descarta o dispose",
+    "declaração await using fica na fila manual: remover descarta o dispose",
     "import de valor preserva execução do módulo",
     "regressão de testes restaura arquivos e não cria commit nem branch",
     "falha do ESLint durante os gates desfaz a proposta e falha",
@@ -67719,7 +67744,7 @@
   },
   "scripts/autofix/unused.mjs": {
    "path": "scripts/autofix/unused.mjs",
-   "lines": 240,
+   "lines": 244,
    "exports": [
     "function runUnused"
    ],
@@ -94575,10 +94600,29 @@
   }
  },
  "git": {
-  "sha": "64c3b0c07a0da1bb66ba86d5bb91738235729dff",
+  "sha": "ab7d1594e08aa782b04a6aee214d74b6eb909521",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "ab7d159",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)",
+    "files": [
+     "scripts/autofix.test.mjs"
+    ]
+   },
+   {
+    "sha": "32c02f0",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)",
+    "files": [
+     "scripts/autofix.test.mjs",
+     "scripts/autofix/unused.mjs"
+    ]
+   },
    {
     "sha": "64c3b0c",
     "date": "2026-11-17",
@@ -94939,30 +94983,13 @@
      "scripts/regras_negocio/test_generate.py",
      "scripts/regras_negocio/test_publish.py"
     ]
-   },
-   {
-    "sha": "dfdb331",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(ai-context): proteção de rotas-objeto, package.json atípico e pastas env/build/out em src (#159)",
-    "files": [
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs"
-    ]
-   },
-   {
-    "sha": "d39d646",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(ai-context): rotas públicas, edges em uso, tabelas e testes fiéis ao repo (#153)",
-    "files": [
-     "scripts/ai-context/README.md",
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/autofix.test.mjs",
+    4
+   ],
    [
     ".github/workflows/ci.yml",
     3
@@ -94976,12 +95003,8 @@
     3
    ],
    [
-    "scripts/ai-context/gerar.mjs",
-    3
-   ],
-   [
-    "scripts/ai-context/gerar.unit.mjs",
-    3
+    "scripts/autofix/unused.mjs",
+    2
    ],
    [
     "inventario/estado/edges.json",
@@ -94997,10 +95020,6 @@
    ],
    [
     ".github/workflows/inventario-estado-semanal.yml",
-    2
-   ],
-   [
-    "scripts/autofix.test.mjs",
     2
    ],
    [
@@ -95032,15 +95051,19 @@
     2
    ],
    [
-    "scripts/ai-context/README.md",
-    2
-   ],
-   [
     "analise-prs/auditorias-anteriores.md",
     1
    ],
    [
     "inventario/estado/banco.json",
+    1
+   ],
+   [
+    "src/components/navigation/DialogHistoryGuard.tsx",
+    1
+   ],
+   [
+    "src/components/ui/error-boundary.tsx",
     1
    ]
   ]

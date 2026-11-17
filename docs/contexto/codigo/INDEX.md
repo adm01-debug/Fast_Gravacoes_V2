@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `64c3b0c07a0da1bb66ba86d5bb91738235729dff` (2026-11-17T10:28:54-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ab7d1594e08aa782b04a6aee214d74b6eb909521` (2026-11-17T11:11:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1530 |
 | arquivos_codigo | 1115 |
-| linhas_codigo | 187466 |
+| linhas_codigo | 187511 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `64c3b0c0`
-- comunidades maiores: card.tsx (234), Button (164), analytics/index.ts (111), snapshot.py (107), generate.py (101), skeleton.tsx (99), gerar.mjs (96), .write (96), utils.ts (96), cn (96), DailyCalendar.tsx (96), IPAllowlist.tsx (87)
+- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `ab7d1594`
+- comunidades maiores: card.tsx (239), Button (164), snapshot.py (107), skeleton.tsx (102), generate.py (101), analytics/index.ts (99), gerar.mjs (96), .write (96), utils.ts (96), cn (96), DailyCalendar.tsx (96), IPAllowlist.tsx (87)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `ab7d159` test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)
+- 2026-11-17 `32c02f0` fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)
 - 2026-11-17 `64c3b0c` fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)
 - 2026-11-14 `9ed883f` chore(inventario): estado real do projeto [auto] (#186)
 - 2026-11-14 `4991121` chore(lint): zera warnings do eslint no src (22 -> 0) (#185)
@@ -380,8 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `4cad7a1` fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)
 - 2026-11-13 `1fc2844` fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)
 - 2026-11-13 `358f079` fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, U
-- 2026-11-12 `9685302` fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)
-- 2026-11-12 `dd1b467` style(manutencao): aplica correcoes locais verificadas (#169)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

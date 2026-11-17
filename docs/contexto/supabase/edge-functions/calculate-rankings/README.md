@@ -4,9 +4,9 @@
 |---|---|
 | nome | calculate-rankings |
 | status | ACTIVE |
-| versão | 33 |
+| versão | 37 |
 | verify_jwt | sim |
-| entrypoint | file:///app/supabase/functions/calculate-rankings/index.ts |
+| entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/calculate-rankings/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
 | URL | https://uoujzvpecohinketylud.supabase.co/functions/v1/calculate-rankings |
 | fonte no repo | `supabase/functions/calculate-rankings/` |

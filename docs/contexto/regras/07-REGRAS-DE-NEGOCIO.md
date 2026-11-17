@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `64c3b0c07a` · branch `main` · 2026-11-17 13:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ab7d1594e0` · branch `main` · 2026-11-17 14:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-14T17:15:33Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T13:38:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-14T17:15:33Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T13:38:47Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-14T17:15:33Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T13:38:47Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-14T17:15:33Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T13:38:47Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-14T17:15:33Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T13:38:47Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1240 testes em 100 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1245 testes em 100 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3275,12 +3275,12 @@ _nenhum item encontrado_
 | `src/test/errorHandling.test.ts` | 36 | categorizeError · returns UNKNOWN_ERROR for null/undefined · returns NETWORK_ERROR for network errors · returns TIMEOUT for timeout errors … |
 | `src/test/webhookSimulation.test.ts` | 35 | Webhook — valid combinations (happy path) · source=%s event=%s → 200 · Webhook — data field variations · data=%s → 200 … |
 | `src/test/queryConfig.test.ts` | 34 | calculateRetryDelay · returns a positive number for each attempt index · respects the max delay cap · generally increases with attempt index (exponential growth) … |
+| `scripts/autofix.test.mjs` | 30 | getter na desestruturação permanece avaliado e entra na fila manual · iterador e valor padrão de desestruturação ficam na fila manual · incremento, coerção e nome computado não são tratados como puros · inicializador que é chamada fica na fila manual: a chamada pode ter efeito … |
 | `scripts/bundle.test.mjs` | 30 | remove hash Vite de 8 chars · remove hash Vite de 16 chars (configuravel) · nao come o nome quando o chunk tem multiplos dash segments · aceita hash com  … |
 | `src/features/inventory/hooks/useTraceability.test.ts` | 29 | useProductionLots · busca lotes de produção com o job vinculado, mais recentes primeiro · useProductionLot · não consulta o Supabase quando lotId é null … |
 | `src/test/offlineStorage.test.ts` | 29 | sanitize - additional edge cases · sanitizeUrl · allows https URLs · allows http URLs … |
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
-| `scripts/autofix.test.mjs` | 25 | getter na desestruturação permanece avaliado e entra na fila manual · iterador e valor padrão de desestruturação ficam na fila manual · incremento, coerção e nome computado não são tratados como puros · import de valor preserva execução do módulo … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/webhookFuzz.test.ts` | 25 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
