@@ -157,7 +157,7 @@
         "npm:vite@^7.3.7",
         "npm:vitest@^4.1.11",
         "npm:web-vitals@^4.2.4",
-        "npm:zod@^3.25.76",
+        "npm:zod@^4.6.7",
         "npm:zustand@^5.0.9"
       ],
       "overrides": {
