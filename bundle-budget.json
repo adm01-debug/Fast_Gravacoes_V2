@@ -16,7 +16,7 @@
     "vendor-forms": 80,
     "vendor-i18n": 80,
     "lib-charts": 320,
-    "lib-mermaid": 900,
+    "lib-mermaid": 1400,
     "lib-excel": 400,
     "lib-pdf": 400,
     "lib-html2canvas": 200,
