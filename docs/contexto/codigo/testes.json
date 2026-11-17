@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 120,
+ "total": 121,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 96
+  "unit": 97
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 84
+   "arquivos": 85
   },
   {
    "padrao": "outro",
@@ -769,6 +769,14 @@
     "src/lib/circuitBreaker.ts"
    ],
    "casos": 12,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/test/cspSync.test.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [],
+   "casos": 3,
    "suporte": false
   },
   {

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bff18e00b4cabdd64b0238480a31e9f1a66db165",
+  "commit": "f07be16d0df050ca13cf7c45a21257dab1a17aa9",
   "branch": "main",
-  "data_commit": "2026-11-17T15:23:19Z",
+  "data_commit": "2026-11-17T15:40:42Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "f07be16",
+    "data": "2026-11-17",
+    "assunto": "fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)"
+   },
    {
     "sha": "bff18e0",
     "data": "2026-11-17",
@@ -126,15 +131,10 @@
     "sha": "854fc23",
     "data": "2026-11-11",
     "assunto": "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)"
-   },
-   {
-    "sha": "2f1c7bf",
-    "data": "2026-11-11",
-    "assunto": "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 128,
+  "arquivos_mudados_7d": 131,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -227,15 +227,15 @@
     "mudancas": 7
    },
    {
+    "arquivo": "index.html",
+    "mudancas": 7
+   },
+   {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 6
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "index.html",
     "mudancas": 6
    },
    {
@@ -275,6 +275,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "vercel.json",
+    "mudancas": 5
+   },
+   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 4
    },
@@ -293,16 +297,12 @@
    {
     "arquivo": "scripts/ai-context/gerar.unit.mjs",
     "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/autofix.test.mjs",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 64
+    "commits": 65
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -319,9 +319,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1531,
-  "arquivos_codigo": 1116,
-  "linhas_codigo": 187588,
+  "arquivos_total": 1532,
+  "arquivos_codigo": 1117,
+  "linhas_codigo": 187643,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -333,7 +333,7 @@
   "tabelas": 133,
   "migrations": 245,
   "cron_jobs": 4,
-  "testes": 120,
+  "testes": 121,
   "workflows": 11,
   "scripts": 41,
   "docs_md": 76
@@ -524,8 +524,8 @@
    "linhas": 23
   },
   "src/test": {
-   "arquivos": 27,
-   "linhas": 4264
+   "arquivos": 28,
+   "linhas": 4319
   },
   "src/types": {
    "arquivos": 2,
