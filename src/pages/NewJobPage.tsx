@@ -44,6 +44,9 @@ const jobSchema = z.object({
 });
 
 type JobFormValues = z.infer<typeof jobSchema>;
+// zod v4 separa input (antes do .default()/.trim()) de output; o
+// react-hook-form precisa dos dois para tipar resolver e handleSubmit.
+type JobFormInput = z.input<typeof jobSchema>;
 
 const DRAFT_KEY_BASE = 'fg-new-job-draft';
 
@@ -54,7 +57,7 @@ function draftKeyFor(userId: string | undefined): string {
 }
 
 interface JobDraft {
-  values: JobFormValues;
+  values: JobFormInput;
   scheduled_date?: string;
   saved_at: string;
 }
@@ -110,7 +113,7 @@ export default function NewJobPage() {
   const draftKey = draftKeyFor(user?.id);
   const draft = useMemo(() => readDraft(draftKey), [draftKey]);
 
-  const { control, handleSubmit, watch, setValue, trigger, getValues, formState: { errors, isDirty } } = useForm<JobFormValues>({
+  const { control, handleSubmit, watch, setValue, trigger, getValues, formState: { errors, isDirty } } =   useForm<JobFormInput, unknown, JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: draft?.values ?? defaultValues,
   });
@@ -138,7 +141,7 @@ export default function NewJobPage() {
   }, []);
 
   // Persiste rascunho a cada alteração — permite retomar depois.
-  const persistDraft = useCallback((values: JobFormValues) => {
+  const persistDraft = useCallback((values: JobFormInput) => {
     // A data mora fora do form — um rascunho "só com data" também vale
     // guardar, senão ela some num reload.
     const hasContent = Boolean(date) || Object.values(values).some(v => typeof v === 'string' && v.trim() !== '' && v !== 'medium');
@@ -159,7 +162,7 @@ export default function NewJobPage() {
   }, [date, draftKey, clearDraft]);
 
   useEffect(() => {
-    const subscription = watch((values) => persistDraft(values as JobFormValues));
+    const subscription = watch((values) => persistDraft(values as JobFormInput));
     return () => subscription.unsubscribe();
   }, [watch, persistDraft]);
 
