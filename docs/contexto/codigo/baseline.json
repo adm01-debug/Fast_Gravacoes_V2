@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "67149711ce01b5c7d6d43b209aac489b71585b1d",
+  "commit": "381fe2ec2b77947c116a160c41c7f9b9d4508bc2",
   "branch": "main",
-  "data_commit": "2026-11-17T16:29:17-03:00",
+  "data_commit": "2026-11-17T16:59:31-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "381fe2e",
+    "data": "2026-11-17",
+    "assunto": "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)"
+   },
    {
     "sha": "6714971",
     "data": "2026-11-17",
@@ -126,15 +131,10 @@
     "sha": "9685302",
     "data": "2026-11-12",
     "assunto": "fix(ci): supabase secrets set/unset precisa de --yes em modo não interativo (#163)"
-   },
-   {
-    "sha": "dd1b467",
-    "data": "2026-11-12",
-    "assunto": "style(manutencao): aplica correcoes locais verificadas (#169)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 146,
+  "arquivos_mudados_7d": 143,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -185,15 +185,15 @@
     "mudancas": 9
    },
    {
+    "pasta": "package.json",
+    "mudancas": 8
+   },
+   {
     "pasta": "src/components/design-system",
     "mudancas": 8
    },
    {
     "pasta": "src/components/kanban",
-    "mudancas": 8
-   },
-   {
-    "pasta": "src/components/ui",
     "mudancas": 8
    }
   ],
@@ -204,10 +204,14 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "package.json",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 11
    },
    {
@@ -215,11 +219,11 @@
     "mudancas": 10
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 10
+    "arquivo": ".github/workflows/db-admin.yml",
+    "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/db-admin.yml",
+    "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 8
    },
    {
@@ -228,10 +232,6 @@
    },
    {
     "arquivo": "index.html",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 7
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 69
+    "commits": 70
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -321,7 +321,7 @@
  "contagens": {
   "arquivos_total": 1534,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187903,
+  "linhas_codigo": 187862,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -369,7 +369,7 @@
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
-   "linhas": 284
+   "linhas": 243
   },
   "scripts/audit-gate.test.mjs": {
    "arquivos": 1,
@@ -681,7 +681,7 @@
   },
   {
    "arquivo": "scripts/audit-gate.mjs",
-   "linha": 228,
+   "linha": 187,
    "tipo": "TODO",
    "texto": "`via` é um advisory conhecido (objeto com"
   },

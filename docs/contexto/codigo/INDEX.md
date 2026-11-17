@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `67149711ce01b5c7d6d43b209aac489b71585b1d` (2026-11-17T16:29:17-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `381fe2ec2b77947c116a160c41c7f9b9d4508bc2` (2026-11-17T16:59:31-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1534 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 187903 |
+| linhas_codigo | 187862 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,21 +247,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7450 nós · 21915 arestas · 656 comunidades · grafo do commit `67149711`
-- comunidades maiores: card.tsx (185), badge.tsx (136), cn (129), FuturisticBI.tsx (122), snapshot.py (110), Button (104), analytics/index.ts (104), MainLayout.tsx (104), generate.py (101), gerar.mjs (96), .write (96), input.tsx (91)
+- 7451 nós · 21916 arestas · 652 comunidades · grafo do commit `381fe2ec`
+- comunidades maiores: card.tsx (195), cn (151), input.tsx (137), badge.tsx (131), analytics/index.ts (127), KPIDashboard.tsx (120), snapshot.py (111), generate.py (101), gerar.mjs (96), .write (96), skeleton.tsx (96), showErrorToast (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (19)
-- package-lock.json (11)
-- package.json (11)
+- package-lock.json (12)
+- package.json (12)
+- deno.lock (11)
 - AGENTS.md (10)
-- deno.lock (10)
 - .github/workflows/db-admin.yml (8)
+- scripts/audit-gate.mjs (8)
 - PENDENCIAS.md (7)
 - index.html (7)
-- scripts/audit-gate.mjs (7)
 - .github/workflows/deploy.yml (6)
 - CLAUDE.md (6)
 - .github/workflows/contexto.yml (5)
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `381fe2e` chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)
 - 2026-11-17 `6714971` chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)
 - 2026-11-17 `a132a36` fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)
 - 2026-11-17 `36befe4` fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `9ed883f` chore(inventario): estado real do projeto [auto] (#186)
 - 2026-11-14 `4991121` chore(lint): zera warnings do eslint no src (22 -> 0) (#185)
 - 2026-11-14 `9afb1a2` docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)
-- 2026-11-14 `c65ff2e` Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
