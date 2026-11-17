@@ -92,7 +92,7 @@ export default function AuthPage() {
     // effect after the next render, so rapid double-submits in the same tick
     // could enqueue duplicate auth requests without this ref.
     if (loginSubmittingRef.current) return;
-    try { loginSchema.parse({ email: loginEmail, password: loginPassword }); } catch (err) { if (err instanceof z.ZodError) { const fe: Record<string, string> = {}; err.errors.forEach(e => { if (e.path[0]) fe[`login_${e.path[0]}`] = e.message; }); setErrors(fe); return; } }
+    try { loginSchema.parse({ email: loginEmail, password: loginPassword }); } catch (err) { if (err instanceof z.ZodError) { const fe: Record<string, string> = {}; err.issues.forEach(e => { if (e.path[0]) fe[`login_${String(e.path[0])}`] = e.message; }); setErrors(fe); return; } }
     if (rememberMe) localStorage.setItem('rememberedEmail', loginEmail); else localStorage.removeItem('rememberedEmail');
     loginSubmittingRef.current = true;
     setIsLoading(true);

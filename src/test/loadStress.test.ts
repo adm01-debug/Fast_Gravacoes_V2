@@ -19,7 +19,7 @@ import { z } from 'zod';
 const WebhookPayloadSchema = z.object({
   source: z.enum(['bitrix24', 'stripe', 'external_system']),
   event: z.string().min(1),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   timestamp: z.string().datetime().optional(),
 });
 
