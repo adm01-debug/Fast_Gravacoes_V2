@@ -84,6 +84,14 @@ test('incremento, coerção e nome computado não são tratados como puros', (t)
   assert.ok(result.manual.filter((m) => m.kind === 'var').length >= 3);
 });
 
+test('inicializador que é chamada fica na fila manual: a chamada pode ter efeito', (t) => {
+  const code = 'function efeito() { console.log("efeito"); return 1; }\nconst descartado = efeito();\nexport {};\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'descartado'));
+});
+
 test('let/var sem uso fica na fila manual: atribuição posterior pode ter efeito', (t) => {
   const code = 'let timer;\ntimer = setInterval(() => {}, 1);\nexport {};\n';
   const dir = fixture(t, code);
