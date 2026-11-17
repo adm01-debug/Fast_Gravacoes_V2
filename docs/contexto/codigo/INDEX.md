@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ab7d1594e08aa782b04a6aee214d74b6eb909521` (2026-11-17T11:11:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a3290d5c09e0a8f814a5ec9a7053570107aadacf` (2026-11-17T11:46:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `ab7d1594`
-- comunidades maiores: card.tsx (239), Button (164), snapshot.py (107), skeleton.tsx (102), generate.py (101), analytics/index.ts (99), gerar.mjs (96), .write (96), utils.ts (96), cn (96), DailyCalendar.tsx (96), IPAllowlist.tsx (87)
+- 7429 nós · 21892 arestas · 665 comunidades · grafo do commit `a3290d5c`
+- comunidades maiores: card.tsx (239), Button (164), snapshot.py (107), generate.py (101), analytics/index.ts (101), gerar.mjs (96), .write (96), utils.ts (96), cn (96), DailyCalendar.tsx (96), skeleton.tsx (95), IPAllowlist.tsx (87)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -362,11 +362,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/plano-50-etapas-consolidacao.md` — Plano de consolidação em 50 etapas — FAST GRAVAÇÕES ES v2 (819 linhas)
 - `docs/plano-graphify-50-etapas.md` — Plano de implementação Graphify — 50 etapas (647 linhas)
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
-- `docs/prod-readiness.md` — Fast Gravacoes V2 - Prontidao para Producao (180 linhas)
+- `docs/prod-readiness.md` — Fast Gravacoes V2 - Prontidao para Producao (189 linhas)
 - subpastas de docs/: docs/estado (20), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/ci (1), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-17 `a3290d5` docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)
 - 2026-11-17 `ab7d159` test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)
 - 2026-11-17 `32c02f0` fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)
 - 2026-11-17 `64c3b0c` fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `2f4326c` test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)
 - 2026-11-13 `4cad7a1` fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)
 - 2026-11-13 `1fc2844` fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)
-- 2026-11-13 `358f079` fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, U
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

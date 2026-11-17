@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ab7d1594e08aa782b04a6aee214d74b6eb909521",
+  "commit": "a3290d5c09e0a8f814a5ec9a7053570107aadacf",
   "branch": "main",
-  "data_commit": "2026-11-17T11:11:39-03:00",
+  "data_commit": "2026-11-17T11:46:46-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a3290d5",
+    "data": "2026-11-17",
+    "assunto": "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)"
+   },
    {
     "sha": "ab7d159",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "a19a8bb",
     "data": "2026-11-11",
     "assunto": "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)"
-   },
-   {
-    "sha": "c9c9f66",
-    "data": "2026-11-11",
-    "assunto": "fix(snapshot): retry da API, erro 400 opcional, carry-over e redação mais fiel (#158)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 61
+    "commits": 62
    },
    {
     "autor": "devin-ai-integration[bot]",

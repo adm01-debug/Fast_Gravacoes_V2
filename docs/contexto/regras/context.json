@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ab7d1594e08aa782b04a6aee214d74b6eb909521",
+  "sha": "a3290d5c09e0a8f814a5ec9a7053570107aadacf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 14:16 UTC",
+  "generated_at": "2026-11-17 15:14 UTC",
   "files_total": 1528,
   "code_files": 1371,
   "code_lines": 202640
@@ -94600,10 +94600,19 @@
   }
  },
  "git": {
-  "sha": "ab7d1594e08aa782b04a6aee214d74b6eb909521",
+  "sha": "a3290d5c09e0a8f814a5ec9a7053570107aadacf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a3290d5",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "ab7d159",
     "date": "2026-11-17",
@@ -94970,25 +94979,16 @@
      "scripts/ai-context/gerar.mjs",
      "scripts/ai-context/gerar.unit.mjs"
     ]
-   },
-   {
-    "sha": "346947d",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(regras): parser SQL fiel a comentários, literais e DDL de migrations; publish.sh com HEAD destacado (#161)",
-    "files": [
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/regras_negocio/test_publish.py"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/autofix.test.mjs",
     4
+   ],
+   [
+    "docs/prod-readiness.md",
+    3
    ],
    [
     ".github/workflows/ci.yml",
@@ -95012,10 +95012,6 @@
    ],
    [
     "inventario/estado/rotas.json",
-    2
-   ],
-   [
-    "docs/prod-readiness.md",
     2
    ],
    [
@@ -95043,14 +95039,6 @@
     2
    ],
    [
-    "scripts/regras_negocio/generate.py",
-    2
-   ],
-   [
-    "scripts/regras_negocio/test_generate.py",
-    2
-   ],
-   [
     "analise-prs/auditorias-anteriores.md",
     1
    ],
@@ -95064,6 +95052,14 @@
    ],
    [
     "src/components/ui/error-boundary.tsx",
+    1
+   ],
+   [
+    "src/contexts/DirtyFormContext.tsx",
+    1
+   ],
+   [
+    "src/features/analytics/hooks/useMLPredictions.ts",
     1
    ]
   ]
