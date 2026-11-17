@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)",
    "fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)",
    "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)",
    "fix: gera o QR do 2FA a partir do otpauth uri (#195)",
-   "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)",
-   "test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)"
+   "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

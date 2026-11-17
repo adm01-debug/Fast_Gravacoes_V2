@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f07be16d0df050ca13cf7c45a21257dab1a17aa9` (2026-11-17T15:40:42Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `599203e210b7f623abfbb2292638aed9030ee28b` (2026-11-17T13:02:03-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1532 |
 | arquivos_codigo | 1117 |
-| linhas_codigo | 187643 |
+| linhas_codigo | 187699 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7437 nós · 21900 arestas · 657 comunidades · grafo do commit `f07be16d`
-- comunidades maiores: card.tsx (256), button.tsx (242), cn (131), analytics/index.ts (126), snapshot.py (107), generate.py (101), useAuth (100), client.ts (99), recharts.ts (98), gerar.mjs (96), .write (96), showErrorToast (92)
+- 7438 nós · 21901 arestas · 656 comunidades · grafo do commit `599203e2`
+- comunidades maiores: card.tsx (245), input.tsx (181), Button (136), useAuth (122), cn (108), snapshot.py (107), client.ts (103), generate.py (101), gerar.mjs (96), .write (96), notifications/index.ts (91), scroll-area.tsx (88)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `599203e` fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)
 - 2026-11-17 `f07be16` fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)
 - 2026-11-17 `bff18e0` fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)
 - 2026-11-17 `c5a478c` fix: gera o QR do 2FA a partir do otpauth uri (#195)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `144be3e` Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856
 - 2026-11-14 `a28848f` docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)
 - 2026-11-14 `d588826` fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)
-- 2026-11-13 `1ee7704` fix(ci): instala ripgrep antes dos testes dos geradores no inventario
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

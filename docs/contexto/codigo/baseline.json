@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f07be16d0df050ca13cf7c45a21257dab1a17aa9",
+  "commit": "599203e210b7f623abfbb2292638aed9030ee28b",
   "branch": "main",
-  "data_commit": "2026-11-17T15:40:42Z",
+  "data_commit": "2026-11-17T13:02:03-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "599203e",
+    "data": "2026-11-17",
+    "assunto": "fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)"
+   },
    {
     "sha": "f07be16",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "3fae94c",
     "data": "2026-11-12",
     "assunto": "fix(ci): pinar runner ubuntu-24.04 (ubuntu-latest virou 26.04 e quebra Playwright) (#170)"
-   },
-   {
-    "sha": "854fc23",
-    "data": "2026-11-11",
-    "assunto": "fix(ci): autenticar ghcr.io para evitar rate-limit no deploy de 34 edge functions (#171)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 65
+    "commits": 66
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -321,7 +321,7 @@
  "contagens": {
   "arquivos_total": 1532,
   "arquivos_codigo": 1117,
-  "linhas_codigo": 187643,
+  "linhas_codigo": 187699,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -473,7 +473,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58613
+   "linhas": 58669
   },
   "src/constants": {
    "arquivos": 2,

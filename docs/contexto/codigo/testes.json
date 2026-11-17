@@ -289,11 +289,11 @@
   {
    "arquivo": "src/components/settings/TwoFactorSetup.test.tsx",
    "tipo": "unit",
-   "linhas": 56,
+   "linhas": 96,
    "testa": [
     "src/components/settings/TwoFactorSetup.tsx"
    ],
-   "casos": 1,
+   "casos": 2,
    "suporte": false
   },
   {

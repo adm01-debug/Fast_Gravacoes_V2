@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f07be16d0d` · branch `main` · 2026-11-17 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `599203e210` · branch `main` · 2026-11-17 16:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T15:40:16Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1252 testes em 102 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1253 testes em 102 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3351,6 +3351,7 @@ _nenhum item encontrado_
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
 | `tests/e2e/system-status.spec.ts` | 4 | Status do sistema · renderiza o painel consolidado com os agregados · não expõe detalhes de erro interno · painel de monitoramento exibe tendência das rotinas |
 | `tests/e2e/visual-regression.spec.ts` | 4 | Regressão Visual · snapshot da dashboard principal · snapshot da sidebar colapsada e expandida · snapshot responsivo mobile |
+| `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |
 | `src/features/analytics/hooks/useKPIs.test.ts` | 3 | useKPIs · should return null when data is loading · should calculate correct metrics when data is provided |
 | `src/features/jobs/hooks/useJobs.realtime.test.tsx` | 3 | useJobs — Realtime invalidation · refetches when a Realtime postgres_changes event arrives · chama removeChannel no unmount e ignora eventos posteriores |
 | `src/features/jobs/hooks/useTechniques.realtime.test.tsx` | 3 | useTechniques — Realtime invalidation · chama removeChannel no unmount e ignora eventos posteriores · refetches when a Realtime postgres_changes event arrives |
@@ -3363,7 +3364,6 @@ _nenhum item encontrado_
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
 | `tests/e2e/inventory-stability.spec.ts` | 3 | Estabilidade Visual do Inventário · deve exibir skeletons durante a busca no inventário · layout deve permanecer estável entre estados de carregamento |
 | `tests/e2e/maintenance.spec.ts` | 3 | Dashboard de Manutenção (TPM) · deve carregar o dashboard de TPM · deve navegar para a aba de alertas |
-| `src/components/settings/TwoFactorSetup.test.tsx` | 2 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase |
 | `src/features/analytics/hooks/useOEE.test.ts` | 2 | useOEE · should calculate OEE components correctly |
 | `src/pages/AdminTelemetriaPage.test.tsx` | 2 | Painel de Telemetria (Lite) · deve carregar dados de telemetria e exibir na tabela |
 | `supabase/functions/_shared/webpushEncrypt.test.ts` | 2 | encryptPushPayload produz corpo aes128gcm descriptografável (RFC 8291/8188) · encryptPushPayload aceita p256dh/auth em base64url |
