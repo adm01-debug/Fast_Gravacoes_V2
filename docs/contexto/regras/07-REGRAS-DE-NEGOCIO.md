@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a3290d5c09` · branch `main` · 2026-11-17 15:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c5a478c586` · branch `main` · 2026-11-17 15:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T14:15:54Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T15:14:40Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T14:15:54Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T15:14:40Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T14:15:54Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T15:14:40Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T14:15:54Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T15:14:40Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T14:15:54Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T15:14:40Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1245 testes em 100 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1247 testes em 101 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3362,6 +3362,7 @@ _nenhum item encontrado_
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
 | `tests/e2e/inventory-stability.spec.ts` | 3 | Estabilidade Visual do Inventário · deve exibir skeletons durante a busca no inventário · layout deve permanecer estável entre estados de carregamento |
 | `tests/e2e/maintenance.spec.ts` | 3 | Dashboard de Manutenção (TPM) · deve carregar o dashboard de TPM · deve navegar para a aba de alertas |
+| `src/components/settings/TwoFactorSetup.test.tsx` | 2 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase |
 | `src/features/analytics/hooks/useOEE.test.ts` | 2 | useOEE · should calculate OEE components correctly |
 | `src/pages/AdminTelemetriaPage.test.tsx` | 2 | Painel de Telemetria (Lite) · deve carregar dados de telemetria e exibir na tabela |
 | `supabase/functions/_shared/webpushEncrypt.test.ts` | 2 | encryptPushPayload produz corpo aes128gcm descriptografável (RFC 8291/8188) · encryptPushPayload aceita p256dh/auth em base64url |

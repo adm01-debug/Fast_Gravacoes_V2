@@ -2717,8 +2717,8 @@
   {
    "modulo": "components/settings",
    "arquivos": 12,
-   "testes": 0,
-   "linhas": 2557,
+   "testes": 1,
+   "linhas": 2560,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

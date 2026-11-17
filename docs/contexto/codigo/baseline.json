@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a3290d5c09e0a8f814a5ec9a7053570107aadacf",
+  "commit": "c5a478c586c3a6d3409c5ce831ab31e6f59964c5",
   "branch": "main",
-  "data_commit": "2026-11-17T11:46:46-03:00",
+  "data_commit": "2026-11-17T12:16:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c5a478c",
+    "data": "2026-11-17",
+    "assunto": "fix: gera o QR do 2FA a partir do otpauth uri (#195)"
+   },
    {
     "sha": "a3290d5",
     "data": "2026-11-17",
@@ -126,15 +131,10 @@
     "sha": "78b8006",
     "data": "2026-11-11",
     "assunto": "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)"
-   },
-   {
-    "sha": "a19a8bb",
-    "data": "2026-11-11",
-    "assunto": "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 124,
+  "arquivos_mudados_7d": 126,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 62
+    "commits": 63
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -319,9 +319,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1530,
-  "arquivos_codigo": 1115,
-  "linhas_codigo": 187511,
+  "arquivos_total": 1531,
+  "arquivos_codigo": 1116,
+  "linhas_codigo": 187570,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -333,7 +333,7 @@
   "tabelas": 133,
   "migrations": 245,
   "cron_jobs": 4,
-  "testes": 119,
+  "testes": 120,
   "workflows": 11,
   "scripts": 41,
   "docs_md": 76
@@ -472,8 +472,8 @@
    "linhas": 22
   },
   "src/components": {
-   "arquivos": 415,
-   "linhas": 58554
+   "arquivos": 416,
+   "linhas": 58613
   },
   "src/constants": {
    "arquivos": 2,

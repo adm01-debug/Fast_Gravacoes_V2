@@ -4820,7 +4820,7 @@
     "TwoFactorSetup"
    ],
    "export_default": null,
-   "linhas": 388,
+   "linhas": 391,
    "dominio": "components/settings",
    "hooks_locais": [
     "useAuth"
