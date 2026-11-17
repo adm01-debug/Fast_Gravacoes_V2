@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "36befe45f5cf3afdf4c3c98d11d737b06d7cff44",
+  "sha": "a132a365a1d23bea8679f14ba80ef1685961cc35",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 16:27 UTC",
-  "files_total": 1531,
-  "code_files": 1374,
-  "code_lines": 202929
+  "generated_at": "2026-11-17 18:49 UTC",
+  "files_total": 1532,
+  "code_files": 1375,
+  "code_lines": 203032
  },
  "version": "1.3.2",
- "facts_hash": "bcd5dbda44030ecb",
+ "facts_hash": "afaa8397f39f7295",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77,7 +77,7 @@
     "in": "package.json"
    },
    "zod": {
-    "version": "^3.25.76",
+    "version": "^4.6.7",
     "role": "Validação de schemas (Zod)",
     "in": "package.json"
    },
@@ -274,7 +274,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 658,
-   ".ts": 396,
+   ".ts": 397,
    ".sql": 253,
    ".mjs": 50,
    ".py": 13,
@@ -26778,7 +26778,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26310,
+   "lines": 26368,
    "tables": [
     "a",
     "c1",
@@ -28072,7 +28072,7 @@
   {
    "module": "src/features/packaging",
    "files": 35,
-   "lines": 3555,
+   "lines": 3560,
    "tables": [
     "audit_log",
     "packaging_checklist_items",
@@ -28651,7 +28651,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16826,
+   "lines": 16829,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -28895,8 +28895,8 @@
   },
   {
    "module": "src/test",
-   "files": 29,
-   "lines": 4326,
+   "files": 30,
+   "lines": 4363,
    "tables": [
     "jobs"
    ],
@@ -28913,6 +28913,7 @@
     "loadStress.test.ts: Load & Stress Tests Simulates concurrent requests against pure-logic modules, measuring latency, error rates, and stability under load. These run entirely in-process — no network required."
    ],
    "deps": [
+    "@hookform/resolvers",
     "@testing-library/jest-dom",
     "fs",
     "path",
@@ -28957,7 +28958,8 @@
     "src/test/utils.test.ts",
     "src/test/validation.test.ts",
     "src/test/webhookFuzz.test.ts",
-    "src/test/webhookSimulation.test.ts"
+    "src/test/webhookSimulation.test.ts",
+    "src/test/zodResolver.test.ts"
    ]
   },
   {
@@ -32714,7 +32716,7 @@
     "file": "supabase/functions/_shared/contracts.ts",
     "name": "WebhookPayloadSchema",
     "kind": "object",
-    "body": "{ source: WebhookSourceSchema, event: z.string(), data: z.record(z.any()), timestamp: z.string().datetime().optional(), }",
+    "body": "{ source: WebhookSourceSchema, event: z.string(), data: z.record(z.string(), z.any()), timestamp: z.string().datetime().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -32778,7 +32780,7 @@
     "file": "supabase/functions/_shared/validation.ts",
     "name": "webhookPayloadSchema",
     "kind": "object",
-    "body": "{ source: z.string().min(1, \"Source is required\"), event: z.string().min(1, \"Event is required\"), data: z.record(z.any()).optional().default({}), }",
+    "body": "{ source: z.string().min(1, \"Source is required\"), event: z.string().min(1, \"Event is required\"), data: z.record(z.string(), z.any()).optional().default({}), }",
     "refines": [],
     "chain": []
    },
@@ -49693,6 +49695,10 @@
    },
    {
     "file": "scripts/audit-gate.test.mjs",
+    "name": "zod vulnerável não é mais isento (corrigido no zod 4)"
+   },
+   {
+    "file": "scripts/audit-gate.test.mjs",
     "name": "mesmo source antigo com outra GHSA reprova (source não é mais a chave)"
    },
    {
@@ -53758,6 +53764,18 @@
    {
     "file": "src/test/webhookSimulation.test.ts",
     "name": "stub sources log only; external_system processes"
+   },
+   {
+    "file": "src/test/zodResolver.test.ts",
+    "name": "zodResolver + zod v4"
+   },
+   {
+    "file": "src/test/zodResolver.test.ts",
+    "name": "propaga a mensagem de cada campo invalido"
+   },
+   {
+    "file": "src/test/zodResolver.test.ts",
+    "name": "retorna os valores ja coagidos quando tudo e valido"
    },
    {
     "file": "supabase/functions/_shared/auth.test.ts",
@@ -66602,7 +66620,7 @@
   },
   "scripts/audit-gate.mjs": {
    "path": "scripts/audit-gate.mjs",
-   "lines": 235,
+   "lines": 284,
    "params": [
     {
      "name": "BRACES_ADVISORY",
@@ -66613,26 +66631,28 @@
      "value": "'GHSA-rj75-hqrm-r3gf'"
     },
     {
-     "name": "ZOD_ADVISORY",
-     "value": "'GHSA-mrhx-c7xc-m3w5'"
+     "name": "PICOMATCH_ADVISORY",
+     "value": "'GHSA-fc5q-39xc-vjpf'"
     }
    ],
    "rule_comments": [
     "aninhados): atinge apenas dependências de build/dev (tailwindcss,",
-    "major breaking (API de schemas, zod-validation-error compat).",
-    "Remoção: migração zod v4 com revisão do zod-validation-error.",
     "exceção não pode ser verificada (falha fechada). O mesmo vale para"
    ],
    "doc": "Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA e documentada para advisories que não afetam este app. Por que um wrapper? `npm audit --audit-level=high` falha em advisories inalcançáveis no nosso contexto (ex.: bug de hidratação SSR num SPA puro) e não sabe expressar e …"
   },
   "scripts/audit-gate.test.mjs": {
    "path": "scripts/audit-gate.test.mjs",
-   "lines": 107,
+   "lines": 116,
    "is_test": true,
    "env": [
     "PATH"
    ],
    "params": [
+    {
+     "name": "PICO",
+     "value": "'https://github.com/advisories/GHSA-fc5q-39xc-vjpf'"
+    },
     {
      "name": "ZOD",
      "value": "'https://github.com/advisories/GHSA-mrhx-c7xc-m3w5'"
@@ -66648,6 +66668,7 @@
     "source renumerado pelo npm com a mesma GHSA continua isento",
     "GHSA em caixa diferente na URL continua isenta",
     "GHSA nova em pacote isento reprova",
+    "zod vulnerável não é mais isento (corrigido no zod 4)",
     "mesmo source antigo com outra GHSA reprova (source não é mais a chave)",
     "via sem URL ou com URL que não é GHSA reprova (falha fechada)",
     "GHSA de outro pacote não isenta este",
@@ -82714,7 +82735,7 @@
   },
   "src/features/packaging/components/DefectTriageForm.tsx": {
    "path": "src/features/packaging/components/DefectTriageForm.tsx",
-   "lines": 178,
+   "lines": 179,
    "exports": [
     "function DefectTriageForm"
    ],
@@ -83487,7 +83508,7 @@
   },
   "src/features/packaging/types/packaging.schema.ts": {
    "path": "src/features/packaging/types/packaging.schema.ts",
-   "lines": 135,
+   "lines": 139,
    "exports": [
     "const packagingTaskStatusSchema",
     "type PackagingTaskStatus",
@@ -83501,8 +83522,10 @@
     "type PackagingTask",
     "const packagingRegisterFormSchema",
     "type PackagingRegisterForm",
+    "type PackagingRegisterFormInput",
     "const defectTriageFormSchema",
     "type DefectTriageForm",
+    "type DefectTriageFormInput",
     "const DEFECT_TYPE_LABELS",
     "const SEVERITY_LABELS",
     "const DECISION_LABELS",
@@ -88647,7 +88670,7 @@
   },
   "src/pages/NewJobPage.tsx": {
    "path": "src/pages/NewJobPage.tsx",
-   "lines": 511,
+   "lines": 514,
    "exports": [
     "function NewJobPage"
    ],
@@ -89969,7 +89992,7 @@
     {
      "name": "WebhookPayloadSchema",
      "kind": "object",
-     "body": "{ source: z.enum(['bitrix24', 'stripe', 'external_system']), event: z.string().min(1), data: z.record(z.any()), timestamp: z.string().datetime().optional(), }",
+     "body": "{ source: z.enum(['bitrix24', 'stripe', 'external_system']), event: z.string().min(1), data: z.record(z.string(), z.any()), timestamp: z.string().datetime().optional(), }",
      "refines": [],
      "chain": []
     }
@@ -90397,6 +90420,28 @@
     "stub sources log only; external_system processes"
    ]
   },
+  "src/test/zodResolver.test.ts": {
+   "path": "src/test/zodResolver.test.ts",
+   "lines": 37,
+   "is_test": true,
+   "zod": [
+    {
+     "name": "schema",
+     "kind": "object",
+     "body": "{ order_number: z.string().min(1, 'Numero da OS e obrigatorio').trim(), priority: z.string().default('medium'), quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), }",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "rule_comments": [
+    "validacao sumia da UI (ex.: wizard de nova OS aceitava campo vazio sem"
+   ],
+   "tests": [
+    "zodResolver + zod v4",
+    "propaga a mensagem de cada campo invalido",
+    "retorna os valores ja coagidos quando tudo e valido"
+   ]
+  },
   "src/types/job.ts": {
    "path": "src/types/job.ts",
    "lines": 50,
@@ -90690,7 +90735,7 @@
     {
      "name": "WebhookPayloadSchema",
      "kind": "object",
-     "body": "{ source: WebhookSourceSchema, event: z.string(), data: z.record(z.any()), timestamp: z.string().datetime().optional(), }",
+     "body": "{ source: WebhookSourceSchema, event: z.string(), data: z.record(z.string(), z.any()), timestamp: z.string().datetime().optional(), }",
      "refines": [],
      "chain": []
     },
@@ -90979,7 +91024,7 @@
     {
      "name": "webhookPayloadSchema",
      "kind": "object",
-     "body": "{ source: z.string().min(1, \"Source is required\"), event: z.string().min(1, \"Event is required\"), data: z.record(z.any()).optional().default({}), }",
+     "body": "{ source: z.string().min(1, \"Source is required\"), event: z.string().min(1, \"Event is required\"), data: z.record(z.string(), z.any()).optional().default({}), }",
      "refines": [],
      "chain": []
     },
@@ -94716,10 +94761,33 @@
   }
  },
  "git": {
-  "sha": "36befe45f5cf3afdf4c3c98d11d737b06d7cff44",
+  "sha": "a132a365a1d23bea8679f14ba80ef1685961cc35",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a132a36",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "scripts/audit-gate.mjs",
+     "scripts/audit-gate.test.mjs",
+     "src/features/packaging/components/DefectTriageForm.tsx",
+     "src/features/packaging/components/PackagingRegisterForm.tsx",
+     "src/features/packaging/types/packaging.schema.ts",
+     "src/pages/AuthPage.tsx",
+     "src/pages/NewJobPage.tsx",
+     "src/pages/ResetPasswordPage.tsx",
+     "src/test/loadStress.test.ts",
+     "src/test/zodResolver.test.ts",
+     "supabase/functions/_shared/contracts.ts",
+     "supabase/functions/_shared/validation.ts"
+    ]
+   },
    {
     "sha": "36befe4",
     "date": "2026-11-17",
@@ -95086,15 +95154,6 @@
     "files": [
      "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql"
     ]
-   },
-   {
-    "sha": "a19a8bb",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(ci): serializa o job E2E entre PRs (concurrency global) (#156)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -95103,16 +95162,24 @@
     4
    ],
    [
-    "docs/prod-readiness.md",
+    "package.json",
     3
    ],
    [
-    ".github/workflows/ci.yml",
+    "docs/prod-readiness.md",
     3
    ],
    [
     ".github/workflows/contexto.yml",
     3
+   ],
+   [
+    "src/features/packaging/components/DefectTriageForm.tsx",
+    2
+   ],
+   [
+    "src/features/packaging/components/PackagingRegisterForm.tsx",
+    2
    ],
    [
     "src/components/settings/TwoFactorSetup.test.tsx",
@@ -95143,6 +95210,10 @@
     2
    ],
    [
+    ".github/workflows/ci.yml",
+    2
+   ],
+   [
     "scripts/automation.mjs",
     2
    ],
@@ -95151,31 +95222,19 @@
     2
    ],
    [
-    "package.json",
-    2
-   ],
-   [
-    "src/features/auth/hooks/useMFA.test.tsx",
+    "deno.lock",
     1
    ],
    [
-    "src/features/auth/hooks/useMFA.ts",
+    "package-lock.json",
     1
    ],
    [
-    "index.html",
+    "scripts/audit-gate.mjs",
     1
    ],
    [
-    "src/test/cspSync.test.ts",
-    1
-   ],
-   [
-    "vercel.json",
-    1
-   ],
-   [
-    "supabase/functions/_shared/cors.test.ts",
+    "scripts/audit-gate.test.mjs",
     1
    ]
   ]

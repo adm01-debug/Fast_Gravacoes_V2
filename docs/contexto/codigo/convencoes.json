@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (86)",
+   "co-localizado (*.test) (87)",
    "outro (18)",
    "tests/ (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)",
    "fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)",
    "fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)",
    "fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)",
-   "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)",
-   "fix: gera o QR do 2FA a partir do otpauth uri (#195)"
+   "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -4568,7 +4568,7 @@
    "modulo": "features/packaging",
    "arquivos": 35,
    "testes": 0,
-   "linhas": 3555,
+   "linhas": 3560,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5840,7 +5840,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 2,
-   "linhas": 16548,
+   "linhas": 16551,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6686,7 +6686,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 28,
+   "testes": 29,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

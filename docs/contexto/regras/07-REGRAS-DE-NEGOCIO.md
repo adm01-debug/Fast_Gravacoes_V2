@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `36befe45f5` · branch `main` · 2026-11-17 16:27 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a132a365a1` · branch `main` · 2026-11-17 18:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T16:16:28Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T17:40:14Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T16:16:28Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T17:40:14Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T16:16:28Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T17:40:14Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T16:16:28Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T17:40:14Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T16:16:28Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T17:40:14Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2105,7 +2105,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **WebhookPayloadSchema** (`supabase/functions/_shared/contracts.ts`, z.object):
   ```ts
-  { source: WebhookSourceSchema, event: z.string(), data: z.record(z.any()), timestamp: z.string().datetime().optional(), }
+  { source: WebhookSourceSchema, event: z.string(), data: z.record(z.string(), z.any()), timestamp: z.string().datetime().optional(), }
   ```
 - **WebhookResponseSchema** (`supabase/functions/_shared/contracts.ts`, z.object):
   ```ts
@@ -2137,7 +2137,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **webhookPayloadSchema** (`supabase/functions/_shared/validation.ts`, z.object):
   ```ts
-  { source: z.string().min(1, "Source is required"), event: z.string().min(1, "Event is required"), data: z.record(z.any()).optional().default({}), }
+  { source: z.string().min(1, "Source is required"), event: z.string().min(1, "Event is required"), data: z.record(z.string(), z.any()).optional().default({}), }
   ```
 - **bitrix24DataSchema** (`supabase/functions/_shared/validation.ts`, z.object):
   ```ts
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1256 testes em 103 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1260 testes em 104 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3297,11 +3297,11 @@ _nenhum item encontrado_
 | `src/test/exportSimulation.test.ts` | 15 | inventoryExport — simulação de cenários · não lança erro em 300 movimentos aleatórios com dados sujos · retorna silenciosamente com array vazio · retorna silenciosamente com null/undefined … |
 | `src/test/validation.test.ts` | 15 | safeParse · returns success:true with parsed data for valid input · returns success:false with ZodError for invalid input · captures missing required fields … |
 | `tests/e2e/navigation.spec.ts` | 15 | Botão Voltar · volta uma entrada do histórico interno · deep-link sem histórico interno cai no fallback (home, não sai do app) · Alt+B navega para trás … |
+| `scripts/audit-gate.test.mjs` | 13 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
 | `src/features/admin/hooks/useSystemStatusSummary.test.ts` | 13 | deriveCronStatus · retorna  · retorna  · retorna  … |
 | `src/features/jobs/services/jobStateMachine.test.ts` | 13 | jobStateMachine · canTransition · permite fluxo padrão: queue → scheduled → ready → production → finished · bloqueia transições ilegais críticas … |
 | `src/lib/oeeExport.test.ts` | 13 | oeeExport · pdf · renders the header row via doc.autoTable with a grid theme · writes an unsanitized (raw) machineName into the PDF body, unlike the CSV path … |
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
-| `scripts/audit-gate.test.mjs` | 12 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/features/inventory/hooks/useLogistics.test.ts` | 11 | useLogistics · busca apenas transportadoras ativas, ordenadas por nome · busca envios com transportadora e job vinculados, mais recentes primeiro · cria um envio removendo campos de relação (provider/job) antes de inserir e sincroniza o job vinculado … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
@@ -3362,6 +3362,7 @@ _nenhum item encontrado_
 | `src/features/production/hooks/useMachines.test.tsx` | 3 | useMachines · fetches active machines and caches the result · shares cache across multiple consumers (no duplicate queries) |
 | `src/features/production/hooks/useOperatorProductivity.test.ts` | 3 | useOperatorProductivity · should fetch and calculate productivity data · should handle errors gracefully |
 | `src/test/realtimeMock.test.ts` | 3 | createRealtimeMock — contrato de tabelas não assinadas · emitFor lança quando a tabela não tem handler registrado · não dispara callbacks de outras tabelas ao emitir para tabela não assinada |
+| `src/test/zodResolver.test.ts` | 3 | zodResolver + zod v4 · propaga a mensagem de cada campo invalido · retorna os valores ja coagidos quando tudo e valido |
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
 | `tests/e2e/inventory-stability.spec.ts` | 3 | Estabilidade Visual do Inventário · deve exibir skeletons durante a busca no inventário · layout deve permanecer estável entre estados de carregamento |
 | `tests/e2e/maintenance.spec.ts` | 3 | Dashboard de Manutenção (TPM) · deve carregar o dashboard de TPM · deve navegar para a aba de alertas |

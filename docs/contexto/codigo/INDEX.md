@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `36befe45f5cf3afdf4c3c98d11d737b06d7cff44` (2026-11-17T13:26:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a132a365a1d23bea8679f14ba80ef1685961cc35` (2026-11-17T15:48:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1054), SQL (253), Markdown (76), JavaScript (54), JSON (30), Python (13), YAML (13), Shell (6)
+- linguagens: TypeScript (1055), SQL (253), Markdown (76), JavaScript (54), JSON (30), Python (13), YAML (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1533 |
-| arquivos_codigo | 1118 |
-| linhas_codigo | 187800 |
+| arquivos_total | 1534 |
+| arquivos_codigo | 1119 |
+| linhas_codigo | 187903 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 245 |
 | cron_jobs | 4 |
-| testes | 122 |
+| testes | 123 |
 | workflows | 11 |
 | scripts | 41 |
 | docs_md | 76 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (41), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (86), outro (18), tests/ (18)
+- testes: co-localizado (*.test) (87), outro (18), tests/ (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -247,23 +247,23 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7444 nós · 21908 arestas · 650 comunidades · grafo do commit `36befe45`
-- comunidades maiores: card.tsx (172), cn (135), analytics/index.ts (125), FuturisticBI.tsx (117), Button (112), snapshot.py (107), DailyCalendar.tsx (107), MainLayout.tsx (102), generate.py (101), OperatorsPage.tsx (101), label.tsx (99), gerar.mjs (96)
+- 7450 nós · 21915 arestas · 656 comunidades · grafo do commit `a132a365`
+- comunidades maiores: card.tsx (185), badge.tsx (136), cn (129), FuturisticBI.tsx (122), snapshot.py (110), useAuth (110), Button (104), analytics/index.ts (104), MainLayout.tsx (104), generate.py (101), errorHandling.ts (97), gerar.mjs (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (19)
 - AGENTS.md (10)
-- package-lock.json (9)
-- package.json (9)
+- package-lock.json (10)
+- package.json (10)
+- deno.lock (9)
 - .github/workflows/db-admin.yml (8)
-- deno.lock (8)
 - PENDENCIAS.md (7)
 - index.html (7)
+- scripts/audit-gate.mjs (7)
 - .github/workflows/deploy.yml (6)
 - CLAUDE.md (6)
-- scripts/audit-gate.mjs (6)
 - .github/workflows/contexto.yml (5)
 - scripts/rls-regression.mjs (5)
 - scripts/supabase_snapshot/snapshot.py (5)
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-17 `a132a36` fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)
 - 2026-11-17 `36befe4` fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)
 - 2026-11-17 `599203e` fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)
 - 2026-11-17 `f07be16` fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `9afb1a2` docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)
 - 2026-11-14 `c65ff2e` Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804
 - 2026-11-14 `144be3e` Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856
-- 2026-11-14 `a28848f` docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

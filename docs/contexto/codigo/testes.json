@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 122,
+ "total": 123,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 98
+  "unit": 99
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 86
+   "arquivos": 87
   },
   {
    "padrao": "outro",
@@ -39,9 +39,9 @@
   {
    "arquivo": "scripts/audit-gate.test.mjs",
    "tipo": "unit",
-   "linhas": 107,
+   "linhas": 116,
    "testa": [],
-   "casos": 12,
+   "casos": 13,
    "suporte": false
   },
   {
@@ -1020,6 +1020,14 @@
     "supabase/functions/_shared/contracts.ts"
    ],
    "casos": 25,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/test/zodResolver.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [],
+   "casos": 2,
    "suporte": false
   },
   {

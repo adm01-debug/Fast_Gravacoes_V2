@@ -41,7 +41,7 @@
   {
    "arquivo": "scripts/audit-gate.mjs",
    "descricao": "* Audit gate — falha em vulnerabilidades high/critical, com allowlist EXPLÍCITA",
-   "linhas": 235,
+   "linhas": 284,
    "env": [],
    "npm_scripts": [],
    "workflows": [
