@@ -84,6 +84,39 @@ test('incremento, coerção e nome computado não são tratados como puros', (t)
   assert.ok(result.manual.filter((m) => m.kind === 'var').length >= 3);
 });
 
+test('let/var sem uso fica na fila manual: atribuição posterior pode ter efeito', (t) => {
+  const code = 'let timer;\ntimer = setInterval(() => {}, 1);\nexport {};\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'timer'));
+});
+
+test('var sem uso fica na fila manual: atribuição posterior pode ter efeito', (t) => {
+  const code = 'var timer;\ntimer = setInterval(() => {}, 1);\nexport {};\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'timer'));
+});
+
+test('declaração using fica na fila manual: remover descarta o dispose', (t) => {
+  const code = 'const recurso = { [Symbol.dispose]() {} };\nusing aberto = recurso;\nexport {};\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'aberto'));
+});
+
+test('declaração await using fica na fila manual: remover descarta o dispose', (t) => {
+  const code =
+    'const recurso = { async [Symbol.asyncDispose]() {} };\nexport async function run() {\n  await using aberto = recurso;\n}\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'aberto'));
+});
+
 test('import de valor preserva execução do módulo', (t) => {
   const dir = fixture(t, 'import { value } from "./side";\nexport const kept = 1;\n');
   writeFileSync(join(dir, 'src/side.ts'), 'console.log("efeito"); export const value = 1;');
