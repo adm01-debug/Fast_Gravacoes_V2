@@ -4,7 +4,7 @@
 |---|---|
 | nome | cleanup-security-logs |
 | status | ACTIVE |
-| versão | 38 |
+| versão | 42 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cleanup-security-logs/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
