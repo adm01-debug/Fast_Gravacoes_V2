@@ -55,6 +55,19 @@ Deno.test("EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes 
   assertEquals(pickAllowedOrigin(req("https://preview.example.com")), "https://preview.example.com");
 });
 
+Deno.test("o dominio de producao da Vercel e aceito sem depender de env", async () => {
+  // Regressao: o front servido em fast-gravacoes-v2.vercel.app recebia o
+  // dominio custom no Access-Control-Allow-Origin e o browser bloqueava o
+  // login (check-login-lockout) e o alerta de novo dispositivo.
+  const { pickAllowedOrigin, getCorsHeaders } = await loadCors({
+    APP_URL: undefined,
+    EXTRA_ALLOWED_ORIGINS: undefined,
+  });
+  const origin = "https://fast-gravacoes-v2.vercel.app";
+  assertEquals(pickAllowedOrigin(req(origin)), origin);
+  assertEquals(getCorsHeaders(req(origin))["Access-Control-Allow-Origin"], origin);
+});
+
 Deno.test("getCorsHeaders: nunca emite Access-Control-Allow-Origin: * e sempre varia por Origin", async () => {
   const { getCorsHeaders } = await loadCors({ APP_URL: "https://fastgravacoes.com.br" });
   for (const origin of ["https://fastgravacoes.com.br", "https://evil.example", undefined]) {
