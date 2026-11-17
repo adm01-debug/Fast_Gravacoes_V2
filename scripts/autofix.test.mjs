@@ -92,12 +92,29 @@ test('let/var sem uso fica na fila manual: atribuição posterior pode ter efeit
   assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'timer'));
 });
 
+test('var sem uso fica na fila manual: atribuição posterior pode ter efeito', (t) => {
+  const code = 'var timer;\ntimer = setInterval(() => {}, 1);\nexport {};\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'timer'));
+});
+
 test('declaração using fica na fila manual: remover descarta o dispose', (t) => {
   const code = 'const recurso = { [Symbol.dispose]() {} };\nusing aberto = recurso;\nexport {};\n';
   const dir = fixture(t, code);
   const result = runUnused({ root: dir, apply: true });
   assert.equal(read(join(dir, 'src/app.ts')), code);
-  assert.ok(result.manual.every((m) => m.name !== 'aberto' || !m.why.includes('não reconhecida')));
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'aberto'));
+});
+
+test('declaração await using fica na fila manual: remover descarta o dispose', (t) => {
+  const code =
+    'const recurso = { async [Symbol.asyncDispose]() {} };\nexport async function run() {\n  await using aberto = recurso;\n}\n';
+  const dir = fixture(t, code);
+  const result = runUnused({ root: dir, apply: true });
+  assert.equal(read(join(dir, 'src/app.ts')), code);
+  assert.ok(result.manual.some((m) => m.kind === 'var' && m.name === 'aberto'));
 });
 
 test('import de valor preserva execução do módulo', (t) => {
