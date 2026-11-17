@@ -6,7 +6,8 @@
  *  - imports que JÁ eram não usados no código original (o bundler já os elimina, então zero efeito em runtime).
  *    Import que só ficou sem uso depois de outra remoção NÃO é removido: o original inicializava o módulo.
  *  - (opt-in --desestruturacao) elementos de desestruturação não usados — assume que ler a propriedade não tem efeito (getter);
- *  - `const/let` não usados cujo inicializador é puro (literal, identificador, função…);
+ *  - `const` não usados cujo inicializador é puro (literal, identificador, função…); `let/var` ficam de fora
+ *    (o code-fix do TS remove também as atribuições posteriores, que podem ter efeito colateral);
  *  - funções / types / interfaces locais não usados.
  *
  * O que NÃO toca (vai para a fila manual do relatório):
@@ -103,6 +104,8 @@ function decide(sf, d, { desestruturacao, origImports, pass }) {
     if (ts.isBindingElement(p)) {
       // Ler uma propriedade pode executar um getter, e isso não dá para provar estaticamente: só com opt-in.
       if (!desestruturacao) return { ok: false, kind: 'destructure', why: 'ler propriedade pode executar getter (use --desestruturacao se aceitar o risco)' };
+      // desestruturação de ARRAY consome o iterador (gerador com efeito colateral): remover o elemento muda o consumo
+      if (ts.isArrayBindingPattern(p.parent)) return { ok: false, kind: 'destructure', why: 'array: remover elemento muda o consumo do iterador' };
       if (d.code === 6198) return { ok: false, kind: 'destructure', why: 'todos os itens não usados: apagar removeria a chamada' };
       // valor padrão (`a = f()`) e chave computada (`[k()]: a`) podem ter efeito colateral
       if (p.initializer && !isPure(p.initializer)) return { ok: false, kind: 'destructure', why: 'valor padrão pode ter efeito colateral' };
@@ -123,6 +126,8 @@ function decide(sf, d, { desestruturacao, origImports, pass }) {
       if (!stmt || !ts.isVariableStatement(stmt)) return { ok: false, kind: 'var', why: 'declaração em for/catch' };
       // `using`/`await using` registram Symbol.dispose/asyncDispose ao sair do escopo: não são const comum
       if (list.flags & ts.NodeFlags.Using) return { ok: false, kind: 'var', why: 'declaração using/await using registra dispose' };
+      // let/var aceitam atribuições posteriores (`x = efeito()`), e o code-fix do TS as remove junto: só const é seguro
+      if (!(list.flags & ts.NodeFlags.Const)) return { ok: false, kind: 'var', why: 'let/var: atribuições posteriores podem ter efeito colateral' };
       if (!ts.isIdentifier(p.name)) return { ok: false, kind: 'var', why: 'padrão de desestruturação' };
       if (!isPure(p.initializer)) return { ok: false, kind: 'var', why: 'inicializador pode ter efeito colateral (chamada/hook/new)' };
       return { ok: true, kind: 'var' };

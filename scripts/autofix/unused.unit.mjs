@@ -88,3 +88,17 @@ test('NÃO remove declaração using (registra Symbol.dispose ao sair do escopo)
   const src = 'declare const recurso: { [Symbol.dispose](): void };\nexport function w() { using naoUsada = recurso; return 1; }\n';
   assert.ok(aplicar(src).texto.includes('using naoUsada'));
 });
+
+test('NÃO remove let com atribuição posterior que tem efeito colateral', () => {
+  const src = 'export function y() { let n = 0; let x = 0; x = ++n; return n; }\n';
+  assert.equal(aplicar(src).texto, src);
+});
+
+test('REMOVE const puro não usado', () => {
+  assert.ok(!aplicar('export function z() { const pura = 7; return 1; }\n').texto.includes('pura'));
+});
+
+test('com --desestruturacao, NÃO remove elemento de array (consome o iterador)', () => {
+  const src = 'let n = 0;\nfunction* g() { yield 1; n++; yield 2; }\nexport function a() { const [b, naoUsado] = g(); return [b, n]; }\n';
+  assert.ok(aplicar(src, { desestruturacao: true }).texto.includes('[b, naoUsado]'));
+});
