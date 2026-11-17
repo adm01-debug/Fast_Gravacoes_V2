@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c5a478c586` · branch `main` · 2026-11-17 15:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bff18e00b4` · branch `main` · 2026-11-17 15:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T15:14:40Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1247 testes em 101 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1248 testes em 101 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3324,6 +3324,7 @@ _nenhum item encontrado_
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
+| `supabase/functions/_shared/cors.test.ts` | 7 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
@@ -3331,7 +3332,6 @@ _nenhum item encontrado_
 | `src/hooks/useOfflineSync.test.ts` | 6 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · should handle sync failures and retries … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `src/lib/logger.test.ts` | 6 | logger persistence · batches multiple events into a single insert after the debounce window · does not recurse when the error_logs insert itself fails · redacts email addresses from the persisted message and error data … |
-| `supabase/functions/_shared/cors.test.ts` | 6 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |

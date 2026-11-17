@@ -1027,9 +1027,9 @@
   {
    "arquivo": "supabase/functions/_shared/cors.test.ts",
    "tipo": "unit",
-   "linhas": 75,
+   "linhas": 88,
    "testa": [],
-   "casos": 6,
+   "casos": 7,
    "suporte": false
   },
   {

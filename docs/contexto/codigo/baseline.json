@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c5a478c586c3a6d3409c5ce831ab31e6f59964c5",
+  "commit": "bff18e00b4cabdd64b0238480a31e9f1a66db165",
   "branch": "main",
-  "data_commit": "2026-11-17T12:16:07-03:00",
+  "data_commit": "2026-11-17T15:23:19Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "bff18e0",
+    "data": "2026-11-17",
+    "assunto": "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)"
+   },
    {
     "sha": "c5a478c",
     "data": "2026-11-17",
@@ -126,15 +131,10 @@
     "sha": "2f1c7bf",
     "data": "2026-11-11",
     "assunto": "fix(ci): bundle-diff.mjs mostra \"undefined KB\" com totals antigo (#168)"
-   },
-   {
-    "sha": "78b8006",
-    "data": "2026-11-11",
-    "assunto": "fix(migrations): R3.3 — revogar EXECUTE de PUBLIC, não só de anon (#146)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 126,
+  "arquivos_mudados_7d": 128,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -161,15 +161,15 @@
     "mudancas": 13
    },
    {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 12
+   },
+   {
     "pasta": "src/components/navigation",
     "mudancas": 10
    },
    {
     "pasta": "src/features/production",
-    "mudancas": 10
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 10
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 63
+    "commits": 64
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -321,7 +321,7 @@
  "contagens": {
   "arquivos_total": 1531,
   "arquivos_codigo": 1116,
-  "linhas_codigo": 187570,
+  "linhas_codigo": 187588,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -533,7 +533,7 @@
   },
   "supabase/functions": {
    "arquivos": 55,
-   "linhas": 11165
+   "linhas": 11183
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
