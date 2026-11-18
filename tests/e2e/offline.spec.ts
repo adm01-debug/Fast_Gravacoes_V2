@@ -35,6 +35,17 @@ test.describe('Offline Syncing and Persistence', () => {
     await login(page);
     await page.goto('/');
 
+    // 0. Bloqueia o service worker (testes simulam rede com
+    // context.setOffline; um SW em cache serviria o app do cache e mascaria
+    // o offline). Register the API mock BEFORE going offline: page.route
+    // requires the browser context and can't be added while the network is
+    // being torn down — a race here previously let the real PATCH escape and
+    // hit the sandbox with the network half-down.
+    await page.route('**/sw.js', (route) => route.abort());
+    await page.route('**/rest/v1/jobs*', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
+    );
+
     // 1. Go offline
     await context.setOffline(true);
     
@@ -101,9 +112,7 @@ test.describe('Offline Syncing and Persistence', () => {
     // 'e2e-offline-test' falharia 4x até o dead-letter em ~21s+RTT (backoff
     // exponencial em useOfflineSync.ts) — margem apertada e falha
     // determinística no CI. Com 200/[], o primeiro passe já drena.
-    await page.route('**/rest/v1/jobs*', (route) =>
-      route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
-    );
+    // (Mock registrado no passo 0 — precisa estar ativo ANTES do offline.)
     await context.setOffline(false);
 
     // 5. A fila precisa esvaziar — provando que um passe de sync de verdade

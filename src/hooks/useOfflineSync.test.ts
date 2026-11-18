@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useOfflineSync } from './useOfflineSync';
 import { supabase } from '@/integrations/supabase/client';
+import { STORAGE_KEYS } from '@/lib/offline/offlineQueue';
 
 // Mock Supabase properly
 vi.mock('@/integrations/supabase/client', () => {
@@ -86,6 +87,36 @@ describe('useOfflineSync', () => {
     });
 
     expect(result.current.pendingActionsCount).toBe(0);
+  });
+
+  it('drains a queue hydrated from localStorage on cold mount while online', async () => {
+    // Regression for the E2E failure in offline.spec.ts: a queue persisted by
+    // a previous session was never replayed after a reload, because the syncRef
+    // trigger effect fired before the ref-assignment effect had populated the
+    // ref, and nothing re-fired it. The assignment effect must kick the pass
+    // itself on cold mount.
+    setOnline(true);
+
+    // Seed localStorage exactly like a reloaded session with a pending action.
+    const seeded: Record<string, unknown> = {
+      id: 'hydrated-1',
+      type: 'update_job',
+      payload: { jobId: 'job-1', updates: { status: 'production' } },
+      createdAt: new Date().toISOString(),
+      retryCount: 0,
+    };
+    localStorage.setItem(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify([seeded]));
+
+    type MockTable = { then: { mockImplementation: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void } };
+    const mockTable = supabase.from('jobs') as unknown as MockTable;
+    mockTable.then.mockImplementation((onFulfilled: (v: unknown) => unknown) =>
+      Promise.resolve({ data: [], error: null }).then(onFulfilled)
+    );
+
+    const { result } = renderHook(() => useOfflineSync());
+    await waitFor(() => {
+      expect(result.current.pendingActionsCount).toBe(0);
+    });
   });
 
   it('should handle sync failures and retries', async () => {
