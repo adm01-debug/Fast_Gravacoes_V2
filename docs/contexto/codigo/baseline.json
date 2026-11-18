@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "096b2ccfd9f4d4c5379b15a363fe65c639ce361a",
+  "commit": "bf38560ce0f08e0465212514cee9efbb27b34354",
   "branch": "main",
-  "data_commit": "2026-11-18T20:30:49-03:00",
+  "data_commit": "2026-11-18T20:52:25-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "bf38560",
+    "data": "2026-11-18",
+    "assunto": "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)"
+   },
    {
     "sha": "096b2cc",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "9afb1a2",
     "data": "2026-11-14",
     "assunto": "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)"
-   },
-   {
-    "sha": "c65ff2e",
-    "data": "2026-11-14",
-    "assunto": "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -170,7 +170,7 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "pasta": "src/components/navigation",
@@ -179,6 +179,10 @@
    {
     "pasta": "src/features/production",
     "mudancas": 10
+   },
+   {
+    "pasta": "deno.lock",
+    "mudancas": 9
    },
    {
     "pasta": "src/components/design-system",
@@ -191,10 +195,6 @@
    {
     "pasta": "src/components/knowledge",
     "mudancas": 9
-   },
-   {
-    "pasta": "deno.lock",
-    "mudancas": 8
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -204,15 +204,15 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "package.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "AGENTS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 77
+    "commits": 78
    },
    {
     "autor": "devin-ai-integration[bot]",
