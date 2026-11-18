@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c14eac6d91b967811e2e23b88bf18948fdd0f727",
+  "commit": "ed61697d3338d6be1ca9e60830fdd6f894b2aa46",
   "branch": "main",
-  "data_commit": "2026-11-18T09:48:20-03:00",
+  "data_commit": "2026-11-18T13:38:59-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "ed61697",
+    "data": "2026-11-18",
+    "assunto": "fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)"
+   },
    {
     "sha": "c14eac6",
     "data": "2026-11-18",
@@ -126,15 +131,10 @@
     "sha": "2f4326c",
     "data": "2026-11-13",
     "assunto": "test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)"
-   },
-   {
-    "sha": "4cad7a1",
-    "data": "2026-11-13",
-    "assunto": "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 135,
+  "arquivos_mudados_7d": 138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -243,6 +243,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "tests/e2e/offline.spec.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 5
    },
@@ -263,11 +267,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "supabase/config.toml",
+    "arquivo": "src/hooks/useOfflineSync.ts",
     "mudancas": 5
    },
    {
-    "arquivo": "tests/e2e/offline.spec.ts",
+    "arquivo": "supabase/config.toml",
     "mudancas": 5
    },
    {
@@ -293,16 +297,12 @@
    {
     "arquivo": "scripts/ai-context/gerar.mjs",
     "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/ai-context/gerar.unit.mjs",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 73
+    "commits": 74
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -321,7 +321,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187895,
+  "linhas_codigo": 187943,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -489,7 +489,7 @@
   },
   "src/hooks": {
    "arquivos": 61,
-   "linhas": 7769
+   "linhas": 7808
   },
   "src/i18n": {
    "arquivos": 1,
@@ -545,7 +545,7 @@
   },
   "tests/e2e": {
    "arquivos": 21,
-   "linhas": 1634
+   "linhas": 1643
   },
   "vite.config.ts": {
    "arquivos": 1,
@@ -595,7 +595,7 @@
   },
   {
    "arquivo": "src/hooks/useOfflineSync.ts",
-   "linhas": 655
+   "linhas": 663
   },
   {
    "arquivo": "src/components/ui/sidebar.tsx",

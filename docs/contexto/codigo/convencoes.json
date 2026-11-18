@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)",
    "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)",
    "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)",
    "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)",
-   "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)",
-   "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)"
+   "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

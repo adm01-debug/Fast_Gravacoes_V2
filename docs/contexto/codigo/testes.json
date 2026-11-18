@@ -607,12 +607,13 @@
   {
    "arquivo": "src/hooks/useOfflineSync.test.ts",
    "tipo": "unit",
-   "linhas": 200,
+   "linhas": 231,
    "testa": [
     "src/hooks/useOfflineSync.ts",
-    "src/integrations/supabase/client.ts"
+    "src/integrations/supabase/client.ts",
+    "src/lib/offline/offlineQueue.ts"
    ],
-   "casos": 5,
+   "casos": 6,
    "suporte": false
   },
   {
@@ -1240,7 +1241,7 @@
   {
    "arquivo": "tests/e2e/offline.spec.ts",
    "tipo": "e2e",
-   "linhas": 117,
+   "linhas": 126,
    "testa": [],
    "casos": 1,
    "suporte": false
@@ -1361,6 +1362,7 @@
   "src/lib/logger.ts": 1,
   "src/lib/navHistory.ts": 1,
   "src/lib/oeeExport.ts": 3,
+  "src/lib/offline/offlineQueue.ts": 1,
   "src/lib/offlineStorage.ts": 1,
   "src/lib/pdfExport.ts": 1,
   "src/lib/queryConfig.ts": 1,
