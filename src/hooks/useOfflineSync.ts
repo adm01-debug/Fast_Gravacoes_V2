@@ -472,6 +472,14 @@ export function useOfflineSync() {
 
   useEffect(() => {
     syncRef.current = syncPendingActions;
+    // Cold-mount hazard: the trigger effect above runs in the same commit
+    // with syncRef.current still null, so a queue hydrated from localStorage
+    // would never drain after reload. Kick the pass here, where the ref is
+    // fresh. The guards read live state, so this is a no-op when the queue
+    // is already empty/drained or the tab is offline.
+    if (navigator.onLine) {
+      syncPendingActions();
+    }
   }, [syncPendingActions]);
 
   // Update job offline (for operators)
