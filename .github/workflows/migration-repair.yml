@@ -39,7 +39,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v1
         with:
-          version: latest
+          version: v3.2.0
 
       - name: Reconcile history
         if: ${{ !inputs.inspect_only }}
@@ -62,7 +62,7 @@ jobs:
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
           echo "===== migration list (antes) ====="
-          supabase migration list | tee /tmp/miglist.txt
+          supabase migration list --remote="$SUPABASE_PROJECT_ID" | tee /tmp/miglist.txt
 
           # Saída real do CLI: "`local` | `remote` | `time`" (backticks + |
           # ASCII). Célula vazia pode aparecer como ` ` — por isso o split é
@@ -97,7 +97,7 @@ jobs:
               continue
             elif [[ "$v" < "$LAST_REMOTE" ]]; then
               echo "repair --status applied $v"
-              supabase migration repair "$v" --status applied --linked
+              supabase migration repair "$v" --status applied --remote="$SUPABASE_PROJECT_ID" --yes
               repaired=$((repaired + 1))
             else
               echo "pendente (será aplicada pelo db push): $v"
@@ -107,10 +107,10 @@ jobs:
           echo "Reconciliadas como applied: $repaired | Pendentes p/ db push: $pending"
 
           echo "===== migration list (depois) ====="
-          supabase migration list
+          supabase migration list --remote="$SUPABASE_PROJECT_ID"
 
           echo "===== dry-run pós-repair ====="
-          supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
+          supabase db push --dry-run --remote="$SUPABASE_PROJECT_ID"
 
       # Diagnóstico do schema REMOTO real: `repair --status applied` marca
       # versões sem executar o SQL — objetos que nunca existiram no remoto
@@ -143,11 +143,11 @@ jobs:
           # Só cai para public quando o erro é explicitamente schema ausente —
           # qualquer outra falha propaga, senão um dump incompleto passaria
           # por inspeção bem-sucedida.
-          if ! supabase db dump --linked --schema public,app_private -f /tmp/remote-schema.sql 2>/tmp/dump-err.txt; then
+          if ! supabase db dump --remote="$SUPABASE_PROJECT_ID" --schema public,app_private -f /tmp/remote-schema.sql 2>/tmp/dump-err.txt; then
             if grep -qiE 'schema.*(does not exist|not found|inexistente|missing|unknown)|no schema matching' /tmp/dump-err.txt; then
               echo "::warning::app_private ausente no remoto — dump restrito a public"
               tail -5 /tmp/dump-err.txt || true
-              supabase db dump --linked --schema public -f /tmp/remote-schema.sql
+              supabase db dump --remote="$SUPABASE_PROJECT_ID" --schema public -f /tmp/remote-schema.sql
             else
               cat /tmp/dump-err.txt
               exit 1
@@ -169,7 +169,7 @@ jobs:
       # Verificação de conteúdo: `repair --status applied` registra a versão
       # sem executar o SQL — certo para arquivos cujo DDL já foi aplicado por
       # outro canal, mas silencioso se um arquivo antigo nunca rodou. O
-      # `db diff --linked` compara o schema remoto com a shadow DB montada a
+      # `db diff --remote="$SUPABASE_PROJECT_ID"` compara o schema remoto com a shadow DB montada a
       # partir das migrations locais e publica o SQL de diferença como
       # artifact, permitindo confirmar que não ficou gap antes do deploy.
       # --schema cobre public E app_private (functions privadas do repo);
@@ -182,7 +182,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: supabase db diff --linked --schema public,app_private > /tmp/schema-drift.sql && { wc -l /tmp/schema-drift.sql; cat /tmp/schema-drift.sql; }
+        run: supabase db diff --remote="$SUPABASE_PROJECT_ID" --schema public,app_private > /tmp/schema-drift.sql && { wc -l /tmp/schema-drift.sql; cat /tmp/schema-drift.sql; }
 
       - name: Upload schema drift artifact
         if: always() && steps.drift-diff.outcome == 'success'
