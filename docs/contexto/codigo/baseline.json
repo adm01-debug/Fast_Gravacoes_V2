@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0c33cf178ac55d481f3f3f4e5985110669bf8fbd",
+  "commit": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
   "branch": "main",
-  "data_commit": "2026-11-18T17:33:50-03:00",
+  "data_commit": "2026-11-18T19:15:13-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "774274a",
+    "data": "2026-11-18",
+    "assunto": "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)"
+   },
    {
     "sha": "0c33cf1",
     "data": "2026-11-18",
@@ -126,15 +131,10 @@
     "sha": "a28848f",
     "data": "2026-11-14",
     "assunto": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
-   },
-   {
-    "sha": "d588826",
-    "data": "2026-11-14",
-    "assunto": "fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 140,
+  "arquivos_mudados_7d": 138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 75
+    "commits": 76
    },
    {
     "autor": "devin-ai-integration[bot]",

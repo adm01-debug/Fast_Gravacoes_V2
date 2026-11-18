@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0c33cf178ac55d481f3f3f4e5985110669bf8fbd",
+  "sha": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-18 20:35 UTC",
+  "generated_at": "2026-11-18 22:15 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203146
@@ -94843,10 +94843,19 @@
   }
  },
  "git": {
-  "sha": "0c33cf178ac55d481f3f3f4e5985110669bf8fbd",
+  "sha": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "774274a",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)",
+    "files": [
+     ".github/workflows/visual-baselines.yml"
+    ]
+   },
    {
     "sha": "0c33cf1",
     "date": "2026-11-18",
@@ -95165,54 +95174,9 @@
      "scripts/automation.mjs",
      "scripts/automation.unit.mjs"
     ]
-   },
-   {
-    "sha": "358f079",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(automacao): reconcilia PR 155 — hooks em worktree, autofix sem symlink externo, grafo (trava órfã, output próprio, UTF-8) (#157)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     ".gitignore",
-     "AGENTS.md",
-     "docs/AUTOMACAO_LOCAL.md",
-     "graphify.local.json",
-     "package.json",
-     "scripts/audit/audit.unit.mjs",
-     "scripts/audit/baseline.json",
-     "scripts/audit/regras.json",
-     "scripts/audit/run.mjs",
-     "scripts/autofix.test.mjs",
-     "scripts/autofix/README.md",
-     "scripts/autofix/run.mjs",
-     "scripts/autofix/unused.mjs",
-     "scripts/automation.config.json",
-     "scripts/automation.mjs",
-     "scripts/automation.unit.mjs",
-     "scripts/graphify-local.mjs",
-     "scripts/graphify-local.unit.mjs",
-     "scripts/maintenance/README.md",
-     "scripts/maintenance/config.example.json",
-     "scripts/maintenance/config.json",
-     "scripts/maintenance/lib.mjs",
-     "scripts/maintenance/maintenance.unit.mjs",
-     "scripts/maintenance/run.mjs",
-     "scripts/maintenance/run.sh",
-     "scripts/maintenance/typecheck.mjs",
-     "scripts/rotina/README.md",
-     "scripts/rotina/instalar.sh",
-     "scripts/rotina/rotina.mjs",
-     "scripts/sync/README.md",
-     "scripts/sync/instalar.sh",
-     "scripts/sync/sincronizar.sh"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "package.json",
-    6
-   ],
    [
     "deno.lock",
     5
@@ -95222,20 +95186,16 @@
     5
    ],
    [
-    "scripts/autofix.test.mjs",
-    4
+    "package.json",
+    5
    ],
    [
     "docs/prod-readiness.md",
     3
    ],
    [
-    "scripts/audit/audit.unit.mjs",
-    2
-   ],
-   [
-    "scripts/audit/run.mjs",
-    2
+    "scripts/autofix.test.mjs",
+    3
    ],
    [
     "scripts/audit-gate.mjs",
@@ -95258,20 +95218,8 @@
     2
    ],
    [
-    "scripts/autofix/unused.mjs",
-    2
-   ],
-   [
-    "scripts/rotina/rotina.mjs",
-    2
-   ],
-   [
-    "scripts/automation.mjs",
-    2
-   ],
-   [
-    "scripts/automation.unit.mjs",
-    2
+    ".github/workflows/visual-baselines.yml",
+    1
    ],
    [
     "src/components/auth/AuthLoginForm.tsx",
@@ -95287,6 +95235,26 @@
    ],
    [
     "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-expanded-chromium-linux.png",
+    1
+   ],
+   [
+    "src/hooks/useOfflineSync.test.ts",
+    1
+   ],
+   [
+    "src/hooks/useOfflineSync.ts",
+    1
+   ],
+   [
+    "tests/e2e/offline.spec.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+    1
+   ],
+   [
+    ".github/dependabot.yml",
     1
    ]
   ]
