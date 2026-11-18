@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
-import { AlertTriangle, AlertCircle, Box, Check, CheckCircle, Layers, Palette, Ruler, Search, Settings, Sparkles, Star, User, X, Zap, Home, Menu, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ExternalLink, Link, Plus, Minus, Edit, Trash2, Save, Download, Upload, Copy, Send, Share2, RefreshCw, RefreshCcw, RotateCw, RotateCcw, Users, Lock, Unlock, Key, Shield, ShieldCheck, Eye, EyeOff, Fingerprint, Bell, Mail, Phone, MessageSquare, Info, HelpCircle, XCircle, MinusCircle, PlusCircle, Trophy, Award, Flame, Coins, Target, Heart, ThumbsUp, ThumbsDown, Gift, FileText, Folder, FolderOpen, Camera, Video, Music, Volume2, VolumeX, Calendar, Clock, TrendingUp, Activity, BarChart, PieChart, LineChart, Gauge, Filter, Grid, List, TableIcon, LayoutGrid, Maximize, Minimize, ZoomIn, ZoomOut, Move, Grip, MoreHorizontal, MoreVertical, Scan, QrCode, Printer, Wifi, WifiOff, Cloud, Database, Server, Cpu, MousePointer2, Wand2, Package, Truck, Factory, Warehouse, Building, ShoppingCart, CreditCard, DollarSign, Percent, Tag, Bookmark, Flag, Sun, Moon, CloudRain, Thermometer, Droplet, Wind, Umbrella, Terminal, Code, GitBranch, Battery, BatteryCharging, Power, Loader2, MapPin, Compass, Globe, Crosshair, Github, Linkedin, Twitter, Facebook, Instagram, Youtube, Square, Circle, Play, Type, Clipboard as ClipboardIcon, FileIcon, ImageIcon, Map as MapIcon, Navigation as NavigationIcon, type LucideIcon } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Box, Check, CheckCircle, Layers, Palette, Ruler, Search, Settings, Sparkles, Star, User, X, Zap, Home, Menu, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ExternalLink, Link, Plus, Minus, Edit, Trash2, Save, Download, Upload, Copy, Send, Share2, RefreshCw, RefreshCcw, RotateCw, RotateCcw, Users, Lock, Unlock, Key, Shield, ShieldCheck, Eye, EyeOff, Fingerprint, Bell, Mail, Phone, MessageSquare, Info, HelpCircle, XCircle, MinusCircle, PlusCircle, Trophy, Award, Flame, Coins, Target, Heart, ThumbsUp, ThumbsDown, Gift, FileText, Folder, FolderOpen, Camera, Video, Music, Volume2, VolumeX, Calendar, Clock, TrendingUp, Activity, BarChart, PieChart, LineChart, Gauge, Filter, Grid, List, TableIcon, LayoutGrid, Maximize, Minimize, ZoomIn, ZoomOut, Move, Grip, MoreHorizontal, MoreVertical, Scan, QrCode, Printer, Wifi, WifiOff, Cloud, Database, Server, Cpu, MousePointer2, Wand2, Package, Truck, Factory, Warehouse, Building, ShoppingCart, CreditCard, DollarSign, Percent, Tag, Bookmark, Flag, Sun, Moon, CloudRain, Thermometer, Droplet, Wind, Umbrella, Terminal, Code, GitBranch, Battery, BatteryCharging, Power, Loader2, MapPin, Compass, Globe, Crosshair, Square, Circle, Play, Type, Clipboard as ClipboardIcon, FileIcon, ImageIcon, Map as MapIcon, Navigation as NavigationIcon, type LucideIcon } from 'lucide-react';
 
 export function IconsSection() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -213,17 +213,6 @@ export function IconsSection() {
         { name: 'Compass', Icon: Compass },
         { name: 'Globe', Icon: Globe },
         { name: 'Crosshair', Icon: Crosshair },
-      ],
-    },
-    {
-      category: 'Redes Sociais',
-      icons: [
-        { name: 'Github', Icon: Github },
-        { name: 'Linkedin', Icon: Linkedin },
-        { name: 'Twitter', Icon: Twitter },
-        { name: 'Facebook', Icon: Facebook },
-        { name: 'Instagram', Icon: Instagram },
-        { name: 'Youtube', Icon: Youtube },
       ],
     },
     {
