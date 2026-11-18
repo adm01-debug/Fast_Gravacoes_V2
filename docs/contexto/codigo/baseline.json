@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "596579f58a1ca8f4afbd0f48507de95488666473",
+  "commit": "0c33cf178ac55d481f3f3f4e5985110669bf8fbd",
   "branch": "main",
-  "data_commit": "2026-11-18T14:37:55-03:00",
+  "data_commit": "2026-11-18T17:33:50-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "0c33cf1",
+    "data": "2026-11-18",
+    "assunto": "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)"
+   },
    {
     "sha": "596579f",
     "data": "2026-11-18",
@@ -126,15 +131,10 @@
     "sha": "d588826",
     "data": "2026-11-14",
     "assunto": "fix(edge): health-check consulta status pending na fila TPM (coluna processed nao existe)"
-   },
-   {
-    "sha": "1ee7704",
-    "data": "2026-11-13",
-    "assunto": "fix(ci): instala ripgrep antes dos testes dos geradores no inventario"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 138,
+  "arquivos_mudados_7d": 140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -169,6 +169,10 @@
     "mudancas": 12
    },
    {
+    "pasta": "package.json",
+    "mudancas": 10
+   },
+   {
     "pasta": "src/components/navigation",
     "mudancas": 10
    },
@@ -177,7 +181,7 @@
     "mudancas": 10
    },
    {
-    "pasta": "package.json",
+    "pasta": "src/components/design-system",
     "mudancas": 9
    },
    {
@@ -189,11 +193,7 @@
     "mudancas": 9
    },
    {
-    "pasta": "src/components/design-system",
-    "mudancas": 8
-   },
-   {
-    "pasta": "src/components/kanban",
+    "pasta": "deno.lock",
     "mudancas": 8
    }
   ],
@@ -204,15 +204,15 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "package.json",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "AGENTS.md",
@@ -313,6 +313,10 @@
     "commits": 2
    },
    {
+    "autor": "dependabot[bot]",
+    "commits": 1
+   },
+   {
     "autor": "github-actions[bot]",
     "commits": 1
    }
@@ -321,7 +325,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187943,
+  "linhas_codigo": 187932,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -473,7 +477,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58669
+   "linhas": 58658
   },
   "src/constants": {
    "arquivos": 2,

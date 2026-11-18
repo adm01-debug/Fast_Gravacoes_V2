@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)",
    "chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)",
    "fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)",
    "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)",
-   "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)",
-   "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)"
+   "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

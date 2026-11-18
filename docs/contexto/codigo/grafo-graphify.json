@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "596579f58a1ca8f4afbd0f48507de95488666473",
+ "commit_do_grafo": "0c33cf178ac55d481f3f3f4e5985110669bf8fbd",
  "grafo_atual": true,
  "nos": 7454,
  "arestas": 21920,
- "comunidades_total": 652,
+ "comunidades_total": 651,
  "relacoes": {
   "calls": 3196,
   "cites": 6,
@@ -35,8 +35,8 @@
   {
    "id": 0,
    "nome": "card.tsx",
-   "nos": 203,
-   "callables": 74,
+   "nos": 197,
+   "callables": 70,
    "arquivos": 110,
    "exemplos_arquivos": [
     "src/components/abc/AIFinancialAdvisor.tsx",
@@ -52,9 +52,9 @@
   {
    "id": 1,
    "nome": "analytics/index.ts",
-   "nos": 138,
-   "callables": 71,
-   "arquivos": 52,
+   "nos": 146,
+   "callables": 77,
+   "arquivos": 55,
    "exemplos_arquivos": [
     "src/components/dashboard/EnergyWidget.tsx",
     "src/constants/biConstants.ts",
@@ -119,6 +119,23 @@
   },
   {
    "id": 5,
+   "nome": "badge.tsx",
+   "nos": 118,
+   "callables": 47,
+   "arquivos": 52,
+   "exemplos_arquivos": [
+    "src/components/alerts/AlertCard.tsx",
+    "src/components/alerts/AlertJobCard.tsx",
+    "src/components/autonomous/AutonomousEventLog.tsx",
+    "src/components/dashboard/BufferPromotionStatus.tsx",
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/dashboard/EfficiencyAlertStatsPanel.tsx",
+    "src/components/dashboard/LiveMachineStatusPanel.tsx",
+    "src/components/dashboard/PredictiveAnalyticsWidget.tsx"
+   ]
+  },
+  {
+   "id": 6,
    "nome": "cn",
    "nos": 111,
    "callables": 48,
@@ -135,7 +152,7 @@
    ]
   },
   {
-   "id": 6,
+   "id": 7,
    "nome": "snapshot.py",
    "nos": 110,
    "callables": 87,
@@ -143,23 +160,6 @@
    "exemplos_arquivos": [
     "scripts/supabase_snapshot/snapshot.py",
     "scripts/supabase_snapshot/test_snapshot.py"
-   ]
-  },
-  {
-   "id": 7,
-   "nome": "badge.tsx",
-   "nos": 110,
-   "callables": 47,
-   "arquivos": 48,
-   "exemplos_arquivos": [
-    "src/components/autonomous/AutonomousEventLog.tsx",
-    "src/components/dashboard/BufferPromotionStatus.tsx",
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/dashboard/LiveMachineStatusPanel.tsx",
-    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
-    "src/components/design-system/hooks/DataHooksDemos.tsx",
-    "src/components/design-system/sections/cards/CardDashboardExample.tsx",
-    "src/components/design-system/sections/tooltips/HoverCardsSection.tsx"
    ]
   },
   {
@@ -833,23 +833,6 @@
   },
   {
    "id": 51,
-   "nome": "EfficiencyDashboard.tsx",
-   "nos": 38,
-   "callables": 24,
-   "arquivos": 14,
-   "exemplos_arquivos": [
-    "src/components/dashboard/EfficiencyAlertStatsPanel.tsx",
-    "src/components/dashboard/EfficiencyAlertTrendChart.tsx",
-    "src/components/dashboard/GamificationBanner.tsx",
-    "src/components/dashboard/LeaderboardWidget.tsx",
-    "src/components/ui/kpi-tooltip.tsx",
-    "src/features/analytics/components/efficiency/BalancingTab.tsx",
-    "src/features/analytics/components/efficiency/BottlenecksTab.tsx",
-    "src/features/analytics/components/efficiency/HistoryTab.tsx"
-   ]
-  },
-  {
-   "id": 52,
    "nome": "parse_sql_schema",
    "nos": 37,
    "callables": 21,
@@ -859,7 +842,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 52,
    "nome": "AlertsDashboard.tsx",
    "nos": 37,
    "callables": 31,
@@ -873,6 +856,23 @@
     "src/components/calendar/CalendarTimeline.tsx",
     "src/components/dashboard/AlertScheduleModal.tsx",
     "src/components/knowledge/TechnicalSheetVisualReference.tsx"
+   ]
+  },
+  {
+   "id": 53,
+   "nome": "GoalAlertsWidget.tsx",
+   "nos": 37,
+   "callables": 30,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/dashboard/OperatorGoalsWidget.tsx",
+    "src/components/operators/GoalAlertsWidget.tsx",
+    "src/components/operators/GoalsHistoryCard.tsx",
+    "src/components/operators/OperatorCardDetailed.tsx",
+    "src/components/operators/OperatorGoalsCard.tsx",
+    "src/components/operators/OperatorGoalsTab.tsx",
+    "src/components/operators/OperatorPerformanceTab.tsx",
+    "src/components/operators/OperatorProductivityCard.tsx"
    ]
   },
   {
@@ -919,6 +919,23 @@
   },
   {
    "id": 58,
+   "nome": "EfficiencyDashboard.tsx",
+   "nos": 35,
+   "callables": 23,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/dashboard/EfficiencyAlertTrendChart.tsx",
+    "src/components/dashboard/GamificationBanner.tsx",
+    "src/components/dashboard/LeaderboardWidget.tsx",
+    "src/components/ui/kpi-tooltip.tsx",
+    "src/features/analytics/components/efficiency/BalancingTab.tsx",
+    "src/features/analytics/components/efficiency/BottlenecksTab.tsx",
+    "src/features/analytics/components/efficiency/HistoryTab.tsx",
+    "src/features/analytics/components/efficiency/SequencingTab.tsx"
+   ]
+  },
+  {
+   "id": 59,
    "nome": "hooks/types.ts",
    "nos": 35,
    "callables": 26,
@@ -935,7 +952,7 @@
    ]
   },
   {
-   "id": 59,
+   "id": 60,
    "nome": "audit/run.mjs",
    "nos": 34,
    "callables": 18,
@@ -945,7 +962,7 @@
    ]
   },
   {
-   "id": 60,
+   "id": 61,
    "nome": "AppSidebar.tsx",
    "nos": 34,
    "callables": 15,
@@ -962,7 +979,7 @@
    ]
   },
   {
-   "id": 61,
+   "id": 62,
    "nome": "MainLayout.tsx",
    "nos": 34,
    "callables": 16,
@@ -979,7 +996,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 63,
    "nome": "exportRegression.test.ts",
    "nos": 34,
    "callables": 17,
@@ -995,34 +1012,7 @@
    ]
   },
   {
-   "id": 63,
-   "nome": "test_snapshot.py",
-   "nos": 32,
-   "callables": 30,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "scripts/supabase_snapshot/test_snapshot.py"
-   ]
-  },
-  {
    "id": 64,
-   "nome": "OperatorGoalsCard.tsx",
-   "nos": 32,
-   "callables": 26,
-   "arquivos": 15,
-   "exemplos_arquivos": [
-    "src/components/dashboard/OperatorGoalsWidget.tsx",
-    "src/components/operators/GoalAlertsWidget.tsx",
-    "src/components/operators/GoalsHistoryCard.tsx",
-    "src/components/operators/OperatorCardDetailed.tsx",
-    "src/components/operators/OperatorGoalsCard.tsx",
-    "src/components/operators/OperatorGoalsTab.tsx",
-    "src/components/operators/OperatorPerformanceTab.tsx",
-    "src/components/operators/OperatorProductivityCard.tsx"
-   ]
-  },
-  {
-   "id": 65,
    "nome": "_shared/validation.ts",
    "nos": 32,
    "callables": 18,
@@ -1035,7 +1025,7 @@
    ]
   },
   {
-   "id": 66,
+   "id": 65,
    "nome": "e2e-setup.ts",
    "nos": 30,
    "callables": 8,
@@ -1052,7 +1042,7 @@
    ]
   },
   {
-   "id": 67,
+   "id": 66,
    "nome": "rotina.mjs",
    "nos": 30,
    "callables": 8,
@@ -1062,7 +1052,7 @@
    ]
   },
   {
-   "id": 68,
+   "id": 67,
    "nome": ".collect",
    "nos": 30,
    "callables": 30,
@@ -1072,7 +1062,7 @@
    ]
   },
   {
-   "id": 69,
+   "id": 68,
    "nome": "App.tsx",
    "nos": 30,
    "callables": 17,
@@ -1089,7 +1079,7 @@
    ]
   },
   {
-   "id": 70,
+   "id": 69,
    "nome": "realtimeChannel.ts",
    "nos": 30,
    "callables": 23,
@@ -1101,7 +1091,7 @@
    ]
   },
   {
-   "id": 71,
+   "id": 70,
    "nome": "gerar-banco.mjs",
    "nos": 29,
    "callables": 17,
@@ -1112,7 +1102,7 @@
    ]
   },
   {
-   "id": 72,
+   "id": 71,
    "nome": "transitions/index.ts",
    "nos": 29,
    "callables": 21,
@@ -1125,7 +1115,7 @@
    ]
   },
   {
-   "id": 73,
+   "id": 72,
    "nome": "ScanHistory.tsx",
    "nos": 29,
    "callables": 20,
@@ -1142,7 +1132,7 @@
    ]
   },
   {
-   "id": 74,
+   "id": 73,
    "nome": "DialogHistoryGuard.tsx",
    "nos": 29,
    "callables": 19,
@@ -1157,7 +1147,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 74,
    "nome": "cenarios.mjs",
    "nos": 28,
    "callables": 10,
@@ -1174,7 +1164,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 75,
    "nome": "SPCDashboard.tsx",
    "nos": 28,
    "callables": 21,
@@ -1190,7 +1180,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "parseDateOnly",
    "nos": 28,
    "callables": 16,
@@ -1207,7 +1197,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "auth.ts",
    "nos": 28,
    "callables": 22,
@@ -1219,13 +1209,25 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "compilerOptions",
    "nos": 27,
    "callables": 0,
    "arquivos": 1,
    "exemplos_arquivos": [
     "tsconfig.app.json"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "webpushEncrypt.ts",
+   "nos": 26,
+   "callables": 17,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "supabase/functions/_shared/webpushEncrypt.test.ts",
+    "supabase/functions/_shared/webpushEncrypt.ts",
+    "supabase/functions/send-push-notification/index.ts"
    ]
   }
  ],
@@ -2141,7 +2143,7 @@
   "scripts/seed-users.test.mjs": "seed-users.test.mjs",
   "scripts/src/pages/Login": "gerar.unit.mjs",
   "scripts/supabase_snapshot/snapshot.py": "snapshot.py",
-  "scripts/supabase_snapshot/test_snapshot.py": "ManagementApiFailureTests",
+  "scripts/supabase_snapshot/test_snapshot.py": "SnapshotFixture",
   "scripts/sync/instalar.sh": "sync/instalar.sh",
   "scripts/sync/sincronizar.sh": "sincronizar.sh",
   "sonner": "sonner",
@@ -2206,7 +2208,7 @@
   "src/components/dashboard/DashboardExport.tsx": "Index.tsx",
   "src/components/dashboard/DraggableWidget.tsx": "cn",
   "src/components/dashboard/EfficiencyAlertHistoryWidget.tsx": "button.tsx",
-  "src/components/dashboard/EfficiencyAlertStatsPanel.tsx": "EfficiencyDashboard.tsx",
+  "src/components/dashboard/EfficiencyAlertStatsPanel.tsx": "badge.tsx",
   "src/components/dashboard/EfficiencyAlertTrendChart.tsx": "EfficiencyDashboard.tsx",
   "src/components/dashboard/EnergyWidget.tsx": "analytics/index.ts",
   "src/components/dashboard/GamificationBanner.tsx": "EfficiencyDashboard.tsx",
@@ -2217,7 +2219,7 @@
   "src/components/dashboard/MaintenanceAlertsWidget.tsx": "cn",
   "src/components/dashboard/OEELoadTrendWidget.tsx": "useSchedulingData",
   "src/components/dashboard/OccupancyChart.tsx": "Index.tsx",
-  "src/components/dashboard/OperatorGoalsWidget.tsx": "OperatorGoalsCard.tsx",
+  "src/components/dashboard/OperatorGoalsWidget.tsx": "GoalAlertsWidget.tsx",
   "src/components/dashboard/PredictiveAnalyticsWidget.tsx": "cn",
   "src/components/dashboard/QuickActions.tsx": "cn",
   "src/components/dashboard/RealtimeIndicator.tsx": "MainLayout.tsx",
@@ -2414,19 +2416,19 @@
   "src/components/operators/EditOperatorModal.tsx": "label.tsx",
   "src/components/operators/EfficiencyChart.tsx": "skeleton.tsx",
   "src/components/operators/EvolutionChart.tsx": "skeleton.tsx",
-  "src/components/operators/GoalAlertsWidget.tsx": "badge.tsx",
-  "src/components/operators/GoalsHistoryCard.tsx": "OperatorGoalsCard.tsx",
+  "src/components/operators/GoalAlertsWidget.tsx": "GoalAlertsWidget.tsx",
+  "src/components/operators/GoalsHistoryCard.tsx": "GoalAlertsWidget.tsx",
   "src/components/operators/MachineAssignmentModal.tsx": "label.tsx",
   "src/components/operators/OperatorAuditHistory.tsx": "OperatorsPage.tsx",
   "src/components/operators/OperatorCard.tsx": "OperatorsPage.tsx",
-  "src/components/operators/OperatorCardDetailed.tsx": "OperatorGoalsCard.tsx",
+  "src/components/operators/OperatorCardDetailed.tsx": "GoalAlertsWidget.tsx",
   "src/components/operators/OperatorConfirmDialogs.tsx": "label.tsx",
   "src/components/operators/OperatorDetailsDialog.tsx": "OperatorsPage.tsx",
-  "src/components/operators/OperatorGoalsCard.tsx": "OperatorGoalsCard.tsx",
-  "src/components/operators/OperatorGoalsTab.tsx": "OperatorGoalsCard.tsx",
+  "src/components/operators/OperatorGoalsCard.tsx": "GoalAlertsWidget.tsx",
+  "src/components/operators/OperatorGoalsTab.tsx": "GoalAlertsWidget.tsx",
   "src/components/operators/OperatorLeaderboard.tsx": "cn",
   "src/components/operators/OperatorPerformanceTab.tsx": "skeleton.tsx",
-  "src/components/operators/OperatorProductivityCard.tsx": "OperatorGoalsCard.tsx",
+  "src/components/operators/OperatorProductivityCard.tsx": "GoalAlertsWidget.tsx",
   "src/components/operators/OperatorProductivityStatCard.tsx": "card.tsx",
   "src/components/operators/OperatorQRBadgeDialog.tsx": "label.tsx",
   "src/components/operators/OperatorSkillsModal.tsx": "label.tsx",
@@ -2554,7 +2556,7 @@
   "src/components/ui/skeleton.tsx": "skeleton.tsx",
   "src/components/ui/slider.tsx": "label.tsx",
   "src/components/ui/sonner.tsx": "App.tsx",
-  "src/components/ui/status-badge.tsx": "AlertJobCard.tsx",
+  "src/components/ui/status-badge.tsx": "badge.tsx",
   "src/components/ui/stepper.tsx": "cn",
   "src/components/ui/switch.tsx": "card.tsx",
   "src/components/ui/table.tsx": "scroll-area.tsx",
@@ -2676,19 +2678,19 @@
   "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/OEEAuditPanel.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEECalculationAudit.tsx": "OEERankingGap.tsx",
+  "src/features/analytics/components/oee/OEECalculationAudit.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEGaugeCard.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEHeatmap.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEELossDrilldown.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEELossesChart.tsx": "skeleton.tsx",
-  "src/features/analytics/components/oee/OEEMachineTable.tsx": "scroll-area.tsx",
+  "src/features/analytics/components/oee/OEEMachineTable.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEOverviewTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEERankingGap.tsx": "OEERankingGap.tsx",
+  "src/features/analytics/components/oee/OEERankingGap.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEERecommendations.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEShiftComparison.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/OEESimulatorPanel.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEStudiosTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "OEERankingGap.tsx",
+  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEETrendChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/ParetoLossesChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/PredictiveAlerts.tsx": "SystemMonitoringPage.tsx",
@@ -2937,7 +2939,7 @@
   "src/hooks/use-toast.ts": "use-toast.ts",
   "src/hooks/useABCCosts.ts": "useABCCosts",
   "src/hooks/useAlertCount.ts": "MainLayout",
-  "src/hooks/useAutoTheme.ts": "card.tsx",
+  "src/hooks/useAutoTheme.ts": "useAutoTheme.ts",
   "src/hooks/useBulkActions.ts": "showErrorToast",
   "src/hooks/useCalendarFilters.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarHotkeys.ts": "DailyCalendar.tsx",
@@ -3007,7 +3009,7 @@
   "src/lib/pdfExport.test.ts": "pdfExport.ts",
   "src/lib/pdfExport.ts": "excelExport.test.ts",
   "src/lib/prefetch.ts": "AppSidebar.tsx",
-  "src/lib/productivityReport.ts": "OperatorGoalsCard.tsx",
+  "src/lib/productivityReport.ts": "GoalAlertsWidget.tsx",
   "src/lib/queryConfig.ts": "errorHandling.ts",
   "src/lib/rateLimiter.ts": "RateLimiter",
   "src/lib/realtimeChannel.ts": "realtimeChannel.ts",
@@ -3050,10 +3052,10 @@
   "src/pages/Fantasma": "gerar-rotas.mjs",
   "src/pages/GamificationPage.tsx": "EfficiencyDashboard.tsx",
   "src/pages/Index.tsx": "Index.tsx",
-  "src/pages/InstallAppPage.tsx": "card.tsx",
+  "src/pages/InstallAppPage.tsx": "BeforeInstallPromptEvent",
   "src/pages/InventoryPage.test.tsx": "label.tsx",
   "src/pages/InventoryPage.tsx": "label.tsx",
-  "src/pages/KPIDashboard.tsx": "OperatorGoalsCard.tsx",
+  "src/pages/KPIDashboard.tsx": "GoalAlertsWidget.tsx",
   "src/pages/Kanban": "gerar-rotas.mjs",
   "src/pages/KanbanBoard.tsx": "jobs/index.ts",
   "src/pages/KioskPage.tsx": "useAuth",
