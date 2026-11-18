@@ -36,8 +36,8 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | technical-assistant | technical-assistant | ACTIVE | 63 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/technical-assistant/index.ts |
 | tpm-notifications | tpm-notifications | ACTIVE | 62 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/tpm-notifications/index.ts |
 | update-operator | update-operator | ACTIVE | 61 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/update-operator/index.ts |
-| validate-login-ip | validate-login-ip | ACTIVE | 62 | sim | file:///app/supabase/functions/validate-login-ip/index.ts |
-| webhook-handler | webhook-handler | ACTIVE | 62 | sim | file:///app/supabase/functions/webhook-handler/index.ts |
+| validate-login-ip | validate-login-ip | ACTIVE | 63 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/validate-login-ip/index.ts |
+| webhook-handler | webhook-handler | ACTIVE | 63 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/webhook-handler/index.ts |
 
 
 ## Secrets (apenas nomes)
