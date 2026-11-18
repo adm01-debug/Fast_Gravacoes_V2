@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
+  "sha": "096b2ccfd9f4d4c5379b15a363fe65c639ce361a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-18 22:32 UTC",
+  "generated_at": "2026-11-18 23:33 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203146
@@ -94843,10 +94843,20 @@
   }
  },
  "git": {
-  "sha": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
+  "sha": "096b2ccfd9f4d4c5379b15a363fe65c639ce361a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "096b2cc",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)",
+    "files": [
+     ".github/workflows/deploy.yml",
+     ".github/workflows/migration-repair.yml"
+    ]
+   },
    {
     "sha": "e36c2ab",
     "date": "2026-11-18",
@@ -95168,16 +95178,6 @@
      "src/lib/spcExport.test.ts",
      "vitest.config.ts"
     ]
-   },
-   {
-    "sha": "4cad7a1",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)",
-    "files": [
-     "scripts/autofix.test.mjs",
-     "scripts/rotina/rotina.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -95198,8 +95198,12 @@
     3
    ],
    [
-    "scripts/autofix.test.mjs",
-    3
+    ".github/workflows/deploy.yml",
+    2
+   ],
+   [
+    ".github/workflows/migration-repair.yml",
+    2
    ],
    [
     ".github/workflows/inventario-estado-semanal.yml",
@@ -95230,6 +95234,10 @@
     2
    ],
    [
+    "scripts/autofix.test.mjs",
+    2
+   ],
+   [
     ".github/workflows/automation-local.yml",
     1
    ],
@@ -95246,15 +95254,7 @@
     1
    ],
    [
-    ".github/workflows/deploy.yml",
-    1
-   ],
-   [
     ".github/workflows/graphify.yml",
-    1
-   ],
-   [
-    ".github/workflows/migration-repair.yml",
     1
    ],
    [

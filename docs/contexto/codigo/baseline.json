@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
+  "commit": "096b2ccfd9f4d4c5379b15a363fe65c639ce361a",
   "branch": "main",
-  "data_commit": "2026-11-18T19:32:07-03:00",
+  "data_commit": "2026-11-18T20:30:49-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "096b2cc",
+    "data": "2026-11-18",
+    "assunto": "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)"
+   },
    {
     "sha": "e36c2ab",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "c65ff2e",
     "data": "2026-11-14",
     "assunto": "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804"
-   },
-   {
-    "sha": "144be3e",
-    "data": "2026-11-14",
-    "assunto": "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -223,12 +223,12 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/audit-gate.mjs",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 7
+    "arquivo": "scripts/audit-gate.mjs",
+    "mudancas": 8
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -252,6 +252,10 @@
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": ".github/workflows/migration-repair.yml",
     "mudancas": 5
    },
    {
@@ -287,10 +291,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/migration-repair.yml",
-    "mudancas": 4
-   },
-   {
     "arquivo": ".github/workflows/visual-baselines.yml",
     "mudancas": 4
    },
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 76
+    "commits": 77
    },
    {
     "autor": "devin-ai-integration[bot]",
