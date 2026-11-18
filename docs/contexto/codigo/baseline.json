@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ed61697d3338d6be1ca9e60830fdd6f894b2aa46",
+  "commit": "596579f58a1ca8f4afbd0f48507de95488666473",
   "branch": "main",
-  "data_commit": "2026-11-18T13:38:59-03:00",
+  "data_commit": "2026-11-18T14:37:55-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "596579f",
+    "data": "2026-11-18",
+    "assunto": "chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)"
+   },
    {
     "sha": "ed61697",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "1ee7704",
     "data": "2026-11-13",
     "assunto": "fix(ci): instala ripgrep antes dos testes dos geradores no inventario"
-   },
-   {
-    "sha": "2f4326c",
-    "data": "2026-11-13",
-    "assunto": "test: vitest no fuso America/Sao_Paulo (spcExport falhava por fuso) (#179)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -177,16 +177,16 @@
     "mudancas": 10
    },
    {
+    "pasta": "package.json",
+    "mudancas": 9
+   },
+   {
     "pasta": "src/components/jobs",
     "mudancas": 9
    },
    {
     "pasta": "src/components/knowledge",
     "mudancas": 9
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 8
    },
    {
     "pasta": "src/components/design-system",
@@ -204,15 +204,15 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "package.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "AGENTS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 74
+    "commits": 75
    },
    {
     "autor": "devin-ai-integration[bot]",

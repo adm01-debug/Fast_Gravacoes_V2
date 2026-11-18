@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ed61697d3338d6be1ca9e60830fdd6f894b2aa46",
+  "sha": "596579f58a1ca8f4afbd0f48507de95488666473",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-18 16:41 UTC",
+  "generated_at": "2026-11-18 17:38 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203157
  },
  "version": "1.3.2",
- "facts_hash": "ad8d340dfa198134",
+ "facts_hash": "77fbeec334b33544",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -22,12 +22,12 @@
     "in": "package.json"
    },
    "@supabase/supabase-js": {
-    "version": "^2.87.1",
+    "version": "^2.119.0",
     "role": "Supabase (DB/Auth/Storage/Functions)",
     "in": "package.json"
    },
    "@tanstack/react-query": {
-    "version": "^5.100.9",
+    "version": "^5.107.1",
     "role": "Cache/fetch de dados (TanStack Query)",
     "in": "package.json"
    },
@@ -57,12 +57,12 @@
     "in": "package.json"
    },
    "react-hook-form": {
-    "version": "^7.61.1",
+    "version": "^7.92.0",
     "role": "Forms (react-hook-form)",
     "in": "package.json"
    },
    "react-router-dom": {
-    "version": "^7.18.4",
+    "version": "^7.18.5",
     "role": "Roteamento (React Router)",
     "in": "package.json"
    },
@@ -82,7 +82,7 @@
     "in": "package.json"
    },
    "zustand": {
-    "version": "^5.0.9",
+    "version": "^5.1.0",
     "role": "Estado Zustand",
     "in": "package.json"
    },
@@ -94843,10 +94843,21 @@
   }
  },
  "git": {
-  "sha": "ed61697d3338d6be1ca9e60830fdd6f894b2aa46",
+  "sha": "596579f58a1ca8f4afbd0f48507de95488666473",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "596579f",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "ed61697",
     "date": "2026-11-18",
@@ -95189,52 +95200,24 @@
     "files": [
      ".github/workflows/db-admin.yml"
     ]
-   },
-   {
-    "sha": "dd1b467",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "style(manutencao): aplica correcoes locais verificadas (#169)",
-    "files": [
-     "src/components/activity/ActivityLog.tsx",
-     "src/components/assistant/TechnicalAssistant.tsx",
-     "src/components/auth/AuthLoginForm.tsx",
-     "src/components/autonomous/AutonomousEventLog.tsx",
-     "src/components/dashboard/OccupancyChart.tsx",
-     "src/components/dashboard/RecentJobsTable.tsx",
-     "src/components/dashboard/SortableWidgetSection.tsx",
-     "src/components/dashboard/StatsCard.tsx",
-     "src/components/digital-twin/CostSimulationCard.tsx",
-     "src/components/digital-twin/SupplyChainPanel.tsx",
-     "src/components/error/GlobalErrorBoundary.tsx",
-     "src/components/jobs/JobCostsTab.tsx",
-     "src/components/kanban/DraggableJobCard.tsx",
-     "src/components/kanban/KanbanAIAdvisor.tsx",
-     "src/components/kanban/KanbanFiltersBar.tsx",
-     "src/components/knowledge/TechnicalSheetTab.tsx",
-     "src/components/knowledge/TechnicalSheetViewer.tsx",
-     "src/components/knowledge/editor/EditorBasicInfo.tsx",
-     "src/components/knowledge/editor/EditorMaterialsSection.tsx",
-     "src/components/knowledge/editor/EditorStepsSection.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
+    5
+   ],
+   [
+    "deno.lock",
+    4
+   ],
+   [
+    "package-lock.json",
     4
    ],
    [
     "scripts/autofix.test.mjs",
     4
-   ],
-   [
-    "deno.lock",
-    3
-   ],
-   [
-    "package-lock.json",
-    3
    ],
    [
     "docs/prod-readiness.md",

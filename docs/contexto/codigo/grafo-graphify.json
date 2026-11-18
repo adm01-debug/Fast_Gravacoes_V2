@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "ed61697d3338d6be1ca9e60830fdd6f894b2aa46",
+ "commit_do_grafo": "596579f58a1ca8f4afbd0f48507de95488666473",
  "grafo_atual": true,
  "nos": 7454,
  "arestas": 21920,
- "comunidades_total": 648,
+ "comunidades_total": 652,
  "relacoes": {
   "calls": 3196,
   "cites": 6,
@@ -35,9 +35,9 @@
   {
    "id": 0,
    "nome": "card.tsx",
-   "nos": 205,
-   "callables": 75,
-   "arquivos": 111,
+   "nos": 203,
+   "callables": 74,
+   "arquivos": 110,
    "exemplos_arquivos": [
     "src/components/abc/AIFinancialAdvisor.tsx",
     "src/components/alerts/AlertStatsGrid.tsx",
@@ -52,9 +52,9 @@
   {
    "id": 1,
    "nome": "analytics/index.ts",
-   "nos": 147,
-   "callables": 77,
-   "arquivos": 55,
+   "nos": 138,
+   "callables": 71,
+   "arquivos": 52,
    "exemplos_arquivos": [
     "src/components/dashboard/EnergyWidget.tsx",
     "src/constants/biConstants.ts",
@@ -68,27 +68,10 @@
   },
   {
    "id": 2,
-   "nome": "badge.tsx",
-   "nos": 140,
-   "callables": 73,
-   "arquivos": 57,
-   "exemplos_arquivos": [
-    "src/components/autonomous/AutonomousEventLog.tsx",
-    "src/components/dashboard/BufferPromotionStatus.tsx",
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/dashboard/LiveMachineStatusPanel.tsx",
-    "src/components/dashboard/OperatorGoalsWidget.tsx",
-    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
-    "src/components/design-system/hooks/DataHooksDemos.tsx",
-    "src/components/design-system/sections/cards/CardDashboardExample.tsx"
-   ]
-  },
-  {
-   "id": 3,
    "nome": "skeleton.tsx",
-   "nos": 136,
-   "callables": 46,
-   "arquivos": 47,
+   "nos": 137,
+   "callables": 47,
+   "arquivos": 48,
    "exemplos_arquivos": [
     "src/components/abc/ABCCostBreakdownChart.tsx",
     "src/components/abc/ABCTechniqueChart.tsx",
@@ -96,12 +79,12 @@
     "src/components/dashboard/EfficiencyAlertTrendChart.tsx",
     "src/components/dashboard/EnergyWidget.tsx",
     "src/components/dashboard/OEELoadTrendWidget.tsx",
-    "src/components/design-system/sections/code-quality/CodeQualityTestsTab.tsx",
-    "src/components/integrations/Bitrix24SyncHistory.tsx"
+    "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx",
+    "src/components/design-system/sections/code-quality/CodeQualityTestsTab.tsx"
    ]
   },
   {
-   "id": 4,
+   "id": 3,
    "nome": "label.tsx",
    "nos": 120,
    "callables": 61,
@@ -118,7 +101,7 @@
    ]
   },
   {
-   "id": 5,
+   "id": 4,
    "nome": "button.tsx",
    "nos": 120,
    "callables": 56,
@@ -135,7 +118,7 @@
    ]
   },
   {
-   "id": 6,
+   "id": 5,
    "nome": "cn",
    "nos": 111,
    "callables": 48,
@@ -152,7 +135,7 @@
    ]
   },
   {
-   "id": 7,
+   "id": 6,
    "nome": "snapshot.py",
    "nos": 110,
    "callables": 87,
@@ -160,6 +143,23 @@
    "exemplos_arquivos": [
     "scripts/supabase_snapshot/snapshot.py",
     "scripts/supabase_snapshot/test_snapshot.py"
+   ]
+  },
+  {
+   "id": 7,
+   "nome": "badge.tsx",
+   "nos": 110,
+   "callables": 47,
+   "arquivos": 48,
+   "exemplos_arquivos": [
+    "src/components/autonomous/AutonomousEventLog.tsx",
+    "src/components/dashboard/BufferPromotionStatus.tsx",
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/dashboard/LiveMachineStatusPanel.tsx",
+    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
+    "src/components/design-system/hooks/DataHooksDemos.tsx",
+    "src/components/design-system/sections/cards/CardDashboardExample.tsx",
+    "src/components/design-system/sections/tooltips/HoverCardsSection.tsx"
    ]
   },
   {
@@ -386,23 +386,6 @@
   },
   {
    "id": 22,
-   "nome": "AppRoutes.tsx",
-   "nos": 64,
-   "callables": 18,
-   "arquivos": 8,
-   "exemplos_arquivos": [
-    "src/components/navigation/ScrollRestoration.tsx",
-    "src/components/technical-assistant/ChatArea.tsx",
-    "src/components/technical-assistant/ConversationSidebar.tsx",
-    "src/hooks/useRoutePrefetch.ts",
-    "src/hooks/useTechnicalConversations.ts",
-    "src/lib/navHistory.ts",
-    "src/pages/TechnicalAssistantPage.tsx",
-    "src/routes/AppRoutes.tsx"
-   ]
-  },
-  {
-   "id": 23,
    "nome": "AppProviders.tsx",
    "nos": 61,
    "callables": 40,
@@ -419,7 +402,7 @@
    ]
   },
   {
-   "id": 24,
+   "id": 23,
    "nome": "TraceabilityPage.tsx",
    "nos": 60,
    "callables": 49,
@@ -436,7 +419,7 @@
    ]
   },
   {
-   "id": 25,
+   "id": 24,
    "nome": "scripts",
    "nos": 59,
    "callables": 0,
@@ -446,7 +429,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 25,
    "nome": "loading/index.ts",
    "nos": 59,
    "callables": 42,
@@ -459,7 +442,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 26,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 45,
@@ -472,7 +455,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 27,
    "nome": "showErrorToast",
    "nos": 58,
    "callables": 45,
@@ -489,7 +472,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 28,
    "nome": "actions-kpi.unit.mjs",
    "nos": 57,
    "callables": 46,
@@ -503,7 +486,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 29,
    "nome": "DesignSystemPage.tsx",
    "nos": 57,
    "callables": 45,
@@ -517,6 +500,22 @@
     "src/components/design-system/sections/ChangelogSection.tsx",
     "src/components/design-system/sections/ColorsSection.tsx",
     "src/components/design-system/sections/EmptyStatesSection.tsx"
+   ]
+  },
+  {
+   "id": 30,
+   "nome": "AppRoutes.tsx",
+   "nos": 57,
+   "callables": 12,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "src/components/technical-assistant/ChatArea.tsx",
+    "src/components/technical-assistant/ConversationSidebar.tsx",
+    "src/hooks/useRoutePrefetch.ts",
+    "src/hooks/useTechnicalConversations.ts",
+    "src/lib/navHistory.ts",
+    "src/pages/TechnicalAssistantPage.tsx",
+    "src/routes/AppRoutes.tsx"
    ]
   },
   {
@@ -997,6 +996,33 @@
   },
   {
    "id": 63,
+   "nome": "test_snapshot.py",
+   "nos": 32,
+   "callables": 30,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/supabase_snapshot/test_snapshot.py"
+   ]
+  },
+  {
+   "id": 64,
+   "nome": "OperatorGoalsCard.tsx",
+   "nos": 32,
+   "callables": 26,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/dashboard/OperatorGoalsWidget.tsx",
+    "src/components/operators/GoalAlertsWidget.tsx",
+    "src/components/operators/GoalsHistoryCard.tsx",
+    "src/components/operators/OperatorCardDetailed.tsx",
+    "src/components/operators/OperatorGoalsCard.tsx",
+    "src/components/operators/OperatorGoalsTab.tsx",
+    "src/components/operators/OperatorPerformanceTab.tsx",
+    "src/components/operators/OperatorProductivityCard.tsx"
+   ]
+  },
+  {
+   "id": 65,
    "nome": "_shared/validation.ts",
    "nos": 32,
    "callables": 18,
@@ -1009,7 +1035,7 @@
    ]
   },
   {
-   "id": 64,
+   "id": 66,
    "nome": "e2e-setup.ts",
    "nos": 30,
    "callables": 8,
@@ -1026,7 +1052,7 @@
    ]
   },
   {
-   "id": 65,
+   "id": 67,
    "nome": "rotina.mjs",
    "nos": 30,
    "callables": 8,
@@ -1036,7 +1062,7 @@
    ]
   },
   {
-   "id": 66,
+   "id": 68,
    "nome": ".collect",
    "nos": 30,
    "callables": 30,
@@ -1046,7 +1072,7 @@
    ]
   },
   {
-   "id": 67,
+   "id": 69,
    "nome": "App.tsx",
    "nos": 30,
    "callables": 17,
@@ -1063,7 +1089,7 @@
    ]
   },
   {
-   "id": 68,
+   "id": 70,
    "nome": "realtimeChannel.ts",
    "nos": 30,
    "callables": 23,
@@ -1075,7 +1101,7 @@
    ]
   },
   {
-   "id": 69,
+   "id": 71,
    "nome": "gerar-banco.mjs",
    "nos": 29,
    "callables": 17,
@@ -1086,7 +1112,7 @@
    ]
   },
   {
-   "id": 70,
+   "id": 72,
    "nome": "transitions/index.ts",
    "nos": 29,
    "callables": 21,
@@ -1099,7 +1125,7 @@
    ]
   },
   {
-   "id": 71,
+   "id": 73,
    "nome": "ScanHistory.tsx",
    "nos": 29,
    "callables": 20,
@@ -1116,7 +1142,7 @@
    ]
   },
   {
-   "id": 72,
+   "id": 74,
    "nome": "DialogHistoryGuard.tsx",
    "nos": 29,
    "callables": 19,
@@ -1131,7 +1157,7 @@
    ]
   },
   {
-   "id": 73,
+   "id": 75,
    "nome": "cenarios.mjs",
    "nos": 28,
    "callables": 10,
@@ -1148,7 +1174,7 @@
    ]
   },
   {
-   "id": 74,
+   "id": 76,
    "nome": "SPCDashboard.tsx",
    "nos": 28,
    "callables": 21,
@@ -1164,7 +1190,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 77,
    "nome": "parseDateOnly",
    "nos": 28,
    "callables": 16,
@@ -1181,7 +1207,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 78,
    "nome": "auth.ts",
    "nos": 28,
    "callables": 22,
@@ -1193,35 +1219,13 @@
    ]
   },
   {
-   "id": 77,
+   "id": 79,
    "nome": "compilerOptions",
    "nos": 27,
    "callables": 0,
    "arquivos": 1,
    "exemplos_arquivos": [
     "tsconfig.app.json"
-   ]
-  },
-  {
-   "id": 78,
-   "nome": "webpushEncrypt.ts",
-   "nos": 26,
-   "callables": 17,
-   "arquivos": 3,
-   "exemplos_arquivos": [
-    "supabase/functions/_shared/webpushEncrypt.test.ts",
-    "supabase/functions/_shared/webpushEncrypt.ts",
-    "supabase/functions/send-push-notification/index.ts"
-   ]
-  },
-  {
-   "id": 79,
-   "nome": "autofix/run.mjs",
-   "nos": 26,
-   "callables": 12,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "scripts/autofix/run.mjs"
    ]
   }
  ],
@@ -2137,7 +2141,7 @@
   "scripts/seed-users.test.mjs": "seed-users.test.mjs",
   "scripts/src/pages/Login": "gerar.unit.mjs",
   "scripts/supabase_snapshot/snapshot.py": "snapshot.py",
-  "scripts/supabase_snapshot/test_snapshot.py": "SnapshotFixture",
+  "scripts/supabase_snapshot/test_snapshot.py": "ManagementApiFailureTests",
   "scripts/sync/instalar.sh": "sync/instalar.sh",
   "scripts/sync/sincronizar.sh": "sincronizar.sh",
   "sonner": "sonner",
@@ -2187,7 +2191,7 @@
   "src/components/calendar/JobQuickActions.tsx": "types/scheduling.ts",
   "src/components/calendar/MobileFAB.tsx": "DailyCalendar.tsx",
   "src/components/calendar/OptimizationAssistant.tsx": "card.tsx",
-  "src/components/calendar/QuickJobDrawer.tsx": "DbJob",
+  "src/components/calendar/QuickJobDrawer.tsx": "button.tsx",
   "src/components/calendar/types.ts": "DbJob",
   "src/components/chat/QuickChat.tsx": "Index.tsx",
   "src/components/dashboard/ActivityFeedWidget.tsx": "Index.tsx",
@@ -2213,7 +2217,7 @@
   "src/components/dashboard/MaintenanceAlertsWidget.tsx": "cn",
   "src/components/dashboard/OEELoadTrendWidget.tsx": "useSchedulingData",
   "src/components/dashboard/OccupancyChart.tsx": "Index.tsx",
-  "src/components/dashboard/OperatorGoalsWidget.tsx": "badge.tsx",
+  "src/components/dashboard/OperatorGoalsWidget.tsx": "OperatorGoalsCard.tsx",
   "src/components/dashboard/PredictiveAnalyticsWidget.tsx": "cn",
   "src/components/dashboard/QuickActions.tsx": "cn",
   "src/components/dashboard/RealtimeIndicator.tsx": "MainLayout.tsx",
@@ -2262,7 +2266,7 @@
   "src/components/design-system/sections/cards/CardCSSUtilities.tsx": "DesignSystemPage.tsx",
   "src/components/design-system/sections/cards/CardDashboardExample.tsx": "DesignSystemPage.tsx",
   "src/components/design-system/sections/cards/CardVariants.tsx": "card.tsx",
-  "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx": "badge.tsx",
+  "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx": "card.tsx",
   "src/components/design-system/sections/code-quality/CodeQualityTestsTab.tsx": "skeleton.tsx",
   "src/components/design-system/sections/empty-states/BasicEmptyStates.tsx": "DesignSystemPage.tsx",
   "src/components/design-system/sections/empty-states/CTAEmptyStates.tsx": "DesignSystemPage.tsx",
@@ -2385,7 +2389,7 @@
   "src/components/navigation/MobileNavigation.tsx": "MainLayout",
   "src/components/navigation/MobileQuickActions.tsx": "useDevice",
   "src/components/navigation/NavigationListener.tsx": "MainLayout",
-  "src/components/navigation/ScrollRestoration.tsx": "AppRoutes.tsx",
+  "src/components/navigation/ScrollRestoration.tsx": "ScrollRestoration.tsx",
   "src/components/navigation/SwipeIndicator.tsx": "MainLayout.tsx",
   "src/components/navigation/TopProgressBar.tsx": "MainLayout.tsx",
   "src/components/navigation/useCommandEntities.tsx": "CommandPaletteAdvanced.tsx",
@@ -2411,18 +2415,18 @@
   "src/components/operators/EfficiencyChart.tsx": "skeleton.tsx",
   "src/components/operators/EvolutionChart.tsx": "skeleton.tsx",
   "src/components/operators/GoalAlertsWidget.tsx": "badge.tsx",
-  "src/components/operators/GoalsHistoryCard.tsx": "badge.tsx",
+  "src/components/operators/GoalsHistoryCard.tsx": "OperatorGoalsCard.tsx",
   "src/components/operators/MachineAssignmentModal.tsx": "label.tsx",
   "src/components/operators/OperatorAuditHistory.tsx": "OperatorsPage.tsx",
   "src/components/operators/OperatorCard.tsx": "OperatorsPage.tsx",
-  "src/components/operators/OperatorCardDetailed.tsx": "badge.tsx",
+  "src/components/operators/OperatorCardDetailed.tsx": "OperatorGoalsCard.tsx",
   "src/components/operators/OperatorConfirmDialogs.tsx": "label.tsx",
   "src/components/operators/OperatorDetailsDialog.tsx": "OperatorsPage.tsx",
-  "src/components/operators/OperatorGoalsCard.tsx": "badge.tsx",
-  "src/components/operators/OperatorGoalsTab.tsx": "badge.tsx",
+  "src/components/operators/OperatorGoalsCard.tsx": "OperatorGoalsCard.tsx",
+  "src/components/operators/OperatorGoalsTab.tsx": "OperatorGoalsCard.tsx",
   "src/components/operators/OperatorLeaderboard.tsx": "cn",
   "src/components/operators/OperatorPerformanceTab.tsx": "skeleton.tsx",
-  "src/components/operators/OperatorProductivityCard.tsx": "badge.tsx",
+  "src/components/operators/OperatorProductivityCard.tsx": "OperatorGoalsCard.tsx",
   "src/components/operators/OperatorProductivityStatCard.tsx": "card.tsx",
   "src/components/operators/OperatorQRBadgeDialog.tsx": "label.tsx",
   "src/components/operators/OperatorSkillsModal.tsx": "label.tsx",
@@ -2452,7 +2456,7 @@
   "src/components/reports/ReportConfigPanel.tsx": "card.tsx",
   "src/components/reports/ReportSourcePanel.tsx": "ReportBuilderPage.tsx",
   "src/components/scheduling/CapacityHealthPanel.tsx": "useAuth",
-  "src/components/scheduling/MachineSuggestionPanel.tsx": "card.tsx",
+  "src/components/scheduling/MachineSuggestionPanel.tsx": "badge.tsx",
   "src/components/scheduling/StuckJobsPanel.tsx": "production/index.ts",
   "src/components/scheduling/UtilizationHeatmap.tsx": "DailyCalendar.tsx",
   "src/components/settings/AutoThemeToggle.tsx": "card.tsx",
@@ -2475,12 +2479,12 @@
   "src/components/shift/OccurrencesPanel.tsx": "ShiftHandoverPage.tsx",
   "src/components/shift/PendingTasksPanel.tsx": "ShiftHandoverPage.tsx",
   "src/components/shift/checklist-templates/TemplateCard.tsx": "badge.tsx",
-  "src/components/shift/checklist-templates/TemplateForm.tsx": "RateLimitSettings.tsx",
+  "src/components/shift/checklist-templates/TemplateForm.tsx": "button.tsx",
   "src/components/shift/occurrences/OccurrenceItem.tsx": "ShiftHandoverPage.tsx",
   "src/components/shift/occurrences/OccurrenceStatsCards.tsx": "card.tsx",
   "src/components/shortcuts/KeyboardShortcuts.tsx": "KeyboardShortcuts.tsx",
   "src/components/technical-assistant/BiometricSecurity.tsx": "button.tsx",
-  "src/components/technical-assistant/ChatArea.tsx": "badge.tsx",
+  "src/components/technical-assistant/ChatArea.tsx": "AppRoutes.tsx",
   "src/components/technical-assistant/ChatMessage.tsx": "TechnicalArtifacts.tsx",
   "src/components/technical-assistant/ConversationSidebar.tsx": "button.tsx",
   "src/components/technical-assistant/FileAnalyzer.tsx": "badge.tsx",
@@ -2672,19 +2676,19 @@
   "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/OEEAuditPanel.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEECalculationAudit.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEECalculationAudit.tsx": "OEERankingGap.tsx",
   "src/features/analytics/components/oee/OEEGaugeCard.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEHeatmap.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEELossDrilldown.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEELossesChart.tsx": "skeleton.tsx",
-  "src/features/analytics/components/oee/OEEMachineTable.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEEMachineTable.tsx": "scroll-area.tsx",
   "src/features/analytics/components/oee/OEEOverviewTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEERankingGap.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEERankingGap.tsx": "OEERankingGap.tsx",
   "src/features/analytics/components/oee/OEERecommendations.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEShiftComparison.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/OEESimulatorPanel.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEEStudiosTab.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "analytics/index.ts",
+  "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "OEERankingGap.tsx",
   "src/features/analytics/components/oee/OEETrendChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/ParetoLossesChart.tsx": "skeleton.tsx",
   "src/features/analytics/components/oee/PredictiveAlerts.tsx": "SystemMonitoringPage.tsx",
@@ -3003,7 +3007,7 @@
   "src/lib/pdfExport.test.ts": "pdfExport.ts",
   "src/lib/pdfExport.ts": "excelExport.test.ts",
   "src/lib/prefetch.ts": "AppSidebar.tsx",
-  "src/lib/productivityReport.ts": "badge.tsx",
+  "src/lib/productivityReport.ts": "OperatorGoalsCard.tsx",
   "src/lib/queryConfig.ts": "errorHandling.ts",
   "src/lib/rateLimiter.ts": "RateLimiter",
   "src/lib/realtimeChannel.ts": "realtimeChannel.ts",
@@ -3049,7 +3053,7 @@
   "src/pages/InstallAppPage.tsx": "card.tsx",
   "src/pages/InventoryPage.test.tsx": "label.tsx",
   "src/pages/InventoryPage.tsx": "label.tsx",
-  "src/pages/KPIDashboard.tsx": "badge.tsx",
+  "src/pages/KPIDashboard.tsx": "OperatorGoalsCard.tsx",
   "src/pages/Kanban": "gerar-rotas.mjs",
   "src/pages/KanbanBoard.tsx": "jobs/index.ts",
   "src/pages/KioskPage.tsx": "useAuth",
