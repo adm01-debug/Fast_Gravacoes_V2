@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "343ed147b4e85aee7b5150588ce6122ef2186c8e",
+  "commit": "c14eac6d91b967811e2e23b88bf18948fdd0f727",
   "branch": "main",
-  "data_commit": "2026-11-17T18:01:45-03:00",
+  "data_commit": "2026-11-18T09:48:20-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c14eac6",
+    "data": "2026-11-18",
+    "assunto": "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)"
+   },
    {
     "sha": "343ed14",
     "data": "2026-11-17",
@@ -126,15 +131,10 @@
     "sha": "4cad7a1",
     "data": "2026-11-13",
     "assunto": "fix(rotina): data local, hooks desligados, carga por núcleos e pendência real (#177)"
-   },
-   {
-    "sha": "1fc2844",
-    "data": "2026-11-13",
-    "assunto": "fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 145,
+  "arquivos_mudados_7d": 135,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 72
+    "commits": 73
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -319,7 +319,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1536,
+  "arquivos_total": 1537,
   "arquivos_codigo": 1119,
   "linhas_codigo": 187895,
   "rotas": 58,
@@ -331,7 +331,7 @@
   "hooks": 196,
   "edge_functions": 34,
   "tabelas": 133,
-  "migrations": 245,
+  "migrations": 246,
   "cron_jobs": 4,
   "testes": 123,
   "workflows": 12,

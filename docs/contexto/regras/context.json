@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "343ed147b4e85aee7b5150588ce6122ef2186c8e",
+  "sha": "c14eac6d91b967811e2e23b88bf18948fdd0f727",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-17 21:03 UTC",
-  "files_total": 1534,
-  "code_files": 1375,
-  "code_lines": 203024
+  "generated_at": "2026-11-18 12:48 UTC",
+  "files_total": 1535,
+  "code_files": 1376,
+  "code_lines": 203109
  },
  "version": "1.3.2",
- "facts_hash": "4aecbbda7bdbeb72",
+ "facts_hash": "ce4b2af5b78febe5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 658,
    ".ts": 397,
-   ".sql": 253,
+   ".sql": 254,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19036,6 +19036,7 @@
    "supabase/migrations/20261107010000_verify_no_using_true_write_policies.sql",
    "supabase/migrations/20261108000001_business_rules_ddl.sql",
    "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql",
+   "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -20628,6 +20629,22 @@
     "objkind": "function",
     "roles": "anon",
     "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
    }
   ],
   "raises": [
@@ -29155,8 +29172,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 245,
-   "lines": 14473,
+   "files": 246,
+   "lines": 14558,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -48249,6 +48266,18 @@
     "field": "status",
     "value": "finished",
     "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+    "field": "status",
+    "value": "delayed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+    "field": "status",
+    "value": "cancelled",
+    "kind": "compara"
    }
   ],
   "calc_fns": [
@@ -61273,7 +61302,8 @@
       "compara:supabase/functions/send-email-report/index.ts",
       "escreve:src/components/design-system/sections/tables/InteractiveTables.tsx",
       "escreve:src/hooks/useSmartDelayAlerts.ts",
-      "escreve:src/pages/KanbanBoard.tsx"
+      "escreve:src/pages/KanbanBoard.tsx",
+      "escreve:supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
      ],
      "paused": [
       "compara:src/components/dashboard/LiveMachineStatusPanel.tsx",
@@ -61511,6 +61541,7 @@
       "compara:src/features/maintenance/components/TPMExecutionHistory.tsx",
       "compara:src/pages/LogisticsPage.tsx",
       "compara:supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql",
+      "compara:supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
       "filtra:src/hooks/useGamification.ts"
      ],
      "published": [
@@ -63847,7 +63878,8 @@
    "supabase/migrations/20261008160000_runtime_config_edge_auth.sql",
    "supabase/migrations/20261019140000_validation_hardening.sql",
    "supabase/migrations/20261028223000_bitrix_oauth_states.sql",
-   "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql"
+   "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql",
+   "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
   ],
   "security_definer_fns": [
    "app_private.has_role",
@@ -65361,6 +65393,22 @@
     "objkind": "function",
     "roles": "anon",
     "src": "supabase/migrations/20261108000001_business_rules_ddl.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
    }
   ],
   "guards": [
@@ -94326,6 +94374,23 @@
    "path": "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql",
    "lines": 23
   },
+  "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql": {
+   "path": "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+   "lines": 85,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "delayed",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "compara"
+    }
+   ],
+   "uses_service_role": true
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -94764,10 +94829,19 @@
   }
  },
  "git": {
-  "sha": "343ed147b4e85aee7b5150588ce6122ef2186c8e",
+  "sha": "c14eac6d91b967811e2e23b88bf18948fdd0f727",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c14eac6",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)",
+    "files": [
+     "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
+    ]
+   },
    {
     "sha": "343ed14",
     "date": "2026-11-17",
@@ -95156,15 +95230,6 @@
      "scripts/supabase_snapshot/snapshot.py",
      "scripts/supabase_snapshot/test_snapshot.py"
     ]
-   },
-   {
-    "sha": "047e75b",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix(ci): regras/ usa snapshot real de supabase/ e banco/ publica .gitattributes (#164)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -95186,10 +95251,6 @@
    ],
    [
     "docs/prod-readiness.md",
-    3
-   ],
-   [
-    ".github/workflows/contexto.yml",
     3
    ],
    [
@@ -95242,6 +95303,10 @@
    ],
    [
     "scripts/rotina/rotina.mjs",
+    2
+   ],
+   [
+    ".github/workflows/contexto.yml",
     2
    ],
    [

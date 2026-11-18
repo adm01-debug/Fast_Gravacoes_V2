@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `343ed147b4` · branch `main` · 2026-11-17 21:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c14eac6d91` · branch `main` · 2026-11-18 12:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-17T20:40:05Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-18T12:19:23Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-17T20:40:05Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-18T12:19:23Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-17T20:40:05Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-18T12:19:23Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-17T20:40:05Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-18T12:19:23Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-17T20:40:05Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-18T12:19:23Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1791,14 +1791,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `approved` | compara, escreve | `src/components/documents/DocumentViewer.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/settings/PasswordResetRequests.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>… +5 |
 | `status` | `blocked` | compara | `src/components/traceability/TraceabilityStatsCards.tsx` |
 | `status` | `buffer` | compara | `src/features/jobs/hooks/useSchedulingData.ts`<br>`src/features/production/hooks/useOperatorDashboardData.ts` |
-| `status` | `cancelled` | compara, filtra | `src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/hooks/useDailyDragDrop.ts`<br>`src/features/jobs/hooks/useWeeklyDragDrop.ts`<br>`src/features/maintenance/components/TPMExecutionHistory.tsx`<br>… +3 |
+| `status` | `cancelled` | compara, filtra | `src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/hooks/useDailyDragDrop.ts`<br>`src/features/jobs/hooks/useWeeklyDragDrop.ts`<br>`src/features/maintenance/components/TPMExecutionHistory.tsx`<br>… +4 |
 | `status` | `completed` | compara, escreve, filtra | `src/components/shift/PendingTasksPanel.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>`src/features/maintenance/components/MachineTPMPanel.tsx`<br>`src/features/maintenance/components/MachineTPMTimeline.tsx`<br>… +7 |
 | `status` | `concluido` | compara, escreve | `src/pages/CodeQualityDashboard.tsx` |
 | `status` | `connected` | compara, escreve | `src/components/integrations/IntegrationHub.tsx`<br>`src/features/analytics/hooks/useRealtimeConnection.ts` |
 | `status` | `connecting` | compara | `src/components/dashboard/RealtimeIndicator.tsx` |
 | `status` | `correction_requested` | compara, escreve | `src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>`src/features/maintenance/hooks/useTPMApprovalMutations.ts` |
 | `status` | `critical` | compara | `src/components/operator/ProductionTimer.tsx`<br>`src/components/scheduling/CapacityHealthPanel.tsx`<br>`src/hooks/useTechniqueCapacityAlerts.ts` |
-| `status` | `delayed` | compara, escreve | `src/components/calendar/AgendaView.tsx`<br>`src/components/dashboard/AlertsWidget.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/kanban/KanbanMetricsBar.tsx`<br>… +21 |
+| `status` | `delayed` | compara, escreve | `src/components/calendar/AgendaView.tsx`<br>`src/components/dashboard/AlertsWidget.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/kanban/KanbanMetricsBar.tsx`<br>… +22 |
 | `status` | `delivered` | compara | `src/components/logistics/EditShipmentModal.tsx`<br>`src/pages/LogisticsPage.tsx` |
 | `status` | `disconnected` | escreve | `src/components/integrations/IntegrationHub.tsx` |
 | `status` | `draft` | compara, escreve | `src/features/maintenance/components/TPMNotificationTemplates.tsx`<br>`src/hooks/technical-sheets/technicalSheetsTypes.ts` |
