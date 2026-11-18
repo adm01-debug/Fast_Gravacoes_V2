@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
+  "commit": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
   "branch": "main",
-  "data_commit": "2026-11-18T19:15:13-03:00",
+  "data_commit": "2026-11-18T19:32:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "e36c2ab",
+    "data": "2026-11-18",
+    "assunto": "chore(ci): bump the acoes group with 10 updates (#206)"
+   },
    {
     "sha": "774274a",
     "data": "2026-11-18",
@@ -126,15 +131,10 @@
     "sha": "144be3e",
     "data": "2026-11-14",
     "assunto": "Merge pull request #180 from adm01-debug/claude/fix-inventario-rg-order-261113-1856"
-   },
-   {
-    "sha": "a28848f",
-    "data": "2026-11-14",
-    "assunto": "docs: relatorio prod-readiness fechado com evidencias ao vivo (RLS 404/401, fila TPM)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 138,
+  "arquivos_mudados_7d": 141,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -200,7 +200,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "package-lock.json",
@@ -220,11 +220,15 @@
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 7
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -235,7 +239,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 6
    },
    {
@@ -247,7 +251,7 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
+    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 5
    },
    {
@@ -283,19 +287,15 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
+    "arquivo": ".github/workflows/migration-repair.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": ".github/workflows/visual-baselines.yml",
     "mudancas": 4
    },
    {
     "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "docs/plano-50-etapas-consolidacao.md",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "scripts/ai-context/gerar.mjs",
     "mudancas": 4
    }
   ],
@@ -314,7 +314,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 1
+    "commits": 2
    },
    {
     "autor": "github-actions[bot]",

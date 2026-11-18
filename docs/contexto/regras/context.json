@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
+  "sha": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-18 22:15 UTC",
+  "generated_at": "2026-11-18 22:32 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203146
@@ -94843,10 +94843,27 @@
   }
  },
  "git": {
-  "sha": "774274a038cb0d9dd5fe570dbe0850cf29fe2d2c",
+  "sha": "e36c2ab6d98cd74e69f7b464b0f4b284d0cf4564",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "e36c2ab",
+    "date": "2026-11-18",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci): bump the acoes group with 10 updates (#206)",
+    "files": [
+     ".github/workflows/automation-local.yml",
+     ".github/workflows/ci.yml",
+     ".github/workflows/contexto.yml",
+     ".github/workflows/db-admin.yml",
+     ".github/workflows/deploy.yml",
+     ".github/workflows/graphify.yml",
+     ".github/workflows/inventario-estado-semanal.yml",
+     ".github/workflows/migration-repair.yml",
+     ".github/workflows/visual-baselines.yml"
+    ]
+   },
    {
     "sha": "774274a",
     "date": "2026-11-18",
@@ -95161,19 +95178,6 @@
      "scripts/autofix.test.mjs",
      "scripts/rotina/rotina.mjs"
     ]
-   },
-   {
-    "sha": "1fc2844",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(automation): realpath nativo (nome curto 8.3) no Windows e CRLF no doctor (#178)",
-    "files": [
-     ".gitattributes",
-     ".github/workflows/ci.yml",
-     ".github/workflows/contexto.yml",
-     "scripts/automation.mjs",
-     "scripts/automation.unit.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -95198,6 +95202,14 @@
     3
    ],
    [
+    ".github/workflows/inventario-estado-semanal.yml",
+    2
+   ],
+   [
+    ".github/workflows/visual-baselines.yml",
+    2
+   ],
+   [
     "scripts/audit-gate.mjs",
     2
    ],
@@ -95218,43 +95230,35 @@
     2
    ],
    [
-    ".github/workflows/visual-baselines.yml",
+    ".github/workflows/automation-local.yml",
+    1
+   ],
+   [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    1
+   ],
+   [
+    ".github/workflows/db-admin.yml",
+    1
+   ],
+   [
+    ".github/workflows/deploy.yml",
+    1
+   ],
+   [
+    ".github/workflows/graphify.yml",
+    1
+   ],
+   [
+    ".github/workflows/migration-repair.yml",
     1
    ],
    [
     "src/components/auth/AuthLoginForm.tsx",
-    1
-   ],
-   [
-    "src/components/design-system/sections/IconsSection.tsx",
-    1
-   ],
-   [
-    "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-collapsed-chromium-linux.png",
-    1
-   ],
-   [
-    "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-expanded-chromium-linux.png",
-    1
-   ],
-   [
-    "src/hooks/useOfflineSync.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useOfflineSync.ts",
-    1
-   ],
-   [
-    "tests/e2e/offline.spec.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
-    1
-   ],
-   [
-    ".github/dependabot.yml",
     1
    ]
   ]
