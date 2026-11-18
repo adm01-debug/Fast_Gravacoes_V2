@@ -113,7 +113,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v1
         with:
-          version: latest
+          version: v3.2.0
 
       - name: Validate canonical target and pending migrations
         env:
@@ -139,7 +139,7 @@ jobs:
             exit 1
           fi
 
-          supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID"
+          supabase db push --dry-run --remote="$SUPABASE_PROJECT_ID"
 
   # Migrations apply before functions deploy — a function expecting a new
   # column/table that hasn't landed yet would error on live traffic during
@@ -157,7 +157,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v1
         with:
-          version: latest
+          version: v3.2.0
 
       - name: Apply migrations
         env:
@@ -168,7 +168,7 @@ jobs:
           : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
           : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
           : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
-          supabase db push --project-ref "$SUPABASE_PROJECT_ID" --yes
+          supabase db push --remote="$SUPABASE_PROJECT_ID" --yes
 
   deploy-edge-functions:
     name: Deploy Edge Functions
@@ -182,7 +182,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v1
         with:
-          version: latest
+          version: v3.2.0
 
       - name: "Remove legacy migrate-helper (backdoor: ACCESS_KEY commitada + verify_jwt=false)"
         # Função "temporária" de migração que expunha SUPABASE_SERVICE_ROLE_KEY e
@@ -195,13 +195,13 @@ jobs:
           set -euo pipefail
           : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
           : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
-          functions="$(supabase functions list --project-ref "$SUPABASE_PROJECT_ID" --output json)"
+          functions="$(supabase functions list --remote="$SUPABASE_PROJECT_ID" --output json)"
           if jq -e --arg name 'migrate-helper' '
             if type == "array" then any(.[]; (.slug? // .name? // "") == $name)
             else any(.functions[]?; (.slug? // .name? // "") == $name)
             end
           ' <<<"$functions" >/dev/null; then
-            supabase functions delete migrate-helper --project-ref "$SUPABASE_PROJECT_ID" --yes
+            supabase functions delete migrate-helper --remote="$SUPABASE_PROJECT_ID" --yes
           else
             echo "migrate-helper não está implantada (estado já conforme)."
           fi
@@ -225,7 +225,7 @@ jobs:
           # runner (toomanyrequests, ~44000/min). O retry interno do CLI cobre
           # só ~12s, então a retentativa com backoff fica aqui no step.
           attempt=1
-          until supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID" --yes; do
+          until supabase functions deploy --remote="$SUPABASE_PROJECT_ID" --yes; do
             if [ "$attempt" -ge 5 ]; then
               echo "functions deploy falhou após $attempt tentativas."
               exit 1
