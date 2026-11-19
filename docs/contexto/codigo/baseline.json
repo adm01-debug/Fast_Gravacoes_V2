@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "868b58306885c0196278dce58a72ecc36a520e59",
+  "commit": "981466072a05d15ceaac6714db0d453983517b9b",
   "branch": "main",
-  "data_commit": "2026-11-19T12:38:36-03:00",
+  "data_commit": "2026-11-19T13:40:39-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9814660",
+    "data": "2026-11-19",
+    "assunto": "fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)"
+   },
    {
     "sha": "868b583",
     "data": "2026-11-19",
@@ -126,15 +131,10 @@
     "sha": "ab7d159",
     "data": "2026-11-17",
     "assunto": "test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)"
-   },
-   {
-    "sha": "32c02f0",
-    "data": "2026-11-17",
-    "assunto": "fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 118,
+  "arquivos_mudados_7d": 119,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -283,6 +283,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "src/pages/PublicTrackingPage.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "supabase/config.toml",
     "mudancas": 5
    },
@@ -293,16 +297,12 @@
    {
     "arquivo": ".github/workflows/visual-baselines.yml",
     "mudancas": 4
-   },
-   {
-    "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 81
+    "commits": 82
    },
    {
     "autor": "devin-ai-integration[bot]",

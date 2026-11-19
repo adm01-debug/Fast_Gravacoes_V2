@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "868b58306885c0196278dce58a72ecc36a520e59",
+  "sha": "981466072a05d15ceaac6714db0d453983517b9b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-19 15:39 UTC",
+  "generated_at": "2026-11-19 16:41 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203164
@@ -94848,10 +94848,19 @@
   }
  },
  "git": {
-  "sha": "868b58306885c0196278dce58a72ecc36a520e59",
+  "sha": "981466072a05d15ceaac6714db0d453983517b9b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9814660",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)",
+    "files": [
+     "src/pages/PublicTrackingPage.tsx"
+    ]
+   },
    {
     "sha": "868b583",
     "date": "2026-11-19",
@@ -95202,13 +95211,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "c65ff2e",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "Merge pull request #182 from adm01-debug/claude/fix-healthcheck-queue-261114-0804",
-    "files": []
    }
   ],
   "hot_files": [
@@ -95277,6 +95279,10 @@
     2
    ],
    [
+    "src/pages/PublicTrackingPage.tsx",
+    1
+   ],
+   [
     "src/components/knowledge/editor/EditorTipsSection.tsx",
     1
    ],
@@ -95286,10 +95292,6 @@
    ],
    [
     "src/components/layout/MainLayout.tsx",
-    1
-   ],
-   [
-    "src/components/layout/sidebar/NavButton.tsx",
     1
    ]
   ]
