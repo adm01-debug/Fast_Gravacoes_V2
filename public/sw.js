@@ -35,6 +35,15 @@ self.addEventListener('activate', (event) => {
 
 // Fetch
 self.addEventListener('fetch', (event) => {
+  // Requisições cross-origin (ex.: Google Fonts) não devem passar pelo cache do
+  // SW: o fetch do worker roda sob a CSP capturada na instalação, e fontes
+  // externas eram bloqueadas mesmo com o host no connect-src da página. Deixar
+  // o documento resolver direto elimina a violação e evita cache cross-origin.
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
