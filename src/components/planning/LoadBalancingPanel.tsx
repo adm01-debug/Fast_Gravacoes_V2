@@ -7,7 +7,7 @@ import {
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog';
 import {
-  Scale, ArrowRight, TrendingDown, 
+  Scale, ArrowRight, TrendingDown,
   Info, ArrowLeftRight, Sparkles, Zap
 } from 'lucide-react';
 import { useLoadBalancing, LoadBalancingSuggestion } from '@/features/analytics';

@@ -34,7 +34,7 @@ export function SwipeIndicator() {
     <div className="fixed inset-y-0 left-0 w-12 z-[100] pointer-events-none flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, x: -20, scale: 0.8 }}
-        animate={{ 
+        animate={{
           opacity: isVisible ? Math.min(distance / 150, 0.8) : 0,
           x: isVisible ? Math.min(distance / 4, 20) - 20 : -20,
           scale: isVisible ? Math.min(0.8 + distance / 400, 1.2) : 0.8

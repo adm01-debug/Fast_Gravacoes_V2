@@ -64,7 +64,7 @@ export function EditorTipsSection({ tips, sheetId, onAdd, onDelete, isAdding }: 
 
       <div className="p-4 rounded-lg border border-dashed border-border/50 space-y-3">
         <p className="text-xs text-muted-foreground">Adicionar dica/observação:</p>
-        <Select value={newTip.tip_type} onValueChange={(v) => setNewTip({...newTip, tip_type: v as 'tip' | 'warning' | 'important'})}>
+        <Select value={newTip.tip_type} onValueChange={(v) => setNewTip({ ...newTip, tip_type: v as 'tip' | 'warning' | 'important' })}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tip">💡 Dica</SelectItem>
@@ -72,7 +72,7 @@ export function EditorTipsSection({ tips, sheetId, onAdd, onDelete, isAdding }: 
             <SelectItem value="important">❗ Importante</SelectItem>
           </SelectContent>
         </Select>
-        <Textarea placeholder="Conteúdo da dica..." value={newTip.content} onChange={(e) => setNewTip({...newTip, content: e.target.value})} rows={2} />
+        <Textarea placeholder="Conteúdo da dica..." value={newTip.content} onChange={(e) => setNewTip({ ...newTip, content: e.target.value })} rows={2} />
         <Button size="sm" onClick={handleAdd} disabled={isAdding}>
           <Plus className="h-4 w-4 mr-1" />Adicionar
         </Button>
