@@ -91,7 +91,7 @@ const ALLOWED_PACKAGES = new Map([
   // picomatch (GHSA-fc5q-39xc-vjpf: ReDoS por extglob repetido): NÃO existe
   // versão corrigida (o advisory cobre o range `*`). Só é alcançado por
   // tooling de build/dev (vite, vitest, tailwind, chokidar, lint-staged,
-  // workbox-build) e os padrões de glob vêm das nossas próprias configs —
+  // e os padrões de glob vêm das nossas próprias configs —
   // nunca de input de usuário em runtime. Nenhum desses pacotes entra no
   // bundle servido ao navegador. Remoção: assim que o upstream publicar
   // uma release corrigida de picomatch.
@@ -128,9 +128,7 @@ for (const pkg of [
   'sucrase',
   'tinyglobby',
   'vite',
-  'vite-plugin-pwa',
   'vitest',
-  'workbox-build',
 ]) {
   ALLOWED_PACKAGES.set(pkg, {
     reason:
