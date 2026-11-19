@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "ce97162f62c43123e9d2c903bc06c6cd4a48dd0e",
+  "sha": "95c091b5cd657c46926a8608f4748b99a0633f63",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-19 19:14 UTC",
-  "files_total": 1535,
+  "generated_at": "2026-11-19 23:37 UTC",
+  "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203362
  },
@@ -94888,10 +94888,30 @@
   }
  },
  "git": {
-  "sha": "ce97162f62c43123e9d2c903bc06c6cd4a48dd0e",
+  "sha": "95c091b5cd657c46926a8608f4748b99a0633f63",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "95c091b",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)",
+    "files": [
+     "analise-prs/RELATORIO_PRS.md",
+     "analise-prs/baseline/baseline.md",
+     "analise-prs/decisoes.md",
+     "analise-prs/dossies/PR-119.md",
+     "analise-prs/dossies/PR-120.md",
+     "analise-prs/dossies/PR-121.md",
+     "analise-prs/fontes.json",
+     "analise-prs/funcionalidades.csv",
+     "analise-prs/progresso.json",
+     "analise-prs/prs.csv",
+     "analise-prs/prs.json",
+     "analise-prs/regras-de-negocio.md"
+    ]
+   },
    {
     "sha": "ce97162",
     "date": "2026-11-19",
@@ -95229,17 +95249,6 @@
     "files": [
      "analise-prs/auditorias-anteriores.md"
     ]
-   },
-   {
-    "sha": "9ed883f",
-    "date": "2026-11-14",
-    "author": "github-actions[bot]",
-    "subject": "chore(inventario): estado real do projeto [auto] (#186)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json",
-     "inventario/estado/rotas.json"
-    ]
    }
   ],
   "hot_files": [
@@ -95300,27 +95309,27 @@
     2
    ],
    [
-    "src/lib/logger.test.ts",
+    "analise-prs/RELATORIO_PRS.md",
     1
    ],
    [
-    "src/lib/logger.ts",
+    "analise-prs/baseline/baseline.md",
     1
    ],
    [
-    "src/lib/sanitize.ts",
+    "analise-prs/decisoes.md",
     1
    ],
    [
-    "src/test/sanitize.test.ts",
+    "analise-prs/dossies/PR-119.md",
     1
    ],
    [
-    "src/pages/PublicTrackingPage.tsx",
+    "analise-prs/dossies/PR-120.md",
     1
    ],
    [
-    "src/components/knowledge/editor/EditorTipsSection.tsx",
+    "analise-prs/dossies/PR-121.md",
     1
    ]
   ]

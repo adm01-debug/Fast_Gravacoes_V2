@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ce97162f62c43123e9d2c903bc06c6cd4a48dd0e` (2026-11-19T16:14:18-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `95c091b5cd657c46926a8608f4748b99a0633f63` (2026-11-19T20:13:20-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1055), SQL (254), Markdown (76), JavaScript (54), JSON (30), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1055), SQL (254), Markdown (83), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1537 |
+| arquivos_total | 1549 |
 | arquivos_codigo | 1119 |
 | linhas_codigo | 188148 |
 | rotas | 58 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 123 |
 | workflows | 12 |
 | scripts | 41 |
-| docs_md | 76 |
+| docs_md | 83 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7463 nós · 21939 arestas · 650 comunidades · grafo do commit `ce97162f`
-- comunidades maiores: card.tsx (207), analytics/index.ts (141), input.tsx (128), badge.tsx (124), FuturisticBI.tsx (123), cn (120), DailyCalendar.tsx (119), MainLayout.tsx (114), snapshot.py (111), client.ts (109), PackagingDashboard.tsx (102), generate.py (101)
+- 7463 nós · 21939 arestas · 653 comunidades · grafo do commit `95c091b5`
+- comunidades maiores: card.tsx (187), analytics/index.ts (143), input.tsx (128), badge.tsx (127), FuturisticBI.tsx (123), cn (120), MainLayout.tsx (114), snapshot.py (111), client.ts (102), PackagingDashboard.tsx (102), generate.py (101), Button (98)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-19 `95c091b` docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)
 - 2026-11-19 `ce97162` fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)
 - 2026-11-19 `248505f` chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)
 - 2026-11-19 `9814660` fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `0c33cf1` chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)
 - 2026-11-18 `596579f` chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)
 - 2026-11-18 `ed61697` fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)
-- 2026-11-18 `c14eac6` fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

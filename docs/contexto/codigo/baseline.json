@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ce97162f62c43123e9d2c903bc06c6cd4a48dd0e",
+  "commit": "95c091b5cd657c46926a8608f4748b99a0633f63",
   "branch": "main",
-  "data_commit": "2026-11-19T16:14:18-03:00",
+  "data_commit": "2026-11-19T20:13:20-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "95c091b",
+    "data": "2026-11-19",
+    "assunto": "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)"
+   },
    {
     "sha": "ce97162",
     "data": "2026-11-19",
@@ -126,15 +131,10 @@
     "sha": "bff18e0",
     "data": "2026-11-17",
     "assunto": "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)"
-   },
-   {
-    "sha": "c5a478c",
-    "data": "2026-11-17",
-    "assunto": "fix: gera o QR do 2FA a partir do otpauth uri (#195)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 123,
+  "arquivos_mudados_7d": 135,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 84
+    "commits": 85
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1537,
+  "arquivos_total": 1549,
   "arquivos_codigo": 1119,
   "linhas_codigo": 188148,
   "rotas": 58,
@@ -344,7 +344,7 @@
   "testes": 123,
   "workflows": 12,
   "scripts": 41,
-  "docs_md": 76
+  "docs_md": 83
  },
  "por_pasta": {
   "commitlint.config.js": {
