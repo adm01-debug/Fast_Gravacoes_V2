@@ -1,0 +1,95 @@
+[
+  {
+    "numero": 119,
+    "titulo": "fix: corrigir politica RLS password_reset_requests para anon",
+    "autor": "claude",
+    "branch": "claude/fix-password-reset-anon-rls-261031-1645",
+    "base": "main",
+    "sha_head": "955d45a014c107830f47a9ea0cd99cba5033ed49",
+    "draft": false,
+    "ci": "success",
+    "conflitos": false,
+    "veredito": "MERGEADA",
+    "merge_sha": "918828fd481d848bf4d084f8745a036581011b1c",
+    "meta": "squash",
+    "arquivos": [
+      "supabase/migrations/20261031184500_fix_password_reset_anon_policy.sql"
+    ]
+  },
+  {
+    "numero": 120,
+    "titulo": "fix: ciclo logger, mock SPC, alias TS (diveda estrutural)",
+    "autor": "claude",
+    "branch": "devin/1793268046-divida-estrutural-2",
+    "base": "main",
+    "sha_head": "0b4c7e245f70fd3f8c8e86b68098c63a26f42e94",
+    "draft": false,
+    "ci": "success",
+    "conflitos": false,
+    "veredito": "MERGEADA",
+    "merge_sha": "8120bef7f2c475e341441e9d085927ffbec57a95",
+    "meta": "squash",
+    "arquivos": [
+      "src/lib/logger.ts",
+      "src/features/spc/SPCDashboard.tsx",
+      "AGENTS.md"
+    ]
+  },
+  {
+    "numero": 121,
+    "titulo": "fix(csp): rejeitar .vercel.app e localhost por padrao",
+    "autor": "claude",
+    "branch": "claude/feat-csp-infra-261031-1920",
+    "base": "main",
+    "sha_head": "f7455c19b522c27e926aa4b91e7dff686392db9f",
+    "draft": false,
+    "ci": "success",
+    "conflitos": false,
+    "veredito": "MERGEADA",
+    "merge_sha": "8664d9381882b53d99b6cfa29caa1f17c5350e60",
+    "meta": "squash",
+    "origem": "devin/1790870081-audit-csp (conflitos resolvidos na criacao da PR)",
+    "arquivos": [
+      "supabase/functions/csp-report/index.ts"
+    ]
+  },
+  {
+    "numero": 128,
+    "titulo": "fix: regera deno.lock no runner (hash tslib@2.8.1 via esm.sh mudou)",
+    "autor": "claude",
+    "branch": "claude/fix-deno-lock-tslib-261106-1712",
+    "base": "main",
+    "sha_head": "4a8e459e61db096c456df91330eaa178b3d3572e",
+    "draft": false,
+    "ci": "nao_verificado",
+    "conflitos": false,
+    "veredito": "FECHAR_SUPERADA",
+    "merge_sha": null,
+    "meta": null,
+    "origem": null,
+    "arquivos": [
+      ".github/workflows/_tmp-regenerate-deno-lock.yml"
+    ],
+    "nota": "Conteudo original (hash tslib deno.lock) ja em main d6c9c11c. Branch residual = so workflow temporario. Merge violaria regra de workflows. Fechamento proposto."
+  },
+  {
+    "numero": null,
+    "titulo": "fix: migra imports de edge functions de esm.sh para npm",
+    "autor": "claude",
+    "branch": "claude/infra-edge-npm-imports-261106-1648",
+    "base": "main",
+    "sha_head": "33c724ce",
+    "draft": false,
+    "ci": "nao_verificado",
+    "conflitos": false,
+    "veredito": "BACKLOG_SEM_PR",
+    "merge_sha": null,
+    "meta": null,
+    "origem": null,
+    "arquivos": [
+      "supabase/functions/_shared/contracts.ts",
+      "supabase/functions/new-device-alert/index.ts"
+    ],
+    "nota": "Sem PR aberta. Migracao esm.sh->npm (zod, supabase-js, resend) nos 2 arquivos. Exigiria PR propria + analise completa."
+  }
+]
