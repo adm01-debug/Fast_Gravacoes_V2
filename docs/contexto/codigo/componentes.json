@@ -2984,7 +2984,7 @@
     "MainLayout"
    ],
    "export_default": null,
-   "linhas": 294,
+   "linhas": 295,
    "dominio": "components/layout",
    "hooks_locais": [
     "useDeepLinkFocus",
@@ -3099,7 +3099,7 @@
     "NavItem"
    ],
    "export_default": null,
-   "linhas": 81,
+   "linhas": 82,
    "dominio": "components/layout",
    "hooks_locais": [
     "useHapticFeedback"
@@ -3209,7 +3209,7 @@
     "TimelineSkeleton"
    ],
    "export_default": "(anônimo)",
-   "linhas": 523,
+   "linhas": 524,
    "dominio": "components/loading",
    "hooks_locais": [],
    "tabelas": [],
@@ -3505,7 +3505,7 @@
     "Breadcrumbs"
    ],
    "export_default": null,
-   "linhas": 288,
+   "linhas": 289,
    "dominio": "components/navigation",
    "hooks_locais": [
     "useBreadcrumbContext",
@@ -3945,7 +3945,7 @@
     "EditOperatorModal"
    ],
    "export_default": null,
-   "linhas": 178,
+   "linhas": 179,
    "dominio": "components/operators",
    "hooks_locais": [],
    "tabelas": [],

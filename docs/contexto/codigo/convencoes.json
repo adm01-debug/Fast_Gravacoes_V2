@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: preserva lint aplicado pelo agente em 20 componentes (trailing whitespace e alinhamento) (#220)",
    "fix: alinha script-src da CSP report-only com a enforce (unsafe-eval) (#219)",
    "chore: remove vite-plugin-pwa (dependencia morta) (#218)",
    "chore(analise): mantem chave redigida no historico",
-   "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)",
-   "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)"
+   "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

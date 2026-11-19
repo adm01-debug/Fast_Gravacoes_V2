@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "57c332f4b572a8ae0fbc06025a8c1932ecbc407f",
+  "commit": "868b58306885c0196278dce58a72ecc36a520e59",
   "branch": "main",
-  "data_commit": "2026-11-19T08:48:13-03:00",
+  "data_commit": "2026-11-19T12:38:36-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "868b583",
+    "data": "2026-11-19",
+    "assunto": "chore: preserva lint aplicado pelo agente em 20 componentes (trailing whitespace e alinhamento) (#220)"
+   },
    {
     "sha": "57c332f",
     "data": "2026-11-19",
@@ -126,15 +131,10 @@
     "sha": "32c02f0",
     "data": "2026-11-17",
     "assunto": "fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)"
-   },
-   {
-    "sha": "64c3b0c",
-    "data": "2026-11-17",
-    "assunto": "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 141,
+  "arquivos_mudados_7d": 118,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -157,6 +157,10 @@
     "mudancas": 18
    },
    {
+    "pasta": "src/components/navigation",
+    "mudancas": 16
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
@@ -173,11 +177,15 @@
     "mudancas": 12
    },
    {
+    "pasta": "src/components/layout",
+    "mudancas": 11
+   },
+   {
     "pasta": "deno.lock",
     "mudancas": 10
    },
    {
-    "pasta": "src/components/navigation",
+    "pasta": "src/components/knowledge",
     "mudancas": 10
    },
    {
@@ -186,14 +194,6 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 9
-   },
-   {
-    "pasta": "src/components/design-system",
-    "mudancas": 9
-   },
-   {
-    "pasta": "src/components/jobs",
     "mudancas": 9
    }
   ],
@@ -247,6 +247,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 6
    },
@@ -275,10 +279,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/components/layout/AppSidebar.tsx",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/hooks/useOfflineSync.ts",
     "mudancas": 5
    },
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 80
+    "commits": 81
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187945,
+  "linhas_codigo": 187950,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58658
+   "linhas": 58663
   },
   "src/constants": {
    "arquivos": 2,
@@ -639,7 +639,7 @@
   },
   {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
-   "linhas": 523
+   "linhas": 524
   },
   {
    "arquivo": "src/components/knowledge/editor/EditorBasicInfo.tsx",
