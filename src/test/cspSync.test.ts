@@ -8,10 +8,18 @@ import path from 'path';
 // (que refaz o pedido via fetch) era bloqueado. Este teste automatiza a regra.
 const root = path.resolve(__dirname, '../..');
 
+function directiveSources(csp: string, name: string): string[] {
+  const directive = csp.split(';').map((d) => d.trim()).find((d) => d.startsWith(`${name} `));
+  if (!directive) throw new Error(`${name} ausente na politica`);
+  return directive.replace(name, '').trim().split(/\s+/).sort();
+}
+
 function connectSrc(csp: string): string[] {
-  const directive = csp.split(';').map((d) => d.trim()).find((d) => d.startsWith('connect-src'));
-  if (!directive) throw new Error('connect-src ausente na politica');
-  return directive.replace('connect-src', '').trim().split(/\s+/).sort();
+  return directiveSources(csp, 'connect-src');
+}
+
+function scriptSrc(csp: string): string[] {
+  return directiveSources(csp, 'script-src');
 }
 
 function policiesFromVercelJson(): { enforce: string; reportOnly: string } {
@@ -38,6 +46,13 @@ describe('CSP', () => {
     const esperado = connectSrc(enforce);
     expect(connectSrc(reportOnly)).toEqual(esperado);
     expect(connectSrc(policyFromIndexHtml())).toEqual(esperado);
+  });
+
+  it('mantem o script-src identico nas tres politicas (regressao: report-only sem unsafe-eval gerava ruido de eval em toda carga)', () => {
+    const { enforce, reportOnly } = policiesFromVercelJson();
+    const esperado = scriptSrc(enforce);
+    expect(scriptSrc(reportOnly)).toEqual(esperado);
+    expect(scriptSrc(policyFromIndexHtml())).toEqual(esperado);
   });
 
   it('libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch)', () => {
