@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "bf38560ce0f08e0465212514cee9efbb27b34354",
+ "commit_do_grafo": "13daf1915f94d91a4352320f3729b5d1798bffe6",
  "grafo_atual": true,
  "nos": 7458,
  "arestas": 21924,
- "comunidades_total": 666,
+ "comunidades_total": 668,
  "relacoes": {
   "calls": 3196,
   "cites": 6,
@@ -759,9 +759,8 @@
    "nome": "test_snapshot.py",
    "nos": 37,
    "callables": 35,
-   "arquivos": 2,
+   "arquivos": 1,
    "exemplos_arquivos": [
-    "scripts/supabase_snapshot/snapshot.py",
     "scripts/supabase_snapshot/test_snapshot.py"
    ]
   },
@@ -1137,16 +1136,6 @@
   },
   {
    "id": 75,
-   "nome": "SnapshotCatalogContractTests",
-   "nos": 26,
-   "callables": 25,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "scripts/supabase_snapshot/test_snapshot.py"
-   ]
-  },
-  {
-   "id": 76,
    "nome": "AppSidebar.tsx",
    "nos": 26,
    "callables": 10,
@@ -1162,7 +1151,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "gerar-rotas.mjs",
    "nos": 25,
    "callables": 14,
@@ -1177,7 +1166,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": ".collect",
    "nos": 25,
    "callables": 25,
@@ -1187,7 +1176,7 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "useDebounce",
    "nos": 25,
    "callables": 18,
@@ -1201,6 +1190,18 @@
     "src/hooks/useMediaQuery.ts",
     "src/hooks/useThrottle.ts",
     "src/hooks/utils/index.ts"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "use-toast.ts",
+   "nos": 25,
+   "callables": 11,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/components/ui/toast.tsx",
+    "src/components/ui/toaster.tsx",
+    "src/hooks/use-toast.ts"
    ]
   }
  ],
@@ -2115,8 +2116,8 @@
   "scripts/rotina/rotina.mjs": "rotina.mjs",
   "scripts/seed-users.test.mjs": "seed-users.test.mjs",
   "scripts/src/pages/Login": "gerar.unit.mjs",
-  "scripts/supabase_snapshot/snapshot.py": "snapshot.py",
-  "scripts/supabase_snapshot/test_snapshot.py": "ManagementApiFailureTests",
+  "scripts/supabase_snapshot/snapshot.py": "SnapshotFixture",
+  "scripts/supabase_snapshot/test_snapshot.py": "SnapshotFixture",
   "scripts/sync/instalar.sh": "sync/instalar.sh",
   "scripts/sync/sincronizar.sh": "sincronizar.sh",
   "sonner": "sonner",

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(analise): mantem chave redigida no historico",
    "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)",
    "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)",
    "chore(ci): bump the acoes group with 10 updates (#206)",
-   "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)",
-   "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)"
+   "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

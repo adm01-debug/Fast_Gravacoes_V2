@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bf38560ce0f08e0465212514cee9efbb27b34354` (2026-11-18T20:52:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `13daf1915f94d91a4352320f3729b5d1798bffe6` (2026-11-19T07:36:45-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,7 +247,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7458 nós · 21924 arestas · 666 comunidades · grafo do commit `bf38560c`
+- 7458 nós · 21924 arestas · 668 comunidades · grafo do commit `13daf191`
 - comunidades maiores: card.tsx (244), button.tsx (219), client.ts (135), analytics/index.ts (119), snapshot.py (107), errorHandling.ts (106), skeleton.tsx (105), useAuth (103), cn (102), generate.py (101), badge.tsx (101), gerar.mjs (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-19 `13daf19` chore(analise): mantem chave redigida no historico
 - 2026-11-18 `bf38560` chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)
 - 2026-11-18 `096b2cc` infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)
 - 2026-11-18 `e36c2ab` chore(ci): bump the acoes group with 10 updates (#206)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `6714971` chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)
 - 2026-11-17 `a132a36` fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)
 - 2026-11-17 `36befe4` fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)
-- 2026-11-17 `599203e` fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

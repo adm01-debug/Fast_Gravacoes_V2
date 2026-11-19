@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bf38560ce0f08e0465212514cee9efbb27b34354",
+  "commit": "13daf1915f94d91a4352320f3729b5d1798bffe6",
   "branch": "main",
-  "data_commit": "2026-11-18T20:52:25-03:00",
+  "data_commit": "2026-11-19T07:36:45-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "13daf19",
+    "data": "2026-11-19",
+    "assunto": "chore(analise): mantem chave redigida no historico"
+   },
    {
     "sha": "bf38560",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "4991121",
     "data": "2026-11-14",
     "assunto": "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)"
-   },
-   {
-    "sha": "9afb1a2",
-    "data": "2026-11-14",
-    "assunto": "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -315,6 +315,10 @@
    {
     "autor": "dependabot[bot]",
     "commits": 2
+   },
+   {
+    "autor": "Claude",
+    "commits": 1
    },
    {
     "autor": "github-actions[bot]",
