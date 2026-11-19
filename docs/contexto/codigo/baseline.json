@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "13daf1915f94d91a4352320f3729b5d1798bffe6",
+  "commit": "9f33e60e733354280839096014c8088a747f5d6f",
   "branch": "main",
-  "data_commit": "2026-11-19T07:36:45-03:00",
+  "data_commit": "2026-11-19T08:24:27-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9f33e60",
+    "data": "2026-11-19",
+    "assunto": "chore: remove vite-plugin-pwa (dependencia morta) (#218)"
+   },
    {
     "sha": "13daf19",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "9ed883f",
     "data": "2026-11-14",
     "assunto": "chore(inventario): estado real do projeto [auto] (#186)"
-   },
-   {
-    "sha": "4991121",
-    "data": "2026-11-14",
-    "assunto": "chore(lint): zera warnings do eslint no src (22 -> 0) (#185)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -165,12 +165,16 @@
     "mudancas": 13
    },
    {
+    "pasta": "package.json",
+    "mudancas": 12
+   },
+   {
     "pasta": "src/features/packaging",
     "mudancas": 12
    },
    {
-    "pasta": "package.json",
-    "mudancas": 11
+    "pasta": "deno.lock",
+    "mudancas": 10
    },
    {
     "pasta": "src/components/navigation",
@@ -181,7 +185,7 @@
     "mudancas": 10
    },
    {
-    "pasta": "deno.lock",
+    "pasta": "package-lock.json",
     "mudancas": 9
    },
    {
@@ -190,10 +194,6 @@
    },
    {
     "pasta": "src/components/jobs",
-    "mudancas": 9
-   },
-   {
-    "pasta": "src/components/knowledge",
     "mudancas": 9
    }
   ],
@@ -204,15 +204,15 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "package.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "AGENTS.md",
@@ -223,11 +223,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 8
+    "arquivo": "scripts/audit-gate.mjs",
+    "mudancas": 9
    },
    {
-    "arquivo": "scripts/audit-gate.mjs",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 8
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 78
+    "commits": 79
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187932,
+  "linhas_codigo": 187930,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -377,7 +377,7 @@
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
-   "linhas": 243
+   "linhas": 241
   },
   "scripts/audit-gate.test.mjs": {
    "arquivos": 1,
@@ -689,7 +689,7 @@
   },
   {
    "arquivo": "scripts/audit-gate.mjs",
-   "linha": 187,
+   "linha": 185,
    "tipo": "TODO",
    "texto": "`via` é um advisory conhecido (objeto com"
   },

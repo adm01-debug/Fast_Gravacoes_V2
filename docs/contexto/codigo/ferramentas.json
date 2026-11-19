@@ -105,7 +105,7 @@
    "test:scripts": "node --test scripts/*.test.mjs scripts/ci/*.test.mjs",
    "test:watch": "vitest"
   },
-  "dependencias": 83,
+  "dependencias": 82,
   "dev_dependencias": 35,
   "principais": {
    "@supabase/supabase-js": "^2.119.0",
@@ -131,7 +131,6 @@
    "react-router-dom": "^7.18.5",
    "recharts": "^2.15.4",
    "tailwindcss-animate": "^1.0.7",
-   "vite-plugin-pwa": "^1.3.0",
    "zod": "^4.6.7",
    "zustand": "^5.1.0"
   },
