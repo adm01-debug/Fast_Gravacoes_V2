@@ -986,7 +986,7 @@
     "logger"
    ],
    "export_default": null,
-   "linhas": 255,
+   "linhas": 366,
    "tabelas": [
     "error_logs"
    ],
@@ -1594,7 +1594,7 @@
     "stripTags"
    ],
    "export_default": null,
-   "linhas": 79,
+   "linhas": 101,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

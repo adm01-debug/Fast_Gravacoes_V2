@@ -662,11 +662,11 @@
   {
    "arquivo": "src/lib/logger.test.ts",
    "tipo": "unit",
-   "linhas": 92,
+   "linhas": 135,
    "testa": [
     "src/lib/logger.ts"
    ],
-   "casos": 5,
+   "casos": 9,
    "suporte": false
   },
   {
@@ -967,11 +967,11 @@
   {
    "arquivo": "src/test/sanitize.test.ts",
    "tipo": "unit",
-   "linhas": 103,
+   "linhas": 125,
    "testa": [
     "src/lib/sanitize.ts"
    ],
-   "casos": 16,
+   "casos": 19,
    "suporte": false
   },
   {

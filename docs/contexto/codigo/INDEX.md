@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `248505f69c366926b3bb1ac1ebb39bf528ea93f8` (2026-11-19T14:24:44-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ce97162f62c43123e9d2c903bc06c6cd4a48dd0e` (2026-11-19T16:14:18-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1537 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 187950 |
+| linhas_codigo | 188148 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7458 nós · 21926 arestas · 648 comunidades · grafo do commit `248505f6`
-- comunidades maiores: card.tsx (204), MainLayout.tsx (166), FuturisticBI.tsx (144), cn (128), snapshot.py (111), DailyCalendar.tsx (104), generate.py (101), label.tsx (99), useAuth (99), progress.tsx (97), gerar.mjs (96), .write (96)
+- 7463 nós · 21939 arestas · 650 comunidades · grafo do commit `ce97162f`
+- comunidades maiores: card.tsx (207), analytics/index.ts (141), input.tsx (128), badge.tsx (124), FuturisticBI.tsx (123), cn (120), DailyCalendar.tsx (119), MainLayout.tsx (114), snapshot.py (111), client.ts (109), PackagingDashboard.tsx (102), generate.py (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-19 `ce97162` fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)
 - 2026-11-19 `248505f` chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)
 - 2026-11-19 `9814660` fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)
 - 2026-11-19 `868b583` chore: preserva lint aplicado pelo agente em 20 componentes (trailing whitespace e alinhamento) (#220)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `596579f` chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)
 - 2026-11-18 `ed61697` fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)
 - 2026-11-18 `c14eac6` fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)
-- 2026-11-17 `343ed14` infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

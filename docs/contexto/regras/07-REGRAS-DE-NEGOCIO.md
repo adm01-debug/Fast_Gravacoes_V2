@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `248505f69c` · branch `main` · 2026-11-19 17:25 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ce97162f62` · branch `main` · 2026-11-19 19:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-19T17:12:16Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-19T18:38:53Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-19T17:12:16Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-19T18:38:53Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-19T17:12:16Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-19T18:38:53Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-19T17:12:16Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-19T18:38:53Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-19T17:12:16Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-19T18:38:53Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1262 testes em 104 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1269 testes em 104 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3283,9 +3283,9 @@ _nenhum item encontrado_
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/webhookFuzz.test.ts` | 25 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
+| `src/test/sanitize.test.ts` | 24 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
-| `src/test/sanitize.test.ts` | 21 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
 | `src/features/inventory/hooks/useInventory.test.ts` | 18 | useInventoryMovements · não consulta quando não há usuário autenticado · busca todas as movimentações ordenadas por data quando nenhum item é informado · filtra movimentações por item_id quando um itemId é informado … |
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
@@ -3309,6 +3309,7 @@ _nenhum item encontrado_
 | `src/test/retryWithBackoff.test.ts` | 11 | retryWithBackoff · resolves immediately on first success · retries after failure and eventually succeeds · throws after exhausting all retries … |
 | `tests/e2e/auth.spec.ts` | 11 | Auth Flow - Login/Logout · should login successfully with valid credentials · should show error with invalid credentials · should logout successfully … |
 | `src/features/jobs/hooks/useSchedulingData.test.tsx` | 10 | useSchedulingData · mantém as consultas desabilitadas quando não há usuário autenticado · carrega jobs, técnicas, máquinas e perfis quando autenticado · propaga erro do jobsService através de error … |
+| `src/lib/logger.test.ts` | 10 | logger persistence · batches multiple events into a single insert after the debounce window · does not recurse when the error_logs insert itself fails · redacts email addresses from the persisted message and error data … |
 | `tests/e2e/jobs.spec.ts` | 10 | Jobs — CRUD and state transitions · calendar page loads with job blocks · quick job drawer opens and closes · job priority filter changes visible jobs … |
 | `tests/e2e/packaging.spec.ts` | 10 | Packaging — Acesso anônimo · redireciona para /auth ao acessar /packaging sem sessão · sub-rota inexistente de /packaging sem sessão não expõe conteúdo protegido · Packaging — Abertura via sidebar … |
 | `scripts/rls-regression.test.mjs` | 9 | signInWithRetry: sucesso de primeira não espera nem repete · signInWithRetry: falha transitória (ex.:  · signInWithRetry: falha em todas as tentativas retorna null (não lança) · signInWithRetry: resposta sem user e sem error também conta como falha … |
@@ -3331,7 +3332,6 @@ _nenhum item encontrado_
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
-| `src/lib/logger.test.ts` | 6 | logger persistence · batches multiple events into a single insert after the debounce window · does not recurse when the error_logs insert itself fails · redacts email addresses from the persisted message and error data … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
@@ -3551,6 +3551,7 @@ _nenhum item encontrado_
 | - Rede intermitente/offline: espera o evento `online` e tenta de novo (limite de | `src/lib/lazyWithRetry.ts` |
 | apenas instável (bug de produção real). | `src/lib/lazyWithRetry.ts` |
 | o client instrumenta fetch via logger, então o logger não pode | `src/lib/logger.ts` |
+| an error was being recorded ? the moment it must not hang. This scanner | `src/lib/logger.ts` |
 | Login screens must NOT reuse this — they validate existing credentials. | `src/lib/passwordPolicy.ts` |
 | JOBS key's full history. They must never share a cache entry — whichever | `src/lib/queryConfig.ts` |
 | PostgREST error codes that must not be retried (auth/permission/client errors). | `src/lib/queryConfig.ts` |

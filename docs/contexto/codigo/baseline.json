@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "248505f69c366926b3bb1ac1ebb39bf528ea93f8",
+  "commit": "ce97162f62c43123e9d2c903bc06c6cd4a48dd0e",
   "branch": "main",
-  "data_commit": "2026-11-19T14:24:44-03:00",
+  "data_commit": "2026-11-19T16:14:18-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "ce97162",
+    "data": "2026-11-19",
+    "assunto": "fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)"
+   },
    {
     "sha": "248505f",
     "data": "2026-11-19",
@@ -126,15 +131,10 @@
     "sha": "c5a478c",
     "data": "2026-11-17",
     "assunto": "fix: gera o QR do 2FA a partir do otpauth uri (#195)"
-   },
-   {
-    "sha": "a3290d5",
-    "data": "2026-11-17",
-    "assunto": "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 119,
+  "arquivos_mudados_7d": 123,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 83
+    "commits": 84
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187950,
+  "linhas_codigo": 188148,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -509,7 +509,7 @@
   },
   "src/lib": {
    "arquivos": 51,
-   "linhas": 6378
+   "linhas": 6554
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -533,7 +533,7 @@
   },
   "src/test": {
    "arquivos": 29,
-   "linhas": 4371
+   "linhas": 4393
   },
   "src/types": {
    "arquivos": 2,
