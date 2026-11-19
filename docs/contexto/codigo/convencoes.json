@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)",
    "fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)",
    "chore: preserva lint aplicado pelo agente em 20 componentes (trailing whitespace e alinhamento) (#220)",
    "fix: alinha script-src da CSP report-only com a enforce (unsafe-eval) (#219)",
-   "chore: remove vite-plugin-pwa (dependencia morta) (#218)",
-   "chore(analise): mantem chave redigida no historico"
+   "chore: remove vite-plugin-pwa (dependencia morta) (#218)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

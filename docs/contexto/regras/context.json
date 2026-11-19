@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "981466072a05d15ceaac6714db0d453983517b9b",
+  "sha": "248505f69c366926b3bb1ac1ebb39bf528ea93f8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-19 16:41 UTC",
+  "generated_at": "2026-11-19 17:25 UTC",
   "files_total": 1535,
   "code_files": 1376,
   "code_lines": 203164
@@ -94848,10 +94848,19 @@
   }
  },
  "git": {
-  "sha": "981466072a05d15ceaac6714db0d453983517b9b",
+  "sha": "248505f69c366926b3bb1ac1ebb39bf528ea93f8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "248505f",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "9814660",
     "date": "2026-11-19",
@@ -95202,15 +95211,6 @@
      "src/lib/realtimeChannel.ts",
      "src/pages/OEEDashboard.tsx"
     ]
-   },
-   {
-    "sha": "9afb1a2",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "docs: fecha prod-readiness com db-admin success e HEAD a28848f (#183)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95229,6 +95229,10 @@
    [
     "scripts/audit-gate.mjs",
     3
+   ],
+   [
+    ".github/workflows/ci.yml",
+    2
    ],
    [
     "src/test/cspSync.test.ts",
@@ -95268,10 +95272,6 @@
    ],
    [
     "src/components/settings/TwoFactorSetup.tsx",
-    2
-   ],
-   [
-    "docs/prod-readiness.md",
     2
    ],
    [
