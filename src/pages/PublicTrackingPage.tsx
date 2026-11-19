@@ -68,7 +68,7 @@ export default function PublicTrackingPage() {
 
       const selectClause = `
           *,
-          shipment:shipments(
+          shipment:shipments!jobs_shipment_id_fkey(
             tracking_code,
             status,
             estimated_delivery,
