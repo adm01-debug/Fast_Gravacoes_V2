@@ -785,9 +785,9 @@
   {
    "arquivo": "src/test/cspSync.test.ts",
    "tipo": "unit",
-   "linhas": 55,
+   "linhas": 70,
    "testa": [],
-   "casos": 3,
+   "casos": 4,
    "suporte": false
   },
   {

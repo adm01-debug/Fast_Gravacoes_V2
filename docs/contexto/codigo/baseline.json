@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9f33e60e733354280839096014c8088a747f5d6f",
+  "commit": "57c332f4b572a8ae0fbc06025a8c1932ecbc407f",
   "branch": "main",
-  "data_commit": "2026-11-19T08:24:27-03:00",
+  "data_commit": "2026-11-19T08:48:13-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "57c332f",
+    "data": "2026-11-19",
+    "assunto": "fix: alinha script-src da CSP report-only com a enforce (unsafe-eval) (#219)"
+   },
    {
     "sha": "9f33e60",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "64c3b0c",
     "data": "2026-11-17",
     "assunto": "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)"
-   },
-   {
-    "sha": "9ed883f",
-    "data": "2026-11-14",
-    "assunto": "chore(inventario): estado real do projeto [auto] (#186)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -251,6 +251,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "vercel.json",
+    "mudancas": 6
+   },
+   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 5
    },
@@ -287,10 +291,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "vercel.json",
-    "mudancas": 5
-   },
-   {
     "arquivo": ".github/workflows/visual-baselines.yml",
     "mudancas": 4
    },
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 79
+    "commits": 80
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1537,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 187930,
+  "linhas_codigo": 187945,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -533,7 +533,7 @@
   },
   "src/test": {
    "arquivos": 29,
-   "linhas": 4356
+   "linhas": 4371
   },
   "src/types": {
    "arquivos": 2,

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9f33e60e73` · branch `main` · 2026-11-19 11:24 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `57c332f4b5` · branch `main` · 2026-11-19 11:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-19T11:13:12Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-19T11:38:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-19T11:13:12Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-19T11:38:47Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -425,7 +425,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-19T11:13:12Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-19T11:38:47Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1468,7 +1468,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-19T11:13:12Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-19T11:38:47Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1591,7 +1591,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-19T11:13:12Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-19T11:38:47Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3264,7 +3264,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1261 testes em 104 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1262 testes em 104 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3336,6 +3336,7 @@ _nenhum item encontrado_
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
+| `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico nas tres politicas · mantem o script-src identico nas tres politicas (regressao: report-only sem unsafe-eval gerava ruido de eval em toda carga) · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
 | `supabase/functions/_shared/contracts.test.ts` | 5 | Webhook Contract - Valid Payload · Webhook Contract - Invalid Source · ERP Job Contract - Valid Request · ERP Job Contract - Missing Required Field … |
 | `tests/e2e/accessibility.spec.ts` | 5 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · CommandPaletteAdvanced - teclado e foco · abre com Cmd+K, navega com setas e fecha com Escape … |
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
@@ -3345,7 +3346,6 @@ _nenhum item encontrado_
 | `src/features/auth/components/AuthProvider.test.tsx` | 4 | AuthContext · should initialize with loading state · should sign in successfully · should sign out successfully |
 | `src/features/jobs/services/jobsService.test.ts` | 4 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
-| `src/test/cspSync.test.ts` | 4 | CSP · mantem o connect-src identico nas tres politicas · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) · nao declara upgrade-insecure-requests na politica report-only, onde o browser a ignora |
 | `tests/e2e/error-states.spec.ts` | 4 | Error boundaries and fallback states · should not have unhandled page errors on auth page · login with wrong credentials shows error message · navigating to non-existent route shows not found state |
 | `tests/e2e/inventory-intelligence.spec.ts` | 4 | Fluxos de Inventário e Inteligência · deve permitir visualizar e filtrar o inventário · deve abrir o modal de registro de movimentação · deve validar o Mapa WMS e sugestões de IA |
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |

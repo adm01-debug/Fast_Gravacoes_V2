@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9f33e60e733354280839096014c8088a747f5d6f` (2026-11-19T08:24:27-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `57c332f4b572a8ae0fbc06025a8c1932ecbc407f` (2026-11-19T08:48:13-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1537 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 187930 |
+| linhas_codigo | 187945 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7456 nós · 21922 arestas · 656 comunidades · grafo do commit `9f33e60e`
-- comunidades maiores: card.tsx (227), KPIDashboard.tsx (146), badge.tsx (143), client.ts (126), select.tsx (119), button.tsx (118), cn (115), analytics/index.ts (114), snapshot.py (111), generate.py (101), skeleton.tsx (97), gerar.mjs (96)
+- 7458 nós · 21926 arestas · 647 comunidades · grafo do commit `57c332f4`
+- comunidades maiores: card.tsx (204), MainLayout.tsx (166), FuturisticBI.tsx (144), cn (128), snapshot.py (111), DailyCalendar.tsx (104), generate.py (101), label.tsx (99), useAuth (99), progress.tsx (97), gerar.mjs (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -266,8 +266,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/contexto.yml (6)
 - CLAUDE.md (6)
 - tests/e2e/offline.spec.ts (6)
+- vercel.json (6)
 - .github/workflows/graphify.yml (5)
-- .github/workflows/migration-repair.yml (5)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-19 `57c332f` fix: alinha script-src da CSP report-only com a enforce (unsafe-eval) (#219)
 - 2026-11-19 `9f33e60` chore: remove vite-plugin-pwa (dependencia morta) (#218)
 - 2026-11-19 `13daf19` chore(analise): mantem chave redigida no historico
 - 2026-11-18 `bf38560` chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `a334acf` fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)
 - 2026-11-17 `381fe2e` chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)
 - 2026-11-17 `6714971` chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)
-- 2026-11-17 `a132a36` fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
