@@ -1,0 +1,49 @@
+{
+  "data": "2026-10-31",
+  "main_sha_inicial": "ebe3a6b2a6655e0f0d5e44bac4a2fb1766fddcbb",
+  "main_sha_final": "8664d9381882b53d99b6cfa29caa1f17c5350e60",
+  "branches_analisadas": [
+    {
+      "nome": "origin/devin/1793268046-divida-estrutural-2",
+      "sha": "0b4c7e245f70fd3f8c8e86b68098c63a26f42e94",
+      "commits_desde_main": 4,
+      "tem_pr": false,
+      "conflito_merge": false,
+      "desfecho": "Resgatado parcial via PR #120 (8120bef7)"
+    },
+    {
+      "nome": "origin/devin/1790870081-audit-csp",
+      "sha": "0256d1c6ecabe48f42fd97ce9d145034b79e5b7d",
+      "commits_desde_main": 10,
+      "tem_pr": false,
+      "conflito_merge": true,
+      "conflitos": [
+        "supabase/functions/_shared/rateLimit.test.ts",
+        "supabase/functions/csp-report/index.ts"
+      ],
+      "desfecho": "Conflitos resolvidos; mergeado via PR #121 (8664d938)"
+    },
+    {
+      "nome": "origin/devin/1791372473-migration-repair",
+      "sha": "d1632a899ff54d239c0d25ca0bdd4a1737d6f6b5",
+      "commits_desde_main": 3,
+      "tem_pr": false,
+      "vetado": "altera .github/workflows"
+    },
+    {
+      "nome": "origin/devin/1791466219-db-admin-alter-role",
+      "sha": "f4f4cfa9c96908737aa3bdebbdb102bc6b2c688d",
+      "commits_desde_main": 1,
+      "tem_pr": false,
+      "vetado": "altera .github/workflows"
+    }
+  ],
+  "prs_abertas": [],
+  "prs_mergeadas_nesta_sessao": [119, 120, 121],
+  "shas_merge": {
+    "119": "918828fd",
+    "120": "8120bef7",
+    "121": "8664d938"
+  },
+  "deploy": "Vercel deploy confirmado para 8664d938"
+}
