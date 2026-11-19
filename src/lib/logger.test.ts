@@ -102,12 +102,33 @@ describe('logger persistence', () => {
 
   it('redacts JWT-shaped token inside long plain text', async () => {
     const fakeJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
-    logger.error(`A'.repeat(20000): ${fakeJwt}`);
+    logger.error(`${'A'.repeat(20000)}: ${fakeJwt}`);
     await vi.advanceTimersByTimeAsync(2100);
 
     const calls = insertMock.mock.calls;
     const row = calls[calls.length - 1][0][0];
     expect(row.message).not.toContain(fakeJwt);
     expect(row.message).toContain('[REDACTED_TOKEN]');
+  });
+
+  it('redacts JWT-shaped token preceded by plain text', async () => {
+    const fakeJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
+    logger.error(`token_${fakeJwt}`);
+    await vi.advanceTimersByTimeAsync(2100);
+
+    const calls = insertMock.mock.calls;
+    const row = calls[calls.length - 1][0][0];
+    expect(row.message).not.toContain(fakeJwt);
+    expect(row.message).toContain('[REDACTED_TOKEN]');
+  });
+
+  it('redacts email followed by sentence punctuation', async () => {
+    logger.error('Falha ao processar usuario@empresa.com. Tente novamente.');
+    await vi.advanceTimersByTimeAsync(2100);
+
+    const calls = insertMock.mock.calls;
+    const row = calls[calls.length - 1][0][0];
+    expect(row.message).toContain('[REDACTED_EMAIL]');
+    expect(row.message).not.toContain('usuario@empresa.com');
   });
 });

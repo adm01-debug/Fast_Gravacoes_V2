@@ -215,12 +215,17 @@ function redactString(value: string): string {
     }
 
     // Email-shaped substring: atom + '@' + domain with a dotted, 2+ letter TLD.
+    // The atom scan stops at a 'eyJ' boundary so a JWT preceded by text is
+    // still detected below (e.g. `token_eyJ...`), instead of being swallowed.
     if (isAtomChar(c)) {
       let end = i;
-      while (end < n && isAtomChar(value[end])) end++;
+      while (end < n && isAtomChar(value[end]) && !(end > i && value.startsWith('eyJ', end))) end++;
       if (end < n && value[end] === '@') {
         let dEnd = end + 1;
         while (dEnd < n && isDomainChar(value[dEnd])) dEnd++;
+        // A trailing '.' before space/EOL is punctuation, not part of the domain;
+        // otherwise `user@empresa.com.` would not resolve to a dotted TLD.
+        while (dEnd > end + 1 && value[dEnd - 1] === '.') dEnd--;
         let hit = false;
         for (let k = dEnd - 1; k > end; k--) {
           if (value[k] === '.' && isAllLetters(value, k + 1, dEnd)) {
