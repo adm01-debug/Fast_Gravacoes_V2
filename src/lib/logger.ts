@@ -133,11 +133,117 @@ function safeStringify(value: unknown): string {
 // the alert webhook completely unredacted. Scrub emails and JWT-shaped
 // tokens from any string before it is persisted or sent externally, and
 // strip query strings from URLs (which can carry tokens/emails/ids).
-const EMAIL_RE = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-const JWT_RE = /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g;
+const isAsciiLetter = (c: string): boolean => {
+  const code = c.charCodeAt(0);
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+};
 
+const isAtomChar = (c: string): boolean => {
+  const code = c.charCodeAt(0);
+  return (
+    (code >= 48 && code <= 57) ||
+    isAsciiLetter(c) ||
+    c === '.' ||
+    c === '_' ||
+    c === '%' ||
+    c === '+' ||
+    c === '-'
+  );
+};
+
+const isDomainChar = (c: string): boolean => {
+  const code = c.charCodeAt(0);
+  return (code >= 48 && code <= 57) || isAsciiLetter(c) || c === '.' || c === '-';
+};
+
+const isJwtChar = (c: string): boolean => {
+  const code = c.charCodeAt(0);
+  return (code >= 48 && code <= 57) || isAsciiLetter(c) || c === '_' || c === '-';
+};
+
+const isAllLetters = (value: string, from: number, to: number): boolean => {
+  if (to <= from) return false;
+  for (let i = from; i < to; i++) {
+    if (!isAsciiLetter(value[i])) return false;
+  }
+  return true;
+};
+
+/**
+ * Linear-time PII redaction. The previous EMAIL_RE/JWT_RE patterns used nested
+ * quantifiers whose backtracking is polynomial on attacker-controlled input
+ * (e.g. many '.'/'%' repetitions), which could stall the logger exactly when
+ * an error was being recorded ? the moment it must not hang. This scanner
+ * visits every character once and never backtracks.
+ */
 function redactString(value: string): string {
-  return value.replace(EMAIL_RE, '[REDACTED_EMAIL]').replace(JWT_RE, '[REDACTED_TOKEN]');
+  let out = '';
+  let i = 0;
+  const n = value.length;
+
+  while (i < n) {
+    const c = value[i];
+
+    // JWT-shaped token: 'eyJ' + three dot-separated base64url segments (10+ chars).
+    if (c === 'e' && value.startsWith('eyJ', i)) {
+      let cursor = i + 3;
+      let firstLen = 0;
+      while (cursor < n && isJwtChar(value[cursor])) {
+        cursor++;
+        firstLen++;
+      }
+      if (firstLen >= 10) {
+        let remaining = 2;
+        let ok = true;
+        while (remaining > 0 && ok) {
+          if (cursor < n && value[cursor] === '.') {
+            cursor++;
+            const segStart = cursor;
+            while (cursor < n && isJwtChar(value[cursor])) cursor++;
+            if (cursor - segStart < 10) ok = false;
+            else remaining--;
+          } else {
+            ok = false;
+          }
+        }
+        if (ok && remaining === 0) {
+          out += '[REDACTED_TOKEN]';
+          i = cursor;
+          continue;
+        }
+      }
+    }
+
+    // Email-shaped substring: atom + '@' + domain with a dotted, 2+ letter TLD.
+    if (isAtomChar(c)) {
+      let end = i;
+      while (end < n && isAtomChar(value[end])) end++;
+      if (end < n && value[end] === '@') {
+        let dEnd = end + 1;
+        while (dEnd < n && isDomainChar(value[dEnd])) dEnd++;
+        let hit = false;
+        for (let k = dEnd - 1; k > end; k--) {
+          if (value[k] === '.' && isAllLetters(value, k + 1, dEnd)) {
+            hit = true;
+            break;
+          }
+        }
+        if (hit) {
+          out += '[REDACTED_EMAIL]';
+          i = dEnd;
+          continue;
+        }
+      }
+      out += value.slice(i, end);
+      i = end;
+      continue;
+    }
+
+    out += c;
+    i++;
+  }
+
+  return out;
 }
 
 function redactUrl(url: string): string {

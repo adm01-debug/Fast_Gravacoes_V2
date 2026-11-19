@@ -28,6 +28,28 @@ describe('stripTags', () => {
     expect(stripTags('<script>alert(1)</script>')).toBe('alert(1)');
     expect(stripTags('no tags here')).toBe('no tags here');
   });
+
+  it('keeps bare < and > that are not part of a tag', () => {
+    expect(stripTags('2 < 3')).toBe('2 < 3');
+  });
+
+  it('strips nested/repeated tag markers', () => {
+    expect(stripTags('<<script>alert(1)</script>')).toBe('alert(1)');
+    expect(stripTags('<div><p>test</p></div>')).toBe('test');
+  });
+
+  it('handles pathological inputs in linear time (ReDoS guard)', () => {
+    // N consecutive '<' with no closing '>' ? the legacy regex was O(n^2)
+    // here (each start position re-scanned to end); the scanner is O(n).
+    const input = '<'.repeat(100000) + 'plain';
+    const result = stripTags(input);
+    expect(result).toBe(input);
+
+    // N '<' then one '>' consumes everything up to that '>' (legacy parity):
+    // '<<<<...plain>' is removed, leaving the trailing '>' chars.
+    const trailing = '<'.repeat(1000) + 'plain' + '>'.repeat(1000);
+    expect(stripTags(trailing)).toBe('>'.repeat(999));
+  });
 });
 
 describe('sanitizeUrl', () => {

@@ -22,7 +22,26 @@ export function escapeHtml(input: string): string {
 
 /** Strip all HTML tags from a string. */
 export function stripTags(input: string): string {
-  return input.replace(/<[^>]*>/g, '');
+  if (!input.includes('<')) return input;
+
+  let out = '';
+  let i = 0;
+  const n = input.length;
+  while (i < n) {
+    const char = input[i];
+    if (char === '<') {
+      // A tag spans from '<' to the next '>'. If there is no closing '>',
+      // keep the '<' and continue (prevents stripping standalone '<').
+      const close = input.indexOf('>', i + 1);
+      if (close !== -1) {
+        i = close + 1;
+        continue;
+      }
+    }
+    out += char;
+    i++;
+  }
+  return out;
 }
 
 /** Sanitize a string for safe display: strip tags + escape remaining chars. */

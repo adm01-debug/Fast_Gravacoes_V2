@@ -88,4 +88,26 @@ describe('logger persistence', () => {
 
     Object.defineProperty(window, 'location', { value: new URL(originalLocation), writable: true });
   });
+
+  it('redacts email inside pathological input in linear time (ReDoS guard)', async () => {
+    const hostile = '%'.repeat(50000) + ' user@empresa.com.br ' + '%'.repeat(50000);
+    logger.error(hostile);
+    await vi.advanceTimersByTimeAsync(2100);
+
+    const calls = insertMock.mock.calls;
+    const row = calls[calls.length - 1][0][0];
+    expect(row.message).toContain('[REDACTED_EMAIL]');
+    expect(row.message).not.toContain('user@empresa.com.br');
+  });
+
+  it('redacts JWT-shaped token inside long plain text', async () => {
+    const fakeJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
+    logger.error(`A'.repeat(20000): ${fakeJwt}`);
+    await vi.advanceTimersByTimeAsync(2100);
+
+    const calls = insertMock.mock.calls;
+    const row = calls[calls.length - 1][0][0];
+    expect(row.message).not.toContain(fakeJwt);
+    expect(row.message).toContain('[REDACTED_TOKEN]');
+  });
 });
