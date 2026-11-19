@@ -91,7 +91,7 @@ export function CommandPaletteAdvanced() {
     let commands = [...allCommands, ...contextualCommands];
     if (mode === "actions") commands = commands.filter(c => c.category === "actions" || c.category === "contextual");
     else if (mode === "navigation") commands = commands.filter(c => c.category === "navigation");
-    
+
     const searchResults = searchCommands(commands, query);
     // Add entity commands to the top if they exist
     return [...entityCommands, ...searchResults];

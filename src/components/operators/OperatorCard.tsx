@@ -27,7 +27,7 @@ interface OperatorCardProps {
 export function OperatorCard({ operator, index, assignedMachines, isOnline, lastSeen, onOpenDetails, onOpenSkills, onOpenEdit, onOpenAssignment, onShowQR, onToggle, onRemove }: OperatorCardProps) {
   return (
     <div
-                    
+
                     className={`flex items-center gap-4 p-4 rounded-lg border border-border/50 bg-card/50 hover:bg-accent/5 transition-colors animate-fade-in ${
                       !operator.is_active ? 'opacity-60' : ''
                     }`}
@@ -199,7 +199,7 @@ export function OperatorCard({ operator, index, assignedMachines, isOnline, last
                               variant="ghost"
                               onClick={() => {
                                 onOpenDetails();
-                                
+
                               }}
                               aria-label={`Visualizar perfil de ${operator.full_name || 'operador'}`}
                               className="h-8 w-8 text-primary"

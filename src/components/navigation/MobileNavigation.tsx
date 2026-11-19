@@ -149,7 +149,7 @@ const MobileNavButton = memo(function MobileNavButton({
 
       <motion.div
         className="relative"
-        animate={{ 
+        animate={{
           scale: isActive ? 1.2 : 1,
           y: isActive ? -2 : 0
         }}
@@ -429,7 +429,7 @@ export function MobileNavigation() {
 
               <motion.div
                 className="relative"
-                animate={{ 
+                animate={{
                   rotate: sheetOpen ? 90 : 0,
                   scale: sheetOpen ? 1.2 : 1
                 }}
