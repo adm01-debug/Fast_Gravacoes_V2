@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
+  "commit": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
   "branch": "main",
-  "data_commit": "2026-11-20T11:06:49-03:00",
+  "data_commit": "2026-11-20T11:29:49-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "7e8a0f6",
+    "data": "2026-11-20",
+    "assunto": "infra: cache npm no job de contratos do automation-local (#230)"
+   },
    {
     "sha": "3d5df1f",
     "data": "2026-11-20",
@@ -126,11 +131,6 @@
     "sha": "381fe2e",
     "data": "2026-11-17",
     "assunto": "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)"
-   },
-   {
-    "sha": "6714971",
-    "data": "2026-11-17",
-    "assunto": "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 90
+    "commits": 91
    },
    {
     "autor": "devin-ai-integration[bot]",

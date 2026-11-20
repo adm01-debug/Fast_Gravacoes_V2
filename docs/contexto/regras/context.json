@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
+  "sha": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 14:07 UTC",
+  "generated_at": "2026-11-20 14:30 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203366
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
+  "sha": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "7e8a0f6",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "infra: cache npm no job de contratos do automation-local (#230)",
+    "files": [
+     ".github/workflows/automation-local.yml"
+    ]
+   },
    {
     "sha": "3d5df1f",
     "date": "2026-11-20",
@@ -95238,16 +95247,6 @@
      "src/test/cspSync.test.ts",
      "vercel.json"
     ]
-   },
-   {
-    "sha": "bff18e0",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: libera o dominio de producao da Vercel no CORS das edge functions (#196)",
-    "files": [
-     "supabase/functions/_shared/cors.test.ts",
-     "supabase/functions/_shared/cors.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -95274,6 +95273,10 @@
    [
     "scripts/audit-gate.mjs",
     3
+   ],
+   [
+    ".github/workflows/automation-local.yml",
+    2
    ],
    [
     "analise-prs/progresso.json",
@@ -95325,10 +95328,6 @@
    ],
    [
     "analise-prs/dossies/PR-120.md",
-    1
-   ],
-   [
-    "analise-prs/dossies/PR-121.md",
     1
    ]
   ]

@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
+ "commit_do_grafo": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
  "grafo_atual": true,
  "nos": 7462,
  "arestas": 21938,
@@ -35,9 +35,9 @@
   {
    "id": 0,
    "nome": "card.tsx",
-   "nos": 172,
-   "callables": 72,
-   "arquivos": 92,
+   "nos": 169,
+   "callables": 71,
+   "arquivos": 90,
    "exemplos_arquivos": [
     "src/components/abc/ABCActivityRatesCard.tsx",
     "src/components/abc/AIFinancialAdvisor.tsx",
@@ -113,19 +113,19 @@
   },
   {
    "id": 5,
-   "nome": "badge.tsx",
-   "nos": 110,
-   "callables": 41,
-   "arquivos": 50,
+   "nome": "utils.ts",
+   "nos": 104,
+   "callables": 48,
+   "arquivos": 44,
    "exemplos_arquivos": [
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/dashboard/GamificationBanner.tsx",
-    "src/components/dashboard/LoadBalancingWidget.tsx",
-    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
-    "src/components/design-system/sections/cards/CardDashboardExample.tsx",
-    "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx",
-    "src/components/design-system/sections/tooltips/HoverCardsSection.tsx",
-    "src/components/inventory/InventoryStats.tsx"
+    "src/components/assistant/AssistantButton.tsx",
+    "src/components/assistant/TechnicalAssistant.tsx",
+    "src/components/calendar/OptimizationAssistant.tsx",
+    "src/components/dashboard/BufferPromotionStatus.tsx",
+    "src/components/dashboard/LiveMachineStatusPanel.tsx",
+    "src/components/digital-twin/FactoryFloorMap.tsx",
+    "src/components/integrations/IntegrationHub.tsx",
+    "src/components/machines/MachineCard.tsx"
    ]
   },
   {
@@ -174,6 +174,23 @@
   },
   {
    "id": 9,
+   "nome": "badge.tsx",
+   "nos": 97,
+   "callables": 35,
+   "arquivos": 47,
+   "exemplos_arquivos": [
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/dashboard/GamificationBanner.tsx",
+    "src/components/dashboard/LoadBalancingWidget.tsx",
+    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
+    "src/components/design-system/sections/cards/CardDashboardExample.tsx",
+    "src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx",
+    "src/components/design-system/sections/tooltips/HoverCardsSection.tsx",
+    "src/components/inventory/InventoryStats.tsx"
+   ]
+  },
+  {
+   "id": 10,
    "nome": "gerar.mjs",
    "nos": 96,
    "callables": 19,
@@ -183,7 +200,7 @@
    ]
   },
   {
-   "id": 10,
+   "id": 11,
    "nome": ".write",
    "nos": 96,
    "callables": 90,
@@ -193,7 +210,7 @@
    ]
   },
   {
-   "id": 11,
+   "id": 12,
    "nome": "scroll-area.tsx",
    "nos": 96,
    "callables": 42,
@@ -210,7 +227,7 @@
    ]
   },
   {
-   "id": 12,
+   "id": 13,
    "nome": "dialog.tsx",
    "nos": 96,
    "callables": 48,
@@ -227,7 +244,7 @@
    ]
   },
   {
-   "id": 13,
+   "id": 14,
    "nome": "button.tsx",
    "nos": 92,
    "callables": 54,
@@ -244,7 +261,7 @@
    ]
   },
   {
-   "id": 14,
+   "id": 15,
    "nome": "analytics/index.ts",
    "nos": 90,
    "callables": 43,
@@ -258,23 +275,6 @@
     "src/features/analytics/components/oee/HyperInsights.tsx",
     "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
     "src/features/analytics/components/oee/OEEAuditPanel.tsx"
-   ]
-  },
-  {
-   "id": 15,
-   "nome": "utils.ts",
-   "nos": 88,
-   "callables": 41,
-   "arquivos": 38,
-   "exemplos_arquivos": [
-    "src/components/assistant/AssistantButton.tsx",
-    "src/components/assistant/TechnicalAssistant.tsx",
-    "src/components/calendar/OptimizationAssistant.tsx",
-    "src/components/dashboard/BufferPromotionStatus.tsx",
-    "src/components/dashboard/LiveMachineStatusPanel.tsx",
-    "src/components/digital-twin/FactoryFloorMap.tsx",
-    "src/components/integrations/IntegrationHub.tsx",
-    "src/components/machines/MachineCard.tsx"
    ]
   },
   {
@@ -533,23 +533,6 @@
   },
   {
    "id": 32,
-   "nome": "useRealtimeChannel",
-   "nos": 53,
-   "callables": 39,
-   "arquivos": 17,
-   "exemplos_arquivos": [
-    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
-    "src/components/ml/MLNotificationSettings.tsx",
-    "src/components/ml/MLPredictionCard.tsx",
-    "src/components/ml/MLRiskDistributionChart.tsx",
-    "src/features/analytics/hooks/useMLPredictions.ts",
-    "src/features/maintenance/components/TPMParameterAlerts.tsx",
-    "src/features/notifications/components/NotificationIntegrator.tsx",
-    "src/features/notifications/components/PushNotificationManager.tsx"
-   ]
-  },
-  {
-   "id": 33,
    "nome": "PackagingDashboard.tsx",
    "nos": 52,
    "callables": 37,
@@ -566,7 +549,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 33,
    "nome": "useTPM",
    "nos": 51,
    "callables": 39,
@@ -583,7 +566,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 34,
    "nome": "ShiftHandoverPage.tsx",
    "nos": 49,
    "callables": 26,
@@ -600,7 +583,7 @@
    ]
   },
   {
-   "id": 36,
+   "id": 35,
    "nome": "AuthProvider.tsx",
    "nos": 48,
    "callables": 31,
@@ -617,7 +600,41 @@
    ]
   },
   {
+   "id": 36,
+   "nome": "NotificationIntegrator.tsx",
+   "nos": 47,
+   "callables": 34,
+   "arquivos": 14,
+   "exemplos_arquivos": [
+    "src/components/dashboard/PredictiveAnalyticsWidget.tsx",
+    "src/components/ml/MLNotificationSettings.tsx",
+    "src/components/ml/MLPredictionCard.tsx",
+    "src/components/ml/MLRiskDistributionChart.tsx",
+    "src/features/analytics/hooks/useMLPredictions.ts",
+    "src/features/notifications/components/NotificationIntegrator.tsx",
+    "src/features/notifications/components/PushNotificationManager.tsx",
+    "src/features/notifications/components/PushNotificationPrompt.tsx"
+   ]
+  },
+  {
    "id": 37,
+   "nome": "useRealtimeChannel",
+   "nos": 47,
+   "callables": 31,
+   "arquivos": 10,
+   "exemplos_arquivos": [
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/OperatorMachinesIndicator.tsx",
+    "src/contexts/WebSocketContext.tsx",
+    "src/features/maintenance/components/TPMParameterAlerts.tsx",
+    "src/features/notifications/hooks/useNotifications.test.ts",
+    "src/features/notifications/hooks/useNotifications.ts",
+    "src/features/notifications/types/index.ts",
+    "src/features/production/hooks/useMachineStatusHub.ts"
+   ]
+  },
+  {
+   "id": 38,
    "nome": "FuturisticBI.tsx",
    "nos": 47,
    "callables": 25,
@@ -634,7 +651,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 39,
    "nome": "TPMDashboard.tsx",
    "nos": 46,
    "callables": 25,
@@ -651,7 +668,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 40,
    "nome": "logger",
    "nos": 46,
    "callables": 30,
@@ -668,7 +685,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 41,
    "nome": "_shared/logger.ts",
    "nos": 46,
    "callables": 27,
@@ -685,7 +702,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 42,
    "nome": "devDependencies",
    "nos": 43,
    "callables": 0,
@@ -695,7 +712,7 @@
    ]
   },
   {
-   "id": 42,
+   "id": 43,
    "nome": "graphify-local.mjs",
    "nos": 43,
    "callables": 36,
@@ -707,7 +724,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 44,
    "nome": "InventoryPage.tsx",
    "nos": 43,
    "callables": 29,
@@ -724,7 +741,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 45,
    "nome": "GoalsHistoryCard.tsx",
    "nos": 43,
    "callables": 34,
@@ -741,7 +758,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 46,
    "nome": "SecurityDashboard.tsx",
    "nos": 43,
    "callables": 31,
@@ -758,7 +775,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 47,
    "nome": "erp-api/index.ts",
    "nos": 43,
    "callables": 23,
@@ -773,7 +790,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 48,
    "nome": "cors.ts",
    "nos": 43,
    "callables": 20,
@@ -790,7 +807,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 49,
    "nome": "automation.mjs",
    "nos": 41,
    "callables": 35,
@@ -798,23 +815,6 @@
    "exemplos_arquivos": [
     "scripts/automation.mjs",
     "scripts/automation.unit.mjs"
-   ]
-  },
-  {
-   "id": 49,
-   "nome": "realtimeChannel.ts",
-   "nos": 41,
-   "callables": 26,
-   "arquivos": 8,
-   "exemplos_arquivos": [
-    "src/components/layout/MainLayout.tsx",
-    "src/components/layout/OperatorMachinesIndicator.tsx",
-    "src/contexts/WebSocketContext.tsx",
-    "src/features/notifications/hooks/useNotifications.test.ts",
-    "src/features/notifications/hooks/useNotifications.ts",
-    "src/features/notifications/types/index.ts",
-    "src/features/production/hooks/useOperatorPresence.ts",
-    "src/lib/realtimeChannel.ts"
    ]
   },
   {
@@ -2056,7 +2056,7 @@
   "public/manifest.json": "manifest.json",
   "public/sw.js": "sw.js",
   "scripts/ai-context/cenarios.mjs": "cenarios.mjs",
-  "scripts/ai-context/gerar.mjs": "readText",
+  "scripts/ai-context/gerar.mjs": "gerar.mjs",
   "scripts/ai-context/gerar.unit.mjs": "gerar.unit.mjs",
   "scripts/ai-context/lib/y": "cenarios.mjs",
   "scripts/ai-context/pages/C": "cenarios.mjs",
@@ -2200,7 +2200,7 @@
   "src/components/dashboard/OEELoadTrendWidget.tsx": "EfficiencyDashboard.tsx",
   "src/components/dashboard/OccupancyChart.tsx": "Index.tsx",
   "src/components/dashboard/OperatorGoalsWidget.tsx": "GoalsHistoryCard.tsx",
-  "src/components/dashboard/PredictiveAnalyticsWidget.tsx": "useRealtimeChannel",
+  "src/components/dashboard/PredictiveAnalyticsWidget.tsx": "NotificationIntegrator.tsx",
   "src/components/dashboard/QuickActions.tsx": "cn",
   "src/components/dashboard/RealtimeIndicator.tsx": "App.tsx",
   "src/components/dashboard/RecentJobsTable.tsx": "DbMachine",
@@ -2330,7 +2330,7 @@
   "src/components/layout/AppSidebar.tsx": "MainLayout.tsx",
   "src/components/layout/LanguageSwitcher.tsx": "dropdown-menu.tsx",
   "src/components/layout/MainLayout.tsx": "MainLayout.tsx",
-  "src/components/layout/OperatorMachinesIndicator.tsx": "realtimeChannel.ts",
+  "src/components/layout/OperatorMachinesIndicator.tsx": "useRealtimeChannel",
   "src/components/layout/PageHeader.tsx": "cn",
   "src/components/layout/PageTransition.tsx": "transitions/index.ts",
   "src/components/layout/QuickFavoritesBar.tsx": "showErrorToast",
@@ -2356,8 +2356,8 @@
   "src/components/machines/MachineStatsCards.tsx": "TPMDashboard.tsx",
   "src/components/machines/MachinesByTechniqueList.tsx": "DbMachine",
   "src/components/ml/MLNotificationSettings.tsx": "utils.ts",
-  "src/components/ml/MLPredictionCard.tsx": "useRealtimeChannel",
-  "src/components/ml/MLRiskDistributionChart.tsx": "useRealtimeChannel",
+  "src/components/ml/MLPredictionCard.tsx": "NotificationIntegrator.tsx",
+  "src/components/ml/MLRiskDistributionChart.tsx": "NotificationIntegrator.tsx",
   "src/components/mobile/PullToRefresh.tsx": "PullToRefresh.tsx",
   "src/components/mobile/SwipeActions.tsx": "utils.ts",
   "src/components/navigation/BackButton.tsx": "MainLayout.tsx",
@@ -2563,7 +2563,7 @@
   "src/contexts/ThemeContext.tsx": "useAuth",
   "src/contexts/TransitionConfigContext.tsx": "transitions/index.ts",
   "src/contexts/UserPreferencesContext.tsx": "useAuth",
-  "src/contexts/WebSocketContext.tsx": "realtimeChannel.ts",
+  "src/contexts/WebSocketContext.tsx": "useRealtimeChannel",
   "src/features/admin/components/audit/AuditAIAdvisor.tsx": "TPMDashboard.tsx",
   "src/features/admin/components/audit/AuditChainStatus.tsx": "useAuditTrail.ts",
   "src/features/admin/components/audit/AuditEntryCard.tsx": "useAuditTrail.ts",
@@ -2656,20 +2656,20 @@
   "src/features/analytics/components/executive/ExecutiveNorthStar.tsx": "ExecutiveDashboard.tsx",
   "src/features/analytics/components/oee/HyperInsights.tsx": "card.tsx",
   "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx": "production/index.ts",
-  "src/features/analytics/components/oee/OEEAuditPanel.tsx": "badge.tsx",
+  "src/features/analytics/components/oee/OEEAuditPanel.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEECalculationAudit.tsx": "utils.ts",
-  "src/features/analytics/components/oee/OEEGaugeCard.tsx": "card.tsx",
+  "src/features/analytics/components/oee/OEEGaugeCard.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEEHeatmap.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEELossDrilldown.tsx": "CardContent",
   "src/features/analytics/components/oee/OEELossesChart.tsx": "recharts.ts",
   "src/features/analytics/components/oee/OEEMachineTable.tsx": "scroll-area.tsx",
-  "src/features/analytics/components/oee/OEEOverviewTab.tsx": "badge.tsx",
+  "src/features/analytics/components/oee/OEEOverviewTab.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEERankingGap.tsx": "analytics/index.ts",
-  "src/features/analytics/components/oee/OEERecommendations.tsx": "badge.tsx",
+  "src/features/analytics/components/oee/OEERecommendations.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEEShiftComparison.tsx": "recharts.ts",
   "src/features/analytics/components/oee/OEESimulatorPanel.tsx": "utils.ts",
-  "src/features/analytics/components/oee/OEEStudiosTab.tsx": "badge.tsx",
+  "src/features/analytics/components/oee/OEEStudiosTab.tsx": "utils.ts",
   "src/features/analytics/components/oee/OEETechniqueComparison.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/OEETrendChart.tsx": "analytics/index.ts",
   "src/features/analytics/components/oee/ParetoLossesChart.tsx": "recharts.ts",
@@ -2688,7 +2688,7 @@
   "src/features/analytics/hooks/useKPIs.ts": "KPIDashboard.tsx",
   "src/features/analytics/hooks/useLoadBalancing.ts": "EfficiencyDashboard.tsx",
   "src/features/analytics/hooks/useLoadBalancingWithActions.ts": "jobs/index.ts",
-  "src/features/analytics/hooks/useMLPredictions.ts": "useRealtimeChannel",
+  "src/features/analytics/hooks/useMLPredictions.ts": "NotificationIntegrator.tsx",
   "src/features/analytics/hooks/useOEE.test.ts": "production/index.ts",
   "src/features/analytics/hooks/useOEEDashboardFilters.ts": "analytics/index.ts",
   "src/features/analytics/hooks/useRealtimeConnection.test.ts": "App.tsx",
@@ -2762,7 +2762,7 @@
   "src/features/maintenance/components/ChecklistManager.tsx": "useTPM",
   "src/features/maintenance/components/CreateScheduleModal.tsx": "useTPM",
   "src/features/maintenance/components/ExecutionAdjustmentParameters.tsx": "ExecutionRecordView.tsx",
-  "src/features/maintenance/components/ExecutionDetailsModal.tsx": "dialog.tsx",
+  "src/features/maintenance/components/ExecutionDetailsModal.tsx": "ExecutionRecordView.tsx",
   "src/features/maintenance/components/ExecutionRecordView.tsx": "ExecutionRecordView.tsx",
   "src/features/maintenance/components/ExecutionSupplies.tsx": "ExecutionRecordView.tsx",
   "src/features/maintenance/components/MTBFMTTRWidget.tsx": "CardContent",
@@ -2803,29 +2803,29 @@
   "src/features/notifications/components/EfficiencyNotificationProvider.tsx": "EfficiencyDashboard.tsx",
   "src/features/notifications/components/InAppNotificationWatcher.tsx": "useAuth",
   "src/features/notifications/components/NotificationCard.tsx": "NotificationCard.tsx",
-  "src/features/notifications/components/NotificationIntegrator.tsx": "useRealtimeChannel",
+  "src/features/notifications/components/NotificationIntegrator.tsx": "NotificationIntegrator.tsx",
   "src/features/notifications/components/NotificationStatsCards.tsx": "CardContent",
   "src/features/notifications/components/NotificationsList.tsx": "CardContent",
   "src/features/notifications/components/PushNotificationManager.tsx": "utils.ts",
-  "src/features/notifications/components/PushNotificationPrompt.tsx": "useRealtimeChannel",
+  "src/features/notifications/components/PushNotificationPrompt.tsx": "NotificationIntegrator.tsx",
   "src/features/notifications/components/RealtimeNotificationsProvider.tsx": "useAuth",
   "src/features/notifications/components/SmartAlertsWatcher.tsx": "useAuth",
   "src/features/notifications/components/ToastWithUndo.tsx": "ToastWithUndo.tsx",
-  "src/features/notifications/hooks/useDailySummaryNotifications.ts": "useRealtimeChannel",
+  "src/features/notifications/hooks/useDailySummaryNotifications.ts": "NotificationIntegrator.tsx",
   "src/features/notifications/hooks/useEfficiencyNotifications.ts": "EfficiencyDashboard.tsx",
   "src/features/notifications/hooks/useGoalAlerts.ts": "GoalsHistoryCard.tsx",
-  "src/features/notifications/hooks/useMLPredictionNotifications.ts": "useRealtimeChannel",
+  "src/features/notifications/hooks/useMLPredictionNotifications.ts": "NotificationIntegrator.tsx",
   "src/features/notifications/hooks/useNotificationPreferences.ts": "useNotificationPreferences.ts",
   "src/features/notifications/hooks/useNotificationSettings.ts": "useAuth",
-  "src/features/notifications/hooks/useNotificationSounds.ts": "useRealtimeChannel",
-  "src/features/notifications/hooks/useNotifications.test.ts": "realtimeChannel.ts",
+  "src/features/notifications/hooks/useNotificationSounds.ts": "NotificationIntegrator.tsx",
+  "src/features/notifications/hooks/useNotifications.test.ts": "useRealtimeChannel",
   "src/features/notifications/hooks/useNotifications.ts": "useAuth",
-  "src/features/notifications/hooks/usePushNotifications.ts": "useRealtimeChannel",
+  "src/features/notifications/hooks/usePushNotifications.ts": "NotificationIntegrator.tsx",
   "src/features/notifications/hooks/usePushSubscription.ts": "useAuth",
-  "src/features/notifications/hooks/useTPMNotifications.ts": "useRealtimeChannel",
+  "src/features/notifications/hooks/useTPMNotifications.ts": "NotificationIntegrator.tsx",
   "src/features/notifications/hooks/useWebPushNotifications.ts": "useAuth",
   "src/features/notifications/index.ts": "useAuth",
-  "src/features/notifications/types/index.ts": "realtimeChannel.ts",
+  "src/features/notifications/types/index.ts": "useRealtimeChannel",
   "src/features/packaging/components/BulkReassignDialog.tsx": "dialog.tsx",
   "src/features/packaging/components/DefectTriageForm.tsx": "PackagingTaskDetail.tsx",
   "src/features/packaging/components/DelayReasonDialog.tsx": "input.tsx",
@@ -2875,7 +2875,7 @@
   "src/features/production/hooks/useOperatorEvolution.ts": "production/index.ts",
   "src/features/production/hooks/useOperatorGoals.ts": "GoalsHistoryCard.tsx",
   "src/features/production/hooks/useOperatorMachines.ts": "client.ts",
-  "src/features/production/hooks/useOperatorPresence.ts": "realtimeChannel.ts",
+  "src/features/production/hooks/useOperatorPresence.ts": "useRealtimeChannel",
   "src/features/production/hooks/useOperatorProductivity.test.ts": "GoalsHistoryCard.tsx",
   "src/features/production/hooks/useOperatorProductivity.ts": "GoalsHistoryCard.tsx",
   "src/features/production/hooks/useOperatorRankings.ts": "client.ts",
@@ -2992,7 +2992,7 @@
   "src/lib/productivityReport.ts": "GoalsHistoryCard.tsx",
   "src/lib/queryConfig.ts": "errorHandling.ts",
   "src/lib/rateLimiter.ts": "RateLimiter",
-  "src/lib/realtimeChannel.ts": "realtimeChannel.ts",
+  "src/lib/realtimeChannel.ts": "useRealtimeChannel",
   "src/lib/recharts.ts": "recharts.ts",
   "src/lib/reportBuilder.ts": "ReportBuilderPage.tsx",
   "src/lib/retryWithBackoff.ts": "retryWithBackoff.ts",
@@ -3041,7 +3041,7 @@
   "src/pages/KioskPage.tsx": "useAuth",
   "src/pages/Leve": "gerar.unit.mjs",
   "src/pages/LogisticsPage.tsx": "TPMDashboard.tsx",
-  "src/pages/MLPredictionsDashboard.tsx": "useRealtimeChannel",
+  "src/pages/MLPredictionsDashboard.tsx": "NotificationIntegrator.tsx",
   "src/pages/MachineComparisonPage.tsx": "useAuth",
   "src/pages/MachinesPage.tsx": "useAuth",
   "src/pages/MasterAPIPage.tsx": "cn",
