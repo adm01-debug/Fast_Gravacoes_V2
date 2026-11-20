@@ -38980,6 +38980,30 @@
         "with_check": "(app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role))"
       },
       {
+        "cmd": "DELETE",
+        "name": "Active roles can delete own inventory movements",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "inventory_movements",
+        "using": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "Active roles can insert inventory movements",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "inventory_movements",
+        "using": null,
+        "with_check": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))"
+      },
+      {
         "cmd": "SELECT",
         "name": "Active roles can view inventory movements",
         "permissive": "PERMISSIVE",

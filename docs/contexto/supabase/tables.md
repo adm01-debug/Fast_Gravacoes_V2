@@ -38,7 +38,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.geo_blocking_rules](tables/public/geo_blocking_rules.md) | table | sim | 3 | 9 | não |  |
 | [public.geo_blocking_settings](tables/public/geo_blocking_settings.md) | table | sim | 3 | 7 | não |  |
 | [public.inventory_items](tables/public/inventory_items.md) | table | sim | 2 | 13 | não |  |
-| [public.inventory_movements](tables/public/inventory_movements.md) | table | sim | 1 | 10 | não |  |
+| [public.inventory_movements](tables/public/inventory_movements.md) | table | sim | 3 | 10 | não |  |
 | [public.ip_allowlist](tables/public/ip_allowlist.md) | table | sim | 2 | 9 | não |  |
 | [public.job_status_audit](tables/public/job_status_audit.md) | table | sim | 2 | 10 | não |  |
 | [public.job_status_history](tables/public/job_status_history.md) | table | sim | 1 | 6 | não |  |

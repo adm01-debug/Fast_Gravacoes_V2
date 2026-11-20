@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 1 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -49,6 +49,26 @@
 
 
 ## Policies (RLS)
+
+### `Active roles can delete own inventory movements`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))` |
+| WITH CHECK |  |
+
+### `Active roles can insert inventory movements`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))` |
 
 ### `Active roles can view inventory movements`
 

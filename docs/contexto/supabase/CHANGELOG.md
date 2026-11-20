@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 18:38 UTC
+
+- **policies (RLS)** adicionado (2): `public.inventory_movements.Active roles can delete own inventory movements`, `public.inventory_movements.Active roles can insert inventory movements`
+
 ## 2026-11-20 18:16 UTC
 
 - **functions** adicionado (1): `public.get_public_tracking(p_job_id uuid, p_order_number text)`
