@@ -5491,7 +5491,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 6351,
+   "linhas": 6355,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5840,7 +5840,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 2,
-   "linhas": 16546,
+   "linhas": 16527,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6307,6 +6307,7 @@
     "check_and_notify_kpi_alert",
     "complete_maintenance_record",
     "get_packaging_leaderboard",
+    "get_public_tracking",
     "increment_job_lost_pieces",
     "verify_audit_chain"
    ],
@@ -6357,7 +6358,9 @@
      "report_templates",
      "telemetry_traces"
     ],
-    "rpcs": []
+    "rpcs": [
+     "get_public_tracking"
+    ]
    },
    "importado_por_outros_modulos": [
     "hooks",

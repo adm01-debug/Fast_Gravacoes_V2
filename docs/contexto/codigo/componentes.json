@@ -9284,7 +9284,7 @@
     "LogisticsPage"
    ],
    "export_default": "LogisticsPage",
-   "linhas": 432,
+   "linhas": 435,
    "dominio": "pages",
    "hooks_locais": [
     "useLogistics"
@@ -9620,12 +9620,10 @@
     "PublicTrackingPage"
    ],
    "export_default": "PublicTrackingPage",
-   "linhas": 333,
+   "linhas": 311,
    "dominio": "pages",
    "hooks_locais": [],
-   "tabelas": [
-    "jobs"
-   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false

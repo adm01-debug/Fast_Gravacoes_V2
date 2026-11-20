@@ -9468,20 +9468,20 @@
    "hooks_locais": [
     "useRipple"
    ],
-   "tabelas": [
-    "jobs"
+   "tabelas": [],
+   "rpcs": [
+    "get_public_tracking"
    ],
-   "rpcs": [],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
    "arquivos_puxados": 12,
    "diretos": {
-    "tabelas": [
-     "jobs"
+    "tabelas": [],
+    "rpcs": [
+     "get_public_tracking"
     ],
-    "rpcs": [],
     "edges": []
    }
   }

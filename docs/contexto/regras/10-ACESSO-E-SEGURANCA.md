@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `53cf28e4d8` · branch `main` · 2026-11-20 19:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `65e7fc5811` · branch `main` · 2026-11-20 20:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-20T18:38:18Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-20T19:37:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-20T18:38:18Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-20T19:37:41Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -291,6 +291,7 @@
 - `on_packaging_defect_create_rework_job`
 - `on_packaging_ready_create_shipment`
 - `purge_old_logs`
+- `rollback_inventory_stock`
 - `rollup_cron_p95_daily`
 - `snapshot_cron_health`
 - `trigger_auto_promotion`
@@ -320,6 +321,7 @@ Middleware matcher (Next.js): nenhum
 
 | Ação | Para/De | Privilégios | Objetos |
 |---|---|---|---|
+| grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
 | grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record` |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
@@ -339,7 +341,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | anon | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `get_system_status_summary`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair`, `get_packaging_manifest`, `get_packaging_leaderboard`, `get_system_status_summary`, `get_cron_health`, `auto_reassign_stale_packaging_tasks` |
 | revoke | anon, authenticated, public | execute | `get_user_role`, `increment_sheet_view_count` |
 | revoke | authenticated | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair` |
-| revoke | public | all | `get_cron_health` |
+| revoke | public | all | `get_cron_health`, `get_public_tracking`, `get_public_tracking` |
 | revoke | public | execute | `validate_stock_before_movement`, `log_job_status_change`, `check_and_notify_kpi_alert`, `audit_machine_changes`, `audit_job_changes`, `rollback_inventory_stock`, `audit_log_immutable`, `log_security_violation`, `compute_audit_hash`, `process_audit_log_hashing`, `calculate_audit_hash` |
 | revoke | public, anon | all | `app_private.has_role`, `app_private.has_role` |
 | revoke | public, anon, authenticated | execute | `has_role`, `archive_finished_jobs` |

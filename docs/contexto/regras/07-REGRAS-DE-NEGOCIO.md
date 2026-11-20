@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `53cf28e4d8` · branch `main` · 2026-11-20 19:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `65e7fc5811` · branch `main` · 2026-11-20 20:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-20T18:38:18Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-20T19:37:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-20T18:38:18Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-20T19:37:41Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -427,7 +427,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-20T18:38:18Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-20T19:37:41Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1470,7 +1470,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-20T18:38:18Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-20T19:37:41Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1593,7 +1593,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-20T18:38:18Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-20T19:37:41Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3568,7 +3568,6 @@ _nenhum item encontrado_
 | errors must not throw into the caller; the caller already has the data in | `src/lib/offline/offlineQueue.ts` |
 | items antigo SEM modal — voltar até ela não pode restaurar a | `src/pages/InventoryPage.tsx` |
 | ').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; }, | `src/pages/NotificationsPage.tsx` |
-| `j` original não pode seqüestrar a consulta digitada. | `src/pages/PublicTrackingPage.tsx` |
 | papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring. | `src/pages/SystemStatusPage.tsx` |
 | Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou). | `supabase/seed-users.mjs` |
 | const forbidden = requireRole(auth.ctx, ['admin']); if (forbidden) return forbidden; | `supabase/functions/_shared/auth.ts` |

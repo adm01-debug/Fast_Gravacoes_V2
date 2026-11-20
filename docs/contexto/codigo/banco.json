@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 247,
+ "migrations": 249,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -66,6 +66,7 @@
   "get_cron_health",
   "get_packaging_leaderboard",
   "get_packaging_manifest",
+  "get_public_tracking",
   "get_system_status_summary",
   "get_user_role",
   "handle_maintenance_correction_notification",
@@ -5331,7 +5332,7 @@
      "rework_reason"
     ]
    },
-   "usada_no_front": 31,
+   "usada_no_front": 30,
    "usada_em_edges": [
     "auto-promote-jobs",
     "bitrix24-sync",
@@ -17716,6 +17717,11 @@
   },
   {
    "nome": "get_packaging_leaderboard",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "get_public_tracking",
    "definida": true,
    "usada_em": 1
   },
