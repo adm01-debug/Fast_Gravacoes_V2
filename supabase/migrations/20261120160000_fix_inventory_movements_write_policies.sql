@@ -35,3 +35,25 @@ CREATE POLICY "Active roles can delete own inventory movements"
     public.has_any_active_role()
     AND user_id = (select auth.uid())
   );
+-- Alinha permissoes do rollback de estoque: o trigger roda como INVOKER e,
+-- para um usuario com apenas role 'operator' (que pode DELETAR a movimentacao),
+-- o UPDATE em inventory_items e barrado por RLS (policy "Inventory items managed
+-- by managers/coordinators") -> o DELETE remove o historico sem restaurar o saldo.
+-- update_inventory_stock (INSERT) ja e SECURITY DEFINER; rollback passa a ser igual.
+CREATE OR REPLACE FUNCTION public.rollback_inventory_stock()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (OLD.type = 'IN') THEN
+        UPDATE public.inventory_items
+        SET current_stock = current_stock - OLD.quantity,
+            updated_at = now()
+        WHERE id = OLD.item_id;
+    ELSIF (OLD.type = 'OUT') THEN
+        UPDATE public.inventory_items
+        SET current_stock = current_stock + OLD.quantity,
+            updated_at = now()
+        WHERE id = OLD.item_id;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
