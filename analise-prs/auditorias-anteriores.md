@@ -186,7 +186,7 @@
 **Status atual (pós-PRs #112–#116):**
 - `/code-quality` hardcoded → CONFIRMADO E PENDENTE (D14 não lista como corrigido)
 - QR Code incompatível → PARCIALMENTE CORRIGIDO: PR #114 corrigiu o par gerador↔leitor (D14 seção C lista como corrigido em #114)
-- `/master-api` chave hardcoded → CONFIRMADO E PENDENTE (D14 seção D: código morto + dados fabricados)
+- `/master-api` chave hardcoded → RESOLVIDO (D10/D14: código morto; sem chave real — #226; placeholder mascarado `sk_live_fast_XXXX`)
 - TPM notificações simuladas → CONFIRMADO E PENDENTE (D14 seção C)
 - `FeatureFlagsContext` morto → CONFIRMADO E PENDENTE (D14 seção D: código morto)
 - Tabelas fantasma `archived_jobs`/`backups`/`backup_logs`/`system_metrics` → PARCIALMENTE CORRIGIDO: PR #115 criou as tabelas internas ausentes; verificação do schema real pendente
@@ -370,7 +370,7 @@
 | `BIAIInsights` — "Simulador Preditivo Deep Learning" (setTimeout + "+28%") | D14 D | CORRIGIDO E VERIFICADO: PR #116 relabels honestos + custo médio real de useABCCosts |
 | `SPCDashboard` — "plano IA" com lote aleatório | D14 D | CORRIGIDO E VERIFICADO: PR #116 usa Cp/Cpk/violações reais |
 | `AutonomousEventLog` — feed "LIVE" de mensagens enlatadas | D14 D | PARCIALMENTE CORRIGIDO: PR #116 adicionou `DemoDataBadge` |
-| `MasterAPIPage` (234 linhas) sem Supabase + chave hardcoded | D10, D14 D | CONFIRMADO E PENDENTE |
+| `MasterAPIPage` (234 linhas) sem Supabase + chave hardcoded | D10, D14 D | RESOLVIDO (#226: sem chave real; placeholder mascarado) |
 | `FuturisticBI`, `VirtualSensorPanel`, `BlockchainIntegrityCard`, etc. (~30 painéis) | D14 D | CONFIRMADO E PENDENTE |
 | Código morto: `NotificationCenter`, `FeedbackProvider`, `WebSocketContext`, `SearchContext`, `ThemeContext`, etc. (~50 itens) | D14 D | CONFIRMADO E PENDENTE |
 | Autociclos de barrels (25 arquivos importavam o próprio barrel) | D14 D | CORRIGIDO E VERIFICADO: PR #116 reescreveu para paths profundos |
