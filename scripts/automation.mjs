@@ -721,7 +721,7 @@ async function runTests(ctx) {
     .split(/\r?\n/))
     delete env[key];
   return execute(
-    [process.execPath, '--test', '--test-concurrency=1', ...files],
+    [process.execPath, '--test', '--test-concurrency=1', '--test-force-exit', ...files],
     { cwd: ctx.root, timeout: ctx.c.timeoutMs || 300000, env }
   );
 }
