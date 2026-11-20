@@ -258,12 +258,13 @@
    "nome": "check-login-lockout",
    "entrada": "supabase/functions/check-login-lockout/index.ts",
    "arquivos": 1,
-   "linhas": 350,
+   "linhas": 385,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
+    "blocked_ips",
     "login_lockouts",
     "security_events"
    ],

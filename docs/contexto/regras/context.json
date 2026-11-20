@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "65e7fc5811e910ae901b1013e9d958edbcd35378",
+  "sha": "46e2219873d7f4e687f33120579e2664f616b4bb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 20:11 UTC",
+  "generated_at": "2026-11-20 20:48 UTC",
   "files_total": 1567,
   "code_files": 1379,
-  "code_lines": 203513
+  "code_lines": 203564
  },
  "version": "1.3.2",
- "facts_hash": "d3326745505f4f37",
+ "facts_hash": "071ca3ea30bf9301",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24529,6 +24529,7 @@
     ],
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
+     "blocked_ips",
      "login_lockouts",
      "rate_limit_logs",
      "security_events"
@@ -27705,7 +27706,7 @@
   {
    "module": "src/features/auth",
    "files": 14,
-   "lines": 1709,
+   "lines": 1721,
    "tables": [
     "profiles",
     "role_permissions",
@@ -28747,7 +28748,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16805,
+   "lines": 16809,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29107,7 +29108,7 @@
   {
    "module": "supabase/functions",
    "files": 55,
-   "lines": 11183,
+   "lines": 11218,
    "tables": [
     "backup_logs",
     "backups",
@@ -29485,6 +29486,7 @@
    "blocked_ips": {
     "select": [
      "src/features/admin/hooks/useRateLimitLogs.ts",
+     "supabase/functions/check-login-lockout/index.ts",
      "supabase/functions/rate-limit-check/index.ts"
     ],
     "insert": [
@@ -30981,6 +30983,7 @@
     "id",
     "ip_address",
     "is_permanent",
+    "reason",
     "unblocked_at"
    ],
    "business_config": [
@@ -34873,6 +34876,10 @@
    },
    {
     "file": "src/pages/AuthPage.tsx",
+    "msg": "Acesso Bloqueado"
+   },
+   {
+    "file": "src/pages/AuthPage.tsx",
     "msg": "Conta Bloqueada"
    },
    {
@@ -36314,6 +36321,14 @@
    {
     "file": "supabase/functions/calculate-rankings/index.ts",
     "text": "so an unconfigured deployment must never run it unauthenticated."
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "chega a tentar login nem consome o bucket de rate limit. Checa antes do"
    },
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
@@ -60446,6 +60461,10 @@
     "limit": "1"
    },
    {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "limit": "1"
+   },
+   {
     "file": "supabase/functions/cron-alert-email/index.ts",
     "limit": "1000"
    },
@@ -79182,7 +79201,7 @@
   },
   "src/features/auth/components/AuthProvider.tsx": {
    "path": "src/features/auth/components/AuthProvider.tsx",
-   "lines": 367,
+   "lines": 377,
    "exports": [
     "function AuthProvider"
    ],
@@ -79470,7 +79489,7 @@
   },
   "src/features/auth/services/authService.ts": {
    "path": "src/features/auth/services/authService.ts",
-   "lines": 81,
+   "lines": 83,
    "exports": [
     "interface LockoutStatus",
     "const AuthService"
@@ -88164,7 +88183,7 @@
   },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 275,
+   "lines": 279,
    "exports": [
     "function AuthPage"
    ],
@@ -88178,6 +88197,7 @@
     "/"
    ],
    "errors": [
+    "Acesso Bloqueado",
     "Conta Bloqueada",
     "Erro ao conectar com Google",
     "Erro ao enviar solicitação. Tente novamente.",
@@ -91833,8 +91853,12 @@
   },
   "supabase/functions/check-login-lockout/index.ts": {
    "path": "supabase/functions/check-login-lockout/index.ts",
-   "lines": 350,
+   "lines": 385,
    "tables": [
+    {
+     "table": "blocked_ips",
+     "op": "select"
+    },
     {
      "table": "login_lockouts",
      "op": "select"
@@ -91865,6 +91889,14 @@
     }
    ],
    "table_cols": {
+    "blocked_ips": [
+     "expires_at",
+     "id",
+     "ip_address",
+     "is_permanent",
+     "reason",
+     "unblocked_at"
+    ],
     "login_lockouts": [
      "identifier",
      "identifier_type"
@@ -91886,6 +91918,8 @@
     }
    ],
    "rule_comments": [
+    "Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca",
+    "chega a tentar login nem consome o bucket de rate limit. Checa antes do",
     "record_success must prove the caller actually holds a session for this"
    ],
    "calc_fns": [
@@ -91894,6 +91928,9 @@
      "params": "lockoutCount: number",
      "body": "const minutes = BASE_LOCKOUT_MINUTES * Math.pow(2, lockoutCount); return Math.min(minutes, 24 * 60);"
     }
+   ],
+   "pagination": [
+    "1"
    ],
    "uses_service_role": true
   },
@@ -94989,10 +95026,22 @@
   }
  },
  "git": {
-  "sha": "65e7fc5811e910ae901b1013e9d958edbcd35378",
+  "sha": "46e2219873d7f4e687f33120579e2664f616b4bb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "46e2219",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: blocked_ips agora bloqueia o login (F-004) (#236)",
+    "files": [
+     "src/features/auth/components/AuthProvider.tsx",
+     "src/features/auth/services/authService.ts",
+     "src/pages/AuthPage.tsx",
+     "supabase/functions/check-login-lockout/index.ts"
+    ]
+   },
    {
     "sha": "65e7fc5",
     "date": "2026-11-20",
@@ -95340,32 +95389,20 @@
      "package.json",
      "scripts/audit-gate.mjs"
     ]
-   },
-   {
-    "sha": "6714971",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)",
-    "files": [
-     "bundle-budget.json",
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "deno.lock",
-    6
+    5
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    6
+    5
    ],
    [
     "src/pages/PublicTrackingPage.tsx",
@@ -95412,27 +95449,27 @@
     2
    ],
    [
+    "src/features/auth/components/AuthProvider.tsx",
+    1
+   ],
+   [
+    "src/features/auth/services/authService.ts",
+    1
+   ],
+   [
+    "src/pages/AuthPage.tsx",
+    1
+   ],
+   [
+    "supabase/functions/check-login-lockout/index.ts",
+    1
+   ],
+   [
     "docs/pendencias/F-001-tracking-p-blico-track-sem-acesso.md",
     1
    ],
    [
     "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
-    1
-   ],
-   [
-    "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md",
-    1
-   ],
-   [
-    "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
-    1
-   ],
-   [
-    "docs/pendencias/F-006-geo-blocking-sem-enforcement.md",
-    1
-   ],
-   [
-    "docs/pendencias/F-007-permissionmanager-in-cuo.md",
     1
    ]
   ]

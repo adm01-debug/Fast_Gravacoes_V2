@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `65e7fc5811e910ae901b1013e9d958edbcd35378` (2026-11-20T17:09:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `46e2219873d7f4e687f33120579e2664f616b4bb` (2026-11-20T17:47:56-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1569 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 188137 |
+| linhas_codigo | 188188 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -180,7 +180,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `bitrix24-sync` (verify_jwt=false) — tabelas: bitrix24_field_mappings, bitrix24_oauth_states, bitrix24_oauth_tokens, bitrix24_sync_history, jobs, user_roles; chamada por 5 arquivo(s) do front
 - `calculate-inventory-intelligence` — tabelas: inventory_items, inventory_movements, user_roles; chamada por 1 arquivo(s) do front
 - `calculate-rankings` — tabelas: jobs, operator_achievements, operator_machines, operator_rankings, user_roles; chamada por 1 arquivo(s) do front
-- `check-login-lockout` — tabelas: login_lockouts, security_events; chamada por 1 arquivo(s) do front
+- `check-login-lockout` — tabelas: blocked_ips, login_lockouts, security_events; chamada por 1 arquivo(s) do front
 - `cleanup-security-logs` — tabelas: blocked_ips, login_audit, rate_limit_logs, security_events; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `create-operator` — tabelas: profiles; chamada por 1 arquivo(s) do front
 - `cron-alert-email` — tabelas: cron_health_history, push_notifications, user_notification_settings, user_roles; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7474 nós · 21947 arestas · 653 comunidades · grafo do commit `65e7fc58`
-- comunidades maiores: card.tsx (162), analytics/index.ts (144), Button (137), skeleton.tsx (134), cn (126), badge.tsx (126), FuturisticBI.tsx (121), snapshot.py (111), scroll-area.tsx (102), client.ts (99), gerar.mjs (96), GraphifyIntegrationTests (96)
+- 7474 nós · 21947 arestas · 655 comunidades · grafo do commit `46e22198`
+- comunidades maiores: card.tsx (162), skeleton.tsx (138), Button (137), analytics/index.ts (133), cn (126), FuturisticBI.tsx (121), badge.tsx (120), snapshot.py (111), client.ts (99), gerar.mjs (96), GraphifyIntegrationTests (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-20 `46e2219` fix: blocked_ips agora bloqueia o login (F-004) (#236)
 - 2026-11-20 `65e7fc5` fix: tracking público /track volta a funcionar (RPC SECURITY DEFINER) (#234)
 - 2026-11-20 `53cf28e` fix(inventory): policies INSERT e DELETE para inventory_movements (#235)
 - 2026-11-20 `d7111c9` fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `ce97162` fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)
 - 2026-11-19 `248505f` chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)
 - 2026-11-19 `9814660` fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)
-- 2026-11-19 `868b583` chore: preserva lint aplicado pelo agente em 20 componentes (trailing whitespace e alinhamento) (#220)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

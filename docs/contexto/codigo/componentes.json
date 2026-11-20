@@ -7854,7 +7854,7 @@
     "AuthProvider"
    ],
    "export_default": null,
-   "linhas": 367,
+   "linhas": 377,
    "dominio": "features/auth",
    "hooks_locais": [
     "useDeviceDetection"
@@ -8958,7 +8958,7 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 275,
+   "linhas": 279,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"

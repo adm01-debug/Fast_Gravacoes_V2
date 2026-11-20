@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "65e7fc5811e910ae901b1013e9d958edbcd35378",
+  "commit": "46e2219873d7f4e687f33120579e2664f616b4bb",
   "branch": "main",
-  "data_commit": "2026-11-20T17:09:39-03:00",
+  "data_commit": "2026-11-20T17:47:56-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "46e2219",
+    "data": "2026-11-20",
+    "assunto": "fix: blocked_ips agora bloqueia o login (F-004) (#236)"
+   },
    {
     "sha": "65e7fc5",
     "data": "2026-11-20",
@@ -126,15 +131,10 @@
     "sha": "596579f",
     "data": "2026-11-18",
     "assunto": "chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)"
-   },
-   {
-    "sha": "ed61697",
-    "data": "2026-11-18",
-    "assunto": "fix: fila offline presa apos reload (race de mount no useOfflineSync) (#214)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 131,
+  "arquivos_mudados_7d": 134,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -291,18 +291,18 @@
     "mudancas": 5
    },
    {
-    "arquivo": "tests/e2e/visual-regression.spec.ts",
+    "arquivo": "supabase/functions/check-login-lockout/index.ts",
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/visual-baselines.yml",
-    "mudancas": 4
+    "arquivo": "tests/e2e/visual-regression.spec.ts",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 95
+    "commits": 96
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1569,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 188137,
+  "linhas_codigo": 188188,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 328,
-   "linhas": 45448
+   "linhas": 45460
   },
   "src/hooks": {
    "arquivos": 61,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 16805
+   "linhas": 16809
   },
   "src/providers": {
    "arquivos": 2,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 55,
-   "linhas": 11183
+   "linhas": 11218
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -668,7 +668,7 @@
  ],
  "qualidade": {
   "any": 116,
-  "console_log": 178,
+  "console_log": 179,
   "ts_ignore": 3,
   "eslint_disable": 2,
   "todos": 10,

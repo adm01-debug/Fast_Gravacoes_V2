@@ -3888,7 +3888,7 @@
    "modulo": "features/auth",
    "arquivos": 11,
    "testes": 3,
-   "linhas": 1467,
+   "linhas": 1479,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5840,7 +5840,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 2,
-   "linhas": 16527,
+   "linhas": 16531,
    "itens_menu": [
     "Agenda",
     "Alertas",
