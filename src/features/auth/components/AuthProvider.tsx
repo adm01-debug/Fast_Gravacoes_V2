@@ -256,6 +256,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     const lockoutStatus = await AuthService.checkLockout(email);
 
+        if (lockoutStatus.blocked_by_ip) {
+          return {
+            error: new LockoutError(
+              'Acesso bloqueado a partir desta rede/IP',
+              { remainingMinutes: 0 }
+            )
+          };
+        }
+
     if (lockoutStatus.locked) {
       const lockoutError = new LockoutError(
         lockoutStatus.message || 'Conta temporariamente bloqueada',
