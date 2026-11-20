@@ -286,7 +286,7 @@
         "is_default": true,
         "name": "main",
         "persistent": false,
-        "status": "FUNCTIONS_DEPLOYED"
+        "status": "MIGRATIONS_FAILED"
       }
     ],
     "custom_hostname": null,
@@ -26242,9 +26242,13 @@
             {
               "file": "supabase/migrations/20260924174928_fix_packaging_waste_insert_check.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 15,
+          "code_total_files": 16,
           "cron": [],
           "db": [
             "public.get_system_status_summary"
@@ -27317,7 +27321,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "aabf2a5848e1ce65",
+        "definition_sha": "8c6ff9c9ac936f64",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -27328,7 +27332,7 @@
         "owner": "postgres",
         "returns": "trigger",
         "schema": "public",
-        "security_definer": false,
+        "security_definer": true,
         "strict": false,
         "volatility": "volatile"
       },
@@ -27584,9 +27588,13 @@
             {
               "file": "supabase/migrations/20260522195522_6c50b805-300f-485b-ad16-db2df4128e8f.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [

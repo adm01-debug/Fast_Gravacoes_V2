@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 19:12 UTC
+
+- **functions** alterado (1): `public.rollback_inventory_stock()`
+
 ## 2026-11-20 18:38 UTC
 
 - **policies (RLS)** adicionado (2): `public.inventory_movements.Active roles can delete own inventory movements`, `public.inventory_movements.Active roles can insert inventory movements`
