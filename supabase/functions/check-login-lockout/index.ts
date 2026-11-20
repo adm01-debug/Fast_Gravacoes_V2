@@ -51,6 +51,40 @@ serve(async (req) => {
     // to evade IP-based lockout, or frame another IP as the failing source.
     const ip_address = getClientIp(req);
 
+    // Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca
+    // chega a tentar login nem consome o bucket de rate limit. Checa antes do
+    // checkRateLimit para um bloqueio permanente nao ser mascarado por um 429.
+    if (ip_address) {
+      const { data: blockedIP, error: blockedError } = await supabase
+        .from('blocked_ips')
+        .select('id, expires_at, is_permanent, reason')
+        .eq('ip_address', ip_address)
+        .is('unblocked_at', null)
+        .order('is_permanent', { ascending: false })
+        .order('expires_at', { ascending: false, nullsFirst: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (blockedError) {
+        console.error('Error fetching blocked IP:', blockedError);
+      } else if (blockedIP) {
+        const ipIsBlocked = blockedIP.is_permanent
+          || (blockedIP.expires_at && new Date(blockedIP.expires_at) > new Date());
+        if (ipIsBlocked) {
+          console.log(`IP ${ip_address} blocked (${blockedIP.reason || 'sem motivo'})`);
+          // Resposta dedicada: AuthService/AuthProvider distinguem este estado
+          // do lockout por tentativas (mensagem propria na UI).
+          return new Response(
+            JSON.stringify({
+              blocked_by_ip: true,
+              block_reason: blockedIP.reason || null,
+            }),
+            { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
+
     // Endpoint com verify_jwt = true no gateway (config.toml) — o JWT do
     // gateway já barra chamadas sem credencial; este bucket limita
     // enumeração de e-mails e flood de tentativas a partir do mesmo IP.
@@ -130,37 +164,6 @@ serve(async (req) => {
     // to unauthenticated callers — that would allow user enumeration (attacker
     // can probe any email and learn its failed-attempt count).
     if (action === 'check') {
-          // Hard block: IP listado em blocked_ips (configurado no painel admin e
-          // pela automação de rate limit) nunca chega a tentar o login. Replica o
-          // critério de rate-limit-check: bloco permanente ou não expirado.
-          if (ip_address) {
-            const { data: blockedIP, error: blockedError } = await supabase
-              .from('blocked_ips')
-              .select('id, expires_at, is_permanent, reason')
-              .eq('ip_address', ip_address)
-              .is('unblocked_at', null)
-              .order('is_permanent', { ascending: false })
-              .order('expires_at', { ascending: false, nullsFirst: false })
-              .limit(1)
-              .maybeSingle();
-
-            if (blockedError) {
-              console.error('Error fetching blocked IP:', blockedError);
-            } else if (blockedIP) {
-              const ipIsBlocked = blockedIP.is_permanent
-                || (blockedIP.expires_at && new Date(blockedIP.expires_at) > now);
-              if (ipIsBlocked) {
-                console.log(`IP ${ip_address} blocked (${blockedIP.reason || 'sem motivo'})`);
-                return new Response(
-                  JSON.stringify({
-                    blocked_by_ip: true,
-                    block_reason: blockedIP.reason || null,
-                  }),
-                  { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
-                );
-              }
-            }
-          }
 
       // Check email lockout
       if (emailLockout?.locked_until) {

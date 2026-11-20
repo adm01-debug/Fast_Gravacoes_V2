@@ -33,11 +33,13 @@ class LockoutError extends Error {
   isLockout = true as const;
   remainingMinutes?: number;
   lockoutMinutes?: number;
-  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number }) {
+  blockedByIp?: boolean;
+  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean }) {
     super(message);
     this.name = 'LockoutError';
     this.remainingMinutes = opts?.remainingMinutes;
     this.lockoutMinutes = opts?.lockoutMinutes;
+    this.blockedByIp = opts?.blockedByIp;
   }
 }
 
@@ -257,12 +259,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const lockoutStatus = await AuthService.checkLockout(email);
 
         if (lockoutStatus.blocked_by_ip) {
-          return {
-            error: new LockoutError(
-              'Acesso bloqueado a partir desta rede/IP',
-              { remainingMinutes: 0 }
-            )
-          };
+          const ipError = new LockoutError(
+            'Acesso bloqueado a partir desta rede/IP',
+            { remainingMinutes: 0, blockedByIp: true }
+          );
+          return { error: ipError };
         }
 
     if (lockoutStatus.locked) {
