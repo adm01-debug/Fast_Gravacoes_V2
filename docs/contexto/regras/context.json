@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "7c1df38c7273ec36cd8ae516dda025280489507f",
+  "sha": "a3d0c082c88e44bab100d15788d91cf6bd0e956f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 01:14 UTC",
+  "generated_at": "2026-11-20 01:41 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203371
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "7c1df38c7273ec36cd8ae516dda025280489507f",
+  "sha": "a3d0c082c88e44bab100d15788d91cf6bd0e956f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a3d0c08",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "docs: marca chave Stripe como resolvida no progresso da auditoria (#227)",
+    "files": [
+     "analise-prs/progresso.json"
+    ]
+   },
    {
     "sha": "7c1df38",
     "date": "2026-11-19",
@@ -95239,15 +95248,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "ab7d159",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "test: cobre inicializador que e chamada de funcao no autofix de nao usados (#194)",
-    "files": [
-     "scripts/autofix.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -95266,6 +95266,10 @@
    [
     "scripts/audit-gate.mjs",
     3
+   ],
+   [
+    "analise-prs/progresso.json",
+    2
    ],
    [
     "docs/prod-readiness.md",
@@ -95325,10 +95329,6 @@
    ],
    [
     "analise-prs/dossies/PR-120.md",
-    1
-   ],
-   [
-    "analise-prs/dossies/PR-121.md",
     1
    ]
   ]
