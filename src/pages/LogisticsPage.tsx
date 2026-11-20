@@ -74,11 +74,14 @@ export default function LogisticsPage() {
 
   // Single source for the tracking URL — URLSearchParams encodes order
   // numbers with reserved characters (e.g. "A&B") for both copy and open.
-  const buildTrackingLink = (orderNumber?: string | null) =>
-    `/track?${new URLSearchParams({ q: orderNumber ?? '' })}`;
+  const buildTrackingLink = (orderNumber?: string | null, jobId?: string | null) => {
+    const params: Record<string, string> = { q: orderNumber ?? '' };
+    if (jobId) params.j = jobId;
+    return `/track?${new URLSearchParams(params)}`;
+  };
 
-  const handleCopyLink = (orderNumber: string) => {
-    const link = `${window.location.origin}${buildTrackingLink(orderNumber)}`;
+  const handleCopyLink = (orderNumber: string, jobId?: string | null) => {
+    const link = `${window.location.origin}${buildTrackingLink(orderNumber, jobId)}`;
     navigator.clipboard.writeText(link);
     toast.success(t('logistics.copyLink') + '!');
   };
@@ -287,7 +290,7 @@ export default function LogisticsPage() {
                               variant="ghost"
                               size="icon"
                               className="group-hover:text-primary"
-                              onClick={() => window.open(buildTrackingLink(shipment.job?.order_number), '_blank')}
+                              onClick={() => window.open(buildTrackingLink(shipment.job?.order_number, shipment.job_id ?? shipment.job?.id), '_blank')}
                             >
                               <ExternalLink className="h-4 w-4" />
                             </Button>
@@ -301,7 +304,7 @@ export default function LogisticsPage() {
                                 <DropdownMenuItem onClick={() => setEditingShipment(shipment)}>
                                   Editar Envio
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number)}>
+                                <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number, shipment.job_id ?? shipment.job?.id)}>
                                   Copiar Link
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleStatusUpdate(shipment.id, 'delivered')}>

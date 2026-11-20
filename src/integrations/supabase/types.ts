@@ -6057,6 +6057,10 @@ export type Database = {
           total_jobs: number
         }[]
       }
+      get_public_tracking: {
+        Args: { p_job_id: string | null; p_order_number: string | null }
+        Returns: Json
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
