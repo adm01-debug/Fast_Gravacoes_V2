@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3d7a4974bf` · branch `main` · 2026-11-20 00:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7c1df38c72` · branch `main` · 2026-11-20 01:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-19T23:38:10Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-20T00:43:46Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 

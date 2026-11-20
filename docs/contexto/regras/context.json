@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
+  "sha": "7c1df38c7273ec36cd8ae516dda025280489507f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 00:42 UTC",
+  "generated_at": "2026-11-20 01:14 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203371
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
+  "sha": "7c1df38c7273ec36cd8ae516dda025280489507f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "7c1df38",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "3d7a497",
     "date": "2026-11-19",
@@ -95239,16 +95248,6 @@
     "files": [
      "scripts/autofix.test.mjs"
     ]
-   },
-   {
-    "sha": "32c02f0",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: restaura guardas de using e let/var no autofix de variaveis nao usadas (#188)",
-    "files": [
-     "scripts/autofix.test.mjs",
-     "scripts/autofix/unused.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -95267,6 +95266,10 @@
    [
     "scripts/audit-gate.mjs",
     3
+   ],
+   [
+    "docs/prod-readiness.md",
+    2
    ],
    [
     ".github/workflows/ci.yml",
@@ -95298,10 +95301,6 @@
    ],
    [
     "src/components/settings/TwoFactorSetup.tsx",
-    2
-   ],
-   [
-    "scripts/autofix.test.mjs",
     2
    ],
    [

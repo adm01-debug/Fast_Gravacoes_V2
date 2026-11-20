@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
+  "commit": "7c1df38c7273ec36cd8ae516dda025280489507f",
   "branch": "main",
-  "data_commit": "2026-11-19T21:08:31-03:00",
+  "data_commit": "2026-11-19T22:03:25-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "7c1df38",
+    "data": "2026-11-19",
+    "assunto": "docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)"
+   },
    {
     "sha": "3d7a497",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "599203e",
     "data": "2026-11-17",
     "assunto": "fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)"
-   },
-   {
-    "sha": "f07be16",
-    "data": "2026-11-17",
-    "assunto": "fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 86
+    "commits": 87
    },
    {
     "autor": "devin-ai-integration[bot]",
