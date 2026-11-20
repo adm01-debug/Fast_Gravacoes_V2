@@ -27,7 +27,6 @@ interface TrackingJob {
   id: string;
   order_number: string;
   status: string;
-  client: string | null;
   product: string | null;
   scheduled_date: string | null;
   production_photos?: string[] | null;
@@ -74,28 +73,32 @@ export default function PublicTrackingPage() {
 
       let data = null;
       let supabaseError = null;
+      let typed: TrackingJob[] = [];
 
       if (jobIdParam && UUID_RE.test(jobIdParam)) {
         ({ data, error: supabaseError } = await supabase
           .rpc('get_public_tracking', { p_job_id: jobIdParam, p_order_number: null }));
+        typed = (data ?? []) as unknown as TrackingJob[];
       }
 
-      if (!supabaseError && (!data || data.length === 0) && isUUID) {
+      if (!supabaseError && typed.length === 0 && isUUID) {
         ({ data, error: supabaseError } = await supabase
           .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: null }));
+        typed = (data ?? []) as unknown as TrackingJob[];
       }
 
-      if (!supabaseError && (!data || data.length === 0)) {
+      if (!supabaseError && typed.length === 0) {
         ({ data, error: supabaseError } = await supabase
           .rpc('get_public_tracking', { p_job_id: null, p_order_number: safeQuery }));
+        typed = (data ?? []) as unknown as TrackingJob[];
       }
 
       if (supabaseError) throw supabaseError;
 
-      if (!data || data.length === 0) {
+      if (typed.length === 0) {
         setError(t('tracking.orderNotFound'));
       } else {
-        setJob(data[0]);
+        setJob(typed[0]);
       }
     } catch {
       setError(t('tracking.errorFetching'));

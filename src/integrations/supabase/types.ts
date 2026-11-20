@@ -6059,22 +6059,7 @@ export type Database = {
       }
       get_public_tracking: {
         Args: { p_job_id: string | null; p_order_number: string | null }
-        Returns: {
-          id: string
-          order_number: string
-          status: string
-          client: string | null
-          product: string | null
-          scheduled_date: string | null
-          production_photos: string[] | null
-          shipment: {
-            tracking_code: string | null
-            status: string | null
-            estimated_delivery: string | null
-            actual_delivery: string | null
-            provider: { name: string | null } | null
-          } | null
-        }[]
+        Returns: Json
       }
       get_user_role: {
         Args: { _user_id: string }

@@ -28,3 +28,14 @@ RPC chamada com chave publishable (anon) retornou o job 64a0c94d-4c5f-47ed-ab94-
 - via p_job_id: uuid -> {id, client, status, product, order_number, shipment:null}
 - via p_order_number "ORD-1795195827942" -> mesmo job
 Build de produção OK, eslint OK, 123 testes de snapshot PASS.
+
+## Hardening R3.3 (2026-11-20, producao)
+Review de seguranca (Devin) apontou que o payload da RPC expunha client (nome
+do cliente) para chamada anonima, violando a regra R3.3 (anon nunca ve nome do
+cliente). Correcao aplicada:
+- Migration 20261120203000_public_tracking_remove_client.sql: CREATE OR REPLACE
+  da RPC removendo client do JSON (mantem apenas campos de rastreio).
+- Aplicada em producao via Management API e validada com chave publishable (anon):
+  payload retornado nao contem mais a chave client.
+- src/integrations/supabase/types.ts: Returns alinhado ao formato gerado (Json).
+- src/pages/PublicTrackingPage.tsx: interface TrackingJob sem client.
