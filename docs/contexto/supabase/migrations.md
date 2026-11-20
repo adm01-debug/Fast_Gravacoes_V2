@@ -250,3 +250,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261108000001 | [business_rules_ddl](migrations/20261108000001_business_rules_ddl.sql) | 25 |
 | 20261109000001 | [fix_r3_3_revoke_public](migrations/20261109000001_fix_r3_3_revoke_public.sql) | 3 |
 | 20261118100000 | [fix_check_job_overlap_update_sem_mudanca](migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql) | 3 |
+| 20261120173500 | [public_tracking_rpc](migrations/20261120173500_public_tracking_rpc.sql) | 4 |

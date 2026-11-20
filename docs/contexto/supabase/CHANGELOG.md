@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 18:16 UTC
+
+- **functions** adicionado (1): `public.get_public_tracking(p_job_id uuid, p_order_number text)`
+- **lints** adicionado (1): `rpc_anon_executable:public.get_public_tracking(p_job_id uuid, p_order_number text)`
+- **migrations** adicionado (1): `20261120173500_public_tracking_rpc`
+
 ## 2026-11-20 17:38 UTC
 
 - **edge functions** alterado (34): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `rate-limit-check`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`

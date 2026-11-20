@@ -25919,6 +25919,36 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_job_id uuid, p_order_number text",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Tracking p??blico m??nimo: id/status/produto/prazo/fotos/entrega. Nunca exp??e custo, notas, operador, t??cnica ou lotes.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "9d9d430ba99677ed",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "get_public_tracking",
+        "owner": "postgres",
+        "returns": "jsonb",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "",
         "callers": {
           "code": [],
@@ -36603,6 +36633,12 @@
       {
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
+        "object": "public.get_public_tracking(p_job_id uuid, p_order_number text)",
+        "severity": "INFO"
+      },
+      {
+        "code": "rpc_anon_executable",
+        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.get_user_role(_user_id uuid)",
         "severity": "INFO"
       },
@@ -38130,6 +38166,12 @@
         "statements": 3,
         "statements_sha": "9b242d9c4b311e6e",
         "version": "20261118100000"
+      },
+      {
+        "name": "public_tracking_rpc",
+        "statements": 4,
+        "statements_sha": "225672672cc55ba2",
+        "version": "20261120173500"
       }
     ],
     "policies": [
