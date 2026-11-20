@@ -7,6 +7,8 @@ export interface LockoutStatus {
   lockout_minutes?: number;
   message?: string;
   attempts_remaining?: number;
+  blocked_by_ip?: boolean;
+  block_reason?: string | null;
 }
 
 export const AuthService = {
