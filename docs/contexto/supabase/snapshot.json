@@ -25928,12 +25928,12 @@
           "triggers": [],
           "views": []
         },
-        "comment": "Tracking p??blico m??nimo: id/status/produto/prazo/fotos/entrega. Nunca exp??e custo, notas, operador, t??cnica ou lotes.",
+        "comment": "Tracking publico minimo: id/status/produto/prazo/fotos/entrega. Nunca expoe client, custo, notas, operador, tecnica ou lotes.",
         "config": [
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "9d9d430ba99677ed",
+        "definition_sha": "5449b011a7c96ac5",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,

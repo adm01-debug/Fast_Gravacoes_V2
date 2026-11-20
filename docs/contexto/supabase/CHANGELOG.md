@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 19:37 UTC
+
+- **functions** alterado (1): `public.get_public_tracking(p_job_id uuid, p_order_number text)`
+
 ## 2026-11-20 19:12 UTC
 
 - **functions** alterado (1): `public.rollback_inventory_stock()`

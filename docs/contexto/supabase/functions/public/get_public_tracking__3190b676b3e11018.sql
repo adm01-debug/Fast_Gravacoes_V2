@@ -10,7 +10,6 @@ AS $function$
         'id', j.id,
         'order_number', j.order_number,
         'status', j.status,
-        'client', j.client,
         'product', j.product,
         'scheduled_date', j.scheduled_date,
         'production_photos', j.production_photos,
