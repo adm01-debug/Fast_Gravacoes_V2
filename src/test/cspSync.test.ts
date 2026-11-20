@@ -22,15 +22,14 @@ function scriptSrc(csp: string): string[] {
   return directiveSources(csp, 'script-src');
 }
 
-function policiesFromVercelJson(): { enforce: string; reportOnly: string } {
+function policiesFromVercelJson(): { enforce: string } {
   const json = JSON.parse(readFileSync(path.join(root, 'vercel.json'), 'utf8')) as {
     headers: Array<{ headers: Array<{ key: string; value: string }> }>;
   };
   const all = json.headers.flatMap((h) => h.headers);
   const enforce = all.find((h) => h.key === 'Content-Security-Policy')?.value;
-  const reportOnly = all.find((h) => h.key === 'Content-Security-Policy-Report-Only')?.value;
-  if (!enforce || !reportOnly) throw new Error('politicas CSP ausentes no vercel.json');
-  return { enforce, reportOnly };
+  if (!enforce) throw new Error('politica CSP enforce ausente no vercel.json');
+  return { enforce };
 }
 
 function policyFromIndexHtml(): string {
@@ -41,17 +40,15 @@ function policyFromIndexHtml(): string {
 }
 
 describe('CSP', () => {
-  it('mantem o connect-src identico nas tres politicas', () => {
-    const { enforce, reportOnly } = policiesFromVercelJson();
+  it('mantem o connect-src identico entre vercel.json e index.html', () => {
+    const { enforce } = policiesFromVercelJson();
     const esperado = connectSrc(enforce);
-    expect(connectSrc(reportOnly)).toEqual(esperado);
     expect(connectSrc(policyFromIndexHtml())).toEqual(esperado);
   });
 
-  it('mantem o script-src identico nas tres politicas (regressao: report-only sem unsafe-eval gerava ruido de eval em toda carga)', () => {
-    const { enforce, reportOnly } = policiesFromVercelJson();
+  it('mantem o script-src identico entre vercel.json e index.html', () => {
+    const { enforce } = policiesFromVercelJson();
     const esperado = scriptSrc(enforce);
-    expect(scriptSrc(reportOnly)).toEqual(esperado);
     expect(scriptSrc(policyFromIndexHtml())).toEqual(esperado);
   });
 
@@ -62,8 +59,11 @@ describe('CSP', () => {
     );
   });
 
-  it('nao declara upgrade-insecure-requests na politica report-only, onde o browser a ignora', () => {
-    const { reportOnly } = policiesFromVercelJson();
-    expect(reportOnly).not.toContain('upgrade-insecure-requests');
+  it('nao declara o header report-only (telemetria estabilizada em 48h)', () => {
+    const json = JSON.parse(readFileSync(path.join(root, 'vercel.json'), 'utf8')) as {
+      headers: Array<{ headers: Array<{ key: string; value: string }> }>;
+    };
+    const all = json.headers.flatMap((h) => h.headers);
+    expect(all.some((h) => h.key === 'Content-Security-Policy-Report-Only')).toBe(false);
   });
 });
