@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a3d0c082c88e44bab100d15788d91cf6bd0e956f",
+  "sha": "7ddd094ef4b9c0fe421cc7e28167a91976154e7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 01:41 UTC",
+  "generated_at": "2026-11-20 11:19 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203371
  },
  "version": "1.3.2",
- "facts_hash": "426034a30e12beed",
+ "facts_hash": "3838485b95198eff",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -51889,11 +51889,11 @@
    },
    {
     "file": "src/test/cspSync.test.ts",
-    "name": "mantem o connect-src identico nas tres politicas"
+    "name": "mantem o connect-src identico entre vercel.json e index.html"
    },
    {
     "file": "src/test/cspSync.test.ts",
-    "name": "mantem o script-src identico nas tres politicas (regressao: report-only sem unsafe-eval gerava ruido de eval em toda carga)"
+    "name": "mantem o script-src identico entre vercel.json e index.html"
    },
    {
     "file": "src/test/cspSync.test.ts",
@@ -51901,7 +51901,7 @@
    },
    {
     "file": "src/test/cspSync.test.ts",
-    "name": "nao declara upgrade-insecure-requests na politica report-only, onde o browser a ignora"
+    "name": "nao declara o header report-only (telemetria estabilizada em 48h)"
    },
    {
     "file": "src/test/dateUtils.test.ts",
@@ -89778,17 +89778,17 @@
    "errors": [
     "${name} ausente na politica",
     "meta CSP ausente no index.html",
-    "politicas CSP ausentes no vercel.json"
+    "politica CSP enforce ausente no vercel.json"
    ],
    "rule_comments": [
     "(que refaz o pedido via fetch) era bloqueado. Este teste automatiza a regra."
    ],
    "tests": [
     "CSP",
-    "mantem o connect-src identico nas tres politicas",
-    "mantem o script-src identico nas tres politicas (regressao: report-only sem unsafe-eval gerava ruido de eval em toda carga)",
+    "mantem o connect-src identico entre vercel.json e index.html",
+    "mantem o script-src identico entre vercel.json e index.html",
     "libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch)",
-    "nao declara upgrade-insecure-requests na politica report-only, onde o browser a ignora"
+    "nao declara o header report-only (telemetria estabilizada em 48h)"
    ]
   },
   "src/test/dateUtils.test.ts": {
@@ -94888,10 +94888,20 @@
   }
  },
  "git": {
-  "sha": "a3d0c082c88e44bab100d15788d91cf6bd0e956f",
+  "sha": "7ddd094ef4b9c0fe421cc7e28167a91976154e7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "7ddd094",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)",
+    "files": [
+     "src/test/cspSync.test.ts",
+     "vercel.json"
+    ]
+   },
    {
     "sha": "a3d0c08",
     "date": "2026-11-19",
@@ -95239,15 +95249,6 @@
      "src/components/settings/TwoFactorSetup.test.tsx",
      "src/components/settings/TwoFactorSetup.tsx"
     ]
-   },
-   {
-    "sha": "a3290d5",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs: preserva #187 e registra incidente de CI (allowed_actions) + limpeza de workflows orfaos (#193)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95264,6 +95265,14 @@
     7
    ],
    [
+    "src/test/cspSync.test.ts",
+    3
+   ],
+   [
+    "vercel.json",
+    3
+   ],
+   [
     "scripts/audit-gate.mjs",
     3
    ],
@@ -95272,19 +95281,7 @@
     2
    ],
    [
-    "docs/prod-readiness.md",
-    2
-   ],
-   [
     ".github/workflows/ci.yml",
-    2
-   ],
-   [
-    "src/test/cspSync.test.ts",
-    2
-   ],
-   [
-    "vercel.json",
     2
    ],
    [
@@ -95306,6 +95303,10 @@
    [
     "src/components/settings/TwoFactorSetup.tsx",
     2
+   ],
+   [
+    "docs/prod-readiness.md",
+    1
    ],
    [
     "public/sw.js",

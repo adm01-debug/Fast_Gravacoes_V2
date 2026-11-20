@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)",
    "docs: marca chave Stripe como resolvida no progresso da auditoria (#227)",
    "docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)",
    "fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)",
-   "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)",
-   "fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)"
+   "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
