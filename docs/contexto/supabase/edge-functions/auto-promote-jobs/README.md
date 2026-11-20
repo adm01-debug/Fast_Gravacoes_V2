@@ -4,7 +4,7 @@
 |---|---|
 | nome | auto-promote-jobs |
 | status | ACTIVE |
-| versão | 100 |
+| versão | 102 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/auto-promote-jobs/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

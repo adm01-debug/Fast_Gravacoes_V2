@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "25e42b914df24886265f7b18a14799cdefd369a8",
+  "sha": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 15:13 UTC",
+  "generated_at": "2026-11-20 17:38 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203366
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "25e42b914df24886265f7b18a14799cdefd369a8",
+  "sha": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d7111c9",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)",
+    "files": [
+     "scripts/automation.mjs"
+    ]
+   },
    {
     "sha": "25e42b9",
     "date": "2026-11-20",
@@ -95235,16 +95244,6 @@
      "src/features/auth/hooks/useMFA.test.tsx",
      "src/features/auth/hooks/useMFA.ts"
     ]
-   },
-   {
-    "sha": "599203e",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: limpa fatores TOTP orfaos antes do enroll (422 no 2FA) (#199)",
-    "files": [
-     "src/components/settings/TwoFactorSetup.test.tsx",
-     "src/components/settings/TwoFactorSetup.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -95301,6 +95300,10 @@
     2
    ],
    [
+    "scripts/automation.mjs",
+    1
+   ],
+   [
     "src/pages/ReportBuilderPage.tsx",
     1
    ],
@@ -95322,10 +95325,6 @@
    ],
    [
     "analise-prs/decisoes.md",
-    1
-   ],
-   [
-    "analise-prs/dossies/PR-119.md",
     1
    ]
   ]

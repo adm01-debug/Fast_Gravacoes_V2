@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "25e42b914df24886265f7b18a14799cdefd369a8",
+  "commit": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
   "branch": "main",
-  "data_commit": "2026-11-20T12:08:57-03:00",
+  "data_commit": "2026-11-20T14:19:32-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d7111c9",
+    "data": "2026-11-20",
+    "assunto": "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)"
+   },
    {
     "sha": "25e42b9",
     "data": "2026-11-20",
@@ -126,15 +131,10 @@
     "sha": "343ed14",
     "data": "2026-11-17",
     "assunto": "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)"
-   },
-   {
-    "sha": "a334acf",
-    "data": "2026-11-17",
-    "assunto": "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 109,
+  "arquivos_mudados_7d": 108,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 92
+    "commits": 93
    },
    {
     "autor": "devin-ai-integration[bot]",

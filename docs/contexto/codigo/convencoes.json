@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)",
    "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)",
    "infra: cache npm no job de contratos do automation-local (#230)",
    "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)",
-   "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)",
-   "docs: marca chave Stripe como resolvida no progresso da auditoria (#227)"
+   "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
