@@ -50,11 +50,6 @@ import { useMutation } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { downloadWorkbook, objectsToRows } from '@/lib/excel';
 
-interface ReportFilters {
-  status: string;
-  dateRange?: DateRange;
-}
-
 
 export default function ReportBuilderPage() {
   const [selectedTable, setSelectedTable] = useState<PublicTables>('jobs');
