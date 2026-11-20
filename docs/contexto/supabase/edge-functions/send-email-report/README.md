@@ -4,7 +4,7 @@
 |---|---|
 | nome | send-email-report |
 | status | ACTIVE |
-| versão | 106 |
+| versão | 110 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-email-report/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `46e2219873d7f4e687f33120579e2664f616b4bb` (2026-11-20T17:47:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6032d376400eb2173cc3e6d625cce87e44fd76c6` (2026-11-20T18:09:00-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7474 nós · 21947 arestas · 655 comunidades · grafo do commit `46e22198`
-- comunidades maiores: card.tsx (162), skeleton.tsx (138), Button (137), analytics/index.ts (133), cn (126), FuturisticBI.tsx (121), badge.tsx (120), snapshot.py (111), client.ts (99), gerar.mjs (96), GraphifyIntegrationTests (96), .write (96)
+- 7474 nós · 21947 arestas · 659 comunidades · grafo do commit `6032d376`
+- comunidades maiores: card.tsx (162), Button (137), skeleton.tsx (134), analytics/index.ts (133), cn (126), FuturisticBI.tsx (121), badge.tsx (120), snapshot.py (111), useAuth (104), scroll-area.tsx (102), client.ts (97), gerar.mjs (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-20 `6032d37` chore: dossie F-004 marcado resolvido com evidencia (#237)
 - 2026-11-20 `46e2219` fix: blocked_ips agora bloqueia o login (F-004) (#236)
 - 2026-11-20 `65e7fc5` fix: tracking público /track volta a funcionar (RPC SECURITY DEFINER) (#234)
 - 2026-11-20 `53cf28e` fix(inventory): policies INSERT e DELETE para inventory_movements (#235)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `95c091b` docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)
 - 2026-11-19 `ce97162` fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)
 - 2026-11-19 `248505f` chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)
-- 2026-11-19 `9814660` fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

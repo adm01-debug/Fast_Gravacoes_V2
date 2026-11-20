@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: dossie F-004 marcado resolvido com evidencia (#237)",
    "fix: blocked_ips agora bloqueia o login (F-004) (#236)",
    "fix: tracking público /track volta a funcionar (RPC SECURITY DEFINER) (#234)",
    "fix(inventory): policies INSERT e DELETE para inventory_movements (#235)",
-   "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)",
-   "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)"
+   "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

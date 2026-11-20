@@ -4,7 +4,7 @@
 |---|---|
 | nome | excel-export |
 | status | ACTIVE |
-| versão | 105 |
+| versão | 109 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/excel-export/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

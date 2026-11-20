@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "46e2219873d7f4e687f33120579e2664f616b4bb",
+  "commit": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
   "branch": "main",
-  "data_commit": "2026-11-20T17:47:56-03:00",
+  "data_commit": "2026-11-20T18:09:00-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6032d37",
+    "data": "2026-11-20",
+    "assunto": "chore: dossie F-004 marcado resolvido com evidencia (#237)"
+   },
    {
     "sha": "46e2219",
     "data": "2026-11-20",
@@ -126,11 +131,6 @@
     "sha": "0c33cf1",
     "data": "2026-11-18",
     "assunto": "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)"
-   },
-   {
-    "sha": "596579f",
-    "data": "2026-11-18",
-    "assunto": "chore(deps): bump 43 deps npm (grupo producao-minor-patch) (#213)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 96
+    "commits": 97
    },
    {
     "autor": "devin-ai-integration[bot]",

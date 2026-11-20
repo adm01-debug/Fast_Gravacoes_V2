@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "46e2219873d7f4e687f33120579e2664f616b4bb",
+  "sha": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 20:48 UTC",
+  "generated_at": "2026-11-20 21:12 UTC",
   "files_total": 1567,
   "code_files": 1379,
   "code_lines": 203564
@@ -95026,10 +95026,19 @@
   }
  },
  "git": {
-  "sha": "46e2219873d7f4e687f33120579e2664f616b4bb",
+  "sha": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6032d37",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: dossie F-004 marcado resolvido com evidencia (#237)",
+    "files": [
+     "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md"
+    ]
+   },
    {
     "sha": "46e2219",
     "date": "2026-11-20",
@@ -95377,32 +95386,24 @@
      "scripts/audit/audit.unit.mjs",
      "scripts/audit/run.mjs"
     ]
-   },
-   {
-    "sha": "381fe2e",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "scripts/audit-gate.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "deno.lock",
-    5
+    4
    ],
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
+   ],
+   [
+    "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md",
+    2
    ],
    [
     "src/pages/PublicTrackingPage.tsx",
@@ -95430,10 +95431,6 @@
    ],
    [
     ".github/workflows/ci.yml",
-    2
-   ],
-   [
-    "scripts/audit-gate.mjs",
     2
    ],
    [
