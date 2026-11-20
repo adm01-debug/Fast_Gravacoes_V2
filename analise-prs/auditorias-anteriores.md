@@ -53,7 +53,7 @@
 5. Cobertura de testes negligenciada
 
 **Status atual:**
-- ERP API → PARCIALMENTE CORRIGIDO: PR #80 adicionou Zod validation; `bitrix24-sync` ganhou 3 modos de auth (AUDITORIA_EXAUSTIVA D6 "CRÍTICO"). Mas `MasterAPIPage.tsx` ainda tem chave `sk_live_REDACTED` hardcoded na linha 29 (conforme D10).- RLS → CORRIGIDO E VERIFICADO: PRs #68, #59, #96 fizeram hardening. D14 confirma 100% das 135 tabelas com RLS habilitado.
+- ERP API → PARCIALMENTE CORRIGIDO: PR #80 adicionou Zod validation; `bitrix24-sync` ganhou 3 modos de auth (AUDITORIA_EXAUSTIVA D6 "CRÍTICO"). Chave hardcoded em `MasterAPIPage.tsx` resolvida na #226 (não existia chave real; placeholder mascarado `sk_live_fast_XXXX`).- RLS → CORRIGIDO E VERIFICADO: PRs #68, #59, #96 fizeram hardening. D14 confirma 100% das 135 tabelas com RLS habilitado.
 - CORS → PARCIALMENTE CORRIGIDO: PR #80 adicionou middleware; wildcard removido do `_shared/auth.ts` (D7 etapa 8).
 - Webhook hardcoded → CORRIGIDO E VERIFICADO: substituído por variáveis de ambiente em múltiplas PRs.
 - Cobertura de testes → PARCIALMENTE CORRIGIDO: PRs #55–58 adicionaram testes; cobertura chegou a ~35% (meta: 60%).
@@ -175,7 +175,7 @@
 |---|---------------------|----------------------|---------------|
 | 1 | `/code-quality` — métricas precisas | Literais hardcoded: `totalPages: 30` (real: 55), `edgeFunctions: 18` (real: 33) | `useCodeQualityMetrics.ts:159-189` |
 | 2 | QR Code de job funcional | `JobQRCode.tsx:23` gera URL `/track?q=<n>` mas `QRScanner.tsx:91-95` exige JSON `{type:"job"}` — incompatíveis | Dois arquivos |
-| 3 | `/master-api` funcional | 234 linhas sem referência ao Supabase; chave hardcoded `sk_live_REDACTED` na linha 29 | `MasterAPIPage.tsx:29` || 4 | Notificações TPM enviadas | `tpm-notifications/index.ts:69`: `// Simular envio`; trigger `send-tpm-email` comentado | `20260508115941.sql:50-53` |
+| 3 | `/master-api` funcional | 234 linhas sem referência ao Supabase; chave hardcoded (placeholder mascarado `sk_live_fast_XXXX`); resolvido na #226 | `MasterAPIPage.tsx:204` || 4 | Notificações TPM enviadas | `tpm-notifications/index.ts:69`: `// Simular envio`; trigger `send-tpm-email` comentado | `20260508115941.sql:50-53` |
 | 5 | `FeatureFlagsContext` funcional | Zero consumidores; hook homônimo em `features/admin/hooks/useFeatureFlags.ts` também morto | Múltiplos |
 
 **Tabelas fantasma (escritas por edge functions sem CREATE TABLE nas migrations):**
@@ -186,7 +186,7 @@
 **Status atual (pós-PRs #112–#116):**
 - `/code-quality` hardcoded → CONFIRMADO E PENDENTE (D14 não lista como corrigido)
 - QR Code incompatível → PARCIALMENTE CORRIGIDO: PR #114 corrigiu o par gerador↔leitor (D14 seção C lista como corrigido em #114)
-- `/master-api` chave hardcoded → CONFIRMADO E PENDENTE (D14 seção D: código morto + dados fabricados)
+- `/master-api` chave hardcoded → RESOLVIDO (D10/D14: código morto; sem chave real — #226; placeholder mascarado `sk_live_fast_XXXX`)
 - TPM notificações simuladas → CONFIRMADO E PENDENTE (D14 seção C)
 - `FeatureFlagsContext` morto → CONFIRMADO E PENDENTE (D14 seção D: código morto)
 - Tabelas fantasma `archived_jobs`/`backups`/`backup_logs`/`system_metrics` → PARCIALMENTE CORRIGIDO: PR #115 criou as tabelas internas ausentes; verificação do schema real pendente
@@ -290,7 +290,7 @@
 | RLS permissivo | D1 | CORRIGIDO E VERIFICADO | 135 tabelas c/ RLS; hardening PRs #59, #68, #96 |
 | CORS wildcard | D1, D7 | PARCIALMENTE CORRIGIDO | `_shared/auth.ts` centralizado; CSP Report-Only (sem bloqueio) |
 | Webhook hardcoded | D1 | CORRIGIDO E VERIFICADO | Substituído por env vars |
-| `/master-api` chave hardcoded `sk_live_REDACTED` | D10 | CONFIRMADO E PENDENTE | `MasterAPIPage.tsx:29` || `check-login-lockout` reset do próprio contador | D6 | CORRIGIDO E VERIFICADO | PR #68 (D6 H5) |
+| `/master-api` chave hardcoded | D10 | RESOLVIDO (#226: não havia chave real) | `MasterAPIPage.tsx:204` || `check-login-lockout` reset do próprio contador | D6 | CORRIGIDO E VERIFICADO | PR #68 (D6 H5) |
 | `validate-login-ip` IP controlado pelo cliente | D6 | CORRIGIDO E VERIFICADO | PR #68 (D6 H4) |
 | `cleanup-security-logs` sem auth | D6 | CORRIGIDO E VERIFICADO | D6 H1 |
 | `send-tpm-email`/`send-loss-risk-alert` HTML não escapado | D6 | CORRIGIDO E VERIFICADO | htmlEscape.ts |
@@ -370,7 +370,7 @@
 | `BIAIInsights` — "Simulador Preditivo Deep Learning" (setTimeout + "+28%") | D14 D | CORRIGIDO E VERIFICADO: PR #116 relabels honestos + custo médio real de useABCCosts |
 | `SPCDashboard` — "plano IA" com lote aleatório | D14 D | CORRIGIDO E VERIFICADO: PR #116 usa Cp/Cpk/violações reais |
 | `AutonomousEventLog` — feed "LIVE" de mensagens enlatadas | D14 D | PARCIALMENTE CORRIGIDO: PR #116 adicionou `DemoDataBadge` |
-| `MasterAPIPage` (234 linhas) sem Supabase + chave hardcoded | D10, D14 D | CONFIRMADO E PENDENTE |
+| `MasterAPIPage` (234 linhas) sem Supabase + chave hardcoded | D10, D14 D | RESOLVIDO (#226: sem chave real; placeholder mascarado) |
 | `FuturisticBI`, `VirtualSensorPanel`, `BlockchainIntegrityCard`, etc. (~30 painéis) | D14 D | CONFIRMADO E PENDENTE |
 | Código morto: `NotificationCenter`, `FeedbackProvider`, `WebSocketContext`, `SearchContext`, `ThemeContext`, etc. (~50 itens) | D14 D | CONFIRMADO E PENDENTE |
 | Autociclos de barrels (25 arquivos importavam o próprio barrel) | D14 D | CORRIGIDO E VERIFICADO: PR #116 reescreveu para paths profundos |
@@ -474,7 +474,7 @@ Estas são melhorias identificadas nos documentos mas não implementadas e sem d
 6. **Web Push nunca funcionou:** sem criptografia de payload real.
 7. **Upload de evidência de alerta bloqueado:** RLS rejeita todos os uploads do fluxo de manutenção.
 8. **BI de perdas inflado:** fallback `produced_quantity || quantity` em 6 arquivos + exportação Bitrix.
-9. **`/master-api` com chave hardcoded `sk_live_REDACTED`:** código morto com secret real embutido.10. **`/code-quality` com métricas hardcoded:** totalPages=30 (real:55), edgeFunctions=18 (real:33).
+9. **`/master-api` com chave hardcoded:** código morto com secret embutido — resolvido na #226 (sem chave real; placeholder mascarado).10. **`/code-quality` com métricas hardcoded:** totalPages=30 (real:55), edgeFunctions=18 (real:33).
 
 **O que funcionou bem:**
 - PRs #68–#116 cobriram sistematicamente os achados críticos de segurança das auditorias de mai–jul/2026.
