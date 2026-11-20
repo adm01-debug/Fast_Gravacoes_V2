@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
+  "sha": "25e42b914df24886265f7b18a14799cdefd369a8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 14:30 UTC",
+  "generated_at": "2026-11-20 15:13 UTC",
   "files_total": 1547,
   "code_files": 1376,
   "code_lines": 203366
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
+  "sha": "25e42b914df24886265f7b18a14799cdefd369a8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "25e42b9",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)",
+    "files": [
+     "analise-prs/auditorias-anteriores.md"
+    ]
+   },
    {
     "sha": "7e8a0f6",
     "date": "2026-11-20",
@@ -95236,17 +95245,6 @@
      "src/components/settings/TwoFactorSetup.test.tsx",
      "src/components/settings/TwoFactorSetup.tsx"
     ]
-   },
-   {
-    "sha": "f07be16",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: libera o Google Fonts no connect-src das tres politicas de CSP (#197)",
-    "files": [
-     "index.html",
-     "src/test/cspSync.test.ts",
-     "vercel.json"
-    ]
    }
   ],
   "hot_files": [
@@ -95263,19 +95261,23 @@
     7
    ],
    [
-    "src/test/cspSync.test.ts",
-    3
-   ],
-   [
-    "vercel.json",
-    3
-   ],
-   [
     "scripts/audit-gate.mjs",
     3
    ],
    [
+    "analise-prs/auditorias-anteriores.md",
+    2
+   ],
+   [
     ".github/workflows/automation-local.yml",
+    2
+   ],
+   [
+    "src/test/cspSync.test.ts",
+    2
+   ],
+   [
+    "vercel.json",
     2
    ],
    [
@@ -95324,10 +95326,6 @@
    ],
    [
     "analise-prs/dossies/PR-119.md",
-    1
-   ],
-   [
-    "analise-prs/dossies/PR-120.md",
     1
    ]
   ]

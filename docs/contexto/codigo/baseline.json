@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7e8a0f66805fb4452d22e925bdcb28527ea804f2",
+  "commit": "25e42b914df24886265f7b18a14799cdefd369a8",
   "branch": "main",
-  "data_commit": "2026-11-20T11:29:49-03:00",
+  "data_commit": "2026-11-20T12:08:57-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "25e42b9",
+    "data": "2026-11-20",
+    "assunto": "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)"
+   },
    {
     "sha": "7e8a0f6",
     "data": "2026-11-20",
@@ -126,15 +131,10 @@
     "sha": "a334acf",
     "data": "2026-11-17",
     "assunto": "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)"
-   },
-   {
-    "sha": "381fe2e",
-    "data": "2026-11-17",
-    "assunto": "chore: fecha alertas transitivos (vitest 4.1.12 + overrides glob/postcss-selector-parser) (#203)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 110,
+  "arquivos_mudados_7d": 109,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 91
+    "commits": 92
    },
    {
     "autor": "devin-ai-integration[bot]",
