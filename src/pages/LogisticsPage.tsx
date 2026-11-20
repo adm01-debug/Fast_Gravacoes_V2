@@ -290,7 +290,7 @@ export default function LogisticsPage() {
                               variant="ghost"
                               size="icon"
                               className="group-hover:text-primary"
-                              onClick={() => window.open(buildTrackingLink(shipment.job?.order_number, shipment.job?.id), '_blank')}
+                              onClick={() => window.open(buildTrackingLink(shipment.job?.order_number, shipment.job_id ?? shipment.job?.id), '_blank')}
                             >
                               <ExternalLink className="h-4 w-4" />
                             </Button>
@@ -304,7 +304,7 @@ export default function LogisticsPage() {
                                 <DropdownMenuItem onClick={() => setEditingShipment(shipment)}>
                                   Editar Envio
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number, shipment.job?.id)}>
+                                <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number, shipment.job_id ?? shipment.job?.id)}>
                                   Copiar Link
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleStatusUpdate(shipment.id, 'delivered')}>

@@ -54,7 +54,7 @@ export function useLogistics() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('shipments')
-        .select('*, provider:shipping_providers(*), job:jobs(order_number, client, product)')
+        .select('*, provider:shipping_providers(*), job:jobs(id, order_number, client, product)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
