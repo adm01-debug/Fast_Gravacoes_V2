@@ -68,13 +68,14 @@ export default function PublicTrackingPage() {
       // O `j=<jobId>` da etiqueta resolve o job exato mesmo quando vários
       // jobs dividem o mesmo order_number; num novo search manual o `j`
       // original não seqüestra a consulta digitada.
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(safeQuery);
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const isUUID = UUID_RE.test(safeQuery);
       const jobIdParam = e ? null : searchParams.get('j');
 
       let data = null;
       let supabaseError = null;
 
-      if (jobIdParam && isUUID.test(jobIdParam)) {
+      if (jobIdParam && UUID_RE.test(jobIdParam)) {
         ({ data, error: supabaseError } = await supabase
           .rpc('get_public_tracking', { p_job_id: jobIdParam, p_order_number: null }));
       }
