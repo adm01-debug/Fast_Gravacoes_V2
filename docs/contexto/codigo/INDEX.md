@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7ddd094ef4b9c0fe421cc7e28167a91976154e7a` (2026-11-20T08:18:48-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627` (2026-11-20T11:06:49-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1549 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 188157 |
+| linhas_codigo | 188152 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7463 nós · 21939 arestas · 653 comunidades · grafo do commit `7ddd094e`
-- comunidades maiores: card.tsx (207), analytics/index.ts (141), input.tsx (131), badge.tsx (124), FuturisticBI.tsx (123), cn (120), MainLayout.tsx (114), snapshot.py (111), Button (108), PackagingDashboard.tsx (102), generate.py (101), gerar.mjs (96)
+- 7462 nós · 21938 arestas · 656 comunidades · grafo do commit `3d5df1f1`
+- comunidades maiores: card.tsx (172), input.tsx (126), jobs/index.ts (116), useAuth (112), snapshot.py (111), badge.tsx (110), MainLayout.tsx (102), generate.py (101), recharts.ts (98), gerar.mjs (96), .write (96), scroll-area.tsx (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-20 `3d5df1f` chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)
 - 2026-11-20 `7ddd094` chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)
 - 2026-11-19 `a3d0c08` docs: marca chave Stripe como resolvida no progresso da auditoria (#227)
 - 2026-11-19 `7c1df38` docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `13daf19` chore(analise): mantem chave redigida no historico
 - 2026-11-18 `bf38560` chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)
 - 2026-11-18 `096b2cc` infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)
-- 2026-11-18 `e36c2ab` chore(ci): bump the acoes group with 10 updates (#206)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7ddd094ef4b9c0fe421cc7e28167a91976154e7a",
+  "commit": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
   "branch": "main",
-  "data_commit": "2026-11-20T08:18:48-03:00",
+  "data_commit": "2026-11-20T11:06:49-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3d5df1f",
+    "data": "2026-11-20",
+    "assunto": "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)"
+   },
    {
     "sha": "7ddd094",
     "data": "2026-11-20",
@@ -126,15 +131,10 @@
     "sha": "6714971",
     "data": "2026-11-17",
     "assunto": "chore: mermaid 11 -> 12 (traz katex 0.18.10 e fecha GHSA-238p-pmpm-9mq7) (#202)"
-   },
-   {
-    "sha": "a132a36",
-    "data": "2026-11-17",
-    "assunto": "fix: zod 3 -> 4.6.7 (alerta de seguranca high, sem patch na linha 3.x) (#201)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 112,
+  "arquivos_mudados_7d": 110,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 89
+    "commits": 90
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1549,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 188157,
+  "linhas_codigo": 188152,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 16829
+   "linhas": 16824
   },
   "src/providers": {
    "arquivos": 2,

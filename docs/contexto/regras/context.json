@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7ddd094ef4b9c0fe421cc7e28167a91976154e7a",
+  "sha": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 11:19 UTC",
+  "generated_at": "2026-11-20 14:07 UTC",
   "files_total": 1547,
   "code_files": 1376,
-  "code_lines": 203371
+  "code_lines": 203366
  },
  "version": "1.3.2",
- "facts_hash": "3838485b95198eff",
+ "facts_hash": "9bc4c8c13d65d953",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -28677,7 +28677,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16829,
+   "lines": 16824,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -89234,7 +89234,7 @@
   },
   "src/pages/ReportBuilderPage.tsx": {
    "path": "src/pages/ReportBuilderPage.tsx",
-   "lines": 314,
+   "lines": 309,
    "exports": [
     "function ReportBuilderPage"
    ],
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "7ddd094ef4b9c0fe421cc7e28167a91976154e7a",
+  "sha": "3d5df1f14b25ccb872d0a7d0ab0b3942ee6d8627",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3d5df1f",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)",
+    "files": [
+     "src/pages/ReportBuilderPage.tsx"
+    ]
+   },
    {
     "sha": "7ddd094",
     "date": "2026-11-20",
@@ -95239,16 +95248,6 @@
      "supabase/functions/_shared/cors.test.ts",
      "supabase/functions/_shared/cors.ts"
     ]
-   },
-   {
-    "sha": "c5a478c",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: gera o QR do 2FA a partir do otpauth uri (#195)",
-    "files": [
-     "src/components/settings/TwoFactorSetup.test.tsx",
-     "src/components/settings/TwoFactorSetup.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -95297,12 +95296,8 @@
     2
    ],
    [
-    "src/components/settings/TwoFactorSetup.test.tsx",
-    2
-   ],
-   [
-    "src/components/settings/TwoFactorSetup.tsx",
-    2
+    "src/pages/ReportBuilderPage.tsx",
+    1
    ],
    [
     "docs/prod-readiness.md",
@@ -95330,6 +95325,10 @@
    ],
    [
     "analise-prs/dossies/PR-120.md",
+    1
+   ],
+   [
+    "analise-prs/dossies/PR-121.md",
     1
    ]
   ]
