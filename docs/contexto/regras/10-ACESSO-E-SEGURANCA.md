@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d7111c977b` · branch `main` · 2026-11-20 17:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `53cf28e4d8` · branch `main` · 2026-11-20 19:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-20T16:14:45Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-20T18:38:18Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-20T16:14:45Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-20T18:38:18Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -54,7 +54,7 @@
 | `geo_blocking_rules` | enabled | authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>authenticated: (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))<br>public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: WITH CHECK (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: USING (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) |
 | `geo_blocking_settings` | enabled | authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>authenticated: (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role))<br>public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: WITH CHECK (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: USING (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))<br>public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) |
 | `inventory_items` | enabled | authenticated: has_any_active_role()<br>authenticated: (app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role)) | authenticated: WITH CHECK (app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role)) | authenticated: USING (app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role)) | authenticated: (app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'coordinator'::app_role)) |
-| `inventory_movements` | enabled | authenticated: has_any_active_role() | — | — | — |
+| `inventory_movements` | enabled | authenticated: has_any_active_role() | authenticated: WITH CHECK (has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid))) | — | authenticated: (has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid))) |
 | `ip_allowlist` | enabled | public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)<br>public: (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)) | public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) | public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) |
 | `job_status_audit` | enabled | anon, authenticated: false<br>authenticated: (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)) | anon, authenticated: WITH CHECK false | anon, authenticated: USING false | anon, authenticated: false |
 | `job_status_history` | enabled | authenticated: has_any_active_role() | — | — | — |
@@ -270,6 +270,7 @@
 - `get_cron_health`
 - `get_packaging_leaderboard`
 - `get_packaging_manifest`
+- `get_public_tracking`
 - `get_system_status_summary`
 - `get_user_role`
 - `handle_new_user`
@@ -347,8 +348,6 @@ Middleware matcher (Next.js): nenhum
 
 | Tabela | Problema | Arquivos |
 |---|---|---|
-| `inventory_movements` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
-| `inventory_movements` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/features/inventory/hooks/useInventory.ts` |
 | `profiles` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |
 | `tpm_notification_templates_published` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/maintenance/components/TPMNotificationTemplates.tsx` |
 

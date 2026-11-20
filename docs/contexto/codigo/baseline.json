@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
+  "commit": "53cf28e4d86d50de2dfea5f41cd6b3e00775497e",
   "branch": "main",
-  "data_commit": "2026-11-20T14:19:32-03:00",
+  "data_commit": "2026-11-20T16:05:25-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "53cf28e",
+    "data": "2026-11-20",
+    "assunto": "fix(inventory): policies INSERT e DELETE para inventory_movements (#235)"
+   },
    {
     "sha": "d7111c9",
     "data": "2026-11-20",
@@ -126,15 +131,10 @@
     "sha": "c14eac6",
     "data": "2026-11-18",
     "assunto": "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)"
-   },
-   {
-    "sha": "343ed14",
-    "data": "2026-11-17",
-    "assunto": "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 108,
+  "arquivos_mudados_7d": 110,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 93
+    "commits": 94
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1549,
+  "arquivos_total": 1551,
   "arquivos_codigo": 1119,
   "linhas_codigo": 188152,
   "rotas": 58,
@@ -339,12 +339,12 @@
   "hooks": 196,
   "edge_functions": 34,
   "tabelas": 133,
-  "migrations": 246,
+  "migrations": 247,
   "cron_jobs": 4,
   "testes": 123,
   "workflows": 12,
   "scripts": 41,
-  "docs_md": 83
+  "docs_md": 84
  },
  "por_pasta": {
   "commitlint.config.js": {

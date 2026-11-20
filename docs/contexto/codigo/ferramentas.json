@@ -4,8 +4,8 @@
  "stack": {
   "linguagens": [
    "TypeScript (1055)",
-   "SQL (254)",
-   "Markdown (83)",
+   "SQL (255)",
+   "Markdown (84)",
    "JavaScript (54)",
    "JSON (33)",
    "YAML (15)",
@@ -737,6 +737,10 @@
   },
   {
    "pasta": "docs/ci",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/pendencias",
    "arquivos_md": 1
   },
   {

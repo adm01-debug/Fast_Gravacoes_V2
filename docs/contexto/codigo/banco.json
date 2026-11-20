@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 246,
+ "migrations": 247,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -4546,6 +4546,18 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "Active roles can delete own inventory movements",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Active roles can insert inventory movements",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Active roles can view inventory movements",
      "comando": "select",

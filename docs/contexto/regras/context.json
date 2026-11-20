@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
+  "sha": "53cf28e4d86d50de2dfea5f41cd6b3e00775497e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 17:38 UTC",
-  "files_total": 1547,
-  "code_files": 1376,
-  "code_lines": 203366
+  "generated_at": "2026-11-20 19:06 UTC",
+  "files_total": 1549,
+  "code_files": 1377,
+  "code_lines": 203425
  },
  "version": "1.3.2",
- "facts_hash": "9bc4c8c13d65d953",
+ "facts_hash": "8741dac998058e5e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 658,
    ".ts": 397,
-   ".sql": 254,
+   ".sql": 255,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -11340,6 +11340,26 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "Active roles can delete own inventory movements",
+    "table": "inventory_movements",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can insert inventory movements",
+    "table": "inventory_movements",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "Active roles can view inventory movements",
     "table": "inventory_movements",
     "cmd": "SELECT",
@@ -15057,6 +15077,21 @@
     "tables": [
      "jobs",
      "packaging_tasks"
+    ]
+   },
+   "get_public_tracking": {
+    "args": "p_job_id uuid, p_order_number text",
+    "returns": "jsonb",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/get_public_tracking__3190b676b3e11018.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "select coalesce( jsonb_agg( jsonb_build_object( 'id', j.id, 'order_number', j.order_number, 'status', j.status, 'client', j.client, 'product', j.product, 'scheduled_date', j.scheduled_date, 'production_photos', j.production_photos, 'shipment', case when s.id is not null then jsonb_build_object( 'tracking_code', s.tracking_code, 'status', s.status, 'estimated_delivery', s.estimated_delivery, 'actual_delivery', s.actual_delivery, 'provider', case when p.id is not null then jsonb_build_object('name', p.name) else null end ) else null end ) ), '[]'::jsonb ) from public.jobs j left join public.shipments s on s.id = j.shipment_id left join public.shipping_providers p on p.id = s.provider_id where …",
+    "raises": [],
+    "tables": [
+     "jobs",
+     "shipments",
+     "shipping_providers"
     ]
    },
    "get_system_status_summary": {
@@ -19039,6 +19074,7 @@
    "supabase/migrations/20261108000001_business_rules_ddl.sql",
    "supabase/migrations/20261109000001_fix_r3_3_revoke_public.sql",
    "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+   "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -29174,8 +29210,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 246,
-   "lines": 14558,
+   "files": 247,
+   "lines": 14617,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -55700,6 +55736,26 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "Active roles can delete own inventory movements",
+    "table": "inventory_movements",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can insert inventory movements",
+    "table": "inventory_movements",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "Active roles can view inventory movements",
     "table": "inventory_movements",
     "cmd": "SELECT",
@@ -59419,6 +59475,21 @@
      "packaging_tasks"
     ]
    },
+   "get_public_tracking": {
+    "args": "p_job_id uuid, p_order_number text",
+    "returns": "jsonb",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/get_public_tracking__3190b676b3e11018.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "select coalesce( jsonb_agg( jsonb_build_object( 'id', j.id, 'order_number', j.order_number, 'status', j.status, 'client', j.client, 'product', j.product, 'scheduled_date', j.scheduled_date, 'production_photos', j.production_photos, 'shipment', case when s.id is not null then jsonb_build_object( 'tracking_code', s.tracking_code, 'status', s.status, 'estimated_delivery', s.estimated_delivery, 'actual_delivery', s.actual_delivery, 'provider', case when p.id is not null then jsonb_build_object('name', p.name) else null end ) else null end ) ), '[]'::jsonb ) from public.jobs j left join public.shipments s on s.id = j.shipment_id left join public.shipping_providers p on p.id = s.provider_id where …",
+    "raises": [],
+    "tables": [
+     "jobs",
+     "shipments",
+     "shipping_providers"
+    ]
+   },
    "get_system_status_summary": {
     "args": "",
     "returns": "TABLE(total_jobs integer, healthy_jobs integer, failing_jobs integer, stale_jobs integer, last_capture timestamp with time zone, edge_status text, edge_last_check timestamp with time zone)",
@@ -62378,9 +62449,13 @@
     "SELECT": [
      "authenticated: has_any_active_role()"
     ],
-    "INSERT": [],
+    "INSERT": [
+     "authenticated: WITH CHECK (has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))"
+    ],
     "UPDATE": [],
-    "DELETE": []
+    "DELETE": [
+     "authenticated: (has_any_active_role() AND (user_id = ( SELECT auth.uid() AS uid)))"
+    ]
    },
    "ip_allowlist": {
     "rls": "enabled",
@@ -63804,20 +63879,6 @@
   },
   "risky": [
    {
-    "table": "inventory_movements",
-    "issue": "front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/features/inventory/hooks/useInventory.ts"
-    ]
-   },
-   {
-    "table": "inventory_movements",
-    "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/features/inventory/hooks/useInventory.ts"
-    ]
-   },
-   {
     "table": "profiles",
     "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "files": [
@@ -63946,6 +64007,7 @@
    "get_cron_health",
    "get_packaging_leaderboard",
    "get_packaging_manifest",
+   "get_public_tracking",
    "get_system_status_summary",
    "get_user_role",
    "handle_new_user",
@@ -66460,20 +66522,6 @@
     "msg": "tabela `erp_api_keys` usada no código não existe no banco real (snapshot)",
     "where": [
      "supabase/functions/erp-api/index.ts"
-    ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`inventory_movements`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/features/inventory/hooks/useInventory.ts"
-    ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`inventory_movements`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/features/inventory/hooks/useInventory.ts"
     ]
    },
    {
@@ -94450,6 +94498,10 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql": {
+   "path": "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
+   "lines": 59
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -94888,10 +94940,20 @@
   }
  },
  "git": {
-  "sha": "d7111c977b56ba5d1f7ab553b2f5ae4c1d1f89c8",
+  "sha": "53cf28e4d86d50de2dfea5f41cd6b3e00775497e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "53cf28e",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(inventory): policies INSERT e DELETE para inventory_movements (#235)",
+    "files": [
+     "docs/pendencias/F-003-inventory-movements-sem-escrita.md",
+     "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql"
+    ]
+   },
    {
     "sha": "d7111c9",
     "date": "2026-11-20",
@@ -95234,16 +95296,6 @@
      "supabase/functions/_shared/contracts.ts",
      "supabase/functions/_shared/validation.ts"
     ]
-   },
-   {
-    "sha": "36befe4",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: limpa fatores TOTP orfaos no hook useMFA antes do enroll (#200)",
-    "files": [
-     "src/features/auth/hooks/useMFA.test.tsx",
-     "src/features/auth/hooks/useMFA.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -95300,6 +95352,14 @@
     2
    ],
    [
+    "docs/pendencias/F-003-inventory-movements-sem-escrita.md",
+    1
+   ],
+   [
+    "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
+    1
+   ],
+   [
     "scripts/automation.mjs",
     1
    ],
@@ -95317,14 +95377,6 @@
    ],
    [
     "analise-prs/RELATORIO_PRS.md",
-    1
-   ],
-   [
-    "analise-prs/baseline/baseline.md",
-    1
-   ],
-   [
-    "analise-prs/decisoes.md",
     1
    ]
   ]
