@@ -6057,6 +6057,25 @@ export type Database = {
           total_jobs: number
         }[]
       }
+      get_public_tracking: {
+        Args: { p_job_id: string | null; p_order_number: string | null }
+        Returns: {
+          id: string
+          order_number: string
+          status: string
+          client: string | null
+          product: string | null
+          scheduled_date: string | null
+          production_photos: string[] | null
+          shipment: {
+            tracking_code: string | null
+            status: string | null
+            estimated_delivery: string | null
+            actual_delivery: string | null
+            provider: { name: string | null } | null
+          } | null
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
