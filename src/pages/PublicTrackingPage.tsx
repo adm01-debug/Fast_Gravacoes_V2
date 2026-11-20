@@ -63,64 +63,38 @@ export default function PublicTrackingPage() {
     setJob(null);
 
     try {
-      // Use separate parameterized queries instead of embedding user input in filter string
+      // Tracking público usa a RPC get_public_tracking (SECURITY DEFINER):
+      // expõe só os campos de rastreio, sem reabrir SELECT anon em `jobs`.
+      // O `j=<jobId>` da etiqueta resolve o job exato mesmo quando vários
+      // jobs dividem o mesmo order_number; num novo search manual o `j`
+      // original não seqüestra a consulta digitada.
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(safeQuery);
-
-      const selectClause = `
-          *,
-          shipment:shipments!jobs_shipment_id_fkey(
-            tracking_code,
-            status,
-            estimated_delivery,
-            actual_delivery,
-            provider:shipping_providers(name)
-          )
-        `;
+      const jobIdParam = e ? null : searchParams.get('j');
 
       let data = null;
       let supabaseError = null;
 
-      // Etiquetas novas levam `j=<jobId>` junto do `q=<orderNumber>`: quando
-      // vários jobs dividem o mesmo pedido, o id resolve o job exato.
-      // Só na busca automática (abertura via QR) — numa nova busca manual o
-      // `j` original não pode seqüestrar a consulta digitada.
-      const jobIdParam = e ? null : searchParams.get('j');
-      if (jobIdParam) {
+      if (jobIdParam && isUUID.test(jobIdParam)) {
         ({ data, error: supabaseError } = await supabase
-          .from('jobs')
-          .select(selectClause)
-          .eq('id', jobIdParam)
-          .maybeSingle());
+          .rpc('get_public_tracking', { p_job_id: jobIdParam, p_order_number: null }));
       }
 
-      if (!supabaseError && !data && isUUID) {
+      if (!supabaseError && (!data || data.length === 0) && isUUID) {
         ({ data, error: supabaseError } = await supabase
-          .from('jobs')
-          .select(selectClause)
-          .eq('id', safeQuery)
-          .maybeSingle());
-        // A UUID-shaped string is a valid order_number value; fall back if id lookup missed.
-        if (!supabaseError && !data) {
-          ({ data, error: supabaseError } = await supabase
-            .from('jobs')
-            .select(selectClause)
-            .eq('order_number', safeQuery)
-            .maybeSingle());
-        }
-      } else if (!supabaseError && !data) {
+          .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: null }));
+      }
+
+      if (!supabaseError && (!data || data.length === 0)) {
         ({ data, error: supabaseError } = await supabase
-          .from('jobs')
-          .select(selectClause)
-          .eq('order_number', safeQuery)
-          .maybeSingle());
+          .rpc('get_public_tracking', { p_job_id: null, p_order_number: safeQuery }));
       }
 
       if (supabaseError) throw supabaseError;
 
-      if (!data) {
+      if (!data || data.length === 0) {
         setError(t('tracking.orderNotFound'));
       } else {
-        setJob(data);
+        setJob(data[0]);
       }
     } catch {
       setError(t('tracking.errorFetching'));
