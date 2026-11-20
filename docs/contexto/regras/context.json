@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "95c091b5cd657c46926a8608f4748b99a0633f63",
+  "sha": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-19 23:37 UTC",
+  "generated_at": "2026-11-20 00:42 UTC",
   "files_total": 1547,
   "code_files": 1376,
-  "code_lines": 203362
+  "code_lines": 203371
  },
  "version": "1.3.2",
- "facts_hash": "666ec089e07db963",
+ "facts_hash": "426034a30e12beed",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -26791,7 +26791,7 @@
   {
    "module": "public",
    "files": 1,
-   "lines": 178,
+   "lines": 187,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -66684,7 +66684,7 @@
   },
   "public/sw.js": {
    "path": "public/sw.js",
-   "lines": 178,
+   "lines": 187,
    "errors": [
     ",\n    renotify: true,\n    requireInteraction: true,\n    data: data.data,\n    actions: [\n      {\n        action: "
    ],
@@ -94888,10 +94888,19 @@
   }
  },
  "git": {
-  "sha": "95c091b5cd657c46926a8608f4748b99a0633f63",
+  "sha": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3d7a497",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)",
+    "files": [
+     "public/sw.js"
+    ]
+   },
    {
     "sha": "95c091b",
     "date": "2026-11-19",
@@ -95240,15 +95249,6 @@
      "scripts/autofix.test.mjs",
      "scripts/autofix/unused.mjs"
     ]
-   },
-   {
-    "sha": "64c3b0c",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: redige chave sk_live exposta em analise-prs/auditorias-anteriores.md (#190)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95281,10 +95281,6 @@
     2
    ],
    [
-    "analise-prs/auditorias-anteriores.md",
-    2
-   ],
-   [
     ".github/workflows/deploy.yml",
     2
    ],
@@ -95307,6 +95303,10 @@
    [
     "scripts/autofix.test.mjs",
     2
+   ],
+   [
+    "public/sw.js",
+    1
    ],
    [
     "analise-prs/RELATORIO_PRS.md",

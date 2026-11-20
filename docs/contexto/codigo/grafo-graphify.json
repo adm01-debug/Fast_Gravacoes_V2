@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "95c091b5cd657c46926a8608f4748b99a0633f63",
+ "commit_do_grafo": "3d7a4974bfac0ec41f8e1d8eb0bce9a0b9da2bc7",
  "grafo_atual": true,
  "nos": 7463,
  "arestas": 21939,
@@ -69,9 +69,9 @@
   {
    "id": 2,
    "nome": "input.tsx",
-   "nos": 128,
-   "callables": 56,
-   "arquivos": 53,
+   "nos": 131,
+   "callables": 59,
+   "arquivos": 55,
    "exemplos_arquivos": [
     "src/components/calendar/CalendarFilters.tsx",
     "src/components/dashboard/AlertScheduleModal.tsx",
@@ -164,19 +164,19 @@
   },
   {
    "id": 8,
-   "nome": "client.ts",
-   "nos": 102,
-   "callables": 48,
-   "arquivos": 44,
+   "nome": "Button",
+   "nos": 106,
+   "callables": 56,
+   "arquivos": 46,
    "exemplos_arquivos": [
-    "src/components/digital-twin/FactoryFloorMap.tsx",
-    "src/components/logistics/EditShipmentModal.tsx",
-    "src/features/admin/hooks/useBusinessConfig.ts",
-    "src/features/admin/hooks/useDashboardSettings.ts",
-    "src/features/admin/hooks/useDetailedAuditTrail.ts",
-    "src/features/admin/hooks/useFeatureFlags.ts",
-    "src/features/admin/index.ts",
-    "src/features/admin/services/integrationsService.ts"
+    "src/components/calendar/CalendarOnboarding.tsx",
+    "src/components/dashboard/InventoryAlertsWidget.tsx",
+    "src/components/design-system/sections/modals/DialogExamples.tsx",
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/documents/DocumentViewer.tsx",
+    "src/components/documents/DocumentsList.tsx",
+    "src/components/inventory/InventoryStats.tsx",
+    "src/components/inventory/QRLabelModal.tsx"
    ]
   },
   {
@@ -208,23 +208,6 @@
   },
   {
    "id": 11,
-   "nome": "Button",
-   "nos": 98,
-   "callables": 52,
-   "arquivos": 44,
-   "exemplos_arquivos": [
-    "src/components/calendar/CalendarOnboarding.tsx",
-    "src/components/dashboard/InventoryAlertsWidget.tsx",
-    "src/components/design-system/sections/modals/DialogExamples.tsx",
-    "src/components/documents/DocumentUploadModal.tsx",
-    "src/components/documents/DocumentViewer.tsx",
-    "src/components/documents/DocumentsList.tsx",
-    "src/components/inventory/InventoryStats.tsx",
-    "src/components/inventory/QRLabelModal.tsx"
-   ]
-  },
-  {
-   "id": 12,
    "nome": "gerar.mjs",
    "nos": 96,
    "callables": 19,
@@ -234,13 +217,30 @@
    ]
   },
   {
-   "id": 13,
+   "id": 12,
    "nome": ".write",
    "nos": 96,
    "callables": 90,
    "arquivos": 1,
    "exemplos_arquivos": [
     "scripts/regras_negocio/test_generate.py"
+   ]
+  },
+  {
+   "id": 13,
+   "nome": "client.ts",
+   "nos": 96,
+   "callables": 43,
+   "arquivos": 42,
+   "exemplos_arquivos": [
+    "src/components/digital-twin/FactoryFloorMap.tsx",
+    "src/components/logistics/EditShipmentModal.tsx",
+    "src/features/admin/hooks/useBusinessConfig.ts",
+    "src/features/admin/hooks/useDashboardSettings.ts",
+    "src/features/admin/hooks/useDetailedAuditTrail.ts",
+    "src/features/admin/hooks/useFeatureFlags.ts",
+    "src/features/admin/index.ts",
+    "src/features/admin/services/integrationsService.ts"
    ]
   },
   {
@@ -330,19 +330,19 @@
   },
   {
    "id": 19,
-   "nome": "errorHandling.ts",
-   "nos": 74,
-   "callables": 35,
-   "arquivos": 21,
+   "nome": "parseDateOnly",
+   "nos": 73,
+   "callables": 47,
+   "arquivos": 31,
    "exemplos_arquivos": [
-    "src/components/documents/DocumentUploadModal.tsx",
-    "src/components/jobs/JobInstructionsTab.tsx",
-    "src/features/admin/hooks/useDashboardPresets.ts",
-    "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
-    "src/features/analytics/hooks/useMLPredictions.ts",
-    "src/features/jobs/hooks/useTechniques.test.tsx",
-    "src/features/jobs/hooks/useTechniques.ts",
-    "src/features/jobs/services/techniquesService.ts"
+    "src/components/calendar/CalendarFilters.tsx",
+    "src/components/calendar/QuickJobDrawer.tsx",
+    "src/components/dashboard/RecentJobsTable.tsx",
+    "src/components/icons/TargetArrowIcon.tsx",
+    "src/components/jobs/JobInfoGrid.tsx",
+    "src/components/jobs/JobInfoRow.tsx",
+    "src/components/kanban/DragOverlayCard.tsx",
+    "src/components/kanban/DraggableJobCard.tsx"
    ]
   },
   {
@@ -381,19 +381,19 @@
   },
   {
    "id": 22,
-   "nome": "DbJob",
-   "nos": 65,
-   "callables": 46,
-   "arquivos": 33,
+   "nome": "errorHandling.ts",
+   "nos": 68,
+   "callables": 41,
+   "arquivos": 22,
    "exemplos_arquivos": [
-    "src/components/calendar/CalendarFilters.tsx",
-    "src/components/calendar/DensityMinimap.tsx",
-    "src/components/calendar/QuickJobDrawer.tsx",
-    "src/components/dashboard/RecentJobsTable.tsx",
-    "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/jobs/JobInfoGrid.tsx",
-    "src/components/jobs/JobInfoRow.tsx",
-    "src/components/jobs/JobQuickActions.tsx"
+    "src/components/assistant/TechnicalAssistant.tsx",
+    "src/components/documents/DocumentUploadModal.tsx",
+    "src/components/integrations/Bitrix24SyncHistory.tsx",
+    "src/components/jobs/JobInstructionsTab.tsx",
+    "src/components/technical-assistant/ChatArea.tsx",
+    "src/components/technical-assistant/ConversationSidebar.tsx",
+    "src/components/technical-assistant/FileAnalyzer.tsx",
+    "src/features/admin/hooks/useBitrix24Sync.ts"
    ]
   },
   {
@@ -415,6 +415,23 @@
   },
   {
    "id": 24,
+   "nome": "DbJob",
+   "nos": 64,
+   "callables": 49,
+   "arquivos": 28,
+   "exemplos_arquivos": [
+    "src/components/alerts/AlertCard.tsx",
+    "src/components/alerts/AlertJobCard.tsx",
+    "src/components/alerts/AlertSpecialCards.tsx",
+    "src/components/alerts/AlertStatsGrid.tsx",
+    "src/components/alerts/AlertViewAllModals.tsx",
+    "src/components/calendar/CalendarTimeline.tsx",
+    "src/components/calendar/DensityMinimap.tsx",
+    "src/components/dashboard/AlertScheduleModal.tsx"
+   ]
+  },
+  {
+   "id": 25,
    "nome": "useTechniques",
    "nos": 62,
    "callables": 49,
@@ -431,7 +448,7 @@
    ]
   },
   {
-   "id": 25,
+   "id": 26,
    "nome": "DesignSystemPage.tsx",
    "nos": 60,
    "callables": 46,
@@ -448,7 +465,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 27,
    "nome": "scripts",
    "nos": 59,
    "callables": 0,
@@ -458,7 +475,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 28,
    "nome": "loading/index.ts",
    "nos": 59,
    "callables": 42,
@@ -471,7 +488,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 29,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 45,
@@ -484,7 +501,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 30,
    "nome": "actions-kpi.unit.mjs",
    "nos": 57,
    "callables": 46,
@@ -498,7 +515,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 31,
    "nome": "AppRoutes.tsx",
    "nos": 55,
    "callables": 13,
@@ -511,7 +528,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 32,
    "nome": "OperatorsPage.tsx",
    "nos": 53,
    "callables": 37,
@@ -528,7 +545,24 @@
    ]
   },
   {
-   "id": 32,
+   "id": 33,
+   "nome": "ReportBuilderPage.tsx",
+   "nos": 53,
+   "callables": 31,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/knowledge/TechnicalSheetTab.tsx",
+    "src/components/reports/ReportConfigPanel.tsx",
+    "src/components/reports/ReportSourcePanel.tsx",
+    "src/components/shift/HandoverDetailsModal.tsx",
+    "src/components/ui/checkbox.tsx",
+    "src/components/ui/date-range-picker.tsx",
+    "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
+    "src/features/maintenance/components/execution/AdjustmentParameters.tsx"
+   ]
+  },
+  {
+   "id": 34,
    "nome": "button.tsx",
    "nos": 52,
    "callables": 34,
@@ -545,7 +579,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 35,
    "nome": "jobs/index.ts",
    "nos": 51,
    "callables": 28,
@@ -562,7 +596,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 36,
    "nome": "useSchedulingData",
    "nos": 50,
    "callables": 32,
@@ -579,7 +613,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 37,
    "nome": "Bitrix24ConfigPage.tsx",
    "nos": 50,
    "callables": 24,
@@ -596,41 +630,24 @@
    ]
   },
   {
-   "id": 36,
-   "nome": "AlertsDashboard.tsx",
-   "nos": 49,
-   "callables": 36,
-   "arquivos": 18,
-   "exemplos_arquivos": [
-    "src/components/alerts/AlertCard.tsx",
-    "src/components/alerts/AlertJobCard.tsx",
-    "src/components/alerts/AlertSpecialCards.tsx",
-    "src/components/alerts/AlertStatsGrid.tsx",
-    "src/components/alerts/AlertViewAllModals.tsx",
-    "src/components/calendar/CalendarTimeline.tsx",
-    "src/components/dashboard/AlertScheduleModal.tsx",
-    "src/components/dashboard/BottleneckWidget.tsx"
-   ]
-  },
-  {
-   "id": 37,
-   "nome": "ReportBuilderPage.tsx",
-   "nos": 48,
-   "callables": 27,
-   "arquivos": 13,
-   "exemplos_arquivos": [
-    "src/components/reports/ReportConfigPanel.tsx",
-    "src/components/reports/ReportSourcePanel.tsx",
-    "src/components/ui/button.tsx",
-    "src/components/ui/calendar.tsx",
-    "src/components/ui/date-range-picker.tsx",
-    "src/contexts/DirtyFormContext.tsx",
-    "src/features/analytics/hooks/useKPIs.ts",
-    "src/lib/reportBuilder.ts"
-   ]
-  },
-  {
    "id": 38,
+   "nome": "showErrorToast",
+   "nos": 49,
+   "callables": 39,
+   "arquivos": 19,
+   "exemplos_arquivos": [
+    "src/components/layout/PageTransition.tsx",
+    "src/components/operators/EditOperatorModal.tsx",
+    "src/components/settings/IPAllowlist.tsx",
+    "src/components/settings/PasswordResetRequests.tsx",
+    "src/components/settings/SettingsAlertsTab.tsx",
+    "src/components/settings/SettingsBackupTab.tsx",
+    "src/components/settings/SettingsNotificationsTab.tsx",
+    "src/components/settings/TechniqueManagement.tsx"
+   ]
+  },
+  {
+   "id": 39,
    "nome": "_shared/logger.ts",
    "nos": 46,
    "callables": 27,
@@ -647,7 +664,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 40,
    "nome": "devDependencies",
    "nos": 43,
    "callables": 0,
@@ -657,7 +674,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 41,
    "nome": "graphify-local.mjs",
    "nos": 43,
    "callables": 36,
@@ -669,7 +686,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 42,
    "nome": "ShiftHandoverPage.tsx",
    "nos": 43,
    "callables": 24,
@@ -686,7 +703,24 @@
    ]
   },
   {
-   "id": 42,
+   "id": 43,
+   "nome": "queryConfig.ts",
+   "nos": 43,
+   "callables": 18,
+   "arquivos": 11,
+   "exemplos_arquivos": [
+    "src/features/analytics/hooks/useMLPredictions.ts",
+    "src/features/jobs/hooks/useTechniques.test.tsx",
+    "src/features/jobs/hooks/useTechniques.ts",
+    "src/features/jobs/services/techniquesService.ts",
+    "src/features/production/hooks/useMTBFMTTR.ts",
+    "src/features/production/hooks/useMachines.test.tsx",
+    "src/features/production/hooks/useMachines.ts",
+    "src/features/production/hooks/useOperatorGoals.ts"
+   ]
+  },
+  {
+   "id": 44,
    "nome": "erp-api/index.ts",
    "nos": 43,
    "callables": 23,
@@ -701,7 +735,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 45,
    "nome": "cors.ts",
    "nos": 43,
    "callables": 20,
@@ -718,24 +752,7 @@
    ]
   },
   {
-   "id": 44,
-   "nome": "ChatArea.tsx",
-   "nos": 42,
-   "callables": 27,
-   "arquivos": 13,
-   "exemplos_arquivos": [
-    "src/components/assistant/TechnicalAssistant.tsx",
-    "src/components/integrations/Bitrix24SyncHistory.tsx",
-    "src/components/technical-assistant/ChatArea.tsx",
-    "src/components/technical-assistant/ChatMessage.tsx",
-    "src/components/technical-assistant/ConversationSidebar.tsx",
-    "src/components/technical-assistant/FileAnalyzer.tsx",
-    "src/components/technical-assistant/SafetyAlert.tsx",
-    "src/components/technical-assistant/TechnicalArtifacts.tsx"
-   ]
-  },
-  {
-   "id": 45,
+   "id": 46,
    "nome": "KnowledgeSheetList.tsx",
    "nos": 42,
    "callables": 31,
@@ -752,7 +769,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 47,
    "nome": "automation.mjs",
    "nos": 41,
    "callables": 35,
@@ -763,7 +780,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 48,
    "nome": "chunks",
    "nos": 40,
    "callables": 0,
@@ -773,7 +790,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 49,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -783,7 +800,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 50,
    "nome": "hooks/types.ts",
    "nos": 36,
    "callables": 26,
@@ -800,7 +817,7 @@
    ]
   },
   {
-   "id": 50,
+   "id": 51,
    "nome": "github-settings-guard.mjs",
    "nos": 35,
    "callables": 25,
@@ -811,7 +828,7 @@
    ]
   },
   {
-   "id": 51,
+   "id": 52,
    "nome": ".git",
    "nos": 35,
    "callables": 30,
@@ -821,7 +838,7 @@
    ]
   },
   {
-   "id": 52,
+   "id": 53,
    "nome": "App.tsx",
    "nos": 35,
    "callables": 21,
@@ -838,7 +855,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 54,
    "nome": "OperatorProductivityPage.tsx",
    "nos": 35,
    "callables": 25,
@@ -852,23 +869,6 @@
     "src/components/operators/GoalAlertsWidget.tsx",
     "src/components/operators/OperatorGoalsTab.tsx",
     "src/components/operators/OperatorPerformanceTab.tsx"
-   ]
-  },
-  {
-   "id": 54,
-   "nome": "HandoverDetailsModal.tsx",
-   "nos": 35,
-   "callables": 22,
-   "arquivos": 10,
-   "exemplos_arquivos": [
-    "src/components/knowledge/TechnicalSheetTab.tsx",
-    "src/components/shift/HandoverDetailsModal.tsx",
-    "src/components/ui/checkbox.tsx",
-    "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
-    "src/features/maintenance/components/execution/AdjustmentParameters.tsx",
-    "src/features/maintenance/components/execution/ChecklistItem.tsx",
-    "src/features/maintenance/components/execution/ChecklistSection.tsx",
-    "src/features/maintenance/components/execution/RegulagemSection.tsx"
    ]
   },
   {
@@ -971,38 +971,23 @@
   },
   {
    "id": 62,
-   "nome": "SettingsPage.tsx",
+   "nome": "NewJobPage.tsx",
    "nos": 30,
-   "callables": 21,
-   "arquivos": 18,
+   "callables": 18,
+   "arquivos": 8,
    "exemplos_arquivos": [
-    "src/components/layout/PageTransition.tsx",
-    "src/components/onboarding/SystemOnboarding.tsx",
-    "src/components/settings/IPAllowlist.tsx",
-    "src/components/settings/PasswordResetRequests.tsx",
-    "src/components/settings/SettingsAlertsTab.tsx",
-    "src/components/settings/SettingsBackupTab.tsx",
-    "src/components/settings/SettingsGeneralTab.tsx",
-    "src/components/settings/SettingsNotificationsTab.tsx"
+    "src/components/ui/button.tsx",
+    "src/components/ui/calendar.tsx",
+    "src/contexts/DirtyFormContext.tsx",
+    "src/features/analytics/hooks/useKPIs.ts",
+    "src/pages/AdminTelemetriaPage.test.tsx",
+    "src/pages/AdminTelemetriaPage.tsx",
+    "src/pages/NewJobPage.tsx",
+    "src/routes/AppRoutes.tsx"
    ]
   },
   {
    "id": 63,
-   "nome": "showErrorToast",
-   "nos": 30,
-   "callables": 25,
-   "arquivos": 6,
-   "exemplos_arquivos": [
-    "src/components/operators/EditOperatorModal.tsx",
-    "src/features/admin/components/security/GeoBlockingSettings.tsx",
-    "src/features/admin/components/security/RateLimitSettings.tsx",
-    "src/features/admin/hooks/useGeoBlocking.ts",
-    "src/features/admin/hooks/useRateLimitLogs.ts",
-    "src/lib/errorHandling.ts"
-   ]
-  },
-  {
-   "id": 64,
    "nome": "gerar-banco.mjs",
    "nos": 29,
    "callables": 17,
@@ -1013,7 +998,7 @@
    ]
   },
   {
-   "id": 65,
+   "id": 64,
    "nome": ".collect",
    "nos": 29,
    "callables": 29,
@@ -1023,7 +1008,7 @@
    ]
   },
   {
-   "id": 66,
+   "id": 65,
    "nome": "realtimeChannel.ts",
    "nos": 29,
    "callables": 22,
@@ -1035,7 +1020,7 @@
    ]
   },
   {
-   "id": 67,
+   "id": 66,
    "nome": "cenarios.mjs",
    "nos": 28,
    "callables": 10,
@@ -1052,7 +1037,7 @@
    ]
   },
   {
-   "id": 68,
+   "id": 67,
    "nome": "GraphifyIntegrationTests",
    "nos": 28,
    "callables": 28,
@@ -1062,7 +1047,7 @@
    ]
   },
   {
-   "id": 69,
+   "id": 68,
    "nome": "calendarExports.ts",
    "nos": 28,
    "callables": 18,
@@ -1079,7 +1064,7 @@
    ]
   },
   {
-   "id": 70,
+   "id": 69,
    "nome": "auth.ts",
    "nos": 28,
    "callables": 22,
@@ -1091,7 +1076,7 @@
    ]
   },
   {
-   "id": 71,
+   "id": 70,
    "nome": "compilerOptions",
    "nos": 27,
    "callables": 0,
@@ -1101,7 +1086,7 @@
    ]
   },
   {
-   "id": 72,
+   "id": 71,
    "nome": "AuthProvider.tsx",
    "nos": 27,
    "callables": 18,
@@ -1115,7 +1100,7 @@
    ]
   },
   {
-   "id": 73,
+   "id": 72,
    "nome": "webpushEncrypt.ts",
    "nos": 26,
    "callables": 17,
@@ -1127,7 +1112,7 @@
    ]
   },
   {
-   "id": 74,
+   "id": 73,
    "nome": "autofix/run.mjs",
    "nos": 26,
    "callables": 12,
@@ -1137,7 +1122,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 74,
    "nome": "SnapshotCatalogContractTests",
    "nos": 26,
    "callables": 25,
@@ -1147,7 +1132,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 75,
    "nome": "gerar-rotas.mjs",
    "nos": 25,
    "callables": 14,
@@ -1162,7 +1147,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "CommandPaletteAdvanced.tsx",
    "nos": 25,
    "callables": 14,
@@ -1175,7 +1160,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "use-toast.ts",
    "nos": 25,
    "callables": 11,
@@ -1187,7 +1172,7 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "useABCMutations.ts",
    "nos": 24,
    "callables": 19,
@@ -1201,6 +1186,20 @@
     "src/hooks/abc/index.ts",
     "src/hooks/abc/types.ts",
     "src/hooks/abc/useABCCalculations.ts"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "types/scheduling.ts",
+   "nos": 24,
+   "callables": 17,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "src/components/calendar/AgendaView.tsx",
+    "src/components/calendar/JobQuickActions.tsx",
+    "src/hooks/use-device.tsx",
+    "src/pages/WeeklyCalendar.tsx",
+    "src/types/scheduling.ts"
    ]
   }
  ],
@@ -1616,7 +1615,7 @@
    "rotulo": "parseDateOnly()",
    "arquivo": "src/lib/dateUtils.ts",
    "grau": 64,
-   "comunidade": "DbJob"
+   "comunidade": "parseDateOnly"
   },
   {
    "id": "src_components_ui_scroll_area",
@@ -2135,14 +2134,14 @@
   "src/components/accessibility/index.tsx": "cn",
   "src/components/achievements/Achievements": "gerar.unit.mjs",
   "src/components/activity/ActivityLog.tsx": "Index.tsx",
-  "src/components/alerts/AlertCard.tsx": "AlertsDashboard.tsx",
-  "src/components/alerts/AlertJobCard.tsx": "AlertsDashboard.tsx",
-  "src/components/alerts/AlertSpecialCards.tsx": "AlertsDashboard.tsx",
+  "src/components/alerts/AlertCard.tsx": "DbJob",
+  "src/components/alerts/AlertJobCard.tsx": "DbJob",
+  "src/components/alerts/AlertSpecialCards.tsx": "DbJob",
   "src/components/alerts/AlertStatsGrid.tsx": "card.tsx",
   "src/components/alerts/AlertSummaryStats.tsx": "card.tsx",
-  "src/components/alerts/AlertViewAllModals.tsx": "AlertsDashboard.tsx",
+  "src/components/alerts/AlertViewAllModals.tsx": "DbJob",
   "src/components/assistant/AssistantButton.tsx": "MainLayout.tsx",
-  "src/components/assistant/TechnicalAssistant.tsx": "ChatArea.tsx",
+  "src/components/assistant/TechnicalAssistant.tsx": "errorHandling.ts",
   "src/components/auth/AuthErrorBoundary.tsx": "alert.tsx",
   "src/components/auth/AuthLoginForm.tsx": "button.tsx",
   "src/components/auth/AuthSignupForm.tsx": "button.tsx",
@@ -2153,7 +2152,7 @@
   "src/components/b/B": "cenarios.mjs",
   "src/components/calendar/AgendaView.tsx": "types/scheduling.ts",
   "src/components/calendar/CalendarEmptyState.tsx": "DailyCalendar.tsx",
-  "src/components/calendar/CalendarFilters.tsx": "input.tsx",
+  "src/components/calendar/CalendarFilters.tsx": "parseDateOnly",
   "src/components/calendar/CalendarHeader.tsx": "DailyCalendar.tsx",
   "src/components/calendar/CalendarLegend.tsx": "DailyCalendar.tsx",
   "src/components/calendar/CalendarOnboarding.tsx": "Button",
@@ -2172,7 +2171,7 @@
   "src/components/dashboard/ActivityFeedWidget.tsx": "Index.tsx",
   "src/components/dashboard/AlertScheduleModal.tsx": "input.tsx",
   "src/components/dashboard/AlertsWidget.tsx": "useSchedulingData",
-  "src/components/dashboard/BottleneckWidget.tsx": "AlertsDashboard.tsx",
+  "src/components/dashboard/BottleneckWidget.tsx": "DbJob",
   "src/components/dashboard/BufferPromotionStatus.tsx": "PendingQueue.tsx",
   "src/components/dashboard/BufferStatusWidget.tsx": "jobs/index.ts",
   "src/components/dashboard/CompactTimeline.tsx": "useSchedulingData",
@@ -2196,7 +2195,7 @@
   "src/components/dashboard/PredictiveAnalyticsWidget.tsx": "KPIDashboard.tsx",
   "src/components/dashboard/QuickActions.tsx": "cn",
   "src/components/dashboard/RealtimeIndicator.tsx": "App.tsx",
-  "src/components/dashboard/RecentJobsTable.tsx": "DbJob",
+  "src/components/dashboard/RecentJobsTable.tsx": "parseDateOnly",
   "src/components/dashboard/ShiftHandoverWidget.tsx": "ShiftHandoverPage.tsx",
   "src/components/dashboard/SmartSequencingWidget.tsx": "jobs/index.ts",
   "src/components/dashboard/SortableWidgetSection.tsx": "useAuth",
@@ -2282,7 +2281,7 @@
   "src/components/feedback/CelebrationMoment.tsx": "CelebrationMoment.tsx",
   "src/components/feedback/FeedbackProvider.tsx": "FeedbackProvider.tsx",
   "src/components/home/Home": "gerar.unit.mjs",
-  "src/components/icons/TargetArrowIcon.tsx": "MachinesPage.tsx",
+  "src/components/icons/TargetArrowIcon.tsx": "parseDateOnly",
   "src/components/integrations/Bitrix24SyncHistory.tsx": "FuturisticBI.tsx",
   "src/components/integrations/Bitrix24SyncPanel.tsx": "card.tsx",
   "src/components/integrations/IntegrationHub.tsx": "card.tsx",
@@ -2292,17 +2291,17 @@
   "src/components/inventory/WarehouseMap.tsx": "Button",
   "src/components/jobs/JobCostsTab.tsx": "LossesTable.tsx",
   "src/components/jobs/JobDetailsModal.tsx": "JobDetailsModal.tsx",
-  "src/components/jobs/JobInfoGrid.tsx": "DbJob",
-  "src/components/jobs/JobInfoRow.tsx": "DbJob",
+  "src/components/jobs/JobInfoGrid.tsx": "parseDateOnly",
+  "src/components/jobs/JobInfoRow.tsx": "parseDateOnly",
   "src/components/jobs/JobInstructionsTab.tsx": "card.tsx",
   "src/components/jobs/JobQualityTab.tsx": "SPCDashboard.tsx",
   "src/components/jobs/JobQuickActions.tsx": "DbJob",
   "src/components/jobs/JobTraceabilityTab.tsx": "JobDetailsModal.tsx",
-  "src/components/kanban/DragOverlayCard.tsx": "DbJob",
-  "src/components/kanban/DraggableJobCard.tsx": "DbJob",
-  "src/components/kanban/DroppableColumn.tsx": "DbJob",
-  "src/components/kanban/KanbanAIAdvisor.tsx": "Button",
-  "src/components/kanban/KanbanFiltersBar.tsx": "DbJob",
+  "src/components/kanban/DragOverlayCard.tsx": "parseDateOnly",
+  "src/components/kanban/DraggableJobCard.tsx": "parseDateOnly",
+  "src/components/kanban/DroppableColumn.tsx": "parseDateOnly",
+  "src/components/kanban/KanbanAIAdvisor.tsx": "useTechniques",
+  "src/components/kanban/KanbanFiltersBar.tsx": "parseDateOnly",
   "src/components/kanban/KanbanMetricsBar.tsx": "useTechniques",
   "src/components/kiosk/KioskMode.tsx": "badge.tsx",
   "src/components/knowledge/KnowledgeBaseStats.tsx": "KnowledgeSheetList.tsx",
@@ -2313,7 +2312,7 @@
   "src/components/knowledge/TechnicalSheetHeader.tsx": "KnowledgeSheetList.tsx",
   "src/components/knowledge/TechnicalSheetHistoryTab.tsx": "KnowledgeSheetList.tsx",
   "src/components/knowledge/TechnicalSheetMaterialCalculator.tsx": "cn",
-  "src/components/knowledge/TechnicalSheetTab.tsx": "KnowledgeSheetList.tsx",
+  "src/components/knowledge/TechnicalSheetTab.tsx": "ReportBuilderPage.tsx",
   "src/components/knowledge/TechnicalSheetViewer.tsx": "KnowledgeSheetList.tsx",
   "src/components/knowledge/TechnicalSheetVisualReference.tsx": "card.tsx",
   "src/components/knowledge/editor/EditorBasicInfo.tsx": "input.tsx",
@@ -2338,16 +2337,16 @@
   "src/components/loading/index.ts": "loading/index.ts",
   "src/components/logistics/CreateShipmentModal.tsx": "Button",
   "src/components/logistics/EditShipmentModal.tsx": "client.ts",
-  "src/components/machines/FactoryHeatmap.tsx": "MachinesPage.tsx",
-  "src/components/machines/MachineBulkActions.tsx": "MachinesPage.tsx",
-  "src/components/machines/MachineCard.tsx": "MachinesPage.tsx",
+  "src/components/machines/FactoryHeatmap.tsx": "parseDateOnly",
+  "src/components/machines/MachineBulkActions.tsx": "parseDateOnly",
+  "src/components/machines/MachineCard.tsx": "parseDateOnly",
   "src/components/machines/MachineDetailsModal.tsx": "MachineDetailsModal.tsx",
   "src/components/machines/MachineHistoryTab.tsx": "MachineDetailsModal.tsx",
-  "src/components/machines/MachineProfileDialog.tsx": "DbJob",
-  "src/components/machines/MachineQRDialog.tsx": "MachinesPage.tsx",
+  "src/components/machines/MachineProfileDialog.tsx": "parseDateOnly",
+  "src/components/machines/MachineQRDialog.tsx": "parseDateOnly",
   "src/components/machines/MachineReliabilityTab.tsx": "FuturisticBI.tsx",
-  "src/components/machines/MachineStatsCards.tsx": "MachinesPage.tsx",
-  "src/components/machines/MachinesByTechniqueList.tsx": "DbJob",
+  "src/components/machines/MachineStatsCards.tsx": "parseDateOnly",
+  "src/components/machines/MachinesByTechniqueList.tsx": "parseDateOnly",
   "src/components/ml/MLNotificationSettings.tsx": "card.tsx",
   "src/components/ml/MLPredictionCard.tsx": "badge.tsx",
   "src/components/ml/MLRiskDistributionChart.tsx": "badge.tsx",
@@ -2410,8 +2409,8 @@
   "src/components/operators/ProductionRadarChart.tsx": "FuturisticBI.tsx",
   "src/components/operators/SkillsMatrix.tsx": "OperatorsPage.tsx",
   "src/components/operators/operator-utils.ts": "KPIDashboard.tsx",
-  "src/components/planning/AISuggestionDetails.tsx": "AlertsDashboard.tsx",
-  "src/components/planning/LoadBalancingPanel.tsx": "AlertsDashboard.tsx",
+  "src/components/planning/AISuggestionDetails.tsx": "DbJob",
+  "src/components/planning/LoadBalancingPanel.tsx": "DbJob",
   "src/components/planning/PendingQueueStats.tsx": "card.tsx",
   "src/components/planning/PlanningEfficiencyDashboard.tsx": "useSchedulingData",
   "src/components/planning/SmartSequencingPanel.tsx": "jobs/index.ts",
@@ -2432,7 +2431,7 @@
   "src/components/reports/ReportSourcePanel.tsx": "ReportBuilderPage.tsx",
   "src/components/scheduling/CapacityHealthPanel.tsx": "AppProviders.tsx",
   "src/components/scheduling/MachineSuggestionPanel.tsx": "badge.tsx",
-  "src/components/scheduling/StuckJobsPanel.tsx": "DbJob",
+  "src/components/scheduling/StuckJobsPanel.tsx": "parseDateOnly",
   "src/components/scheduling/UtilizationHeatmap.tsx": "DbJob",
   "src/components/settings/AutoThemeToggle.tsx": "input.tsx",
   "src/components/settings/IPAllowlist.tsx": "input.tsx",
@@ -2443,11 +2442,11 @@
   "src/components/settings/SettingsGeneralTab.tsx": "input.tsx",
   "src/components/settings/SettingsNotificationsTab.tsx": "input.tsx",
   "src/components/settings/TechniqueManagement.tsx": "scroll-area.tsx",
-  "src/components/settings/TransitionsSettings.tsx": "SettingsPage.tsx",
-  "src/components/settings/TwoFactorSetup.test.tsx": "SettingsPage.tsx",
-  "src/components/settings/TwoFactorSetup.tsx": "SettingsPage.tsx",
-  "src/components/settings/UserManagement.tsx": "SettingsPage.tsx",
-  "src/components/shift/AutoShiftSummary.tsx": "DbJob",
+  "src/components/settings/TransitionsSettings.tsx": "showErrorToast",
+  "src/components/settings/TwoFactorSetup.test.tsx": "showErrorToast",
+  "src/components/settings/TwoFactorSetup.tsx": "showErrorToast",
+  "src/components/settings/UserManagement.tsx": "Button",
+  "src/components/shift/AutoShiftSummary.tsx": "parseDateOnly",
   "src/components/shift/ChecklistTemplatesManager.tsx": "useTechniques",
   "src/components/shift/CreateHandoverModal.tsx": "input.tsx",
   "src/components/shift/HandoverDetailsModal.tsx": "ShiftHandoverPage.tsx",
@@ -2459,12 +2458,12 @@
   "src/components/shift/occurrences/OccurrenceStatsCards.tsx": "card.tsx",
   "src/components/shortcuts/KeyboardShortcuts.tsx": "KeyboardShortcuts.tsx",
   "src/components/technical-assistant/BiometricSecurity.tsx": "button.tsx",
-  "src/components/technical-assistant/ChatArea.tsx": "ChatArea.tsx",
-  "src/components/technical-assistant/ChatMessage.tsx": "ChatArea.tsx",
+  "src/components/technical-assistant/ChatArea.tsx": "errorHandling.ts",
+  "src/components/technical-assistant/ChatMessage.tsx": "TechnicalArtifacts.tsx",
   "src/components/technical-assistant/ConversationSidebar.tsx": "input.tsx",
-  "src/components/technical-assistant/FileAnalyzer.tsx": "ChatArea.tsx",
-  "src/components/technical-assistant/SafetyAlert.tsx": "ChatArea.tsx",
-  "src/components/technical-assistant/TechnicalArtifacts.tsx": "ChatArea.tsx",
+  "src/components/technical-assistant/FileAnalyzer.tsx": "errorHandling.ts",
+  "src/components/technical-assistant/SafetyAlert.tsx": "TechnicalArtifacts.tsx",
+  "src/components/technical-assistant/TechnicalArtifacts.tsx": "TechnicalArtifacts.tsx",
   "src/components/technical-assistant/TechnicalTelemetryPanel.tsx": "cn",
   "src/components/traceability/BlockchainIntegrityCard.tsx": "JobDetailsModal.tsx",
   "src/components/traceability/CreateLotModal.tsx": "input.tsx",
@@ -2489,12 +2488,12 @@
   "src/components/ui/badge.tsx": "badge.tsx",
   "src/components/ui/breadcrumb.tsx": "BreadcrumbExamples.tsx",
   "src/components/ui/button.tsx": "button.tsx",
-  "src/components/ui/calendar.tsx": "ReportBuilderPage.tsx",
+  "src/components/ui/calendar.tsx": "NewJobPage.tsx",
   "src/components/ui/card.tsx": "card.tsx",
   "src/components/ui/carousel.tsx": "carousel.tsx",
   "src/components/ui/celebration.tsx": "celebration.tsx",
   "src/components/ui/chart.tsx": "FuturisticBI.tsx",
-  "src/components/ui/checkbox.tsx": "HandoverDetailsModal.tsx",
+  "src/components/ui/checkbox.tsx": "ReportBuilderPage.tsx",
   "src/components/ui/code-block.tsx": "card.tsx",
   "src/components/ui/collapsible.tsx": "cn",
   "src/components/ui/command.tsx": "CommandPaletteAdvanced.tsx",
@@ -2529,7 +2528,7 @@
   "src/components/ui/skeleton.tsx": "card.tsx",
   "src/components/ui/slider.tsx": "input.tsx",
   "src/components/ui/sonner.tsx": "App.tsx",
-  "src/components/ui/status-badge.tsx": "AlertsDashboard.tsx",
+  "src/components/ui/status-badge.tsx": "DbJob",
   "src/components/ui/stepper.tsx": "cn",
   "src/components/ui/switch.tsx": "input.tsx",
   "src/components/ui/table.tsx": "scroll-area.tsx",
@@ -2583,7 +2582,7 @@
   "src/features/admin/hooks/useActivityLog.ts": "Index.tsx",
   "src/features/admin/hooks/useAuditTrail.ts": "MachineDetailsModal.tsx",
   "src/features/admin/hooks/useBIExport.ts": "pdfExport.ts",
-  "src/features/admin/hooks/useBitrix24Sync.ts": "ChatArea.tsx",
+  "src/features/admin/hooks/useBitrix24Sync.ts": "errorHandling.ts",
   "src/features/admin/hooks/useBusinessConfig.ts": "client.ts",
   "src/features/admin/hooks/useCodeQualityMetrics.ts": "useCodeQualityMetrics.ts",
   "src/features/admin/hooks/useCronHealth.ts": "CronHealthCard.tsx",
@@ -2673,7 +2672,7 @@
   "src/features/analytics/components/spc/SPCControlChart.tsx": "SPCDashboard.tsx",
   "src/features/analytics/components/spc/SPCCreateParameterModal.tsx": "SPCDashboard.tsx",
   "src/features/analytics/constants/oee.ts": "analytics/index.ts",
-  "src/features/analytics/hooks/useBottleneckPrediction.ts": "useTechniques",
+  "src/features/analytics/hooks/useBottleneckPrediction.ts": "input.tsx",
   "src/features/analytics/hooks/useEfficiencyAlertHistory.ts": "EfficiencyAlertHistoryWidget.tsx",
   "src/features/analytics/hooks/useEnergy.ts": "client.ts",
   "src/features/analytics/hooks/useExecutiveDashboard.ts": "excelExport.test.ts",
@@ -2689,13 +2688,13 @@
   "src/features/analytics/hooks/useSPC.ts": "SPCDashboard.tsx",
   "src/features/analytics/index.ts": "analytics/index.ts",
   "src/features/analytics/lib/oeeReportExport.ts": "analytics/index.ts",
-  "src/features/analytics/types/index.ts": "DbJob",
+  "src/features/analytics/types/index.ts": "parseDateOnly",
   "src/features/auth/components/AuthProvider.test.tsx": "AuthProvider.tsx",
   "src/features/auth/components/AuthProvider.tsx": "AuthProvider.tsx",
   "src/features/auth/hooks/useAuth.ts": "useAuth",
   "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts": "client.ts",
-  "src/features/auth/hooks/useMFA.test.tsx": "useMFA.ts",
-  "src/features/auth/hooks/useMFA.ts": "useMFA.ts",
+  "src/features/auth/hooks/useMFA.test.tsx": "useMFA.test.tsx",
+  "src/features/auth/hooks/useMFA.ts": "errorHandling.ts",
   "src/features/auth/hooks/useRBAC.tsx": "useAuth",
   "src/features/auth/hooks/useRolePermissions.ts": "useAuth",
   "src/features/auth/hooks/useSessionManager.tsx": "useAuth",
@@ -2720,14 +2719,14 @@
   "src/features/jobs/hooks/useAutoBufferPromotion.ts": "client.ts",
   "src/features/jobs/hooks/useDailyDragDrop.ts": "jobs/index.ts",
   "src/features/jobs/hooks/useDuplicateJob.ts": "JobDetailsModal",
-  "src/features/jobs/hooks/useJobInventoryCheck.ts": "DbJob",
+  "src/features/jobs/hooks/useJobInventoryCheck.ts": "parseDateOnly",
   "src/features/jobs/hooks/useJobStatusHistory.ts": "client.ts",
   "src/features/jobs/hooks/useJobs.realtime.test.tsx": "useJobs.realtime.test.tsx",
   "src/features/jobs/hooks/useJobs.ts": "jobs/index.ts",
   "src/features/jobs/hooks/useKanbanDragDrop.ts": "jobs/index.ts",
   "src/features/jobs/hooks/usePaginatedJobs.ts": "lib/logger.ts",
   "src/features/jobs/hooks/usePriorityEscalation.ts": "AppProviders.tsx",
-  "src/features/jobs/hooks/useRecordDuplication.ts": "useRecordDuplication.ts",
+  "src/features/jobs/hooks/useRecordDuplication.ts": "client.ts",
   "src/features/jobs/hooks/useSchedulingConflicts.test.tsx": "calendarExports.ts",
   "src/features/jobs/hooks/useSchedulingConflicts.ts": "calendarExports.ts",
   "src/features/jobs/hooks/useSchedulingData.test.tsx": "useSchedulingData",
@@ -2736,7 +2735,7 @@
   "src/features/jobs/hooks/useSmartSequencingWithActions.ts": "useTechniques",
   "src/features/jobs/hooks/useStuckJobsDetection.ts": "jobs/index.ts",
   "src/features/jobs/hooks/useTechniques.realtime.test.tsx": "useJobs.realtime.test.tsx",
-  "src/features/jobs/hooks/useTechniques.test.tsx": "errorHandling.ts",
+  "src/features/jobs/hooks/useTechniques.test.tsx": "queryConfig.ts",
   "src/features/jobs/hooks/useTechniques.ts": "useTechniques",
   "src/features/jobs/hooks/useWeeklyDragDrop.ts": "jobs/index.ts",
   "src/features/jobs/index.ts": "card.tsx",
@@ -2761,7 +2760,7 @@
   "src/features/maintenance/components/MTBFMTTRWidget.tsx": "MTBFMTTRWidget.tsx",
   "src/features/maintenance/components/MachineTPMPanel.tsx": "KPIDashboard.tsx",
   "src/features/maintenance/components/MachineTPMTimeline.tsx": "card.tsx",
-  "src/features/maintenance/components/MaintenanceExecutionModal.tsx": "hooks/types.ts",
+  "src/features/maintenance/components/MaintenanceExecutionModal.tsx": "ReportBuilderPage.tsx",
   "src/features/maintenance/components/PredictiveHealthCard.tsx": "badge.tsx",
   "src/features/maintenance/components/TPMAlertsPanel.tsx": "hooks/types.ts",
   "src/features/maintenance/components/TPMCalendar.tsx": "hooks/types.ts",
@@ -2775,16 +2774,16 @@
   "src/features/maintenance/components/TPMScheduleList.tsx": "hooks/types.ts",
   "src/features/maintenance/components/TPMSeverityConfigs.tsx": "input.tsx",
   "src/features/maintenance/components/VirtualSensorPanel.tsx": "FuturisticBI.tsx",
-  "src/features/maintenance/components/execution/AdjustmentParameters.tsx": "KnowledgeSheetList.tsx",
+  "src/features/maintenance/components/execution/AdjustmentParameters.tsx": "ReportBuilderPage.tsx",
   "src/features/maintenance/components/execution/AlertRiskPanel.tsx": "input.tsx",
-  "src/features/maintenance/components/execution/ChecklistItem.tsx": "HandoverDetailsModal.tsx",
-  "src/features/maintenance/components/execution/ChecklistSection.tsx": "HandoverDetailsModal.tsx",
+  "src/features/maintenance/components/execution/ChecklistItem.tsx": "ReportBuilderPage.tsx",
+  "src/features/maintenance/components/execution/ChecklistSection.tsx": "ReportBuilderPage.tsx",
   "src/features/maintenance/components/execution/GeneralInfoSection.tsx": "input.tsx",
-  "src/features/maintenance/components/execution/RegulagemSection.tsx": "HandoverDetailsModal.tsx",
+  "src/features/maintenance/components/execution/RegulagemSection.tsx": "ReportBuilderPage.tsx",
   "src/features/maintenance/components/execution/ReplacementParts.tsx": "input.tsx",
-  "src/features/maintenance/components/execution/SupplyList.tsx": "HandoverDetailsModal.tsx",
+  "src/features/maintenance/components/execution/SupplyList.tsx": "ReportBuilderPage.tsx",
   "src/features/maintenance/hooks/index.ts": "hooks/types.ts",
-  "src/features/maintenance/hooks/types.ts": "hooks/types.ts",
+  "src/features/maintenance/hooks/types.ts": "ReportBuilderPage.tsx",
   "src/features/maintenance/hooks/useTPM.ts": "scroll-area.tsx",
   "src/features/maintenance/hooks/useTPMAlertMutations.ts": "hooks/types.ts",
   "src/features/maintenance/hooks/useTPMApprovalMutations.ts": "hooks/types.ts",
@@ -2854,19 +2853,19 @@
   "src/features/packaging/index.ts": "PackagingDashboard.tsx",
   "src/features/packaging/services/packagingService.ts": "PackagingDashboard.tsx",
   "src/features/packaging/types/packaging.schema.ts": "Button",
-  "src/features/production/hooks/useMTBFMTTR.ts": "errorHandling.ts",
-  "src/features/production/hooks/useMachineDowntime.ts": "client.ts",
+  "src/features/production/hooks/useMTBFMTTR.ts": "queryConfig.ts",
+  "src/features/production/hooks/useMachineDowntime.ts": "useMachineDowntime.ts",
   "src/features/production/hooks/useMachineStatusHub.ts": "client.ts",
   "src/features/production/hooks/useMachineUtilization.ts": "calendarExports.ts",
   "src/features/production/hooks/useMachines.realtime.test.tsx": "useJobs.realtime.test.tsx",
-  "src/features/production/hooks/useMachines.test.tsx": "errorHandling.ts",
+  "src/features/production/hooks/useMachines.test.tsx": "queryConfig.ts",
   "src/features/production/hooks/useMachines.ts": "useTechniques",
   "src/features/production/hooks/useOEE.ts": "analytics/index.ts",
   "src/features/production/hooks/useOEEAlerts.ts": "notifications/index.ts",
   "src/features/production/hooks/useOperatorAudit.ts": "client.ts",
   "src/features/production/hooks/useOperatorDashboardData.ts": "useAuth",
   "src/features/production/hooks/useOperatorEvolution.ts": "useOperatorEvolution.ts",
-  "src/features/production/hooks/useOperatorGoals.ts": "errorHandling.ts",
+  "src/features/production/hooks/useOperatorGoals.ts": "badge.tsx",
   "src/features/production/hooks/useOperatorMachines.ts": "useAuth",
   "src/features/production/hooks/useOperatorPresence.ts": "realtimeChannel.ts",
   "src/features/production/hooks/useOperatorProductivity.test.ts": "OperatorProductivityPage.tsx",
@@ -2877,7 +2876,7 @@
   "src/features/production/hooks/usePerformanceMetrics.ts": "client.ts",
   "src/features/production/hooks/useProductionLosses.ts": "client.ts",
   "src/features/production/index.ts": "analytics/index.ts",
-  "src/features/production/services/machinesService.ts": "KPIDashboard.tsx",
+  "src/features/production/services/machinesService.ts": "client.ts",
   "src/features/production/services/maintenanceService.ts": "client.ts",
   "src/features/production/services/oeeCalculations.test.ts": "useSchedulingData",
   "src/features/production/services/oeeCalculations.ts": "useSchedulingData",
@@ -2913,7 +2912,7 @@
   "src/hooks/useABCCosts.ts": "LossesTable.tsx",
   "src/hooks/useAlertCount.ts": "MainLayout.tsx",
   "src/hooks/useAutoTheme.ts": "input.tsx",
-  "src/hooks/useBulkActions.ts": "client.ts",
+  "src/hooks/useBulkActions.ts": "useBulkActions.ts",
   "src/hooks/useCalendarFilters.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarHotkeys.ts": "DailyCalendar.tsx",
   "src/hooks/useCalendarPreferences.ts": "DailyCalendar.tsx",
@@ -2921,7 +2920,7 @@
   "src/hooks/useDashboardLayout.ts": "useAuth",
   "src/hooks/useDebounce.ts": "OperatorsPage.tsx",
   "src/hooks/useDeviceDetection.ts": "AuthProvider.tsx",
-  "src/hooks/useDocuments.ts": "Button",
+  "src/hooks/useDocuments.ts": "errorHandling.ts",
   "src/hooks/useFuseSearch.ts": "OperatorsPage.tsx",
   "src/hooks/useGamification.ts": "LeaderboardWidget.tsx",
   "src/hooks/useInfiniteScroll.ts": "utils/index.ts",
@@ -2937,7 +2936,7 @@
   "src/hooks/useRoutePrefetch.ts": "KPIDashboard.tsx",
   "src/hooks/useShiftHandover.ts": "ShiftHandoverPage.tsx",
   "src/hooks/useSmartDelayAlerts.ts": "AppProviders.tsx",
-  "src/hooks/useTechnicalConversations.ts": "ChatArea.tsx",
+  "src/hooks/useTechnicalConversations.ts": "errorHandling.ts",
   "src/hooks/useTechnicalSheets.ts": "KnowledgeSheetList.tsx",
   "src/hooks/useTechniqueCapacityAlerts.ts": "AppProviders.tsx",
   "src/hooks/useThemeSound.ts": "notifications/index.ts",
@@ -2949,14 +2948,14 @@
   "src/i18n/index.ts": "KPIDashboard.tsx",
   "src/integrations/lovable/index.ts": "client.ts",
   "src/integrations/supabase/client.ts": "client.ts",
-  "src/lib/a11y.ts": "AlertsDashboard.tsx",
+  "src/lib/a11y.ts": "DbJob",
   "src/lib/calendarExports.test.ts": "calendarExports.ts",
   "src/lib/calendarExports.ts": "calendarExports.ts",
   "src/lib/circuitBreaker.ts": "circuitBreaker.ts",
   "src/lib/csvSafety.test.ts": "useDataExport.ts",
   "src/lib/csvSafety.ts": "useDataExport.ts",
-  "src/lib/dateUtils.ts": "DbJob",
-  "src/lib/edgeFunctionFetch.ts": "ChatArea.tsx",
+  "src/lib/dateUtils.ts": "parseDateOnly",
+  "src/lib/edgeFunctionFetch.ts": "errorHandling.ts",
   "src/lib/envGuard.ts": "App.tsx",
   "src/lib/errorHandling.ts": "errorHandling.ts",
   "src/lib/excel.test.ts": "excel.ts",
@@ -2983,7 +2982,7 @@
   "src/lib/pdfExport.ts": "excelExport.test.ts",
   "src/lib/prefetch.ts": "AppSidebar.tsx",
   "src/lib/productivityReport.ts": "badge.tsx",
-  "src/lib/queryConfig.ts": "errorHandling.ts",
+  "src/lib/queryConfig.ts": "queryConfig.ts",
   "src/lib/rateLimiter.ts": "RateLimiter",
   "src/lib/realtimeChannel.ts": "realtimeChannel.ts",
   "src/lib/recharts.ts": "FuturisticBI.tsx",
@@ -2991,7 +2990,7 @@
   "src/lib/retryWithBackoff.ts": "retryWithBackoff.ts",
   "src/lib/sanitize.ts": "sanitize.ts",
   "src/lib/schemas/auditLog.ts": "useAuditTrail.ts",
-  "src/lib/shiftReportPdf.ts": "DbJob",
+  "src/lib/shiftReportPdf.ts": "parseDateOnly",
   "src/lib/simulation.ts": "simulation.ts",
   "src/lib/soundFeedback.ts": "notifications/index.ts",
   "src/lib/spcExport.test.ts": "SPCDashboard.tsx",
@@ -3004,9 +3003,9 @@
   "src/pages/A": "cenarios.mjs",
   "src/pages/ABCCostingDashboard.tsx": "KPIDashboard.tsx",
   "src/pages/AdminDocs": "gerar.unit.mjs",
-  "src/pages/AdminTelemetriaPage.test.tsx": "ReportBuilderPage.tsx",
-  "src/pages/AdminTelemetriaPage.tsx": "ReportBuilderPage.tsx",
-  "src/pages/AlertsDashboard.tsx": "AlertsDashboard.tsx",
+  "src/pages/AdminTelemetriaPage.test.tsx": "NewJobPage.tsx",
+  "src/pages/AdminTelemetriaPage.tsx": "NewJobPage.tsx",
+  "src/pages/AlertsDashboard.tsx": "DbJob",
   "src/pages/AuditTrailPage.tsx": "useAuditTrail.ts",
   "src/pages/AuthPage.tsx": "useAuth",
   "src/pages/B": "cenarios.mjs",
@@ -3040,7 +3039,7 @@
   "src/pages/MasterAPIPage.tsx": "cn",
   "src/pages/MfaEnrollmentPage.tsx": "card.tsx",
   "src/pages/MonthlyCalendar.tsx": "DailyCalendar.tsx",
-  "src/pages/NewJobPage.tsx": "ReportBuilderPage.tsx",
+  "src/pages/NewJobPage.tsx": "NewJobPage.tsx",
   "src/pages/NotFound.tsx": "MainLayout.tsx",
   "src/pages/NotificationsPage.tsx": "notifications/index.ts",
   "src/pages/OEEDashboard.tsx": "analytics/index.ts",
@@ -3059,14 +3058,14 @@
   "src/pages/ResetPasswordPage.tsx": "button.tsx",
   "src/pages/SPCDashboard.tsx": "SPCDashboard.tsx",
   "src/pages/SecurityDashboard.tsx": "useAuth",
-  "src/pages/SettingsPage.tsx": "SettingsPage.tsx",
+  "src/pages/SettingsPage.tsx": "showErrorToast",
   "src/pages/ShiftHandoverPage.tsx": "ShiftHandoverPage.tsx",
   "src/pages/SimulationDashboard.tsx": "cn",
   "src/pages/SystemMonitoringPage.tsx": "SystemMonitoringPage.tsx",
   "src/pages/SystemStatusPage.tsx": "SystemStatusPage.tsx",
   "src/pages/TPMDashboard.tsx": "notifications/index.ts",
   "src/pages/Tarde": "gerar-rotas.mjs",
-  "src/pages/TechnicalAssistantPage.tsx": "ChatArea.tsx",
+  "src/pages/TechnicalAssistantPage.tsx": "errorHandling.ts",
   "src/pages/TechnicalKnowledgeBase.tsx": "OperatorsPage.tsx",
   "src/pages/TraceabilityPage.tsx": "JobDetailsModal.tsx",
   "src/pages/WeeklyCalendar.tsx": "DailyCalendar.tsx",
@@ -3092,7 +3091,7 @@
   "src/test/loadStress.test.ts": "sanitize.ts",
   "src/test/oeeCalculations.test.ts": "useSchedulingData",
   "src/test/offlineStorage.test.ts": "sanitize.ts",
-  "src/test/queryConfig.test.ts": "errorHandling.ts",
+  "src/test/queryConfig.test.ts": "queryConfig.ts",
   "src/test/rateLimiter.test.ts": "RateLimiter",
   "src/test/rateLimiterAdvanced.test.ts": "RateLimiter",
   "src/test/realtimeMock.test.ts": "useJobs.realtime.test.tsx",
