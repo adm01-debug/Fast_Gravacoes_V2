@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
+  "commit": "3c05e4eeeefa585b868a855879c1e7e09b569c51",
   "branch": "main",
-  "data_commit": "2026-11-21T10:19:46-03:00",
+  "data_commit": "2026-11-21T13:05:52-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3c05e4e",
+    "data": "2026-11-21",
+    "assunto": "fix: F-006 geo-blocking enforced no login (#240)"
+   },
    {
     "sha": "4590899",
     "data": "2026-11-21",
@@ -126,15 +131,10 @@
     "sha": "096b2cc",
     "data": "2026-11-18",
     "assunto": "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)"
-   },
-   {
-    "sha": "e36c2ab",
-    "data": "2026-11-18",
-    "assunto": "chore(ci): bump the acoes group with 10 updates (#206)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 134,
+  "arquivos_mudados_7d": 119,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -161,15 +161,19 @@
     "mudancas": 16
    },
    {
+    "pasta": "src/features/admin",
+    "mudancas": 14
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
    {
-    "pasta": "src/features/admin",
-    "mudancas": 13
+    "pasta": "package.json",
+    "mudancas": 12
    },
    {
-    "pasta": "package.json",
+    "pasta": "src/features/auth",
     "mudancas": 12
    },
    {
@@ -191,10 +195,6 @@
    {
     "pasta": "src/features/production",
     "mudancas": 10
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -239,6 +239,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "supabase/functions/check-login-lockout/index.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "vercel.json",
     "mudancas": 7
    },
@@ -256,10 +260,6 @@
    },
    {
     "arquivo": "src/pages/PublicTrackingPage.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "supabase/functions/check-login-lockout/index.ts",
     "mudancas": 6
    },
    {
@@ -287,22 +287,22 @@
     "mudancas": 5
    },
    {
+    "arquivo": "src/features/auth/components/AuthProvider.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/hooks/useOfflineSync.ts",
     "mudancas": 5
    },
    {
     "arquivo": "supabase/config.toml",
     "mudancas": 5
-   },
-   {
-    "arquivo": "tests/e2e/visual-regression.spec.ts",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 99
+    "commits": 100
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1569,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 188336,
+  "linhas_codigo": 189082,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 328,
-   "linhas": 45523
+   "linhas": 46141
   },
   "src/hooks": {
    "arquivos": 61,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 16809
+   "linhas": 16811
   },
   "src/providers": {
    "arquivos": 2,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 55,
-   "linhas": 11303
+   "linhas": 11429
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -614,6 +614,10 @@
    "linhas": 623
   },
   {
+   "arquivo": "supabase/functions/check-login-lockout/index.ts",
+   "linhas": 596
+  },
+  {
    "arquivo": "src/pages/AdminTelemetriaPage.tsx",
    "linhas": 590
   },
@@ -660,19 +664,15 @@
   {
    "arquivo": "src/components/layout/QuickFavoritesBar.tsx",
    "linhas": 501
-  },
-  {
-   "arquivo": "src/pages/ShiftHandoverPage.tsx",
-   "linhas": 501
   }
  ],
  "qualidade": {
-  "any": 120,
-  "console_log": 180,
+  "any": 169,
+  "console_log": 181,
   "ts_ignore": 3,
   "eslint_disable": 2,
   "todos": 10,
-  "arquivos_acima_500_linhas": 25
+  "arquivos_acima_500_linhas": 26
  },
  "todos": [
   {

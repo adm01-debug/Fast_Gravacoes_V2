@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4590899633` · branch `main` · 2026-11-21 13:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c05e4eeee` · branch `main` · 2026-11-21 16:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T13:12:42Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T14:37:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T13:12:42Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T14:37:47Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -427,7 +427,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T13:12:42Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T14:37:47Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1470,7 +1470,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T13:12:42Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T14:37:47Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1593,7 +1593,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T13:12:42Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T14:37:47Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3267,7 +3267,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1271 testes em 104 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1283 testes em 104 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3290,6 +3290,7 @@ _nenhum item encontrado_
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
+| `src/features/auth/components/AuthProvider.test.tsx` | 18 | AuthContext · should initialize with loading state · should sign in successfully · should re-gate a Google session after a failed password sign-in (YTJ_) … |
 | `src/features/inventory/hooks/useInventory.test.ts` | 18 | useInventoryMovements · não consulta quando não há usuário autenticado · busca todas as movimentações ordenadas por data quando nenhum item é informado · filtra movimentações por item_id quando um itemId é informado … |
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
 | `src/test/rateLimiterAdvanced.test.ts` | 18 | RateLimiter — advanced scenarios · basic token consumption · allows requests up to maxTokens · rejects when tokens are exhausted … |
@@ -3334,7 +3335,6 @@ _nenhum item encontrado_
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
-| `src/features/auth/components/AuthProvider.test.tsx` | 6 | AuthContext · should initialize with loading state · should sign in successfully · should return blocked_by_ip error when allowlist blocks the IP … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
@@ -3498,10 +3498,14 @@ _nenhum item encontrado_
 | Rule 2: Seven or more points in a row on one side of the mean | `src/features/analytics/hooks/useSPC.ts` |
 | Rule 3: Seven points in a row steadily increasing or decreasing | `src/features/analytics/hooks/useSPC.ts` |
 | query sem ORDER BY + .limit(1) devolve uma linha em ordem não garantida | `src/features/auth/components/AuthProvider.tsx` |
+| falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior | `src/features/auth/components/AuthProvider.tsx` |
+| não pode re-gatear. Marca o user como admitido aqui mesmo (fora do | `src/features/auth/components/AuthProvider.tsx` |
+| verificada, e a sessão recém-emitida não deve entrar. | `src/features/auth/components/AuthProvider.tsx` |
 | `ProtectedRoute` must not treat an AAL1 session as fully authenticated when | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts` |
 | Permission checks | `src/features/auth/hooks/useRBAC.tsx` |
 | 429 = rate limit esgotado no gate pré-login. Um IP que saturou o | `src/features/auth/services/authService.ts` |
 | bucket de check-login-lockout é exatamente quem a allowlist deve | `src/features/auth/services/authService.ts` |
+| sessão já emitida não deve ser revogada só porque a cota acabou. | `src/features/auth/services/authService.ts` |
 | Validação de segurança: estoque insuficiente | `src/features/inventory/hooks/useInventory.ts` |
 | Runtime validation | `src/features/jobs/hooks/usePaginatedJobs.ts` |
 | Per-job try/catch: one failed update must not abort the loop for | `src/features/jobs/hooks/usePriorityEscalation.ts` |
@@ -3596,11 +3600,14 @@ _nenhum item encontrado_
 | inventory and must not be callable by any signed-in user. | `supabase/functions/calculate-inventory-intelligence/index.ts` |
 | padrão dual-header (service_role) não resolve usuário e não deve ser | `supabase/functions/calculate-rankings/index.ts` |
 | so an unconfigured deployment must never run it unauthenticated. | `supabase/functions/calculate-rankings/index.ts` |
+| Teto total entre os dois providers: um provedor fora do ar não pode | `supabase/functions/check-login-lockout/index.ts` |
 | Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca | `supabase/functions/check-login-lockout/index.ts` |
 | chega a tentar login nem consome o bucket de rate limit. Checa antes do | `supabase/functions/check-login-lockout/index.ts` |
 | Rate limit ANTES da allowlist: a resolução de usuário (listUsers) paga | `supabase/functions/check-login-lockout/index.ts` |
 | custo no Auth e não pode ser varrida sem consumir o bucket — chamador | `supabase/functions/check-login-lockout/index.ts` |
 | linha que não deve ser mascarada por um 429). | `supabase/functions/check-login-lockout/index.ts` |
+| F-006: geo-blocking (painel admin). Modo whitelist: só países com regra | `supabase/functions/check-login-lockout/index.ts` |
+| ativa is_blocked=false passam; países sem regra são bloqueados. País | `supabase/functions/check-login-lockout/index.ts` |
 | record_success must prove the caller actually holds a session for this | `supabase/functions/check-login-lockout/index.ts` |
 | Clean up old rate limit logs | `supabase/functions/cleanup-security-logs/index.ts` |
 | Rate limit: 10 operator-creations per hour per requesting user. | `supabase/functions/create-operator/index.ts` |

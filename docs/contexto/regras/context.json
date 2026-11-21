@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
+  "sha": "3c05e4eeeefa585b868a855879c1e7e09b569c51",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-21 13:38 UTC",
+  "generated_at": "2026-11-21 16:06 UTC",
   "files_total": 1567,
   "code_files": 1379,
-  "code_lines": 203712
+  "code_lines": 204458
  },
  "version": "1.3.2",
- "facts_hash": "c09a12ed7abd36e9",
+ "facts_hash": "267d44257cf71ed5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24530,6 +24530,9 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "blocked_ips",
+     "geo_blocking_logs",
+     "geo_blocking_rules",
+     "geo_blocking_settings",
      "ip_allowlist",
      "login_lockouts",
      "rate_limit_logs",
@@ -27374,7 +27377,7 @@
   {
    "module": "src/features/admin",
    "files": 55,
-   "lines": 6997,
+   "lines": 6999,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -27707,7 +27710,7 @@
   {
    "module": "src/features/auth",
    "files": 14,
-   "lines": 1784,
+   "lines": 2400,
    "tables": [
     "profiles",
     "role_permissions",
@@ -28749,7 +28752,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16809,
+   "lines": 16811,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29109,7 +29112,7 @@
   {
    "module": "supabase/functions",
    "files": 55,
-   "lines": 11303,
+   "lines": 11429,
    "tables": [
     "backup_logs",
     "backups",
@@ -29122,6 +29125,9 @@
     "daily_summaries",
     "edge_health_history",
     "erp_api_keys",
+    "geo_blocking_logs",
+    "geo_blocking_rules",
+    "geo_blocking_settings",
     "inventory_items",
     "inventory_movements",
     "ip_allowlist",
@@ -29690,11 +29696,15 @@
    "geo_blocking_logs": {
     "select": [
      "src/features/admin/hooks/useGeoBlocking.ts"
+    ],
+    "insert": [
+     "supabase/functions/check-login-lockout/index.ts"
     ]
    },
    "geo_blocking_rules": {
     "select": [
-     "src/features/admin/hooks/useGeoBlocking.ts"
+     "src/features/admin/hooks/useGeoBlocking.ts",
+     "supabase/functions/check-login-lockout/index.ts"
     ],
     "insert": [
      "src/features/admin/hooks/useGeoBlocking.ts"
@@ -29708,7 +29718,8 @@
    },
    "geo_blocking_settings": {
     "select": [
-     "src/features/admin/hooks/useGeoBlocking.ts"
+     "src/features/admin/hooks/useGeoBlocking.ts",
+     "supabase/functions/check-login-lockout/index.ts"
     ],
     "insert": [
      "src/features/admin/hooks/useGeoBlocking.ts"
@@ -31065,11 +31076,18 @@
     "is_active"
    ],
    "geo_blocking_rules": [
+    "block_type",
     "country_code",
-    "id"
+    "id",
+    "is_blocked",
+    "reason"
    ],
    "geo_blocking_settings": [
-    "id"
+    "block_unknown_countries",
+    "id",
+    "is_enabled",
+    "log_blocked_attempts",
+    "mode"
    ],
    "ghost_table": [
     "id"
@@ -35945,6 +35963,18 @@
     "text": "query sem ORDER BY + .limit(1) devolve uma linha em ordem não garantida"
    },
    {
+    "file": "src/features/auth/components/AuthProvider.tsx",
+    "text": "falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.tsx",
+    "text": "não pode re-gatear. Marca o user como admitido aqui mesmo (fora do"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.tsx",
+    "text": "verificada, e a sessão recém-emitida não deve entrar."
+   },
+   {
     "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
     "text": "`ProtectedRoute` must not treat an AAL1 session as fully authenticated when"
    },
@@ -35959,6 +35989,10 @@
    {
     "file": "src/features/auth/services/authService.ts",
     "text": "bucket de check-login-lockout é exatamente quem a allowlist deve"
+   },
+   {
+    "file": "src/features/auth/services/authService.ts",
+    "text": "sessão já emitida não deve ser revogada só porque a cota acabou."
    },
    {
     "file": "src/features/inventory/hooks/useInventory.ts",
@@ -36338,6 +36372,10 @@
    },
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "Teto total entre os dois providers: um provedor fora do ar não pode"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
     "text": "Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca"
    },
    {
@@ -36355,6 +36393,14 @@
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
     "text": "linha que não deve ser mascarada por um 429)."
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "F-006: geo-blocking (painel admin). Modo whitelist: só países com regra"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "ativa is_blocked=false passam; países sem regra são bloqueados. País"
    },
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
@@ -50498,11 +50544,59 @@
    },
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should re-gate a Google session after a failed password sign-in (YTJ_)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
     "name": "should return blocked_by_ip error when allowlist blocks the IP"
    },
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
     "name": "should block sign-in when lockout check is rate-limited (429)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should block sign-in when geo-blocking blocks the country"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should allow sign-in when geo-blocking allows the country"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should re-check lockout and sign out a restored session blocked by geo/IP"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should NOT sign out a restored session when lockout is rate-limited (429)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should sign out a NEW OAuth session when lockout is rate-limited (429)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should NOT re-sign-out an already admitted session on tab refocus (429)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should NOT re-gate when token refresh changes access_token (YE4M)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should re-check a restored 429 session once the quota returns (YE5U)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should NOT sign out a pending restored session on refocus 429 (YQbV)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should sign out a pending restored session once geo blocks after the refocus 429s (YWzd)"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should NOT re-gate an admitted session on TOKEN_REFRESHED (YQbx)"
    },
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
@@ -76516,7 +76610,7 @@
   },
   "src/features/admin/components/security/GeoBlockingSettings.tsx": {
    "path": "src/features/admin/components/security/GeoBlockingSettings.tsx",
-   "lines": 366,
+   "lines": 368,
    "exports": [
     "function GeoBlockingSettings"
    ],
@@ -79224,20 +79318,37 @@
   },
   "src/features/auth/components/AuthProvider.test.tsx": {
    "path": "src/features/auth/components/AuthProvider.test.tsx",
-   "lines": 180,
+   "lines": 679,
    "is_test": true,
+   "rule_comments": [
+    "XP_W/YTJ_: falha de senha não pode deixar o marker de sessão-password ativo,",
+    "password, então o gate DEVE rodar.",
+    "a sessão nova não pode entrar: re-gate não é fail-open para SIGNED_IN."
+   ],
    "tests": [
     "AuthContext",
     "should initialize with loading state",
     "should sign in successfully",
+    "should re-gate a Google session after a failed password sign-in (YTJ_)",
     "should return blocked_by_ip error when allowlist blocks the IP",
     "should block sign-in when lockout check is rate-limited (429)",
+    "should block sign-in when geo-blocking blocks the country",
+    "should allow sign-in when geo-blocking allows the country",
+    "should re-check lockout and sign out a restored session blocked by geo/IP",
+    "should NOT sign out a restored session when lockout is rate-limited (429)",
+    "should sign out a NEW OAuth session when lockout is rate-limited (429)",
+    "should NOT re-sign-out an already admitted session on tab refocus (429)",
+    "should NOT re-gate when token refresh changes access_token (YE4M)",
+    "should re-check a restored 429 session once the quota returns (YE5U)",
+    "should NOT sign out a pending restored session on refocus 429 (YQbV)",
+    "should sign out a pending restored session once geo blocks after the refocus 429s (YWzd)",
+    "should NOT re-gate an admitted session on TOKEN_REFRESHED (YQbx)",
     "should sign out successfully"
    ]
   },
   "src/features/auth/components/AuthProvider.tsx": {
    "path": "src/features/auth/components/AuthProvider.tsx",
-   "lines": 377,
+   "lines": 485,
    "exports": [
     "function AuthProvider"
    ],
@@ -79331,7 +79442,10 @@
     "operator"
    ],
    "rule_comments": [
-    "query sem ORDER BY + .limit(1) devolve uma linha em ordem não garantida"
+    "query sem ORDER BY + .limit(1) devolve uma linha em ordem não garantida",
+    "falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior",
+    "não pode re-gatear. Marca o user como admitido aqui mesmo (fora do",
+    "verificada, e a sessão recém-emitida não deve entrar."
    ],
    "doc": "eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
    "temporal": [
@@ -79525,7 +79639,7 @@
   },
   "src/features/auth/services/authService.ts": {
    "path": "src/features/auth/services/authService.ts",
-   "lines": 98,
+   "lines": 107,
    "exports": [
     "interface LockoutStatus",
     "const AuthService"
@@ -79535,7 +79649,8 @@
    ],
    "rule_comments": [
     "429 = rate limit esgotado no gate pré-login. Um IP que saturou o",
-    "bucket de check-login-lockout é exatamente quem a allowlist deve"
+    "bucket de check-login-lockout é exatamente quem a allowlist deve",
+    "sessão já emitida não deve ser revogada só porque a cota acabou."
    ],
    "side_effects": [
     "invoke("
@@ -88223,7 +88338,7 @@
   },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 279,
+   "lines": 281,
    "exports": [
     "function AuthPage"
    ],
@@ -91893,7 +92008,7 @@
   },
   "supabase/functions/check-login-lockout/index.ts": {
    "path": "supabase/functions/check-login-lockout/index.ts",
-   "lines": 470,
+   "lines": 596,
    "tables": [
     {
      "table": "blocked_ips",
@@ -91902,6 +92017,18 @@
     {
      "table": "ip_allowlist",
      "op": "select"
+    },
+    {
+     "table": "geo_blocking_settings",
+     "op": "select"
+    },
+    {
+     "table": "geo_blocking_rules",
+     "op": "select"
+    },
+    {
+     "table": "geo_blocking_logs",
+     "op": "insert"
     },
     {
      "table": "login_lockouts",
@@ -91949,6 +92076,18 @@
      "is_global",
      "user_id"
     ],
+    "geo_blocking_settings": [
+     "block_unknown_countries",
+     "is_enabled",
+     "log_blocked_attempts",
+     "mode"
+    ],
+    "geo_blocking_rules": [
+     "block_type",
+     "country_code",
+     "is_blocked",
+     "reason"
+    ],
     "login_lockouts": [
      "identifier",
      "identifier_type"
@@ -91970,11 +92109,14 @@
     }
    ],
    "rule_comments": [
+    "Teto total entre os dois providers: um provedor fora do ar não pode",
     "Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca",
     "chega a tentar login nem consome o bucket de rate limit. Checa antes do",
     "Rate limit ANTES da allowlist: a resolução de usuário (listUsers) paga",
     "custo no Auth e não pode ser varrida sem consumir o bucket — chamador",
     "linha que não deve ser mascarada por um 429).",
+    "F-006: geo-blocking (painel admin). Modo whitelist: só países com regra",
+    "ativa is_blocked=false passam; países sem regra são bloqueados. País",
     "record_success must prove the caller actually holds a session for this"
    ],
    "calc_fns": [
@@ -95081,10 +95223,24 @@
   }
  },
  "git": {
-  "sha": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
+  "sha": "3c05e4eeeefa585b868a855879c1e7e09b569c51",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3c05e4e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: F-006 geo-blocking enforced no login (#240)",
+    "files": [
+     "src/features/admin/components/security/GeoBlockingSettings.tsx",
+     "src/features/auth/components/AuthProvider.test.tsx",
+     "src/features/auth/components/AuthProvider.tsx",
+     "src/features/auth/services/authService.ts",
+     "src/pages/AuthPage.tsx",
+     "supabase/functions/check-login-lockout/index.ts"
+    ]
+   },
    {
     "sha": "4590899",
     "date": "2026-11-21",
@@ -95432,15 +95588,6 @@
      "src/hooks/useOfflineSync.ts",
      "tests/e2e/offline.spec.ts"
     ]
-   },
-   {
-    "sha": "c14eac6",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix: trigger de conflito travava jobs ja sobrepostos em qualquer update (#212)",
-    "files": [
-     "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -95457,19 +95604,27 @@
     4
    ],
    [
-    "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
-    2
-   ],
-   [
     "src/features/auth/components/AuthProvider.tsx",
-    2
+    3
    ],
    [
     "src/features/auth/services/authService.ts",
-    2
+    3
    ],
    [
     "supabase/functions/check-login-lockout/index.ts",
+    3
+   ],
+   [
+    "src/features/auth/components/AuthProvider.test.tsx",
+    2
+   ],
+   [
+    "src/pages/AuthPage.tsx",
+    2
+   ],
+   [
+    "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
     2
    ],
    [
@@ -95515,14 +95670,6 @@
    [
     ".github/workflows/visual-baselines.yml",
     2
-   ],
-   [
-    "src/features/auth/components/AuthProvider.test.tsx",
-    1
-   ],
-   [
-    "src/pages/AuthPage.tsx",
-    1
    ]
   ]
  }

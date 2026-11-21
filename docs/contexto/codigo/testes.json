@@ -374,13 +374,13 @@
   {
    "arquivo": "src/features/auth/components/AuthProvider.test.tsx",
    "tipo": "unit",
-   "linhas": 180,
+   "linhas": 679,
    "testa": [
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 5,
+   "casos": 17,
    "suporte": false
   },
   {

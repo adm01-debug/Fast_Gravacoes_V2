@@ -258,13 +258,16 @@
    "nome": "check-login-lockout",
    "entrada": "supabase/functions/check-login-lockout/index.ts",
    "arquivos": 1,
-   "linhas": 470,
+   "linhas": 596,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
     "blocked_ips",
+    "geo_blocking_logs",
+    "geo_blocking_rules",
+    "geo_blocking_settings",
     "ip_allowlist",
     "login_lockouts",
     "security_events"
@@ -277,7 +280,10 @@
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [],
+   "hosts_externos": [
+    "ipapi.co",
+    "ipwho.is"
+   ],
    "usa_shared": [
     "cors.ts",
     "logger.ts",

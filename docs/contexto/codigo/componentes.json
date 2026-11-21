@@ -6847,7 +6847,7 @@
     "GeoBlockingSettings"
    ],
    "export_default": null,
-   "linhas": 366,
+   "linhas": 368,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAddCountryRule",
@@ -7854,7 +7854,7 @@
     "AuthProvider"
    ],
    "export_default": null,
-   "linhas": 377,
+   "linhas": 485,
    "dominio": "features/auth",
    "hooks_locais": [
     "useDeviceDetection"
@@ -8958,7 +8958,7 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 279,
+   "linhas": 281,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"
