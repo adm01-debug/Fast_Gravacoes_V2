@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
+  "sha": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-20 21:12 UTC",
+  "generated_at": "2026-11-21 12:47 UTC",
   "files_total": 1567,
   "code_files": 1379,
-  "code_lines": 203564
+  "code_lines": 203712
  },
  "version": "1.3.2",
- "facts_hash": "071ca3ea30bf9301",
+ "facts_hash": "c09a12ed7abd36e9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -24530,6 +24530,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "blocked_ips",
+     "ip_allowlist",
      "login_lockouts",
      "rate_limit_logs",
      "security_events"
@@ -27706,7 +27707,7 @@
   {
    "module": "src/features/auth",
    "files": 14,
-   "lines": 1721,
+   "lines": 1784,
    "tables": [
     "profiles",
     "role_permissions",
@@ -29108,7 +29109,7 @@
   {
    "module": "supabase/functions",
    "files": 55,
-   "lines": 11218,
+   "lines": 11303,
    "tables": [
     "backup_logs",
     "backups",
@@ -29765,6 +29766,7 @@
    "ip_allowlist": {
     "select": [
      "src/components/settings/IPAllowlist.tsx",
+     "supabase/functions/check-login-lockout/index.ts",
      "supabase/functions/validate-login-ip/index.ts"
     ],
     "insert": [
@@ -31085,8 +31087,12 @@
     "type"
    ],
    "ip_allowlist": [
+    "expires_at",
     "id",
-    "is_active"
+    "ip_address",
+    "is_active",
+    "is_global",
+    "user_id"
    ],
    "job_status_history": [
     "job_id"
@@ -35947,6 +35953,14 @@
     "text": "Permission checks"
    },
    {
+    "file": "src/features/auth/services/authService.ts",
+    "text": "429 = rate limit esgotado no gate pré-login. Um IP que saturou o"
+   },
+   {
+    "file": "src/features/auth/services/authService.ts",
+    "text": "bucket de check-login-lockout é exatamente quem a allowlist deve"
+   },
+   {
     "file": "src/features/inventory/hooks/useInventory.ts",
     "text": "Validação de segurança: estoque insuficiente"
    },
@@ -36329,6 +36343,18 @@
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
     "text": "chega a tentar login nem consome o bucket de rate limit. Checa antes do"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "Rate limit ANTES da allowlist: a resolução de usuário (listUsers) paga"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "custo no Auth e não pode ser varrida sem consumir o bucket — chamador"
+   },
+   {
+    "file": "supabase/functions/check-login-lockout/index.ts",
+    "text": "linha que não deve ser mascarada por um 429)."
    },
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
@@ -50469,6 +50495,14 @@
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
     "name": "should sign in successfully"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should return blocked_by_ip error when allowlist blocks the IP"
+   },
+   {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "should block sign-in when lockout check is rate-limited (429)"
    },
    {
     "file": "src/features/auth/components/AuthProvider.test.tsx",
@@ -79190,12 +79224,14 @@
   },
   "src/features/auth/components/AuthProvider.test.tsx": {
    "path": "src/features/auth/components/AuthProvider.test.tsx",
-   "lines": 132,
+   "lines": 180,
    "is_test": true,
    "tests": [
     "AuthContext",
     "should initialize with loading state",
     "should sign in successfully",
+    "should return blocked_by_ip error when allowlist blocks the IP",
+    "should block sign-in when lockout check is rate-limited (429)",
     "should sign out successfully"
    ]
   },
@@ -79489,13 +79525,17 @@
   },
   "src/features/auth/services/authService.ts": {
    "path": "src/features/auth/services/authService.ts",
-   "lines": 83,
+   "lines": 98,
    "exports": [
     "interface LockoutStatus",
     "const AuthService"
    ],
    "invokes": [
     "check-login-lockout"
+   ],
+   "rule_comments": [
+    "429 = rate limit esgotado no gate pré-login. Um IP que saturou o",
+    "bucket de check-login-lockout é exatamente quem a allowlist deve"
    ],
    "side_effects": [
     "invoke("
@@ -91853,10 +91893,14 @@
   },
   "supabase/functions/check-login-lockout/index.ts": {
    "path": "supabase/functions/check-login-lockout/index.ts",
-   "lines": 385,
+   "lines": 470,
    "tables": [
     {
      "table": "blocked_ips",
+     "op": "select"
+    },
+    {
+     "table": "ip_allowlist",
      "op": "select"
     },
     {
@@ -91897,6 +91941,14 @@
      "reason",
      "unblocked_at"
     ],
+    "ip_allowlist": [
+     "expires_at",
+     "id",
+     "ip_address",
+     "is_active",
+     "is_global",
+     "user_id"
+    ],
     "login_lockouts": [
      "identifier",
      "identifier_type"
@@ -91920,6 +91972,9 @@
    "rule_comments": [
     "Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca",
     "chega a tentar login nem consome o bucket de rate limit. Checa antes do",
+    "Rate limit ANTES da allowlist: a resolução de usuário (listUsers) paga",
+    "custo no Auth e não pode ser varrida sem consumir o bucket — chamador",
+    "linha que não deve ser mascarada por um 429).",
     "record_success must prove the caller actually holds a session for this"
    ],
    "calc_fns": [
@@ -95026,10 +95081,22 @@
   }
  },
  "git": {
-  "sha": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
+  "sha": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "ecaa439",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)",
+    "files": [
+     "src/features/auth/components/AuthProvider.test.tsx",
+     "src/features/auth/components/AuthProvider.tsx",
+     "src/features/auth/services/authService.ts",
+     "supabase/functions/check-login-lockout/index.ts"
+    ]
+   },
    {
     "sha": "6032d37",
     "date": "2026-11-20",
@@ -95376,16 +95443,6 @@
      ".github/workflows/dependency-review.yml",
      "docs/ci/README.md"
     ]
-   },
-   {
-    "sha": "a334acf",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(audit): fecha 3 falsos negativos do gate (DISABLE RLS, drop/recreate, acento no nome) (#204)",
-    "files": [
-     "scripts/audit/audit.unit.mjs",
-     "scripts/audit/run.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -95400,6 +95457,18 @@
    [
     "package.json",
     4
+   ],
+   [
+    "src/features/auth/components/AuthProvider.tsx",
+    2
+   ],
+   [
+    "src/features/auth/services/authService.ts",
+    2
+   ],
+   [
+    "supabase/functions/check-login-lockout/index.ts",
+    2
    ],
    [
     "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md",
@@ -95446,11 +95515,7 @@
     2
    ],
    [
-    "src/features/auth/components/AuthProvider.tsx",
-    1
-   ],
-   [
-    "src/features/auth/services/authService.ts",
+    "src/features/auth/components/AuthProvider.test.tsx",
     1
    ],
    [
@@ -95458,15 +95523,7 @@
     1
    ],
    [
-    "supabase/functions/check-login-lockout/index.ts",
-    1
-   ],
-   [
     "docs/pendencias/F-001-tracking-p-blico-track-sem-acesso.md",
-    1
-   ],
-   [
-    "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
     1
    ]
   ]

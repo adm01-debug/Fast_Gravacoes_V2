@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6032d376400eb2173cc3e6d625cce87e44fd76c6",
+  "commit": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
   "branch": "main",
-  "data_commit": "2026-11-20T18:09:00-03:00",
+  "data_commit": "2026-11-21T09:47:31-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "ecaa439",
+    "data": "2026-11-21",
+    "assunto": "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)"
+   },
    {
     "sha": "6032d37",
     "data": "2026-11-20",
@@ -126,11 +131,6 @@
     "sha": "774274a",
     "data": "2026-11-18",
     "assunto": "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)"
-   },
-   {
-    "sha": "0c33cf1",
-    "data": "2026-11-18",
-    "assunto": "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -259,6 +259,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/check-login-lockout/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 6
    },
@@ -291,10 +295,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "supabase/functions/check-login-lockout/index.ts",
-    "mudancas": 5
-   },
-   {
     "arquivo": "tests/e2e/visual-regression.spec.ts",
     "mudancas": 5
    }
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 97
+    "commits": 98
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1569,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 188188,
+  "linhas_codigo": 188336,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 328,
-   "linhas": 45460
+   "linhas": 45523
   },
   "src/hooks": {
    "arquivos": 61,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 55,
-   "linhas": 11218
+   "linhas": 11303
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -667,8 +667,8 @@
   }
  ],
  "qualidade": {
-  "any": 116,
-  "console_log": 179,
+  "any": 120,
+  "console_log": 180,
   "ts_ignore": 3,
   "eslint_disable": 2,
   "todos": 10,
