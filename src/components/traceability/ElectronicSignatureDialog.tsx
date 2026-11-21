@@ -35,7 +35,7 @@ export function ElectronicSignatureDialog({
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!password) {
       toast.error('Senha de assinatura é obrigatória');
       return;
