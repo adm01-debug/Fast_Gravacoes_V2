@@ -61,6 +61,17 @@ serve(async (req) => {
 
     console.log('Starting auto-promotion check...')
 
+        // F-009: honor an optional techniqueId from the body. A per-technique
+        // call (BufferStatusWidget -> promoteForTechnique) must only touch that
+        // technique; an empty body means "rebalance all techniques" (cron / global
+        // button). Without this, a promote from the widget promoted every
+        // technique's queue, sending buffer jobs to the wrong technique.
+        let requestedTechniqueId: string | undefined
+        const rawBody = await req.json().catch(() => null)
+        if (rawBody && typeof rawBody.techniqueId === 'string' && rawBody.techniqueId.trim() !== '') {
+          requestedTechniqueId = rawBody.techniqueId.trim()
+        }
+
     // 1. Fetch all techniques
     const { data: techniques, error: techError } = await supabaseClient
       .from('techniques')
@@ -68,9 +79,20 @@ serve(async (req) => {
 
     if (techError) throw techError
 
+        if (requestedTechniqueId && !(techniques || []).some((t: { id: string }) => t.id === requestedTechniqueId)) {
+          return new Response(JSON.stringify({ error: 'Technique nao encontrada' }), {
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+            status: 404,
+          })
+        }
+
     const results = []
 
-    for (const technique of techniques || []) {
+        const targetTechniques = (techniques || []).filter((t: { id: string }) =>
+          requestedTechniqueId ? t.id === requestedTechniqueId : true
+        )
+
+        for (const technique of targetTechniques) {
       // 2. Count current 'ready' jobs for this technique
       const { count: readyCount, error: countError } = await supabaseClient
         .from('jobs')
