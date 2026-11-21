@@ -334,7 +334,9 @@ export function GeoBlockingSettings() {
                         {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
                       </TableCell>
                       <TableCell className="font-mono text-sm">
-                        {String(log.ip_address)}
+                        {String(log.ip_address) === '0.0.0.0'
+                          ? <span className="text-muted-foreground italic">IP não identificado</span>
+                          : String(log.ip_address)}
                       </TableCell>
                       <TableCell>
                         {log.country_name ? (

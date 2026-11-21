@@ -54,6 +54,54 @@ function ipMatchesCidr(ip: string, cidr: string): boolean {
   return (ipInt & mask) === (networkInt & mask);
 }
 
+// F-006: resolve o país do IP em runtime. ipwho.is como primário (sem chave);
+// ipapi.co como fallback. Fail-open: qualquer erro de infra retorna null e o
+// gate decide pelo block_unknown_countries (ou libera por padrão).
+async function resolveCountry(ip: string): Promise<{ country_code: string; country_name: string } | null> {
+  // Teto total entre os dois providers: um provedor fora do ar não pode
+  // estender a espera além do teto (antes, 15s x 2 = até 30s de latência por
+  // login antes do fail-open). Cada provider ainda tem o próprio timeout para
+  // o reserva não ficar refém da lentidão do primário (thread SEC do review).
+  const totalTimeoutMs = 8_000;
+  const perProviderTimeoutMs = 5_000;
+  const providers: Array<{ url: string; parse: (json: any) => { country_code: string; country_name: string } | null }> = [
+    {
+      url: `https://ipwho.is/${ip}`,
+      parse: (json) =>
+        json && json.success === true && typeof json.country_code === 'string' && json.country_code
+          ? { country_code: json.country_code, country_name: json.country_name || json.country_code }
+          : null,
+    },
+    {
+      url: `https://ipapi.co/${ip}/json/`,
+      parse: (json) =>
+        json && typeof json.country_code === 'string' && json.country_code && json.country_code !== 'undefined'
+          ? { country_code: json.country_code, country_name: json.country_name || json.country_code }
+          : null,
+    },
+  ];
+
+  const deadlineAt = Date.now() + totalTimeoutMs;
+  for (const provider of providers) {
+    const remainingMs = deadlineAt - Date.now();
+    if (remainingMs <= 0) break;
+    const providerController = new AbortController();
+    const providerTimer = setTimeout(() => providerController.abort(), Math.min(perProviderTimeoutMs, remainingMs));
+    try {
+      const resp = await fetch(provider.url, { signal: providerController.signal });
+      if (!resp.ok) continue;
+      const json = await resp.json();
+      const parsed = provider.parse(json);
+      if (parsed) return parsed;
+    } catch (err) {
+      console.error(`Geo lookup failed for ${provider.url}:`, err);
+    } finally {
+      clearTimeout(providerTimer);
+    }
+  }
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -181,6 +229,84 @@ serve(async (req) => {
               );
             }
           }
+        }
+      }
+    }
+
+    // F-006: geo-blocking (painel admin). Modo whitelist: só países com regra
+    // ativa is_blocked=false passam; países sem regra são bloqueados. País
+    // desconhecido respeita block_unknown_countries. Fail-open em erro de
+    // infra (resolução de país) — consistente com rateLimit.ts.
+    // Só avalia no action=check: record_failure/record_success são pós-login e
+    // o gate já foi aplicado no check — evita lookup duplicado por login.
+    // IP ausente (proxy/env sem x-forwarded-for/x-real-ip) também passa pelo
+    // gate: com block_unknown_countries=true o request é tratado como
+    // localização desconhecida e bloqueado (thread P2 do review).
+    if (action === 'check') {
+      const { data: geoSettings, error: geoSettingsError } = await supabase
+        .from('geo_blocking_settings')
+        .select('is_enabled, mode, block_unknown_countries, log_blocked_attempts')
+        .limit(1)
+        .maybeSingle();
+
+      if (geoSettingsError) {
+        console.error('Error fetching geo settings:', geoSettingsError);
+      } else if (geoSettings?.is_enabled) {
+        const geo = ip_address ? await resolveCountry(ip_address) : null;
+        let geoBlocked = false;
+        let geoReason: string | null = null;
+
+        if (!geo) {
+          // Sem resolução de país OU sem IP disponível: aplica a política de
+          // país desconhecido do painel.
+          geoBlocked = geoSettings.block_unknown_countries === true;
+          geoReason = geoBlocked ? 'País desconhecido não permitido' : null;
+        } else {
+          const { data: rule, error: ruleError } = await supabase
+            .from('geo_blocking_rules')
+            .select('is_blocked, block_type, reason')
+            .eq('country_code', geo.country_code)
+            .maybeSingle();
+
+          if (ruleError) {
+            console.error('Error fetching geo rule:', ruleError);
+            geoBlocked = geoSettings.block_unknown_countries === true;
+            geoReason = geoBlocked ? 'País desconhecido não permitido' : null;
+          } else if (!rule) {
+            geoBlocked = true;
+            geoReason = 'País não está na lista de países permitidos';
+          } else if (rule.is_blocked) {
+            geoBlocked = true;
+            geoReason = rule.reason || `Acesso bloqueado para ${geo.country_name}`;
+          } else {
+            geoBlocked = false;
+          }
+        }
+
+        if (geoBlocked) {
+          console.log(`IP ${ip_address ?? '(none)'} geo-blocked (${geo?.country_code || 'unknown'})`);
+          if (geoSettings.log_blocked_attempts) {
+            // geo_blocking_logs.ip_address é inet NOT NULL — sem IP (proxy sem
+            // x-forwarded-for/x-real-ip) usamos o endereço de loopback como
+            // placeholder, preservando o registro de auditoria (thread do review).
+            await supabase.from('geo_blocking_logs').insert({
+              ip_address: ip_address ?? '0.0.0.0',
+              country_code: geo?.country_code ?? null,
+              country_name: geo?.country_name ?? null,
+              action: 'blocked',
+              user_agent: req.headers.get('user-agent'),
+              request_path: '/auth/v1/check-login-lockout',
+            });
+          }
+          return new Response(
+            JSON.stringify({
+              geo_blocked: true,
+              country_code: geo?.country_code ?? null,
+              country_name: geo?.country_name ?? null,
+              block_reason: geoReason,
+            }),
+            { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+          );
         }
       }
     }

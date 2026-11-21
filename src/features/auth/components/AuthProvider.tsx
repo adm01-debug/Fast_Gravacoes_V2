@@ -34,12 +34,14 @@ class LockoutError extends Error {
   remainingMinutes?: number;
   lockoutMinutes?: number;
   blockedByIp?: boolean;
-  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean }) {
+  geoBlocked?: boolean;
+  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean; geoBlocked?: boolean }) {
     super(message);
     this.name = 'LockoutError';
     this.remainingMinutes = opts?.remainingMinutes;
     this.lockoutMinutes = opts?.lockoutMinutes;
     this.blockedByIp = opts?.blockedByIp;
+    this.geoBlocked = opts?.geoBlocked;
   }
 }
 
@@ -90,6 +92,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Último usuário autenticado — o evento SIGNED_OUT chega sem session,
   // então o id precisa vir daqui para limpar só o rascunho dele.
   const lastUserIdRef = useRef<string | null>(null);
+  // T4: marca sessão criada pelo fluxo password (já passou pelo gate no signIn).
+  // Sessões sem essa marca (OAuth, restauração) são re-gateadas no onAuthStateChange.
+  const passwordSignInRef = useRef(false);
+  // XyDD/YE4M/YE5U: user.id das sessões que JÁ passaram pelo gate (password ou
+  // re-gate aprovado). O SDK re-emite SIGNED_IN no tab refocus
+  // (_recoverAndRefresh) e o refresh de token troca o access_token — chavear
+  // por token re-gatearia a cada renovação (YE4M). Sessão restaurada com 429
+  // NÃO entra aqui: a rede não foi avaliada e precisa ser re-checada quando a
+  // cota voltar (YE5U).
+  const admittedUsersRef = useRef<Set<string>>(new Set());
+    // YQbV: sessões RESTAURADAS que receberam 429 ficam pendentes — a rede ainda
+    // não foi avaliada. O SDK re-emite SIGNED_IN no tab refocus para a MESMA
+    // sessão; sem esta marca, o 429 seria tratado como login novo e deslogaria
+    // a operadora (perdendo o rascunho). Pendente continua pendente em novo 429,
+    // mas re-checa quando a cota voltar.
+    const pendingUsersRef = useRef<Set<string>>(new Set());
   const ACTIVITY_TIMEOUT_MINUTES = 60;
   const REFRESH_INTERVAL_MINUTES = 30;
 
@@ -223,6 +241,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === 'SIGNED_OUT') {
         clearFormDrafts(lastUserIdRef.current ?? undefined);
         lastUserIdRef.current = null;
+        admittedUsersRef.current.clear();
+              pendingUsersRef.current.clear();
       }
       if (nextSession?.user) lastUserIdRef.current = nextSession.user.id;
 
@@ -230,10 +250,86 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(nextSession?.user ?? null);
       const requestSeq = ++authRequestSeqRef.current;
 
+      // O ref é limpo em QUALQUER evento de sessão — se um signIn password
+      // falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior
+      // seria tratado como "já gateado" e pularia o re-gate (thread P1 do review).
+      // XyDD: sessão que JÁ passou pelo gate (password ou re-gate anterior) não
+      // é re-gateada de novo. O SDK re-emite SIGNED_IN no tab refocus
+      // (_recoverAndRefresh) para a MESMA sessão — sem esta marca, um 429 na
+      // volta da aba deslogaria sessão válida e apagaria o rascunho.
+      // Sem user id a sessão é tratada como nova e o gate roda.
+      const userId = nextSession?.user?.id ?? null;
+      const bypassedGate = !passwordSignInRef.current && !(userId && admittedUsersRef.current.has(userId));
+      passwordSignInRef.current = false;
+
       if (nextSession?.user) {
         setIsLoading(true);
-        // Fire-and-forget: nunca await dentro de onAuthStateChange
-        fetchUserData(nextSession.user.id, requestSeq).finally(() => {
+        // Sessão password: já passou pelo gate no signIn — o SIGNED_IN seguinte
+        // não pode re-gatear. Marca o user como admitido aqui mesmo (fora do
+        // promise do re-gate) para cobrir também o caso em que não há re-gate.
+        if (!bypassedGate && userId) admittedUsersRef.current.add(userId);
+        // T4: sessões que não vieram do fluxo password (OAuth, restauração de
+        // sessão no boot) não passaram pelo gate pré-login. Re-checa o lockout
+        // em background e desloga se geo/ip bloquear — sem await aqui (não
+        // bloqueia a fila do Supabase).
+
+        // Re-gate de sessão não-password. Para sessões OAuth/restauradas o
+        // loading só é liberado quando a checagem termina — evita renderizar
+        // rotas protegidas antes da decisão de bloqueio (janela P1 do review).
+        let gatePromise: Promise<unknown> = Promise.resolve();
+        if (bypassedGate) {
+          const email = nextSession.user.email;
+          gatePromise = email
+            ? AuthService.checkLockout(email).then((lockoutStatus) => {
+                if (cancelled) return;
+                // rate_limited (429) é cota esgotada, não decisão de bloqueio
+                // para sessão RESTAURADA — derruba novos logins mas não revoga
+                // sessão já emitida (evita deslogar operadora válida).
+                // Já para um OAuth NOVO (event SIGNED_IN), o gate não avaliou
+                // geo/allowlist antes da sessão existir: 429 = rede não
+                // verificada, e a sessão recém-emitida não deve entrar.
+                const isRestored = event !== 'SIGNED_IN';
+                                // YQbV: sessão pendente (restaurada com 429) continua pendente em
+                                // nova re-emissão do refocus — o SDK re-emite SIGNED_IN para a
+                                // MESMA sessão, mas o 429 ainda não é decisão de bloqueio.
+                                const wasPending = !!userId && pendingUsersRef.current.has(userId);
+                                const sessionLikeRestored = isRestored || wasPending;
+                const shouldSignOut =
+                  (lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) &&
+                                  (!lockoutStatus.rate_limited || !sessionLikeRestored);
+                                const admitId = userId && !lockoutStatus.rate_limited;
+                                if (admitId) pendingUsersRef.current.delete(userId);
+                if (shouldSignOut) {
+                  logger.warn('Session blocked by geo/IP gate — signing out', {
+                    geoBlocked: lockoutStatus.geo_blocked,
+                    blockedByIp: lockoutStatus.blocked_by_ip,
+                    rateLimited: lockoutStatus.rate_limited,
+                  }, 'AuthProvider');
+                  // scope 'local': revoga só neste dispositivo. A mesma conta pode
+                  // estar logada em outro device numa rede permitida — logout
+                  // global derrubaria todos os outros.
+                  supabase.auth.signOut({ scope: 'local' });
+                } else if (userId && !lockoutStatus.rate_limited) {
+                  // XyDD: sessão aprovada no re-gate fica marcada como admitida —
+                  // um SIGNED_IN re-emitido no tab refocus não é re-gateado.
+                  // YE5U: 429 NÃO admite — a rede não foi avaliada; quando a cota
+                  // voltar, o próximo SIGNED_IN/INITIAL_SESSION re-checa.
+                  admittedUsersRef.current.add(userId);
+                                  pendingUsersRef.current.delete(userId);
+                                } else if (userId && sessionLikeRestored) {
+                                  // YQbV: restaurada com 429 fica PENDENTE — re-emissões do
+                                  // refocus continuam pendentes (não deslogam), re-checando
+                                  // quando a cota voltar.
+                                  pendingUsersRef.current.add(userId);
+                }
+              }).catch(() => { /* fail-open: gate é advisory no cliente */ })
+            : Promise.resolve();
+        }
+
+        // Fire-and-forget: nunca await dentro de onAuthStateChange. O loading
+        // só cai quando perfil + re-gate (se houver) terminaram.
+        const dataPromise = fetchUserData(nextSession.user.id, requestSeq);
+        Promise.allSettled([dataPromise, gatePromise]).then(() => {
           if (!cancelled && authRequestSeqRef.current === requestSeq) setIsLoading(false);
         });
       } else {
@@ -258,6 +354,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     const lockoutStatus = await AuthService.checkLockout(email);
 
+        if (lockoutStatus.geo_blocked) {
+          const geoError = new LockoutError(
+            lockoutStatus.message || lockoutStatus.block_reason || 'Acesso bloqueado para a sua região/país',
+            { geoBlocked: true }
+          );
+          return { error: geoError };
+        }
+
         if (lockoutStatus.blocked_by_ip) {
           const ipError = new LockoutError(
             lockoutStatus.message || lockoutStatus.block_reason || 'Acesso bloqueado a partir desta rede/IP',
@@ -275,6 +379,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      passwordSignInRef.current = true; // T4: sessão deste fluxo já passou pelo gate
       const data = await AuthService.signIn(email, password);
       await AuthService.recordLoginAttempt(email, true);
 
@@ -312,6 +417,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { error: null };
     } catch (error: unknown) {
+          // XP_W: falha no login com senha deixa o marker 'true' e um OAuth
+          // posterior pularia o gate. Limpa para o gate valer na proxima sessao.
+          passwordSignInRef.current = false;
       const result = await AuthService.recordLoginAttempt(email, false);
 
       if (result.locked) {

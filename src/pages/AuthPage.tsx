@@ -99,9 +99,11 @@ export default function AuthPage() {
     const { error } = await signIn(loginEmail, loginPassword);
     loginSubmittingRef.current = false;
     if (error) {
-      const le = error as Error & { isLockout?: boolean; remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean };
+      const le = error as Error & { isLockout?: boolean; remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean; geoBlocked?: boolean };
       if (le.isLockout) {
-              if (le.blockedByIp) {
+              if (le.geoBlocked) {
+                toast.error('Acesso Bloqueado', { description: 'Esta região/país está bloqueada para acesso ao sistema. Contate o administrador.', duration: 10000 });
+              } else if (le.blockedByIp) {
                 toast.error('Acesso Bloqueado', { description: 'Esta rede/IP está bloqueada para acesso ao sistema. Contate o administrador.', duration: 10000 });
               } else {
                 toast.error('Conta Bloqueada', { description: `Muitas tentativas falhas. Tente novamente em ${le.remainingMinutes || le.lockoutMinutes || 0} minuto(s).`, duration: 10000 });
