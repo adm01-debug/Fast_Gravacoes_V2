@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9654a58e2436dd26cd65f7815c93a010e978dcba",
+  "sha": "3fc37b3262f240515ed53a4a95573259b346cc45",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-21 17:59 UTC",
+  "generated_at": "2026-11-21 18:39 UTC",
   "files_total": 1567,
   "code_files": 1379,
-  "code_lines": 204210
+  "code_lines": 204244
  },
  "version": "1.3.2",
- "facts_hash": "6c270f1e6567a26f",
+ "facts_hash": "598ee5c8c744cf80",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -13017,6 +13017,166 @@
     "mode": "permissive",
     "using": "",
     "check": "((operator_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own execution evidence",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own production photos",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own technical documents",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own tpm evidences",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own tpm signatures",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff can view production photos",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view execution evidence",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view tpm evidences",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view tpm signatures",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete execution-evidence",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete tpm-evidences",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete tpm_signatures",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update execution-evidence",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update tpm-evidences",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update tpm_signatures",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Staff or approved-only view technical documents",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -29088,7 +29248,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11190,
+   "lines": 11224,
    "tables": [
     "backup_logs",
     "backups",
@@ -36305,6 +36465,10 @@
    {
     "file": "supabase/functions/auto-promote-jobs/index.ts",
     "text": "must not run unauthenticated on an unconfigured deployment."
+   },
+   {
+    "file": "supabase/functions/auto-promote-jobs/index.ts",
+    "text": "call (BufferStatusWidget -> promoteForTechnique) must only touch that"
    },
    {
     "file": "supabase/functions/bitrix24-sync/index.ts",
@@ -57544,6 +57708,166 @@
     "mode": "permissive",
     "using": "",
     "check": "((operator_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own execution evidence",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own production photos",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own technical documents",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own tpm evidences",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can upload own tpm signatures",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff can view production photos",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view execution evidence",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view tpm evidences",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owner or staff view tpm signatures",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete execution-evidence",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete tpm-evidences",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can delete tpm_signatures",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update execution-evidence",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update tpm-evidences",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Owners and staff can update tpm_signatures",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Staff or approved-only view technical documents",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -91491,7 +91815,7 @@
   },
   "supabase/functions/auto-promote-jobs/index.ts": {
    "path": "supabase/functions/auto-promote-jobs/index.ts",
-   "lines": 181,
+   "lines": 215,
    "tables": [
     {
      "table": "user_roles",
@@ -91578,7 +91902,8 @@
     }
    ],
    "rule_comments": [
-    "must not run unauthenticated on an unconfigured deployment."
+    "must not run unauthenticated on an unconfigured deployment.",
+    "call (BufferStatusWidget -> promoteForTechnique) must only touch that"
    ],
    "temporal": [
     "const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()"
@@ -95122,10 +95447,19 @@
   }
  },
  "git": {
-  "sha": "9654a58e2436dd26cd65f7815c93a010e978dcba",
+  "sha": "3fc37b3262f240515ed53a4a95573259b346cc45",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3fc37b3",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)",
+    "files": [
+     "supabase/functions/auto-promote-jobs/index.ts"
+    ]
+   },
    {
     "sha": "9654a58",
     "date": "2026-11-21",
@@ -95478,21 +95812,6 @@
     "files": [
      ".github/workflows/visual-baselines.yml"
     ]
-   },
-   {
-    "sha": "0c33cf1",
-    "date": "2026-11-18",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump lucide-react from 0.454.0 to 1.73.0 (#210)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "src/components/auth/AuthLoginForm.tsx",
-     "src/components/design-system/sections/IconsSection.tsx",
-     "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-collapsed-chromium-linux.png",
-     "tests/e2e/visual-regression.spec.ts-snapshots/sidebar-expanded-chromium-linux.png"
-    ]
    }
   ],
   "hot_files": [
@@ -95506,18 +95825,6 @@
    ],
    [
     "supabase/functions/check-login-lockout/index.ts",
-    3
-   ],
-   [
-    "deno.lock",
-    3
-   ],
-   [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
     3
    ],
    [
@@ -95566,6 +95873,18 @@
    ],
    [
     ".github/workflows/ci.yml",
+    2
+   ],
+   [
+    "deno.lock",
+    2
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
     2
    ],
    [

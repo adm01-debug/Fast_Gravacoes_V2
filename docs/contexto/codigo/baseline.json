@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9654a58e2436dd26cd65f7815c93a010e978dcba",
+  "commit": "3fc37b3262f240515ed53a4a95573259b346cc45",
   "branch": "main",
-  "data_commit": "2026-11-21T14:58:10-03:00",
+  "data_commit": "2026-11-21T15:38:30-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3fc37b3",
+    "data": "2026-11-21",
+    "assunto": "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)"
+   },
    {
     "sha": "9654a58",
     "data": "2026-11-21",
@@ -126,15 +131,10 @@
     "sha": "9f33e60",
     "data": "2026-11-19",
     "assunto": "chore: remove vite-plugin-pwa (dependencia morta) (#218)"
-   },
-   {
-    "sha": "13daf19",
-    "data": "2026-11-19",
-    "assunto": "chore(analise): mantem chave redigida no historico"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 130,
+  "arquivos_mudados_7d": 131,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 102
+    "commits": 103
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1569,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 188834,
+  "linhas_codigo": 188868,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11190
+   "linhas": 11224
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

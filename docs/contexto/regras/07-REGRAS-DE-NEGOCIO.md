@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9654a58e24` · branch `main` · 2026-11-21 17:59 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3fc37b3262` · branch `main` · 2026-11-21 18:39 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T17:37:58Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T18:14:27Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,11 +107,11 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T17:37:58Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T18:14:27Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
-311 política(s) em 130 tabela(s), agrupadas por tabela — lista completa, sem cortes.
+327 política(s) em 131 tabela(s), agrupadas por tabela — lista completa, sem cortes.
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
@@ -350,6 +350,22 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `spc_measurements` | Authenticated users can view SPC measurements | SELECT | authenticated | permissive | `has_any_active_role()` |  |
 | `spc_measurements` | Active roles can insert measurements | INSERT | authenticated | permissive |  | `has_any_active_role()` |
 | `spc_measurements` | Operators insert own spc measurements | INSERT | authenticated | permissive |  | `((operator_id = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `storage.objects` | Owner or staff can view production photos | SELECT | authenticated | permissive | `((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))` |  |
+| `storage.objects` | Owner or staff view execution evidence | SELECT | authenticated | permissive | `((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))` |  |
+| `storage.objects` | Owner or staff view tpm evidences | SELECT | authenticated | permissive | `((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))` |  |
+| `storage.objects` | Owner or staff view tpm signatures | SELECT | authenticated | permissive | `((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))` |  |
+| `storage.objects` | Staff or approved-only view technical documents | SELECT | authenticated | permissive | `((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))` |  |
+| `storage.objects` | Active roles can upload own execution evidence | INSERT | authenticated | permissive |  | `((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))` |
+| `storage.objects` | Active roles can upload own production photos | INSERT | authenticated | permissive |  | `((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))` |
+| `storage.objects` | Active roles can upload own technical documents | INSERT | authenticated | permissive |  | `((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))` |
+| `storage.objects` | Active roles can upload own tpm evidences | INSERT | authenticated | permissive |  | `((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))` |
+| `storage.objects` | Active roles can upload own tpm signatures | INSERT | authenticated | permissive |  | `((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text))` |
+| `storage.objects` | Owners and staff can update execution-evidence | UPDATE | authenticated | permissive | `((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` | _= USING_ |
+| `storage.objects` | Owners and staff can update tpm-evidences | UPDATE | authenticated | permissive | `((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` | _= USING_ |
+| `storage.objects` | Owners and staff can update tpm_signatures | UPDATE | authenticated | permissive | `((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` | _= USING_ |
+| `storage.objects` | Owners and staff can delete execution-evidence | DELETE | authenticated | permissive | `((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` |  |
+| `storage.objects` | Owners and staff can delete tpm-evidences | DELETE | authenticated | permissive | `((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` |  |
+| `storage.objects` | Owners and staff can delete tpm_signatures | DELETE | authenticated | permissive | `((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))` |  |
 | `system_metrics` | Managers and admins can read system metrics | SELECT | public | permissive | `(app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
 | `technical_conversations` | Users can view their own conversations | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
 | `technical_conversations` | Users can create their own conversations | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) = user_id)` |
@@ -427,7 +443,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T17:37:58Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T18:14:27Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1470,7 +1486,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T17:37:58Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T18:14:27Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1593,7 +1609,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T17:37:58Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T18:14:27Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3593,6 +3609,7 @@ _nenhum item encontrado_
 | Um record só: o plaintext não pode exceder o record size declarado (rs). | `supabase/functions/_shared/webpushEncrypt.ts` |
 | Rate limit: 30 approvals per hour per reviewer. | `supabase/functions/approve-password-reset/index.ts` |
 | must not run unauthenticated on an unconfigured deployment. | `supabase/functions/auto-promote-jobs/index.ts` |
+| call (BufferStatusWidget -> promoteForTechnique) must only touch that | `supabase/functions/auto-promote-jobs/index.ts` |
 | Shared secret Bitrix24 must send (as ?token= query param or x-bitrix-webhook-secret | `supabase/functions/bitrix24-sync/index.ts` |
 | callback — um state capturado não pode ser reutilizado para trocar o code | `supabase/functions/bitrix24-sync/index.ts` |
 | A backend failure must not be silently reported as an authorization denial. | `supabase/functions/bitrix24-sync/index.ts` |
