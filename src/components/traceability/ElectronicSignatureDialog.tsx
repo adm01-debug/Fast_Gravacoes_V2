@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { supabase } from '@/integrations/supabase/client';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShieldCheck, Fingerprint, Lock } from 'lucide-react';
@@ -45,15 +46,40 @@ export function ElectronicSignatureDialog({
     }
 
     setIsSubmitting(true);
-    // Em um sistema real, validaríamos a senha contra o Supabase Auth ou um PIN específico
-    setTimeout(() => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        throw new Error('Usuário não encontrado');
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password,
+      });
+
+      if (signInError) {
+        throw new Error('Senha incorreta');
+      }
+
+      await supabase.from('security_events').insert({
+        event_type: 'electronic_signature',
+        severity: 'info',
+        user_id: user.id,
+        user_email: user.email,
+        details: { reason },
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      });
+
       onConfirm(reason);
       setIsSubmitting(false);
       onOpenChange(false);
       setPassword('');
       setReason('');
       toast.success('Operação assinada e registrada na trilha de auditoria imutável');
-    }, 800);
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error(err instanceof Error ? err.message : 'Falha na validação da senha');
+    }
   };
 
   return (
