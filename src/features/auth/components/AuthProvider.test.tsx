@@ -111,6 +111,54 @@ describe('AuthContext', () => {
     });
   });
 
+  it('should return blocked_by_ip error when allowlist blocks the IP', async () => {
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: { blocked_by_ip: true, block_reason: 'IP não está na lista de IPs permitidos' },
+      error: null
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      const signInResult = await result.current.signIn('test@example.com', 'password123');
+      expect(signInResult.error).not.toBeNull();
+      const le = signInResult.error as any;
+      expect(le.blockedByIp).toBe(true);
+    });
+
+    expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
+  });
+
+  it('should block sign-in when lockout check is rate-limited (429)', async () => {
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: null,
+      error: { context: { status: 429 } }
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      const signInResult = await result.current.signIn('test@example.com', 'password123');
+      expect(signInResult.error).not.toBeNull();
+      const le = signInResult.error as any;
+      expect(le.blockedByIp).toBe(true);
+    });
+
+    expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
+  });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>
