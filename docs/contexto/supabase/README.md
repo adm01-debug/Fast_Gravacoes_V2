@@ -32,7 +32,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | filas pgmq | 0 |
 | migrations | 249 |
 | buckets | 0 |
-| edge functions | 34 |
+| edge functions | 33 |
 | webhooks | 0 |
 | lints ALTA | 5 |
 | lints total | 87 |

@@ -568,18 +568,6 @@
         "version": 113
       },
       {
-        "created_at": 1791379396096,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/rate-limit-check/index.ts",
-        "import_map": null,
-        "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
-        "name": "rate-limit-check",
-        "slug": "rate-limit-check",
-        "status": "ACTIVE",
-        "updated_at": 1795277330686,
-        "verify_jwt": true,
-        "version": 114
-      },
-      {
         "created_at": 1791379399176,
         "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/security-alert/index.ts",
         "import_map": null,

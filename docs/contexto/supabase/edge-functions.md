@@ -27,7 +27,6 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | ml-predictions | ml-predictions | ACTIVE | 115 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/ml-predictions/index.ts |
 | new-device-alert | new-device-alert | ACTIVE | 122 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/new-device-alert/index.ts |
 | pdf-generator | pdf-generator | ACTIVE | 113 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/pdf-generator/index.ts |
-| rate-limit-check | rate-limit-check | ACTIVE | 114 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/rate-limit-check/index.ts |
 | security-alert | security-alert | ACTIVE | 114 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/security-alert/index.ts |
 | send-email-report | send-email-report | ACTIVE | 116 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-email-report/index.ts |
 | send-loss-risk-alert | send-loss-risk-alert | ACTIVE | 114 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-loss-risk-alert/index.ts |
