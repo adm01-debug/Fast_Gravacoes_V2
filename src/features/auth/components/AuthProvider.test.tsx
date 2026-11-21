@@ -471,6 +471,79 @@ describe('AuthContext', () => {
     expect(gateCalls).toBeGreaterThanOrEqual(2);
   });
 
+      it('should NOT sign out a pending restored session on refocus 429 (YQbV)', async () => {
+        // Restauração no boot com 429 deixa a sessão PENDENTE (rede não avaliada).
+        // No refocus o SDK re-emite SIGNED_IN para a MESMA sessão e o 429 persiste —
+        // ainda não é decisão de bloqueio, então NÃO desloga nem apaga o rascunho.
+        const mockUser = { id: 'pend-user', email: 'pend@example.com' };
+        (supabase.auth.getSession as any).mockResolvedValue({
+          data: { session: null },
+          error: null
+        });
+        let signOutCalls = 0;
+        (supabase.auth.signOut as any).mockImplementation(() => {
+          signOutCalls++;
+          return Promise.resolve({ data: {}, error: null });
+        });
+        (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+          queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser, access_token: 'tok-1' }));
+          setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 50);
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        });
+        // Sempre 429 — cota esgotada o tempo todo.
+        (supabase.functions.invoke as any).mockImplementation(() => {
+          return Promise.resolve({ data: null, error: { context: { status: 429 } } });
+        });
+
+        const wrapper = ({ children }: { children: React.ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        );
+
+        renderHook(() => useAuth(), { wrapper });
+
+        // Sessão pendente sobrevive ao refocus: nem 429 sucessivos deslogam.
+        await new Promise((r) => setTimeout(r, 100));
+        expect(signOutCalls).toBe(0);
+      });
+
+      it('should NOT re-gate an admitted session on TOKEN_REFRESHED (YQbx)', async () => {
+        // O SDK emite TOKEN_REFRESHED quando renova o access_token em background.
+        // Sessão admitida não é re-gateada — senão o loading travaria a cada 30min.
+        const mockUser = { id: 'tokrefresh-user', email: 'tokrefresh@example.com' };
+        (supabase.auth.getSession as any).mockResolvedValue({
+          data: { session: null },
+          error: null
+        });
+        (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+          // Recovery programa a sessão; o refresh emite TOKEN_REFRESHED com token novo.
+          queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser, access_token: 'tok-1' }));
+          setTimeout(() => cb('TOKEN_REFRESHED', { user: mockUser, access_token: 'tok-2' }), 50);
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        });
+        let gateCalls = 0;
+        (supabase.functions.invoke as any).mockImplementation(() => {
+          gateCalls++;
+          return Promise.resolve({
+            data: { geo_blocked: false, blocked_by_ip: false },
+            error: null,
+          });
+        });
+
+        const wrapper = ({ children }: { children: React.ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        );
+
+        renderHook(() => useAuth(), { wrapper });
+
+        await new Promise((r) => setTimeout(r, 100));
+        // O refresh não re-roda o gate — o token novo não dispara re-checagem.
+        expect(gateCalls).toBe(1);
+      });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>

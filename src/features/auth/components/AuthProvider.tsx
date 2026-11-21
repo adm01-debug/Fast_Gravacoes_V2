@@ -102,6 +102,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // NÃO entra aqui: a rede não foi avaliada e precisa ser re-checada quando a
   // cota voltar (YE5U).
   const admittedUsersRef = useRef<Set<string>>(new Set());
+    // YQbV: sessões RESTAURADAS que receberam 429 ficam pendentes — a rede ainda
+    // não foi avaliada. O SDK re-emite SIGNED_IN no tab refocus para a MESMA
+    // sessão; sem esta marca, o 429 seria tratado como login novo e deslogaria
+    // a operadora (perdendo o rascunho). Pendente continua pendente em novo 429,
+    // mas re-checa quando a cota voltar.
+    const pendingUsersRef = useRef<Set<string>>(new Set());
   const ACTIVITY_TIMEOUT_MINUTES = 60;
   const REFRESH_INTERVAL_MINUTES = 30;
 
@@ -236,6 +242,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearFormDrafts(lastUserIdRef.current ?? undefined);
         lastUserIdRef.current = null;
         admittedUsersRef.current.clear();
+              pendingUsersRef.current.clear();
       }
       if (nextSession?.user) lastUserIdRef.current = nextSession.user.id;
 
@@ -282,9 +289,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 // geo/allowlist antes da sessão existir: 429 = rede não
                 // verificada, e a sessão recém-emitida não deve entrar.
                 const isRestored = event !== 'SIGNED_IN';
+                                // YQbV: sessão pendente (restaurada com 429) continua pendente em
+                                // nova re-emissão do refocus — o SDK re-emite SIGNED_IN para a
+                                // MESMA sessão, mas o 429 ainda não é decisão de bloqueio.
+                                const wasPending = !!userId && pendingUsersRef.current.has(userId);
+                                const sessionLikeRestored = isRestored || wasPending;
                 const shouldSignOut =
                   (lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) &&
-                  (!lockoutStatus.rate_limited || !isRestored);
+                                  (!lockoutStatus.rate_limited || !sessionLikeRestored);
+                                const admitId = userId && !lockoutStatus.rate_limited;
+                                if (admitId) pendingUsersRef.current.delete(userId);
                 if (shouldSignOut) {
                   logger.warn('Session blocked by geo/IP gate — signing out', {
                     geoBlocked: lockoutStatus.geo_blocked,
@@ -301,6 +315,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   // YE5U: 429 NÃO admite — a rede não foi avaliada; quando a cota
                   // voltar, o próximo SIGNED_IN/INITIAL_SESSION re-checa.
                   admittedUsersRef.current.add(userId);
+                                  pendingUsersRef.current.delete(userId);
+                                } else if (userId && sessionLikeRestored) {
+                                  // YQbV: restaurada com 429 fica PENDENTE — re-emissões do
+                                  // refocus continuam pendentes (não deslogam), re-checando
+                                  // quando a cota voltar.
+                                  pendingUsersRef.current.add(userId);
                 }
               }).catch(() => { /* fail-open: gate é advisory no cliente */ })
             : Promise.resolve();
