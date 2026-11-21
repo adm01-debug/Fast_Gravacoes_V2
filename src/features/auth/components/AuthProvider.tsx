@@ -95,6 +95,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // T4: marca sessão criada pelo fluxo password (já passou pelo gate no signIn).
   // Sessões sem essa marca (OAuth, restauração) são re-gateadas no onAuthStateChange.
   const passwordSignInRef = useRef(false);
+  // XyDD: access_token da sessão que já passou pelo gate (password ou re-gate
+  // anterior). Evita re-gatear sessão já admitida quando o SDK re-emite
+  // SIGNED_IN no tab refocus (_recoverAndRefresh) — re-gatear aí deslogaria
+  // operadora válida num 429 e apagaria o rascunho em andamento.
+  const admittedSessionRef = useRef<string | null>(null);
   const ACTIVITY_TIMEOUT_MINUTES = 60;
   const REFRESH_INTERVAL_MINUTES = 30;
 
@@ -228,6 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === 'SIGNED_OUT') {
         clearFormDrafts(lastUserIdRef.current ?? undefined);
         lastUserIdRef.current = null;
+        admittedSessionRef.current = null;
       }
       if (nextSession?.user) lastUserIdRef.current = nextSession.user.id;
 
@@ -238,11 +244,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // O ref é limpo em QUALQUER evento de sessão — se um signIn password
       // falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior
       // seria tratado como "já gateado" e pularia o re-gate (thread P1 do review).
-      const bypassedGate = !passwordSignInRef.current;
+      const token = nextSession?.access_token ?? null;
+      // XyDD: sessão que JÁ passou pelo gate (password ou re-gate anterior) não
+      // é re-gateada de novo. O SDK re-emite SIGNED_IN no tab refocus
+      // (_recoverAndRefresh) para a MESMA sessão — sem esta marca, um 429 na
+      // volta da aba deslogaria sessão válida e apagaria o rascunho.
+      // Token ausente nunca é considerado "admitido": sem access_token a
+      // sessão é tratada como nova e o gate roda.
+      const bypassedGate = !passwordSignInRef.current && !(token && token === admittedSessionRef.current);
       passwordSignInRef.current = false;
 
       if (nextSession?.user) {
         setIsLoading(true);
+        // Sessão password: já passou pelo gate no signIn — o SIGNED_IN seguinte
+        // não pode re-gatear. Marca o token como admitido aqui mesmo (fora do
+        // promise do re-gate) para cobrir também o caso em que não há re-gate.
+        if (!bypassedGate && token) admittedSessionRef.current = token;
         // T4: sessões que não vieram do fluxo password (OAuth, restauração de
         // sessão no boot) não passaram pelo gate pré-login. Re-checa o lockout
         // em background e desloga se geo/ip bloquear — sem await aqui (não
@@ -277,6 +294,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   // estar logada em outro device numa rede permitida — logout
                   // global derrubaria todos os outros.
                   supabase.auth.signOut({ scope: 'local' });
+                } else if (token) {
+                  // XyDD: sessão aprovada no re-gate fica marcada como admitida —
+                  // um SIGNED_IN re-emitido no tab refocus não é re-gateado.
+                  admittedSessionRef.current = token;
                 }
               }).catch(() => { /* fail-open: gate é advisory no cliente */ })
             : Promise.resolve();

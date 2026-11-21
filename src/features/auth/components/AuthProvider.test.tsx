@@ -337,6 +337,56 @@ describe('AuthContext', () => {
     });
   });
 
+  it('should NOT re-sign-out an already admitted session on tab refocus (429)', async () => {
+    // XyDD: o SDK re-emite SIGNED_IN no tab refocus (_recoverAndRefresh) para a
+    // MESMA sessão já admitida. Re-gatear nesse evento trataria a sessão válida
+    // como OAuth novo e um 429 deslogaria a operadora e apagaria o rascunho.
+    const mockUser = { id: 'refocus-user', email: 'refocus@example.com' };
+    (supabase.auth.getSession as any).mockResolvedValue({
+      data: { session: null },
+      error: null
+    });
+    // Primeiro: sessão OAuth nova passa pelo re-gate SEM bloqueio (fica admitida).
+    let signOutCalls = 0;
+    (supabase.auth.signOut as any).mockImplementation(() => {
+      signOutCalls++;
+      return Promise.resolve({ data: {}, error: null });
+    });
+    (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+      // Emite SIGNED_IN para a mesma sessão DUAS vezes (recovery + tab refocus).
+      // A segunda emissão chega DEPOIS do gate da primeira resolver (sessão já
+      // admitida) — assim o teste valida o cenário real de tab refocus.
+      queueMicrotask(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }));
+      setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 50);
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
+    // Primeira chamada do gate: permitido. A partir daí, 429 (cota esgotada).
+    let gateCalls = 0;
+    (supabase.functions.invoke as any).mockImplementation(() => {
+      gateCalls++;
+      if (gateCalls === 1) {
+        return Promise.resolve({
+          data: { geo_blocked: false, blocked_by_ip: false },
+          error: null,
+        });
+      }
+      return Promise.resolve({ data: null, error: { context: { status: 429 } } });
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    renderHook(() => useAuth(), { wrapper });
+
+    // Sessão admitida na primeira emissão; a segunda (refocus) não re-gateia.
+    await new Promise((r) => setTimeout(r, 100));
+    expect(signOutCalls).toBe(0);
+    expect(gateCalls).toBe(1);
+  });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>
