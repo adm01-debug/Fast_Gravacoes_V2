@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryConfig';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/features/auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +46,7 @@ const roleColors: Record<AppRole, string> = {
 export function UserManagement() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
@@ -70,7 +72,7 @@ export function UserManagement() {
   });
 
   // Fetch user roles
-  const { data: userRoles = [] } = useQuery({
+    const { data: userRoles = [], isLoading: isRolesLoading } = useQuery({
     queryKey: QUERY_KEYS.USER_ROLES_MANAGEMENT,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -81,13 +83,18 @@ export function UserManagement() {
     },
   });
 
-  const getUserRoles = (userId: string): AppRole[] =>
-    userRoles.filter(r => r.user_id === userId).map(r => r.role as AppRole);
+    // O vinculo real de cada usuario so e conhecido apos a query de roles concluir.
+    // Enquanto carrega, 'userRoles' e vazio e getUserRole retorna null; tratar isso
+    // como 'sem vinculo' levava o INSERT a duplicar papels (BUG do Devin).
+    const rolesReady = !isRolesLoading;
+    const getUserRoles = useMemo(() => (userId: string): AppRole[] =>
+      userRoles.filter(r => r.user_id === userId).map(r => r.role as AppRole),
+    [userRoles]);
 
-  const getUserRole = (userId: string): AppRole | null => {
+    const getUserRole = useMemo(() => (userId: string): AppRole | null => {
     const roles = getUserRoles(userId);
     return roles.length > 0 ? roles[0] : null;
-  };
+    }, [getUserRoles]);
 
   // Update user mutation
   const updateUserMutation = useMutation({
@@ -218,6 +225,7 @@ export function UserManagement() {
   });
 
   const handleEditUser = (user: Profile) => {
+      if (!rolesReady) return; // roles ainda pendentes: nao abre edicao com vinculo desconhecido
     setSelectedUser(user);
     setEditForm({
       full_name: user.full_name || '',
@@ -234,6 +242,11 @@ export function UserManagement() {
 
   const handleSaveEdit = () => {
     if (!selectedUser) return;
+      // Roles ainda nao confirmadas: nao salvar com vinculo desconhecido.
+      if (!rolesReady) {
+        toast.error('Aguarde o carregamento dos vínculos antes de salvar.');
+        return;
+      }
       if (editForm.role === '') {
         toast.error('Selecione um papel antes de salvar.');
         return;
@@ -251,6 +264,9 @@ export function UserManagement() {
       userId: selectedUser.id,
       profileUpdates,
       newRole: editForm.role,
+        // Revalida o vinculo no momento do save (nao usa o congelado no open):
+        // se outro gestor mudou o papel enquanto o modal ficou aberto, a mutacao
+        // parte do vínculo ATUAL e substitui o vinculo certo.
       originalRole: getUserRole(selectedUser.id),
     });
   };
@@ -342,6 +358,8 @@ export function UserManagement() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleEditUser(user)}
+                                          disabled={!rolesReady}
+                                          title={rolesReady ? undefined : 'Aguardando vínculos carregarem'}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -371,20 +389,24 @@ export function UserManagement() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>{t('operators.fullName')}</Label>
-              <Input
-                value={editForm.full_name}
-                onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Telefone</Label>
-              <Input
-                value={editForm.phone}
-                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-              />
-            </div>
+                      {selectedUser?.id === currentUser?.id && (
+                        <>
+                          <div className="space-y-2">
+                            <Label>{t('operators.fullName')}</Label>
+                            <Input
+                              value={editForm.full_name}
+                              onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Telefone</Label>
+                            <Input
+                              value={editForm.phone}
+                              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                            />
+                          </div>
+                        </>
+                      )}
             <div className="space-y-2">
               <Label>Papel</Label>
               <Select
