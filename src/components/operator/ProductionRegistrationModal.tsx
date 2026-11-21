@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadOwnedFile } from '@/lib/storage';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryConfig';
 import { DbJob } from '@/features/jobs';
@@ -148,20 +149,13 @@ export function ProductionRegistrationModal({
         const fileExt = file.name.split('.').pop();
         const fileName = `${job.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from('production-photos')
-          .upload(fileName, file);
-
-        if (uploadError) {
+        try {
+          const signedUrl = await uploadOwnedFile('production-photos', fileName, file);
+          uploadedUrls.push(signedUrl);
+        } catch (uploadError) {
           toast.error(`Erro ao enviar foto: ${file.name}`);
           continue;
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('production-photos')
-          .getPublicUrl(fileName);
-
-        uploadedUrls.push(publicUrl);
       }
 
       setPhotos(prev => [...prev, ...uploadedUrls]);

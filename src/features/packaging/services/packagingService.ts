@@ -195,7 +195,10 @@ export const packagingService = {
   },
 
   async uploadDefectPhoto(taskId: string, file: File): Promise<string> {
-    const path = `packaging/${taskId}/${crypto.randomUUID()}-${file.name}`;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Não autenticado');
+
+    const path = `${user.id}/packaging/${taskId}/${crypto.randomUUID()}-${file.name}`;
     const { error } = await supabase.storage.from('production-photos').upload(path, file, {
       cacheControl: '3600',
       upsert: false,
