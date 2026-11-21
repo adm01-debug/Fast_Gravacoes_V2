@@ -51,6 +51,21 @@ export const AuthService = {
         body: { email, action: 'check' }
       });
       if (error) {
+        // 429 = rate limit esgotado no gate pré-login. Um IP que saturou o
+        // bucket de check-login-lockout é exatamente quem a allowlist deve
+        // barrar (o gate limita ANTES da allowlist para não permitir varredura
+        // de listUsers). Tratar como bloqueio em vez de fail-open — caso
+        // contrário bastaria saturar o bucket para entrar de uma rede proibida.
+        const status = (error as { context?: { status?: number } })?.context?.status;
+        if (status === 429) {
+          logger.warn('Lockout check rate-limited — treating as IP block', { error }, 'authService');
+          return {
+            locked: true,
+            blocked_by_ip: true,
+            block_reason: 'Muitas tentativas a partir desta rede. Tente novamente em 1 minuto.',
+            message: 'Muitas tentativas a partir desta rede. Tente novamente em 1 minuto.',
+          };
+        }
         logger.warn('Lockout check returned error — brute-force protection may be inactive', { error }, 'authService');
         return { locked: false };
       }
