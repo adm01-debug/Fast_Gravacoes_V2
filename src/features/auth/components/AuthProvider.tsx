@@ -235,17 +235,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(nextSession?.user ?? null);
       const requestSeq = ++authRequestSeqRef.current;
 
+      // O ref é limpo em QUALQUER evento de sessão — se um signIn password
+      // falhar (sem SIGNED_IN), a marca não pode sobreviver: um OAuth posterior
+      // seria tratado como "já gateado" e pularia o re-gate (thread P1 do review).
+      const bypassedGate = !passwordSignInRef.current;
+      passwordSignInRef.current = false;
+
       if (nextSession?.user) {
         setIsLoading(true);
         // T4: sessões que não vieram do fluxo password (OAuth, restauração de
         // sessão no boot) não passaram pelo gate pré-login. Re-checa o lockout
         // em background e desloga se geo/ip bloquear — sem await aqui (não
         // bloqueia a fila do Supabase).
-        // O ref é limpo em QUALQUER evento de sessão: se um signIn password
-        // falhar, nenhum SIGNED_IN limparia a marca — e um OAuth posterior
-        // seria tratado como "já gateado" (bypass). Falha = sempre re-gatear.
-        const bypassedGate = !passwordSignInRef.current;
-        passwordSignInRef.current = false;
 
         // Re-gate de sessão não-password. Para sessões OAuth/restauradas o
         // loading só é liberado quando a checagem termina — evita renderizar
@@ -256,13 +257,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           gatePromise = email
             ? AuthService.checkLockout(email).then((lockoutStatus) => {
                 if (cancelled) return;
-                // rate_limited (429) é cota esgotada, não decisão de bloqueio:
-                // derruba novos logins mas NÃO revoga sessão já emitida — evita
-                // deslogar operadora válida só porque a rede saturou a cota.
-                if ((lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) && !lockoutStatus.rate_limited) {
+                // rate_limited (429) é cota esgotada, não decisão de bloqueio
+                // para sessão RESTAURADA — derruba novos logins mas não revoga
+                // sessão já emitida (evita deslogar operadora válida).
+                // Já para um OAuth NOVO (event SIGNED_IN), o gate não avaliou
+                // geo/allowlist antes da sessão existir: 429 = rede não
+                // verificada, e a sessão recém-emitida não deve entrar.
+                const isRestored = event !== 'SIGNED_IN';
+                const shouldSignOut =
+                  (lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) &&
+                  (!lockoutStatus.rate_limited || !isRestored);
+                if (shouldSignOut) {
                   logger.warn('Session blocked by geo/IP gate — signing out', {
                     geoBlocked: lockoutStatus.geo_blocked,
                     blockedByIp: lockoutStatus.blocked_by_ip,
+                    rateLimited: lockoutStatus.rate_limited,
                   }, 'AuthProvider');
                   // scope 'local': revoga só neste dispositivo. A mesma conta pode
                   // estar logada em outro device numa rede permitida — logout

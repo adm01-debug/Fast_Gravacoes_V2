@@ -300,6 +300,43 @@ describe('AuthContext', () => {
     expect(supabase.auth.signOut).not.toHaveBeenCalled();
   });
 
+  it('should sign out a NEW OAuth session when lockout is rate-limited (429)', async () => {
+    // Sessão OAuth recém-emitida (SIGNED_IN) não passou pelo gate pré-login.
+    // Com a cota esgotada o servidor retorna 429 sem avaliar geo/allowlist —
+    // a sessão nova não pode entrar: re-gate não é fail-open para SIGNED_IN.
+    const mockUser = { id: 'oauth-user', email: 'oauth@example.com' };
+    (supabase.auth.getSession as any).mockResolvedValue({
+      data: { session: null },
+      error: null
+    });
+    (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+      queueMicrotask(() => cb('SIGNED_IN', { user: mockUser }));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: null,
+      error: { context: { status: 429 } }
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => {
+      expect(supabase.functions.invoke).toHaveBeenCalledWith('check-login-lockout', {
+        body: { email: 'oauth@example.com', action: 'check' },
+      });
+    });
+
+    await waitFor(() => {
+      expect(supabase.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    });
+  });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>

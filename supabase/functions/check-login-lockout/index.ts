@@ -284,10 +284,13 @@ serve(async (req) => {
         }
 
         if (geoBlocked) {
-          console.log(`IP ${ip_address} geo-blocked (${geo?.country_code || 'unknown'})`);
+          console.log(`IP ${ip_address ?? '(none)'} geo-blocked (${geo?.country_code || 'unknown'})`);
           if (geoSettings.log_blocked_attempts) {
+            // geo_blocking_logs.ip_address é inet NOT NULL — sem IP (proxy sem
+            // x-forwarded-for/x-real-ip) usamos o endereço de loopback como
+            // placeholder, preservando o registro de auditoria (thread do review).
             await supabase.from('geo_blocking_logs').insert({
-              ip_address,
+              ip_address: ip_address ?? '0.0.0.0',
               country_code: geo?.country_code ?? null,
               country_name: geo?.country_name ?? null,
               action: 'blocked',
