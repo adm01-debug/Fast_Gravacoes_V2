@@ -4353,7 +4353,7 @@
     "useDocumentVersions",
     "useDocuments"
    ],
-   "linhas": 325,
+   "linhas": 309,
    "dominio": "hooks",
    "tabelas": [
     "document_versions",

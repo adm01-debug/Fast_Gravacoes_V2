@@ -1,10 +1,10 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 54,
+ "total": 55,
  "por_camada": {
   "integrations": 3,
-  "lib": 41,
+  "lib": 42,
   "python": 8,
   "schemas": 2
  },
@@ -453,7 +453,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 171,
+   "usado_por": 172,
    "usado_por_modulos": [
     "components/auth",
     "components/calendar",
@@ -1766,6 +1766,32 @@
     "pages"
    ],
    "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/storage.ts",
+   "camada": "lib",
+   "exports": [
+    "uploadOwnedFile"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/operator",
+    "components/traceability",
+    "features/maintenance",
+    "hooks"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {

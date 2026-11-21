@@ -3854,7 +3854,7 @@
     "ProductionRegistrationModal"
    ],
    "export_default": null,
-   "linhas": 473,
+   "linhas": 467,
    "dominio": "components/operator",
    "hooks_locais": [],
    "tabelas": [
@@ -5249,7 +5249,7 @@
     "LotInspectionsTab"
    ],
    "export_default": null,
-   "linhas": 258,
+   "linhas": 252,
    "dominio": "components/traceability",
    "hooks_locais": [
     "useTraceabilityMutations"
@@ -8216,7 +8216,7 @@
     "MaintenanceExecutionModal"
    ],
    "export_default": null,
-   "linhas": 500,
+   "linhas": 485,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useTPM",

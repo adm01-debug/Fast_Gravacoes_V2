@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6d6591cc209b4dde5be16147044d3718884b584a",
+  "commit": "9654a58e2436dd26cd65f7815c93a010e978dcba",
   "branch": "main",
-  "data_commit": "2026-11-21T14:11:42-03:00",
+  "data_commit": "2026-11-21T14:58:10-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9654a58",
+    "data": "2026-11-21",
+    "assunto": "fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)"
+   },
    {
     "sha": "6d6591c",
     "data": "2026-11-21",
@@ -126,15 +131,10 @@
     "sha": "13daf19",
     "data": "2026-11-19",
     "assunto": "chore(analise): mantem chave redigida no historico"
-   },
-   {
-    "sha": "bf38560",
-    "data": "2026-11-18",
-    "assunto": "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 124,
+  "arquivos_mudados_7d": 130,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -142,7 +142,7 @@
    },
    {
     "pasta": "src/features/maintenance",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "src/features/notifications",
@@ -169,15 +169,15 @@
     "mudancas": 14
    },
    {
+    "pasta": "src/features/packaging",
+    "mudancas": 13
+   },
+   {
     "pasta": "package.json",
     "mudancas": 12
    },
    {
     "pasta": "src/features/auth",
-    "mudancas": 12
-   },
-   {
-    "pasta": "src/features/packaging",
     "mudancas": 12
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 101
+    "commits": 102
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1568,
-  "arquivos_codigo": 1118,
-  "linhas_codigo": 188843,
+  "arquivos_total": 1569,
+  "arquivos_codigo": 1119,
+  "linhas_codigo": 188834,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58663
+   "linhas": 58651
   },
   "src/constants": {
    "arquivos": 2,
@@ -493,11 +493,11 @@
   },
   "src/features": {
    "arquivos": 328,
-   "linhas": 46141
+   "linhas": 46129
   },
   "src/hooks": {
    "arquivos": 61,
-   "linhas": 7808
+   "linhas": 7792
   },
   "src/i18n": {
    "arquivos": 1,
@@ -508,8 +508,8 @@
    "linhas": 6394
   },
   "src/lib": {
-   "arquivos": 51,
-   "linhas": 6554
+   "arquivos": 52,
+   "linhas": 6585
   },
   "src/main.tsx": {
    "arquivos": 1,

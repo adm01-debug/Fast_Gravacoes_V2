@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6d6591cc20` · branch `main` · 2026-11-21 17:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9654a58e24` · branch `main` · 2026-11-21 17:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T17:11:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T17:37:58Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T17:11:08Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T17:37:58Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -427,7 +427,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T17:11:08Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T17:37:58Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1470,7 +1470,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T17:11:08Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T17:37:58Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1593,7 +1593,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T17:11:08Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T17:37:58Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3209,7 +3209,7 @@ _nenhum item encontrado_
 | Máquina não encontrada | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | Nenhum destinatário configurado para este canal e máquina. | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | Erro ao ativar notificações push | `src/features/notifications/hooks/useWebPushNotifications.ts` |
-| … +229 linhas — lista completa em `context.json` | |
+| … +230 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3569,6 +3569,7 @@ _nenhum item encontrado_
 | Validation errors - don't retry | `src/lib/queryConfig.ts` |
 | the Supabase client validation. Fanout to the listener sets at runtime. | `src/lib/realtimeChannel.ts` |
 | auth-token velho no localStorage (setup anterior) não pode | `src/lib/soundFeedback.ts` |
+| ownership prefix (`<uid>/...`), required by the storage RLS policies | `src/lib/storage.ts` |
 | * Runtime validation utilities using Zod. | `src/lib/validation.ts` |
 | Logs validation failures in dev mode. | `src/lib/validation.ts` |
 | errors must not throw into the caller; the caller already has the data in | `src/lib/offline/offlineQueue.ts` |

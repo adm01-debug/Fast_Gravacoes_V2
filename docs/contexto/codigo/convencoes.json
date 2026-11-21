@@ -16,7 +16,7 @@
    "src/components (15)"
   ],
   "servicos_logica": [
-   "src/lib (41)",
+   "src/lib (42)",
    "scripts/graphify (5)",
    "src/integrations (3)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)",
    "chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)",
    "fix: F-006 geo-blocking enforced no login (#240)",
    "chore: dossie F-005 marcado resolvida (#239)",
-   "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)",
-   "chore: dossie F-004 marcado resolvido com evidencia (#237)"
+   "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

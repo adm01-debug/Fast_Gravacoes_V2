@@ -1727,6 +1727,7 @@
    "src/lib/errorHandling.ts",
    "src/lib/file-validation.ts",
    "src/lib/queryConfig.ts",
+   "src/lib/storage.ts",
    "src/lib/utils.ts",
    "src/types/scheduling.ts"
   ],
@@ -2445,7 +2446,8 @@
    "src/components/ui/textarea.tsx",
    "src/features/inventory/index.ts",
    "src/integrations/supabase/client.ts",
-   "src/lib/file-validation.ts"
+   "src/lib/file-validation.ts",
+   "src/lib/storage.ts"
   ],
   "src/components/traceability/LotLabelPrint.tsx": [
    "src/components/ui/button.tsx",
@@ -3910,7 +3912,8 @@
    "src/features/maintenance/hooks/types.ts",
    "src/features/maintenance/hooks/useTPM.ts",
    "src/hooks/useTechnicalSheets.ts",
-   "src/integrations/supabase/client.ts"
+   "src/integrations/supabase/client.ts",
+   "src/lib/storage.ts"
   ],
   "src/features/maintenance/components/PredictiveHealthCard.tsx": [
    "src/components/ui/badge.tsx",
@@ -4718,7 +4721,8 @@
    "src/hooks/use-toast.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/errorHandling.ts",
-   "src/lib/queryConfig.ts"
+   "src/lib/queryConfig.ts",
+   "src/lib/storage.ts"
   ],
   "src/hooks/useGamification.ts": [
    "src/features/auth/index.ts",
@@ -4922,6 +4926,9 @@
   ],
   "src/lib/spcExport.ts": [
    "src/features/analytics/hooks/useSPC.ts"
+  ],
+  "src/lib/storage.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/lib/validation.ts": [
    "src/lib/logger.ts"
