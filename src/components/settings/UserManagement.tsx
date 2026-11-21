@@ -88,7 +88,7 @@ export function UserManagement() {
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, updates, newRole }: { userId: string; updates: Partial<Profile>; newRole: AppRole }) => {
+    mutationFn: async ({ userId, updates, newRole, originalRole }: { userId: string; updates: Partial<Profile>; newRole: AppRole; originalRole: AppRole }) => {
       // Update profile
       const { error: profileError } = await supabase
         .from('profiles')
@@ -97,19 +97,24 @@ export function UserManagement() {
 
       if (profileError) throw profileError;
 
-      // Replace role (UNIQUE(user_id, role) - remove existing, insert new)
-      const { error: roleDeleteError } = await supabase
+      // Semi papel inalterado: nao toca em user_roles (preserva outros vinculos e flags de inativacao)
+      if (newRole === originalRole) return;
+
+      // Substitui apenas o vinculo exato sendo alterado (UNIQUE(user_id, role)).
+      // O UPDATE com .eq('role', originalRole) e autorizado por linha pela RLS:
+      // - se a promocao for recusada, a RLS rejeita com erro e o papel antigo permanece;
+      // - se o manager nao puder tocar naquele papel, zero linhas sao afetadas e reportamos a recusa.
+      const { data: updated, error: roleUpdateError } = await supabase
         .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
+        .update({ role: newRole })
+        .eq('user_id', userId)
+        .eq('role', originalRole)
+        .select('id');
 
-      if (roleDeleteError) throw roleDeleteError;
-
-      const { error: roleInsertError } = await supabase
-        .from('user_roles')
-        .insert({ user_id: userId, role: newRole });
-
-      if (roleInsertError) throw roleInsertError;
+      if (roleUpdateError) throw roleUpdateError;
+      if (!updated || updated.length === 0) {
+        throw new Error('Troca de papel recusada: verifique a permissao ou tente novamente.');
+      }
     },
     onSuccess: () => {
       toast.success('Usuário atualizado com sucesso!');
@@ -195,6 +200,7 @@ export function UserManagement() {
         phone: editForm.phone,
       },
       newRole: editForm.role,
+      originalRole: getUserRole(selectedUser.id),
     });
   };
 
