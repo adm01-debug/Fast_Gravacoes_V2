@@ -97,12 +97,19 @@ export function UserManagement() {
 
       if (profileError) throw profileError;
 
-      // Update role
-      const { error: roleError } = await supabase
+      // Replace role (UNIQUE(user_id, role) - remove existing, insert new)
+      const { error: roleDeleteError } = await supabase
         .from('user_roles')
-        .upsert({ user_id: userId, role: newRole }, { onConflict: 'user_id' });
+        .delete()
+        .eq('user_id', userId);
 
-      if (roleError) throw roleError;
+      if (roleDeleteError) throw roleDeleteError;
+
+      const { error: roleInsertError } = await supabase
+        .from('user_roles')
+        .insert({ user_id: userId, role: newRole });
+
+      if (roleInsertError) throw roleInsertError;
     },
     onSuccess: () => {
       toast.success('Usuário atualizado com sucesso!');
