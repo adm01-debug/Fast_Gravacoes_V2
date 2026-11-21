@@ -58,12 +58,12 @@ function ipMatchesCidr(ip: string, cidr: string): boolean {
 // ipapi.co como fallback. Fail-open: qualquer erro de infra retorna null e o
 // gate decide pelo block_unknown_countries (ou libera por padrão).
 async function resolveCountry(ip: string): Promise<{ country_code: string; country_name: string } | null> {
-  // Deadline compartilhado entre os dois providers: um provedor fora do ar não
-  // pode estender a espera total além do teto (antes, 15s x 2 = até 30s de
-  // latência por login antes do fail-open). Aborta ambos e retorna null.
+  // Teto total entre os dois providers: um provedor fora do ar não pode
+  // estender a espera além do teto (antes, 15s x 2 = até 30s de latência por
+  // login antes do fail-open). Cada provider ainda tem o próprio timeout para
+  // o reserva não ficar refém da lentidão do primário (thread SEC do review).
   const totalTimeoutMs = 8_000;
-  const controller = new AbortController();
-  const deadline = setTimeout(() => controller.abort(), totalTimeoutMs);
+  const perProviderTimeoutMs = 5_000;
   const providers: Array<{ url: string; parse: (json: any) => { country_code: string; country_name: string } | null }> = [
     {
       url: `https://ipwho.is/${ip}`,
@@ -81,22 +81,23 @@ async function resolveCountry(ip: string): Promise<{ country_code: string; count
     },
   ];
 
-  try {
-    for (const provider of providers) {
-      if (controller.signal.aborted) break;
-      try {
-        const resp = await fetch(provider.url, { signal: controller.signal });
-        if (!resp.ok) continue;
-        const json = await resp.json();
-        const parsed = provider.parse(json);
-        if (parsed) return parsed;
-      } catch (err) {
-        if (controller.signal.aborted) break;
-        console.error(`Geo lookup failed for ${provider.url}:`, err);
-      }
+  const deadlineAt = Date.now() + totalTimeoutMs;
+  for (const provider of providers) {
+    const remainingMs = deadlineAt - Date.now();
+    if (remainingMs <= 0) break;
+    const providerController = new AbortController();
+    const providerTimer = setTimeout(() => providerController.abort(), Math.min(perProviderTimeoutMs, remainingMs));
+    try {
+      const resp = await fetch(provider.url, { signal: providerController.signal });
+      if (!resp.ok) continue;
+      const json = await resp.json();
+      const parsed = provider.parse(json);
+      if (parsed) return parsed;
+    } catch (err) {
+      console.error(`Geo lookup failed for ${provider.url}:`, err);
+    } finally {
+      clearTimeout(providerTimer);
     }
-  } finally {
-    clearTimeout(deadline);
   }
   return null;
 }
@@ -238,7 +239,10 @@ serve(async (req) => {
     // infra (resolução de país) — consistente com rateLimit.ts.
     // Só avalia no action=check: record_failure/record_success são pós-login e
     // o gate já foi aplicado no check — evita lookup duplicado por login.
-    if (action === 'check' && ip_address) {
+    // IP ausente (proxy/env sem x-forwarded-for/x-real-ip) também passa pelo
+    // gate: com block_unknown_countries=true o request é tratado como
+    // localização desconhecida e bloqueado (thread P2 do review).
+    if (action === 'check') {
       const { data: geoSettings, error: geoSettingsError } = await supabase
         .from('geo_blocking_settings')
         .select('is_enabled, mode, block_unknown_countries, log_blocked_attempts')
@@ -248,11 +252,13 @@ serve(async (req) => {
       if (geoSettingsError) {
         console.error('Error fetching geo settings:', geoSettingsError);
       } else if (geoSettings?.is_enabled) {
-        const geo = await resolveCountry(ip_address);
+        const geo = ip_address ? await resolveCountry(ip_address) : null;
         let geoBlocked = false;
         let geoReason: string | null = null;
 
         if (!geo) {
+          // Sem resolução de país OU sem IP disponível: aplica a política de
+          // país desconhecido do painel.
           geoBlocked = geoSettings.block_unknown_countries === true;
           geoReason = geoBlocked ? 'País desconhecido não permitido' : null;
         } else {

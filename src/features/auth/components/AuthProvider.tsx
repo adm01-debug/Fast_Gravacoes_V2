@@ -241,25 +241,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // sessão no boot) não passaram pelo gate pré-login. Re-checa o lockout
         // em background e desloga se geo/ip bloquear — sem await aqui (não
         // bloqueia a fila do Supabase).
+        // O ref é limpo em QUALQUER evento de sessão: se um signIn password
+        // falhar, nenhum SIGNED_IN limparia a marca — e um OAuth posterior
+        // seria tratado como "já gateado" (bypass). Falha = sempre re-gatear.
         const bypassedGate = !passwordSignInRef.current;
         passwordSignInRef.current = false;
+
+        // Re-gate de sessão não-password. Para sessões OAuth/restauradas o
+        // loading só é liberado quando a checagem termina — evita renderizar
+        // rotas protegidas antes da decisão de bloqueio (janela P1 do review).
+        let gatePromise: Promise<unknown> = Promise.resolve();
         if (bypassedGate) {
           const email = nextSession.user.email;
-          if (email) {
-            AuthService.checkLockout(email).then((lockoutStatus) => {
-              if (cancelled) return;
-              if (lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) {
-                logger.warn('Session blocked by geo/IP gate — signing out', {
-                  geoBlocked: lockoutStatus.geo_blocked,
-                  blockedByIp: lockoutStatus.blocked_by_ip,
-                }, 'AuthProvider');
-                supabase.auth.signOut();
-              }
-            }).catch(() => { /* fail-open: gate é advisory no cliente */ });
-          }
+          gatePromise = email
+            ? AuthService.checkLockout(email).then((lockoutStatus) => {
+                if (cancelled) return;
+                // rate_limited (429) é cota esgotada, não decisão de bloqueio:
+                // derruba novos logins mas NÃO revoga sessão já emitida — evita
+                // deslogar operadora válida só porque a rede saturou a cota.
+                if ((lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) && !lockoutStatus.rate_limited) {
+                  logger.warn('Session blocked by geo/IP gate — signing out', {
+                    geoBlocked: lockoutStatus.geo_blocked,
+                    blockedByIp: lockoutStatus.blocked_by_ip,
+                  }, 'AuthProvider');
+                  // scope 'local': revoga só neste dispositivo. A mesma conta pode
+                  // estar logada em outro device numa rede permitida — logout
+                  // global derrubaria todos os outros.
+                  supabase.auth.signOut({ scope: 'local' });
+                }
+              }).catch(() => { /* fail-open: gate é advisory no cliente */ })
+            : Promise.resolve();
         }
-        // Fire-and-forget: nunca await dentro de onAuthStateChange
-        fetchUserData(nextSession.user.id, requestSeq).finally(() => {
+
+        // Fire-and-forget: nunca await dentro de onAuthStateChange. O loading
+        // só cai quando perfil + re-gate (se houver) terminaram.
+        const dataPromise = fetchUserData(nextSession.user.id, requestSeq);
+        Promise.allSettled([dataPromise, gatePromise]).then(() => {
           if (!cancelled && authRequestSeqRef.current === requestSeq) setIsLoading(false);
         });
       } else {

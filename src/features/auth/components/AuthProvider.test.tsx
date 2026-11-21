@@ -223,6 +223,83 @@ describe('AuthContext', () => {
     });
   });
 
+  it('should re-check lockout and sign out a restored session blocked by geo/IP', async () => {
+    // Sessão restaurada no boot (INITIAL_SESSION) de um país bloqueado.
+    // onAuthStateChange re-gatea (não veio do fluxo password) e desloga.
+    const mockUser = { id: 'restored-user', email: 'restored@example.com' };
+    (supabase.auth.getSession as any).mockResolvedValue({
+      data: { session: { user: mockUser } },
+      error: null
+    });
+    (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+      queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser }));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: {
+        geo_blocked: true,
+        country_code: 'RU',
+        country_name: 'Russia',
+        block_reason: 'País não está na lista de países permitidos',
+      },
+      error: null
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => {
+      expect(supabase.functions.invoke).toHaveBeenCalledWith('check-login-lockout', {
+        body: { email: 'restored@example.com', action: 'check' },
+      });
+    });
+
+    await waitFor(() => {
+      expect(supabase.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    });
+  });
+
+  it('should NOT sign out a restored session when lockout is rate-limited (429)', async () => {
+    // Cota esgotada (429) não é decisão de bloqueio: sessão existente não é
+    // revogada, mesmo com a rede saturada (evita derrubar sessões válidas).
+    const mockUser = { id: 'restored-user', email: 'restored@example.com' };
+    (supabase.auth.getSession as any).mockResolvedValue({
+      data: { session: { user: mockUser } },
+      error: null
+    });
+    (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+      queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser }));
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
+    });
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: null,
+      error: { context: { status: 429 } }
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => {
+      expect(supabase.functions.invoke).toHaveBeenCalledWith('check-login-lockout', {
+        body: { email: 'restored@example.com', action: 'check' },
+      });
+    });
+
+    // Pequena espera para garantir que o promise do gate resolveu
+    await new Promise((r) => setTimeout(r, 50));
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>

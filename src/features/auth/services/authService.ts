@@ -12,6 +12,8 @@ export interface LockoutStatus {
   country_code?: string | null;
   country_name?: string | null;
   block_reason?: string | null;
+  /** true quando o gate respondeu 429 (cota esgotada) — não é decisão de bloqueio. */
+  rate_limited?: boolean;
 }
 
 export const AuthService = {
@@ -65,6 +67,10 @@ export const AuthService = {
           return {
             locked: true,
             blocked_by_ip: true,
+            // Sinaliza cota esgotada (não é decisão de bloqueio): o signIn recusa
+            // novos logins, mas o re-gate de sessão existente NÃO desloga — a
+            // sessão já emitida não deve ser revogada só porque a cota acabou.
+            rate_limited: true,
             block_reason: 'Muitas tentativas a partir desta rede. Tente novamente em 1 minuto.',
             message: 'Muitas tentativas a partir desta rede. Tente novamente em 1 minuto.',
           };
