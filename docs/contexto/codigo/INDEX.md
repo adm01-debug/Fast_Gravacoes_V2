@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c05e4eeeefa585b868a855879c1e7e09b569c51` (2026-11-21T13:05:52-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6d6591cc209b4dde5be16147044d3718884b584a` (2026-11-21T14:11:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1055), SQL (257), Markdown (100), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1054), SQL (257), Markdown (100), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1569 |
-| arquivos_codigo | 1119 |
-| linhas_codigo | 189082 |
+| arquivos_total | 1568 |
+| arquivos_codigo | 1118 |
+| linhas_codigo | 188843 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -44,7 +44,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | modulos | 74 |
 | componentes | 621 |
 | hooks | 196 |
-| edge_functions | 34 |
+| edge_functions | 33 |
 | tabelas | 133 |
 | migrations | 249 |
 | cron_jobs | 4 |
@@ -197,7 +197,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `ml-predictions` — tabelas: jobs, machine_predictions, machines, maintenance_records, maintenance_schedules; chamada por 2 arquivo(s) do front
 - `new-device-alert` — tabelas: new_device_alerts, user_devices; chamada por 1 arquivo(s) do front
 - `pdf-generator` — tabelas: -; chamada por 1 arquivo(s) do front
-- `rate-limit-check` — tabelas: blocked_ips, rate_limit_logs, rate_limit_settings, security_events; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `security-alert` — tabelas: security_events; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `send-email-report` — tabelas: daily_summaries, jobs; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `send-loss-risk-alert` — tabelas: maintenance_records, tpm_executions, user_notification_settings; chamada por 0 arquivo(s) do front, por SQL/cron
@@ -232,7 +231,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_nao_interpretadas: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 1 — ex.: Voltar -> #
-- edges_orfas: 15 — ex.: backup-scheduler, cleanup-security-logs, cron-alert-email
+- edges_orfas: 14 — ex.: backup-scheduler, cleanup-security-logs, cron-alert-email
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 0
 - tabelas_usadas_sem_definicao: 1 — ex.: backups
@@ -247,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7477 nós · 21951 arestas · 664 comunidades · grafo do commit `3c05e4ee`
-- comunidades maiores: card.tsx (190), badge.tsx (151), FuturisticBI.tsx (126), client.ts (117), analytics/index.ts (115), snapshot.py (111), label.tsx (103), cn (100), dialog.tsx (99), gerar.mjs (96), GraphifyIntegrationTests (96), .write (96)
+- 7474 nós · 21944 arestas · 658 comunidades · grafo do commit `6d6591cc`
+- comunidades maiores: card.tsx (162), skeleton.tsx (138), Button (137), analytics/index.ts (133), cn (123), FuturisticBI.tsx (121), badge.tsx (120), snapshot.py (111), client.ts (108), gerar.mjs (96), GraphifyIntegrationTests (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-21 `6d6591c` chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)
 - 2026-11-21 `3c05e4e` fix: F-006 geo-blocking enforced no login (#240)
 - 2026-11-21 `4590899` chore: dossie F-005 marcado resolvida (#239)
 - 2026-11-21 `ecaa439` fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)
@@ -382,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `7ddd094` chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)
 - 2026-11-19 `a3d0c08` docs: marca chave Stripe como resolvida no progresso da auditoria (#227)
 - 2026-11-19 `7c1df38` docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)
-- 2026-11-19 `3d7a497` fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

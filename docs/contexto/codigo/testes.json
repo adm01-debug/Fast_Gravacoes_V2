@@ -1639,7 +1639,6 @@
    "ml-predictions",
    "new-device-alert",
    "pdf-generator",
-   "rate-limit-check",
    "security-alert",
    "send-email-report",
    "send-loss-risk-alert",

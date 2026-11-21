@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 34,
+ "total": 33,
  "verify_jwt_false": [
   "bitrix24-sync",
   "csp-report"
@@ -827,38 +827,6 @@
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
-   "testes": 0
-  },
-  {
-   "nome": "rate-limit-check",
-   "entrada": "supabase/functions/rate-limit-check/index.ts",
-   "arquivos": 1,
-   "linhas": 239,
-   "verify_jwt": true,
-   "metodos": [],
-   "tabelas": [
-    "blocked_ips",
-    "rate_limit_logs",
-    "rate_limit_settings",
-    "security_events"
-   ],
-   "rpcs": [],
-   "env": [
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
-   ],
-   "buckets": [],
-   "chama_edges": [],
-   "hosts_externos": [],
-   "usa_shared": [
-    "cors.ts",
-    "rateLimit.ts"
-   ],
-   "chamada_pelo_front": [],
-   "chamada_por_edges": [],
-   "chamada_por_sql_ou_cron": false,
-   "orfa": true,
    "testes": 0
   },
   {

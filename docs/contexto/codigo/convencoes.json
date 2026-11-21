@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)",
    "fix: F-006 geo-blocking enforced no login (#240)",
    "chore: dossie F-005 marcado resolvida (#239)",
    "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)",
-   "chore: dossie F-004 marcado resolvido com evidencia (#237)",
-   "fix: blocked_ips agora bloqueia o login (F-004) (#236)"
+   "chore: dossie F-004 marcado resolvido com evidencia (#237)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

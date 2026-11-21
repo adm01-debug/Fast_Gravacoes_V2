@@ -6180,10 +6180,6 @@
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/logger.ts"
   ],
-  "supabase/functions/rate-limit-check/index.ts": [
-   "supabase/functions/_shared/cors.ts",
-   "supabase/functions/_shared/rateLimit.ts"
-  ],
   "supabase/functions/security-alert/index.ts": [
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/cronAuth.ts"

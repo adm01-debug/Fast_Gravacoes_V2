@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3c05e4eeeefa585b868a855879c1e7e09b569c51",
+  "commit": "6d6591cc209b4dde5be16147044d3718884b584a",
   "branch": "main",
-  "data_commit": "2026-11-21T13:05:52-03:00",
+  "data_commit": "2026-11-21T14:11:42-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6d6591c",
+    "data": "2026-11-21",
+    "assunto": "chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)"
+   },
    {
     "sha": "3c05e4e",
     "data": "2026-11-21",
@@ -126,15 +131,10 @@
     "sha": "bf38560",
     "data": "2026-11-18",
     "assunto": "chore: fecha alerta minimatch (medium) com override escopado 11.0.9 (#217)"
-   },
-   {
-    "sha": "096b2cc",
-    "data": "2026-11-18",
-    "assunto": "infra: pina Supabase CLI v3.2.0 e migra flags para --remote/--yes (#216)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 119,
+  "arquivos_mudados_7d": 124,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -263,6 +263,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 6
+   },
+   {
     "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 6
    },
@@ -272,6 +276,10 @@
    },
    {
     "arquivo": ".github/workflows/migration-repair.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
     "mudancas": 5
    },
    {
@@ -289,20 +297,12 @@
    {
     "arquivo": "src/features/auth/components/AuthProvider.tsx",
     "mudancas": 5
-   },
-   {
-    "arquivo": "src/hooks/useOfflineSync.ts",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 100
+    "commits": 101
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1569,
-  "arquivos_codigo": 1119,
-  "linhas_codigo": 189082,
+  "arquivos_total": 1568,
+  "arquivos_codigo": 1118,
+  "linhas_codigo": 188843,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -337,7 +337,7 @@
   "modulos": 74,
   "componentes": 621,
   "hooks": 196,
-  "edge_functions": 34,
+  "edge_functions": 33,
   "tabelas": 133,
   "migrations": 249,
   "cron_jobs": 4,
@@ -540,8 +540,8 @@
    "linhas": 172
   },
   "supabase/functions": {
-   "arquivos": 55,
-   "linhas": 11429
+   "arquivos": 54,
+   "linhas": 11190
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -668,7 +668,7 @@
  ],
  "qualidade": {
   "any": 169,
-  "console_log": 181,
+  "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,
   "todos": 10,
@@ -754,7 +754,6 @@
    "health-monitor",
    "image-optimizer",
    "metrics-collector",
-   "rate-limit-check",
    "security-alert",
    "send-email-report",
    "tpm-notifications",

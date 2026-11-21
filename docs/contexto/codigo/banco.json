@@ -1985,8 +1985,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [
     "check-login-lockout",
-    "cleanup-security-logs",
-    "rate-limit-check"
+    "cleanup-security-logs"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -11228,8 +11227,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [
     "_shared",
-    "cleanup-security-logs",
-    "rate-limit-check"
+    "cleanup-security-logs"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -11343,9 +11341,7 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [
-    "rate-limit-check"
-   ],
+   "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
@@ -11934,7 +11930,6 @@
     "check-login-lockout",
     "cleanup-security-logs",
     "health-monitor",
-    "rate-limit-check",
     "security-alert"
    ],
    "triggers": [],

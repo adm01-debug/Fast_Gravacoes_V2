@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c05e4eeee` · branch `main` · 2026-11-21 16:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6d6591cc20` · branch `main` · 2026-11-21 17:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-21T14:37:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-21T17:11:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-21T14:37:47Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-21T17:11:08Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -154,7 +154,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 91 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 90 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -189,7 +189,6 @@
 - `supabase/functions/ml-predictions/index.ts`
 - `supabase/functions/new-device-alert/index.ts`
 - `supabase/functions/pdf-generator/index.ts`
-- `supabase/functions/rate-limit-check/index.ts`
 - `supabase/functions/security-alert/index.ts`
 - `supabase/functions/send-email-report/index.ts`
 - `supabase/functions/send-loss-risk-alert/index.ts`

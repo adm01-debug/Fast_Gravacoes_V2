@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c05e4eeee` · branch `main` · 2026-11-21 16:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6d6591cc20` · branch `main` · 2026-11-21 17:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T14:37:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-21T17:11:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T14:37:47Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-21T17:11:08Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -427,7 +427,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T14:37:47Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-21T17:11:08Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1470,7 +1470,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T14:37:47Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-21T17:11:08Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1593,7 +1593,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T14:37:47Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-21T17:11:08Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2901,7 +2901,6 @@ _nenhum item encontrado_
 | 1000 | `supabase/functions/erp-api/index.ts` |
 | 200 | `supabase/functions/ml-predictions/index.ts` |
 | 500 | `supabase/functions/ml-predictions/index.ts` |
-| 1 | `supabase/functions/rate-limit-check/index.ts` |
 | 1 | `supabase/functions/send-push-notification/index.ts` |
 | 1 | `supabase/functions/tpm-notifications/index.ts` |
 | 10 | `supabase/functions/tpm-notifications/index.ts` |
@@ -3629,8 +3628,6 @@ _nenhum item encontrado_
 | ").order("started_at", { ascending: false }).limit(200), | `supabase/functions/ml-predictions/index.ts` |
 | fields — a caller must not be able to forge device records or trigger | `supabase/functions/new-device-alert/index.ts` |
 | de PDF real deve ser implementada com `pdf-lib` ou similar; até lá o texto | `supabase/functions/pdf-generator/index.ts` |
-| Guarda de abuso do próprio endpoint de rate limit (público): anônimos são | `supabase/functions/rate-limit-check/index.ts` |
-| Get rate limit config for endpoint | `supabase/functions/rate-limit-check/index.ts` |
 | we must walk every page or subscribers beyond the first page silently | `supabase/functions/send-loss-risk-alert/index.ts` |
 | "failed" and must NOT cause the subscription to be deleted. | `supabase/functions/send-push-notification/index.ts` |
 | Filter by eligible roles before limit(1) to handle users with multiple role rows. | `supabase/functions/send-push-notification/index.ts` |

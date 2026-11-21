@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 990,
- "arestas": 4538,
+ "nos": 989,
+ "arestas": 4536,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -105,11 +105,11 @@
    "importado_por": 33
   },
   {
-   "arquivo": "supabase/functions/_shared/cors.ts",
-   "importado_por": 32
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 31
   },
   {
-   "arquivo": "src/components/ui/table.tsx",
+   "arquivo": "supabase/functions/_shared/cors.ts",
    "importado_por": 31
   },
   {
