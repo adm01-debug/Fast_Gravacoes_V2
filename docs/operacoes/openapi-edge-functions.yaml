@@ -86,10 +86,6 @@ paths:
     post:
       summary: Notifica login em dispositivo novo (hook de login)
       responses: { '200': { description: OK } }
-  /functions/v1/rate-limit-check:
-    post:
-      summary: Consulta/incrementa bucket de rate limit genérico
-      responses: { '200': { description: '{ allowed, remaining }' } }
 
   # ============ Produção ============
   /functions/v1/auto-promote-jobs:

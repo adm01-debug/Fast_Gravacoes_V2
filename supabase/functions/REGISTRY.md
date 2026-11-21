@@ -1,6 +1,6 @@
 # Registry de Edge Functions — gatilhos e validação de entrada
 
-34 functions. Este arquivo responde: **quem pode chamar cada function, de onde,
+33 functions. Este arquivo responde: **quem pode chamar cada function, de onde,
 e se o gatilho está versionado no repositório.** Sem isso, nenhuma function pode
 ser considerada "órfã" com segurança — algumas são chamadas por fora do código
 (pg_cron, DB webhooks do painel, integrações externas) e não aparecem em grep.
