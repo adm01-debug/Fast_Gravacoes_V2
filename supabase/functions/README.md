@@ -1,6 +1,6 @@
 # Edge Functions — inventário de autenticação
 
-34 functions em `supabase/functions/`. Todas rodam com `verify_jwt = true`
+33 functions em `supabase/functions/`. Todas rodam com `verify_jwt = true`
 (declarado explicitamente em `supabase/config.toml`, ver o comentário lá para
 o porquê) — exceto `csp-report` (`verify_jwt = false`, justificativa no
 config.toml e na linha dela abaixo). Esta tabela documenta a **camada 2** — a
@@ -54,7 +54,6 @@ Classificação:
 | ml-predictions | user | `auth.getUser(token)` |
 | new-device-alert | user | `auth.getUser()` |
 | pdf-generator | user | `auth.getUser()` |
-| rate-limit-check | user | `auth.getUser()` |
 | security-alert | cron | `requireCronSecret` |
 | send-email-report | user | `auth.getUser()` |
 | send-loss-risk-alert | cron | `requireCronSecret({ failClosed: true })`; aceita adicionalmente service-role key ou `WEBHOOK_API_KEY` |
