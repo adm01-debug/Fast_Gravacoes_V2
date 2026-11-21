@@ -89,3 +89,29 @@ REVOKE EXECUTE ON FUNCTION public.audit_job_status_change() FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.log_job_status_change() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.audit_job_status_change() TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.log_job_status_change() TO authenticated, service_role;
+
+-- 3. Hash para registros sem actor (promocoes automaticas via service_role).
+--    calculate_audit_hash (migration 20260512180411) concatena actor_id::text
+--    sem COALESCE: com auth.uid() NULL, o || devolve NULL e o hash gravado vira
+--    NULL -- registro invisivel na trilha (o schema do frontend exige hash
+--    string) e conta como quebra de cadeia. COALESCE nao altera hashes de
+--    registros com actor preenchido (comportamento identico) e passa a gerar
+--    hash para promocoes automaticas, cujo resultado se mostra na tela.
+CREATE OR REPLACE FUNCTION public.calculate_audit_hash(rec public.audit_log)
+RETURNS text
+LANGUAGE plpgsql
+IMMUTABLE
+AS $$
+BEGIN
+  RETURN md5(
+    COALESCE(rec.previous_hash, '') ||
+    rec.entity_type ||
+    rec.entity_id ||
+    rec.action ||
+    COALESCE(rec.actor_id::text, '') ||
+    COALESCE(rec.old_data::text, '') ||
+    COALESCE(rec.new_data::text, '') ||
+    rec.created_at::text
+  );
+END;
+$$;
