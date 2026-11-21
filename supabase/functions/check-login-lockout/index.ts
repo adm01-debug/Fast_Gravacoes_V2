@@ -106,12 +106,26 @@ serve(async (req) => {
       }
     }
 
-    // F-005: allowlist de IP (painel admin). Se existir QUALQUER entrada ativa
-    // (global ou do usuário do e-mail), o IP de fora da lista não chega ao
-    // login. Sem entradas ativas a allowlist está desligada (fail-open).
-    // Mesmo critério da órfã validate-login-ip, agora enforçado no gate real
-    // pré-login — onde o front não tem user_id, o usuário é resolvido pelo
-    // e-mail (auth.admin), mantendo também as entradas user-specific.
+    // Rate limit ANTES da allowlist: a resolução de usuário (listUsers) paga
+    // custo no Auth e não pode ser varrida sem consumir o bucket — chamador
+    // pré-login repetindo pedidos de fora da lista esgotaria a cota sem
+    // penalidade. O hard block de blocked_ips continua acima (checagem de 1
+    // linha que não deve ser mascarada por um 429).
+    const limited = await checkRateLimit(supabase, {
+      endpoint: 'check-login-lockout',
+      identity: { ip: ip_address },
+      max: 30,
+      windowSeconds: 60,
+      corsHeaders: getCorsHeaders(req),
+    });
+    if (limited) return limited;
+
+    // F-005: allowlist de IP (painel admin). A restrição só vale para quem tem
+    // entrada aplicável — global (todos) ou do próprio usuário do e-mail.
+    // Usuários sem entrada aplicável não são restringidos (a UI trata a lista
+    // como "usuário específico" por entrada). Entradas vencidas não ativam a
+    // lista nem autorizam IP. Sem entradas aplicáveis a allowlist está
+    // desligada (fail-open).
     if (ip_address) {
       const { data: ipAllowlist, error: allowlistError } = await supabase
         .from('ip_allowlist')
@@ -121,60 +135,55 @@ serve(async (req) => {
       if (allowlistError) {
         console.error('Error fetching IP allowlist:', allowlistError);
       } else if (ipAllowlist && ipAllowlist.length > 0) {
-        let allowedIPs = ipAllowlist.filter(entry => entry.is_global);
+        const now = new Date();
+        const activeEntries = ipAllowlist.filter(entry =>
+          !entry.expires_at || new Date(entry.expires_at) > now
+        );
 
-        const userSpecific = ipAllowlist.filter(entry => !entry.is_global && entry.user_id);
-        if (userSpecific.length > 0) {
-          // Resolve o userId do e-mail via auth.admin.listUsers (paginação
-          // local; a tipagem do auth-js não expõe getUserByEmail). Mesma
-          // estratégia de paginação de send-loss-risk-alert.
-          try {
-            const perPage = 1000;
-            for (let page = 1; ; page++) {
-              const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers({ page, perPage });
-              if (usersError) throw usersError;
-              const users = usersData?.users ?? [];
-              const match = users.find(u => (u.email ?? '').toLowerCase() === normalizedEmail);
-              if (match) {
-                allowedIPs = [...allowedIPs, ...userSpecific.filter(entry => entry.user_id === match.id)];
-                break;
+        if (activeEntries.length > 0) {
+          const allowedIPs = activeEntries.filter(entry => entry.is_global);
+
+          const userSpecific = activeEntries.filter(entry => !entry.is_global && entry.user_id);
+          if (userSpecific.length > 0) {
+            // Resolve o userId do e-mail via auth.admin.listUsers (paginação
+            // local; a tipagem do auth-js não expõe getUserByEmail). Mesma
+            // estratégia de paginação de send-loss-risk-alert.
+            try {
+              const perPage = 1000;
+              for (let page = 1; ; page++) {
+                const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers({ page, perPage });
+                if (usersError) throw usersError;
+                const users = usersData?.users ?? [];
+                const match = users.find(u => (u.email ?? '').toLowerCase() === normalizedEmail);
+                if (match) {
+                  allowedIPs.push(...userSpecific.filter(entry => entry.user_id === match.id));
+                  break;
+                }
+                if (users.length < perPage) break;
               }
-              if (users.length < perPage) break;
+            } catch (err) {
+              console.error('Error resolving user for allowlist:', err);
             }
-          } catch (err) {
-            console.error('Error resolving user for allowlist:', err);
           }
-        }
 
-        const isAllowed = allowedIPs.some(entry => {
-          if (entry.expires_at && new Date(entry.expires_at) <= new Date()) return false;
-          return ipMatchesCidr(ip_address!, entry.ip_address);
-        });
+          // Sem entradas aplicáveis a este usuário → não restringido.
+          if (allowedIPs.length > 0) {
+            const isAllowed = allowedIPs.some(entry => ipMatchesCidr(ip_address!, entry.ip_address));
 
-        if (!isAllowed) {
-          console.log(`IP ${ip_address} not in active allowlist`);
-          return new Response(
-            JSON.stringify({
-              blocked_by_ip: true,
-              block_reason: 'IP não está na lista de IPs permitidos',
-            }),
-            { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
-          );
+            if (!isAllowed) {
+              console.log(`IP ${ip_address} not in active allowlist`);
+              return new Response(
+                JSON.stringify({
+                  blocked_by_ip: true,
+                  block_reason: 'IP não está na lista de IPs permitidos',
+                }),
+                { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+              );
+            }
+          }
         }
       }
     }
-
-    // Endpoint com verify_jwt = true no gateway (config.toml) — o JWT do
-    // gateway já barra chamadas sem credencial; este bucket limita
-    // enumeração de e-mails e flood de tentativas a partir do mesmo IP.
-    const limited = await checkRateLimit(supabase, {
-      endpoint: 'check-login-lockout',
-      identity: { ip: ip_address },
-      max: 30,
-      windowSeconds: 60,
-      corsHeaders: getCorsHeaders(req),
-    });
-    if (limited) return limited;
 
     // Reject malformed email addresses to prevent abuse
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 254) {
