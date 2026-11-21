@@ -397,6 +397,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { error: null };
     } catch (error: unknown) {
+          // XP_W: falha no login com senha deixa o marker 'true' e um OAuth
+          // posterior pularia o gate. Limpa para o gate valer na proxima sessao.
+          passwordSignInRef.current = false;
       const result = await AuthService.recordLoginAttempt(email, false);
 
       if (result.locked) {
