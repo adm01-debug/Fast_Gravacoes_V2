@@ -131,6 +131,14 @@ describe('AuthContext', () => {
         let gateCalls = 0;
         (supabase.functions.invoke as any).mockImplementation(() => {
           gateCalls++;
+          if (gateCalls === 1) {
+            // Pré-checagem do login por senha: permitida — o signInWithPassword roda.
+            return Promise.resolve({
+              data: { geo_blocked: false, blocked_by_ip: false, locked: false },
+              error: null,
+            });
+          }
+          // Re-gate da sessão Google: rede geo-bloqueada.
           return Promise.resolve({
             data: { geo_blocked: true, country_code: 'RU', block_reason: 'País não permitido' },
             error: null,
@@ -145,15 +153,19 @@ describe('AuthContext', () => {
 
         const { result } = renderHook(() => useAuth(), { wrapper });
 
-        // 1) Senha falha — deveria devolver erro ao chamador.
+        // 1) Senha falha — deveria devolver erro ao chamador e o Supabase foi chamado.
         await act(async () => {
           const r = await result.current.signIn('test@example.com', 'wrong');
           expect(r.error).toBeDefined();
         });
+        expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
+          email: 'test@example.com',
+          password: 'wrong',
+        });
 
         // 2) Google chega — o gate roda (marker password foi limpo na falha).
         await waitFor(() => {
-          expect(gateCalls).toBeGreaterThanOrEqual(1);
+          expect(gateCalls).toBeGreaterThanOrEqual(2);
         });
         // A rede geo-bloqueada derruba a sessão do Google.
         await waitFor(() => {
