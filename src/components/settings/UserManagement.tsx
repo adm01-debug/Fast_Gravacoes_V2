@@ -52,7 +52,7 @@ export function UserManagement() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  const [editForm, setEditForm] = useState({ full_name: '', phone: '', role: 'operator' as AppRole });
+  const [editForm, setEditForm] = useState({ full_name: '', phone: '', role: '' as AppRole | '' });
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<AppRole>('operator');
 
@@ -81,29 +81,71 @@ export function UserManagement() {
     },
   });
 
-  const getUserRole = (userId: string): AppRole => {
-    const role = userRoles.find(r => r.user_id === userId);
-    return (role?.role as AppRole) || 'operator';
+  const getUserRoles = (userId: string): AppRole[] =>
+    userRoles.filter(r => r.user_id === userId).map(r => r.role as AppRole);
+
+  const getUserRole = (userId: string): AppRole | null => {
+    const roles = getUserRoles(userId);
+    return roles.length > 0 ? roles[0] : null;
   };
 
   // Update user mutation
   const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, updates, newRole, originalRole }: { userId: string; updates: Partial<Profile>; newRole: AppRole; originalRole: AppRole }) => {
-      // Update profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId);
+    mutationFn: async ({ userId, profileUpdates, newRole, originalRole }: { userId: string; profileUpdates: Partial<Profile>; newRole: AppRole; originalRole: AppRole | null }) => {
+      // 1) Perfil: so quando ha mudanca real. A policy de profiles so permite
+      // editar o proprio perfil (auth.uid() = id); editar outro usuario afeta
+      // zero linhas sem erro, entao checamos e reportamos recusa (sem sucesso falso).
+      if (Object.keys(profileUpdates).length > 0) {
+        const { data: updatedProfile, error: profileError } = await supabase
+          .from('profiles')
+          .update(profileUpdates)
+          .eq('id', userId)
+          .select('id');
 
-      if (profileError) throw profileError;
+        if (profileError) throw profileError;
+        if (!updatedProfile || updatedProfile.length === 0) {
+          throw new Error('Nao foi possivel alterar o perfil: a permissao permite editar apenas seus proprios dados.');
+        }
+      }
 
-      // Semi papel inalterado: nao toca em user_roles (preserva outros vinculos e flags de inativacao)
+      // Papel no estado 'sem vinculo' (perfil manteve-se apos remocao de operador,
+      // ex.: OperatorsPage -> removeOperator apaga o vinculo mas nao o perfil).
+      // A tela agora distingue 'sem papel' de 'operator' e atribui via INSERT.
+      if (originalRole === null) {
+        const { data: inserted, error: insertError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: userId, role: newRole })
+          .select('id');
+
+        if (insertError) throw insertError;
+        if (!inserted || inserted.length === 0) {
+          throw new Error('Papel recusado: sem permissao para atribuir este papel.');
+        }
+        return;
+      }
+
+      // Papel inalterado: nao toca em user_roles (preserva outros vinculos e flags de inativacao)
       if (newRole === originalRole) return;
 
-      // Substitui apenas o vinculo exato sendo alterado (UNIQUE(user_id, role)).
+      // Destino ja atribuido em outro vinculo (UNIQUE(user_id, role)): remover apenas
+      // o vinculo exibido, mantendo o destino e os demais vinculos intactos.
+      if (getUserRoles(userId).includes(newRole)) {
+        const { error: deleteError } = await supabase
+          .from('user_roles')
+          .delete()
+          .eq('user_id', userId)
+          .eq('role', originalRole);
+
+        if (deleteError) throw deleteError;
+        return;
+      }
+
+      // Troca normal: substitui apenas o vinculo exato sendo alterado (UNIQUE(user_id, role)).
       // O UPDATE com .eq('role', originalRole) e autorizado por linha pela RLS:
       // - se a promocao for recusada, a RLS rejeita com erro e o papel antigo permanece;
       // - se o manager nao puder tocar naquele papel, zero linhas sao afetadas e reportamos a recusa.
+      // (O fluxo usa UPDATE em vez de DELETE+INSERT propositalmente: a policy de escrita
+      // e delimitada pelo papel-alvo e AAL2, e o INSERT nao cobre todos os destinos.)
       const { data: updated, error: roleUpdateError } = await supabase
         .from('user_roles')
         .update({ role: newRole })
@@ -180,7 +222,7 @@ export function UserManagement() {
     setEditForm({
       full_name: user.full_name || '',
       phone: user.phone || '',
-      role: getUserRole(user.id),
+      role: getUserRole(user.id) ?? '',
     });
     setShowEditModal(true);
   };
@@ -192,13 +234,22 @@ export function UserManagement() {
 
   const handleSaveEdit = () => {
     if (!selectedUser) return;
+      if (editForm.role === '') {
+        toast.error('Selecione um papel antes de salvar.');
+        return;
+      }
+
+    const profileUpdates: Partial<Profile> = {};
+    if (editForm.full_name !== (selectedUser.full_name ?? '')) {
+      profileUpdates.full_name = editForm.full_name;
+    }
+    if (editForm.phone !== (selectedUser.phone ?? '')) {
+      profileUpdates.phone = editForm.phone;
+    }
 
     updateUserMutation.mutate({
       userId: selectedUser.id,
-      updates: {
-        full_name: editForm.full_name,
-        phone: editForm.phone,
-      },
+      profileUpdates,
       newRole: editForm.role,
       originalRole: getUserRole(selectedUser.id),
     });
@@ -263,7 +314,7 @@ export function UserManagement() {
         ) : (
           <div className="space-y-2">
             {filteredUsers.map((user) => {
-              const role = getUserRole(user.id);
+              const role = getUserRole(user.id) ?? 'operator';
               return (
                 <div
                   key={user.id}
@@ -341,7 +392,7 @@ export function UserManagement() {
                 onValueChange={(value: AppRole) => setEditForm({ ...editForm, role: value })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Sem papel (sem acesso)" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="operator">Operador</SelectItem>
