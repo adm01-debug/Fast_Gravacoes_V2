@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ProductionLot, useTraceabilityMutations, type LotQualityInspection } from '@/features/inventory';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadOwnedFile } from '@/lib/storage';
 import { toast } from 'sonner';
 import { validateFileMagicBytes } from '@/lib/file-validation';
 
@@ -60,20 +61,13 @@ export function LotInspectionsTab({ lot, inspections }: LotInspectionsTabProps) 
         const fileExt = file.name.split('.').pop();
         const fileName = `inspections/${lot.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from('production-photos')
-          .upload(fileName, file);
-
-        if (uploadError) {
+        try {
+          const signedUrl = await uploadOwnedFile('production-photos', fileName, file);
+          uploadedUrls.push(signedUrl);
+        } catch (uploadError) {
           toast.error(`Erro ao enviar foto: ${file.name}`);
           continue;
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('production-photos')
-          .getPublicUrl(fileName);
-
-        uploadedUrls.push(publicUrl);
       }
 
       setNewInspection(prev => ({

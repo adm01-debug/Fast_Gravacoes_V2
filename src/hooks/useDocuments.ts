@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadOwnedFile } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import { createAppError } from '@/lib/errorHandling';
 import { defaultQueryOptions, STALE_TIMES } from '@/lib/queryConfig';
@@ -86,16 +87,7 @@ export const useDocuments = (technicalSheetId?: string) => {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `documents/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('technical-documents')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('technical-documents')
-        .getPublicUrl(filePath);
+      const signedUrl = await uploadOwnedFile('technical-documents', filePath, file);
 
       // Insert document record
       const { data, error } = await supabase
@@ -104,7 +96,7 @@ export const useDocuments = (technicalSheetId?: string) => {
           title,
           description: description || null,
           technical_sheet_id: sheetId || null,
-          file_url: urlData.publicUrl,
+          file_url: signedUrl,
           file_name: file.name,
           file_size: file.size,
           file_type: file.type,
@@ -174,21 +166,13 @@ export const useDocuments = (technicalSheetId?: string) => {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `documents/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('technical-documents')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from('technical-documents')
-        .getPublicUrl(filePath);
+      const signedUrl = await uploadOwnedFile('technical-documents', filePath, file);
 
       // Update document with new version
       const { data, error } = await supabase
         .from('technical_documents')
         .update({
-          file_url: urlData.publicUrl,
+          file_url: signedUrl,
           file_name: file.name,
           file_size: file.size,
           file_type: file.type,

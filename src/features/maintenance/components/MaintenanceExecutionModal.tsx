@@ -13,6 +13,7 @@ import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import { useTechnicalSheets } from '@/hooks/useTechnicalSheets';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadOwnedFile } from '@/lib/storage';
 import { AlertRiskPanel } from './execution/AlertRiskPanel';
 import { ChecklistSection } from '@/features/maintenance/components/execution/ChecklistSection';
 import { RegulagemSection } from '@/features/maintenance/components/execution/RegulagemSection';
@@ -270,17 +271,9 @@ export function MaintenanceExecutionModal({
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `execution-evidences/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('tpm-evidences')
-        .upload(filePath, file);
+      const signedUrl = await uploadOwnedFile('tpm-evidences', filePath, file);
 
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('tpm-evidences')
-        .getPublicUrl(filePath);
-
-      handleResponseUpdate(itemId, { photo_url: publicUrl });
+      handleResponseUpdate(itemId, { photo_url: signedUrl });
       toast.success('Foto enviada com sucesso');
     } catch (error) {
       toast.error('Erro ao enviar foto');
@@ -296,18 +289,10 @@ export function MaintenanceExecutionModal({
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `execution-alerts/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('execution-evidence')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('execution-evidence')
-        .getPublicUrl(filePath);
+      const signedUrl = await uploadOwnedFile('execution-evidence', filePath, file);
 
       const newAlerts = [...activeAlerts];
-      newAlerts[alertIndex].evidence_urls = [...newAlerts[alertIndex].evidence_urls, publicUrl];
+      newAlerts[alertIndex].evidence_urls = [...newAlerts[alertIndex].evidence_urls, signedUrl];
       setActiveAlerts(newAlerts);
 
       toast.success('Evidência anexada com sucesso');
