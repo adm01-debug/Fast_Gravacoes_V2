@@ -34,6 +34,26 @@ function calculateLockoutMinutes(lockoutCount: number): number {
   return Math.min(minutes, 24 * 60); // Max 24 hours
 }
 
+// IPv4-only general-prefix CIDR match (any /0-/32) — mesma semântica da
+// allowlist original em validate-login-ip, agora enforçada no gate real.
+function ipv4ToInt(ip: string): number | null {
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(p => Number.isNaN(p) || p < 0 || p > 255)) return null;
+  return ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+}
+
+function ipMatchesCidr(ip: string, cidr: string): boolean {
+  if (!cidr.includes('/')) return ip === cidr;
+  const [network, bitsStr] = cidr.split('/');
+  const bits = parseInt(bitsStr, 10);
+  const ipInt = ipv4ToInt(ip);
+  const networkInt = ipv4ToInt(network);
+  if (ipInt === null || networkInt === null || Number.isNaN(bits) || bits < 0 || bits > 32) return false;
+  if (bits === 0) return true;
+  const mask = (0xffffffff << (32 - bits)) >>> 0;
+  return (ipInt & mask) === (networkInt & mask);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -50,6 +70,7 @@ serve(async (req) => {
     // Server-derived — a client-supplied IP would let an attacker spoof/rotate
     // to evade IP-based lockout, or frame another IP as the failing source.
     const ip_address = getClientIp(req);
+    const normalizedEmail = email.toLowerCase().trim();
 
     // Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca
     // chega a tentar login nem consome o bucket de rate limit. Checa antes do
@@ -85,6 +106,54 @@ serve(async (req) => {
       }
     }
 
+    // F-005: allowlist de IP (painel admin). Se existir QUALQUER entrada ativa
+    // (global ou do usuário do e-mail), o IP de fora da lista não chega ao
+    // login. Sem entradas ativas a allowlist está desligada (fail-open).
+    // Mesmo critério da órfã validate-login-ip, agora enforçado no gate real
+    // pré-login — onde o front não tem user_id, o usuário é resolvido pelo
+    // e-mail (auth.admin), mantendo também as entradas user-specific.
+    if (ip_address) {
+      const { data: ipAllowlist, error: allowlistError } = await supabase
+        .from('ip_allowlist')
+        .select('id, ip_address, is_global, user_id, expires_at')
+        .eq('is_active', true);
+
+      if (allowlistError) {
+        console.error('Error fetching IP allowlist:', allowlistError);
+      } else if (ipAllowlist && ipAllowlist.length > 0) {
+        let allowedIPs = ipAllowlist.filter(entry => entry.is_global);
+
+        const userSpecific = ipAllowlist.filter(entry => !entry.is_global && entry.user_id);
+        if (userSpecific.length > 0) {
+          try {
+            const { data: authUser } = await supabase.auth.admin.getUserByEmail(normalizedEmail);
+            const userId = authUser?.user?.id;
+            if (userId) {
+              allowedIPs = [...allowedIPs, ...userSpecific.filter(entry => entry.user_id === userId)];
+            }
+          } catch (err) {
+            console.error('Error resolving user for allowlist:', err);
+          }
+        }
+
+        const isAllowed = allowedIPs.some(entry => {
+          if (entry.expires_at && new Date(entry.expires_at) <= new Date()) return false;
+          return ipMatchesCidr(ip_address!, entry.ip_address);
+        });
+
+        if (!isAllowed) {
+          console.log(`IP ${ip_address} not in active allowlist`);
+          return new Response(
+            JSON.stringify({
+              blocked_by_ip: true,
+              block_reason: 'IP não está na lista de IPs permitidos',
+            }),
+            { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
+
     // Endpoint com verify_jwt = true no gateway (config.toml) — o JWT do
     // gateway já barra chamadas sem credencial; este bucket limita
     // enumeração de e-mails e flood de tentativas a partir do mesmo IP.
@@ -97,9 +166,6 @@ serve(async (req) => {
     });
     if (limited) return limited;
 
-
-
-    const normalizedEmail = email.toLowerCase().trim();
     // Reject malformed email addresses to prevent abuse
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 254) {
       return new Response(JSON.stringify({ error: 'Invalid email' }), {
