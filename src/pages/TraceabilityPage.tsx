@@ -77,7 +77,7 @@ export default function TraceabilityPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sortField, setSortField] = useState<SortField>('production_date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
-  const [signatureModal, setSignatureModal] = useState<{ open: boolean; status: string }>({ open: false, status: '' });
+    const [signatureModal, setSignatureModal] = useState<{ open: boolean; status: string; validLots: ProductionLot[] }>({ open: false, status: '', validLots: [] });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -177,7 +177,7 @@ export default function TraceabilityPage() {
     }
 
     if (['blocked', 'quarantine', 'active'].includes(newStatus)) {
-      setSignatureModal({ open: true, status: newStatus });
+          setSignatureModal({ open: true, status: newStatus, validLots });
     } else {
       processBulkStatusUpdate(validLots, newStatus);
     }
@@ -251,17 +251,14 @@ export default function TraceabilityPage() {
           open={signatureModal.open}
           onOpenChange={(open) => setSignatureModal(prev => ({ ...prev, open }))}
           onConfirm={(reason) => {
-            const validLots = filteredAndSortedLots.filter(l =>
-              selectedIds.has(l.id) && VALID_TRANSITIONS[l.status]?.includes(signatureModal.status)
-            );
-            processBulkStatusUpdate(validLots, signatureModal.status, reason);
+                    processBulkStatusUpdate(signatureModal.validLots, signatureModal.status, reason);
           }}
           title={`Assinar Alteração: ${STATUS_CONFIG[signatureModal.status]?.label}`}
-          description={`Você está orquestrando a alteração de status de ${selectedIds.size} lote(s). Confirme sua identidade para compliance.`}
+                  description={`Você está orquestrando a alteração de status de ${signatureModal.validLots.length} lote(s) elegível(is). Confirmar identidade para compliance.`}
           operationMetadata={{
-            lotes: Array.from(selectedIds),
+                    lotes: signatureModal.validLots.map(l => l.id),
             status_destino: signatureModal.status,
-            quantidade_lotes: selectedIds.size,
+                    quantidade_lotes: signatureModal.validLots.length,
           }}
         />
 
