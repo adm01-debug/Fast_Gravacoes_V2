@@ -205,7 +205,7 @@ export default function TraceabilityPage() {
               await queryClient.invalidateQueries({ queryKey: ['production-lots'] });
       }
       return { applied: appliedIds.length > 0, appliedIds, abortedIds };
-    }, []);
+          }, [queryClient]);
 
   const handleBulkStatusChange = useCallback((newStatus: string) => {
     const validLots = filteredAndSortedLots.filter(l =>
