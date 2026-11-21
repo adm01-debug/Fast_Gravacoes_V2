@@ -5,16 +5,23 @@
 -- 20260516174623 (audit_job_status_change) inserem em public.audit_log usando
 -- as colunas inexistentes old_values/new_values. A tabela audit_log so tem
 -- old_data/new_data. Alem disso, action='status_change' viola a constraint
--- audit_log_action_check (so aceita INSERT/UPDATE/DELETE/CREATE). Em UPDATE
--- de status, o primeiro trigger a falhar abortava a transacao inteira com
--- 42703, portanto nenhum update de status persistia: a promocao automatica de
--- buffers nunca funcionou, e mover cartao no Kanban/Finalizar job tambem
--- quebrava silenciosamente (a menos que o chamador tratasse o 400).
+-- audit_log_action_check (so aceita INSERT/UPDATE/DELETE). Em UPDATE de status,
+-- o primeiro trigger a falhar abortava a transacao inteira com 42703, portanto
+-- nenhum update de status persistia: a promocao automatica de buffers nunca
+-- funcionou, e mover cartao no Kanban/Finalizar job tambem quebrava.
 --
--- Correcao: alinha os INSERTs ao schema real (old_data/new_data) e usa
--- action='UPDATE'. Tambem corrige log_job_status_change, que referenciava
--- NEW.code (coluna inexistente; jobs tem order_number). A notificacao push
--- para admins/managers e o registro em audit_log sao preservados.
+-- Redesenho (revisao Devin): o trigger generico audit_jobs (audit_trigger_func,
+-- migration 20260421004919) JA grava TODO UPDATE em audit_log com hash em cadeia
+-- e old_data/new_data. Gravar aqui de novo duplicaria a auditoria (3 registros
+-- para a mesma transicao) e quebraria a cadeia de hash. Entao:
+--   * audit_job_status_change (trigger tr_audit_job_status) volta a gravar o
+--     historico em public.job_status_history (tabela consumida pelo frontend
+--     useJobStatusHistory / JobTraceabilityTab) - trabalho original do agente
+--     da migration 20260512175348.
+--   * log_job_status_change (trigger trigger_log_job_status_change) mantem a
+--     notificacao push para admins/managers (trabalho do agente da migration
+--     20260516172507), removendo o INSERT duplicado em audit_log e corrigindo
+--     NEW.code -> NEW.order_number (jobs nao tem coluna code).
 
 -- 1. audit_job_status_change (trigger tr_audit_job_status)
 CREATE OR REPLACE FUNCTION public.audit_job_status_change()
@@ -25,29 +32,17 @@ SET search_path = public
 AS $$
 BEGIN
     IF (OLD.status IS DISTINCT FROM NEW.status) THEN
-        INSERT INTO public.audit_log (
-            entity_type,
-            entity_id,
-            action,
-            actor_id,
-            old_data,
-            new_data,
-            changed_fields,
-            metadata
-        ) VALUES (
-            'job',
-            NEW.id,
-            'UPDATE',
-            auth.uid(),
-            jsonb_build_object('status', OLD.status),
-            jsonb_build_object('status', NEW.status),
-            ARRAY['status'],
-            jsonb_build_object('order_number', NEW.order_number)
-        );
+        INSERT INTO public.job_status_history (job_id, previous_status, new_status, changed_by)
+        VALUES (NEW.id, OLD.status, NEW.status, auth.uid());
     END IF;
     RETURN NEW;
 END;
 $$;
+
+DROP TRIGGER IF EXISTS tr_audit_job_status ON public.jobs;
+CREATE TRIGGER tr_audit_job_status
+AFTER UPDATE ON public.jobs
+FOR EACH ROW EXECUTE FUNCTION public.audit_job_status_change();
 
 -- 2. log_job_status_change (trigger trigger_log_job_status_change)
 CREATE OR REPLACE FUNCTION public.log_job_status_change()
@@ -62,30 +57,6 @@ BEGIN
     actor_id := auth.uid();
 
     IF (OLD.status IS DISTINCT FROM NEW.status) THEN
-        INSERT INTO public.audit_log (
-            entity_type,
-            entity_id,
-            action,
-            actor_id,
-            old_data,
-            new_data,
-            changed_fields,
-            metadata
-        ) VALUES (
-            'job',
-            NEW.id,
-            'UPDATE',
-            actor_id,
-            jsonb_build_object('status', OLD.status),
-            jsonb_build_object('status', NEW.status),
-            ARRAY['status'],
-            jsonb_build_object(
-                'order_number', NEW.order_number,
-                'client', NEW.client,
-                'product', NEW.product
-            )
-        );
-
         INSERT INTO public.push_notifications (
             user_id,
             title,
@@ -103,7 +74,8 @@ BEGIN
                 'job_id', NEW.id,
                 'old_status', OLD.status,
                 'new_status', NEW.status,
-                'severity', 'info'
+                'severity', 'info',
+                'actor_id', actor_id
             )
         FROM public.user_roles p
         WHERE p.role IN ('admin', 'manager');
