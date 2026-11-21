@@ -115,3 +115,13 @@ BEGIN
   );
 END;
 $$;
+
+-- 4. FK de changed_by -> profiles: o front-end (useJobStatusHistory) faz embed
+--    `changed_by_profile:profiles(full_name)`, que exige uma relacao declarada.
+--    Sem a FK, o PostgREST nao encontra a relacao e a aba Rastreabilidade
+--    tratava a falha como historico vazio. Todos os changed_by existentes
+--    referenciam auth.users com profile (verificado em producao: 0 orfaos),
+--    entao a constraint e segura.
+ALTER TABLE public.job_status_history
+  DROP CONSTRAINT IF EXISTS job_status_history_changed_by_fkey,
+  ADD CONSTRAINT job_status_history_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
