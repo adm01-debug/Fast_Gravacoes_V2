@@ -2,7 +2,12 @@
 
 Policies de `storage.objects`/`storage.buckets` em `policies.md`. Contagens em `stats.md`.
 
-_nenhum_
+| bucket | público | limite por arquivo | mime permitidos | criado em |
+|---|---|---|---|---|
+| execution-evidence | não |  |  | 2026-11-21 17:38:11.086452+00:00 |
+| production-photos | não |  |  | 2026-11-21 17:38:10.093416+00:00 |
+| technical-documents | não |  |  | 2026-11-21 17:38:10.474777+00:00 |
+| tpm-evidences | não |  |  | 2026-11-21 17:38:10.777930+00:00 |
 
 ## Configuração (Management API)
 
