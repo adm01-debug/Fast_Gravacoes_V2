@@ -61,6 +61,29 @@ serve(async (req) => {
 
     console.log('Starting auto-promotion check...')
 
+        // F-009: honor an optional techniqueId from the body. A per-technique
+        // call (BufferStatusWidget -> promoteForTechnique) must only touch that
+        // technique; an absent/empty body means "rebalance all techniques"
+        // (cron / global button). A present-but-invalid techniqueId or malformed
+        // JSON is a contract violation -> 400, never a silent global rebalance.
+        let requestedTechniqueId: string | undefined
+        const rawBody = await req.json().catch(() => null)
+        if (rawBody) {
+          if (typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+            return new Response(JSON.stringify({ error: 'Body deve ser um objeto JSON' }), {
+              headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+              status: 400,
+            })
+          }
+          if ('techniqueId' in rawBody && (typeof rawBody.techniqueId !== 'string' || rawBody.techniqueId.trim() === '')) {
+            return new Response(JSON.stringify({ error: 'techniqueId invalido' }), {
+              headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+              status: 400,
+            })
+          }
+          requestedTechniqueId = typeof rawBody.techniqueId === 'string' ? rawBody.techniqueId.trim() : undefined
+        }
+
     // 1. Fetch all techniques
     const { data: techniques, error: techError } = await supabaseClient
       .from('techniques')
@@ -68,9 +91,20 @@ serve(async (req) => {
 
     if (techError) throw techError
 
+        if (requestedTechniqueId && !(techniques || []).some((t: { id: string }) => t.id === requestedTechniqueId)) {
+          return new Response(JSON.stringify({ error: 'Technique nao encontrada' }), {
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+            status: 404,
+          })
+        }
+
     const results = []
 
-    for (const technique of techniques || []) {
+        const targetTechniques = (techniques || []).filter((t: { id: string }) =>
+          requestedTechniqueId ? t.id === requestedTechniqueId : true
+        )
+
+        for (const technique of targetTechniques) {
       // 2. Count current 'ready' jobs for this technique
       const { count: readyCount, error: countError } = await supabaseClient
         .from('jobs')
