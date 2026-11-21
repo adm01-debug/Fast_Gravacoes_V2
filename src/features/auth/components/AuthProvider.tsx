@@ -34,12 +34,14 @@ class LockoutError extends Error {
   remainingMinutes?: number;
   lockoutMinutes?: number;
   blockedByIp?: boolean;
-  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean }) {
+  geoBlocked?: boolean;
+  constructor(message: string, opts?: { remainingMinutes?: number; lockoutMinutes?: number; blockedByIp?: boolean; geoBlocked?: boolean }) {
     super(message);
     this.name = 'LockoutError';
     this.remainingMinutes = opts?.remainingMinutes;
     this.lockoutMinutes = opts?.lockoutMinutes;
     this.blockedByIp = opts?.blockedByIp;
+    this.geoBlocked = opts?.geoBlocked;
   }
 }
 
@@ -257,6 +259,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const lockoutStatus = await AuthService.checkLockout(email);
+
+        if (lockoutStatus.geo_blocked) {
+          const geoError = new LockoutError(
+            lockoutStatus.message || lockoutStatus.block_reason || 'Acesso bloqueado para a sua região/país',
+            { geoBlocked: true }
+          );
+          return { error: geoError };
+        }
 
         if (lockoutStatus.blocked_by_ip) {
           const ipError = new LockoutError(

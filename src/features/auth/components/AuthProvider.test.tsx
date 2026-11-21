@@ -159,6 +159,35 @@ describe('AuthContext', () => {
     expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
   });
 
+  it('should block sign-in when geo-blocking blocks the country', async () => {
+    (supabase.functions.invoke as any).mockResolvedValue({
+      data: {
+        geo_blocked: true,
+        country_code: 'RU',
+        country_name: 'Russia',
+        block_reason: 'País não está na lista de países permitidos',
+      },
+      error: null
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      const signInResult = await result.current.signIn('test@example.com', 'password123');
+      expect(signInResult.error).not.toBeNull();
+      const le = signInResult.error as any;
+      expect(le.geoBlocked).toBe(true);
+    });
+
+    expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
+  });
+
   it('should sign out successfully', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>

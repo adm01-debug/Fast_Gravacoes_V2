@@ -8,6 +8,9 @@ export interface LockoutStatus {
   message?: string;
   attempts_remaining?: number;
   blocked_by_ip?: boolean;
+  geo_blocked?: boolean;
+  country_code?: string | null;
+  country_name?: string | null;
   block_reason?: string | null;
 }
 
