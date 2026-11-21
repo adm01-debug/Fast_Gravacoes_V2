@@ -92,9 +92,6 @@ verify_jwt = true
 [functions.pdf-generator]
 verify_jwt = true
 
-[functions.rate-limit-check]
-verify_jwt = true
-
 [functions.security-alert]
 verify_jwt = true
 

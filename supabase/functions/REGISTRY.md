@@ -48,7 +48,6 @@ Complementa `README.md` (inventário da camada 2 de autenticação).
 | ml-predictions | frontend | `src/` | `_shared` |
 | new-device-alert | frontend (pós-login) | `src/` | própria |
 | pdf-generator | frontend | `src/` | própria |
-| rate-limit-check | **órfã** — criada para o fluxo de login, nunca ligada (`authService` chama só `check-login-lockout`) | — | própria |
 | security-alert | pg_cron **(painel — não versionado)** | — | própria |
 | send-email-report | pg_cron **(painel — não versionado)** | — | própria |
 | send-loss-risk-alert | db-trigger versionado `on_tpm_execution_alert` (`20260508144832`) via pg_net + possível db-webhook no painel | — | `tpmExecutionAlertWebhookSchema` |
@@ -94,6 +93,6 @@ Além dos triggers, pode haver db-webhooks equivalentes configurados no painel
 |---|---|
 | excel-export | Manter por ora — pode ser chamada por script/ERP externo. Reavaliar após confirmar ausência no painel e nos logs de invocação. |
 | external-db-bridge | Manter — ponte genérica que integrações externas podem usar. Alto risco se for lixo real (expõe SQL arbitrário com service role? revisar). |
-| rate-limit-check | Manter — planejada para o fluxo de login; ligar ou remover em PR futuro. |
+| rate-limit-check | **Removida em `claude/chore-remove-rate-limit-check-*` (2026-11-21)** — órfã, nunca ligada; `check-login-lockout` cobre o fluxo de login. |
 | validate-login-ip | Manter — mesma situação; fail-open por design. |
 | image-optimizer | Manter — stub explícito (501), documentado. |

@@ -54,7 +54,6 @@ Classificação:
 | ml-predictions | user | `auth.getUser(token)` |
 | new-device-alert | user | `auth.getUser()` |
 | pdf-generator | user | `auth.getUser()` |
-| rate-limit-check | user | `auth.getUser()` |
 | security-alert | cron | `requireCronSecret` |
 | send-email-report | user | `auth.getUser()` |
 | send-loss-risk-alert | cron | `requireCronSecret({ failClosed: true })`; aceita adicionalmente service-role key ou `WEBHOOK_API_KEY` |
