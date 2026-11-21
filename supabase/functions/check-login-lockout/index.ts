@@ -58,7 +58,12 @@ function ipMatchesCidr(ip: string, cidr: string): boolean {
 // ipapi.co como fallback. Fail-open: qualquer erro de infra retorna null e o
 // gate decide pelo block_unknown_countries (ou libera por padrão).
 async function resolveCountry(ip: string): Promise<{ country_code: string; country_name: string } | null> {
-  const timeoutMs = 15_000;
+  // Deadline compartilhado entre os dois providers: um provedor fora do ar não
+  // pode estender a espera total além do teto (antes, 15s x 2 = até 30s de
+  // latência por login antes do fail-open). Aborta ambos e retorna null.
+  const totalTimeoutMs = 8_000;
+  const controller = new AbortController();
+  const deadline = setTimeout(() => controller.abort(), totalTimeoutMs);
   const providers: Array<{ url: string; parse: (json: any) => { country_code: string; country_name: string } | null }> = [
     {
       url: `https://ipwho.is/${ip}`,
@@ -76,16 +81,22 @@ async function resolveCountry(ip: string): Promise<{ country_code: string; count
     },
   ];
 
-  for (const provider of providers) {
-    try {
-      const resp = await fetch(provider.url, { signal: AbortSignal.timeout(timeoutMs) });
-      if (!resp.ok) continue;
-      const json = await resp.json();
-      const parsed = provider.parse(json);
-      if (parsed) return parsed;
-    } catch (err) {
-      console.error(`Geo lookup failed for ${provider.url}:`, err);
+  try {
+    for (const provider of providers) {
+      if (controller.signal.aborted) break;
+      try {
+        const resp = await fetch(provider.url, { signal: controller.signal });
+        if (!resp.ok) continue;
+        const json = await resp.json();
+        const parsed = provider.parse(json);
+        if (parsed) return parsed;
+      } catch (err) {
+        if (controller.signal.aborted) break;
+        console.error(`Geo lookup failed for ${provider.url}:`, err);
+      }
     }
+  } finally {
+    clearTimeout(deadline);
   }
   return null;
 }
@@ -225,7 +236,9 @@ serve(async (req) => {
     // ativa is_blocked=false passam; países sem regra são bloqueados. País
     // desconhecido respeita block_unknown_countries. Fail-open em erro de
     // infra (resolução de país) — consistente com rateLimit.ts.
-    if (ip_address) {
+    // Só avalia no action=check: record_failure/record_success são pós-login e
+    // o gate já foi aplicado no check — evita lookup duplicado por login.
+    if (action === 'check' && ip_address) {
       const { data: geoSettings, error: geoSettingsError } = await supabase
         .from('geo_blocking_settings')
         .select('is_enabled, mode, block_unknown_countries, log_blocked_attempts')

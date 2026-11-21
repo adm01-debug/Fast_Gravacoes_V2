@@ -92,6 +92,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Último usuário autenticado — o evento SIGNED_OUT chega sem session,
   // então o id precisa vir daqui para limpar só o rascunho dele.
   const lastUserIdRef = useRef<string | null>(null);
+  // T4: marca sessão criada pelo fluxo password (já passou pelo gate no signIn).
+  // Sessões sem essa marca (OAuth, restauração) são re-gateadas no onAuthStateChange.
+  const passwordSignInRef = useRef(false);
   const ACTIVITY_TIMEOUT_MINUTES = 60;
   const REFRESH_INTERVAL_MINUTES = 30;
 
@@ -234,6 +237,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (nextSession?.user) {
         setIsLoading(true);
+        // T4: sessões que não vieram do fluxo password (OAuth, restauração de
+        // sessão no boot) não passaram pelo gate pré-login. Re-checa o lockout
+        // em background e desloga se geo/ip bloquear — sem await aqui (não
+        // bloqueia a fila do Supabase).
+        const bypassedGate = !passwordSignInRef.current;
+        passwordSignInRef.current = false;
+        if (bypassedGate) {
+          const email = nextSession.user.email;
+          if (email) {
+            AuthService.checkLockout(email).then((lockoutStatus) => {
+              if (cancelled) return;
+              if (lockoutStatus.geo_blocked || lockoutStatus.blocked_by_ip) {
+                logger.warn('Session blocked by geo/IP gate — signing out', {
+                  geoBlocked: lockoutStatus.geo_blocked,
+                  blockedByIp: lockoutStatus.blocked_by_ip,
+                }, 'AuthProvider');
+                supabase.auth.signOut();
+              }
+            }).catch(() => { /* fail-open: gate é advisory no cliente */ });
+          }
+        }
         // Fire-and-forget: nunca await dentro de onAuthStateChange
         fetchUserData(nextSession.user.id, requestSeq).finally(() => {
           if (!cancelled && authRequestSeqRef.current === requestSeq) setIsLoading(false);
@@ -285,6 +309,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      passwordSignInRef.current = true; // T4: sessão deste fluxo já passou pelo gate
       const data = await AuthService.signIn(email, password);
       await AuthService.recordLoginAttempt(email, true);
 
