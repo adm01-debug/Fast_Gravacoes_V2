@@ -111,6 +111,56 @@ describe('AuthContext', () => {
     });
   });
 
+      it('should re-gate a Google session after a failed password sign-in (YTJ_)', async () => {
+        // XP_W/YTJ_: falha de senha não pode deixar o marker de sessão-password ativo,
+        // senão um Google posterior pularia o gate geo/IP. A sessão do Google recebe
+        // a própria checagem.
+        const mockUser = { id: 'google-user', email: 'google@example.com' };
+        (supabase.auth.signInWithPassword as any).mockResolvedValue({
+          data: { user: null, session: null },
+          error: { message: 'Invalid login credentials' }
+        });
+        (supabase.auth.signOut as any).mockImplementation(() => Promise.resolve({ data: {}, error: null }));
+        (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+          queueMicrotask(() => cb('INITIAL_SESSION', null));
+          // Após o Google sign-in, o SDK emite SIGNED_IN — a sessão não veio do fluxo
+          // password, então o gate DEVE rodar.
+          setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-g' }), 50);
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        });
+        let gateCalls = 0;
+        (supabase.functions.invoke as any).mockImplementation(() => {
+          gateCalls++;
+          return Promise.resolve({
+            data: { geo_blocked: true, country_code: 'RU', block_reason: 'País não permitido' },
+            error: null,
+          });
+        });
+
+        const wrapper = ({ children }: { children: React.ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        );
+
+        const { result } = renderHook(() => useAuth(), { wrapper });
+
+        // 1) Senha falha — deveria devolver erro ao chamador.
+        await act(async () => {
+          const r = await result.current.signIn('test@example.com', 'wrong');
+          expect(r.error).toBeDefined();
+        });
+
+        // 2) Google chega — o gate roda (marker password foi limpo na falha).
+        await waitFor(() => {
+          expect(gateCalls).toBeGreaterThanOrEqual(1);
+        });
+        // A rede geo-bloqueada derruba a sessão do Google.
+        await waitFor(() => {
+          expect(supabase.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+        });
+      });
+
   it('should return blocked_by_ip error when allowlist blocks the IP', async () => {
     (supabase.functions.invoke as any).mockResolvedValue({
       data: { blocked_by_ip: true, block_reason: 'IP não está na lista de IPs permitidos' },
@@ -488,10 +538,14 @@ describe('AuthContext', () => {
         (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
           queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser, access_token: 'tok-1' }));
           setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 50);
+          // Terceiro retorno à aba com 429 — a sessão pendente continua de pé.
+          setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 100);
           return { data: { subscription: { unsubscribe: vi.fn() } } };
         });
         // Sempre 429 — cota esgotada o tempo todo.
+        let gateCalls = 0;
         (supabase.functions.invoke as any).mockImplementation(() => {
+          gateCalls++;
           return Promise.resolve({ data: null, error: { context: { status: 429 } } });
         });
 
@@ -503,9 +557,53 @@ describe('AuthContext', () => {
 
         renderHook(() => useAuth(), { wrapper });
 
-        // Sessão pendente sobrevive ao refocus: nem 429 sucessivos deslogam.
-        await new Promise((r) => setTimeout(r, 100));
+        // Sessão pendente sobrevive aos refocus: múltiplos 429 não deslogam.
+        await new Promise((r) => setTimeout(r, 160));
         expect(signOutCalls).toBe(0);
+        // O gate realmente re-roda em cada retorno — a pendência é re-checada.
+        expect(gateCalls).toBeGreaterThanOrEqual(2);
+      });
+
+      it('should sign out a pending restored session once geo blocks after the refocus 429s (YWzd)', async () => {
+        // A mesma sessão pendente: 429, 429… e então o gate finalmente avalia a rede
+        // (cota liberada) e ela está geo-bloqueada. A pendência é encerrada — o 429
+        // não criou imunidade permanente.
+        const mockUser = { id: 'pend2-user', email: 'pend2@example.com' };
+        (supabase.auth.getSession as any).mockResolvedValue({
+          data: { session: null },
+          error: null
+        });
+        (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+          queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser, access_token: 'tok-1' }));
+          setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 50);
+          setTimeout(() => cb('SIGNED_IN', { user: mockUser, access_token: 'tok-1' }), 100);
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        });
+        let gateCalls = 0;
+        (supabase.functions.invoke as any).mockImplementation(() => {
+          gateCalls++;
+          if (gateCalls < 3) {
+            return Promise.resolve({ data: null, error: { context: { status: 429 } } });
+          }
+          return Promise.resolve({
+            data: { geo_blocked: true, country_code: 'RU', block_reason: 'País não permitido' },
+            error: null,
+          });
+        });
+
+        const wrapper = ({ children }: { children: React.ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        );
+
+        renderHook(() => useAuth(), { wrapper });
+
+        // O terceiro gate (cota restaurada) avalia a rede e encerra a pendência.
+        await waitFor(() => {
+          expect(supabase.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+        });
+        expect(gateCalls).toBeGreaterThanOrEqual(3);
       });
 
       it('should NOT re-gate an admitted session on TOKEN_REFRESHED (YQbx)', async () => {
