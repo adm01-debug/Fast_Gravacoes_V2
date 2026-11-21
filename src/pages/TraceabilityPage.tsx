@@ -156,16 +156,31 @@ export default function TraceabilityPage() {
   };
 
   const processBulkStatusUpdate = useCallback((validLots: ProductionLot[], newStatus: string, reason?: string) => {
+      // Revalida contra o estado mais recente da lista: se um lote mudou para um
+      // status que nao permite mais a transicao enquanto o dialogo esteve aberto,
+      // aborta a operacao e pede nova confirmacao (nao sobrescreve silenciosamente).
+      const fresh = new Map(filteredAndSortedLots.map(l => [l.id, l]));
+      const stale = validLots.filter(l => {
+        const current = fresh.get(l.id);
+        return !current || !VALID_TRANSITIONS[current.status]?.includes(newStatus);
+      });
+      if (stale.length > 0) {
+        toast.error(`${stale.length} lote(s) deixaram de ser elegíveis para "${STATUS_CONFIG[newStatus]?.label || newStatus}". Reabra a assinatura para reconfirmar.`);
+        setSignatureModal(prev => ({ ...prev, open: false, validLots: [] }));
+        return;
+      }
+
     validLots.forEach(lot => {
+        const current = fresh.get(lot.id);
       updateLot.mutate({
         id: lot.id,
         status: newStatus,
-        notes: reason ? `${lot.notes || ''}\n[Assinado]: ${reason}` : lot.notes
+          notes: reason ? `${current?.notes || lot.notes || ''}\n[Assinado]: ${reason}` : (current?.notes ?? lot.notes)
       });
     });
     toast.success(`${validLots.length} lote(s) atualizados para ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
     setSelectedIds(new Set());
-  }, [updateLot]);
+    }, [filteredAndSortedLots, updateLot]);
 
   const handleBulkStatusChange = useCallback((newStatus: string) => {
     const validLots = filteredAndSortedLots.filter(l =>
