@@ -34,6 +34,8 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { useProductionLots, useTraceabilityMutations, ProductionLot } from '@/features/inventory';
 import { useJobs } from '@/features/jobs';
+import { useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import LotDetailsModal from '@/components/traceability/LotDetailsModal';
 import LotGenealogyView from '@/components/traceability/LotGenealogyView';
 import { TraceabilityStatsCards } from '@/components/traceability/TraceabilityStatsCards';
@@ -89,7 +91,8 @@ export default function TraceabilityPage() {
 
   const { data: lots } = useProductionLots();
   const { data: jobs } = useJobs();
-  const { createLot, updateLot } = useTraceabilityMutations();
+  const { createLot } = useTraceabilityMutations();
+    const queryClient = useQueryClient();
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -155,32 +158,54 @@ export default function TraceabilityPage() {
     });
   };
 
-  const processBulkStatusUpdate = useCallback((validLots: ProductionLot[], newStatus: string, reason?: string) => {
-      // Revalida contra o estado mais recente da lista: se um lote mudou para um
-      // status que nao permite mais a transicao enquanto o dialogo esteve aberto,
-      // aborta a operacao e pede nova confirmacao (nao sobrescreve silenciosamente).
-      const fresh = new Map(filteredAndSortedLots.map(l => [l.id, l]));
-      const stale = validLots.filter(l => {
-        const current = fresh.get(l.id);
-        return !current || !VALID_TRANSITIONS[current.status]?.includes(newStatus);
-      });
-      if (stale.length > 0) {
-        toast.error(`${stale.length} lote(s) deixaram de ser elegíveis para "${STATUS_CONFIG[newStatus]?.label || newStatus}". Reabra a assinatura para reconfirmar.`);
-        setSignatureModal(prev => ({ ...prev, open: false, validLots: [] }));
-        return;
+  const processBulkStatusUpdate = useCallback(async (validLots: ProductionLot[], newStatus: string, reason?: string): Promise<{ applied: boolean; appliedIds: string[]; abortedIds: string[]; message?: string }> => {
+      const lotIds = validLots.map(l => l.id);
+      if (lotIds.length === 0) return { applied: false, appliedIds: [], abortedIds: [], message: 'Nenhum lote selecionado.' };
+
+      // Revalida contra o estado ATUAL no banco (nao usa a lista filtrada da tela,
+      // que pode esconder lotes que mudaram de status e pode estar desatualizada).
+      const { data: freshLots, error: fetchError } = await supabase
+        .from('production_lots')
+        .select('id, status, notes')
+        .in('id', lotIds);
+      if (fetchError) throw fetchError;
+
+      const freshById = new Map((freshLots || []).map(l => [l.id, l]));
+      const appliedIds: string[] = [];
+      const abortedIds: string[] = [];
+
+      for (const lot of validLots) {
+        const current = freshById.get(lot.id);
+        // Lote sumiu ou mudou para status que nao permite mais a transicao: aborta so esse.
+        if (!current || !VALID_TRANSITIONS[current.status]?.includes(newStatus)) {
+          abortedIds.push(lot.id);
+          continue;
+      }
+        const { error: updateError } = await supabase
+          .from('production_lots')
+          .update({
+            status: newStatus,
+            notes: reason ? `${current.notes || ''}\n[Assinado]: ${reason}` : (current.notes ?? null),
+          })
+          .eq('id', lot.id)
+          .eq('status', current.status); // guard: nao sobscreve se mudou entre a leitura e o update
+        if (updateError) throw updateError;
+        appliedIds.push(lot.id);
       }
 
-    validLots.forEach(lot => {
-        const current = fresh.get(lot.id);
-      updateLot.mutate({
-        id: lot.id,
-        status: newStatus,
-          notes: reason ? `${current?.notes || lot.notes || ''}\n[Assinado]: ${reason}` : (current?.notes ?? lot.notes)
-      });
-    });
-    toast.success(`${validLots.length} lote(s) atualizados para ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
-    setSelectedIds(new Set());
-    }, [filteredAndSortedLots, updateLot]);
+      // Abortou ao menos um lote? Operacao parcial ou total: nao registra assinatura
+      // de sucesso (o dialogo so audita o que foi aplicado), e informa o conflito.
+      if (abortedIds.length > 0 && appliedIds.length === 0) {
+        return { applied: false, appliedIds: [], abortedIds, message: `${abortedIds.length} lote(s) deixaram de ser elegíveis para "${STATUS_CONFIG[newStatus]?.label || newStatus}". Reabra a assinatura para reconfirmar.` };
+      }
+
+      if (appliedIds.length > 0) {
+        toast.success(`${appliedIds.length} lote(s) atualizados para ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
+        setSelectedIds(new Set());
+              await queryClient.invalidateQueries({ queryKey: ['production-lots'] });
+      }
+      return { applied: appliedIds.length > 0, appliedIds, abortedIds };
+    }, []);
 
   const handleBulkStatusChange = useCallback((newStatus: string) => {
     const validLots = filteredAndSortedLots.filter(l =>
@@ -192,9 +217,9 @@ export default function TraceabilityPage() {
     }
 
     if (['blocked', 'quarantine', 'active'].includes(newStatus)) {
-          setSignatureModal({ open: true, status: newStatus, validLots });
+        setSignatureModal({ open: true, status: newStatus, validLots });
     } else {
-      processBulkStatusUpdate(validLots, newStatus);
+        void processBulkStatusUpdate(validLots, newStatus);
     }
   }, [filteredAndSortedLots, selectedIds, processBulkStatusUpdate]);
 
@@ -265,9 +290,9 @@ export default function TraceabilityPage() {
         <ElectronicSignatureDialog
           open={signatureModal.open}
           onOpenChange={(open) => setSignatureModal(prev => ({ ...prev, open }))}
-          onConfirm={(reason) => {
-                    processBulkStatusUpdate(signatureModal.validLots, signatureModal.status, reason);
-          }}
+          onConfirm={(reason) =>
+            processBulkStatusUpdate(signatureModal.validLots, signatureModal.status, reason)
+          }
           title={`Assinar Alteração: ${STATUS_CONFIG[signatureModal.status]?.label}`}
                   description={`Você está orquestrando a alteração de status de ${signatureModal.validLots.length} lote(s) elegível(is). Confirmar identidade para compliance.`}
           operationMetadata={{
