@@ -31,9 +31,8 @@ import {
   AlertTriangle, RotateCcw, Pause, Command, Trash2} from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob } from '@/features/jobs';
-import { JobStatus, assertTransition, canTransition } from '@/features/jobs';
+import { JobStatus, assertTransition, canTransition, jobsService } from '@/features/jobs';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -182,7 +181,7 @@ export default function KanbanBoard() {
       updateData.actual_end_time = new Date().toISOString();
     }
 
-    const { error } = await supabase.from('jobs').update(updateData).eq('id', jobId);
+    const { error } = await jobsService.update(jobId, updateData);
     if (error) {
       toast.error('Erro ao atualizar status');
     } else {
@@ -191,10 +190,10 @@ export default function KanbanBoard() {
           label: 'Desfazer',
           onClick: async () => {
             if (job) {
-              await supabase.from('jobs').update({
+              await jobsService.update(jobId, {
                 status: job.status,
                 updated_at: new Date().toISOString()
-              }).eq('id', jobId);
+              });
               handleJobsUpdate();
             }
           }
@@ -225,9 +224,7 @@ export default function KanbanBoard() {
       if (targetStatus === 'production') updateData.actual_start_time = new Date().toISOString();
       if (targetStatus === 'finished') updateData.actual_end_time = new Date().toISOString();
 
-      const updates = selectedJobsList.map(j =>
-        supabase.from('jobs').update(updateData).eq('id', j.id)
-      );
+      const updates = selectedJobsList.map(j => jobsService.update(j.id, updateData));
       const settled = await Promise.allSettled(updates);
       const errors = settled.flatMap(r =>
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
@@ -247,9 +244,7 @@ export default function KanbanBoard() {
         toast.error(`${invalid.length} job(s) não podem ser enviados para Retrabalho a partir do estado atual`);
         return;
       }
-      const updates = selectedJobsList.map(j =>
-        supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', j.id)
-      );
+      const updates = selectedJobsList.map(j => jobsService.update(j.id, { status: 'rework', updated_at: new Date().toISOString() }));
       const settled = await Promise.allSettled(updates);
       const errors = settled.flatMap(r =>
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
@@ -262,9 +257,7 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-      const updates = Array.from(selectedJobs).map(id =>
-        supabase.from('jobs').delete().eq('id', id)
-      );
+      const updates = Array.from(selectedJobs).map(id => jobsService.delete(id));
       const settled = await Promise.allSettled(updates);
       const errors = settled.flatMap(r =>
         r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
