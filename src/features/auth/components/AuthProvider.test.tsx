@@ -164,8 +164,12 @@ describe('AuthContext', () => {
         });
 
         // 2) Google chega — o gate roda (marker password foi limpo na falha).
+        // A checagem do Google usa o e-mail da sessão OAuth com action 'check'
+        // (não basta contar chamadas: a pré-checagem + record_failure já somam duas).
         await waitFor(() => {
-          expect(gateCalls).toBeGreaterThanOrEqual(2);
+          expect(supabase.functions.invoke).toHaveBeenCalledWith('check-login-lockout', {
+            body: { email: 'google@example.com', action: 'check' },
+          });
         });
         // A rede geo-bloqueada derruba a sessão do Google.
         await waitFor(() => {
