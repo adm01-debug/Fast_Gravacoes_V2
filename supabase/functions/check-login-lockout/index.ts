@@ -125,11 +125,21 @@ serve(async (req) => {
 
         const userSpecific = ipAllowlist.filter(entry => !entry.is_global && entry.user_id);
         if (userSpecific.length > 0) {
+          // Resolve o userId do e-mail via auth.admin.listUsers (paginação
+          // local; a tipagem do auth-js não expõe getUserByEmail). Mesma
+          // estratégia de paginação de send-loss-risk-alert.
           try {
-            const { data: authUser } = await supabase.auth.admin.getUserByEmail(normalizedEmail);
-            const userId = authUser?.user?.id;
-            if (userId) {
-              allowedIPs = [...allowedIPs, ...userSpecific.filter(entry => entry.user_id === userId)];
+            const perPage = 1000;
+            for (let page = 1; ; page++) {
+              const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers({ page, perPage });
+              if (usersError) throw usersError;
+              const users = usersData?.users ?? [];
+              const match = users.find(u => (u.email ?? '').toLowerCase() === normalizedEmail);
+              if (match) {
+                allowedIPs = [...allowedIPs, ...userSpecific.filter(entry => entry.user_id === match.id)];
+                break;
+              }
+              if (users.length < perPage) break;
             }
           } catch (err) {
             console.error('Error resolving user for allowlist:', err);
