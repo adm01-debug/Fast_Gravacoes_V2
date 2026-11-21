@@ -179,19 +179,12 @@ export const packagingService = {
     });
     if (error) throw error;
 
-    // Increment rejected count on parent task
-    const { data: task } = await db
-      .from('packaging_tasks')
-      .select('rejected_quantity')
-      .eq('id', taskId)
-      .single();
-    if (task) {
-      const current = (task as { rejected_quantity: number }).rejected_quantity ?? 0;
-      await db
-        .from('packaging_tasks')
-        .update({ rejected_quantity: current + form.quantity })
-        .eq('id', taskId);
-    }
+    // Increment rejected count on parent task (atomic, no race)
+    const { error: rpcError } = await supabase.rpc('increment_packaging_rejected', {
+      p_task_id: taskId,
+      p_quantity: form.quantity,
+    });
+    if (rpcError) throw rpcError;
   },
 
   async uploadDefectPhoto(taskId: string, file: File): Promise<string> {
