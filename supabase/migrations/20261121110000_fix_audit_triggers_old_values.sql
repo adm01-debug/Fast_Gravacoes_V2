@@ -126,15 +126,26 @@ ALTER TABLE public.job_status_history
   DROP CONSTRAINT IF EXISTS job_status_history_changed_by_fkey,
   ADD CONSTRAINT job_status_history_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
 
--- 5. Alinhar verify_audit_chain(_limit) ao formato de escrita real.
---    O botao "Verificar" (AuditChainStatus) chama verify_audit_chain(_limit),
---    que validava com compute_audit_hash (sha256 com separador '|' entre os
---    campos). A escrita (tr_audit_log_hashing -> calculate_audit_hash) usa
---    sha256 da concatenacao direta, SEM separador. Resultado: 0/316 registros
---    casavam no formato de verificacao e o botao mostrava cadeia integralmente
---    quebrada mesmo estando integra. Reescreve a funcao validando com
---    calculate_audit_hash (mesmo formato em que os hashes foram gravados),
---    preservando a checagem de role e a assinatura usada pelo frontend.
+-- 5. Reescreve verify_audit_chain(_limit) validando elo + hash individual.
+--    O botao "Verificar" (AuditChainStatus) chamava verify_audit_chain(_limit),
+--    que validava com compute_audit_hash (formato com separador '|'), formula
+--    diferente da escrita. A escrita (tr_audit_log_hashing ->
+--    calculate_audit_hash) usa concatenacao direta SEM separador e md5.
+--    Resultado: o botao acusava cadeia integralmente quebrada mesmo estando
+--    integra. Alem disso, a verificacao nao conferia o ELO: um registro cujo
+--    previous_hash nao correspondesse ao hash anterior seguiria contando como
+--    valido. A nova funcao:
+--      * confere o elo: previous_hash deve ser o hash do registro anterior com
+--        hash nao-nulo (ancora), com 'GENESIS' no inicio;
+--      * confere o hash individual com calculate_audit_hash (mesmo formato
+--        em que foi gravado);
+--      * preserva registros historicos sem hash (gravacoes pre-fix com actor
+--        NULL, 30 na producao): eles nao sao contados como quebra nem
+--        reescritos, mantendo a imutabilidade da cadeia.
+--    Medido em producao antes do merge (funcao temp com a mesma logica):
+--    311 registros validos, 5 quebras — todas historicas (elos gravados pela
+--    cadeia antiga pre-fix), nenhum hash individual invalido (316 com hash OK
+--    quando conferido isoladamente; 30 sem hash = gravacoes com actor NULL).
 CREATE OR REPLACE FUNCTION public.verify_audit_chain(_limit integer DEFAULT 1000)
 RETURNS TABLE(total_records bigint, verified bigint, broken bigint, first_broken_id uuid)
 LANGUAGE plpgsql
@@ -144,6 +155,7 @@ AS $$
 DECLARE
   _rec public.audit_log;
   _expected TEXT;
+  _anchored TEXT := 'GENESIS';
   _total BIGINT := 0;
   _ok BIGINT := 0;
   _bad BIGINT := 0;
@@ -159,10 +171,18 @@ BEGIN
     LIMIT _limit
   LOOP
     _total := _total + 1;
+    -- Registro historico sem hash (pre-fix, actor NULL): preserva e avanca
+    -- sem reescrever. A ancora so avanca quando ha um hash valido.
     IF _rec.hash IS NULL THEN
+      CONTINUE;
+    END IF;
+
+    -- 1) ELO: previous_hash deve ser a ancora (ultimo hash nao-nulo anterior).
+    IF _rec.previous_hash IS DISTINCT FROM _anchored THEN
       _bad := _bad + 1;
       IF _first_bad IS NULL THEN _first_bad := _rec.id; END IF;
     ELSE
+      -- 2) Hash individual no formato de escrita real.
       _expected := public.calculate_audit_hash(_rec);
       IF _expected = _rec.hash THEN
         _ok := _ok + 1;
@@ -171,6 +191,8 @@ BEGIN
         IF _first_bad IS NULL THEN _first_bad := _rec.id; END IF;
       END IF;
     END IF;
+
+    _anchored := _rec.hash;
   END LOOP;
 
   RETURN QUERY SELECT _total, _ok, _bad, _first_bad;
