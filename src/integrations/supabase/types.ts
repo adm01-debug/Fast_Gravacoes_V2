@@ -6073,6 +6073,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_packaging_rejected: {
+        Args: { p_task_id: string; p_quantity: number }
+        Returns: undefined
+      }
       increment_sheet_view_count: {
         Args: { sheet_id: string }
         Returns: undefined
