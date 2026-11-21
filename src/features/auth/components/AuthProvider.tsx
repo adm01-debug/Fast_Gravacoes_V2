@@ -260,8 +260,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (lockoutStatus.blocked_by_ip) {
           const ipError = new LockoutError(
-            'Acesso bloqueado a partir desta rede/IP',
-            { remainingMinutes: 0, blockedByIp: true }
+            lockoutStatus.message || lockoutStatus.block_reason || 'Acesso bloqueado a partir desta rede/IP',
+            { remainingMinutes: lockoutStatus.remaining_minutes || 0, blockedByIp: true }
           );
           return { error: ipError };
         }
