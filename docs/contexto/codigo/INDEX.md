@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ecaa43916cad5775f06bc8d209f49a1aaf639dbe` (2026-11-21T09:47:31-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `459089963329fa2ec6cb848f7b36d0d73dd7363e` (2026-11-21T10:19:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7476 nós · 21950 arestas · 652 comunidades · grafo do commit `ecaa4391`
-- comunidades maiores: card.tsx (189), button.tsx (145), cn (132), input.tsx (116), snapshot.py (111), DailyCalendar.tsx (103), generate.py (101), OperatorsPage.tsx (100), gerar.mjs (96), .write (96), recharts.ts (91), badge.tsx (89)
+- 7476 nós · 21950 arestas · 653 comunidades · grafo do commit `45908996`
+- comunidades maiores: card.tsx (189), button.tsx (145), cn (133), input.tsx (116), snapshot.py (111), DailyCalendar.tsx (103), generate.py (101), OperatorsPage.tsx (100), gerar.mjs (96), .write (96), recharts.ts (94), badge.tsx (89)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -368,6 +368,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-21 `4590899` chore: dossie F-005 marcado resolvida (#239)
 - 2026-11-21 `ecaa439` fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)
 - 2026-11-20 `6032d37` chore: dossie F-004 marcado resolvido com evidencia (#237)
 - 2026-11-20 `46e2219` fix: blocked_ips agora bloqueia o login (F-004) (#236)
@@ -382,7 +383,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `7c1df38` docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)
 - 2026-11-19 `3d7a497` fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)
 - 2026-11-19 `95c091b` docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)
-- 2026-11-19 `ce97162` fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

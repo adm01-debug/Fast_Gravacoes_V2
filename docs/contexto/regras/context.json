@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
+  "sha": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-21 12:47 UTC",
+  "generated_at": "2026-11-21 13:38 UTC",
   "files_total": 1567,
   "code_files": 1379,
   "code_lines": 203712
@@ -95081,10 +95081,19 @@
   }
  },
  "git": {
-  "sha": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
+  "sha": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4590899",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: dossie F-005 marcado resolvida (#239)",
+    "files": [
+     "docs/pendencias/F-005-allowlist-de-ip-in-cua.md"
+    ]
+   },
    {
     "sha": "ecaa439",
     "date": "2026-11-21",
@@ -95432,17 +95441,6 @@
     "files": [
      "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
     ]
-   },
-   {
-    "sha": "343ed14",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "infra: dependabot agrupado + dependency review de CVE em dependencia nova (#205)",
-    "files": [
-     ".github/dependabot.yml",
-     ".github/workflows/dependency-review.yml",
-     "docs/ci/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -95457,6 +95455,10 @@
    [
     "package.json",
     4
+   ],
+   [
+    "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
+    2
    ],
    [
     "src/features/auth/components/AuthProvider.tsx",
@@ -95520,10 +95522,6 @@
    ],
    [
     "src/pages/AuthPage.tsx",
-    1
-   ],
-   [
-    "docs/pendencias/F-001-tracking-p-blico-track-sem-acesso.md",
     1
    ]
   ]

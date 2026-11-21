@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ecaa43916cad5775f06bc8d209f49a1aaf639dbe",
+  "commit": "459089963329fa2ec6cb848f7b36d0d73dd7363e",
   "branch": "main",
-  "data_commit": "2026-11-21T09:47:31-03:00",
+  "data_commit": "2026-11-21T10:19:46-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "4590899",
+    "data": "2026-11-21",
+    "assunto": "chore: dossie F-005 marcado resolvida (#239)"
+   },
    {
     "sha": "ecaa439",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "e36c2ab",
     "data": "2026-11-18",
     "assunto": "chore(ci): bump the acoes group with 10 updates (#206)"
-   },
-   {
-    "sha": "774274a",
-    "data": "2026-11-18",
-    "assunto": "fix: usa ubuntu-24.04 no gerador de baselines visuais (ubuntu-latest quebrou com playwright 1.60) (#215)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 98
+    "commits": 99
    },
    {
     "autor": "devin-ai-integration[bot]",
