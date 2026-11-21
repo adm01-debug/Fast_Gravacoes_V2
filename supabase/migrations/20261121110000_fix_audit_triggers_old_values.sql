@@ -125,3 +125,59 @@ $$;
 ALTER TABLE public.job_status_history
   DROP CONSTRAINT IF EXISTS job_status_history_changed_by_fkey,
   ADD CONSTRAINT job_status_history_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
+
+-- 5. Alinhar verify_audit_chain(_limit) ao formato de escrita real.
+--    O botao "Verificar" (AuditChainStatus) chama verify_audit_chain(_limit),
+--    que validava com compute_audit_hash (sha256 com separador '|' entre os
+--    campos). A escrita (tr_audit_log_hashing -> calculate_audit_hash) usa
+--    sha256 da concatenacao direta, SEM separador. Resultado: 0/316 registros
+--    casavam no formato de verificacao e o botao mostrava cadeia integralmente
+--    quebrada mesmo estando integra. Reescreve a funcao validando com
+--    calculate_audit_hash (mesmo formato em que os hashes foram gravados),
+--    preservando a checagem de role e a assinatura usada pelo frontend.
+CREATE OR REPLACE FUNCTION public.verify_audit_chain(_limit integer DEFAULT 1000)
+RETURNS TABLE(total_records bigint, verified bigint, broken bigint, first_broken_id uuid)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $$
+DECLARE
+  _rec public.audit_log;
+  _expected TEXT;
+  _total BIGINT := 0;
+  _ok BIGINT := 0;
+  _bad BIGINT := 0;
+  _first_bad UUID := NULL;
+BEGIN
+  IF NOT (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator') OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager')) THEN
+    RAISE EXCEPTION 'Access denied' USING ERRCODE = '42501';
+  END IF;
+
+  FOR _rec IN
+    SELECT * FROM public.audit_log
+    ORDER BY created_at ASC, id ASC
+    LIMIT _limit
+  LOOP
+    _total := _total + 1;
+    IF _rec.hash IS NULL THEN
+      _bad := _bad + 1;
+      IF _first_bad IS NULL THEN _first_bad := _rec.id; END IF;
+    ELSE
+      _expected := public.calculate_audit_hash(_rec);
+      IF _expected = _rec.hash THEN
+        _ok := _ok + 1;
+      ELSE
+        _bad := _bad + 1;
+        IF _first_bad IS NULL THEN _first_bad := _rec.id; END IF;
+      END IF;
+    END IF;
+  END LOOP;
+
+  RETURN QUERY SELECT _total, _ok, _bad, _first_bad;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.verify_audit_chain(integer) FROM public, anon;
+GRANT EXECUTE ON FUNCTION public.verify_audit_chain(integer) TO authenticated, service_role;
+
+
