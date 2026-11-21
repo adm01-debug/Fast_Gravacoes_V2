@@ -258,6 +258,11 @@ export default function TraceabilityPage() {
           }}
           title={`Assinar Alteração: ${STATUS_CONFIG[signatureModal.status]?.label}`}
           description={`Você está orquestrando a alteração de status de ${selectedIds.size} lote(s). Confirme sua identidade para compliance.`}
+          operationMetadata={{
+            lotes: Array.from(selectedIds),
+            status_destino: signatureModal.status,
+            quantidade_lotes: selectedIds.size,
+          }}
         />
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -21,6 +21,7 @@ interface ElectronicSignatureDialogProps {
   title?: string;
   description?: string;
   actionLabel?: string;
+  operationMetadata?: Record<string, unknown>;
 }
 
 export function ElectronicSignatureDialog({
@@ -29,7 +30,8 @@ export function ElectronicSignatureDialog({
   onConfirm,
   title = "Assinatura Eletrônica (21 CFR Part 11)",
   description = "Para prosseguir com esta operação crítica, confirme sua identidade e o motivo da alteração.",
-  actionLabel = "Confirmar e Assinar"
+  actionLabel = "Confirmar e Assinar",
+  operationMetadata,
 }: ElectronicSignatureDialogProps) {
   const [password, setPassword] = useState('');
   const [reason, setReason] = useState('');
@@ -52,12 +54,19 @@ export function ElectronicSignatureDialog({
         throw new Error('Usuário não encontrado');
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password,
+      // Valida a senha via chamada REST direta ao endpoint de token.
+      // Nao persiste/usurpa a sessao: o supabase-js continua com a sessao MFA atual,
+      // entao assinar um lote nao derruba o usuario para um novo desafio 2FA.
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL as string}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+        },
+        body: JSON.stringify({ email: user.email, password }),
       });
 
-      if (signInError) {
+      if (!res.ok) {
         throw new Error('Senha incorreta');
       }
 
@@ -66,7 +75,7 @@ export function ElectronicSignatureDialog({
         severity: 'info',
         user_id: user.id,
         user_email: user.email,
-        details: { reason },
+        details: { reason, ...operationMetadata },
         user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
       });
 
