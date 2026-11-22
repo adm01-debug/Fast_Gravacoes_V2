@@ -120,19 +120,30 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
           alertSeverity[newAlert.alert_type] > alertSeverity[a.alert_type]
         )
       );
-      for (const pending of alertsToResolve) {
-        await supabase
-          .from('maintenance_alerts')
-          .update({ is_resolved: true, resolved_at: new Date().toISOString() })
-          .eq('id', pending.id);
-      }
-
+      // Insert first; only resolve the superseded (lower-severity) alerts
+      // if every insert succeeds. This keeps the panel consistent when a
+      // single write fails (an insert error no longer discards the
+      // previous pending alert).
       const results = await Promise.all(
         alertsToCreate.map(async (alertData) => {
           const { error } = await supabase.from('maintenance_alerts').insert(alertData);
           return error ? null : alertData;
         })
       );
+
+      if (results.every(r => r !== null)) {
+        const supersedeMark = new Date().toISOString();
+        for (const pending of alertsToResolve) {
+          const { error } = await supabase
+            .from('maintenance_alerts')
+            .update({ is_resolved: true, resolved_at: supersedeMark })
+            .eq('id', pending.id)
+            // Guard: missing records mean a user dismissed (or resolved)
+            // this alert concurrently ? do not overwrite their stamp.
+            .eq('is_resolved', false);
+          if (error) throw error;
+        }
+      }
 
       return results.filter(r => r !== null).length;
     },
