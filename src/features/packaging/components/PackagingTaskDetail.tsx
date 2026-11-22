@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Printer } from 'lucide-react';
+import { useAuth } from '@/features/auth';
 import { usePackagingTask } from '../hooks/usePackagingTask';
 import { usePackagingSettings, computeSla } from '../hooks/usePackagingSettings';
 import { usePackagingSlaOverrides } from '../hooks/usePackagingSlaOverrides';
@@ -24,6 +25,7 @@ interface Props {
 
 export function PackagingTaskDetail({ taskId, onOpenChange }: Props) {
   const { task, defects, isLoading, assign, changeStatus, registerPackaging, recordDefect } = usePackagingTask(taskId);
+  const { isCoordinator, isManager, isAdmin } = useAuth();
   const { data: settings } = usePackagingSettings();
   const { data: overrides } = usePackagingSlaOverrides();
   const [showLabel, setShowLabel] = useState(false);
@@ -73,11 +75,17 @@ export function PackagingTaskDetail({ taskId, onOpenChange }: Props) {
                 Assumir tarefa
               </Button>
             )}
-                        {!task.assigned_to && task.status === 'on_hold' && (
-                          <p className="text-sm text-muted-foreground">
-                            Tarefa em espera por defeito crítico — aguardando coordenador.
-                          </p>
-                        )}
+            {!task.assigned_to && task.status === 'on_hold' && (
+              isCoordinator || isManager || isAdmin ? (
+                <Button className="w-full" onClick={() => assign.mutate()} disabled={assign.isPending}>
+                  Assumir tarefa
+                </Button>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Tarefa em espera — aguardando coordenador.
+                </p>
+              )
+            )}
 
             <Tabs defaultValue="triage">
               <TabsList className="grid grid-cols-5 w-full">

@@ -119,16 +119,37 @@ export function useLogistics() {
       const { provider, job, ...data } = input;
       void provider;
       void job;
-      const { error } = await supabase
-        .from('shipments')
-        .update(data)
-        .eq('id', id);
 
-      if (error) throw error;
+      // Mudança de status passa pela RPC update_shipment_status (F-010):
+      // ela aplica o bloqueio de despacho quando o job tem packaging_task em
+      // on_hold (defeito crítico/cancelamento) e retorna 'blocked' sem
+      // alterar nada. Retorna flag para o chamador decidir como informar.
+      let blocked = false;
+      if (data.status) {
+        const { data: result, error } = await supabase.rpc('update_shipment_status', {
+          p_shipment_id: id,
+          p_status: data.status,
+        });
+        if (error) throw error;
+        if (result === 'blocked') {
+          blocked = true;
+        }
+      }
+
+      // Atualiza os demais campos (exceto status, tratado pela RPC acima).
+      const patch = { ...data };
+      delete patch.status;
+      if (Object.keys(patch).length > 0) {
+        const { error } = await supabase
+          .from('shipments')
+          .update(patch)
+          .eq('id', id);
+        if (error) throw error;
+      }
 
       // Sync with job if status changed — idem: erro propagado em vez
       // de divergência silenciosa.
-      if (data.status) {
+      if (data.status && !blocked) {
         const { data: shipment, error: fetchError } = await supabase.from('shipments').select('job_id').eq('id', id).single();
         if (fetchError) throw fetchError;
         if (shipment?.job_id) {
@@ -141,11 +162,16 @@ export function useLogistics() {
           }
         }
       }
+      return { blocked };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      toast.success('Envio atualizado com sucesso');
+      if (result?.blocked) {
+        toast.warning('Envio bloqueado: a embalagem deste pedido está em espera.');
+      } else {
+        toast.success('Envio atualizado com sucesso');
+      }
     },
     onError: (error) => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
