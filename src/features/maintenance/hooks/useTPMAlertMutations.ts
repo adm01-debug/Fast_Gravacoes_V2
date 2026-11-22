@@ -100,6 +100,33 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         logger.warn('Falha na análise preditiva de IA (TPM)', err, 'useTPMMutations');
       }
 
+      // Resolve lower-severity pending alerts for schedules that are about
+      // to receive a higher-severity alert (e.g. an 'overdue' supersedes a
+      // pending 'due') so the panel never shows contradictory states for
+      // the same maintenance at once.
+      const alertSeverity: Record<MaintenanceAlert['alert_type'], number> = {
+        upcoming: 1,
+        due: 2,
+        overdue: 3,
+        critical: 4,
+        predictive: 0,
+      };
+      const alertsToResolve = alerts.filter(a =>
+        !a.is_resolved &&
+        a.alert_type !== 'predictive' &&
+        alertsToCreate.some(newAlert =>
+          newAlert.schedule_id === a.schedule_id &&
+          newAlert.alert_type !== 'predictive' &&
+          alertSeverity[newAlert.alert_type] > alertSeverity[a.alert_type]
+        )
+      );
+      for (const pending of alertsToResolve) {
+        await supabase
+          .from('maintenance_alerts')
+          .update({ is_resolved: true, resolved_at: new Date().toISOString() })
+          .eq('id', pending.id);
+      }
+
       const results = await Promise.all(
         alertsToCreate.map(async (alertData) => {
           const { error } = await supabase.from('maintenance_alerts').insert(alertData);

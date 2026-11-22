@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     const sp = zonedParts(nowInst);
     const today = localMidnightToUtc(sp.year, sp.month, sp.day);
     const tomorrow = localMidnightToUtc(sp.year, sp.month, sp.day + 1);
-    const nextWeek = localMidnightToUtc(sp.year, sp.month, sp.day + 7);
+    const nextWeek = localMidnightToUtc(sp.year, sp.month, sp.day + 8);
     console.log('Generating daily maintenance summary for:', today.toISOString());
 
     // Fetch overdue maintenance schedules
