@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { differenceInDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
 import { showErrorToast } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { TPM_ERROR_CONTEXT } from './types';
@@ -36,7 +36,7 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         })
         .map(schedule => {
           const dueDate = new Date(schedule.next_due_at);
-          const daysUntilDue = differenceInDays(dueDate, now);
+          const daysUntilDue = differenceInCalendarDays(dueDate, now);
 
           let alertType: MaintenanceAlert['alert_type'] | null = null;
           let message = '';

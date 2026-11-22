@@ -38,13 +38,35 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+    // Limites do dia no fuso operacional (America/Sao_Paulo), convertidos para
+    // UTC. next_due_at e gravado como fim do dia local (23h59 BRT = 02h59Z do
+    // dia seguinte); usar meia-noite UTC aqui deslocaria prazos de fim de dia
+    // para a faixa "upcoming" no proprio dia em que vencem.
+    const SP_TIMEZONE = 'America/Sao_Paulo';
+    const zonedDtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: SP_TIMEZONE,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hourCycle: 'h23',
+    });
+    const zonedParts = (date: Date) => {
+      const parts = zonedDtf.formatToParts(date);
+      const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+      return { year: get('year'), month: get('month'), day: get('day'), hour: get('hour'), minute: get('minute'), second: get('second') };
+    };
+    // Meia-noite local do dia (year, month, day) expressa como instante UTC.
+    const localMidnightToUtc = (year: number, month: number, day: number): Date => {
+      const probe = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+      const p = zonedParts(probe);
+      const localAsUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+      return new Date(Date.UTC(year, month - 1, day, 0, 0, 0) + (probe.getTime() - localAsUtc));
+    };
 
+    const nowInst = new Date();
+    const sp = zonedParts(nowInst);
+    const today = localMidnightToUtc(sp.year, sp.month, sp.day);
+    const tomorrow = localMidnightToUtc(sp.year, sp.month, sp.day + 1);
+    const nextWeek = localMidnightToUtc(sp.year, sp.month, sp.day + 7);
     console.log('Generating daily maintenance summary for:', today.toISOString());
 
     // Fetch overdue maintenance schedules
