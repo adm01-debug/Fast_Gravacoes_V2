@@ -18,28 +18,6 @@ const KEY_TARGETS = 'targets';
 
 type Resp = { data?: unknown[]; error?: { message: string } } | unknown[];
 
-function createBuilder(responses: Map<string, Resp>) {
-  const builder: Record<string, any> = {
-    _selectCols: '',
-    select(cols: string) {
-      builder._selectCols = cols;
-      return builder;
-    },
-    gte() { return builder; },
-    lte() { return builder; },
-    eq() { return builder; },
-    order() { return builder; },
-    limit() { return builder; },
-    async then(resolve: (v: any) => void) {
-      const key = builder._selectCols.includes('*') ? KEY_CONSUMPTION : KEY_PREV;
-      const entry = responses.get(key)!;
-      if (Array.isArray(entry)) resolve({ data: entry, error: null });
-      else resolve(entry);
-    },
-  };
-  return builder;
-}
-
 function setup(responses: Map<string, Resp>) {
   // from() é chamado com a tabela; seleciona qual resposta pelo campo usado
   vi.mocked(supabase.from).mockImplementation((tbl: string) => {
@@ -68,47 +46,73 @@ function setup(responses: Map<string, Resp>) {
   });
 }
 
-function makeWrapper() {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+function makeWrapper(queryClient?: QueryClient) {
+  const client = queryClient || new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children);
+    React.createElement(QueryClientProvider, { client }, children);
 }
 
 describe('useEnergy (F-007 contrato)', () => {
-  it('enabled=false zera stats e arrays, sem fetch, hasError false', async () => {
-    // Cache pré-existente nas queries não deve vazar para stats:
-    // como enabled=false, o mock nem precisa ser chamado de fato.
-    setup(new Map([
-      [KEY_CONSUMPTION, [{ id: 'c1', consumption_kwh: 10, total_cost: 5, recorded_at: new Date().toISOString() }]],
-      [KEY_PREV, [{ total_cost: 20 }]],
-      [KEY_ALERTS, [{ id: 'a1' }]],
-      [KEY_TARGETS, [{ id: 't1' }]],
-    ]));
-    const { result } = renderHook(() => useEnergy(undefined, { enabled: false }), { wrapper: makeWrapper() });
+  it('enabled=false oculta dados ja carregados do cache e nao refaz fetch', async () => {
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const callCount = { consumption: 0, prev: 0 };
+    vi.mocked(supabase.from).mockImplementation((tbl: string) => {
+      const b: Record<string, any> = {
+        _tbl: tbl,
+        select(cols: string) {
+          if (tbl === 'energy_consumption' && cols.includes('*')) callCount.consumption += 1;
+          return b;
+        },
+        gte() { return b; },
+        lte() { return b; },
+        eq() { return b; },
+        order() { return b; },
+        limit() { return b; },
+        async then(resolve: (v: any) => void) {
+          resolve({ data: [], error: null });
+        },
+      };
+      return b;
+    });
 
-    expect(result.current.stats.totalConsumption).toBe(0);
-    expect(result.current.stats.totalCost).toBe(0);
-    expect(result.current.stats.consumptionByMachine).toEqual([]);
-    expect(result.current.stats.dailyConsumption).toEqual([]);
-    expect(result.current.consumption).toEqual([]);
-    expect(result.current.alerts).toEqual([]);
-    expect(result.current.targets).toEqual([]);
-    expect(result.current.stats.hourlyPattern.every((h) => h.avgConsumption === 0)).toBe(true);
-    expect(result.current.hasError).toBe(false);
+    // Primeiro carrega dados de verdade no cache (enabled=true)
+    const first = renderHook(() => useEnergy(), { wrapper: makeWrapper(queryClient) });
+    await waitFor(() => expect(callCount.consumption).toBeGreaterThan(0));
+    first.unmount();
+
+    // Com enabled=false, dados carregados nao podem vazar para stats/arrays
+        callCount.consumption = 0;
+    const second = renderHook(() => useEnergy(undefined, { enabled: false }), { wrapper: makeWrapper(queryClient) });
+        await waitFor(() => expect(callCount.consumption).toBe(0));
+    expect(second.result.current.stats.totalConsumption).toBe(0);
+    expect(second.result.current.stats.totalCost).toBe(0);
+    expect(second.result.current.stats.consumptionByMachine).toEqual([]);
+    expect(second.result.current.stats.dailyConsumption).toEqual([]);
+    expect(second.result.current.consumption).toEqual([]);
+    expect(second.result.current.alerts).toEqual([]);
+    expect(second.result.current.targets).toEqual([]);
+    expect(second.result.current.stats.hourlyPattern.every((h) => h.avgConsumption === 0)).toBe(true);
+    expect(second.result.current.hasError).toBe(false);
+    second.unmount();
   });
 
-  it('falha apenas em alerts/targets nao acende hasError nem esconde total zero', async () => {
+  it('falha em alerts/targets nao acende hasError nem esconde o consumo real', async () => {
+    const consumptionRow = { id: 'c1', consumption_kwh: 10, total_cost: 5, recorded_at: new Date().toISOString() };
     setup(new Map([
-      [KEY_CONSUMPTION, []],
-      [KEY_PREV, []],
+      [KEY_CONSUMPTION, [consumptionRow]],
+      [KEY_PREV, [{ total_cost: 20 }]],
       [KEY_ALERTS, { error: { message: 'RLS denied' } }],
       [KEY_TARGETS, { error: { message: 'RLS denied' } }],
     ]));
     const { result } = renderHook(() => useEnergy(undefined, { enabled: true }), { wrapper: makeWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
+    // A falha auxiliar nao acende o erro nem zera o total carregado
     expect(result.current.hasError).toBe(false);
-    expect(result.current.stats.totalConsumption).toBe(0);
+    expect(result.current.stats.totalConsumption).toBe(10);
+    expect(result.current.stats.totalCost).toBe(5);
+    expect(result.current.alerts).toEqual([]);
+    expect(result.current.targets).toEqual([]);
   });
 
   it('falha na consulta principal de consumo acende hasError', async () => {
