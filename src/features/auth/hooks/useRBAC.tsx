@@ -174,7 +174,7 @@ export function useRBAC(): RBACResult {
 
   const resourceMatch = useMemo(() => {
     return (permission: string): boolean => {
-      const [resource] = permission.split(':');
+          const [resource] = permission.replace(/\./g, ':').split(':');
       return permissions.includes(`${resource}:all`);
     };
   }, [permissions]);
