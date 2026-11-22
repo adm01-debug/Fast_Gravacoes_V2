@@ -33,19 +33,28 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
       // Estado fresco dos alertas pendentes: a lista recebida pelo hook pode
       // estar desatualizada (retry após falha parcial), o que duplicaria
       // alertas ou deixaria contradições. O banco é a fonte de verdade.
-      const { data: freshAlerts, error: freshError } = await supabase
-        .from('maintenance_alerts')
-        .select('id, schedule_id, machine_id, alert_type, message, is_resolved, resolved_at, created_at')
-        .eq('is_resolved', false);
-      if (freshError) throw freshError;
-      const sourceAlerts = freshAlerts ?? alerts;
+      const [{ data: freshAlerts }, { data: freshSchedules }] = await Promise.all([
+        supabase
+          .from('maintenance_alerts')
+          .select('id, schedule_id, machine_id, alert_type, message, is_resolved, resolved_at, created_at')
+          .eq('is_resolved', false).limit(10000),
+        supabase
+          .from('maintenance_schedules')
+          .select('id, machine_id, name, is_active, next_due_at')
+          .eq('is_active', true).limit(10000),
+      ]);
+      if (freshAlerts?.error) throw freshAlerts.error;
+      if (freshSchedules?.error) throw freshSchedules.error;
+      const sourceAlerts = freshAlerts?.data ?? alerts;
+      const sourceSchedules = freshSchedules?.data ?? schedules;
+
       // 1. Static checks (due dates)
       const alertsToCreate: Array<{
         schedule_id: string;
         machine_id: string;
         alert_type: MaintenanceAlert['alert_type'];
         message: string;
-      }> = schedules
+      }> = sourceSchedules
         .map(schedule => {
           const dueDate = new Date(schedule.next_due_at);
           const daysUntilDue = differenceInCalendarDays(dueDate, now);
@@ -109,7 +118,7 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
           mlResult.predictions.forEach((p: { machine: { id: string }, prediction: { risk_score: number, recommendations?: string[] } }) => {
             if (p.prediction?.risk_score > 75) {
               // High risk detected by AI, find the primary schedule for this machine
-              const machineSchedule = schedules.find(s => s.machine_id === p.machine.id && s.is_active);
+              const machineSchedule = sourceSchedules.find(s => s.machine_id === p.machine.id && s.is_active);
               if (machineSchedule) {
                 const existingAlert = sourceAlerts.find(a => a.schedule_id === machineSchedule.id && a.alert_type === 'predictive' && !a.is_resolved);
                 if (!existingAlert) {
