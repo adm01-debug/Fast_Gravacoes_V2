@@ -28,12 +28,6 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         alert_type: MaintenanceAlert['alert_type'];
         message: string;
       }> = schedules
-        .filter(schedule => {
-          const existingAlert = alerts.find(
-            a => a.schedule_id === schedule.id && !a.is_resolved
-          );
-          return !existingAlert;
-        })
         .map(schedule => {
           const dueDate = new Date(schedule.next_due_at);
           const daysUntilDue = differenceInCalendarDays(dueDate, now);
@@ -55,17 +49,25 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
             message = `Manutenção próxima (${daysUntilDue} dias): ${schedule.name}`;
           }
 
-          if (alertType) {
-            return {
-              schedule_id: schedule.id,
-              machine_id: schedule.machine_id,
-              alert_type: alertType,
-              message,
-            };
-          }
-          return null;
+          if (!alertType) return null;
+
+          return {
+            schedule_id: schedule.id,
+            machine_id: schedule.machine_id,
+            alert_type: alertType,
+            message,
+          };
         })
-        .filter((alert): alert is NonNullable<typeof alert> => alert !== null);
+        .filter((alert): alert is NonNullable<typeof alert> => alert !== null)
+        .filter(alert => {
+          const existingAlert = alerts.find(
+            a =>
+              a.schedule_id === alert.schedule_id &&
+              a.alert_type === alert.alert_type &&
+              !a.is_resolved
+          );
+          return !existingAlert;
+        });
 
       // 2. Predictive AI Check (Edge Function)
       try {
