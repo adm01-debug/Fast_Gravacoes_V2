@@ -6086,6 +6086,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_shipment_status: {
+        Args: {
+          p_shipment_id: string
+          p_status: string
+        }
+        Returns: string
+      }
       record_packaging_defect: {
         Args: {
           p_task_id: string
