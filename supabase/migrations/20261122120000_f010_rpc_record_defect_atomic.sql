@@ -33,12 +33,17 @@ begin
     from public.packaging_tasks
    where id = p_task_id;
 
-  if v_assigned_to is null then
+  if not found then
     raise exception 'Tarefa de embalagem não encontrada';
   end if;
 
-  -- Autorizacao: espelha a policy RLS "Authorized defect management".
-  if v_assigned_to <> auth.uid() and not public.has_role(auth.uid(), 'coordinator') then
+  -- Autorização: espelha exatamente a policy RLS vigente
+  -- "Authorized defect management" (2026-08-02): só o dono da tarefa
+  -- (assigned_to) ou coordenador. Tarefa não atribuída também é negada.
+  if v_assigned_to is null
+     or (v_assigned_to <> auth.uid()
+         and not public.has_role(auth.uid(), 'coordinator'))
+  then
     raise exception 'Sem autorização para registrar defeito nesta tarefa';
   end if;
 
