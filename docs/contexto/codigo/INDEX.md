@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `82df4465f028f9971aa3a03ffbbcd610a1c6f72a` (2026-11-22T07:08:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `75dc92499751210b8dc5b5a21c8486feb4f15a5e` (2026-11-22T08:23:08-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1055), SQL (257), Markdown (100), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1056), SQL (257), Markdown (100), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1569 |
-| arquivos_codigo | 1119 |
-| linhas_codigo | 189064 |
+| arquivos_total | 1570 |
+| arquivos_codigo | 1120 |
+| linhas_codigo | 189202 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 249 |
 | cron_jobs | 4 |
-| testes | 123 |
+| testes | 124 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 100 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (87), outro (18), tests/ (18)
+- testes: co-localizado (*.test) (88), outro (18), tests/ (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -96,11 +96,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | features/admin | 0 | 0 | 52 | 62 | 2 | 36 |
 | features/analytics | 0 | 0 | 74 | 53 | 3 | 39 |
 | features/auth | 0 | 0 | 11 | 8 | 2 | 4 |
-| features/inventory | 0 | 0 | 9 | 14 | 1 | 9 |
+| features/inventory | 0 | 0 | 9 | 14 | 1 | 10 |
 | features/jobs | 0 | 0 | 26 | 31 | 3 | 12 |
 | features/maintenance | 0 | 0 | 41 | 18 | 2 | 29 |
 | features/notifications | 0 | 0 | 26 | 43 | 4 | 19 |
-| features/packaging | 0 | 0 | 35 | 23 | 1 | 14 |
+| features/packaging | 0 | 0 | 35 | 23 | 1 | 15 |
 | features/production | 0 | 0 | 27 | 30 | 1 | 21 |
 | hooks | 0 | 0 | 44 | 62 | 3 | 36 |
 | hooks/abc | 0 | 0 | 5 | 6 | 0 | 7 |
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7477 nós · 21966 arestas · 636 comunidades · grafo do commit `82df4465`
-- comunidades maiores: card.tsx (206), cn (175), analytics/index.ts (154), MainLayout.tsx (129), FuturisticBI.tsx (125), button.tsx (123), badge.tsx (118), DailyCalendar.tsx (118), jobs/index.ts (113), snapshot.py (111), client.ts (104), OperatorsPage.tsx (98)
+- 7481 nós · 21977 arestas · 660 comunidades · grafo do commit `75dc9249`
+- comunidades maiores: card.tsx (245), Button (194), JobDetailsModal.tsx (139), analytics/index.ts (121), snapshot.py (111), errorHandling.ts (109), useAuth (108), DailyCalendar.tsx (102), generate.py (101), cn (101), gerar.mjs (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-22 `75dc924` fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)
 - 2026-11-22 `82df446` chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)
 - 2026-11-22 `dbb891a` chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)
 - 2026-11-22 `2a1a433` fix: ativa notificações push reais (par VAPID configurado) (#252)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `4590899` chore: dossie F-005 marcado resolvida (#239)
 - 2026-11-21 `ecaa439` fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)
 - 2026-11-20 `6032d37` chore: dossie F-004 marcado resolvido com evidencia (#237)
-- 2026-11-20 `46e2219` fix: blocked_ips agora bloqueia o login (F-004) (#236)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

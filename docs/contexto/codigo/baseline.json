@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "82df4465f028f9971aa3a03ffbbcd610a1c6f72a",
+  "commit": "75dc92499751210b8dc5b5a21c8486feb4f15a5e",
   "branch": "main",
-  "data_commit": "2026-11-22T07:08:28-03:00",
+  "data_commit": "2026-11-22T08:23:08-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "75dc924",
+    "data": "2026-11-22",
+    "assunto": "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)"
+   },
    {
     "sha": "82df446",
     "data": "2026-11-22",
@@ -126,15 +131,10 @@
     "sha": "7c1df38",
     "data": "2026-11-19",
     "assunto": "docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)"
-   },
-   {
-    "sha": "3d7a497",
-    "data": "2026-11-19",
-    "assunto": "fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 138,
+  "arquivos_mudados_7d": 140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -165,6 +165,10 @@
     "mudancas": 14
    },
    {
+    "pasta": "src/features/auth",
+    "mudancas": 14
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
@@ -174,10 +178,6 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 12
-   },
-   {
-    "pasta": "src/features/auth",
     "mudancas": 12
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 110
+    "commits": 111
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1569,
-  "arquivos_codigo": 1119,
-  "linhas_codigo": 189064,
+  "arquivos_total": 1570,
+  "arquivos_codigo": 1120,
+  "linhas_codigo": 189202,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 249,
   "cron_jobs": 4,
-  "testes": 123,
+  "testes": 124,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 100
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 328,
-   "linhas": 46129
+   "arquivos": 329,
+   "linhas": 46267
   },
   "src/hooks": {
    "arquivos": 61,
@@ -667,7 +667,7 @@
   }
  ],
  "qualidade": {
-  "any": 169,
+  "any": 171,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

@@ -3582,7 +3582,8 @@
    "src/lib/logger.ts"
   ],
   "src/features/auth/hooks/useRBAC.tsx": [
-   "src/features/auth/index.ts"
+   "src/features/auth/index.ts",
+   "src/integrations/supabase/client.ts"
   ],
   "src/features/auth/hooks/useRolePermissions.ts": [
    "src/features/auth/hooks/useRBAC.tsx",

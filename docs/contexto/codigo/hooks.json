@@ -1650,13 +1650,16 @@
    "hooks_exportados": [
     "useRBAC"
    ],
-   "linhas": 250,
+   "linhas": 286,
    "dominio": "features/auth",
-   "tabelas": [],
+   "tabelas": [
+    "role_permissions"
+   ],
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
     "useAuth",
+    "useEffect",
     "useMemo"
    ],
    "canais_realtime": [],
@@ -1665,7 +1668,7 @@
     "src/features/auth/hooks/useRolePermissions.ts",
     "src/features/auth/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/auth/hooks/useRolePermissions.ts",

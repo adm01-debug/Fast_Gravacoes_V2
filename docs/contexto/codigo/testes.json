@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 123,
+ "total": 124,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 99
+  "unit": 100
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 87
+   "arquivos": 88
   },
   {
    "padrao": "outro",
@@ -391,6 +391,18 @@
     "src/features/auth/hooks/useMFA.ts"
    ],
    "casos": 2,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/auth/hooks/useRBAC.test.tsx",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/features/auth/hooks/useRBAC.tsx",
+    "src/features/auth/index.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1326,7 +1338,8 @@
   "src/features/auth/components/AuthProvider.tsx": 1,
   "src/features/auth/hooks/useAuth.ts": 1,
   "src/features/auth/hooks/useMFA.ts": 1,
-  "src/features/auth/index.ts": 1,
+  "src/features/auth/hooks/useRBAC.tsx": 1,
+  "src/features/auth/index.ts": 2,
   "src/features/auth/services/authService.ts": 1,
   "src/features/auth/types/auth.types.ts": 1,
   "src/features/inventory/hooks/useInventory.ts": 1,
@@ -1351,7 +1364,7 @@
   "src/hooks/use-smart-back.ts": 1,
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,
-  "src/integrations/supabase/client.ts": 11,
+  "src/integrations/supabase/client.ts": 12,
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
   "src/lib/csvSafety.ts": 1,
@@ -1498,7 +1511,6 @@
    "src/features/analytics/hooks/useMLPredictions.ts",
    "src/features/analytics/hooks/useOEEDashboardFilters.ts",
    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
-   "src/features/auth/hooks/useRBAC.tsx",
    "src/features/auth/hooks/useRolePermissions.ts",
    "src/features/auth/hooks/useSessionManager.tsx",
    "src/features/auth/hooks/useSessionTimeout.tsx",

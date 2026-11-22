@@ -4040,6 +4040,7 @@
     "profiles",
     "push_notifications",
     "qr_scan_history",
+    "role_permissions",
     "techniques"
    ],
    "rpcs": [],
@@ -4059,7 +4060,8 @@
    "diretos": {
     "tabelas": [
      "inventory_items",
-     "inventory_movements"
+     "inventory_movements",
+     "role_permissions"
     ],
     "rpcs": [],
     "edges": [
@@ -7273,6 +7275,7 @@
     "profiles",
     "push_notifications",
     "qr_scan_history",
+    "role_permissions",
     "techniques",
     "user_roles"
    ],

@@ -3890,8 +3890,8 @@
   {
    "modulo": "features/auth",
    "arquivos": 11,
-   "testes": 3,
-   "linhas": 1611,
+   "testes": 4,
+   "linhas": 1647,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4041,6 +4041,7 @@
     "lot_movements",
     "lot_quality_inspections",
     "production_lots",
+    "role_permissions",
     "shipments",
     "shipping_providers"
    ],
@@ -4633,6 +4634,7 @@
     "packaging_task_checklist",
     "packaging_tasks",
     "profiles",
+    "role_permissions",
     "techniques",
     "user_roles"
    ],
