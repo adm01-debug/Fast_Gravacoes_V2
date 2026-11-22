@@ -38329,6 +38329,11 @@
         "statements": 4,
         "statements_sha": "78dad7904deebe47",
         "version": "20261120203000"
+      },
+      {
+        "name": "seed_role_permissions",
+        "statements": [],
+        "version": "20261122010000"
       }
     ],
     "policies": [

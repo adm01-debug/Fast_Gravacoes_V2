@@ -253,3 +253,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261120160000 | [fix_inventory_movements_write_policies](migrations/20261120160000_fix_inventory_movements_write_policies.sql) | 5 |
 | 20261120173500 | [public_tracking_rpc](migrations/20261120173500_public_tracking_rpc.sql) | 4 |
 | 20261120203000 | [public_tracking_remove_client](migrations/20261120203000_public_tracking_remove_client.sql) | 4 |
+| 20261122010000 | [seed_role_permissions](migrations/20261122010000_seed_role_permissions.sql) | 0 |
