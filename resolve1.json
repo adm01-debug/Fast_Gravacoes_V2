@@ -1,6 +1,0 @@
-{
-    "query":  "mutation ResolveThread($threadId: ID!) {\n  resolveReviewThread(input: { threadId: $threadId }) {\n    thread { id isResolved }\n  }\n}",
-    "variables":  {
-                      "threadId":  "PRRT_kwDOSaWszM66jXj1"
-                  }
-}

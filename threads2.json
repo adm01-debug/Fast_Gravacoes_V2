@@ -1,3 +1,0 @@
-{
-    "query":  "query ReviewThreads {\n  repository(owner: \"adm01-debug\", name: \"Fast_Gravacoes_V2\") {\n    pullRequest(number: 256) {\n      reviewThreads(first: 20) {\n        nodes {\n          id\n          isResolved\n          comments(first: 8) {\n            nodes {\n              id\n              author { login }\n            }\n          }\n        }\n      }\n    }\n  }\n}"
-}

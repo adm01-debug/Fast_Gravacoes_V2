@@ -1,8 +1,0 @@
-{
-    "query":  "query ReviewThreads($owner: String!, $repo: String!, $number: Int!) {\n  repository(owner: $owner, name: $repo) {\n    pullRequest(number: $number) {\n      reviewThreads(first: 20) {\n        nodes {\n          id\n          isResolved\n          isOutdated\n          path\n          comments(first: 8) {\n            nodes { author { login } body }\n          }\n        }\n      }\n    }\n  }\n}",
-    "variables":  {
-                      "number":  256,
-                      "owner":  "adm01-debug",
-                      "repo":  "Fast_Gravacoes_V2"
-                  }
-}
