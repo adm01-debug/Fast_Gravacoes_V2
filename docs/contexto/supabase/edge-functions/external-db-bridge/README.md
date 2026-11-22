@@ -4,7 +4,7 @@
 |---|---|
 | nome | external-db-bridge |
 | status | ACTIVE |
-| versão | 134 |
+| versão | 136 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/external-db-bridge/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
