@@ -212,12 +212,12 @@ export function KioskMode({
                                           <Clock className="h-5 w-5 mx-auto mb-2 text-blue-500" />
                                           <p className="text-[10px] font-bold text-muted-foreground uppercase">Tempo Decorrido</p>
                                           <p className="text-xl font-black">
-                                            {activeJob?.actualStartTime
-                                              ? (() => {
-                                                  const min = Math.max(0, Math.floor((currentTime.getTime() - new Date(activeJob.actualStartTime!).getTime()) / 60000));
-                                                  return min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min}min`;
-                                                })()
-                                              : "—"}
+                                            {(() => {
+                                              const start = activeJob?.actualStartTime;
+                                              if (!start) return "—";
+                                              const min = Math.max(0, Math.floor((currentTime.getTime() - new Date(start).getTime()) / 60000));
+                                              return min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min}min`;
+                                            })()}
                                           </p>
                      </div>
                      <div className="bg-background/50 p-4 rounded-xl border border-border/50 text-center">
