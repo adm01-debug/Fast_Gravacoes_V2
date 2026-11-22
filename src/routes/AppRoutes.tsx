@@ -109,19 +109,21 @@ function ProtectedPage({
   children,
   fallback,
   allowedRoles,
+  requiredPermission,
   direction = 'forward',
   transitionPreset,
 }: {
   children: React.ReactNode;
   fallback: React.ReactNode;
   allowedRoles?: AppRole[];
+  requiredPermission?: string;
   direction?: 'forward' | 'backward';
   transitionPreset?: TransitionPreset;
 }) {
   const { pathname } = useLocation();
   const preset = transitionPreset ?? resolveRoutePreset(pathname);
   return (
-    <ProtectedRoute allowedRoles={allowedRoles}>
+    <ProtectedRoute allowedRoles={allowedRoles} requiredPermission={requiredPermission}>
       <PageTransition direction={direction} preset={preset}>
         <Suspense fallback={fallback}>{children}</Suspense>
       </PageTransition>
@@ -235,7 +237,7 @@ export function AnimatedRoutes() {
         {/* Resources */}
         <Route path="/machines" element={<ProtectedPage direction={direction} fallback={<ListPageSkeleton />} allowedRoles={['coordinator', 'manager']}><MachinesPage /></ProtectedPage>} />
         <Route path="/machines/compare" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><MachineComparisonPage /></ProtectedPage>} />
-        <Route path="/energy" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']}><EnergyDashboard /></ProtectedPage>} />
+        <Route path="/energy" element={<ProtectedPage direction={direction} fallback={<KPIPageSkeleton />} allowedRoles={['coordinator', 'manager']} requiredPermission="energy:read"><EnergyDashboard /></ProtectedPage>} />
         <Route path="/inventory" element={<ProtectedPage direction={direction} fallback={<ListPageSkeleton />} allowedRoles={['coordinator', 'manager']}><InventoryPage /></ProtectedPage>} />
 
         {/* Quality & Traceability */}

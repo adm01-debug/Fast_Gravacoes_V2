@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { PermissionGate, useRBAC } from '@/features/auth';
 import { QRLabelModal } from '@/components/inventory/QRLabelModal';
 import { InventoryItem, InventoryMovement } from '@/features/inventory/hooks/useInventory';
 
@@ -21,16 +20,16 @@ export function InventoryCard({
   item,
   onMovement,
   isSelected,
-  onSelect
+  onSelect,
+  canAdjustStock,
 }: {
   item: InventoryItem,
   onMovement: (data: Omit<InventoryMovement, 'id' | 'created_at' | 'user_id'>) => Promise<unknown>,
   isSelected: boolean,
-  onSelect: (id: string, checked: boolean) => void
+  onSelect: (id: string, checked: boolean) => void,
+  canAdjustStock: boolean,
 }) {
   const isLowStock = item.current_stock <= item.min_stock_level;
-    const { hasPermission } = useRBAC();
-    const canAdjustStock = hasPermission('inventory:adjust');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [movementType, setMovementType] = useState<'IN' | 'OUT'>('IN');
@@ -181,11 +180,11 @@ export function InventoryCard({
             </DialogContent>
           </Dialog>
 
-          <PermissionGate permission="inventory:adjust">
+          {canAdjustStock && (
             <Button variant="outline" size="sm" className="flex-1 text-xs gap-1.5 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" onClick={() => { setMovementType('OUT'); setIsModalOpen(true); }}>
               <ArrowDownRight className="h-3 w-3" /> Saída
             </Button>
-          </PermissionGate>
+          )}
         </div>
       </CardContent>
 

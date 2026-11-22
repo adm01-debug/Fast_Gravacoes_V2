@@ -214,7 +214,7 @@ export const RESOURCE_LABELS: Record<string, string> = {
   'users': 'Usuários',
 };
 
-const ACTION_LABELS: Record<string, string> = {
+export const ACTION_LABELS: Record<string, string> = {
   read: 'Visualizar', create: 'Criar', update: 'Editar', delete: 'Excluir',
   manage: 'Gerenciar', resolve: 'Resolver', sync: 'Sincronizar',
   approve: 'Aprovar', adjust: 'Ajustar', transfer: 'Transferir',
