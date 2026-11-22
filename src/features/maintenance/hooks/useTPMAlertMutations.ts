@@ -21,6 +21,24 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
     mutationFn: async () => {
       const now = new Date();
 
+      const alertSeverity: Record<MaintenanceAlert['alert_type'], number> = {
+        upcoming: 1,
+        due: 2,
+        overdue: 3,
+        critical: 4,
+        predictive: 0,
+      };
+
+
+      // Estado fresco dos alertas pendentes: a lista recebida pelo hook pode
+      // estar desatualizada (retry após falha parcial), o que duplicaria
+      // alertas ou deixaria contradições. O banco é a fonte de verdade.
+      const { data: freshAlerts, error: freshError } = await supabase
+        .from('maintenance_alerts')
+        .select('id, schedule_id, machine_id, alert_type, message, is_resolved, resolved_at, created_at')
+        .eq('is_resolved', false);
+      if (freshError) throw freshError;
+      const sourceAlerts = freshAlerts ?? alerts;
       // 1. Static checks (due dates)
       const alertsToCreate: Array<{
         schedule_id: string;
@@ -60,13 +78,24 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         })
         .filter((alert): alert is NonNullable<typeof alert> => alert !== null)
         .filter(alert => {
-          const existingAlert = alerts.find(
+          const existingAlert = sourceAlerts.find(
             a =>
               a.schedule_id === alert.schedule_id &&
               a.alert_type === alert.alert_type &&
               !a.is_resolved
           );
-          return !existingAlert;
+          if (existingAlert) return false;
+          // Não insere alerta de menor gravidade quando o schedule já tem um
+          // pendente mais grave (evita contradição após falha parcial / retry).
+          const blockedByHigher = sourceAlerts.some(
+            a =>
+              a.schedule_id === alert.schedule_id &&
+              a.alert_type !== 'predictive' &&
+              alert.alert_type !== 'predictive' &&
+              alertSeverity[a.alert_type] >= alertSeverity[alert.alert_type] &&
+              !a.is_resolved
+          );
+          return !blockedByHigher;
         });
 
       // 2. Predictive AI Check (Edge Function)
@@ -82,7 +111,7 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
               // High risk detected by AI, find the primary schedule for this machine
               const machineSchedule = schedules.find(s => s.machine_id === p.machine.id && s.is_active);
               if (machineSchedule) {
-                const existingAlert = alerts.find(a => a.schedule_id === machineSchedule.id && a.alert_type === 'predictive' && !a.is_resolved);
+                const existingAlert = sourceAlerts.find(a => a.schedule_id === machineSchedule.id && a.alert_type === 'predictive' && !a.is_resolved);
                 if (!existingAlert) {
                   alertsToCreate.push({
                     schedule_id: machineSchedule.id,
@@ -103,27 +132,12 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
       // Resolve lower-severity pending alerts for schedules that are about
       // to receive a higher-severity alert (e.g. an 'overdue' supersedes a
       // pending 'due') so the panel never shows contradictory states for
-      // the same maintenance at once.
-      const alertSeverity: Record<MaintenanceAlert['alert_type'], number> = {
-        upcoming: 1,
-        due: 2,
-        overdue: 3,
-        critical: 4,
-        predictive: 0,
-      };
-      const alertsToResolve = alerts.filter(a =>
-        !a.is_resolved &&
-        a.alert_type !== 'predictive' &&
-        alertsToCreate.some(newAlert =>
-          newAlert.schedule_id === a.schedule_id &&
-          newAlert.alert_type !== 'predictive' &&
-          alertSeverity[newAlert.alert_type] > alertSeverity[a.alert_type]
-        )
-      );
-      // Insert first; only resolve the superseded (lower-severity) alerts
-      // if every insert succeeds. This keeps the panel consistent when a
-      // single write fails (an insert error no longer discards the
-      // previous pending alert).
+      // the same maintenance at once. The decision is per-schedule and
+      // based on the alert state that will actually hold afterwards: the union
+      // of the alerts persisted in this run plus the ones already pending in
+      // the database (fresh read), so a partial failure or a retry never
+      // leaves contradictions behind.
+      // Insert first.
       const results = await Promise.all(
         alertsToCreate.map(async (alertData) => {
           const { error } = await supabase.from('maintenance_alerts').insert(alertData);
@@ -131,18 +145,39 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         })
       );
 
-      if (results.every(r => r !== null)) {
-        const supersedeMark = new Date().toISOString();
-        for (const pending of alertsToResolve) {
-          const { error } = await supabase
-            .from('maintenance_alerts')
-            .update({ is_resolved: true, resolved_at: supersedeMark })
-            .eq('id', pending.id)
-            // Guard: missing records mean a user dismissed (or resolved)
-            // this alert concurrently ? do not overwrite their stamp.
-            .eq('is_resolved', false);
-          if (error) throw error;
+      const supersedeMark = new Date().toISOString();
+      const pendingAlerts = sourceAlerts.filter(a => !a.is_resolved);
+
+      // Highest severity reached per schedule after this run: union of the
+      // alerts persisted now and the alerts already pending in the database.
+      const effectiveBySchedule = new Map<string, number>();
+      const mergeSeverity = (scheduleId: string, severity: number) => {
+        const current = effectiveBySchedule.get(scheduleId) ?? 0;
+        if (severity > current) effectiveBySchedule.set(scheduleId, severity);
+      };
+      for (const saved of results) {
+        if (saved !== null) mergeSeverity(saved.schedule_id, alertSeverity[saved.alert_type]);
+      }
+      for (const pending of pendingAlerts) {
+        if (pending.alert_type !== 'predictive') {
+          mergeSeverity(pending.schedule_id, alertSeverity[pending.alert_type]);
         }
+      }
+
+      // Supersede only the alerts that are strictly below their schedule's
+      // effective severity; predictive risk is independent and preserved.
+      for (const pending of pendingAlerts) {
+        if (pending.alert_type === 'predictive') continue;
+        const effective = effectiveBySchedule.get(pending.schedule_id) ?? 0;
+        if (alertSeverity[pending.alert_type] >= effective) continue;
+        const { error } = await supabase
+          .from('maintenance_alerts')
+          .update({ is_resolved: true, resolved_at: supersedeMark })
+          .eq('id', pending.id)
+          // Guard: missing records mean a user dismissed (or resolved)
+          // this alert concurrently ? do not overwrite their stamp.
+          .eq('is_resolved', false);
+        if (error) throw error;
       }
 
       return results.filter(r => r !== null).length;
