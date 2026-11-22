@@ -18,7 +18,7 @@ import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
 
 // Default VAPID public key - should be overridden by environment variable
-const DEFAULT_VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U';
+const DEFAULT_VAPID_PUBLIC_KEY = 'BNqegy2GmfICoO05Urf9cuBPcEBFBUXhZSQQbQUvT0xta8hOQU3iZOwUnLh4ahv0qA5hELrJCkPf7xE4B99psuo';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);

@@ -12,7 +12,7 @@ import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
 
 // Chave pública VAPID - substitua pela sua chave gerada
-const VAPID_PUBLIC_KEY = 'BNbxGYNMhEIi9zrneh7mqBs0ePmGEEFb4VDl7yZzfFzVV4OTjFQP6dZjgQxBBBDMhPpNkH6Y4A4VaOJlBzLqQxo';
+const VAPID_PUBLIC_KEY = 'BNqegy2GmfICoO05Urf9cuBPcEBFBUXhZSQQbQUvT0xta8hOQU3iZOwUnLh4ahv0qA5hELrJCkPf7xE4B99psuo';
 
 export function useWebPushNotifications() {
   const { user } = useAuth();
