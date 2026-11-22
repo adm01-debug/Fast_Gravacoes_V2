@@ -31,9 +31,8 @@ import {
   AlertTriangle, RotateCcw, Pause, Command, Trash2} from 'lucide-react';
 import { useSchedulingData } from '@/features/jobs';
 import { DbJob } from '@/features/jobs';
-import { JobStatus, assertTransition, canTransition } from '@/features/jobs';
+import { JobStatus, assertTransition, canTransition, jobsService } from '@/features/jobs';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -182,26 +181,27 @@ export default function KanbanBoard() {
       updateData.actual_end_time = new Date().toISOString();
     }
 
-    const { error } = await supabase.from('jobs').update(updateData).eq('id', jobId);
-    if (error) {
+    try {
+      await jobsService.update(jobId, updateData);
+    } catch {
       toast.error('Erro ao atualizar status');
-    } else {
-      toast.success(`Job movido para "${mapping.label}"`, {
-        action: {
-          label: 'Desfazer',
-          onClick: async () => {
-            if (job) {
-              await supabase.from('jobs').update({
-                status: job.status,
-                updated_at: new Date().toISOString()
-              }).eq('id', jobId);
-              handleJobsUpdate();
-            }
+      return;
+    }
+    toast.success(`Job movido para "${mapping.label}"`, {
+      action: {
+        label: 'Desfazer',
+        onClick: async () => {
+          if (job) {
+            await jobsService.update(jobId, {
+              status: job.status,
+              updated_at: new Date().toISOString()
+            });
+            handleJobsUpdate();
           }
         }
-      });
-      handleJobsUpdate();
-    }
+      }
+    });
+    handleJobsUpdate();
   }, [jobs, handleJobsUpdate]);
 
   // Bulk actions
@@ -225,15 +225,10 @@ export default function KanbanBoard() {
       if (targetStatus === 'production') updateData.actual_start_time = new Date().toISOString();
       if (targetStatus === 'finished') updateData.actual_end_time = new Date().toISOString();
 
-      const updates = selectedJobsList.map(j =>
-        supabase.from('jobs').update(updateData).eq('id', j.id)
-      );
-      const settled = await Promise.allSettled(updates);
-      const errors = settled.flatMap(r =>
-        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
-      );
+      const results = await Promise.allSettled(selectedJobsList.map(j => jobsService.update(j.id, updateData)));
+      const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
       if (errors.length > 0) {
-        toast.error(`Erro ao mover jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao mover jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
         return;
       }
       const allColumns = [...statusColumns, ...exceptionStatuses];
@@ -247,30 +242,20 @@ export default function KanbanBoard() {
         toast.error(`${invalid.length} job(s) não podem ser enviados para Retrabalho a partir do estado atual`);
         return;
       }
-      const updates = selectedJobsList.map(j =>
-        supabase.from('jobs').update({ status: 'rework', updated_at: new Date().toISOString() }).eq('id', j.id)
-      );
-      const settled = await Promise.allSettled(updates);
-      const errors = settled.flatMap(r =>
-        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
-      );
+      const results = await Promise.allSettled(selectedJobsList.map(j => jobsService.update(j.id, { status: 'rework', updated_at: new Date().toISOString() })));
+      const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
       if (errors.length > 0) {
-        toast.error(`Erro ao marcar retrabalho: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao marcar retrabalho: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
         return;
       }
       toast.success(`${selectedJobs.size} jobs marcados como Retrabalho`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-      const updates = Array.from(selectedJobs).map(id =>
-        supabase.from('jobs').delete().eq('id', id)
-      );
-      const settled = await Promise.allSettled(updates);
-      const errors = settled.flatMap(r =>
-        r.status === 'fulfilled' ? (r.value.error ? [r.value.error] : []) : [r.reason]
-      );
+      const results = await Promise.allSettled(Array.from(selectedJobs).map(id => jobsService.delete(id)));
+      const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
       if (errors.length > 0) {
-        toast.error(`Erro ao excluir jobs: ${errors.map((e: unknown) => (e as { message?: string } | null)?.message ?? String(e)).join('; ')}`);
+        toast.error(`Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
         return;
       }
       toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);

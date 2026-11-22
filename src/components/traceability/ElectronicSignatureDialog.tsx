@@ -8,18 +8,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { supabase } from '@/integrations/supabase/client';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShieldCheck, Fingerprint, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
+interface SignatureBulkResult {
+  applied: boolean;
+  appliedIds: string[];
+  abortedIds: string[];
+  message?: string;
+}
+
 interface ElectronicSignatureDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string) => Promise<SignatureBulkResult>;
   title?: string;
   description?: string;
   actionLabel?: string;
+  operationMetadata?: Record<string, unknown>;
 }
 
 export function ElectronicSignatureDialog({
@@ -28,13 +37,14 @@ export function ElectronicSignatureDialog({
   onConfirm,
   title = "Assinatura Eletrônica (21 CFR Part 11)",
   description = "Para prosseguir com esta operação crítica, confirme sua identidade e o motivo da alteração.",
-  actionLabel = "Confirmar e Assinar"
+  actionLabel = "Confirmar e Assinar",
+  operationMetadata,
 }: ElectronicSignatureDialogProps) {
   const [password, setPassword] = useState('');
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!password) {
       toast.error('Senha de assinatura é obrigatória');
       return;
@@ -45,15 +55,57 @@ export function ElectronicSignatureDialog({
     }
 
     setIsSubmitting(true);
-    // Em um sistema real, validaríamos a senha contra o Supabase Auth ou um PIN específico
-    setTimeout(() => {
-      onConfirm(reason);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        throw new Error('Usuário não encontrado');
+      }
+
+          // Valida a senha ANTES de aplicar qualquer operacao: assinatura invalida
+                // nunca dispara mudanca de dado no banco. A chamada REST direta ao endpoint
+                // de token nao persiste/usurpa a sessao: o supabase-js continua com a sessao
+                // MFA atual, entao assinar um lote nao derruba o usuario para novo 2FA.
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL as string}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+        },
+        body: JSON.stringify({ email: user.email, password }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Senha incorreta');
+      }
+
+          // Senha validada: aplica a operacao no banco (onConfirm revalida contra o
+                // banco na pagina). A assinatura so e persistida se a alteracao foi de fato
+                // aplicada - operacao abortada nao gera entrada de auditoria fake.
+                const result = await onConfirm(reason);
+                if (!result.applied) {
+                  setIsSubmitting(false);
+                  toast.error(result.message || 'Operação não aplicada: reabra a assinatura para reconfirmar.');
+                  return;
+                }
+
+      await supabase.from('security_events').insert({
+        event_type: 'electronic_signature',
+        severity: 'info',
+        user_id: user.id,
+        user_email: user.email,
+                  details: { reason, ...operationMetadata, resultado: 'aplicado', lotes_aplicados: result.appliedIds },
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      });
+
       setIsSubmitting(false);
       onOpenChange(false);
       setPassword('');
       setReason('');
       toast.success('Operação assinada e registrada na trilha de auditoria imutável');
-    }, 800);
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error(err instanceof Error ? err.message : 'Falha na validação da senha');
+    }
   };
 
   return (
