@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '../index';
+import { supabase } from '@/integrations/supabase/client';
 import type { AppRole } from '../index';
 
 // Define permissions for each role
@@ -133,40 +134,74 @@ export interface RBACResult {
 
 export function useRBAC(): RBACResult {
   const { role, isCoordinator, isManager, isOperator, isAdmin, isLoading } = useAuth();
+  const [dbPermissions, setDbPermissions] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (isLoading || !role) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('role_permissions')
+          .select('permission')
+          .eq('role', role);
+        if (cancelled) return;
+        if (error) throw error;
+        // Banco é a fonte primária da autorização (tela de permissões tem efeito real).
+        setDbPermissions((data || []).map(p => p.permission));
+      } catch {
+        // Fallback para o mapa estático em caso de falha/erro de rede.
+        if (!cancelled) setDbPermissions(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [role, isLoading]);
 
   const permissions = useMemo(() => {
-    if (isLoading || !role) return [];
-    
-    const perms = ROLE_PERMISSIONS[role] || [];
+    const base = dbPermissions !== null ? dbPermissions : (ROLE_PERMISSIONS[role] || []);
+    // Union com o mapa estático garante zero regressão: permissões hard-coded
+    // históricas continuam valendo mesmo se o banco não listar todas.
+    const staticPerms = ROLE_PERMISSIONS[role] || [];
     // Standardize all permissions to use ":" instead of "." and remove duplicates
-    const standardized = perms.map(p => p.replace(/\./g, ':'));
+    const standardized = [...new Set([...base, ...staticPerms])].map(p => p.replace(/\./g, ':'));
     return Array.from(new Set(standardized));
-  }, [role, isLoading]);
+  }, [dbPermissions, role]);
+
+  const resourceMatch = useMemo(() => {
+    return (permission: string): boolean => {
+      const [resource] = permission.split(':');
+      return permissions.includes(`${resource}:all`);
+    };
+  }, [permissions]);
 
   const hasPermission = useMemo(() => {
     return (permission: string): boolean => {
       if (!role) return false;
       if (role === 'admin') return true;
       const target = permission.replace(/\./g, ':');
-      return permissions.includes(target);
+      return permissions.includes(target) || resourceMatch(permission);
     };
-  }, [role, permissions]);
+  }, [role, permissions, resourceMatch]);
 
   const hasAnyPermission = useMemo(() => {
     return (permissionList: string[]): boolean => {
       if (!role) return false;
       if (role === 'admin') return true;
-      return permissionList.some(p => permissions.includes(p));
+      return permissionList.some(p => permissions.includes(p) || resourceMatch(p));
     };
-  }, [role, permissions]);
+  }, [role, permissions, resourceMatch]);
 
   const hasAllPermissions = useMemo(() => {
     return (permissionList: string[]): boolean => {
       if (!role) return false;
       if (role === 'admin') return true;
-      return permissionList.every(p => permissions.includes(p));
+      return permissionList.every(p => permissions.includes(p) || resourceMatch(p));
     };
-  }, [role, permissions]);
+  }, [role, permissions, resourceMatch]);
 
   const canAccessRoute = useMemo(() => {
     return (path: string): boolean => {
@@ -177,9 +212,9 @@ export function useRBAC(): RBACResult {
       const requiredPermissions = ROUTE_PERMISSIONS[path];
       if (!requiredPermissions) return true; // No restrictions defined
 
-      return requiredPermissions.some(p => permissions.includes(p));
+      return requiredPermissions.some(p => permissions.includes(p) || resourceMatch(p));
     };
-  }, [role, permissions]);
+  }, [role, permissions, resourceMatch]);
 
   return {
     hasPermission,
