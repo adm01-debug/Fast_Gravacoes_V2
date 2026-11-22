@@ -117,6 +117,61 @@ describe('useRBAC - permissoes do banco (F-007)', () => {
   });
 });
 
+describe('useRBAC - fetch condicional (F-007 threads rodada 2)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('enabled:false pula a consulta ao banco e usa o mapa estatico', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
+    // Operator tem jobs:read no mapa estatico; sem a chamada ao banco, o
+    // fallback estatico resolve na hora (isPermissionLoading=false e fechado).
+    const { result } = renderHook(() => useRBAC({ enabled: false }));
+
+    expect(result.current.hasPermission('jobs:read')).toBe(true);
+    expect(result.current.hasPermission('jobs:create')).toBe(false);
+    expect(result.current.isPermissionLoading).toBe(false);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
+  it('isPermissionLoading fica true enquanto o banco nao responde e false ao resolver', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
+    let resolveFetch: (v: unknown) => void = () => {};
+    const pending = new Promise((resolve) => {
+      resolveFetch = resolve;
+    });
+    const chainMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnValue(pending),
+    };
+    (mockFrom as ReturnType<typeof vi.fn>).mockReturnValue(chainMock as never);
+
+    const { result } = renderHook(() => useRBAC());
+
+    await waitFor(() => {
+      expect(result.current.isPermissionLoading).toBe(true);
+    });
+    resolveFetch({ data: [{ permission: 'jobs:read' }], error: null });
+    await waitFor(() => {
+      expect(result.current.isPermissionLoading).toBe(false);
+    });
+    expect(result.current.hasPermission('jobs:read')).toBe(true);
+  });
+
+  it('admin nao consulta o banco e isPermissionLoading fica false (bypass implicito)', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({ ...mockUseAuth(), role: 'admin', isAdmin: true });
+
+    const { result } = renderHook(() => useRBAC());
+
+    await waitFor(() => {
+      expect(result.current.isPermissionLoading).toBe(false);
+    });
+    expect(result.current.hasPermission('any:thing')).toBe(true);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+});
+
+
 describe('catalogo deriva do mapa real (fonte unica F-007)', () => {
   it('AVAILABLE_PERMISSIONS e a uniao exata de ROLE_PERMISSIONS (sem vocab divergente)', async () => {
     const { ROLE_PERMISSIONS, AVAILABLE_PERMISSIONS } = await import('../permissions');

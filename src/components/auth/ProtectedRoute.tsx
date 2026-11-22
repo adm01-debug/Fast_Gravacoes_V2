@@ -68,7 +68,11 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles, requiredPermission }: ProtectedRouteProps) {
   const { user, role, isLoading } = useAuth();
-  const { hasPermission, isLoading: rbacLoading } = useRBAC();
+  // Rotas que so exigem perfil nao disparam query de permissoes (F-007):
+  // enabled=false usa o mapa estatico e pula a consulta ao banco.
+  const { hasPermission, isPermissionLoading: rbacLoading } = useRBAC({
+    enabled: Boolean(requiredPermission),
+  });
   const { checked: aalChecked, needsMfaChallenge, hasNoVerifiedFactor } = useAuthenticatorAssuranceLevel();
   const location = useLocation();
 
