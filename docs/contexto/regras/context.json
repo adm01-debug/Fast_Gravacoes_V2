@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c",
+  "sha": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 16:13 UTC",
+  "generated_at": "2026-11-22 16:33 UTC",
   "files_total": 1570,
   "code_files": 1380,
   "code_lines": 204578
@@ -95725,10 +95725,19 @@
   }
  },
  "git": {
-  "sha": "0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c",
+  "sha": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4dc0b5b",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: confianca da predicao exibida na escala correta (0-100) (#258)",
+    "files": [
+     "src/features/maintenance/components/PredictiveHealthCard.tsx"
+    ]
+   },
    {
     "sha": "0a50e73",
     "date": "2026-11-22",
@@ -96053,18 +96062,6 @@
      "analise-prs/prs.json",
      "analise-prs/regras-de-negocio.md"
     ]
-   },
-   {
-    "sha": "ce97162",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)",
-    "files": [
-     "src/lib/logger.test.ts",
-     "src/lib/logger.ts",
-     "src/lib/sanitize.ts",
-     "src/test/sanitize.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -96137,15 +96134,15 @@
     2
    ],
    [
+    "src/features/maintenance/components/PredictiveHealthCard.tsx",
+    1
+   ],
+   [
     "docs/plano-ux-navegacao-200-etapas-261122.md",
     1
    ],
    [
     "docs/plano-190-etapas-261122.md",
-    1
-   ],
-   [
-    "src/features/auth/hooks/useRBAC.test.tsx",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c",
+  "commit": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
   "branch": "main",
-  "data_commit": "2026-11-22T13:06:33-03:00",
+  "data_commit": "2026-11-22T13:32:25-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "4dc0b5b",
+    "data": "2026-11-22",
+    "assunto": "fix: confianca da predicao exibida na escala correta (0-100) (#258)"
+   },
    {
     "sha": "0a50e73",
     "data": "2026-11-22",
@@ -126,15 +131,10 @@
     "sha": "3d5df1f",
     "data": "2026-11-20",
     "assunto": "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)"
-   },
-   {
-    "sha": "7ddd094",
-    "data": "2026-11-20",
-    "assunto": "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 142,
+  "arquivos_mudados_7d": 143,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -142,7 +142,7 @@
    },
    {
     "pasta": "src/features/maintenance",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "pasta": "src/features/notifications",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 113
+    "commits": 114
    },
    {
     "autor": "devin-ai-integration[bot]",

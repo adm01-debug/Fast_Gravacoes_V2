@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c` (2026-11-22T13:06:33-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b` (2026-11-22T13:32:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -246,7 +246,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7481 nós · 21977 arestas · 659 comunidades · grafo do commit `0a50e735`
+- 7481 nós · 21977 arestas · 660 comunidades · grafo do commit `4dc0b5b2`
 - comunidades maiores: card.tsx (245), Button (194), JobDetailsModal.tsx (139), analytics/index.ts (121), snapshot.py (111), errorHandling.ts (109), useAuth (108), DailyCalendar.tsx (102), generate.py (101), cn (101), gerar.mjs (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-22 `4dc0b5b` fix: confianca da predicao exibida na escala correta (0-100) (#258)
 - 2026-11-22 `0a50e73` docs: plano de 200 etapas de UX de navegacao (#260)
 - 2026-11-22 `efca83b` docs: plano de 190 etapas de melhorias e correcoes (#257)
 - 2026-11-22 `75dc924` fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `9654a58` fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)
 - 2026-11-21 `6d6591c` chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)
 - 2026-11-21 `3c05e4e` fix: F-006 geo-blocking enforced no login (#240)
-- 2026-11-21 `4590899` chore: dossie F-005 marcado resolvida (#239)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
