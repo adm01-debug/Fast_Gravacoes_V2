@@ -68,11 +68,16 @@ export function PackagingTaskDetail({ taskId, onOpenChange }: Props) {
               </div>
             </div>
 
-            {!task.assigned_to && (
+            {!task.assigned_to && task.status !== 'on_hold' && (
               <Button className="w-full" onClick={() => assign.mutate()} disabled={assign.isPending}>
                 Assumir tarefa
               </Button>
             )}
+                        {!task.assigned_to && task.status === 'on_hold' && (
+                          <p className="text-sm text-muted-foreground">
+                            Tarefa em espera por defeito crítico — aguardando coordenador.
+                          </p>
+                        )}
 
             <Tabs defaultValue="triage">
               <TabsList className="grid grid-cols-5 w-full">

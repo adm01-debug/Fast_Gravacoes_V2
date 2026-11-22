@@ -4,6 +4,7 @@
 -- task) e que mantinha o INSERT do defect fora da transação (retry duplicava defect).
 
 drop function if exists public.increment_packaging_rejected(uuid, integer);
+drop function if exists public.record_packaging_defect(uuid, integer, text, text, text, text, text, text);
 
 -- Idempotência: chave opcional por envio de operação; repetir a mesma operação não duplica.
 alter table public.packaging_defects
@@ -86,7 +87,7 @@ begin
          loss_reason = coalesce(v_loss_reason, loss_reason),
          status = case
            when p_severity = 'critical'
-                and status in ('pending','in_triage','packaging')
+                and status in ('pending','in_triage','packaging','ready_to_ship')
              then 'on_hold'
            else status
          end,
@@ -103,8 +104,55 @@ begin
 end;
 $$;
 
+-- Atribuição atômica de tarefa de embalagem: preserva on_hold (defeito crítico
+-- aguardando coordenador) e não "reseta" uma tarefa em espera para in_triage.
+create or replace function public.assign_packaging_task(p_task_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v_is_staff boolean;
+  v_is_operator boolean;
+begin
+  if v_uid is null then
+    raise exception 'Não autenticado';
+  end if;
+  if not public.has_any_active_role() then
+    raise exception 'Usuário sem papel ativo';
+  end if;
+  v_is_staff := public.has_role(v_uid, 'coordinator')
+             or public.has_role(v_uid, 'manager')
+             or public.has_role(v_uid, 'admin');
+  v_is_operator := public.has_role(v_uid, 'operator');
+
+  update public.packaging_tasks
+     set assigned_to = v_uid,
+         started_at = coalesce(started_at, now()),
+         status = case
+           when status = 'on_hold' then 'on_hold'
+           else 'in_triage'
+         end,
+         updated_at = now()
+   where id = p_task_id
+     and (
+       v_is_staff
+       or (v_is_operator and (assigned_to is null or assigned_to = v_uid))
+     );
+
+  if not found then
+    raise exception 'Sem autorização para assumir esta tarefa';
+  end if;
+end;
+$$;
+
 revoke all on function public.record_packaging_defect(uuid, integer, text, text, text, text, text, text, uuid) from public;
 grant execute on function public.record_packaging_defect(uuid, integer, text, text, text, text, text, text, uuid) to authenticated;
+
+revoke all on function public.assign_packaging_task(uuid) from public;
+grant execute on function public.assign_packaging_task(uuid) to authenticated;
 
 comment on function public.record_packaging_defect(uuid, integer, text, text, text, text, text, text, uuid) is
   'Registra defeito de embalagem e incrementa rejected_quantity de forma atômica, idempotente e autorizada.';

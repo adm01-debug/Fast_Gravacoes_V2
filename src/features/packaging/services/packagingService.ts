@@ -93,15 +93,9 @@ export const packagingService = {
   },
 
   async assignToMe(taskId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Não autenticado');
-
-    // Optimistic lock: only take if unassigned or already mine.
-    const { error } = await db
-      .from('packaging_tasks')
-      .update({ assigned_to: user.id, status: 'in_triage', started_at: new Date().toISOString() })
-      .eq('id', taskId)
-      .or(`assigned_to.is.null,assigned_to.eq.${user.id}`);
+    // RPC atomica (F-010): assume a tarefa preservando on_hold (defeito critico
+    // aguardando coordenador) e valida papel ativo + autorizacao no banco.
+    const { error } = await supabase.rpc('assign_packaging_task', { p_task_id: taskId });
     if (error) throw error;
   },
 
