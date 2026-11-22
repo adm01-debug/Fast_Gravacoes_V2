@@ -90,16 +90,47 @@ async function sendWebPush(
     const encodedPayload = base64UrlEncode(JSON.stringify(claims));
     const unsignedToken = `${encodedHeader}.${encodedPayload}`;
 
-    // Import private key and sign
-    const privateKeyBuffer = Uint8Array.from(atob(vapidPrivateKey.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
-    
-    const cryptoKey = await crypto.subtle.importKey(
-      "pkcs8",
-      privateKeyBuffer,
-      { name: "ECDSA", namedCurve: "P-256" },
-      false,
-      ["sign"]
-    );
+    // Import private key and sign.
+    // The web-push generator emits the private key as a raw P-256 scalar
+    // (32 bytes, base64url) — NOT a DER PKCS#8 structure. Accept both formats:
+    // a 32-byte scalar (derive the JWK x/y from the matching public key) or a
+    // full PKCS#8 DER blob.
+    const privateKeyDecoded = atob(vapidPrivateKey.replace(/-/g, "+").replace(/_/g, "/"));
+    const privateKeyBuffer = Uint8Array.from(privateKeyDecoded, c => c.charCodeAt(0));
+
+    let cryptoKey: CryptoKey;
+    if (privateKeyBuffer.length === 32) {
+      // Raw P-256 scalar — build a JWK using the public key coordinates.
+      const publicKeyDecoded = atob(vapidPublicKey.replace(/-/g, "+").replace(/_/g, "/"));
+      const publicKeyRaw = Uint8Array.from(publicKeyDecoded, c => c.charCodeAt(0));
+      if (publicKeyRaw.length !== 65 || publicKeyRaw[0] !== 0x04) {
+        throw new Error("VAPID_PUBLIC_KEY must be an uncompressed P-256 point (65 bytes, 0x04 prefix)");
+      }
+      const jwk: JsonWebKey = {
+        kty: "EC",
+        crv: "P-256",
+        x: btoa(String.fromCharCode(...publicKeyRaw.subarray(1, 33)))
+          .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
+        y: btoa(String.fromCharCode(...publicKeyRaw.subarray(33, 65)))
+          .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
+        d: btoa(String.fromCharCode(...privateKeyBuffer)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
+      };
+      cryptoKey = await crypto.subtle.importKey(
+        "jwk",
+        jwk,
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"]
+      );
+    } else {
+      cryptoKey = await crypto.subtle.importKey(
+        "pkcs8",
+        privateKeyBuffer,
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"]
+      );
+    }
 
     const signature = await crypto.subtle.sign(
       { name: "ECDSA", hash: { name: "SHA-256" } },
