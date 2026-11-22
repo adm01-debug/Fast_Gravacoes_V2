@@ -470,7 +470,7 @@
    "nome": "daily-maintenance-summary",
    "entrada": "supabase/functions/daily-maintenance-summary/index.ts",
    "arquivos": 1,
-   "linhas": 231,
+   "linhas": 253,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

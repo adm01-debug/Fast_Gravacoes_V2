@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
+  "commit": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
   "branch": "main",
-  "data_commit": "2026-11-22T13:32:25-03:00",
+  "data_commit": "2026-11-22T16:36:33-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "ca42441",
+    "data": "2026-11-22",
+    "assunto": "fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)"
+   },
    {
     "sha": "4dc0b5b",
     "data": "2026-11-22",
@@ -126,34 +131,29 @@
     "sha": "7e8a0f6",
     "data": "2026-11-20",
     "assunto": "infra: cache npm no job de contratos do automation-local (#230)"
-   },
-   {
-    "sha": "3d5df1f",
-    "data": "2026-11-20",
-    "assunto": "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 143,
+  "arquivos_mudados_7d": 161,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "pasta": "src/features/maintenance",
-    "mudancas": 23
+    "mudancas": 26
    },
    {
     "pasta": "src/features/notifications",
     "mudancas": 21
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 18
+    "pasta": "src/features/jobs",
+    "mudancas": 20
    },
    {
-    "pasta": "src/features/jobs",
+    "pasta": "src/components/dashboard",
     "mudancas": 18
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 114
+    "commits": 115
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1572,
   "arquivos_codigo": 1120,
-  "linhas_codigo": 189202,
+  "linhas_codigo": 189321,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58789
+   "linhas": 58793
   },
   "src/constants": {
    "arquivos": 2,
@@ -493,11 +493,11 @@
   },
   "src/features": {
    "arquivos": 329,
-   "linhas": 46267
+   "linhas": 46353
   },
   "src/hooks": {
    "arquivos": 61,
-   "linhas": 7792
+   "linhas": 7796
   },
   "src/i18n": {
    "arquivos": 1,
@@ -509,7 +509,7 @@
   },
   "src/lib": {
    "arquivos": 52,
-   "linhas": 6585
+   "linhas": 6586
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 16838
+   "linhas": 16840
   },
   "src/providers": {
    "arquivos": 2,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11255
+   "linhas": 11277
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

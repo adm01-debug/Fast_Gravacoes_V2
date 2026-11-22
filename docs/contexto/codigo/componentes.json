@@ -50,7 +50,7 @@
     "ABCActivityRatesCard"
    ],
    "export_default": null,
-   "linhas": 173,
+   "linhas": 174,
    "dominio": "components/abc",
    "hooks_locais": [],
    "tabelas": [],
@@ -3256,7 +3256,7 @@
     "FactoryHeatmap"
    ],
    "export_default": null,
-   "linhas": 114,
+   "linhas": 115,
    "dominio": "components/machines",
    "hooks_locais": [
     "useSchedulingData"
@@ -3364,7 +3364,7 @@
     "MachineReliabilityTab"
    ],
    "export_default": null,
-   "linhas": 203,
+   "linhas": 204,
    "dominio": "components/machines",
    "hooks_locais": [
     "useMTBFMTTR"
@@ -3884,7 +3884,7 @@
     "ShiftSummaryCard"
    ],
    "export_default": null,
-   "linhas": 100,
+   "linhas": 101,
    "dominio": "components/operator",
    "hooks_locais": [],
    "tabelas": [],
@@ -7992,7 +7992,7 @@
     "CreateScheduleModal"
    ],
    "export_default": null,
-   "linhas": 217,
+   "linhas": 218,
    "dominio": "features/maintenance",
    "hooks_locais": [],
    "tabelas": [],
@@ -9444,7 +9444,7 @@
     "NotificationsPage"
    ],
    "export_default": "NotificationsPage",
-   "linhas": 176,
+   "linhas": 177,
    "dominio": "pages",
    "hooks_locais": [
     "useDailySummaryNotifications",
@@ -9563,7 +9563,7 @@
     "PackagingDashboard"
    ],
    "export_default": "PackagingDashboard",
-   "linhas": 362,
+   "linhas": 363,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

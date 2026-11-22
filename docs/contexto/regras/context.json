@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
+  "sha": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 16:33 UTC",
+  "generated_at": "2026-11-22 19:38 UTC",
   "files_total": 1570,
   "code_files": 1380,
-  "code_lines": 204578
+  "code_lines": 204697
  },
  "version": "1.3.2",
- "facts_hash": "a55e6a49140093c6",
+ "facts_hash": "1c76348e280c7c4a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -21245,7 +21245,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 123
+    "deps_count": 124
    },
    {
     "path": "",
@@ -21307,7 +21307,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 109
+    "deps_count": 110
    },
    {
     "path": "",
@@ -21647,7 +21647,7 @@
     "rpc_transitive": [
      "verify_audit_chain"
     ],
-    "deps_count": 144
+    "deps_count": 145
    },
    {
     "path": "",
@@ -21847,7 +21847,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "",
@@ -21969,7 +21969,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 121
+    "deps_count": 122
    },
    {
     "path": "",
@@ -22091,7 +22091,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 113
+    "deps_count": 114
    },
    {
     "path": "",
@@ -22213,7 +22213,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 111
+    "deps_count": 112
    },
    {
     "path": "",
@@ -22305,7 +22305,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 126
+    "deps_count": 127
    },
    {
     "path": "",
@@ -22666,7 +22666,7 @@
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 162
+    "deps_count": 163
    },
    {
     "path": "",
@@ -22878,7 +22878,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 108
+    "deps_count": 109
    },
    {
     "path": "",
@@ -22914,7 +22914,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 107
+    "deps_count": 108
    },
    {
     "path": "",
@@ -23138,7 +23138,7 @@
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 162
+    "deps_count": 163
    },
    {
     "path": "",
@@ -23596,7 +23596,7 @@
     "rpc_transitive": [
      "get_packaging_leaderboard"
     ],
-    "deps_count": 156
+    "deps_count": 157
    },
    {
     "path": "",
@@ -23756,7 +23756,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 122
+    "deps_count": 123
    },
    {
     "path": "",
@@ -23791,7 +23791,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 116
+    "deps_count": 117
    },
    {
     "path": "",
@@ -23839,7 +23839,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 115
+    "deps_count": 116
    },
    {
     "path": "",
@@ -24069,7 +24069,7 @@
      "webhook-handler"
     ],
     "rpc_transitive": [],
-    "deps_count": 104
+    "deps_count": 105
    },
    {
     "path": "",
@@ -24109,7 +24109,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 116
+    "deps_count": 117
    },
    {
     "path": "",
@@ -24144,7 +24144,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 103
+    "deps_count": 104
    },
    {
     "path": "",
@@ -24255,7 +24255,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 119
+    "deps_count": 120
    },
    {
     "path": "",
@@ -27327,7 +27327,7 @@
   {
    "module": "src/components",
    "files": 416,
-   "lines": 58789,
+   "lines": 58793,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28056,7 +28056,7 @@
   {
    "module": "src/features/jobs",
    "files": 34,
-   "lines": 3640,
+   "lines": 3642,
    "tables": [
     "job_status_history",
     "jobs",
@@ -28160,7 +28160,7 @@
   {
    "module": "src/features/maintenance",
    "files": 41,
-   "lines": 7313,
+   "lines": 7397,
    "tables": [
     "machine_predictions",
     "machines",
@@ -28617,7 +28617,7 @@
   {
    "module": "src/hooks",
    "files": 61,
-   "lines": 7792,
+   "lines": 7796,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -28837,7 +28837,7 @@
   {
    "module": "src/lib",
    "files": 52,
-   "lines": 6585,
+   "lines": 6586,
    "tables": [
     "audit_log",
     "error_logs",
@@ -28980,7 +28980,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16838,
+   "lines": 16840,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29341,7 +29341,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11255,
+   "lines": 11277,
    "tables": [
     "backup_logs",
     "backups",
@@ -30215,18 +30215,19 @@
     ]
    },
    "maintenance_alerts": {
+    "select": [
+     "src/features/maintenance/hooks/useTPMAlertMutations.ts",
+     "src/features/maintenance/hooks/useTPMData.ts",
+     "src/features/notifications/hooks/useNotifications.ts",
+     "src/features/production/services/maintenanceService.ts",
+     "src/pages/NotificationsPage.tsx"
+    ],
     "insert": [
      "src/features/maintenance/hooks/useTPMAlertMutations.ts"
     ],
     "update": [
      "src/features/maintenance/hooks/useTPMAlertMutations.ts",
      "src/features/notifications/hooks/useNotifications.ts"
-    ],
-    "select": [
-     "src/features/maintenance/hooks/useTPMData.ts",
-     "src/features/notifications/hooks/useNotifications.ts",
-     "src/features/production/services/maintenanceService.ts",
-     "src/pages/NotificationsPage.tsx"
     ]
    },
    "maintenance_checklist_items": {
@@ -30282,6 +30283,7 @@
    },
    "maintenance_schedules": {
     "select": [
+     "src/features/maintenance/hooks/useTPMAlertMutations.ts",
      "src/features/maintenance/hooks/useTPMData.ts",
      "src/features/maintenance/hooks/useTPMLifecycleMutations.ts",
      "src/features/production/services/maintenanceService.ts",
@@ -31405,8 +31407,14 @@
     "technique_id"
    ],
    "maintenance_alerts": [
+    "alert_type",
+    "created_at",
     "id",
-    "is_resolved"
+    "is_resolved",
+    "machine_id",
+    "message",
+    "resolved_at",
+    "schedule_id"
    ],
    "maintenance_checklist_items": [
     "checklist_id",
@@ -42351,6 +42359,11 @@
     "file": "supabase/functions/csp-report/index.ts",
     "name": "INBOUND_WINDOW_MS",
     "value": "60"
+   },
+   {
+    "file": "supabase/functions/daily-maintenance-summary/index.ts",
+    "name": "SP_TIMEZONE",
+    "value": "'America/Sao_Paulo'"
    },
    {
     "file": "supabase/functions/excel-export/index.ts",
@@ -61028,6 +61041,10 @@
     "limit": "50"
    },
    {
+    "file": "src/features/maintenance/hooks/useTPMAlertMutations.ts",
+    "limit": "10000"
+   },
+   {
     "file": "src/features/maintenance/hooks/useTPMData.ts",
     "limit": "200"
    },
@@ -70041,7 +70058,7 @@
   },
   "src/components/abc/ABCActivityRatesCard.tsx": {
    "path": "src/components/abc/ABCActivityRatesCard.tsx",
-   "lines": 173,
+   "lines": 174,
    "exports": [
     "function ABCActivityRatesCard"
    ]
@@ -73639,7 +73656,7 @@
   },
   "src/components/machines/FactoryHeatmap.tsx": {
    "path": "src/components/machines/FactoryHeatmap.tsx",
-   "lines": 114,
+   "lines": 115,
    "exports": [
     "function FactoryHeatmap"
    ],
@@ -73719,7 +73736,7 @@
   },
   "src/components/machines/MachineReliabilityTab.tsx": {
    "path": "src/components/machines/MachineReliabilityTab.tsx",
-   "lines": 203,
+   "lines": 204,
    "exports": [
     "function MachineReliabilityTab"
    ]
@@ -74258,7 +74275,7 @@
   },
   "src/components/operator/ShiftSummaryCard.tsx": {
    "path": "src/components/operator/ShiftSummaryCard.tsx",
-   "lines": 100,
+   "lines": 101,
    "exports": [
     "function ShiftSummaryCard"
    ],
@@ -80980,7 +80997,7 @@
   },
   "src/features/jobs/hooks/usePriorityEscalation.ts": {
    "path": "src/features/jobs/hooks/usePriorityEscalation.ts",
-   "lines": 118,
+   "lines": 119,
    "exports": [
     "function usePriorityEscalation"
    ],
@@ -81111,7 +81128,7 @@
   },
   "src/features/jobs/hooks/useSchedulingData.ts": {
    "path": "src/features/jobs/hooks/useSchedulingData.ts",
-   "lines": 338,
+   "lines": 339,
    "exports": [
     "function useSchedulingData",
     "function useJobsData",
@@ -81761,7 +81778,7 @@
   },
   "src/features/maintenance/components/CreateScheduleModal.tsx": {
    "path": "src/features/maintenance/components/CreateScheduleModal.tsx",
-   "lines": 217,
+   "lines": 218,
    "exports": [
     "function CreateScheduleModal"
    ],
@@ -82430,14 +82447,26 @@
   },
   "src/features/maintenance/hooks/useTPMAlertMutations.ts": {
    "path": "src/features/maintenance/hooks/useTPMAlertMutations.ts",
-   "lines": 156,
+   "lines": 239,
    "exports": [
     "function useTPMAlertMutations"
    ],
    "tables": [
     {
      "table": "maintenance_alerts",
+     "op": "select"
+    },
+    {
+     "table": "maintenance_schedules",
+     "op": "select"
+    },
+    {
+     "table": "maintenance_alerts",
      "op": "insert"
+    },
+    {
+     "table": "maintenance_alerts",
+     "op": "update"
     },
     {
      "table": "maintenance_alerts",
@@ -82446,7 +82475,21 @@
    ],
    "table_cols": {
     "maintenance_alerts": [
-     "id"
+     "alert_type",
+     "created_at",
+     "id",
+     "is_resolved",
+     "machine_id",
+     "message",
+     "resolved_at",
+     "schedule_id"
+    ],
+    "maintenance_schedules": [
+     "id",
+     "is_active",
+     "machine_id",
+     "name",
+     "next_due_at"
     ]
    },
    "invokes": [
@@ -82462,6 +82505,9 @@
    ],
    "side_effects": [
     "invoke("
+   ],
+   "pagination": [
+    "10000"
    ]
   },
   "src/features/maintenance/hooks/useTPMApprovalMutations.ts": {
@@ -85908,7 +85954,7 @@
   },
   "src/hooks/useAlertCount.ts": {
    "path": "src/hooks/useAlertCount.ts",
-   "lines": 40,
+   "lines": 41,
    "exports": [
     "function useAlertCount"
    ],
@@ -86402,7 +86448,7 @@
   },
   "src/hooks/useMachineSuggestion.ts": {
    "path": "src/hooks/useMachineSuggestion.ts",
-   "lines": 75,
+   "lines": 76,
    "exports": [
     "function useMachineSuggestion"
    ],
@@ -86793,7 +86839,7 @@
   },
   "src/hooks/useTechniqueCapacityAlerts.ts": {
    "path": "src/hooks/useTechniqueCapacityAlerts.ts",
-   "lines": 99,
+   "lines": 100,
    "exports": [
     "interface CapacityMetric",
     "function useTechniqueCapacityAlerts"
@@ -86991,7 +87037,7 @@
   },
   "src/hooks/abc/useABCMutations.ts": {
    "path": "src/hooks/abc/useABCMutations.ts",
-   "lines": 182,
+   "lines": 183,
    "exports": [
     "function useABCMutations"
    ],
@@ -88167,7 +88213,7 @@
   },
   "src/lib/productivityReport.ts": {
    "path": "src/lib/productivityReport.ts",
-   "lines": 307,
+   "lines": 308,
    "exports": [
     "function generateProductivityReport"
    ],
@@ -89666,7 +89712,7 @@
   },
   "src/pages/NotificationsPage.tsx": {
    "path": "src/pages/NotificationsPage.tsx",
-   "lines": 176,
+   "lines": 177,
    "exports": [
     "default NotificationsPage"
    ],
@@ -89862,7 +89908,7 @@
   },
   "src/pages/PackagingDashboard.tsx": {
    "path": "src/pages/PackagingDashboard.tsx",
-   "lines": 362,
+   "lines": 363,
    "exports": [
     "function PackagingDashboard"
    ],
@@ -92929,7 +92975,7 @@
   },
   "supabase/functions/daily-maintenance-summary/index.ts": {
    "path": "supabase/functions/daily-maintenance-summary/index.ts",
-   "lines": 231,
+   "lines": 253,
    "tables": [
     {
      "table": "maintenance_schedules",
@@ -92973,6 +93019,12 @@
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "SP_TIMEZONE",
+     "value": "'America/Sao_Paulo'"
+    }
    ],
    "uses_service_role": true
   },
@@ -95725,10 +95777,36 @@
   }
  },
  "git": {
-  "sha": "4dc0b5b2f0ddd8305182f754c4d48a30422ddc8b",
+  "sha": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "ca42441",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)",
+    "files": [
+     "src/components/abc/ABCActivityRatesCard.tsx",
+     "src/components/machines/FactoryHeatmap.tsx",
+     "src/components/machines/MachineReliabilityTab.tsx",
+     "src/components/operator/ShiftSummaryCard.tsx",
+     "src/features/analytics/components/bi/BIAIInsights.tsx",
+     "src/features/jobs/hooks/usePriorityEscalation.ts",
+     "src/features/jobs/hooks/useSchedulingData.ts",
+     "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
+     "src/features/maintenance/components/CreateScheduleModal.tsx",
+     "src/features/maintenance/hooks/useTPMAlertMutations.ts",
+     "src/hooks/abc/useABCMutations.ts",
+     "src/hooks/useAlertCount.ts",
+     "src/hooks/useMachineSuggestion.ts",
+     "src/hooks/useTechniqueCapacityAlerts.ts",
+     "src/lib/productivityReport.ts",
+     "src/pages/NotificationsPage.tsx",
+     "src/pages/PackagingDashboard.tsx",
+     "supabase/functions/daily-maintenance-summary/index.ts"
+    ]
+   },
    {
     "sha": "4dc0b5b",
     "date": "2026-11-22",
@@ -96042,26 +96120,6 @@
     "files": [
      "public/sw.js"
     ]
-   },
-   {
-    "sha": "95c091b",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)",
-    "files": [
-     "analise-prs/RELATORIO_PRS.md",
-     "analise-prs/baseline/baseline.md",
-     "analise-prs/decisoes.md",
-     "analise-prs/dossies/PR-119.md",
-     "analise-prs/dossies/PR-120.md",
-     "analise-prs/dossies/PR-121.md",
-     "analise-prs/fontes.json",
-     "analise-prs/funcionalidades.csv",
-     "analise-prs/progresso.json",
-     "analise-prs/prs.csv",
-     "analise-prs/prs.json",
-     "analise-prs/regras-de-negocio.md"
-    ]
    }
   ],
   "hot_files": [
@@ -96130,19 +96188,19 @@
     2
    ],
    [
-    "analise-prs/progresso.json",
-    2
-   ],
-   [
-    "src/features/maintenance/components/PredictiveHealthCard.tsx",
+    "src/components/abc/ABCActivityRatesCard.tsx",
     1
    ],
    [
-    "docs/plano-ux-navegacao-200-etapas-261122.md",
+    "src/components/machines/FactoryHeatmap.tsx",
     1
    ],
    [
-    "docs/plano-190-etapas-261122.md",
+    "src/components/machines/MachineReliabilityTab.tsx",
+    1
+   ],
+   [
+    "src/components/operator/ShiftSummaryCard.tsx",
     1
    ]
   ]

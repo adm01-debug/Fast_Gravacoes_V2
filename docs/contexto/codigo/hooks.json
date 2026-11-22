@@ -2025,7 +2025,7 @@
    "hooks_exportados": [
     "usePriorityEscalation"
    ],
-   "linhas": 118,
+   "linhas": 119,
    "dominio": "features/jobs",
    "tabelas": [
     "jobs"
@@ -2096,7 +2096,7 @@
     "useSchedulingData",
     "useTechniquesData"
    ],
-   "linhas": 338,
+   "linhas": 339,
    "dominio": "features/jobs",
    "tabelas": [
     "profiles",
@@ -2267,10 +2267,11 @@
     "useTPMStats"
    ],
    "canais_realtime": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "usado_por_arquivos": [
     "src/components/dashboard/MaintenanceAlertsWidget.tsx",
     "src/components/digital-twin/FactoryFloorMap.tsx",
+    "src/components/machines/MachineReliabilityTab.tsx",
     "src/features/analytics/components/bi/FuturisticBI.tsx",
     "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
     "src/features/maintenance/components/ChecklistManager.tsx",
@@ -2295,10 +2296,11 @@
    "hooks_exportados": [
     "useTPMAlertMutations"
    ],
-   "linhas": 156,
+   "linhas": 239,
    "dominio": "features/maintenance",
    "tabelas": [
-    "maintenance_alerts"
+    "maintenance_alerts",
+    "maintenance_schedules"
    ],
    "rpcs": [],
    "edges": [
@@ -3627,7 +3629,7 @@
    "hooks_exportados": [
     "useABCMutations"
    ],
-   "linhas": 182,
+   "linhas": 183,
    "dominio": "hooks/abc",
    "tabelas": [
     "abc_activity_rates",
@@ -4121,7 +4123,7 @@
    "hooks_exportados": [
     "useAlertCount"
    ],
-   "linhas": 40,
+   "linhas": 41,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -4494,7 +4496,7 @@
    "hooks_exportados": [
     "useMachineSuggestion"
    ],
-   "linhas": 75,
+   "linhas": 76,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -4808,7 +4810,7 @@
    "hooks_exportados": [
     "useTechniqueCapacityAlerts"
    ],
-   "linhas": 99,
+   "linhas": 100,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
