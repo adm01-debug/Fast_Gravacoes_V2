@@ -41,7 +41,7 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
         supabase
           .from('maintenance_schedules')
           .select('id, machine_id, name, is_active, next_due_at')
-          .eq('is_active', true).limit(10000),
+          .eq('is_active', true).order('next_due_at').limit(10000),
       ]);
       if (freshError) throw freshError;
       if (freshSchedError) throw freshSchedError;
