@@ -20,9 +20,13 @@ import { useState } from 'react';
 import { packagingService } from '../services/packagingService';
 import { toast } from 'sonner';
 
+export interface DefectTriagePayload extends DefectTriageForm {
+  requestId: string;
+}
+
 interface Props {
   taskId: string;
-  onSubmit: (values: DefectTriageForm) => Promise<void> | void;
+  onSubmit: (values: DefectTriagePayload) => Promise<void> | void;
   submitting?: boolean;
 }
 
@@ -55,16 +59,10 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
   };
 
   const handleFormSubmit = async (values: DefectTriageForm) => {
-    if (values.severity === 'critical') {
-      try {
-        await packagingService.updateStatus(taskId, 'on_hold');
-        toast.info('Tarefa colocada em espera — notifique o coordenador');
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Erro ao colocar tarefa em espera');
-        return;
-      }
-    }
-    await onSubmit(values);
+    // request_id: chave de idempotência única por submissão. O React Query reusa as
+    // mesmas variables no retry automático; a RPC (F-010) retorna sem efeito se a
+    // mesma chave já foi processada, evitando defeito/quantidade duplicados.
+    await onSubmit({ ...values, requestId: crypto.randomUUID() });
   };
 
   return (

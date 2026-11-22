@@ -69,7 +69,8 @@ export function usePackagingTask(taskId: string | null) {
   });
 
   const recordDefect = useMutation({
-    mutationFn: (form: DefectTriageForm) => packagingService.recordDefect(requireTaskId(), form),
+    mutationFn: (form: DefectTriageForm & { requestId?: string }) =>
+      packagingService.recordDefect(requireTaskId(), form),
     onSuccess: () => {
       toast.success('Defeito registrado');
       invalidate();

@@ -6087,6 +6087,7 @@ export type Database = {
           p_photo_url?: string | null
           p_notes?: string | null
           p_loss_reason?: string | null
+          p_request_id?: string | null
         }
         Returns: undefined
       }

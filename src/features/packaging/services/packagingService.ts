@@ -163,10 +163,15 @@ export const packagingService = {
     return (data ?? []) as PackagingDefectRow[];
   },
 
-  async recordDefect(taskId: string, form: DefectTriageForm): Promise<void> {
+  async recordDefect(
+    taskId: string,
+    form: DefectTriageForm & { requestId?: string },
+  ): Promise<void> {
     // Operação única e atômica no banco: INSERT do defeito + incremento de
     // rejected_quantity na mesma transação (evita duplicação em retry) com a
-    // mesma checagem de autorização da policy RLS (F-010).
+    // mesma checagem de autorização da policy RLS (F-010). p_request_id é a
+    // chave de idempotência gerada no form; um retry do React Query com a
+    // mesma chave não registra defeito/quantidade duplicados.
     const { error } = await supabase.rpc('record_packaging_defect', {
       p_task_id: taskId,
       p_quantity: form.quantity,
@@ -176,6 +181,7 @@ export const packagingService = {
       p_photo_url: form.photo_url || null,
       p_notes: form.notes ?? null,
       p_loss_reason: form.loss_reason || null,
+      p_request_id: form.requestId || null,
     });
     if (error) throw error;
   },
