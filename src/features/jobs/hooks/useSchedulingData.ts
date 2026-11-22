@@ -210,7 +210,7 @@ export function useSchedulingData() {
     const jobsByDateMap = new Map<string, DbJob[]>();
     jobs.forEach(j => {
       if (j.status === 'finished' && j.actual_end_time) {
-        const d = j.actual_end_time.substring(0, 10);
+        const d = formatDateOnly(new Date(j.actual_end_time));
         const list = jobsByDateMap.get(d) || [];
         list.push(j);
         jobsByDateMap.set(d, list);

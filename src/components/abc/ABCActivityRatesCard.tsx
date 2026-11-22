@@ -40,7 +40,7 @@ export function ABCActivityRatesCard({
     rate_per_unit: '',
   });
 
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
   const periodStart = `${currentMonth}-01`;
   const periodEnd = formatDateOnly(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0));
 

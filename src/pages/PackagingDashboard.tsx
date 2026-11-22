@@ -73,13 +73,13 @@ export default function PackagingDashboard() {
       pending: list.filter(t => t.status === 'pending'),
       inProgress: list.filter(t => t.status === 'in_triage' || t.status === 'packaging' || t.status === 'on_hold'),
       triage: list.filter(t => t.status === 'in_triage'),
-      completedToday: list.filter(t => t.status === 'ready_to_ship' && (t.completed_at ?? '').startsWith(today)),
+      completedToday: list.filter(t => t.status === 'ready_to_ship' && !!t.completed_at && formatDateOnly(new Date(t.completed_at)) === today),
     };
   }, [filteredTasks]);
 
   const completedTodayAll = useMemo(() => {
     const today = formatDateOnly(new Date());
-    return (allTasks ?? []).filter(t => t.status === 'ready_to_ship' && (t.completed_at ?? '').startsWith(today));
+    return (allTasks ?? []).filter(t => t.status === 'ready_to_ship' && !!t.completed_at && formatDateOnly(new Date(t.completed_at)) === today);
   }, [allTasks]);
 
   return (
@@ -315,7 +315,7 @@ export default function PackagingDashboard() {
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `manifesto-carga-${new Date().toISOString().slice(0, 10)}.csv`;
+                  a.download = `manifesto-carga-${formatDateOnly(new Date())}.csv`;
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
