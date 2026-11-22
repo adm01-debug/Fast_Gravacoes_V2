@@ -53,7 +53,11 @@ begin
   -- avanço direto para delivered de um envio que ainda não despachou:
   -- entregar sem passar pelo despacho burlaria a espera da embalagem.
   -- Envios já despachados (in_transit) podem ser entregues normalmente.
-  if v_job_id is not null then
+  -- Pedidos que repetem o status atual são operações sem mudança (correção
+  -- de rastreio/frete) e nunca são bloqueados, mesmo se a embalagem retiver.
+  if v_job_id is not null
+     and p_status is distinct from v_current_status
+  then
     -- delivered: bloqueia apenas transição vinda de um status pré-despacho.
     if p_status = 'in_transit'
        or (p_status = 'delivered' and v_current_status <> 'in_transit')
@@ -94,13 +98,12 @@ security definer
 set search_path = public
 as $$
 declare
-  v_via_rpc boolean;
   v_job_id uuid;
 begin
   -- A RPC update_shipment_status seta a flag antes do update e a limpa depois.
-  select coalesce(current_setting('app.f010_shipment_rpc', true), 'off')
-    into v_via_rpc;
-  if v_via_rpc = 'on' then
+  -- Compara como texto: após o commit, a flag volta ao default (lido como
+  -- texto vazio); cast para boolean quebraria o próximo UPDATE na sessão.
+  if current_setting('app.f010_shipment_rpc', true) = 'on' then
     return new;
   end if;
 
