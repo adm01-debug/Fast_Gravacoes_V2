@@ -31,7 +31,7 @@ export function useRolePermissions(role: AppRole | null) {
       logger.error('Error fetching permissions', error, 'useRolePermissions');
       // Fallback to static permissions from useRBAC
       if (selectedRole && ROLE_PERMISSIONS[selectedRole]) {
-        setPermissions(ROLE_PERMISSIONS[selectedRole]);
+              setPermissions([...ROLE_PERMISSIONS[selectedRole]]);
       } else {
         setPermissions([]);
       }
