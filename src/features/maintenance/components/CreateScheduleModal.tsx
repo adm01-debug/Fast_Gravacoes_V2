@@ -65,7 +65,7 @@ export function CreateScheduleModal({
     e.preventDefault();
     onSubmit({
       ...formData,
-      next_due_at: parseDateOnly(formData.next_due_at).toISOString(),
+      next_due_at: parseDateOnly(formData.next_due_at)?.toISOString() ?? formatDateOnly(new Date()),
     });
     setOpen(false);
     setFormData({

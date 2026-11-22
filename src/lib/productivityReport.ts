@@ -180,7 +180,7 @@ export function generateProductivityReport(data: ProductivityReportData): void {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(100, 100, 100);
-      doc.text(`Período: ${format(parseDateOnly(period.split(' - ')[0]), 'dd/MM/yyyy')} - ${format(parseDateOnly(period.split(' - ')[1]), 'dd/MM/yyyy')}`, margin, yPosition);
+      doc.text(`Período: ${format(parseDateOnly(period.split(' - ')[0]) ?? new Date(), 'dd/MM/yyyy')} - ${format(parseDateOnly(period.split(' - ')[1]) ?? new Date(), 'dd/MM/yyyy')}`, margin, yPosition);
       yPosition += 6;
 
       const goalsTableData = periodGoals.map(goal => {
