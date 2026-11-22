@@ -33,7 +33,7 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
       // Estado fresco dos alertas pendentes: a lista recebida pelo hook pode
       // estar desatualizada (retry após falha parcial), o que duplicaria
       // alertas ou deixaria contradições. O banco é a fonte de verdade.
-      const [{ data: freshAlerts }, { data: freshSchedules }] = await Promise.all([
+      const [{ data: freshAlerts, error: freshError }, { data: freshSchedules, error: freshSchedError }] = await Promise.all([
         supabase
           .from('maintenance_alerts')
           .select('id, schedule_id, machine_id, alert_type, message, is_resolved, resolved_at, created_at')
@@ -43,10 +43,10 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
           .select('id, machine_id, name, is_active, next_due_at')
           .eq('is_active', true).limit(10000),
       ]);
-      if (freshAlerts?.error) throw freshAlerts.error;
-      if (freshSchedules?.error) throw freshSchedules.error;
-      const sourceAlerts = freshAlerts?.data ?? alerts;
-      const sourceSchedules = freshSchedules?.data ?? schedules;
+      if (freshError) throw freshError;
+      if (freshSchedError) throw freshSchedError;
+      const sourceAlerts = (freshAlerts ?? alerts) as MaintenanceAlert[];
+      const sourceSchedules = (freshSchedules ?? schedules) as MaintenanceSchedule[];
 
       // 1. Static checks (due dates)
       const alertsToCreate: Array<{
@@ -100,7 +100,6 @@ export function useTPMAlertMutations({ schedules, alerts }: UseTPMMutationsProps
             a =>
               a.schedule_id === alert.schedule_id &&
               a.alert_type !== 'predictive' &&
-              alert.alert_type !== 'predictive' &&
               alertSeverity[a.alert_type] >= alertSeverity[alert.alert_type] &&
               !a.is_resolved
           );
