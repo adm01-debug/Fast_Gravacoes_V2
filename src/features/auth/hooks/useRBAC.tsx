@@ -162,6 +162,7 @@ export function useRBAC(): RBACResult {
   }, [role, isLoading]);
 
   const permissions = useMemo(() => {
+      if (!role) return [];
     const base = dbPermissions !== null ? dbPermissions : (ROLE_PERMISSIONS[role] || []);
     // Union com o mapa estático garante zero regressão: permissões hard-coded
     // históricas continuam valendo mesmo se o banco não listar todas.
