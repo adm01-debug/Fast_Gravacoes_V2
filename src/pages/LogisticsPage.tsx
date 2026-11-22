@@ -87,7 +87,12 @@ export default function LogisticsPage() {
   };
 
   const handleStatusUpdate = (id: string, status: DbShipment['status']) => {
-    updateShipment.mutate({ id, data: { status } });
+      // Alinhado ao EditShipmentModal: grava a data real na transição para
+      // delivered — o atalho não pode deixar o envio entregue sem data.
+      updateShipment.mutate({
+        id,
+        data: status === 'delivered' ? { status, actual_delivery: new Date().toISOString() } : { status },
+      });
   };
 
   return (
