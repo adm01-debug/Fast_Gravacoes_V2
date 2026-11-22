@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `eb7c327e3852e3384055a2ac05442e588fd9e8ce` (2026-11-22T05:48:52-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2a1a43378bc95bd73353a29ca92f47b0e2f34f24` (2026-11-22T06:35:07-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1569 |
 | arquivos_codigo | 1119 |
-| linhas_codigo | 189033 |
+| linhas_codigo | 189064 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7477 nós · 21966 arestas · 639 comunidades · grafo do commit `eb7c327e`
-- comunidades maiores: card.tsx (206), cn (175), analytics/index.ts (154), MainLayout.tsx (129), FuturisticBI.tsx (125), badge.tsx (118), DailyCalendar.tsx (118), input.tsx (118), jobs/index.ts (113), snapshot.py (111), client.ts (104), button.tsx (98)
+- 7477 nós · 21966 arestas · 636 comunidades · grafo do commit `2a1a4337`
+- comunidades maiores: card.tsx (206), cn (175), analytics/index.ts (154), DailyCalendar.tsx (129), MainLayout.tsx (129), FuturisticBI.tsx (125), button.tsx (123), badge.tsx (118), snapshot.py (111), jobs/index.ts (105), client.ts (104), OperatorsPage.tsx (98)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -367,6 +367,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-22 `2a1a433` fix: ativa notificações push reais (par VAPID configurado) (#252)
 - 2026-11-22 `eb7c327` chore: atualiza dossies F-009 e F-012 para resolvidas (#250)
 - 2026-11-22 `885b37c` fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)
 - 2026-11-22 `a17c419` fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)
@@ -381,7 +382,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `46e2219` fix: blocked_ips agora bloqueia o login (F-004) (#236)
 - 2026-11-20 `65e7fc5` fix: tracking público /track volta a funcionar (RPC SECURITY DEFINER) (#234)
 - 2026-11-20 `53cf28e` fix(inventory): policies INSERT e DELETE para inventory_movements (#235)
-- 2026-11-20 `d7111c9` fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

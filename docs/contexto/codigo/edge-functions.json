@@ -941,7 +941,7 @@
    "nome": "send-push-notification",
    "entrada": "supabase/functions/send-push-notification/index.ts",
    "arquivos": 1,
-   "linhas": 377,
+   "linhas": 408,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [

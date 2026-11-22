@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: ativa notificações push reais (par VAPID configurado) (#252)",
    "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)",
    "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)",
    "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)",
-   "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)",
-   "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)"
+   "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

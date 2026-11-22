@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "eb7c327e3852e3384055a2ac05442e588fd9e8ce",
+  "commit": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
   "branch": "main",
-  "data_commit": "2026-11-22T05:48:52-03:00",
+  "data_commit": "2026-11-22T06:35:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "2a1a433",
+    "data": "2026-11-22",
+    "assunto": "fix: ativa notificações push reais (par VAPID configurado) (#252)"
+   },
    {
     "sha": "eb7c327",
     "data": "2026-11-22",
@@ -126,15 +131,10 @@
     "sha": "ce97162",
     "data": "2026-11-19",
     "assunto": "fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)"
-   },
-   {
-    "sha": "248505f",
-    "data": "2026-11-19",
-    "assunto": "chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 135,
+  "arquivos_mudados_7d": 138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -146,7 +146,7 @@
    },
    {
     "pasta": "src/features/notifications",
-    "mudancas": 19
+    "mudancas": 21
    },
    {
     "pasta": "src/components/dashboard",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 107
+    "commits": 108
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1569,
   "arquivos_codigo": 1119,
-  "linhas_codigo": 189033,
+  "linhas_codigo": 189064,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11224
+   "linhas": 11255
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

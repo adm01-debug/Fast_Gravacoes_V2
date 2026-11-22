@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "eb7c327e3852e3384055a2ac05442e588fd9e8ce",
+  "sha": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 09:14 UTC",
+  "generated_at": "2026-11-22 09:35 UTC",
   "files_total": 1567,
   "code_files": 1379,
-  "code_lines": 204409
+  "code_lines": 204440
  },
  "version": "1.3.2",
- "facts_hash": "ce25281885466d21",
+ "facts_hash": "447b3b0ce9643976",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -25313,7 +25313,9 @@
     "external": [],
     "invokes": [],
     "doc": "",
-    "errors": [],
+    "errors": [
+     "VAPID_PUBLIC_KEY must be an uncompressed P-256 point (65 bytes, 0x04 prefix)"
+    ],
     "side_effects": [
      "notify"
     ],
@@ -29338,7 +29340,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11224,
+   "lines": 11255,
    "tables": [
     "backup_logs",
     "backups",
@@ -35397,6 +35399,10 @@
    {
     "file": "supabase/functions/send-loss-risk-alert/index.ts",
     "msg": "Failed to send email: ${sendErrors.join("
+   },
+   {
+    "file": "supabase/functions/send-push-notification/index.ts",
+    "msg": "VAPID_PUBLIC_KEY must be an uncompressed P-256 point (65 bytes, 0x04 prefix)"
    },
    {
     "file": "supabase/functions/send-tpm-email/index.ts",
@@ -93737,7 +93743,7 @@
   },
   "supabase/functions/send-push-notification/index.ts": {
    "path": "supabase/functions/send-push-notification/index.ts",
-   "lines": 377,
+   "lines": 408,
    "tables": [
     {
      "table": "user_roles",
@@ -93784,6 +93790,9 @@
     "VAPID_PRIVATE_KEY",
     "VAPID_PUBLIC_KEY",
     "VAPID_SUBJECT"
+   ],
+   "errors": [
+    "VAPID_PUBLIC_KEY must be an uncompressed P-256 point (65 bytes, 0x04 prefix)"
    ],
    "status_values": [
     {
@@ -95667,10 +95676,21 @@
   }
  },
  "git": {
-  "sha": "eb7c327e3852e3384055a2ac05442e588fd9e8ce",
+  "sha": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "2a1a433",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: ativa notificações push reais (par VAPID configurado) (#252)",
+    "files": [
+     "src/features/notifications/hooks/usePushSubscription.ts",
+     "src/features/notifications/hooks/useWebPushNotifications.ts",
+     "supabase/functions/send-push-notification/index.ts"
+    ]
+   },
    {
     "sha": "eb7c327",
     "date": "2026-11-22",
@@ -96014,15 +96034,6 @@
      "package.json",
      "scripts/audit-gate.mjs"
     ]
-   },
-   {
-    "sha": "13daf19",
-    "date": "2026-11-19",
-    "author": "Claude",
-    "subject": "chore(analise): mantem chave redigida no historico",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -96071,10 +96082,6 @@
     2
    ],
    [
-    "analise-prs/auditorias-anteriores.md",
-    2
-   ],
-   [
     "src/test/cspSync.test.ts",
     2
    ],
@@ -96087,6 +96094,18 @@
     2
    ],
    [
+    "src/features/notifications/hooks/usePushSubscription.ts",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useWebPushNotifications.ts",
+    1
+   ],
+   [
+    "supabase/functions/send-push-notification/index.ts",
+    1
+   ],
+   [
     "src/components/settings/UserManagement.tsx",
     1
    ],
@@ -96096,14 +96115,6 @@
    ],
    [
     "src/components/traceability/ElectronicSignatureDialog.tsx",
-    1
-   ],
-   [
-    "src/pages/TraceabilityPage.tsx",
-    1
-   ],
-   [
-    "supabase/functions/auto-promote-jobs/index.ts",
     1
    ]
   ]
