@@ -164,34 +164,20 @@ export const packagingService = {
   },
 
   async recordDefect(taskId: string, form: DefectTriageForm): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Não autenticado');
-
-    const { error } = await db.from('packaging_defects').insert({
-      packaging_task_id: taskId,
-      quantity: form.quantity,
-      defect_type: form.defect_type,
-      severity: form.severity,
-      decision: form.decision,
-      photo_url: form.photo_url || null,
-      notes: form.notes ?? null,
-      reported_by: user.id,
+    // Operação única e atômica no banco: INSERT do defeito + incremento de
+    // rejected_quantity na mesma transação (evita duplicação em retry) com a
+    // mesma checagem de autorização da policy RLS (F-010).
+    const { error } = await supabase.rpc('record_packaging_defect', {
+      p_task_id: taskId,
+      p_quantity: form.quantity,
+      p_defect_type: form.defect_type,
+      p_severity: form.severity,
+      p_decision: form.decision,
+      p_photo_url: form.photo_url || null,
+      p_notes: form.notes ?? null,
+      p_loss_reason: form.loss_reason || null,
     });
     if (error) throw error;
-
-    // Increment rejected count on parent task
-    const { data: task } = await db
-      .from('packaging_tasks')
-      .select('rejected_quantity')
-      .eq('id', taskId)
-      .single();
-    if (task) {
-      const current = (task as { rejected_quantity: number }).rejected_quantity ?? 0;
-      await db
-        .from('packaging_tasks')
-        .update({ rejected_quantity: current + form.quantity })
-        .eq('id', taskId);
-    }
   },
 
   async uploadDefectPhoto(taskId: string, file: File): Promise<string> {

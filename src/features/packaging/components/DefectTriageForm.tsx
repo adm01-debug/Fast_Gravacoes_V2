@@ -36,6 +36,7 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
       severity: 'minor',
       photo_url: '',
       notes: '',
+      loss_reason: '',
     },
   });
 
@@ -163,6 +164,18 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
         <Textarea id="notes" rows={3} {...form.register('notes')} />
         {form.formState.errors.notes && (
           <p className="text-xs text-destructive mt-1">{form.formState.errors.notes.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="loss_reason">Motivo da perda</Label>
+        <Textarea
+          id="loss_reason"
+          rows={2}
+          placeholder="Obrigatório quando a rejeição superar 5% da quantidade recebida"
+          {...form.register('loss_reason')}
+        />
+        {form.formState.errors.loss_reason && (
+          <p className="text-xs text-destructive mt-1">{form.formState.errors.loss_reason.message}</p>
         )}
       </div>
       {form.watch('severity') === 'critical' && (

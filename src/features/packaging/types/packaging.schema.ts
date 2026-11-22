@@ -65,6 +65,7 @@ export const defectTriageFormSchema = z
     decision: packagingDefectDecisionSchema,
     photo_url: z.string().url().optional().or(z.literal('')),
     notes: z.string().max(1000).optional(),
+    loss_reason: z.string().max(500).optional(),
   })
   .superRefine((data, ctx) => {
     const photoRequired = data.severity === 'critical' || data.decision === 'rework';

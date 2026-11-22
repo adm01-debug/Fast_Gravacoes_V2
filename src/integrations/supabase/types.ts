@@ -6077,6 +6077,19 @@ export type Database = {
         Args: { sheet_id: string }
         Returns: undefined
       }
+      record_packaging_defect: {
+        Args: {
+          p_task_id: string
+          p_quantity: number
+          p_defect_type: string
+          p_severity?: string
+          p_decision?: string
+          p_photo_url?: string | null
+          p_notes?: string | null
+          p_loss_reason?: string | null
+        }
+        Returns: undefined
+      }
       packaging_task_sla_status: {
         Args: {
           _created_at: string
