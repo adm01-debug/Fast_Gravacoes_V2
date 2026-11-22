@@ -22,14 +22,14 @@ body ignora techniqueId; auto-promote-jobs promove tudo
 - supabase/functions/auto-promote-jobs/index.ts (PR #243, merge 3fc37b32)
 - Front `useAutoBufferPromotion`/BufferStatusWidget (chamada com techniqueId)
 
-## Resolucao (2026-11-21, PR #243)
-`auto-promote-jobs` passa a honrar `techniqueId` opcional no body:
-- Chamada por-técnica (BufferStatusWidget -> promoteForTechnique) só toca aquela técnica (filtro `requestedTechniqueId ? t.id === requestedTechniqueId : true`).
+## Resolucao do filtro (2026-11-21, PR #243) — código na main
+`auto-promote-jobs` honra `techniqueId` opcional no body:
+- Chamada por-técnica só toca aquela técnica (filtro `requestedTechniqueId ? t.id === requestedTechniqueId : true`).
 - Body ausente/vazio = rebalanceamento global (cron / botão global).
-- techniqueId presente mas inválido -> 400 (contract violation, nunca reverte a global).
+- Contrato de erro: techniqueId vazio ou de tipo incorreto -> 400; techniqueId sem técnica correspondente -> 404; nenhum dos dois inicia promoção global.
 
-## Nota DDL pendente (PR #244)
-A migração `20261121110000_fix_audit_triggers_old_values.sql` (triggers de auditoria de jobs quebrados, ERRO 42703 em produção) está aberta na PR #244 e aguarda aprovação do dono (regra 8). Sem ela, UPDATE de status de job falha em produção. O fix de promoção em si já está na main e não depende dela.
+## Situacao em PRODUCAO (separada do filtro)
+A promoção em produção segue bloqueada por DDL pendente: os triggers de auditoria de jobs (que escrevem em `old_values`/`new_values` e leem `NEW.code`, inexistentes) fazem qualquer UPDATE de status de job falhar com ERRO 42703 — reproduzido ao vivo via Management API. A migração `20261121110000_fix_audit_triggers_old_values.sql` está na PR #244 (regra 8: aguarda aprovação do dono e aplicação em produção). Enquanto não for aplicada, não há evidência de aceite em produção para a promoção.
 
 ## Criterio de aceite
-Comportamento verificado: filtro por techniqueId presente e testado na main (edge function), sem regressão. [OK - código na main]
+Filtro por techniqueId: código na main #243 com CI verde. Aceite em produção: pendente da PR #244 (DDL de audit triggers).

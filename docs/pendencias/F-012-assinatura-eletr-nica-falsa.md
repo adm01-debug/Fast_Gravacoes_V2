@@ -22,12 +22,12 @@ ElectronicSignatureDialog aceita senha qualquer sem validar contra Supabase Auth
 - src/components/traceability/ElectronicSignatureDialog.tsx (PR #247, merge 42f66bec)
 
 ## Resolucao (2026-11-22, PR #247)
-O dialog agora valida a senha REAL do usuário antes de assinar:
+O dialog valida a senha REAL do usuário antes de assinar:
 - Chamada a `POST /auth/v1/token?grant_type=password` com `{ email: user.email, password }` — senha incorreta retorna erro e bloqueia a operação.
-- `onConfirm` revalida contra o Supabase Auth no momento da operação (não confia só no estado do form).
-- Sem senha: toast de erro "Senha de assinatura é obrigatória" — assinatura inválida nunca aplica a operação.
+- A senha é validada uma única vez, antes de chamar `onConfirm` com o motivo; `onConfirm` revalida os lotes (não a senha). Assinatura inválida nunca aplica a operação.
+- Sem senha: toast de erro "Senha de assinatura é obrigatória".
 
-Antes disso, `ElectronicSignatureDialog` aceitava qualquer texto digitado como senha válida (assinatura fake, sem validade legal).
+Antes disso, o dialog aceitava qualquer texto digitado como senha válida (assinatura fake, sem validade legal).
 
 ## Criterio de aceite
-Senha conferida contra o Supabase Auth (token grant real); assinatura inválida não aplica a operação. [OK - código na main]
+Senha conferida contra o Supabase Auth (token grant real) antes de qualquer operação. [OK - código na main]
