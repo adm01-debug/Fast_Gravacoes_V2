@@ -58,7 +58,16 @@ export interface EnergyStats {
   energyScore: number;
 }
 
-export function useEnergy(dateRange?: { start: Date; end: Date }) {
+export interface UseEnergyOptions {
+  start?: Date;
+  end?: Date;
+  // false desativa as consultas (ex.: sem permissao energy:read o RLS
+  // bloquearia e o hook retornaria "erro" em vez de dados) - stats fica vazio.
+  enabled?: boolean;
+}
+
+export function useEnergy(dateRange?: { start: Date; end: Date }, options?: UseEnergyOptions) {
+  const { enabled = true } = options || {};
   const queryClient = useQueryClient();
   const now = new Date();
   const start = dateRange?.start || startOfMonth(now);
@@ -69,6 +78,7 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
   // Fetch consumption data
   const consumptionQuery = useQuery({
     queryKey: ['energy-consumption', start.toISOString(), end.toISOString()],
+    enabled,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('energy_consumption')
@@ -86,6 +96,7 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
   // Fetch previous month consumption for trend comparison
   const prevConsumptionQuery = useQuery({
     queryKey: ['energy-consumption-prev', prevStart.toISOString(), prevEnd.toISOString()],
+    enabled,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('energy_consumption')
@@ -102,6 +113,7 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
   // Fetch alerts
   const alertsQuery = useQuery({
     queryKey: ['energy-alerts'],
+    enabled,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('energy_alerts')
@@ -119,6 +131,7 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
   // Fetch targets
   const targetsQuery = useQuery({
     queryKey: ['energy-targets'],
+    enabled,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('energy_targets')
@@ -291,6 +304,15 @@ export function useEnergy(dateRange?: { start: Date; end: Date }) {
     targets: targetsQuery.data || [],
     stats,
     isLoading: consumptionQuery.isLoading || alertsQuery.isLoading,
+      // RLS/permissao negando a leitura (energy:read revogada) produz erro de
+      // query em vez de stats zerados; o chamador distingue "indisponivel"
+      // (sem acesso) de consumo zero real.
+      hasError: Boolean(
+        consumptionQuery.error ||
+        prevConsumptionQuery.error ||
+        alertsQuery.error ||
+        targetsQuery.error
+      ),
     addConsumption,
     resolveAlert,
     createTarget,

@@ -63,11 +63,21 @@ export function useRBAC(options?: { enabled?: boolean }): RBACResult {
   const [isPermissionLoading, setIsPermissionLoading] = useState(enabled);
 
   useEffect(() => {
-    if (isLoading || !role) {
-      return;
-    }
     let cancelled = false;
     (async () => {
+      if (isLoading) {
+        // Aguarda a resolucao da sessao; isPermissionLoading permanece no
+        // estado inicial (true quando enabled) para o gate nao decidir cedo.
+        return;
+      }
+      if (!role) {
+        // Sem role (nao autenticado ou role indisponivel apos o boot): nao ha
+        // consulta de permissoes a fazer - fecha o loading do gate para que a
+        // rota redirecione para /auth ou / em vez de travar em "Carregando...".
+        setDbPermissions(null);
+        setIsPermissionLoading(false);
+        return;
+      }
       if (role === 'admin' || !enabled) {
         // Admin tem bypass total no runtime (hasPermission retorna true); e com
         // enabled=false nenhuma rota pede permissao. Ambos nao consultam o banco.

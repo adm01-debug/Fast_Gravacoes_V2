@@ -20,14 +20,20 @@ import { SupplyChainPanel } from '@/components/digital-twin/SupplyChainPanel';
 import { CostSimulationCard } from '@/components/digital-twin/CostSimulationCard';
 import { useKPIs } from '@/features/analytics/hooks/useKPIs';
 import { useEnergy } from '@/features/analytics/hooks/useEnergy';
+import { useRBAC } from '@/features/auth';
 
 export default function DigitalTwin() {
   const { data: kpiData } = useKPIs('day');
-  const { stats: energyStats } = useEnergy();
+  const { hasPermission } = useRBAC();
+  const canReadEnergy = hasPermission('energy:read');
+  // Sem energy:read a consulta a energia e bloqueada pelo RLS e retornaria 0
+  // como se fosse real; consultamos so quando a permissao existe.
+  const { stats: energyStats, hasError: energyError } = useEnergy(undefined, { enabled: canReadEnergy });
 
   const oee = kpiData?.productivityByTechnique?.[0]?.occupancyRate || 92.4;
   const machinesCount = kpiData?.totalJobs || 0;
   const totalEnergyToday = energyStats?.totalConsumption || 0;
+  const energyUnavailable = !canReadEnergy || energyError;
 
   return (
     <MainLayout>
@@ -74,9 +80,17 @@ export default function DigitalTwin() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-3xl font-black">{totalEnergyToday.toFixed(1)} <span className="text-sm font-bold text-muted-foreground">kW/h</span></p>
+                    {energyUnavailable ? (
+                      <p className="text-3xl font-black text-muted-foreground">--</p>
+                    ) : (
+                      <p className="text-3xl font-black">
+                        {totalEnergyToday.toFixed(1)}{' '}
+                        <span className="text-sm font-bold text-muted-foreground">kW/h</span>
+                      </p>
+                    )}
                     <div className="mt-2 flex items-center gap-1 text-success text-[10px] font-bold">
-                       <TrendingUp className="h-3 w-3" /> Sincronizado com Fábrica
+                      <TrendingUp className="h-3 w-3" />
+                      {energyUnavailable ? 'Indisponível (sem acesso à energia)' : 'Sincronizado com Fábrica'}
                     </div>
                   </CardContent>
                </Card>

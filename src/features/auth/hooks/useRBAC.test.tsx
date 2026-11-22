@@ -169,6 +169,28 @@ describe('useRBAC - fetch condicional (F-007 threads rodada 2)', () => {
     expect(result.current.hasPermission('any:thing')).toBe(true);
     expect(mockFrom).not.toHaveBeenCalled();
   });
+
+  it('sem sessao (role null) nunca trava o gate: isPermissionLoading fecha e permissao e negada', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({ ...mockUseAuth(), role: null, isLoading: false });
+
+    const { result } = renderHook(() => useRBAC());
+
+    await waitFor(() => {
+      expect(result.current.isPermissionLoading).toBe(false);
+    });
+    // Sem role nao ha permissao, mesmo que o banco tivesse linhas.
+    expect(result.current.hasPermission('jobs:read')).toBe(false);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
+  it('enquanto a sessao carrega, o gate permanece aberto (isPermissionLoading true) e so fecha depois', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({ ...mockUseAuth(), role: null, isLoading: true });
+
+    const { result } = renderHook(() => useRBAC());
+
+    // Ainda carregando: o gate nao decidiu.
+    expect(result.current.isPermissionLoading).toBe(true);
+  });
 });
 
 
