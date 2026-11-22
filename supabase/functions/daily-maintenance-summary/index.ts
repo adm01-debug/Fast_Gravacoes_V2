@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
       .select('id, name, next_due_at, machine_id, machines(name, code)')
       .eq('is_active', true)
       .gte('next_due_at', tomorrow.toISOString())
-      .lte('next_due_at', nextWeek.toISOString())
+      .lt('next_due_at', nextWeek.toISOString())
       .order('next_due_at', { ascending: true });
 
     if (upcomingError) {
