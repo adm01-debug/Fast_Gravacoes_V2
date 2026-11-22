@@ -24,6 +24,7 @@ useTPMNotifications.ts só envia real para push; demais canais fake
 - Push real ativado de ponta a ponta: secrets `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` configuradas no Supabase e par VAPID gerado no formato nativo do web-push.
 - Correção de bug no formato da chave privada: a edge function importava a chave como PKCS#8 (DER), mas o web-push gera escalar P-256 de 32 bytes. Agora detecta 32 bytes e deriva JWK EC P-256 (x/y/d) para a assinatura ES256, com fallback PKCS#8 preservado.
 - Validação em produção: `send-push-notification` responde `vapid_configured: true` e assina o JWT VAPID sem erro (antes falharia silenciosamente com `sent: 0`).
+- Limitação conhecida: o teste de front (`usePushNotifications.sendNotification`) exibe notificação só no navegador atual e não aciona a edge function de envio em massa; a entrega remota exige inscrição real no dispositivo (ver critério de aceite).
 
 ## Pendente (não é push)
 - **Email real**: a edge function de email exige `RESEND_API_KEY` (conta Resend), que não existe — bloqueado por credencial externa, não implementado no repo.
