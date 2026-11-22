@@ -163,13 +163,12 @@ export function useRBAC(): RBACResult {
 
   const permissions = useMemo(() => {
       if (!role) return [];
+          // Banco é a fonte autoritativa: permissões revogadas na tela de
+          // PermissionManager têm efeito real. O mapa estático só entra como
+          // fallback quando a consulta ao banco falha (dbPermissions === null).
     const base = dbPermissions !== null ? dbPermissions : (ROLE_PERMISSIONS[role] || []);
-    // Union com o mapa estático garante zero regressão: permissões hard-coded
-    // históricas continuam valendo mesmo se o banco não listar todas.
-    const staticPerms = ROLE_PERMISSIONS[role] || [];
     // Standardize all permissions to use ":" instead of "." and remove duplicates
-    const standardized = [...new Set([...base, ...staticPerms])].map(p => p.replace(/\./g, ':'));
-    return Array.from(new Set(standardized));
+          return Array.from(new Set(base.map(p => p.replace(/\./g, ':'))));
   }, [dbPermissions, role]);
 
   const resourceMatch = useMemo(() => {

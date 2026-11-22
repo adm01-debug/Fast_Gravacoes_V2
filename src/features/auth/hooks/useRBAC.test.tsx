@@ -75,6 +75,22 @@ describe('useRBAC - permissoes do banco (F-007)', () => {
     expect(result.current.hasPermission('jobs:create')).toBe(false);
   });
 
+  it('banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007)', async () => {
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
+    // operator tem 'jobs:read' e 'machines:read' no mapa estático, mas o banco
+    // revogou (nao retorna). A uniao antiga reconcederia; o banco-autoritativo nega.
+    mockSupabaseResult([{ permission: 'jobs:read' }]);
+
+    const { result } = renderHook(() => useRBAC());
+
+    await waitFor(() => {
+      expect(result.current.permissions).toEqual(['jobs:read']);
+    });
+    expect(result.current.hasPermission('jobs:read')).toBe(true);
+    expect(result.current.hasPermission('machines:read')).toBe(false);
+    expect(result.current.hasPermission('quality:read')).toBe(false);
+  });
+
   it('recurso:all cobre permissoes com dois-pontos e com ponto', async () => {
     // Operator NAO tem inventory:adjust no mapa estatico: prova que resource:all concede.
     (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
