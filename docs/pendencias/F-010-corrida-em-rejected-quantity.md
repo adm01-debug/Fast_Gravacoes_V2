@@ -68,3 +68,8 @@ Suite `tsuite.sql` executada em banco temporario `fg_f010_test1` com RLS ativa +
 
 ## Ordem
 10 de 16 por impacto x custo.
+## Resposta aos achados do Devin (commit 9e14667e)
+- Trigger 	rg_prevent_hold_shipment_update (BEFORE UPDATE) barra qualquer UPDATE direto de status em envio retido - o bypass fora da RPC era possivel via edicao de tabela; agora 
+ew.status e reescrito e a operacao falha com Envios em on_hold nao podem ser despachados fora da RPC update_shipment_status.- Envio avulso (sem job/packaging_task): o bloqueio so se aplica quando ha packaging_task; envio direto sem job nao e bloqueado por engano.- Ajuste pproved_quantity usa LEAST() e mantem pproved + rejected <= received mesmo no caso do BUG 0001 (rejected 60, approved 60 em received 100).
+- Modal de edicao de envio nao fecha quando o despacho e bloqueado (esult.blocked); metadados enviados junto nao sao persistidos nesse caso.- BOM UTF-8 removido da migration (quebrava psql/grep).
+- Validacao: SQL 14/14 (suíte T1-T14), tsc/eslint/vitest 12/12.
