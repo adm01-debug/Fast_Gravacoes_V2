@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)",
+   "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)",
    "fix: ativa notificações push reais (par VAPID configurado) (#252)",
    "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)",
-   "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)",
-   "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)",
-   "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)"
+   "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

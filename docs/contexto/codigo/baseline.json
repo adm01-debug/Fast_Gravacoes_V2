@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
+  "commit": "82df4465f028f9971aa3a03ffbbcd610a1c6f72a",
   "branch": "main",
-  "data_commit": "2026-11-22T06:35:07-03:00",
+  "data_commit": "2026-11-22T07:08:28-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "82df446",
+    "data": "2026-11-22",
+    "assunto": "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)"
+   },
+   {
+    "sha": "dbb891a",
+    "data": "2026-11-22",
+    "assunto": "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)"
+   },
    {
     "sha": "2a1a433",
     "data": "2026-11-22",
@@ -121,16 +131,6 @@
     "sha": "3d7a497",
     "data": "2026-11-19",
     "assunto": "fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)"
-   },
-   {
-    "sha": "95c091b",
-    "data": "2026-11-19",
-    "assunto": "docs: versiona auditoria de PRs do agente (12 arquivos untracked) (#224)"
-   },
-   {
-    "sha": "ce97162",
-    "data": "2026-11-19",
-    "assunto": "fix: elimina ReDoS e sanitizacao incompleta (CodeQL HIGH x3) (#223)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 108
+    "commits": 110
    },
    {
     "autor": "devin-ai-integration[bot]",

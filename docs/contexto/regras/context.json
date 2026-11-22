@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
+  "sha": "82df4465f028f9971aa3a03ffbbcd610a1c6f72a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 09:35 UTC",
+  "generated_at": "2026-11-22 10:12 UTC",
   "files_total": 1567,
   "code_files": 1379,
   "code_lines": 204440
@@ -95676,10 +95676,32 @@
   }
  },
  "git": {
-  "sha": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
+  "sha": "82df4465f028f9971aa3a03ffbbcd610a1c6f72a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "82df446",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)",
+    "files": [
+     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md"
+    ]
+   },
+   {
+    "sha": "dbb891a",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)",
+    "files": [
+     "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
+     "docs/pendencias/F-008-web-push-sem-criptografia.md",
+     "docs/pendencias/F-013-upload-de-evid-ncia-bloqueado.md",
+     "docs/pendencias/F-015-kanbanboard-escreve-jobs-status-direto.md",
+     "docs/pendencias/F-016-troca-de-papel-quebrada.md"
+    ]
+   },
    {
     "sha": "2a1a433",
     "date": "2026-11-22",
@@ -96012,28 +96034,6 @@
      "src/components/technical-assistant/BiometricSecurity.tsx",
      "src/components/technical-assistant/ChatArea.tsx"
     ]
-   },
-   {
-    "sha": "57c332f",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: alinha script-src da CSP report-only com a enforce (unsafe-eval) (#219)",
-    "files": [
-     "src/test/cspSync.test.ts",
-     "vercel.json"
-    ]
-   },
-   {
-    "sha": "9f33e60",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "chore: remove vite-plugin-pwa (dependencia morta) (#218)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "scripts/audit-gate.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -96048,6 +96048,30 @@
    [
     "supabase/functions/check-login-lockout/index.ts",
     3
+   ],
+   [
+    "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
+    2
+   ],
+   [
+    "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
+    2
+   ],
+   [
+    "docs/pendencias/F-008-web-push-sem-criptografia.md",
+    2
+   ],
+   [
+    "docs/pendencias/F-013-upload-de-evid-ncia-bloqueado.md",
+    2
+   ],
+   [
+    "docs/pendencias/F-015-kanbanboard-escreve-jobs-status-direto.md",
+    2
+   ],
+   [
+    "docs/pendencias/F-016-troca-de-papel-quebrada.md",
+    2
    ],
    [
     "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
@@ -96082,14 +96106,6 @@
     2
    ],
    [
-    "src/test/cspSync.test.ts",
-    2
-   ],
-   [
-    "vercel.json",
-    2
-   ],
-   [
     "analise-prs/progresso.json",
     2
    ],
@@ -96099,22 +96115,6 @@
    ],
    [
     "src/features/notifications/hooks/useWebPushNotifications.ts",
-    1
-   ],
-   [
-    "supabase/functions/send-push-notification/index.ts",
-    1
-   ],
-   [
-    "src/components/settings/UserManagement.tsx",
-    1
-   ],
-   [
-    "src/pages/KanbanBoard.tsx",
-    1
-   ],
-   [
-    "src/components/traceability/ElectronicSignatureDialog.tsx",
     1
    ]
   ]

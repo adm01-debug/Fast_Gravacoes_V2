@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "2a1a43378bc95bd73353a29ca92f47b0e2f34f24",
+ "commit_do_grafo": "82df4465f028f9971aa3a03ffbbcd610a1c6f72a",
  "grafo_atual": true,
  "nos": 7477,
  "arestas": 21966,
@@ -85,23 +85,6 @@
   },
   {
    "id": 3,
-   "nome": "DailyCalendar.tsx",
-   "nos": 129,
-   "callables": 77,
-   "arquivos": 30,
-   "exemplos_arquivos": [
-    "src/components/calendar/AgendaView.tsx",
-    "src/components/calendar/CalendarEmptyState.tsx",
-    "src/components/calendar/CalendarFilters.tsx",
-    "src/components/calendar/CalendarHeader.tsx",
-    "src/components/calendar/CalendarLegend.tsx",
-    "src/components/calendar/CalendarOnboarding.tsx",
-    "src/components/calendar/CalendarTimeline.tsx",
-    "src/components/calendar/CalendarToolbar.tsx"
-   ]
-  },
-  {
-   "id": 4,
    "nome": "MainLayout.tsx",
    "nos": 129,
    "callables": 70,
@@ -118,7 +101,7 @@
    ]
   },
   {
-   "id": 5,
+   "id": 4,
    "nome": "FuturisticBI.tsx",
    "nos": 125,
    "callables": 47,
@@ -135,7 +118,7 @@
    ]
   },
   {
-   "id": 6,
+   "id": 5,
    "nome": "button.tsx",
    "nos": 123,
    "callables": 55,
@@ -152,7 +135,7 @@
    ]
   },
   {
-   "id": 7,
+   "id": 6,
    "nome": "badge.tsx",
    "nos": 118,
    "callables": 41,
@@ -169,22 +152,28 @@
    ]
   },
   {
-   "id": 8,
-   "nome": "snapshot.py",
-   "nos": 111,
-   "callables": 88,
-   "arquivos": 2,
+   "id": 7,
+   "nome": "DailyCalendar.tsx",
+   "nos": 118,
+   "callables": 71,
+   "arquivos": 26,
    "exemplos_arquivos": [
-    "scripts/supabase_snapshot/snapshot.py",
-    "scripts/supabase_snapshot/test_snapshot.py"
+    "src/components/calendar/AgendaView.tsx",
+    "src/components/calendar/CalendarEmptyState.tsx",
+    "src/components/calendar/CalendarFilters.tsx",
+    "src/components/calendar/CalendarHeader.tsx",
+    "src/components/calendar/CalendarLegend.tsx",
+    "src/components/calendar/CalendarOnboarding.tsx",
+    "src/components/calendar/CalendarTimeline.tsx",
+    "src/components/calendar/CalendarToolbar.tsx"
    ]
   },
   {
-   "id": 9,
+   "id": 8,
    "nome": "jobs/index.ts",
-   "nos": 105,
-   "callables": 73,
-   "arquivos": 42,
+   "nos": 113,
+   "callables": 79,
+   "arquivos": 45,
    "exemplos_arquivos": [
     "src/components/alerts/AlertCard.tsx",
     "src/components/calendar/CalendarFilters.tsx",
@@ -194,6 +183,17 @@
     "src/components/dashboard/RecentJobsTable.tsx",
     "src/components/jobs/JobDetailsModal.tsx",
     "src/components/jobs/JobInfoGrid.tsx"
+   ]
+  },
+  {
+   "id": 9,
+   "nome": "snapshot.py",
+   "nos": 111,
+   "callables": 88,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "scripts/supabase_snapshot/snapshot.py",
+    "scripts/supabase_snapshot/test_snapshot.py"
    ]
   },
   {
@@ -318,6 +318,23 @@
   },
   {
    "id": 18,
+   "nome": "createAppError",
+   "nos": 70,
+   "callables": 48,
+   "arquivos": 27,
+   "exemplos_arquivos": [
+    "src/components/dashboard/ConflictAlertsWidget.tsx",
+    "src/components/dashboard/LoadBalancingWidget.tsx",
+    "src/components/dashboard/SmartSequencingWidget.tsx",
+    "src/components/kanban/KanbanAIAdvisor.tsx",
+    "src/components/settings/SettingsAlertsTab.tsx",
+    "src/features/admin/hooks/useOrphanedDataDetection.ts",
+    "src/features/analytics/hooks/useBottleneckPrediction.ts",
+    "src/features/analytics/hooks/useEfficiencyAlertHistory.ts"
+   ]
+  },
+  {
+   "id": 19,
    "nome": "production/index.ts",
    "nos": 69,
    "callables": 47,
@@ -334,7 +351,7 @@
    ]
   },
   {
-   "id": 19,
+   "id": 20,
    "nome": "auth/index.ts",
    "nos": 68,
    "callables": 40,
@@ -351,7 +368,7 @@
    ]
   },
   {
-   "id": 20,
+   "id": 21,
    "nome": "notifications/index.ts",
    "nos": 67,
    "callables": 46,
@@ -368,7 +385,7 @@
    ]
   },
   {
-   "id": 21,
+   "id": 22,
    "nome": "SystemMonitoringPage.tsx",
    "nos": 64,
    "callables": 40,
@@ -382,23 +399,6 @@
     "src/components/design-system/hooks/MaintenanceOperatorDemos.tsx",
     "src/components/design-system/hooks/PredictionHooksDemos.tsx",
     "src/components/ui/alert.tsx"
-   ]
-  },
-  {
-   "id": 22,
-   "nome": "createAppError",
-   "nos": 64,
-   "callables": 47,
-   "arquivos": 28,
-   "exemplos_arquivos": [
-    "src/components/dashboard/BufferPromotionStatus.tsx",
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/dashboard/LoadBalancingWidget.tsx",
-    "src/components/dashboard/SmartSequencingWidget.tsx",
-    "src/components/kanban/KanbanAIAdvisor.tsx",
-    "src/components/settings/SettingsAlertsTab.tsx",
-    "src/features/admin/hooks/useOrphanedDataDetection.ts",
-    "src/features/analytics/hooks/useBottleneckPrediction.ts"
    ]
   },
   {
@@ -420,40 +420,6 @@
   },
   {
    "id": 24,
-   "nome": "useSchedulingData",
-   "nos": 62,
-   "callables": 43,
-   "arquivos": 33,
-   "exemplos_arquivos": [
-    "src/components/dashboard/CompactTimeline.tsx",
-    "src/components/dashboard/LiveMachineStatusPanel.tsx",
-    "src/components/dashboard/OccupancyChart.tsx",
-    "src/components/dashboard/RecentJobsTable.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/layout/OperatorMachinesIndicator.tsx",
-    "src/components/machines/FactoryHeatmap.tsx",
-    "src/components/machines/MachineDetailsModal.tsx"
-   ]
-  },
-  {
-   "id": 25,
-   "nome": "utils.ts",
-   "nos": 60,
-   "callables": 36,
-   "arquivos": 26,
-   "exemplos_arquivos": [
-    "src/components/assistant/AssistantButton.tsx",
-    "src/components/calendar/JobBlock.tsx",
-    "src/components/dashboard/BufferPromotionStatus.tsx",
-    "src/components/dashboard/RealtimeIndicator.tsx",
-    "src/components/digital-twin/FactoryFloorMap.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/logistics/CreateShipmentModal.tsx",
-    "src/components/logistics/EditShipmentModal.tsx"
-   ]
-  },
-  {
-   "id": 26,
    "nome": "scripts",
    "nos": 59,
    "callables": 0,
@@ -463,7 +429,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 25,
    "nome": "loading/index.ts",
    "nos": 59,
    "callables": 42,
@@ -476,7 +442,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 26,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 45,
@@ -489,7 +455,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 27,
    "nome": "actions-kpi.unit.mjs",
    "nos": 57,
    "callables": 46,
@@ -503,7 +469,58 @@
    ]
   },
   {
+   "id": 28,
+   "nome": "utils.ts",
+   "nos": 57,
+   "callables": 35,
+   "arquivos": 25,
+   "exemplos_arquivos": [
+    "src/components/assistant/AssistantButton.tsx",
+    "src/components/calendar/JobBlock.tsx",
+    "src/components/dashboard/BufferPromotionStatus.tsx",
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/dashboard/RealtimeIndicator.tsx",
+    "src/components/digital-twin/FactoryFloorMap.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/logistics/CreateShipmentModal.tsx"
+   ]
+  },
+  {
+   "id": 29,
+   "nome": "OperatorView.tsx",
+   "nos": 57,
+   "callables": 35,
+   "arquivos": 21,
+   "exemplos_arquivos": [
+    "src/components/kiosk/KioskMode.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/mobile/SwipeActions.tsx",
+    "src/components/offline/OfflineBanner.tsx",
+    "src/components/offline/OfflineReadyIndicator.tsx",
+    "src/components/offline/OfflineStatusBanner.tsx",
+    "src/components/offline/OfflineSyncIndicator.tsx",
+    "src/components/operator/OperatorProductionCard.tsx"
+   ]
+  },
+  {
    "id": 30,
+   "nome": "useSchedulingData",
+   "nos": 55,
+   "callables": 38,
+   "arquivos": 32,
+   "exemplos_arquivos": [
+    "src/components/dashboard/CompactTimeline.tsx",
+    "src/components/dashboard/LiveMachineStatusPanel.tsx",
+    "src/components/dashboard/OccupancyChart.tsx",
+    "src/components/dashboard/RecentJobsTable.tsx",
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/OperatorMachinesIndicator.tsx",
+    "src/components/machines/FactoryHeatmap.tsx",
+    "src/components/machines/MachineDetailsModal.tsx"
+   ]
+  },
+  {
+   "id": 31,
    "nome": "LotDetailsModal.tsx",
    "nos": 52,
    "callables": 38,
@@ -520,7 +537,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 32,
    "nome": "AppRoutes.tsx",
    "nos": 52,
    "callables": 11,
@@ -535,7 +552,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 33,
    "nome": "TechnicalKnowledgeBase.tsx",
    "nos": 51,
    "callables": 38,
@@ -552,7 +569,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 34,
    "nome": "errorHandling.ts",
    "nos": 50,
    "callables": 32,
@@ -569,7 +586,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 35,
    "nome": "EfficiencyDashboard.tsx",
    "nos": 50,
    "callables": 27,
@@ -583,23 +600,6 @@
     "src/components/ui/chart.tsx",
     "src/components/ui/kpi-tooltip.tsx",
     "src/features/analytics/components/efficiency/BottlenecksTab.tsx"
-   ]
-  },
-  {
-   "id": 35,
-   "nome": "OperatorView.tsx",
-   "nos": 50,
-   "callables": 30,
-   "arquivos": 20,
-   "exemplos_arquivos": [
-    "src/components/kiosk/KioskMode.tsx",
-    "src/components/layout/MainLayout.tsx",
-    "src/components/mobile/SwipeActions.tsx",
-    "src/components/offline/OfflineBanner.tsx",
-    "src/components/offline/OfflineReadyIndicator.tsx",
-    "src/components/offline/OfflineStatusBanner.tsx",
-    "src/components/offline/OfflineSyncIndicator.tsx",
-    "src/components/operator/OperatorProductionCard.tsx"
    ]
   },
   {
@@ -2198,10 +2198,10 @@
   "src/components/dashboard/AlertScheduleModal.tsx": "button.tsx",
   "src/components/dashboard/AlertsWidget.tsx": "badge.tsx",
   "src/components/dashboard/BottleneckWidget.tsx": "badge.tsx",
-  "src/components/dashboard/BufferPromotionStatus.tsx": "createAppError",
+  "src/components/dashboard/BufferPromotionStatus.tsx": "utils.ts",
   "src/components/dashboard/BufferStatusWidget.tsx": "errorHandling.ts",
   "src/components/dashboard/CompactTimeline.tsx": "useSchedulingData",
-  "src/components/dashboard/ConflictAlertsWidget.tsx": "DailyCalendar.tsx",
+  "src/components/dashboard/ConflictAlertsWidget.tsx": "createAppError",
   "src/components/dashboard/DashboardEditControls.tsx": "useDashboardLayout.ts",
   "src/components/dashboard/DashboardExport.tsx": "badge.tsx",
   "src/components/dashboard/DraggableWidget.tsx": "badge.tsx",
@@ -2458,7 +2458,7 @@
   "src/components/scheduling/CapacityHealthPanel.tsx": "usePriorityEscalation.ts",
   "src/components/scheduling/MachineSuggestionPanel.tsx": "badge.tsx",
   "src/components/scheduling/StuckJobsPanel.tsx": "AlertsDashboard.tsx",
-  "src/components/scheduling/UtilizationHeatmap.tsx": "utils.ts",
+  "src/components/scheduling/UtilizationHeatmap.tsx": "jobs/index.ts",
   "src/components/settings/AutoThemeToggle.tsx": "select.tsx",
   "src/components/settings/IPAllowlist.tsx": "TraceabilityPage.tsx",
   "src/components/settings/LoginAuditLog.tsx": "TraceabilityPage.tsx",
@@ -2565,7 +2565,7 @@
   "src/components/ui/toggle-group.tsx": "cn",
   "src/components/ui/toggle.tsx": "cn",
   "src/components/ui/tooltip.tsx": "utils.ts",
-  "src/components/voice/VoiceCommands.tsx": "useSchedulingData",
+  "src/components/voice/VoiceCommands.tsx": "OperatorView.tsx",
   "src/constants/biConstants.ts": "biConstants.ts",
   "src/constants/index.ts": "constants/index.ts",
   "src/contexts/BreadcrumbContext.tsx": "BreadcrumbContext.tsx",
@@ -2753,7 +2753,7 @@
   "src/features/jobs/hooks/usePaginatedJobs.ts": "lib/logger.ts",
   "src/features/jobs/hooks/usePriorityEscalation.ts": "usePriorityEscalation.ts",
   "src/features/jobs/hooks/useRecordDuplication.ts": "errorHandling.ts",
-  "src/features/jobs/hooks/useSchedulingConflicts.test.tsx": "DailyCalendar.tsx",
+  "src/features/jobs/hooks/useSchedulingConflicts.test.tsx": "createAppError",
   "src/features/jobs/hooks/useSchedulingConflicts.ts": "createAppError",
   "src/features/jobs/hooks/useSchedulingData.test.tsx": "useSchedulingData.test.tsx",
   "src/features/jobs/hooks/useSchedulingData.ts": "useSchedulingData",
@@ -2976,7 +2976,7 @@
   "src/integrations/supabase/client.ts": "client.ts",
   "src/lib/a11y.ts": "AlertsDashboard.tsx",
   "src/lib/calendarExports.test.ts": "jobs/index.ts",
-  "src/lib/calendarExports.ts": "DailyCalendar.tsx",
+  "src/lib/calendarExports.ts": "jobs/index.ts",
   "src/lib/circuitBreaker.ts": "CircuitBreaker",
   "src/lib/csvSafety.test.ts": "useDataExport.ts",
   "src/lib/csvSafety.ts": "useDataExport.ts",
@@ -3039,7 +3039,7 @@
   "src/pages/BIDashboard.tsx": "useSchedulingData",
   "src/pages/Bitrix24ConfigPage.tsx": "Bitrix24ConfigPage.tsx",
   "src/pages/CodeQualityDashboard.tsx": "useCodeQualityMetrics.ts",
-  "src/pages/DailyCalendar.tsx": "DailyCalendar.tsx",
+  "src/pages/DailyCalendar.tsx": "jobs/index.ts",
   "src/pages/DesignSystemPage.tsx": "card.tsx",
   "src/pages/DigitalTwin.tsx": "analytics/index.ts",
   "src/pages/Docs": "gerar.unit.mjs",
