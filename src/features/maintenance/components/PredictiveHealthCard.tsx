@@ -85,7 +85,7 @@ export function PredictiveHealthCard({ machineId }: PredictiveHealthCardProps) {
             </div>
           </div>
           <Badge variant="outline" className="text-[10px] gap-1 px-2 border-primary/20 bg-primary/5">
-            <ShieldCheck className="h-3 w-3" /> Confiabilidade: {(displayData.confidence * 100).toFixed(0)}%
+            <ShieldCheck className="h-3 w-3" /> Confiabilidade: {Number(displayData.confidence).toFixed(0)}%
           </Badge>
         </div>
       </CardHeader>
