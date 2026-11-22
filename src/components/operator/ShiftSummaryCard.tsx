@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Package, AlertTriangle, Clock } from 'lucide-react';
 import { DbJob } from '@/features/jobs';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 interface ShiftSummaryCardProps {
   jobs: DbJob[];
@@ -11,7 +12,7 @@ interface ShiftSummaryCardProps {
 
 export function ShiftSummaryCard({ jobs }: ShiftSummaryCardProps) {
   const summary = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
     const todayJobs = jobs.filter(j => j.scheduled_date === today);
 
     const completed = todayJobs.filter(j => j.status === 'finished').length;

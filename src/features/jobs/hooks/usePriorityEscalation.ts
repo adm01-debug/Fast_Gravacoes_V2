@@ -4,6 +4,7 @@ import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { useAuth } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 /**
  * Automatically escalates job priority based on rules:
@@ -29,7 +30,7 @@ export function usePriorityEscalation() {
   useEffect(() => {
     if (seededRef.current || jobs.length === 0) return;
     seededRef.current = true;
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
     for (const job of jobs) {
       const isOverdue = job.scheduled_date && job.scheduled_date < today;
       const isDueToday = job.scheduled_date === today;
@@ -42,7 +43,7 @@ export function usePriorityEscalation() {
     if (!user) return;
 
     const checkEscalation = async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = formatDateOnly(new Date());
 
       for (const job of jobs) {
         if (['finished', 'cancelled', 'production'].includes(job.status)) continue;

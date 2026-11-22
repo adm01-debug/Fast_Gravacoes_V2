@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Clock, Activity, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useTPM } from '@/features/maintenance/hooks/useTPM';
 import {
   BarChart,
   Bar,
@@ -171,7 +172,7 @@ export function MachineReliabilityTab({ machineId }: MachineReliabilityTabProps)
                   <span className="text-sm">Última Falha</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(machineMetrics.lastFailure).toLocaleDateString()}
+                  {new Date(machineMetrics.lastFailure).toLocaleDateString('pt-BR')}
                 </span>
               </div>
             )}

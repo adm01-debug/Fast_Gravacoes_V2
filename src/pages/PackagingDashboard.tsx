@@ -1,4 +1,5 @@
 import { sanitizeCsvCell } from '@/lib/csvSafety';
+import { formatDateOnly } from '@/lib/dateUtils';
 import { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePackagingQueue } from '@/features/packaging/hooks/usePackagingQueue';
@@ -67,7 +68,7 @@ export default function PackagingDashboard() {
 
   const grouped = useMemo(() => {
     const list = filteredTasks;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = formatDateOnly(new Date());
     return {
       pending: list.filter(t => t.status === 'pending'),
       inProgress: list.filter(t => t.status === 'in_triage' || t.status === 'packaging' || t.status === 'on_hold'),
@@ -77,7 +78,7 @@ export default function PackagingDashboard() {
   }, [filteredTasks]);
 
   const completedTodayAll = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = formatDateOnly(new Date());
     return (allTasks ?? []).filter(t => t.status === 'ready_to_ship' && (t.completed_at ?? '').startsWith(today));
   }, [allTasks]);
 

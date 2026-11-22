@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { parseDateOnly } from '@/lib/dateUtils';
 import { OperatorProductivityMetrics } from '@/features/production';
 import { OperatorGoal, calculateGoalProgress, GOAL_TYPE_LABELS, GoalType } from '@/features/production';
 
@@ -179,7 +180,7 @@ export function generateProductivityReport(data: ProductivityReportData): void {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(100, 100, 100);
-      doc.text(`Período: ${format(new Date(period.split(' - ')[0]), 'dd/MM/yyyy')} - ${format(new Date(period.split(' - ')[1]), 'dd/MM/yyyy')}`, margin, yPosition);
+      doc.text(`Período: ${format(parseDateOnly(period.split(' - ')[0]), 'dd/MM/yyyy')} - ${format(parseDateOnly(period.split(' - ')[1]), 'dd/MM/yyyy')}`, margin, yPosition);
       yPosition += 6;
 
       const goalsTableData = periodGoals.map(goal => {

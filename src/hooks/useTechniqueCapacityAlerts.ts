@@ -2,6 +2,7 @@ import { useMemo, useEffect, useRef } from 'react';
 import { useSchedulingData } from '@/features/jobs';
 import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { useAuth } from '@/features/auth';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 export interface CapacityMetric {
   techniqueId: string;
@@ -29,7 +30,7 @@ export function useTechniqueCapacityAlerts() {
   const capacities = useMemo(() => {
     if (!jobs.length || !techniques.length) return [] as CapacityMetric[];
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
     
     return techniques.map(technique => {
       const techniqueJobs = jobs.filter(j => j.technique_id === technique.id && j.scheduled_date === today);
@@ -61,7 +62,7 @@ export function useTechniqueCapacityAlerts() {
   useEffect(() => {
     if (!user || !capacities.length) return;
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
 
     capacities.forEach(cap => {
       if (cap.status === 'critical') {

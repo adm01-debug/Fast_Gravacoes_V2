@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { showErrorToast } from '@/lib/errorHandling';
 import { logger } from '@/lib/logger';
 import { ABCActivity, ABCActivityRate, ABCJobCost, ABC_ERROR_CONTEXT } from './types';
+import { formatDateOnly } from '@/lib/dateUtils';
 import type { Database } from '@/integrations/supabase/types';
 
 type Job = Database['public']['Tables']['jobs']['Row'];
@@ -26,7 +27,7 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
       if (!job) throw new Error('Job não encontrado');
 
       const technique = techniques.find(t => t.id === job.technique_id);
-      const now = new Date().toISOString().split('T')[0];
+      const now = formatDateOnly(new Date());
 
       // Get current rates
       const currentRates = activityRates.filter(
