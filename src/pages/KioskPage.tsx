@@ -75,6 +75,7 @@ export default function KioskPage() {
           orderNumber: job.order_number,
           quantity: job.quantity,
           produced: job.produced_quantity || undefined,
+                    actualStartTime: job.actual_start_time || undefined,
           status: statusMap[job.status],
           priority: priorityMap[job.priority] ?? "normal",
           technique: technique?.name,
