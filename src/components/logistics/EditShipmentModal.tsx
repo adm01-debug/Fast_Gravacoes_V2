@@ -57,7 +57,11 @@ export function EditShipmentModal({ shipment, open, onOpenChange }: EditShipment
         actual_delivery: status === 'delivered' ? new Date().toISOString() : shipment.actual_delivery
       }
     }, {
-      onSuccess: () => onOpenChange(false)
+      onSuccess: (result) => {
+        // Despacho retido pela embalagem: mantém o modal aberto para corrigir
+        // o status; nada além do status foi persistido.
+        if (!result?.blocked) onOpenChange(false);
+      }
     });
   };
 

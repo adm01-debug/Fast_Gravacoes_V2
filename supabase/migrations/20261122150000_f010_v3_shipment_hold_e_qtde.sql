@@ -1,4 +1,4 @@
-﻿﻿-- ============================================================================
+-- ============================================================================
 -- F-010 (v3): threads 12 e 14 do Devin Review na PR #249
 --  - Thread 12: impedir que logística despache (in_transit) shipment cujo job
 --    tenha packaging_task em on_hold (defeito crítico/cancelamento). A regra
@@ -24,6 +24,7 @@ as $$
 declare
   v_uid uuid := auth.uid();
   v_job_id uuid;
+  v_current_status text;
   v_blocked boolean := false;
 begin
   if v_uid is null then
@@ -39,23 +40,31 @@ begin
     raise exception 'Sem permissão para alterar envio';
   end if;
 
-  select job_id into v_job_id
+  select job_id, status into v_job_id, v_current_status
     from public.shipments
    where id = p_shipment_id;
-  if v_job_id is null then
+  if not found then
     raise exception 'Envio não encontrado';
   end if;
 
   -- Bloqueio de negócio (thread 12): despacho de job com embalagem em espera
   -- não pode seguir para in_transit. Regra vale mesmo se o job estiver
-  -- cancelado (on_hold criado por cancelamento).
-  if p_status = 'in_transit' and v_job_id is not null then
-    if exists (
-      select 1 from public.packaging_tasks
-       where job_id = v_job_id
-         and status = 'on_hold'
-    ) then
-      v_blocked := true;
+  -- cancelado (on_hold criado por cancelamento). A mesma retenção vale para
+  -- avanço direto para delivered de um envio que ainda não despachou:
+  -- entregar sem passar pelo despacho burlaria a espera da embalagem.
+  -- Envios já despachados (in_transit) podem ser entregues normalmente.
+  if v_job_id is not null then
+    -- delivered: bloqueia apenas transição vinda de um status pré-despacho.
+    if p_status = 'in_transit'
+       or (p_status = 'delivered' and v_current_status <> 'in_transit')
+    then
+      if exists (
+        select 1 from public.packaging_tasks
+         where job_id = v_job_id
+           and status = 'on_hold'
+      ) then
+        v_blocked := true;
+      end if;
     end if;
   end if;
 
@@ -64,12 +73,60 @@ begin
     return 'blocked';
   end if;
 
+  -- Flag para o trigger trg_prevent_hold_shipment_update não barrar a RPC.
+  perform set_config('app.f010_shipment_rpc', 'on', true);
   update public.shipments set status = p_status where id = p_shipment_id;
+  perform set_config('app.f010_shipment_rpc', 'off', true);
   return 'ok';
 end;
 $$;
 
 grant execute on function public.update_shipment_status(uuid, text) to authenticated;
+
+-- Barreira de política (thread SEC): a RPC autoriza a escrita do status via
+-- set_config; qualquer outra escrita direta em shipments com mudança de
+-- status para um envio retido é barrada aqui, inclusive se vier por fora da
+-- RPC (REST/menu). Atualizações que NÃO mudam status (metadados) passam.
+create or replace function public.preventDefault_hold_shipment_update()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_via_rpc boolean;
+  v_job_id uuid;
+begin
+  -- A RPC update_shipment_status seta a flag antes do update e a limpa depois.
+  select coalesce(current_setting('app.f010_shipment_rpc', true), 'off')
+    into v_via_rpc;
+  if v_via_rpc = 'on' then
+    return new;
+  end if;
+
+  if new.status is distinct from old.status then
+    select job_id into v_job_id from public.shipments where id = new.id;
+    if v_job_id is not null then
+      if exists (
+        select 1 from public.packaging_tasks
+         where job_id = v_job_id
+           and status = 'on_hold'
+      ) then
+        -- Mantém o status anterior; a escrita fora da RPC não vale.
+        new.status := old.status;
+        raise exception 'Envio retido pela embalagem em espera; use update_shipment_status';
+      end if;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_prevent_hold_shipment_update on public.shipments;
+create trigger trg_prevent_hold_shipment_update
+before update on public.shipments
+for each row
+execute function public.preventDefault_hold_shipment_update();
 
 -- ---------------------------------------------------------------------------
 -- Ajuste da RPC de defeito: subtrai approved_quantity excedente no caso
@@ -167,13 +224,16 @@ begin
   end if;
 
   -- Ajuste de approved_quantity para defeito após liberação (thread 14):
-  -- se a soma approved + rejected exceder received, subtrai o excedente de
-  -- approved_quantity para manter a constraint packaging_tasks_qty_sum.
-  -- Feito na mesma transação da RPC para não haver fetch-then-write no
-  -- cliente (corrida entre operadores).
-  v_new_approved := v_new_approved - p_quantity;
+  -- garante que a soma approved + rejected nunca exceda received, mas sem
+  -- "pagar" a rejeição com peças aprovadas quando ainda há peças não
+  -- classificadas (approved + rejected < received): o teto é o espaço restante.
+  v_new_approved := least(
+    v_new_approved,
+    v_received_quantity - v_rejected_quantity - p_quantity
+  );
   if v_new_approved < 0 then
-    -- rejeição além do aprovado: aprovado não pode ficar negativo (CHECK constraints)
+    -- rejeição além do aprovado + restante: aprovado não pode ficar negativo
+    -- (CHECK constraints)
     v_new_approved := 0;
     v_over_rejection := true;
   end if;

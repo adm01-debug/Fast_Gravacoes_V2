@@ -124,7 +124,7 @@ export function useLogistics() {
       // ela aplica o bloqueio de despacho quando o job tem packaging_task em
       // on_hold (defeito crítico/cancelamento) e retorna 'blocked' sem
       // alterar nada. Retorna flag para o chamador decidir como informar.
-      let blocked = false;
+      const blocked = false;
       if (data.status) {
         const { data: result, error } = await supabase.rpc('update_shipment_status', {
           p_shipment_id: id,
@@ -132,7 +132,10 @@ export function useLogistics() {
         });
         if (error) throw error;
         if (result === 'blocked') {
-          blocked = true;
+          // Envio retido: encerra a mutação sem gravar os demais campos —
+          // metadados não podem ser persistidos "por cima" de um despacho
+          // barrado (o usuário veria a edição parcialmente aplicada).
+          return { blocked: true };
         }
       }
 
@@ -149,7 +152,7 @@ export function useLogistics() {
 
       // Sync with job if status changed — idem: erro propagado em vez
       // de divergência silenciosa.
-      if (data.status && !blocked) {
+      if (data.status) {
         const { data: shipment, error: fetchError } = await supabase.from('shipments').select('job_id').eq('id', id).single();
         if (fetchError) throw fetchError;
         if (shipment?.job_id) {

@@ -260,4 +260,24 @@ describe('useLogistics', () => {
     expect(mocks.lookupEq).not.toHaveBeenCalled();
     expect(mocks.jobsUpdate).not.toHaveBeenCalled();
   });
+
+  it('bloqueia o despacho sem persistir metadados enviados junto (F-010)', async () => {
+    const mocks = mockSupabaseFrom({ shipmentStatusRpc: 'blocked', shipmentLookup: { job_id: 'job-2' } });
+
+    const { result } = renderHook(() => useLogistics(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.providers.isSuccess).toBe(true));
+
+    const res = await result.current.updateShipment.mutateAsync({
+      id: 'ship-1',
+      data: { status: 'in_transit', tracking_code: 'ABC123', notes: 'atualização de observação' },
+    });
+
+    // retido: nada é gravado (nem rastreio, nem observação) — a edição fica
+    // parcial apenas no formulário, não no banco.
+    expect(res).toEqual({ blocked: true });
+    expect(mocks.rpcFn).toHaveBeenCalledWith({ p_shipment_id: 'ship-1', p_status: 'in_transit' });
+    expect(mocks.shipmentsUpdate).not.toHaveBeenCalled();
+    expect(mocks.lookupEq).not.toHaveBeenCalled();
+    expect(mocks.jobsUpdate).not.toHaveBeenCalled();
+  });
 });
