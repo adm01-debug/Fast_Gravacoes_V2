@@ -1,0 +1,84 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (56)"
+  ],
+  "componentes": [
+   "src/components (402)",
+   "src/features (144)",
+   "src/pages (56)"
+  ],
+  "hooks": [
+   "src/features (113)",
+   "src/hooks (53)",
+   "src/components (15)"
+  ],
+  "servicos_logica": [
+   "src/lib (42)",
+   "scripts/graphify (5)",
+   "src/integrations (3)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (87)",
+   "outro (18)",
+   "tests/ (18)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/ci (6)",
+   "scripts/graphify (5)",
+   "scripts/inventario (5)"
+  ],
+  "docs": [
+   "(raiz) (10)",
+   "docs (9)",
+   ".github (1)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (90%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (98%)",
+  "edge_functions": "kebab-case (100%)",
+  "tabelas": "snake_case (95%)"
+ },
+ "barrels_index": 20,
+ "extensao_componentes": [
+  ".tsx (621)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "commitlint",
+  "exemplos": [
+   "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)",
+   "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)",
+   "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)",
+   "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)",
+   "fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)"
+  ]
+ },
+ "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
+ "codeowners": null,
+ "contributing": null,
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": false,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json"
+  ]
+ }
+}
