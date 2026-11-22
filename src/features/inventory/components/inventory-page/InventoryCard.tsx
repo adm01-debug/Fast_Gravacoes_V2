@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { PermissionGate } from '@/features/auth';
+import { PermissionGate, useRBAC } from '@/features/auth';
 import { QRLabelModal } from '@/components/inventory/QRLabelModal';
 import { InventoryItem, InventoryMovement } from '@/features/inventory/hooks/useInventory';
 
@@ -29,6 +29,8 @@ export function InventoryCard({
   onSelect: (id: string, checked: boolean) => void
 }) {
   const isLowStock = item.current_stock <= item.min_stock_level;
+    const { hasPermission } = useRBAC();
+    const canAdjustStock = hasPermission('inventory:adjust');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [movementType, setMovementType] = useState<'IN' | 'OUT'>('IN');
@@ -36,6 +38,11 @@ export function InventoryCard({
   const [quantity, setQuantity] = useState('1');
 
   const handleRecord = async () => {
+      if (movementType === 'OUT' && !canAdjustStock) {
+        toast.error('Você não tem permissão para registrar saídas de estoque');
+        return;
+      }
+
     if (movementType === 'OUT' && Number(quantity) > item.current_stock) {
       toast.error('Saldo insuficiente para realizar a saída');
       return;
@@ -159,7 +166,9 @@ export function InventoryCard({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="IN">Entrada (Reposição)</SelectItem>
-                      <SelectItem value="OUT">Saída (Consumo)</SelectItem>
+                                          {canAdjustStock && (
+                                            <SelectItem value="OUT">Saída (Consumo)</SelectItem>
+                                          )}
                     </SelectContent>
                   </Select>
                 </div>

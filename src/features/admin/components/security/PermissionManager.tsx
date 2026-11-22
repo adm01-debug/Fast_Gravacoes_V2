@@ -51,14 +51,26 @@ const ROLE_CONFIG: Record<AppRole, { label: string; color: string; icon: React.R
 
 const RESOURCE_ICONS: Record<string, React.ReactNode> = {
   jobs: React.createElement(Factory, { className: "h-4 w-4" }),
-  production: React.createElement(Factory, { className: "h-4 w-4" }),
-  operators: React.createElement(Users, { className: "h-4 w-4" }),
   machines: React.createElement(Cog, { className: "h-4 w-4" }),
+  operators: React.createElement(Users, { className: "h-4 w-4" }),
   reports: React.createElement(FileText, { className: "h-4 w-4" }),
   settings: React.createElement(Settings, { className: "h-4 w-4" }),
   security: React.createElement(Lock, { className: "h-4 w-4" }),
   users: React.createElement(Users, { className: "h-4 w-4" }),
   admin: React.createElement(Shield, { className: "h-4 w-4" }),
+  maintenance: React.createElement(Cog, { className: "h-4 w-4" }),
+  quality: React.createElement(Shield, { className: "h-4 w-4" }),
+  traceability: React.createElement(FileText, { className: "h-4 w-4" }),
+  technical_sheets: React.createElement(FileText, { className: "h-4 w-4" }),
+  goals: React.createElement(Settings, { className: "h-4 w-4" }),
+  gamification: React.createElement(Shield, { className: "h-4 w-4" }),
+  alerts: React.createElement(Shield, { className: "h-4 w-4" }),
+  energy: React.createElement(Factory, { className: "h-4 w-4" }),
+  spc: React.createElement(Shield, { className: "h-4 w-4" }),
+  shifts: React.createElement(Settings, { className: "h-4 w-4" }),
+  bitrix: React.createElement(FileText, { className: "h-4 w-4" }),
+  audit: React.createElement(Lock, { className: "h-4 w-4" }),
+  inventory: React.createElement(Factory, { className: "h-4 w-4" }),
 };
 
 export function PermissionManager() {

@@ -116,3 +116,19 @@ describe('useRBAC - permissoes do banco (F-007)', () => {
     });
   });
 });
+
+describe('catalogo deriva do mapa real (fonte unica F-007)', () => {
+  it('AVAILABLE_PERMISSIONS e a uniao exata de ROLE_PERMISSIONS (sem vocab divergente)', async () => {
+    const { ROLE_PERMISSIONS, AVAILABLE_PERMISSIONS } = await import('../permissions');
+    const expected = Array.from(new Set(Object.values(ROLE_PERMISSIONS).flat()));
+    const actual = AVAILABLE_PERMISSIONS.map((p) => p.permission);
+    // Mesmo conjunto, mesmo tamanho (nenhuma permissão órfã nem inventada).
+    expect(actual.sort()).toEqual(expected.sort());
+    // Vocabulário legado que divergia do runtime (view/edit/manage/register) não pode existir.
+    expect(actual).not.toContain('jobs:view');
+    expect(actual).not.toContain('jobs:edit');
+    expect(actual).not.toContain('production:view');
+    expect(actual).not.toContain('operators:manage');
+    expect(actual).not.toContain('settings:manage');
+  });
+});
