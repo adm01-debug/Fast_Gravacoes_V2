@@ -40,15 +40,16 @@ vi.mock('../index', async (importOriginal) => {
   };
 });
 
-import { useAuth, ROLE_PERMISSIONS } from '../index';
+import { useAuth } from '../index';
 
-describe('useRBAC - permissÃƒÆ’Ã‚Âµes do banco (F-007)', () => {
+describe('useRBAC - permissoes do banco (F-007)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('usa permissÃƒÆ’Ã‚Âµes do banco como fonte primÃƒÆ’Ã‚Â¡ria de autorizaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o', async () => {
+  it('usa permissoes do banco como fonte primaria', async () => {
     (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
+    // 'jobs:create' nao existe no mapa estatico do operator: prova que veio do banco.
     mockSupabaseResult([{ permission: 'jobs:create' }, { permission: 'inventory:read' }]);
 
     const { result } = renderHook(() => useRBAC());
@@ -60,7 +61,7 @@ describe('useRBAC - permissÃƒÆ’Ã‚Âµes do banco (F-007)', () => {
     expect(result.current.hasPermission('jobs:delete')).toBe(false);
   });
 
-  it('faz fallback para o mapa estÃƒÆ’Ã‚Â¡tico quando a consulta falha', async () => {
+  it('faz fallback para o mapa estatico quando a consulta falha', async () => {
     (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
     mockSupabaseResult(null, new Error('network'));
 
@@ -69,12 +70,14 @@ describe('useRBAC - permissÃƒÆ’Ã‚Âµes do banco (F-007)', () => {
     await waitFor(() => {
       expect(mockFrom).toHaveBeenCalled();
     });
-    // operator tem 'jobs:read' no mapa estÃƒÆ’Ã‚Â¡tico
+    // Operator tem jobs:read estatico; jobs:create e exclusivo do banco e deve sumir no fallback.
     expect(result.current.hasPermission('jobs:read')).toBe(true);
+    expect(result.current.hasPermission('jobs:create')).toBe(false);
   });
 
-  it('recurso:all cobre permissÃƒÆ’Ã‚Âµes com dois-pontos e com ponto', async () => {
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({ ...mockUseAuth(), role: 'manager' });
+  it('recurso:all cobre permissoes com dois-pontos e com ponto', async () => {
+    // Operator NAO tem inventory:adjust no mapa estatico: prova que resource:all concede.
+    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue(mockUseAuth());
     mockSupabaseResult([{ permission: 'inventory:all' }]);
 
     const { result } = renderHook(() => useRBAC());
