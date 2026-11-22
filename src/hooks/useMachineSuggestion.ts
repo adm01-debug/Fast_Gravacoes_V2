@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useSchedulingData } from '@/features/jobs';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 interface MachineSuggestion {
   machineId: string;
@@ -29,7 +30,7 @@ export function useMachineSuggestion(techniqueId: string | null) {
 
     if (!techniqueMachines.length) return [];
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
 
     return techniqueMachines
       .map(machine => {

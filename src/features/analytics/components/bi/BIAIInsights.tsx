@@ -87,7 +87,7 @@ export function BIAIInsights({ biMetrics, oeeData }: BIAIInsightsProps) {
       const financialImpact = biMetrics.periodLostPieces * averageUnitCost;
       list.push({
         title: "Vulnerabilidade de Qualidade",
-        description: `Impacto direto de R$ ${financialImpact.toLocaleString()} em perdas de material este mês.`,
+        description: `Impacto direto de R$ ${financialImpact.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} em perdas de material este mês.`,
         details: "Padrão de desvio recorrente em lotes de alta densidade. Verifique a calibração de pressão nos bicos injetores.",
         type: "danger",
         icon: Activity,

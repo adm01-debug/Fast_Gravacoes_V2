@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MaintenanceType } from '@/features/maintenance/hooks/useTPM';
+import { formatDateOnly, parseDateOnly } from '@/lib/dateUtils';
 
 interface CreateScheduleModalProps {
   machines: { id: string; name: string; code: string }[];
@@ -50,7 +51,7 @@ export function CreateScheduleModal({
     name: '',
     description: '',
     interval_days: 30,
-    next_due_at: new Date().toISOString().split('T')[0],
+    next_due_at: formatDateOnly(new Date()),
     estimated_duration_minutes: 60,
   });
 
@@ -64,7 +65,7 @@ export function CreateScheduleModal({
     e.preventDefault();
     onSubmit({
       ...formData,
-      next_due_at: new Date(formData.next_due_at).toISOString(),
+      next_due_at: (() => { const d = parseDateOnly(formData.next_due_at) ?? new Date(); d.setHours(23, 59, 59, 999); return d.toISOString(); })(),
     });
     setOpen(false);
     setFormData({
@@ -73,7 +74,7 @@ export function CreateScheduleModal({
       name: '',
       description: '',
       interval_days: 30,
-      next_due_at: new Date().toISOString().split('T')[0],
+      next_due_at: formatDateOnly(new Date()),
       estimated_duration_minutes: 60,
     });
   };

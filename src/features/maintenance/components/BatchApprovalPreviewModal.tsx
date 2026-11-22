@@ -94,7 +94,7 @@ export function BatchApprovalPreviewModal({
     const rows = validationResults.map((v) => [
       v.machine?.name || '',
       v.machine?.code || '',
-      v.completed_at ? new Date(v.completed_at).toLocaleDateString() : 'N/A',
+      v.completed_at ? new Date(v.completed_at).toLocaleDateString('pt-BR') : 'N/A',
       v.isValid ? 'Pronto' : 'Incompleto',
       v.issues.join('; ')
     ]);
@@ -148,7 +148,7 @@ export function BatchApprovalPreviewModal({
                     <div className="text-[10px] text-muted-foreground">{v.machine?.code}</div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    {v.completed_at ? new Date(v.completed_at).toLocaleDateString() : 'N/A'}
+                    {v.completed_at ? new Date(v.completed_at).toLocaleDateString('pt-BR') : 'N/A'}
                   </TableCell>
                   <TableCell>
                     {v.isValid ? (

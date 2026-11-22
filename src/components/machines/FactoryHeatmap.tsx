@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { formatDateOnly } from '@/lib/dateUtils';
 import { Map as MapIcon } from 'lucide-react';
 import { useSchedulingData, type DbMachine, type DbTechnique } from '@/features/jobs';
 
@@ -17,7 +18,7 @@ export function FactoryHeatmap({ machines }: { machines: DbMachine[]; techniques
     if (productionJobs > 0) return 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]';
 
     // Check if machine is scheduled for today
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
     const scheduledToday = jobs.filter(j => j.machine_id === machine.id && j.scheduled_date === today).length;
 
     if (scheduledToday > 0) return 'bg-warning shadow-[0_0_10px_rgba(251,191,36,0.3)]';
@@ -29,7 +30,7 @@ export function FactoryHeatmap({ machines }: { machines: DbMachine[]; techniques
 
     const machineJobs = jobs.filter(j => j.machine_id === machine.id);
     const productionCount = machineJobs.filter(j => j.status === 'production').length;
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
     const todayCount = machineJobs.filter(j => j.scheduled_date === today).length;
     const completedCount = machineJobs.filter(j => j.status === 'finished').length;
 

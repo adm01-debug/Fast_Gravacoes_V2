@@ -7,6 +7,7 @@ import { type Technique as DbTechnique } from '../services/techniquesService';
 import { type Machine as DbMachine } from '../../production/services/machinesService';
 import { QUERY_KEYS, STALE_TIMES, calculateRetryDelay } from '@/lib/queryConfig';
 import { createAppError } from '@/lib/errorHandling';
+import { formatDateOnly } from '@/lib/dateUtils';
 import { jobsService } from '../services/jobsService';
 import { machinesService } from '../../production/services/machinesService';
 import { useAuth } from '@/features/auth';
@@ -153,7 +154,7 @@ export function useSchedulingData() {
   // Single-pass stats computation (replaces 9+ separate .filter() calls)
   const stats = useMemo(() => {
     const jobs = jobsQuery.data || [];
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatDateOnly(new Date());
 
     const result = {
       total: jobs.length,
@@ -209,7 +210,7 @@ export function useSchedulingData() {
     const jobsByDateMap = new Map<string, DbJob[]>();
     jobs.forEach(j => {
       if (j.status === 'finished' && j.actual_end_time) {
-        const d = j.actual_end_time.substring(0, 10);
+        const d = formatDateOnly(new Date(j.actual_end_time));
         const list = jobsByDateMap.get(d) || [];
         list.push(j);
         jobsByDateMap.set(d, list);
@@ -219,7 +220,7 @@ export function useSchedulingData() {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(now);
       date.setDate(now.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatDateOnly(date);
 
       const dayJobs = jobsByDateMap.get(dateStr) || [];
 
@@ -262,7 +263,7 @@ export function useSchedulingData() {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatDateOnly(date);
 
       const dayJobs = jobsByScheduledDateMap.get(dateStr) || [];
       const load = dayJobs.reduce((sum, j) => sum + (j.estimated_duration || 0), 0);

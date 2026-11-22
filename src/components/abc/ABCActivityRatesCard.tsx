@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { ABCActivity, ABCCostPool, ABCActivityRate } from '@/hooks/useABCCosts';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 interface ABCActivityRatesCardProps {
   activities: ABCActivity[];
@@ -39,9 +40,9 @@ export function ABCActivityRatesCard({
     rate_per_unit: '',
   });
 
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
   const periodStart = `${currentMonth}-01`;
-  const periodEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
+  const periodEnd = formatDateOnly(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0));
 
   const handleEdit = (activity: ABCActivity) => {
     const currentRate = activityRates.find(
