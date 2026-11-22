@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1056)",
    "SQL (257)",
-   "Markdown (100)",
+   "Markdown (102)",
    "JavaScript (54)",
    "JSON (33)",
    "YAML (15)",
@@ -685,6 +685,11 @@
    "linhas": 134
   },
   {
+   "arquivo": "docs/plano-190-etapas-261122.md",
+   "titulo": "Plano de melhorias e correções em 190 etapas — Fast Gravações V2",
+   "linhas": 1314
+  },
+  {
    "arquivo": "docs/plano-50-etapas-260924.md",
    "titulo": "Plano de correções e melhorias em 50 etapas — FAST GRAVAÇÕES ES v2",
    "linhas": 763
@@ -703,6 +708,11 @@
    "arquivo": "docs/plano-mestre-10-10.md",
    "titulo": "Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10",
    "linhas": 831
+  },
+  {
+   "arquivo": "docs/plano-ux-navegacao-200-etapas-261122.md",
+   "titulo": "Plano de UX de Navegação e Transição entre Telas — 200 Etapas",
+   "linhas": 1760
   },
   {
    "arquivo": "docs/prod-readiness.md",

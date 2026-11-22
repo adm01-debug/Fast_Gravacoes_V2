@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "75dc92499751210b8dc5b5a21c8486feb4f15a5e",
+  "sha": "0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 11:23 UTC",
-  "files_total": 1568,
+  "generated_at": "2026-11-22 16:13 UTC",
+  "files_total": 1570,
   "code_files": 1380,
   "code_lines": 204578
  },
@@ -95725,10 +95725,28 @@
   }
  },
  "git": {
-  "sha": "75dc92499751210b8dc5b5a21c8486feb4f15a5e",
+  "sha": "0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "0a50e73",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "docs: plano de 200 etapas de UX de navegacao (#260)",
+    "files": [
+     "docs/plano-ux-navegacao-200-etapas-261122.md"
+    ]
+   },
+   {
+    "sha": "efca83b",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "docs: plano de 190 etapas de melhorias e correcoes (#257)",
+    "files": [
+     "docs/plano-190-etapas-261122.md"
+    ]
+   },
    {
     "sha": "75dc924",
     "date": "2026-11-22",
@@ -96047,24 +96065,6 @@
      "src/lib/sanitize.ts",
      "src/test/sanitize.test.ts"
     ]
-   },
-   {
-    "sha": "248505f",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "chore: reintroduz rigidez no lint da CI (--max-warnings 0) (#221)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
-   },
-   {
-    "sha": "9814660",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: desambigua embed shipment no rastreamento (jobs_shipment_id_fkey) (#222)",
-    "files": [
-     "src/pages/PublicTrackingPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -96133,19 +96133,19 @@
     2
    ],
    [
-    "src/pages/PublicTrackingPage.tsx",
-    2
-   ],
-   [
     "analise-prs/progresso.json",
     2
    ],
    [
-    "src/features/auth/hooks/useRBAC.test.tsx",
+    "docs/plano-ux-navegacao-200-etapas-261122.md",
     1
    ],
    [
-    "src/features/auth/hooks/useRBAC.tsx",
+    "docs/plano-190-etapas-261122.md",
+    1
+   ],
+   [
+    "src/features/auth/hooks/useRBAC.test.tsx",
     1
    ]
   ]

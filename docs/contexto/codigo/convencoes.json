@@ -33,8 +33,8 @@
    "scripts/inventario (5)"
   ],
   "docs": [
+   "docs (11)",
    "(raiz) (10)",
-   "docs (9)",
    ".github (1)"
   ]
  },
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: plano de 200 etapas de UX de navegacao (#260)",
+   "docs: plano de 190 etapas de melhorias e correcoes (#257)",
    "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)",
    "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)",
-   "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)",
-   "fix: ativa notificações push reais (par VAPID configurado) (#252)",
-   "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)"
+   "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

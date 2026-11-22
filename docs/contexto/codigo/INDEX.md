@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `75dc92499751210b8dc5b5a21c8486feb4f15a5e` (2026-11-22T08:23:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0a50e7356c9f2d7ad180f9c51d30f5ac43a9998c` (2026-11-22T13:06:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1056), SQL (257), Markdown (100), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1056), SQL (257), Markdown (102), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1570 |
+| arquivos_total | 1572 |
 | arquivos_codigo | 1120 |
 | linhas_codigo | 189202 |
 | rotas | 58 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 124 |
 | workflows | 12 |
 | scripts | 41 |
-| docs_md | 100 |
+| docs_md | 102 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
-- docs: (raiz) (10), docs (9), .github (1)
+- docs: docs (11), (raiz) (10), .github (1)
 - nomenclatura: {"componentes":"PascalCase (90%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (100%)","tabelas":"snake_case (95%)"}
 - instruções para agentes no repo: AGENTS.md, CLAUDE.md
 
@@ -246,7 +246,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7481 nós · 21977 arestas · 660 comunidades · grafo do commit `75dc9249`
+- 7481 nós · 21977 arestas · 659 comunidades · grafo do commit `0a50e735`
 - comunidades maiores: card.tsx (245), Button (194), JobDetailsModal.tsx (139), analytics/index.ts (121), snapshot.py (111), errorHandling.ts (109), useAuth (108), DailyCalendar.tsx (102), generate.py (101), cn (101), gerar.mjs (96), .write (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), parseDateOnly() (src/lib/dateUtils.ts), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -358,15 +358,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/AUTOMACAO_LOCAL.md` — Automação local — Fast_Gravacoes_V2 (107 linhas)
 - `docs/QA_AUDIT_2026-06-14.md` — QA Audit — FAST GRAVAÇÕES ES v2 (142 linhas)
 - `docs/QA_SIMULACAO_CENARIOS_2026-06-14.md` — Simulação de Cenários & Hardening — FAST GRAVAÇÕES ES v2 (134 linhas)
+- `docs/plano-190-etapas-261122.md` — Plano de melhorias e correções em 190 etapas — Fast Gravações V2 (1314 linhas)
 - `docs/plano-50-etapas-260924.md` — Plano de correções e melhorias em 50 etapas — FAST GRAVAÇÕES ES v2 (763 linhas)
 - `docs/plano-50-etapas-consolidacao.md` — Plano de consolidação em 50 etapas — FAST GRAVAÇÕES ES v2 (819 linhas)
 - `docs/plano-graphify-50-etapas.md` — Plano de implementação Graphify — 50 etapas (647 linhas)
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
+- `docs/plano-ux-navegacao-200-etapas-261122.md` — Plano de UX de Navegação e Transição entre Telas — 200 Etapas (1760 linhas)
 - `docs/prod-readiness.md` — Fast Gravacoes V2 - Prontidao para Producao (189 linhas)
 - subpastas de docs/: docs/estado (20), docs/pendencias (17), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/ci (1), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-22 `0a50e73` docs: plano de 200 etapas de UX de navegacao (#260)
+- 2026-11-22 `efca83b` docs: plano de 190 etapas de melhorias e correcoes (#257)
 - 2026-11-22 `75dc924` fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)
 - 2026-11-22 `82df446` chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)
 - 2026-11-22 `dbb891a` chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)
@@ -380,8 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `6d6591c` chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)
 - 2026-11-21 `3c05e4e` fix: F-006 geo-blocking enforced no login (#240)
 - 2026-11-21 `4590899` chore: dossie F-005 marcado resolvida (#239)
-- 2026-11-21 `ecaa439` fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)
-- 2026-11-20 `6032d37` chore: dossie F-004 marcado resolvido com evidencia (#237)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
