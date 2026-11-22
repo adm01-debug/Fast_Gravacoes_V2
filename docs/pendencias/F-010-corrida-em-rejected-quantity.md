@@ -68,8 +68,12 @@ Suite `tsuite.sql` executada em banco temporario `fg_f010_test1` com RLS ativa +
 
 ## Ordem
 10 de 16 por impacto x custo.
-## Resposta aos achados do Devin (commit 9e14667e)
-- Trigger 	rg_prevent_hold_shipment_update (BEFORE UPDATE) barra qualquer UPDATE direto de status em envio retido - o bypass fora da RPC era possivel via edicao de tabela; agora 
-ew.status e reescrito e a operacao falha com Envios em on_hold nao podem ser despachados fora da RPC update_shipment_status.- Envio avulso (sem job/packaging_task): o bloqueio so se aplica quando ha packaging_task; envio direto sem job nao e bloqueado por engano.- Ajuste pproved_quantity usa LEAST() e mantem pproved + rejected <= received mesmo no caso do BUG 0001 (rejected 60, approved 60 em received 100).
-- Modal de edicao de envio nao fecha quando o despacho e bloqueado (esult.blocked); metadados enviados junto nao sao persistidos nesse caso.- BOM UTF-8 removido da migration (quebrava psql/grep).
-- Validacao: SQL 14/14 (suíte T1-T14), tsc/eslint/vitest 12/12.
+## Resposta aos achados do Devin (commits 9e14667e e 19dc05c1)
+
+- Trigger `trg_prevent_hold_shipment_update` (BEFORE UPDATE) barra qualquer UPDATE direto de status em envio retido: `NEW.status` é reescrito e a operação falha com "Envios em on_hold não podem ser despachados fora da RPC update_shipment_status". A flag `app.f010_shipment_rpc` é comparada como texto (`current_setting(...) = 'on'`), não como booleano — o cast quebraria o próximo UPDATE na sessão após o commit (thread gphG do Devin).
+- Envio avulso (sem job/packaging_task): o bloqueio só se aplica quando há `packaging_task`; envio direto sem job não é bloqueado por engano.
+- Ajuste de `approved_quantity` usa `LEAST()` e mantém approved + rejected <= received mesmo no caso do BUG 0001 (rejected 60, approved 60 em received 100).
+- Repetir o status atual (correção de rastreio/frete em envio já despachado com embalagem retida) não é tratado como despacho bloqueado — a RPC trata `p_status is distinct from v_current_status` e retorna `ok` em no-op (thread gphi do Devin).
+- Modal de edição de envio não fecha quando o despacho é bloqueado (`result.blocked`); metadados enviados junto não são persistidos nesse caso.
+- BOM UTF-8 removido da migration (quebrava psql/grep).
+- Validação: SQL 16/16 (suíte T1-T16), tsc/eslint/vitest 12/12.
