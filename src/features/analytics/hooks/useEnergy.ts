@@ -62,7 +62,8 @@ export interface UseEnergyOptions {
   start?: Date;
   end?: Date;
   // false desativa as consultas (ex.: sem permissao energy:read o RLS
-  // bloquearia e o hook retornaria "erro" em vez de dados) - stats fica vazio.
+  // bloquearia e o hook retornaria "erro" em vez de dados). E tambem evita
+  // devolver dados de cache: stats e os arrays ficam vazios quando disabled.
   enabled?: boolean;
 }
 
@@ -146,7 +147,9 @@ export function useEnergy(dateRange?: { start: Date; end: Date }, options?: UseE
 
   // Calculate stats
   const stats: EnergyStats = (() => {
-    const consumption = consumptionQuery.data || [];
+    // enabled=false (ex.: sem energy:read) nao deve computar stats com dados
+    // de cache: react-query mantem data mesmo com o fetch desativado.
+    const consumption = enabled ? (consumptionQuery.data || []) : [];
 
     const totalConsumption = consumption.reduce((sum, c) => sum + Number(c.consumption_kwh), 0);
     const totalCost = consumption.reduce((sum, c) => sum + Number(c.total_cost), 0);
@@ -161,7 +164,7 @@ export function useEnergy(dateRange?: { start: Date; end: Date }, options?: UseE
     const avgDailyConsumption = totalConsumption / days;
 
     // Compare with previous month using separate query
-    const prevData = prevConsumptionQuery.data || [];
+    const prevData = enabled ? (prevConsumptionQuery.data || []) : [];
     const prevTotal = prevData.reduce((sum, c) => sum + Number(c.total_cost), 0);
     const costTrend = prevTotal > 0 ? ((totalCost - prevTotal) / prevTotal) * 100 : 0;
 
@@ -299,20 +302,20 @@ export function useEnergy(dateRange?: { start: Date; end: Date }, options?: UseE
   });
 
   return {
-    consumption: consumptionQuery.data || [],
-    alerts: alertsQuery.data || [],
-    targets: targetsQuery.data || [],
+    consumption: enabled ? (consumptionQuery.data || []) : [],
+    alerts: enabled ? (alertsQuery.data || []) : [],
+    targets: enabled ? (targetsQuery.data || []) : [],
     stats,
     isLoading: consumptionQuery.isLoading || alertsQuery.isLoading,
-      // RLS/permissao negando a leitura (energy:read revogada) produz erro de
-      // query em vez de stats zerados; o chamador distingue "indisponivel"
-      // (sem acesso) de consumo zero real.
-      hasError: Boolean(
-        consumptionQuery.error ||
-        prevConsumptionQuery.error ||
-        alertsQuery.error ||
-        targetsQuery.error
-      ),
+    // RLS/permissao negando a leitura (energy:read revogada) produz erro de
+    // query em vez de stats zerados; o chamador distingue "indisponivel"
+    // (sem acesso) de consumo zero real. So as consultas de consumo importam
+    // para o total exibido - falha em alerts/targets/historico nao esconde o
+    // total (falha auxiliar esconderia o dado principal).
+    hasError: Boolean(
+      consumptionQuery.error ||
+      prevConsumptionQuery.error
+    ),
     addConsumption,
     resolveAlert,
     createTarget,

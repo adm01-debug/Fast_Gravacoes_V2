@@ -26,8 +26,10 @@ export default function DigitalTwin() {
   const { data: kpiData } = useKPIs('day');
   const { hasPermission } = useRBAC();
   const canReadEnergy = hasPermission('energy:read');
-  // Sem energy:read a consulta a energia e bloqueada pelo RLS e retornaria 0
-  // como se fosse real; consultamos so quando a permissao existe.
+    // Sem energy:read o RLS filtraria a leitura (retorno vazio, indistinguivel
+    // de consumo zero); por isso a consulta so roda quando a permissao existe
+    // (enabled=false tambem descarta dados de cache). hasError cobre falhas
+    // reais de query de consumo - alertas/metas/historico nao escondem o total.
   const { stats: energyStats, hasError: energyError } = useEnergy(undefined, { enabled: canReadEnergy });
 
   const oee = kpiData?.productivityByTechnique?.[0]?.occupancyRate || 92.4;
