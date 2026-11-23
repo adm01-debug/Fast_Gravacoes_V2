@@ -2,91 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '../index';
 import { supabase } from '@/integrations/supabase/client';
 import type { AppRole } from '../index';
-
-// Define permissions for each role
-export const ROLE_PERMISSIONS: Record<AppRole, string[]> = {
-  admin: [
-    'admin:all',
-    'jobs:read', 'jobs:create', 'jobs:update', 'jobs:delete',
-    'machines:read', 'machines:create', 'machines:update', 'machines:delete',
-    'operators:read', 'operators:create', 'operators:update', 'operators:delete',
-    'users:read', 'users:create', 'users:update', 'users:delete', 'users:change_role',
-    'reports:read', 'reports:export',
-    'settings:read', 'settings:update',
-    'maintenance:read', 'maintenance:create', 'maintenance:update', 'maintenance:delete',
-    'quality:read', 'quality:create', 'quality:update',
-    'traceability:read', 'traceability:create',
-    'technical_sheets:read', 'technical_sheets:create', 'technical_sheets:update', 'technical_sheets:delete',
-    'technical_sheets:approve',
-    'goals:read', 'goals:create', 'goals:update', 'goals:delete',
-    'gamification:read', 'gamification:manage',
-    'alerts:read', 'alerts:resolve',
-    'energy:read', 'energy:manage',
-    'spc:read', 'spc:manage',
-    'shifts:read', 'shifts:manage',
-    'bitrix:read', 'bitrix:sync',
-    'audit:read',
-    'inventory:read', 'inventory:transfer', 'inventory:adjust', 'inventory:delete',
-  ],
-  coordinator: [
-    // Full access
-    'jobs:read', 'jobs:create', 'jobs:update', 'jobs:delete',
-    'machines:read', 'machines:create', 'machines:update', 'machines:delete',
-    'operators:read', 'operators:create', 'operators:update', 'operators:delete',
-    'users:read', 'users:create', 'users:update', 'users:delete', 'users:change_role',
-    'reports:read', 'reports:export',
-    'settings:read', 'settings:update',
-    'maintenance:read', 'maintenance:create', 'maintenance:update', 'maintenance:delete',
-    'quality:read', 'quality:create', 'quality:update',
-    'traceability:read', 'traceability:create',
-    'technical_sheets:read', 'technical_sheets:create', 'technical_sheets:update', 'technical_sheets:delete',
-    'technical_sheets:approve',
-    'goals:read', 'goals:create', 'goals:update', 'goals:delete',
-    'gamification:read', 'gamification:manage',
-    'alerts:read', 'alerts:resolve',
-    'energy:read', 'energy:manage',
-    'spc:read', 'spc:manage',
-    'shifts:read', 'shifts:manage',
-    'bitrix:read', 'bitrix:sync',
-    'audit:read',
-    'inventory:read', 'inventory:transfer', 'inventory:adjust', 'inventory:delete',
-  ],
-  manager: [
-    // Most access except user management and some sensitive operations
-    'jobs:read', 'jobs:create', 'jobs:update',
-    'machines:read', 'machines:update',
-    'operators:read',
-    'users:read',
-    'reports:read', 'reports:export',
-    'settings:read',
-    'maintenance:read', 'maintenance:create', 'maintenance:update',
-    'quality:read', 'quality:create', 'quality:update',
-    'traceability:read', 'traceability:create',
-    'technical_sheets:read', 'technical_sheets:update', 'technical_sheets:approve',
-    'goals:read', 'goals:create', 'goals:update',
-    'gamification:read',
-    'alerts:read', 'alerts:resolve',
-    'energy:read',
-    'spc:read', 'spc:manage',
-    'shifts:read', 'shifts:manage',
-    'bitrix:read',
-    'audit:read',
-    'inventory:read', 'inventory:transfer', 'inventory:adjust',
-  ],
-  operator: [
-    // Limited access - only their own data and assigned machines
-    'jobs:read', 'jobs:update', // Can update job progress
-    'machines:read',
-    'quality:read', 'quality:create', // Can create quality inspections
-    'traceability:read',
-    'technical_sheets:read',
-    'gamification:read', // Can view their achievements
-    'alerts:read',
-    'shifts:read',
-    'maintenance:read', // Can view maintenance schedules
-    'inventory:read',
-  ],
-};
+import { ROLE_PERMISSIONS } from '../permissions';
 
 // Route permissions mapping
 const ROUTE_PERMISSIONS: Record<string, string[]> = {
@@ -130,18 +46,46 @@ export interface RBACResult {
 
   // Loading state
   isLoading: boolean;
+
+  // Estado do fetch de permissoes no banco (false quando desabilitado ou
+  // quando o runtime nao consulta, ex.: admin). Separado de isLoading (auth)
+  // para o gate de rota aguardar o banco em vez de decidir com o mapa estatico.
+  isPermissionLoading: boolean;
 }
 
-export function useRBAC(): RBACResult {
+export function useRBAC(options?: { enabled?: boolean }): RBACResult {
+  const enabled = options?.enabled !== false;
   const { role, isCoordinator, isManager, isOperator, isAdmin, isLoading } = useAuth();
   const [dbPermissions, setDbPermissions] = useState<string[] | null>(null);
+  // Inicia true quando o fetch esta habilitado: o gate de rota aguarda a
+  // resposta do banco em vez de avaliar com o mapa estatico (fallback de rede,
+  // nao decisao).
+  const [isPermissionLoading, setIsPermissionLoading] = useState(enabled);
 
   useEffect(() => {
-    if (isLoading || !role) {
-      return;
-    }
     let cancelled = false;
     (async () => {
+      if (isLoading) {
+        // Aguarda a resolucao da sessao; isPermissionLoading permanece no
+        // estado inicial (true quando enabled) para o gate nao decidir cedo.
+        return;
+      }
+      if (!role) {
+        // Sem role (nao autenticado ou role indisponivel apos o boot): nao ha
+        // consulta de permissoes a fazer - fecha o loading do gate para que a
+        // rota redirecione para /auth ou / em vez de travar em "Carregando...".
+        setDbPermissions(null);
+        setIsPermissionLoading(false);
+        return;
+      }
+      if (role === 'admin' || !enabled) {
+        // Admin tem bypass total no runtime (hasPermission retorna true); e com
+        // enabled=false nenhuma rota pede permissao. Ambos nao consultam o banco.
+        setDbPermissions(null);
+        setIsPermissionLoading(false);
+        return;
+      }
+      setIsPermissionLoading(true);
       try {
         const { data, error } = await supabase
           .from('role_permissions')
@@ -149,28 +93,29 @@ export function useRBAC(): RBACResult {
           .eq('role', role);
         if (cancelled) return;
         if (error) throw error;
-        // Banco é a fonte primária da autorização (tela de permissões tem efeito real).
+        // Banco e a fonte primaria da autorizacao (tela de permissoes tem efeito real).
         setDbPermissions((data || []).map(p => p.permission));
       } catch {
-        // Fallback para o mapa estático em caso de falha/erro de rede.
+        // Fallback para o mapa estatico em caso de falha/erro de rede.
         if (!cancelled) setDbPermissions(null);
+      } finally {
+        if (!cancelled) setIsPermissionLoading(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [role, isLoading]);
+  }, [role, isLoading, enabled]);
 
   const permissions = useMemo(() => {
       if (!role) return [];
-    const base = dbPermissions !== null ? dbPermissions : (ROLE_PERMISSIONS[role] || []);
-    // Union com o mapa estático garante zero regressão: permissões hard-coded
-    // históricas continuam valendo mesmo se o banco não listar todas.
-    const staticPerms = ROLE_PERMISSIONS[role] || [];
+          // Banco é a fonte autoritativa: permissões revogadas na tela de
+          // PermissionManager têm efeito real. O mapa estático só entra como
+          // fallback quando a consulta ao banco falha (dbPermissions === null).
+    const base = enabled && dbPermissions !== null ? dbPermissions : (ROLE_PERMISSIONS[role] || []);
     // Standardize all permissions to use ":" instead of "." and remove duplicates
-    const standardized = [...new Set([...base, ...staticPerms])].map(p => p.replace(/\./g, ':'));
-    return Array.from(new Set(standardized));
-  }, [dbPermissions, role]);
+          return Array.from(new Set(base.map(p => p.replace(/\./g, ':'))));
+  }, [dbPermissions, role, enabled]);
 
   const resourceMatch = useMemo(() => {
     return (permission: string): boolean => {
@@ -229,6 +174,7 @@ export function useRBAC(): RBACResult {
     isAdmin,
     permissions,
     isLoading,
+    isPermissionLoading,
   };
 }
 
@@ -248,9 +194,9 @@ export function PermissionGate({
   fallback = null,
   children,
 }: PermissionGateProps) {
-  const { hasPermission, hasAnyPermission, hasAllPermissions, isLoading } = useRBAC();
+  const { hasPermission, hasAnyPermission, hasAllPermissions, isPermissionLoading } = useRBAC();
 
-  if (isLoading) return null;
+  if (isPermissionLoading) return null;
 
   let hasAccess = false;
 

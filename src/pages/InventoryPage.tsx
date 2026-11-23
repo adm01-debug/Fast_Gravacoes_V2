@@ -42,6 +42,7 @@ export default function InventoryPage() {
   const { items, isLoading, recordMovement, stats } = useInventory();
   const { data: movements } = useInventoryMovements();
   const { hasPermission } = useRBAC();
+  const canAdjustStock = hasPermission('inventory:adjust');
   // Filtros persistidos na URL: sobrevivem a voltar/recarregar/compartilhar.
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get('q') ?? '';
@@ -202,6 +203,7 @@ export default function InventoryPage() {
                     item={item as InventoryItem}
                     onMovement={recordMovement}
                     isSelected={selectedItems.has(item.id)}
+                    canAdjustStock={canAdjustStock}
                     onSelect={(id: string, checked: boolean) => {
                       const next = new Set(selectedItems);
                       if (checked) next.add(id);

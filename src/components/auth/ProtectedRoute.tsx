@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth, AppRole, useAuthenticatorAssuranceLevel } from '@/features/auth';
+import { useAuth, AppRole, useAuthenticatorAssuranceLevel, useRBAC } from '@/features/auth';
 import { logger } from '@/lib/logger';
 import { Loader2 } from 'lucide-react';
 
@@ -15,11 +15,13 @@ const ROLE_LABEL: Record<AppRole, string> = {
 function AccessDeniedRedirect({
   role,
   allowedRoles,
+  requiredPermission,
   path,
   to,
 }: {
   role: AppRole;
-  allowedRoles: AppRole[];
+  allowedRoles?: AppRole[];
+  requiredPermission?: string;
   path: string;
   to: string;
 }) {
@@ -27,13 +29,15 @@ function AccessDeniedRedirect({
   useEffect(() => {
     if (notified.current) return;
     notified.current = true;
-    const needed = allowedRoles.map((r) => ROLE_LABEL[r] ?? r).join(', ');
+    const needed = requiredPermission
+      ? `permissão: ${requiredPermission}`
+      : `perfil: ${(allowedRoles || []).map((r) => ROLE_LABEL[r] ?? r).join(', ')}`;
     toast.error('Acesso restrito', {
-      description: `Esta área requer perfil: ${needed}. Seu perfil atual (${ROLE_LABEL[role] ?? role}) não tem permissão. Fale com um administrador para solicitar acesso.`,
+      description: `Esta área requer ${needed}. Seu perfil atual (${ROLE_LABEL[role] ?? role}) não tem permissão. Fale com um administrador para solicitar acesso.`,
       duration: 8000,
     });
-    logger.warn('Access denied: role not allowed', { role, allowedRoles, path }, 'ProtectedRoute');
-  }, [role, allowedRoles, path]);
+    logger.warn('Access denied: role not allowed', { role, allowedRoles, requiredPermission, path }, 'ProtectedRoute');
+  }, [role, allowedRoles, requiredPermission, path]);
   return <Navigate to={to} replace />;
 }
 
@@ -59,10 +63,16 @@ function MfaEnrollmentRedirect({ role, path }: { role: AppRole; path: string }) 
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles?: AppRole[];
+  requiredPermission?: string;
 }
 
-export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, allowedRoles, requiredPermission }: ProtectedRouteProps) {
   const { user, role, isLoading } = useAuth();
+  // Rotas que so exigem perfil nao disparam query de permissoes (F-007):
+  // enabled=false usa o mapa estatico e pula a consulta ao banco.
+  const { hasPermission, isPermissionLoading: rbacLoading } = useRBAC({
+    enabled: Boolean(requiredPermission),
+  });
   const { checked: aalChecked, needsMfaChallenge, hasNoVerifiedFactor } = useAuthenticatorAssuranceLevel();
   const location = useLocation();
 
@@ -77,7 +87,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     }, 'ProtectedRoute');
   }
 
-  if (isLoading || (user && !aalChecked)) {
+  if (isLoading || (user && !aalChecked) || (requiredPermission && rbacLoading)) {
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -130,10 +140,11 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   // If role verification finished without a valid role, do not keep users stuck
   // on the permission loader. Redirect to the safest available authenticated route.
-  if (allowedRoles && role === null) {
+  if ((allowedRoles || requiredPermission) && role === null) {
     logger.warn('Role unavailable after auth loading completed', {
       path: location.pathname,
       allowedRoles,
+      requiredPermission,
     }, 'ProtectedRoute');
     return <Navigate to="/" replace />;
   }
@@ -150,6 +161,19 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     );
   }
 
+  // Permission gate: when a required permission is defined, the RBAC runtime
+  // (banco-autoritativo) decides access, not the static role list.
+  if (requiredPermission && !rbacLoading && !hasPermission(requiredPermission)) {
+    const to = role === 'operator' ? '/operator' : '/';
+    return (
+      <AccessDeniedRedirect
+        role={role as AppRole}
+        requiredPermission={requiredPermission}
+        path={location.pathname}
+        to={to}
+      />
+    );
+  }
 
   return <>{children}</>;
 }

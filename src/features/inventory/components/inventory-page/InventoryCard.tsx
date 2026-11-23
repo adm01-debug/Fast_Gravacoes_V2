@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { PermissionGate } from '@/features/auth';
 import { QRLabelModal } from '@/components/inventory/QRLabelModal';
 import { InventoryItem, InventoryMovement } from '@/features/inventory/hooks/useInventory';
 
@@ -21,12 +20,14 @@ export function InventoryCard({
   item,
   onMovement,
   isSelected,
-  onSelect
+  onSelect,
+  canAdjustStock,
 }: {
   item: InventoryItem,
   onMovement: (data: Omit<InventoryMovement, 'id' | 'created_at' | 'user_id'>) => Promise<unknown>,
   isSelected: boolean,
-  onSelect: (id: string, checked: boolean) => void
+  onSelect: (id: string, checked: boolean) => void,
+  canAdjustStock: boolean,
 }) {
   const isLowStock = item.current_stock <= item.min_stock_level;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +37,11 @@ export function InventoryCard({
   const [quantity, setQuantity] = useState('1');
 
   const handleRecord = async () => {
+      if (movementType === 'OUT' && !canAdjustStock) {
+        toast.error('Você não tem permissão para registrar saídas de estoque');
+        return;
+      }
+
     if (movementType === 'OUT' && Number(quantity) > item.current_stock) {
       toast.error('Saldo insuficiente para realizar a saída');
       return;
@@ -159,7 +165,9 @@ export function InventoryCard({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="IN">Entrada (Reposição)</SelectItem>
-                      <SelectItem value="OUT">Saída (Consumo)</SelectItem>
+                                          {canAdjustStock && (
+                                            <SelectItem value="OUT">Saída (Consumo)</SelectItem>
+                                          )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -172,11 +180,11 @@ export function InventoryCard({
             </DialogContent>
           </Dialog>
 
-          <PermissionGate permission="inventory:adjust">
+          {canAdjustStock && (
             <Button variant="outline" size="sm" className="flex-1 text-xs gap-1.5 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" onClick={() => { setMovementType('OUT'); setIsModalOpen(true); }}>
               <ArrowDownRight className="h-3 w-3" /> Saída
             </Button>
-          </PermissionGate>
+          )}
         </div>
       </CardContent>
 

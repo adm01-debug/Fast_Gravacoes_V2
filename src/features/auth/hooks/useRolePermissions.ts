@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { showErrorToast } from '@/lib/errorHandling';
 import { type AppRole } from '../index';
-import { ROLE_PERMISSIONS } from './useRBAC';
+import { ROLE_PERMISSIONS } from '../permissions';
 
 export function useRolePermissions(role: AppRole | null) {
   const [permissions, setPermissions] = useState<string[]>([]);
@@ -31,7 +31,7 @@ export function useRolePermissions(role: AppRole | null) {
       logger.error('Error fetching permissions', error, 'useRolePermissions');
       // Fallback to static permissions from useRBAC
       if (selectedRole && ROLE_PERMISSIONS[selectedRole]) {
-        setPermissions(ROLE_PERMISSIONS[selectedRole]);
+              setPermissions([...ROLE_PERMISSIONS[selectedRole]]);
       } else {
         setPermissions([]);
       }

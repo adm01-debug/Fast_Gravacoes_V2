@@ -5,6 +5,7 @@ export * from './hooks/useMFA';
 export * from './hooks/useRolePermissions';
 export * from './hooks/useSessionManager';
 export * from './hooks/useSessionTimeout';
+export * from './permissions';
 export * from './types/auth.types';
 export * from './services/authService';
 export { AuthProvider } from './components/AuthProvider';
