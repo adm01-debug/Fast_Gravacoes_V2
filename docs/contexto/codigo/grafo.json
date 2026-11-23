@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 991,
- "arestas": 4565,
+ "arestas": 4566,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/features/auth/index.ts",
-   "importado_por": 85
+   "importado_por": 86
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -122,7 +122,7 @@
   },
   {
    "arquivo": "src/features/inventory/index.ts",
-   "importado_por": 24
+   "importado_por": 25
   },
   {
    "arquivo": "src/lib/realtimeChannel.ts",

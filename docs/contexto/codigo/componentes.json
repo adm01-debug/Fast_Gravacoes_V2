@@ -2710,7 +2710,7 @@
     "KioskModeButton"
    ],
    "export_default": null,
-   "linhas": 390,
+   "linhas": 417,
    "dominio": "components/kiosk",
    "hooks_locais": [],
    "tabelas": [],
@@ -3241,7 +3241,7 @@
     "EditShipmentModal"
    ],
    "export_default": null,
-   "linhas": 174,
+   "linhas": 187,
    "dominio": "components/logistics",
    "hooks_locais": [
     "useLogistics"
@@ -8586,10 +8586,11 @@
   {
    "arquivo": "src/features/packaging/components/DefectTriageForm.tsx",
    "exports": [
-    "DefectTriageForm"
+    "DefectTriageForm",
+    "DefectTriagePayload"
    ],
    "export_default": null,
-   "linhas": 179,
+   "linhas": 190,
    "dominio": "features/packaging",
    "hooks_locais": [],
    "tabelas": [],
@@ -8813,9 +8814,10 @@
     "PackagingTaskDetail"
    ],
    "export_default": null,
-   "linhas": 205,
+   "linhas": 218,
    "dominio": "features/packaging",
    "hooks_locais": [
+    "useAuth",
     "usePackagingSettings",
     "usePackagingSlaOverrides",
     "usePackagingTask"
@@ -9252,7 +9254,7 @@
     "KioskPage"
    ],
    "export_default": "KioskPage",
-   "linhas": 167,
+   "linhas": 168,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9290,7 +9292,7 @@
     "LogisticsPage"
    ],
    "export_default": "LogisticsPage",
-   "linhas": 435,
+   "linhas": 444,
    "dominio": "pages",
    "hooks_locais": [
     "useLogistics"

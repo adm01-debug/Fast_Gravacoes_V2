@@ -2,8 +2,8 @@
  "produtor": "ai-context-sync",
  "versao": "1.3.2",
  "perfil": "regras",
- "gerado_em": "2026-11-23 11:02 UTC",
- "commit": "4b0d87152755301a13e5938157f176c748282a0e",
+ "gerado_em": "2026-11-23 11:09 UTC",
+ "commit": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
  "fonte": "código + banco real (snapshot) + manual/ (regras de negócio)",
  "entrada": "07-REGRAS-DE-NEGOCIO.md",
  "arquivos": [
@@ -17,6 +17,6 @@
  "snapshot_gerado_em": "2026-11-23T10:15:01Z",
  "erros": [],
  "avisos": [],
- "inconsistencias": 56,
+ "inconsistencias": 57,
  "lacunas": 20
 }

@@ -1418,7 +1418,7 @@
    "modulo": "components/kiosk",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 390,
+   "linhas": 417,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1708,8 +1708,8 @@
   {
    "modulo": "components/logistics",
    "arquivos": 2,
-   "testes": 0,
-   "linhas": 311,
+   "testes": 1,
+   "linhas": 324,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1737,7 +1737,9 @@
     "shipping_providers",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "update_shipment_status"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -3995,7 +3997,7 @@
    "modulo": "features/inventory",
    "arquivos": 9,
    "testes": 4,
-   "linhas": 1372,
+   "linhas": 1401,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4042,7 +4044,9 @@
     "shipments",
     "shipping_providers"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "update_shipment_status"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -4066,7 +4070,9 @@
      "shipments",
      "shipping_providers"
     ],
-    "rpcs": []
+    "rpcs": [
+     "update_shipment_status"
+    ]
    },
    "importado_por_outros_modulos": [
     "components/dashboard",
@@ -4567,7 +4573,7 @@
    "modulo": "features/packaging",
    "arquivos": 35,
    "testes": 0,
-   "linhas": 3563,
+   "linhas": 3575,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4634,7 +4640,9 @@
     "user_roles"
    ],
    "rpcs": [
-    "get_packaging_leaderboard"
+    "assign_packaging_task",
+    "get_packaging_leaderboard",
+    "record_packaging_defect"
    ],
    "buckets": [
     "production-photos"
@@ -4665,7 +4673,9 @@
      "user_roles"
     ],
     "rpcs": [
-     "get_packaging_leaderboard"
+     "assign_packaging_task",
+     "get_packaging_leaderboard",
+     "record_packaging_defect"
     ]
    },
    "importado_por_outros_modulos": [
@@ -5491,7 +5501,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 6355,
+   "linhas": 6385,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5839,8 +5849,8 @@
   {
    "modulo": "pages",
    "arquivos": 56,
-   "testes": 2,
-   "linhas": 16580,
+   "testes": 3,
+   "linhas": 16590,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6304,11 +6314,14 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "assign_packaging_task",
     "check_and_notify_kpi_alert",
     "complete_maintenance_record",
     "get_packaging_leaderboard",
     "get_public_tracking",
     "increment_job_lost_pieces",
+    "record_packaging_defect",
+    "update_shipment_status",
     "verify_audit_chain"
    ],
    "buckets": [

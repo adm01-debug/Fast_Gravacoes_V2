@@ -1774,14 +1774,16 @@
    "hooks_exportados": [
     "useLogistics"
    ],
-   "linhas": 164,
+   "linhas": 193,
    "dominio": "features/inventory",
    "tabelas": [
     "jobs",
     "shipments",
     "shipping_providers"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "update_shipment_status"
+   ],
    "edges": [],
    "hooks_internos": [
     "useMutation",
@@ -3013,7 +3015,7 @@
    "hooks_exportados": [
     "usePackagingTask"
    ],
-   "linhas": 90,
+   "linhas": 91,
    "dominio": "features/packaging",
    "tabelas": [],
    "rpcs": [],

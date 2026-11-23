@@ -4411,6 +4411,7 @@
    "src/components/ui/sheet.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tabs.tsx",
+   "src/features/auth/index.ts",
    "src/features/packaging/components/DefectTriageForm.tsx",
    "src/features/packaging/components/DelayReasonDialog.tsx",
    "src/features/packaging/components/PackagingAuditTimeline.tsx",

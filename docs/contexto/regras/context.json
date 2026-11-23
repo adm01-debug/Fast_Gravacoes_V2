@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4b0d87152755301a13e5938157f176c748282a0e",
+  "sha": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 11:02 UTC",
-  "files_total": 1575,
-  "code_files": 1385,
-  "code_lines": 205782
+  "generated_at": "2026-11-23 11:09 UTC",
+  "files_total": 1579,
+  "code_files": 1389,
+  "code_lines": 206585
  },
  "version": "1.3.2",
- "facts_hash": "f1456b2e2129320b",
+ "facts_hash": "bfe63d0902398940",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,9 +280,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 659,
+   ".tsx": 661,
    ".ts": 399,
-   ".sql": 260,
+   ".sql": 262,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19292,6 +19292,8 @@
    "supabase/migrations/20261120203000_public_tracking_remove_client.sql",
    "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
    "supabase/migrations/20261122010000_seed_role_permissions.sql",
+   "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+   "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -20985,6 +20987,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "assign_packaging_task",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "assign_packaging_task",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "update_shipment_status",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "has_permission",
     "objkind": "function",
     "roles": "PUBLIC",
@@ -21483,6 +21533,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 305
@@ -21664,6 +21715,7 @@
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 230
@@ -21885,6 +21937,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 248
@@ -22127,6 +22180,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 214
@@ -22244,6 +22298,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 206
@@ -22334,7 +22389,9 @@
      "new-device-alert",
      "send-push-notification"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "update_shipment_status"
+    ],
     "deps_count": 108
    },
    {
@@ -22379,7 +22436,9 @@
      "new-device-alert",
      "send-push-notification"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "update_shipment_status"
+    ],
     "deps_count": 128
    },
    {
@@ -22462,6 +22521,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 214
@@ -22558,6 +22618,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 304
@@ -22636,9 +22697,54 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 164
+   },
+   {
+    "path": "",
+    "file": "src/pages/LogisticsPage.test.tsx",
+    "component": "LogisticsPage.test",
+    "tables_transitive": [
+     "audit_log",
+     "error_logs",
+     "inventory_items",
+     "inventory_movements",
+     "job_status_history",
+     "jobs",
+     "lot_components",
+     "lot_movements",
+     "lot_quality_inspections",
+     "machine_predictions",
+     "machines",
+     "maintenance_alerts",
+     "packaging_tasks",
+     "production_lots",
+     "profiles",
+     "push_notifications",
+     "push_subscriptions",
+     "role_permissions",
+     "shipments",
+     "shipping_providers",
+     "technical_sheet_materials",
+     "technical_sheets",
+     "techniques",
+     "tpm_notification_logs",
+     "user_notification_settings",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "auto-promote-jobs",
+     "calculate-inventory-intelligence",
+     "check-login-lockout",
+     "daily-maintenance-summary",
+     "send-push-notification"
+    ],
+    "rpc_transitive": [
+     "update_shipment_status"
+    ],
+    "deps_count": 129
    },
    {
     "path": "",
@@ -22687,7 +22793,9 @@
      "new-device-alert",
      "send-push-notification"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "update_shipment_status"
+    ],
     "deps_count": 154
    },
    {
@@ -22820,6 +22928,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 187
@@ -22916,6 +23025,7 @@
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 243
@@ -23068,6 +23178,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 196
@@ -23151,6 +23262,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 206
@@ -23378,6 +23490,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 188
@@ -23544,6 +23657,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 242
@@ -23627,6 +23741,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 220
@@ -23669,7 +23784,9 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
-     "get_packaging_leaderboard"
+     "assign_packaging_task",
+     "get_packaging_leaderboard",
+     "record_packaging_defect"
     ],
     "deps_count": 158
    },
@@ -23684,7 +23801,10 @@
      "packaging_tasks"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "assign_packaging_task",
+     "record_packaging_defect"
+    ],
     "deps_count": 13
    },
    {
@@ -23785,6 +23905,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 310
@@ -24414,6 +24535,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 220
@@ -24494,6 +24616,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 220
@@ -24587,6 +24710,7 @@
     "rpc_transitive": [
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
+     "update_shipment_status",
      "verify_audit_chain"
     ],
     "deps_count": 234
@@ -26046,7 +26170,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 569,
+  "components_count": 570,
   "hooks": [
    {
     "name": "useContacts",
@@ -27401,8 +27525,8 @@
   },
   {
    "module": "src/components",
-   "files": 416,
-   "lines": 58817,
+   "files": 417,
+   "lines": 58957,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28075,7 +28199,7 @@
   {
    "module": "src/features/inventory",
    "files": 13,
-   "lines": 2418,
+   "lines": 2497,
    "tables": [
     "inventory_items",
     "inventory_movements",
@@ -28478,7 +28602,7 @@
   {
    "module": "src/features/packaging",
    "files": 35,
-   "lines": 3563,
+   "lines": 3575,
    "tables": [
     "audit_log",
     "packaging_checklist_items",
@@ -28492,7 +28616,7 @@
    ],
    "exports": [
     "BulkReassignDialog.tsx: BulkReassignDialog",
-    "DefectTriageForm.tsx: DefectTriageForm",
+    "DefectTriageForm.tsx: DefectTriagePayload, DefectTriageForm",
     "DelayReasonDialog.tsx: DelayReasonDialog",
     "PackagingAuditTimeline.tsx: PackagingAuditTimeline",
     "PackagingChecklistPanel.tsx: PackagingChecklistPanel",
@@ -28891,7 +29015,7 @@
   {
    "module": "src/integrations",
    "files": 3,
-   "lines": 6394,
+   "lines": 6424,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -29058,8 +29182,8 @@
   },
   {
    "module": "src/pages",
-   "files": 58,
-   "lines": 16858,
+   "files": 59,
+   "lines": 16971,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29189,6 +29313,7 @@
     "src/pages/KPIDashboard.tsx",
     "src/pages/KanbanBoard.tsx",
     "src/pages/KioskPage.tsx",
+    "src/pages/LogisticsPage.test.tsx",
     "src/pages/LogisticsPage.tsx",
     "src/pages/MLPredictionsDashboard.tsx",
     "src/pages/MachineComparisonPage.tsx",
@@ -29558,8 +29683,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 252,
-   "lines": 15227,
+   "files": 254,
+   "lines": 15656,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -30488,9 +30613,6 @@
      "src/features/packaging/hooks/usePackagingAuditTimeline.ts",
      "src/features/packaging/hooks/usePackagingQuality.ts",
      "src/features/packaging/services/packagingService.ts"
-    ],
-    "insert": [
-     "src/features/packaging/services/packagingService.ts"
     ]
    },
    "packaging_settings": {
@@ -30527,8 +30649,7 @@
      "src/features/packaging/hooks/usePackagingOverdueCount.ts",
      "src/features/packaging/hooks/usePackagingQuality.ts",
      "src/features/packaging/hooks/usePackagingSlaHeatmap.ts",
-     "src/features/packaging/hooks/usePackagingThroughput.ts",
-     "src/features/packaging/services/packagingService.ts"
+     "src/features/packaging/hooks/usePackagingThroughput.ts"
     ],
     "ref": [
      "src/features/packaging/services/packagingService.ts"
@@ -32300,6 +32421,9 @@
    "archive_finished_jobs": [
     "supabase/functions/cron-cleanup/index.ts"
    ],
+   "assign_packaging_task": [
+    "src/features/packaging/services/packagingService.ts"
+   ],
    "calcular_oee": [
     "scripts/inventario/gerar-rotas.unit.mjs"
    ],
@@ -32364,11 +32488,17 @@
    "real_missing_rpc": [
     "scripts/regras_negocio/test_generate.py"
    ],
+   "record_packaging_defect": [
+    "src/features/packaging/services/packagingService.ts"
+   ],
    "runtime_rpc": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
    "tools_rpc": [
     "scripts/ai-context/gerar.unit.mjs"
+   ],
+   "update_shipment_status": [
+    "src/features/inventory/hooks/useLogistics.ts"
    ],
    "verify_audit_chain": [
     "src/features/admin/hooks/useAuditTrail.ts"
@@ -32940,7 +33070,7 @@
     "file": "src/features/packaging/types/packaging.schema.ts",
     "name": "defectTriageFormSchema",
     "kind": "object",
-    "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), }",
+    "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), loss_reason: z.string().max(500).optional(), }",
     "refines": [
      "Observação obrigatória ao aceitar com nota"
     ],
@@ -34667,6 +34797,10 @@
     "msg": "Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message}"
    },
    {
+    "file": "src/features/inventory/hooks/useLogistics.ts",
+    "msg": "Envio bloqueado: a embalagem deste pedido está em espera."
+   },
+   {
     "file": "src/features/jobs/hooks/useAutoBufferPromotion.ts",
     "msg": "Falha ao acionar promoção automática"
    },
@@ -36103,6 +36237,38 @@
    {
     "file": "supabase/migrations/20261019140000_validation_hardening.sql",
     "value": "g"
+   },
+   {
+    "file": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+    "value": "admin"
+   },
+   {
+    "file": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+    "value": "coordinator"
+   },
+   {
+    "file": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+    "value": "manager"
+   },
+   {
+    "file": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+    "value": "operator"
+   },
+   {
+    "file": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+    "value": "admin"
+   },
+   {
+    "file": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+    "value": "coordinator"
+   },
+   {
+    "file": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+    "value": "manager"
+   },
+   {
+    "file": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+    "value": "operator"
    }
   ],
   "comments": [
@@ -36157,6 +36323,10 @@
    {
     "file": "src/components/layout/QuickFavoritesBar.tsx",
     "text": "Hooks must be called before any conditional returns"
+   },
+   {
+    "file": "src/components/logistics/EditShipmentModal.tsx",
+    "text": "rastreio/frete de um envio já entregue não pode sobrescrever a data"
    },
    {
     "file": "src/components/ml/MLNotificationSettings.tsx",
@@ -36657,6 +36827,10 @@
    {
     "file": "src/pages/InventoryPage.tsx",
     "text": "items antigo SEM modal — voltar até ela não pode restaurar a"
+   },
+   {
+    "file": "src/pages/LogisticsPage.tsx",
+    "text": "delivered — o atalho não pode deixar o envio entregue sem data."
    },
    {
     "file": "src/pages/NotificationsPage.tsx",
@@ -46908,6 +47082,18 @@
    {
     "file": "src/features/packaging/components/PackagingTaskDetail.tsx",
     "field": "status",
+    "value": "on_hold",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/packaging/components/PackagingTaskDetail.tsx",
+    "field": "status",
+    "value": "on_hold",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/packaging/components/PackagingTaskDetail.tsx",
+    "field": "status",
     "value": "packaging",
     "kind": "compara"
    },
@@ -46994,12 +47180,6 @@
     "field": "type",
     "value": "warning",
     "kind": "compara"
-   },
-   {
-    "file": "src/features/packaging/services/packagingService.ts",
-    "field": "status",
-    "value": "in_triage",
-    "kind": "escreve"
    },
    {
     "file": "src/features/packaging/services/packagingService.ts",
@@ -48042,6 +48222,12 @@
    {
     "file": "src/pages/LogisticsPage.tsx",
     "field": "status",
+    "value": "delivered",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/LogisticsPage.tsx",
+    "field": "status",
     "value": "in_transit",
     "kind": "compara"
    },
@@ -48067,6 +48253,12 @@
     "file": "src/pages/LogisticsPage.tsx",
     "field": "status",
     "value": "in_transit",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/LogisticsPage.tsx",
+    "field": "status",
+    "value": "delivered",
     "kind": "compara"
    },
    {
@@ -50770,6 +50962,18 @@
     "name": "build que falha não carimba (a próxima sessão refaz)"
    },
    {
+    "file": "src/components/logistics/EditShipmentModal.test.tsx",
+    "name": "EditShipmentModal"
+   },
+   {
+    "file": "src/components/logistics/EditShipmentModal.test.tsx",
+    "name": "nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin)"
+   },
+   {
+    "file": "src/components/logistics/EditShipmentModal.test.tsx",
+    "name": "nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete)"
+   },
+   {
     "file": "src/components/settings/TwoFactorSetup.test.tsx",
     "name": "TwoFactorSetup"
    },
@@ -51220,6 +51424,14 @@
    {
     "file": "src/features/inventory/hooks/useLogistics.test.ts",
     "name": "propaga erro do Supabase ao atualizar um envio"
+   },
+   {
+    "file": "src/features/inventory/hooks/useLogistics.test.ts",
+    "name": "bloqueia o despacho quando o job tem packaging_task em espera (F-010)"
+   },
+   {
+    "file": "src/features/inventory/hooks/useLogistics.test.ts",
+    "name": "bloqueia o despacho sem persistir metadados enviados junto (F-010)"
    },
    {
     "file": "src/features/inventory/hooks/useTraceability.test.ts",
@@ -52384,6 +52596,18 @@
    {
     "file": "src/pages/InventoryPage.test.tsx",
     "name": "deve filtrar itens corretamente"
+   },
+   {
+    "file": "src/pages/LogisticsPage.test.tsx",
+    "name": "LogisticsPage - atalho "
+   },
+   {
+    "file": "src/pages/LogisticsPage.test.tsx",
+    "name": "primeira transicao grava actual_delivery"
+   },
+   {
+    "file": "src/pages/LogisticsPage.test.tsx",
+    "name": "repetir o atalho em envio ja entregue e impossivel e preserva a data original"
    },
    {
     "file": "src/test/authFlow.test.ts",
@@ -62732,7 +62956,6 @@
       "compara:src/features/packaging/hooks/usePackagingSettings.ts",
       "compara:src/pages/PackagingDashboard.tsx",
       "compara:src/pages/PackagingKioskPage.tsx",
-      "escreve:src/features/packaging/services/packagingService.ts",
       "escreve:src/pages/PackagingKioskPage.tsx"
      ],
      "ready_to_ship": [
@@ -62746,6 +62969,7 @@
       "escreve:src/pages/PackagingKioskPage.tsx"
      ],
      "on_hold": [
+      "compara:src/features/packaging/components/PackagingTaskDetail.tsx",
       "compara:src/features/packaging/hooks/usePackagingSettings.ts",
       "compara:src/pages/PackagingDashboard.tsx"
      ],
@@ -66504,6 +66728,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "assign_packaging_task",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "assign_packaging_task",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "update_shipment_status",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_packaging_defect",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "has_permission",
     "objkind": "function",
     "roles": "PUBLIC",
@@ -67565,6 +67837,13 @@
     "msg": "RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot)",
     "where": [
      "src/features/production/hooks/useProductionLosses.ts"
+    ]
+   },
+   {
+    "kind": "rpc",
+    "msg": "RPC `update_shipment_status` chamada mas não definida no banco real (snapshot)",
+    "where": [
+     "src/features/inventory/hooks/useLogistics.ts"
     ]
    },
    {
@@ -73432,7 +73711,7 @@
   },
   "src/components/kiosk/KioskMode.tsx": {
    "path": "src/components/kiosk/KioskMode.tsx",
-   "lines": 390,
+   "lines": 417,
    "exports": [
     "function KioskMode",
     "function KioskModeButton"
@@ -73910,9 +74189,19 @@
     }
    ]
   },
+  "src/components/logistics/EditShipmentModal.test.tsx": {
+   "path": "src/components/logistics/EditShipmentModal.test.tsx",
+   "lines": 100,
+   "is_test": true,
+   "tests": [
+    "EditShipmentModal",
+    "nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin)",
+    "nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete)"
+   ]
+  },
   "src/components/logistics/EditShipmentModal.tsx": {
    "path": "src/components/logistics/EditShipmentModal.tsx",
-   "lines": 174,
+   "lines": 187,
    "exports": [
     "function EditShipmentModal"
    ],
@@ -73932,6 +74221,9 @@
      "value": "delivered",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "rastreio/frete de um envio já entregue não pode sobrescrever a data"
    ],
    "doc": "eslint-disable react-hooks/set-state-in-effect -- Effects nesse arquivo sincronizam com sistemas externos legítimos (URL params, localStorage, timers, subscriptions Supabase realtime, matchMedia, event listeners DOM, deep-linking) e não são estado derivado. A cascata é intencional para refletir muda …"
   },
@@ -80820,10 +81112,14 @@
   },
   "src/features/inventory/hooks/useLogistics.test.ts": {
    "path": "src/features/inventory/hooks/useLogistics.test.ts",
-   "lines": 234,
+   "lines": 284,
    "is_test": true,
    "errors": [
+    "rpc inesperada: ${fnName}",
     "tabela inesperada: ${table}"
+   ],
+   "rule_comments": [
+    "parcial apenas no formulário, não no banco."
    ],
    "tests": [
     "useLogistics",
@@ -80836,12 +81132,14 @@
     "atualiza um envio removendo campos de relação e sincroniza o status do job quando o envio está vinculado",
     "não sincroniza job quando o status não muda na atualização do envio",
     "não sincroniza job quando o envio vinculado não possui job_id (envio avulso)",
-    "propaga erro do Supabase ao atualizar um envio"
+    "propaga erro do Supabase ao atualizar um envio",
+    "bloqueia o despacho quando o job tem packaging_task em espera (F-010)",
+    "bloqueia o despacho sem persistir metadados enviados junto (F-010)"
    ]
   },
   "src/features/inventory/hooks/useLogistics.ts": {
    "path": "src/features/inventory/hooks/useLogistics.ts",
-   "lines": 164,
+   "lines": 193,
    "exports": [
     "interface DbShippingProvider",
     "interface DbShipment",
@@ -80889,8 +81187,12 @@
      "job_id"
     ]
    },
+   "rpc": [
+    "update_shipment_status"
+   ],
    "errors": [
-    "Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message}"
+    "Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message}",
+    "Envio bloqueado: a embalagem deste pedido está em espera."
    ],
    "status_values": [
     {
@@ -84075,8 +84377,9 @@
   },
   "src/features/packaging/components/DefectTriageForm.tsx": {
    "path": "src/features/packaging/components/DefectTriageForm.tsx",
-   "lines": 179,
+   "lines": 190,
    "exports": [
+    "interface DefectTriagePayload",
     "function DefectTriageForm"
    ],
    "html_constraints": [
@@ -84253,7 +84556,7 @@
   },
   "src/features/packaging/components/PackagingTaskDetail.tsx": {
    "path": "src/features/packaging/components/PackagingTaskDetail.tsx",
-   "lines": 205,
+   "lines": 218,
    "exports": [
     "function PackagingTaskDetail"
    ],
@@ -84262,6 +84565,16 @@
      "field": "status",
      "value": "ready_to_ship",
      "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "on_hold",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "on_hold",
+     "kind": "compara"
     },
     {
      "field": "status",
@@ -84667,7 +84980,7 @@
   },
   "src/features/packaging/hooks/usePackagingTask.ts": {
    "path": "src/features/packaging/hooks/usePackagingTask.ts",
-   "lines": 90,
+   "lines": 91,
    "exports": [
     "function usePackagingTask"
    ],
@@ -84765,7 +85078,7 @@
   },
   "src/features/packaging/services/packagingService.ts": {
    "path": "src/features/packaging/services/packagingService.ts",
-   "lines": 213,
+   "lines": 199,
    "exports": [
     "interface PackagingTaskWithJob",
     "interface PackagingDefectRow",
@@ -84793,35 +85106,22 @@
      "op": "update"
     },
     {
-     "table": "packaging_tasks",
-     "op": "update"
-    },
-    {
      "table": "packaging_defects",
      "op": "select"
-    },
-    {
-     "table": "packaging_defects",
-     "op": "insert"
-    },
-    {
-     "table": "packaging_tasks",
-     "op": "select"
-    },
-    {
-     "table": "packaging_tasks",
-     "op": "update"
     }
    ],
    "table_cols": {
     "packaging_tasks": [
-     "id",
-     "rejected_quantity"
+     "id"
     ],
     "packaging_defects": [
      "packaging_task_id"
     ]
    },
+   "rpc": [
+    "assign_packaging_task",
+    "record_packaging_defect"
+   ],
    "storage": [
     "production-photos"
    ],
@@ -84829,11 +85129,6 @@
     "Não autenticado"
    ],
    "status_values": [
-    {
-     "field": "status",
-     "value": "in_triage",
-     "kind": "escreve"
-    },
     {
      "field": "status",
      "value": "packaging",
@@ -84848,7 +85143,7 @@
   },
   "src/features/packaging/types/packaging.schema.ts": {
    "path": "src/features/packaging/types/packaging.schema.ts",
-   "lines": 139,
+   "lines": 140,
    "exports": [
     "const packagingTaskStatusSchema",
     "type PackagingTaskStatus",
@@ -84921,7 +85216,7 @@
     {
      "name": "defectTriageFormSchema",
      "kind": "object",
-     "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), }",
+     "body": "{ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), loss_reason: z.string().max(500).optional(), }",
      "refines": [
       "Observação obrigatória ao aceitar com nota"
      ],
@@ -87912,7 +88207,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 6278,
+   "lines": 6308,
    "exports": [
     "type Json",
     "type Database",
@@ -89850,7 +90145,7 @@
   },
   "src/pages/KioskPage.tsx": {
    "path": "src/pages/KioskPage.tsx",
-   "lines": 167,
+   "lines": 168,
    "exports": [
     "function KioskPage"
    ],
@@ -89878,13 +90173,28 @@
     "notifyStatusChange"
    ]
   },
+  "src/pages/LogisticsPage.test.tsx": {
+   "path": "src/pages/LogisticsPage.test.tsx",
+   "lines": 103,
+   "is_test": true,
+   "tests": [
+    "LogisticsPage - atalho ",
+    "primeira transicao grava actual_delivery",
+    "repetir o atalho em envio ja entregue e impossivel e preserva a data original"
+   ]
+  },
   "src/pages/LogisticsPage.tsx": {
    "path": "src/pages/LogisticsPage.tsx",
-   "lines": 435,
+   "lines": 444,
    "exports": [
     "function LogisticsPage"
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "delivered",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "in_transit",
@@ -89917,9 +90227,17 @@
     },
     {
      "field": "status",
+     "value": "delivered",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
      "value": "in_transit",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "delivered — o atalho não pode deixar o envio entregue sem data."
    ],
    "percents": [
     "94.2%",
@@ -95709,6 +96027,26 @@
    "path": "supabase/migrations/20261122010000_seed_role_permissions.sql",
    "lines": 178
   },
+  "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql": {
+   "path": "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+   "lines": 158,
+   "role_checks": [
+    "admin",
+    "coordinator",
+    "manager",
+    "operator"
+   ]
+  },
+  "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql": {
+   "path": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+   "lines": 271,
+   "role_checks": [
+    "admin",
+    "coordinator",
+    "manager",
+    "operator"
+   ]
+  },
   "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql": {
    "path": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "lines": 123,
@@ -96152,10 +96490,43 @@
   }
  },
  "git": {
-  "sha": "4b0d87152755301a13e5938157f176c748282a0e",
+  "sha": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4b3ed9b",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)",
+    "files": [
+     "src/components/kiosk/KioskMode.tsx",
+     "src/pages/KioskPage.tsx"
+    ]
+   },
+   {
+    "sha": "1724af5",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)",
+    "files": [
+     "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
+     "src/components/logistics/EditShipmentModal.test.tsx",
+     "src/components/logistics/EditShipmentModal.tsx",
+     "src/features/inventory/hooks/useLogistics.test.ts",
+     "src/features/inventory/hooks/useLogistics.ts",
+     "src/features/packaging/components/DefectTriageForm.tsx",
+     "src/features/packaging/components/PackagingTaskDetail.tsx",
+     "src/features/packaging/hooks/usePackagingTask.ts",
+     "src/features/packaging/services/packagingService.ts",
+     "src/features/packaging/types/packaging.schema.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/LogisticsPage.test.tsx",
+     "src/pages/LogisticsPage.tsx",
+     "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
+     "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
+    ]
+   },
    {
     "sha": "4b0d871",
     "date": "2026-11-23",
@@ -96491,25 +96862,6 @@
     "files": [
      ".github/workflows/automation-local.yml"
     ]
-   },
-   {
-    "sha": "3d5df1f",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: remove interface ReportFilters morta (autofix obsoleto reaproveitado) (#231)",
-    "files": [
-     "src/pages/ReportBuilderPage.tsx"
-    ]
-   },
-   {
-    "sha": "7ddd094",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: remove CSP report-only duplicado apos 48h sem violacoes (#228)",
-    "files": [
-     "src/test/cspSync.test.ts",
-     "vercel.json"
-    ]
    }
   ],
   "hot_files": [
@@ -96524,6 +96876,26 @@
    [
     "supabase/functions/check-login-lockout/index.ts",
     3
+   ],
+   [
+    "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
+    2
+   ],
+   [
+    "src/features/inventory/hooks/useLogistics.ts",
+    2
+   ],
+   [
+    "src/features/packaging/services/packagingService.ts",
+    2
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
+    "src/pages/LogisticsPage.tsx",
+    2
    ],
    [
     "docs/pendencias/F-007-permissionmanager-in-cuo.md",
@@ -96572,26 +96944,6 @@
    [
     "docs/pendencias/F-006-geo-blocking-sem-enforcement.md",
     2
-   ],
-   [
-    "src/features/auth/components/AuthProvider.test.tsx",
-    2
-   ],
-   [
-    "src/pages/AuthPage.tsx",
-    2
-   ],
-   [
-    "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
-    2
-   ],
-   [
-    "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md",
-    2
-   ],
-   [
-    "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
-    1
    ]
   ]
  }

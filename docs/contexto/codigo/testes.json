@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 125,
+ "total": 127,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 101
+  "unit": 103
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 89
+   "arquivos": 91
   },
   {
    "padrao": "outro",
@@ -287,6 +287,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/components/logistics/EditShipmentModal.test.tsx",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/components/logistics/EditShipmentModal.tsx",
+    "src/features/inventory/index.ts"
+   ],
+   "casos": 2,
+   "suporte": false
+  },
+  {
    "arquivo": "src/components/settings/TwoFactorSetup.test.tsx",
    "tipo": "unit",
    "linhas": 96,
@@ -442,12 +453,12 @@
   {
    "arquivo": "src/features/inventory/hooks/useLogistics.test.ts",
    "tipo": "unit",
-   "linhas": 234,
+   "linhas": 284,
    "testa": [
     "src/features/inventory/hooks/useLogistics.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 10,
+   "casos": 12,
    "suporte": false
   },
   {
@@ -764,6 +775,16 @@
     "src/pages/InventoryPage.tsx"
    ],
    "casos": 3,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/pages/LogisticsPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "src/pages/LogisticsPage.tsx"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -1337,6 +1358,7 @@
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
+  "src/components/logistics/EditShipmentModal.tsx": 1,
   "src/components/settings/TwoFactorSetup.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
@@ -1359,7 +1381,7 @@
   "src/features/inventory/hooks/useInventory.ts": 1,
   "src/features/inventory/hooks/useLogistics.ts": 1,
   "src/features/inventory/hooks/useTraceability.ts": 1,
-  "src/features/inventory/index.ts": 1,
+  "src/features/inventory/index.ts": 2,
   "src/features/inventory/services/traceabilityService.ts": 1,
   "src/features/jobs/hooks/useJobs.ts": 1,
   "src/features/jobs/hooks/useSchedulingConflicts.ts": 1,
@@ -1401,6 +1423,7 @@
   "src/lib/validation.ts": 2,
   "src/pages/AdminTelemetriaPage.tsx": 1,
   "src/pages/InventoryPage.tsx": 1,
+  "src/pages/LogisticsPage.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
   "supabase/functions/_shared/contracts.ts": 4,
   "supabase/functions/_shared/cronAuth.ts": 1,
@@ -1432,7 +1455,6 @@
    "src/pages/KPIDashboard.tsx",
    "src/pages/KanbanBoard.tsx",
    "src/pages/KioskPage.tsx",
-   "src/pages/LogisticsPage.tsx",
    "src/pages/MLPredictionsDashboard.tsx",
    "src/pages/MachineComparisonPage.tsx",
    "src/pages/MachinesPage.tsx",

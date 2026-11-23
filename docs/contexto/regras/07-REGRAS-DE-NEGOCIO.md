@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4b0d871527` · branch `main` · 2026-11-23 11:02 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4b3ed9b594` · branch `main` · 2026-11-23 11:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1836,11 +1836,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `idle` | compara, escreve | `src/components/dashboard/LiveMachineStatusPanel.tsx`<br>`src/features/production/hooks/useMachineStatusHub.ts` |
 | `status` | `in_progress` | compara, escreve, filtra | `src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/MachineTPMTimeline.tsx`<br>`src/features/maintenance/components/TPMExecutionHistory.tsx`<br>`src/features/maintenance/hooks/types.ts`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>… +1 |
 | `status` | `in_transit` | compara | `src/pages/LogisticsPage.tsx` |
-| `status` | `in_triage` | compara, escreve | `src/features/packaging/components/PackagingStatsCards.tsx`<br>`src/features/packaging/hooks/usePackagingSettings.ts`<br>`src/features/packaging/services/packagingService.ts`<br>`src/pages/PackagingDashboard.tsx`<br>`src/pages/PackagingKioskPage.tsx` |
+| `status` | `in_triage` | compara, escreve | `src/features/packaging/components/PackagingStatsCards.tsx`<br>`src/features/packaging/hooks/usePackagingSettings.ts`<br>`src/pages/PackagingDashboard.tsx`<br>`src/pages/PackagingKioskPage.tsx` |
 | `status` | `logged_only` | escreve | `supabase/functions/webhook-handler/index.ts` |
 | `status` | `normal` | escreve | `src/hooks/useTechniqueCapacityAlerts.ts` |
 | `status` | `not_implemented` | escreve | `supabase/functions/image-optimizer/index.ts` |
-| `status` | `on_hold` | compara | `src/features/packaging/hooks/usePackagingSettings.ts`<br>`src/pages/PackagingDashboard.tsx` |
+| `status` | `on_hold` | compara | `src/features/packaging/components/PackagingTaskDetail.tsx`<br>`src/features/packaging/hooks/usePackagingSettings.ts`<br>`src/pages/PackagingDashboard.tsx` |
 | `status` | `open` | compara, escreve, filtra | `src/components/shift/HandoverDetailsModal.tsx`<br>`src/components/shift/OccurrencesPanel.tsx`<br>`src/hooks/shift-handover/shiftHandoverTypes.ts`<br>`src/pages/ShiftHandoverPage.tsx` |
 | `status` | `overdue` | compara, escreve | `src/components/design-system/hooks/MaintenanceOperatorDemos.tsx` |
 | `status` | `packaging` | compara, escreve | `src/features/jobs/services/jobsService.ts`<br>`src/features/packaging/components/PackagingStatsCards.tsx`<br>`src/features/packaging/components/PackagingTaskDetail.tsx`<br>`src/features/packaging/hooks/usePackagingSettings.ts`<br>`src/features/packaging/services/packagingService.ts`<br>… +2 |
@@ -2035,7 +2035,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **defectTriageFormSchema** (`src/features/packaging/types/packaging.schema.ts`, z.object, encadeia superRefine):
   ```ts
-  { quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), }
+  { quantity: z.coerce.number().int().positive('Quantidade deve ser positiva'), defect_type: packagingDefectTypeSchema, severity: packagingDefectSeveritySchema, decision: packagingDefectDecisionSchema, photo_url: z.string().url().optional().or(z.literal('')), notes: z.string().max(1000).optional(), loss_reason: z.string().max(500).optional(), }
   ```
   - Regras cruzadas (refine): “Observação obrigatória ao aceitar com nota”
 - **delayReasonSchema** (`src/features/packaging/types/packaging.schema.ts`, z.object):
@@ -3165,6 +3165,7 @@ _nenhum item encontrado_
 | Estoque insuficiente de ${item.name} para realizar esta saída. | `src/features/inventory/hooks/useInventory.ts` |
 | Sessão expirada. Faça login novamente. | `src/features/inventory/hooks/useInventory.ts` |
 | Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message} | `src/features/inventory/hooks/useLogistics.ts` |
+| Envio bloqueado: a embalagem deste pedido está em espera. | `src/features/inventory/hooks/useLogistics.ts` |
 | Falha ao acionar promoção automática | `src/features/jobs/hooks/useAutoBufferPromotion.ts` |
 | Erro ao mover agendamento | `src/features/jobs/hooks/useDailyDragDrop.ts` |
 | Erro ao duplicar job | `src/features/jobs/hooks/useDuplicateJob.ts` |
@@ -3233,8 +3234,7 @@ _nenhum item encontrado_
 | Erro ao enviar notificação | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao enviar notificação de teste | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao salvar subscription | `src/features/notifications/hooks/usePushSubscription.ts` |
-| Invalid subscription data | `src/features/notifications/hooks/usePushSubscription.ts` |
-| … +239 linhas — lista completa em `context.json` | |
+| … +240 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3291,8 +3291,16 @@ _nenhum item encontrado_
 | `coordinator` | `src/pages/TechnicalKnowledgeBase.tsx` |
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
+| `admin` | `supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql` |
+| `coordinator` | `supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql` |
+| `manager` | `supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql` |
+| `operator` | `supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql` |
+| `admin` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
+| `coordinator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
+| `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
+| `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1301 testes em 106 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1309 testes em 108 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3329,11 +3337,11 @@ _nenhum item encontrado_
 | `src/features/auth/hooks/useRBAC.test.tsx` | 14 | useRBAC - permissoes do banco (F-007) · usa permissoes do banco como fonte primaria · faz fallback para o mapa estatico quando a consulta falha · banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007) … |
 | `scripts/audit-gate.test.mjs` | 13 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
 | `src/features/admin/hooks/useSystemStatusSummary.test.ts` | 13 | deriveCronStatus · retorna  · retorna  · retorna  … |
+| `src/features/inventory/hooks/useLogistics.test.ts` | 13 | useLogistics · busca apenas transportadoras ativas, ordenadas por nome · busca envios com transportadora e job vinculados, mais recentes primeiro · cria um envio removendo campos de relação (provider/job) antes de inserir e sincroniza o job vinculado … |
 | `src/features/jobs/services/jobStateMachine.test.ts` | 13 | jobStateMachine · canTransition · permite fluxo padrão: queue → scheduled → ready → production → finished · bloqueia transições ilegais críticas … |
 | `src/lib/oeeExport.test.ts` | 13 | oeeExport · pdf · renders the header row via doc.autoTable with a grid theme · writes an unsanitized (raw) machineName into the PDF body, unlike the CSV path … |
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
-| `src/features/inventory/hooks/useLogistics.test.ts` | 11 | useLogistics · busca apenas transportadoras ativas, ordenadas por nome · busca envios com transportadora e job vinculados, mais recentes primeiro · cria um envio removendo campos de relação (provider/job) antes de inserir e sincroniza o job vinculado … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/test/retryBackoffAdvanced.test.ts` | 11 | retryWithBackoff — advanced scenarios · returns immediately on first success · retries up to maxRetries times then throws · stops retrying when isRetryable returns false … |
 | `src/test/retryWithBackoff.test.ts` | 11 | retryWithBackoff · resolves immediately on first success · retries after failure and eventually succeeds · throws after exhausting all retries … |
@@ -3381,6 +3389,7 @@ _nenhum item encontrado_
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
 | `tests/e2e/system-status.spec.ts` | 4 | Status do sistema · renderiza o painel consolidado com os agregados · não expõe detalhes de erro interno · painel de monitoramento exibe tendência das rotinas |
 | `tests/e2e/visual-regression.spec.ts` | 4 | Regressão Visual · snapshot da dashboard principal · snapshot da sidebar colapsada e expandida · snapshot responsivo mobile |
+| `src/components/logistics/EditShipmentModal.test.tsx` | 3 | EditShipmentModal · nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin) · nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete) |
 | `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |
 | `src/features/analytics/hooks/useKPIs.test.ts` | 3 | useKPIs · should return null when data is loading · should calculate correct metrics when data is provided |
 | `src/features/auth/hooks/useMFA.test.tsx` | 3 | useMFA.startEnrollment · remove fatores TOTP nao verificados antes de criar um novo (evita 422) · nao remove um fator TOTP ja verificado |
@@ -3391,6 +3400,7 @@ _nenhum item encontrado_
 | `src/features/production/hooks/useMachines.realtime.test.tsx` | 3 | useMachines — Realtime invalidation · chama removeChannel no unmount e ignora eventos posteriores · refetches when a Realtime postgres_changes event arrives |
 | `src/features/production/hooks/useMachines.test.tsx` | 3 | useMachines · fetches active machines and caches the result · shares cache across multiple consumers (no duplicate queries) |
 | `src/features/production/hooks/useOperatorProductivity.test.ts` | 3 | useOperatorProductivity · should fetch and calculate productivity data · should handle errors gracefully |
+| `src/pages/LogisticsPage.test.tsx` | 3 | LogisticsPage - atalho  · primeira transicao grava actual_delivery · repetir o atalho em envio ja entregue e impossivel e preserva a data original |
 | `src/test/realtimeMock.test.ts` | 3 | createRealtimeMock — contrato de tabelas não assinadas · emitFor lança quando a tabela não tem handler registrado · não dispara callbacks de outras tabelas ao emitir para tabela não assinada |
 | `src/test/zodResolver.test.ts` | 3 | zodResolver + zod v4 · propaga a mensagem de cada campo invalido · retorna os valores ja coagidos quando tudo e valido |
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
@@ -3487,6 +3497,7 @@ _nenhum item encontrado_
 | Determine the bottleneck limit for this specific column if applicable | `src/components/kanban/DroppableColumn.tsx` |
 | deve pedir confirmação de descarte do formulário atr��s dele. | `src/components/layout/MainLayout.tsx` |
 | Hooks must be called before any conditional returns | `src/components/layout/QuickFavoritesBar.tsx` |
+| rastreio/frete de um envio já entregue não pode sobrescrever a data | `src/components/logistics/EditShipmentModal.tsx` |
 | Permission Status */} | `src/components/ml/MLNotificationSettings.tsx` |
 | Máximo de itens visíveis antes de colapsar em "..." | `src/components/navigation/Breadcrumbs.tsx` |
 | Pai sem rota própria: texto apagado — não pode parecer | `src/components/navigation/Breadcrumbs.tsx` |
@@ -3612,6 +3623,7 @@ _nenhum item encontrado_
 | errors must not throw into the caller; the caller already has the data in | `src/lib/offline/offlineQueue.ts` |
 | de consumo zero); por isso a consulta so roda quando a permissao existe | `src/pages/DigitalTwin.tsx` |
 | items antigo SEM modal — voltar até ela não pode restaurar a | `src/pages/InventoryPage.tsx` |
+| delivered — o atalho não pode deixar o envio entregue sem data. | `src/pages/LogisticsPage.tsx` |
 | ').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; }, | `src/pages/NotificationsPage.tsx` |
 | papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring. | `src/pages/SystemStatusPage.tsx` |
 | Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou). | `supabase/seed-users.mjs` |

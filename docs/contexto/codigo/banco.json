@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 252,
+ "migrations": 254,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -41,6 +41,7 @@
   "app_private",
   "approve_maintenance_record",
   "archive_finished_jobs",
+  "assign_packaging_task",
   "audit_job_changes",
   "audit_job_status_change",
   "audit_log_immutable",
@@ -92,11 +93,13 @@
   "on_packaging_defect_create_rework_job",
   "on_packaging_ready_create_shipment",
   "packaging_task_sla_status",
+  "preventDefault_hold_shipment_update",
   "process_audit_log_hashing",
   "process_tpm_notifications_cron",
   "purge_old_logs",
   "rate_limit_check_and_record",
   "rate_limit_check_and_record_pair",
+  "record_packaging_defect",
   "refresh_operator_rankings",
   "rollback_inventory_stock",
   "rollup_cron_p95_daily",
@@ -106,6 +109,7 @@
   "trigger_send_tpm_email",
   "update_audit_hash",
   "update_inventory_stock",
+  "update_shipment_status",
   "update_updated_at_column",
   "validate_inventory_stock",
   "validate_job_cancel_reason",
@@ -611,6 +615,13 @@
    "evento": "insert or update or delete",
    "tabela": "shipments",
    "funcao": "audit_logistics_changes"
+  },
+  {
+   "nome": "trg_prevent_hold_shipment_update",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "shipments",
+   "funcao": "preventDefault_hold_shipment_update"
   },
   {
    "nome": "update_shipments_updated_at",
@@ -9005,6 +9016,13 @@
      "default": null,
      "ref": "auth"
     },
+    "request_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "severity": {
      "tipo": "text",
      "nn": true,
@@ -9063,6 +9081,11 @@
      "nome": "idx_packaging_defects_task",
      "colunas": "packaging_task_id",
      "unico": false
+    },
+    {
+     "nome": "packaging_defects_request_id_key",
+     "colunas": "request_id",
+     "unico": true
     }
    ],
    "fks": [
@@ -9080,6 +9103,7 @@
     "photo_url": "string | null",
     "quantity": "number",
     "reported_by": "string | null",
+    "request_id": "string | null",
     "severity": "string",
     "updated_at": "string"
    },
@@ -12918,6 +12942,7 @@
    "usada_em_edges": [],
    "triggers": [
     "audit_shipments_trigger",
+    "trg_prevent_hold_shipment_update",
     "update_shipments_updated_at"
    ],
    "sem_rls": false,
@@ -17737,6 +17762,11 @@
    "usada_em": 1
   },
   {
+   "nome": "assign_packaging_task",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "check_and_notify_kpi_alert",
    "definida": true,
    "usada_em": 1
@@ -17788,6 +17818,16 @@
   },
   {
    "nome": "rate_limit_check_and_record_pair",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "record_packaging_defect",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "update_shipment_status",
    "definida": true,
    "usada_em": 1
   },
