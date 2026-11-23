@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c43c1b21ca701f88280e68c39cbc71d4ba2ec196",
+  "sha": "0becad3428a0a768808dcb957740322070cb20cb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 21:21 UTC",
-  "files_total": 1586,
-  "code_files": 1390,
-  "code_lines": 206649
+  "generated_at": "2026-11-23 22:59 UTC",
+  "files_total": 1587,
+  "code_files": 1391,
+  "code_lines": 206729
  },
  "version": "1.3.2",
- "facts_hash": "c0eff3905d29a67d",
+ "facts_hash": "4d2cc2404186a989",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -37,7 +37,7 @@
     "in": "package.json"
    },
    "i18next": {
-    "version": "^26.1.0",
+    "version": "^27.2.2",
     "role": "i18n",
     "in": "package.json"
    },
@@ -281,7 +281,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 662,
-   ".ts": 399,
+   ".ts": 400,
    ".sql": 262,
    ".mjs": 50,
    ".py": 13,
@@ -29613,8 +29613,8 @@
   },
   {
    "module": "src/test",
-   "files": 30,
-   "lines": 4400,
+   "files": 31,
+   "lines": 4480,
    "tables": [
     "jobs"
    ],
@@ -29633,8 +29633,11 @@
    "deps": [
     "@hookform/resolvers",
     "@testing-library/jest-dom",
+    "@testing-library/react",
     "fs",
     "path",
+    "react",
+    "react-i18next",
     "vitest",
     "zod"
    ],
@@ -29643,6 +29646,7 @@
     "src/features/jobs",
     "src/features/production",
     "src/hooks",
+    "src/i18n",
     "src/integrations",
     "src/lib",
     "supabase/functions"
@@ -29659,6 +29663,7 @@
     "src/test/errorHandling.test.ts",
     "src/test/exportRegression.test.ts",
     "src/test/exportSimulation.test.ts",
+    "src/test/i18nRuntime.test.ts",
     "src/test/jobStateMachine.test.ts",
     "src/test/jobsService.test.ts",
     "src/test/loadStress.test.ts",
@@ -53512,6 +53517,38 @@
    {
     "file": "src/test/exportSimulation.test.ts",
     "name": "GAP: CSV injection não é escapado (=, +, -, @) — recomendar prefix apóstrofo"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "i18n runtime (i18next 27 / react-i18next 18)"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "resolve traducao padrao pt-BR"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "interpola variaveis"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "troca de idioma em runtime"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "resolve chave no idioma ativo en-US"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "expoe os tres idiomas suportados"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "useTranslation re-renderiza componente montado ao trocar o idioma"
+   },
+   {
+    "file": "src/test/i18nRuntime.test.ts",
+    "name": "mantem o idioma pt-BR ao fim da suite"
    },
    {
     "file": "src/test/jobStateMachine.test.ts",
@@ -91914,6 +91951,21 @@
     "GAP: CSV injection não é escapado (=, +, -, @) — recomendar prefix apóstrofo"
    ]
   },
+  "src/test/i18nRuntime.test.ts": {
+   "path": "src/test/i18nRuntime.test.ts",
+   "lines": 80,
+   "is_test": true,
+   "tests": [
+    "i18n runtime (i18next 27 / react-i18next 18)",
+    "resolve traducao padrao pt-BR",
+    "interpola variaveis",
+    "troca de idioma em runtime",
+    "resolve chave no idioma ativo en-US",
+    "expoe os tres idiomas suportados",
+    "useTranslation re-renderiza componente montado ao trocar o idioma",
+    "mantem o idioma pt-BR ao fim da suite"
+   ]
+  },
   "src/test/jobStateMachine.test.ts": {
    "path": "src/test/jobStateMachine.test.ts",
    "lines": 162,
@@ -96886,10 +96938,22 @@
   }
  },
  "git": {
-  "sha": "c43c1b21ca701f88280e68c39cbc71d4ba2ec196",
+  "sha": "0becad3428a0a768808dcb957740322070cb20cb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "0becad3",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "src/test/i18nRuntime.test.ts"
+    ]
+   },
    {
     "sha": "c43c1b2",
     "date": "2026-11-23",
@@ -97247,29 +97311,24 @@
      "src/features/auth/services/authService.ts",
      "supabase/functions/check-login-lockout/index.ts"
     ]
-   },
-   {
-    "sha": "6032d37",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: dossie F-004 marcado resolvido com evidencia (#237)",
-    "files": [
-     "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    4
+    5
    ],
    [
     "package.json",
-    4
+    5
    ],
    [
     "src/features/auth/hooks/useRBAC.tsx",
     3
+   ],
+   [
+    "deno.lock",
+    2
    ],
    [
     "src/hooks/abc/useABCMutations.ts",
@@ -97304,7 +97363,7 @@
     2
    ],
    [
-    "deno.lock",
+    "src/test/i18nRuntime.test.ts",
     1
    ],
    [
@@ -97333,10 +97392,6 @@
    ],
    [
     "src/components/auth/PasswordStrengthIndicator.tsx",
-    1
-   ],
-   [
-    "src/hooks/use-swipe-gesture.tsx",
     1
    ]
   ]

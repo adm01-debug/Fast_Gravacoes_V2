@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c43c1b21ca` · branch `main` · 2026-11-23 21:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0becad3428` · branch `main` · 2026-11-23 22:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T21:12:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T22:38:27Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T21:12:47Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T22:38:27Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -452,7 +452,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T21:12:47Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T22:38:27Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1495,7 +1495,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T21:12:47Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T22:38:27Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1632,7 +1632,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T21:12:47Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T22:38:27Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3316,7 +3316,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1314 testes em 109 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1322 testes em 110 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3374,6 +3374,7 @@ _nenhum item encontrado_
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
+| `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |

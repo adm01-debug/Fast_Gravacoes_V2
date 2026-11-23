@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1061)",
+   "TypeScript (1062)",
    "SQL (262)",
    "Markdown (108)",
    "JavaScript (54)",
@@ -114,7 +114,7 @@
    "date-fns": "^3.6.0",
    "date-fns-tz": "^3.2.0",
    "framer-motion": "^12.39.0",
-   "i18next": "^26.1.0",
+   "i18next": "^27.2.2",
    "i18next-browser-languagedetector": "^8.3.0",
    "next-themes": "^0.4.6",
    "react": "^18.3.1",
@@ -123,7 +123,7 @@
    "react-dropzone": "^15.0.0",
    "react-helmet-async": "^2.0.5",
    "react-hook-form": "^7.92.0",
-   "react-i18next": "^16.5.0",
+   "react-i18next": "^18.0.3",
    "react-intersection-observer": "^9.16.0",
    "react-joyride": "^3.2.0",
    "react-markdown": "^10.1.0",
@@ -889,12 +889,12 @@
    {
     "pacote": "i18next",
     "servico": "i18next",
-    "versao": "^26.1.0"
+    "versao": "^27.2.2"
    },
    {
     "pacote": "react-i18next",
     "servico": "i18next",
-    "versao": "^16.5.0"
+    "versao": "^18.0.3"
    },
    {
     "pacote": "@tanstack/react-query",

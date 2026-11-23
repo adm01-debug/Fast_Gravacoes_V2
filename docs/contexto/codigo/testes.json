@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 128,
+ "total": 129,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 104
+  "unit": 105
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 92
+   "arquivos": 93
   },
   {
    "padrao": "outro",
@@ -898,6 +898,16 @@
    "suporte": false
   },
   {
+   "arquivo": "src/test/i18nRuntime.test.ts",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/i18n/index.ts"
+   ],
+   "casos": 7,
+   "suporte": false
+  },
+  {
    "arquivo": "src/test/jobsService.test.ts",
    "tipo": "unit",
    "linhas": 241,
@@ -1411,6 +1421,7 @@
   "src/hooks/use-smart-back.ts": 1,
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,
+  "src/i18n/index.ts": 1,
   "src/integrations/supabase/client.ts": 13,
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
