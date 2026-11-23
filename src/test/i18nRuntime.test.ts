@@ -48,20 +48,30 @@ describe('i18n runtime (i18next 27 / react-i18next 18)', () => {
     render(createElement(TitleProbe));
     expect(screen.getByTestId('probe').textContent).toBe('Dashboard Principal');
 
-    await act(async () => {
-      await i18n.changeLanguage('en-US');
-    });
-    expect(screen.getByTestId('probe').textContent).toBe('Dashboard');
+    try {
+      await act(async () => {
+        await i18n.changeLanguage('en-US');
+      });
+      expect(screen.getByTestId('probe').textContent).toBe('Dashboard');
 
-    await act(async () => {
-      await i18n.changeLanguage('es-ES');
-    });
-    expect(screen.getByTestId('probe').textContent).toBe('Panel Principal');
+      await act(async () => {
+        await i18n.changeLanguage('es-ES');
+      });
+      expect(screen.getByTestId('probe').textContent).toBe('Panel Principal');
 
-    await act(async () => {
-      await i18n.changeLanguage('pt-BR');
-    });
-    expect(screen.getByTestId('probe').textContent).toBe('Dashboard Principal');
+      await act(async () => {
+        await i18n.changeLanguage('pt-BR');
+      });
+      expect(screen.getByTestId('probe').textContent).toBe('Dashboard Principal');
+    } finally {
+      // Restaura o idioma mesmo se um assert acima falhar, para nao cascatear
+      // a falha no teste seguinte.
+      if (i18n.language !== 'pt-BR') {
+        await act(async () => {
+          await i18n.changeLanguage('pt-BR');
+        });
+      }
+    }
   });
 
   it('mantem o idioma pt-BR ao fim da suite', () => {
