@@ -6,7 +6,7 @@
  * Imports de valor, desestruturações e expressões com coerção/avaliação desconhecida
  * ficam na fila manual: getters, iteradores, módulos e operadores podem ter efeitos.
  */
-import ts from 'typescript';
+import * as ts from 'typescript';
 import { lstatSync, writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
