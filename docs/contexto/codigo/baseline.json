@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "390d6dac52b6dc727c16e52aa116397e8097067d",
+  "commit": "156312d893c702609e5bf6815d3bf96c79dc598f",
   "branch": "main",
-  "data_commit": "2026-11-23T08:05:59-03:00",
+  "data_commit": "2026-11-23T11:45:12-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "156312d",
+    "data": "2026-11-23",
+    "assunto": "fix: corrige import typescript para ESM namespace (TS7) (#270)"
+   },
    {
     "sha": "390d6da",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "3c05e4e",
     "data": "2026-11-21",
     "assunto": "fix: F-006 geo-blocking enforced no login (#240)"
-   },
-   {
-    "sha": "4590899",
-    "data": "2026-11-21",
-    "assunto": "chore: dossie F-005 marcado resolvida (#239)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 193,
+  "arquivos_mudados_7d": 198,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -145,12 +145,12 @@
     "mudancas": 26
    },
    {
-    "pasta": "src/features/notifications",
+    "pasta": "src/features/auth",
     "mudancas": 21
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 20
+    "pasta": "src/features/notifications",
+    "mudancas": 21
    },
    {
     "pasta": "src/features/jobs",
@@ -174,19 +174,19 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
    {
-    "pasta": "src/features/inventory",
+    "pasta": "package-lock.json",
     "mudancas": 12
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 11
+    "pasta": "src/features/inventory",
+    "mudancas": 12
    },
    {
     "pasta": "src/components/layout",
@@ -204,11 +204,11 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "package.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "deno.lock",
@@ -243,6 +243,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "tests/e2e/offline.spec.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "vercel.json",
     "mudancas": 7
    },
@@ -264,10 +268,6 @@
    },
    {
     "arquivo": "supabase/config.toml",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 6
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 121
+    "commits": 122
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1587,
   "arquivos_codigo": 1124,
-  "linhas_codigo": 190273,
+  "linhas_codigo": 190276,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -373,7 +373,7 @@
   },
   "scripts/audit": {
    "arquivos": 2,
-   "linhas": 545
+   "linhas": 546
   },
   "scripts/audit-gate.mjs": {
    "arquivos": 1,
@@ -385,7 +385,7 @@
   },
   "scripts/autofix": {
    "arquivos": 2,
-   "linhas": 469
+   "linhas": 470
   },
   "scripts/autofix.test.mjs": {
    "arquivos": 1,
@@ -417,7 +417,7 @@
   },
   "scripts/check-any-baseline.test.mjs": {
    "arquivos": 1,
-   "linhas": 185
+   "linhas": 186
   },
   "scripts/ci": {
    "arquivos": 12,
@@ -695,19 +695,19 @@
   },
   {
    "arquivo": "scripts/audit/run.mjs",
-   "linha": 320,
+   "linha": 321,
    "tipo": "TODO",
    "texto": "/FIXME/\"em breve\"/\"não implementado\" no código', 'Texto de interface \"em breve\" conta como funcional"
   },
   {
    "arquivo": "scripts/audit/run.mjs",
-   "linha": 324,
+   "linha": 325,
    "tipo": "TODO",
    "texto": "|FIXME|XXX|HACK)\\b/.exec(ln) || /em breve|coming soon|not implemented|n[ãa]o implementad/i.exec(ln);"
   },
   {
    "arquivo": "scripts/check-any-baseline.test.mjs",
-   "linha": 46,
+   "linha": 47,
    "tipo": "TODO",
    "texto": "any follow-up',"
   },

@@ -86,7 +86,7 @@
   {
    "arquivo": "scripts/check-any-baseline.test.mjs",
    "tipo": "unit",
-   "linhas": 185,
+   "linhas": 186,
    "testa": [
     "scripts/check-any-baseline.mjs"
    ],

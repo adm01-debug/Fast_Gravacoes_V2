@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "390d6dac52b6dc727c16e52aa116397e8097067d",
+  "sha": "156312d893c702609e5bf6815d3bf96c79dc598f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 11:30 UTC",
+  "generated_at": "2026-11-23 14:52 UTC",
   "files_total": 1585,
   "code_files": 1389,
-  "code_lines": 206585
+  "code_lines": 206588
  },
  "version": "1.3.2",
- "facts_hash": "1b90b4d0a3361411",
+ "facts_hash": "e184824c4c2ce874",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -22,12 +22,12 @@
     "in": "package.json"
    },
    "@supabase/supabase-js": {
-    "version": "^2.119.2",
+    "version": "^2.119.0",
     "role": "Supabase (DB/Auth/Storage/Functions)",
     "in": "package.json"
    },
    "@tanstack/react-query": {
-    "version": "^5.108.1",
+    "version": "^5.107.1",
     "role": "Cache/fetch de dados (TanStack Query)",
     "in": "package.json"
    },
@@ -47,7 +47,7 @@
     "in": "package.json"
    },
    "lucide-react": {
-    "version": "1.77.0",
+    "version": "1.73.0",
     "role": "Ícones Lucide",
     "in": "package.json"
    },
@@ -62,7 +62,7 @@
     "in": "package.json"
    },
    "react-router-dom": {
-    "version": "^7.18.6",
+    "version": "^7.18.5",
     "role": "Roteamento (React Router)",
     "in": "package.json"
    },
@@ -87,22 +87,22 @@
     "in": "package.json"
    },
    "@playwright/test": {
-    "version": "^1.65.1",
+    "version": "^1.60.0",
     "role": "E2E Playwright",
     "in": "package.json"
    },
    "tailwindcss": {
-    "version": "^4.3.5",
+    "version": "^3.4.17",
     "role": "Tailwind CSS",
     "in": "package.json"
    },
    "vite": {
-    "version": "^8.3.8",
+    "version": "^7.3.7",
     "role": "Bundler Vite",
     "in": "package.json"
    },
    "vitest": {
-    "version": "^5.1.1",
+    "version": "^4.1.12",
     "role": "Testes Vitest",
     "in": "package.json"
    }
@@ -11137,13 +11137,33 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Active roles can manage energy alerts",
+    "name": "Active roles can create energy alerts",
     "table": "energy_alerts",
-    "cmd": "ALL",
+    "cmd": "INSERT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "has_any_active_role()",
-    "check": "has_any_active_role()",
+    "using": "",
+    "check": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can delete energy alerts",
+    "table": "energy_alerts",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can update energy alerts",
+    "table": "energy_alerts",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "check": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -11153,6 +11173,16 @@
     "roles": "authenticated",
     "mode": "permissive",
     "using": "has_any_active_role()",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy alerts",
+    "table": "energy_alerts",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -11167,13 +11197,43 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Coordinators can manage energy consumption",
+    "name": "Coordinators can create energy consumption",
     "table": "energy_consumption",
-    "cmd": "ALL",
-    "roles": "public",
+    "cmd": "INSERT",
+    "roles": "authenticated",
     "mode": "permissive",
-    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
-    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
+    "using": "",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can delete energy consumption",
+    "table": "energy_consumption",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can update energy consumption",
+    "table": "energy_consumption",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy consumption",
+    "table": "energy_consumption",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -11187,13 +11247,43 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Coordinators can manage energy targets",
+    "name": "Coordinators can create energy targets",
     "table": "energy_targets",
-    "cmd": "ALL",
-    "roles": "public",
+    "cmd": "INSERT",
+    "roles": "authenticated",
     "mode": "permissive",
-    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
-    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
+    "using": "",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can delete energy targets",
+    "table": "energy_targets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can update energy targets",
+    "table": "energy_targets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy targets",
+    "table": "energy_targets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -15380,6 +15470,20 @@
     "body": "SELECT EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND is_active = true );",
     "raises": [],
     "tables": [
+     "user_roles"
+    ]
+   },
+   "has_permission": {
+    "args": "_permission text",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/has_permission__c446a5763d690e53.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT app_private.has_role(auth.uid(), 'admin'::app_role) OR EXISTS ( SELECT 1 FROM public.user_roles ur JOIN public.role_permissions rp ON ur.role = rp.role WHERE ur.user_id = auth.uid() AND ur.is_active = true AND rp.is_granted = true AND ( rp.permission = _permission -- admin:all so contorna a revogacao para perfil admin REAL: a thread -- SEC do review apontou que admin:all em role comum (ex.: concession -- via PermissionManager) promovia a role a admin sem ter o perfil. OR (rp.permission = 'admin:all' AND ur.role = 'admin'::app_role) ) );",
+    "raises": [],
+    "tables": [
+     "role_permissions",
      "user_roles"
     ]
    },
@@ -27302,7 +27406,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26358,
+   "lines": 26361,
    "tables": [
     "a",
     "c1",
@@ -27394,6 +27498,7 @@
     "fs",
     "lib",
     "lodash",
+    "module",
     "node:assert",
     "node:child_process",
     "node:crypto",
@@ -27406,8 +27511,7 @@
     "node:test",
     "node:url",
     "node:zlib",
-    "path",
-    "react"
+    "path"
    ],
    "imports_modules": [
     "src/b",
@@ -56412,13 +56516,33 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Active roles can manage energy alerts",
+    "name": "Active roles can create energy alerts",
     "table": "energy_alerts",
-    "cmd": "ALL",
+    "cmd": "INSERT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "has_any_active_role()",
-    "check": "has_any_active_role()",
+    "using": "",
+    "check": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can delete energy alerts",
+    "table": "energy_alerts",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Active roles can update energy alerts",
+    "table": "energy_alerts",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
+    "check": "(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -56428,6 +56552,16 @@
     "roles": "authenticated",
     "mode": "permissive",
     "using": "has_any_active_role()",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy alerts",
+    "table": "energy_alerts",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -56442,13 +56576,43 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Coordinators can manage energy consumption",
+    "name": "Coordinators can create energy consumption",
     "table": "energy_consumption",
-    "cmd": "ALL",
-    "roles": "public",
+    "cmd": "INSERT",
+    "roles": "authenticated",
     "mode": "permissive",
-    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
-    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
+    "using": "",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can delete energy consumption",
+    "table": "energy_consumption",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can update energy consumption",
+    "table": "energy_consumption",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy consumption",
+    "table": "energy_consumption",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -56462,13 +56626,43 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
-    "name": "Coordinators can manage energy targets",
+    "name": "Coordinators can create energy targets",
     "table": "energy_targets",
-    "cmd": "ALL",
-    "roles": "public",
+    "cmd": "INSERT",
+    "roles": "authenticated",
     "mode": "permissive",
-    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
-    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)",
+    "using": "",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can delete energy targets",
+    "table": "energy_targets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Coordinators can update energy targets",
+    "table": "energy_targets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "check": "app_private.has_role(auth.uid(), 'coordinator'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "Energy readers can view energy targets",
+    "table": "energy_targets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "has_permission('energy:read'::text)",
+    "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -60658,6 +60852,20 @@
      "user_roles"
     ]
    },
+   "has_permission": {
+    "args": "_permission text",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/has_permission__c446a5763d690e53.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT app_private.has_role(auth.uid(), 'admin'::app_role) OR EXISTS ( SELECT 1 FROM public.user_roles ur JOIN public.role_permissions rp ON ur.role = rp.role WHERE ur.user_id = auth.uid() AND ur.is_active = true AND rp.is_granted = true AND ( rp.permission = _permission -- admin:all so contorna a revogacao para perfil admin REAL: a thread -- SEC do review apontou que admin:all em role comum (ex.: concession -- via PermissionManager) promovia a role a admin sem ter o perfil. OR (rp.permission = 'admin:all' AND ur.role = 'admin'::app_role) ) );",
+    "raises": [],
+    "tables": [
+     "role_permissions",
+     "user_roles"
+    ]
+   },
    "has_role": {
     "args": "_user_id uuid, _role app_role",
     "returns": "boolean",
@@ -63098,6 +63306,7 @@
   ],
   "policy_fns": [
    "has_any_active_role",
+   "has_permission",
    "has_role",
    "is_staff"
   ],
@@ -63422,48 +63631,48 @@
     "rls": "enabled",
     "SELECT": [
      "authenticated: has_any_active_role()",
-     "authenticated: has_any_active_role()"
+     "authenticated: has_permission('energy:read'::text)"
     ],
     "INSERT": [
-     "authenticated: WITH CHECK has_any_active_role()"
+     "authenticated: WITH CHECK (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))"
     ],
     "UPDATE": [
-     "authenticated: USING has_any_active_role()"
+     "authenticated: USING (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))"
     ],
     "DELETE": [
-     "authenticated: has_any_active_role()"
+     "authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))"
     ]
    },
    "energy_consumption": {
     "rls": "enabled",
     "SELECT": [
      "authenticated: has_any_active_role()",
-     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: has_permission('energy:read'::text)"
     ],
     "INSERT": [
-     "public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: WITH CHECK app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ],
     "UPDATE": [
-     "public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: USING app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ],
     "DELETE": [
-     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ]
    },
    "energy_targets": {
     "rls": "enabled",
     "SELECT": [
      "authenticated: has_any_active_role()",
-     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: has_permission('energy:read'::text)"
     ],
     "INSERT": [
-     "public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: WITH CHECK app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ],
     "UPDATE": [
-     "public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: USING app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ],
     "DELETE": [
-     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)"
+     "authenticated: app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ]
    },
    "error_logs": {
@@ -65140,6 +65349,7 @@
    "handle_new_user",
    "handle_parameter_alert_notification",
    "has_any_active_role",
+   "has_permission",
    "has_role",
    "increment_sheet_view_count",
    "is_staff",
@@ -68352,7 +68562,7 @@
   },
   "scripts/check-any-baseline.test.mjs": {
    "path": "scripts/check-any-baseline.test.mjs",
-   "lines": 185,
+   "lines": 186,
    "is_test": true,
    "doc": "Testes do ratchet de `any` — `node --test scripts/check-any-baseline.test.mjs`.",
    "tests": [
@@ -69195,7 +69405,7 @@
   },
   "scripts/audit/run.mjs": {
    "path": "scripts/audit/run.mjs",
-   "lines": 455,
+   "lines": 456,
    "env": [
     "AUDIT_BASELINE"
    ],
@@ -69262,7 +69472,7 @@
   },
   "scripts/autofix/unused.mjs": {
    "path": "scripts/autofix/unused.mjs",
-   "lines": 244,
+   "lines": 245,
    "exports": [
     "function runUnused"
    ],
@@ -96490,10 +96700,31 @@
   }
  },
  "git": {
-  "sha": "390d6dac52b6dc727c16e52aa116397e8097067d",
+  "sha": "156312d893c702609e5bf6815d3bf96c79dc598f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "156312d",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrige import typescript para ESM namespace (TS7) (#270)",
+    "files": [
+     "package-lock.json",
+     "package.json",
+     "scripts/audit/run.mjs",
+     "scripts/autofix/unused.mjs",
+     "scripts/check-any-baseline.test.mjs",
+     "src/components/auth/PasswordStrengthIndicator.tsx",
+     "src/features/auth/hooks/useRBAC.tsx",
+     "src/hooks/abc/useABCMutations.ts",
+     "src/hooks/use-swipe-gesture.tsx",
+     "src/hooks/useMachineSuggestion.ts",
+     "src/lib/pdfExport.ts",
+     "supabase/functions/health-monitor/index.ts",
+     "tests/e2e/offline.spec.ts"
+    ]
+   },
    {
     "sha": "390d6da",
     "date": "2026-11-23",
@@ -96859,19 +97090,21 @@
      "supabase/migrations/20261120173500_public_tracking_rpc.sql",
      "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
     ]
-   },
-   {
-    "sha": "53cf28e",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(inventory): policies INSERT e DELETE para inventory_movements (#235)",
-    "files": [
-     "docs/pendencias/F-003-inventory-movements-sem-escrita.md",
-     "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "package-lock.json",
+    3
+   ],
+   [
+    "package.json",
+    3
+   ],
+   [
+    "src/features/auth/hooks/useRBAC.tsx",
+    3
+   ],
    [
     "src/features/auth/components/AuthProvider.tsx",
     3
@@ -96885,11 +97118,11 @@
     3
    ],
    [
-    "package-lock.json",
+    "src/hooks/abc/useABCMutations.ts",
     2
    ],
    [
-    "package.json",
+    "src/hooks/useMachineSuggestion.ts",
     2
    ],
    [
@@ -96921,10 +97154,6 @@
     2
    ],
    [
-    "src/features/auth/hooks/useRBAC.tsx",
-    2
-   ],
-   [
     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
     2
    ],
@@ -96942,14 +97171,6 @@
    ],
    [
     "docs/pendencias/F-015-kanbanboard-escreve-jobs-status-direto.md",
-    2
-   ],
-   [
-    "docs/pendencias/F-016-troca-de-papel-quebrada.md",
-    2
-   ],
-   [
-    "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
     2
    ]
   ]

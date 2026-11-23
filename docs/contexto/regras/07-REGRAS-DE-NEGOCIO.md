@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `390d6dac52` · branch `main` · 2026-11-23 11:30 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `156312d893` · branch `main` · 2026-11-23 14:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T14:20:35Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,11 +107,11 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T10:15:01Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T14:20:35Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
-327 política(s) em 131 tabela(s), agrupadas por tabela — lista completa, sem cortes.
+336 política(s) em 131 tabela(s), agrupadas por tabela — lista completa, sem cortes.
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
@@ -161,12 +161,21 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `efficiency_alert_history` | Authenticated users can view efficiency alert history | SELECT | authenticated | permissive | `has_any_active_role()` |  |
 | `efficiency_alert_history` | Elevated can insert efficiency alerts | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
 | `efficiency_alert_history` | Elevated can update efficiency alerts | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
-| `energy_alerts` | Active roles can manage energy alerts | ALL | authenticated | permissive | `has_any_active_role()` | `has_any_active_role()` |
 | `energy_alerts` | Authenticated users can view energy alerts | SELECT | authenticated | permissive | `has_any_active_role()` |  |
-| `energy_consumption` | Coordinators can manage energy consumption | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `energy_alerts` | Energy readers can view energy alerts | SELECT | authenticated | permissive | `has_permission('energy:read'::text)` |  |
+| `energy_alerts` | Active roles can create energy alerts | INSERT | authenticated | permissive |  | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `energy_alerts` | Active roles can update energy alerts | UPDATE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| `energy_alerts` | Active roles can delete energy alerts | DELETE | authenticated | permissive | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |  |
 | `energy_consumption` | Authenticated users can view energy consumption | SELECT | authenticated | permissive | `has_any_active_role()` |  |
-| `energy_targets` | Coordinators can manage energy targets | ALL | public | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| `energy_consumption` | Energy readers can view energy consumption | SELECT | authenticated | permissive | `has_permission('energy:read'::text)` |  |
+| `energy_consumption` | Coordinators can create energy consumption | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| `energy_consumption` | Coordinators can update energy consumption | UPDATE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| `energy_consumption` | Coordinators can delete energy consumption | DELETE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |  |
 | `energy_targets` | Authenticated users can view energy targets | SELECT | authenticated | permissive | `has_any_active_role()` |  |
+| `energy_targets` | Energy readers can view energy targets | SELECT | authenticated | permissive | `has_permission('energy:read'::text)` |  |
+| `energy_targets` | Coordinators can create energy targets | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| `energy_targets` | Coordinators can update energy targets | UPDATE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| `energy_targets` | Coordinators can delete energy targets | DELETE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |  |
 | `error_logs` | Users can view their own error logs | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
 | `error_logs` | Users can insert error logs | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
 | `feature_flags` | Apenas administradores gerenciam flags | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
@@ -443,7 +452,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T10:15:01Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T14:20:35Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1486,7 +1495,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T10:15:01Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T14:20:35Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1616,7 +1625,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T10:15:01Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T14:20:35Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|

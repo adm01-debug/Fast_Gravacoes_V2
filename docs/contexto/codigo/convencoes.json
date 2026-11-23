@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige import typescript para ESM namespace (TS7) (#270)",
    "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)",
    "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)",
    "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)",
-   "fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)",
-   "fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)"
+   "fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

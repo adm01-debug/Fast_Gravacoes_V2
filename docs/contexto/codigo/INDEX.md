@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `390d6dac52b6dc727c16e52aa116397e8097067d` (2026-11-23T08:05:59-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `156312d893c702609e5bf6815d3bf96c79dc598f` (2026-11-23T11:45:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1587 |
 | arquivos_codigo | 1124 |
-| linhas_codigo | 190273 |
+| linhas_codigo | 190276 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -246,15 +246,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7531 nós · 22094 arestas · 666 comunidades · grafo do commit `390d6dac`
-- comunidades maiores: card.tsx (195), input.tsx (131), FuturisticBI.tsx (131), analytics/index.ts (128), cn (123), button.tsx (119), MainLayout.tsx (112), snapshot.py (110), client.ts (106), badge.tsx (104), DailyCalendar.tsx (101), gerar.mjs (96)
+- 7534 nós · 22097 arestas · 681 comunidades · grafo do commit `156312d8`
+- comunidades maiores: card.tsx (232), button.tsx (225), skeleton.tsx (127), DailyCalendar.tsx (115), cn (113), snapshot.py (111), client.ts (106), errorHandling.ts (104), generate.py (101), gerar.mjs (96), .write (96), analytics/index.ts (94)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (21)
-- package-lock.json (18)
-- package.json (18)
+- package-lock.json (19)
+- package.json (19)
 - deno.lock (15)
 - AGENTS.md (10)
 - .github/workflows/db-admin.yml (9)
@@ -263,10 +263,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - PENDENCIAS.md (7)
 - index.html (7)
 - supabase/functions/check-login-lockout/index.ts (7)
+- tests/e2e/offline.spec.ts (7)
 - vercel.json (7)
 - .github/workflows/contexto.yml (6)
 - CLAUDE.md (6)
-- src/components/layout/AppSidebar.tsx (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-23 `156312d` fix: corrige import typescript para ESM namespace (TS7) (#270)
 - 2026-11-23 `390d6da` chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)
 - 2026-11-23 `8973b0c` chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)
 - 2026-11-23 `414b392` docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `efca83b` docs: plano de 190 etapas de melhorias e correcoes (#257)
 - 2026-11-22 `75dc924` fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)
 - 2026-11-22 `82df446` chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)
-- 2026-11-22 `dbb891a` chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
