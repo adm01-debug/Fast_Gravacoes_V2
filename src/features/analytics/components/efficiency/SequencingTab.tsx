@@ -1,20 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, ArrowRight, Palette, Package } from 'lucide-react';
-
-interface SequencingSuggestion {
-  machineName: string;
-  techniqueName: string;
-  estimatedSavings: number;
-  colorGroups: Array<{ color: string; jobCount: number }>;
-}
+import { CheckCircle2, ArrowRight, Palette, Package, Loader2 } from 'lucide-react';
+import type { SequencingSuggestion } from '@/features/jobs/hooks/useSmartSequencingWithActions';
 
 interface SequencingTabProps {
   suggestions: SequencingSuggestion[];
+  onApply?: (suggestion: SequencingSuggestion) => void;
+  isApplying?: boolean;
 }
 
-export function SequencingTab({ suggestions }: SequencingTabProps) {
+export function SequencingTab({ suggestions, onApply, isApplying }: SequencingTabProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {suggestions.map((suggestion, index) => (
@@ -51,8 +47,15 @@ export function SequencingTab({ suggestions }: SequencingTabProps) {
                 <p className="text-xs text-muted-foreground text-center">+{suggestion.colorGroups.length - 3} grupos adicionais</p>
               )}
             </div>
-            <Button variant="outline" size="sm" className="w-full gap-2">
-              Aplicar Sequenciamento <ArrowRight className="h-3 w-3" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full gap-2"
+              disabled={isApplying}
+              onClick={() => onApply?.(suggestion)}
+            >
+              {isApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : <ArrowRight className="h-3 w-3" />}
+              Aplicar Sequenciamento
             </Button>
           </CardContent>
         </Card>
