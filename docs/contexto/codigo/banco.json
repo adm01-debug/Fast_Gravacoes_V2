@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 254,
+ "migrations": 255,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -5062,6 +5062,13 @@
      "default": "60",
      "ref": null
     },
+    "external_ref": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "gravure_color": {
      "tipo": "text",
      "nn": false,
@@ -5261,6 +5268,11 @@
      "unico": false
     },
     {
+     "nome": "idx_jobs_external_ref",
+     "colunas": "external_ref",
+     "unico": true
+    },
+    {
      "nome": "idx_jobs_machine_id",
      "colunas": "machine_id",
      "unico": false
@@ -5379,7 +5391,8 @@
    },
    "drift": {
     "so_na_migration": [
-     "cancel_reason"
+     "cancel_reason",
+     "external_ref"
     ],
     "so_no_types": [
      "delay_reason",

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0becad3428` · branch `main` · 2026-11-23 22:59 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `17a3af4a9a` · branch `main` · 2026-11-23 23:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T22:38:27Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T23:15:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T22:38:27Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T23:15:19Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -452,7 +452,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T22:38:27Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T23:15:19Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1495,7 +1495,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T22:38:27Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T23:15:19Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1632,7 +1632,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T22:38:27Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T23:15:19Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2154,7 +2154,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **ERPJobRequestSchema** (`supabase/functions/_shared/contracts.ts`, z.object):
   ```ts
-  { order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().uuid(), priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"), scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), }
+  { order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().min(1), priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"), scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), external_ref: z.string().min(1).max(200).optional(), }
   ```
 - **ERPJobResponseSchema** (`supabase/functions/_shared/contracts.ts`, z.object):
   ```ts
@@ -3316,14 +3316,14 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1322 testes em 110 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1327 testes em 110 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
 | `supabase/functions/external-db-bridge/index.test.ts` | 80 | CS-001: error always returns  · CS-002: error with high duration still returns  · CS-003: 0ms no error = normal · CS-004: 1ms = normal … |
 | `src/test/jobStateMachine.test.ts` | 71 | canTransition · queue · allows queue → scheduled · allows queue → ready … |
 | `src/lib/offlineStorage.test.ts` | 42 | offlineStorage · generic CRUD against an object store · put/get round-trips a record · get returns undefined for a key that was never stored … |
-| `src/test/erpApiContracts.test.ts` | 36 | ERP Job Create — valid payloads · priority=%s → valid · without priority (uses default) → valid · with optional machine_id → valid … |
+| `src/test/erpApiContracts.test.ts` | 39 | ERP Job Create — valid payloads · priority=%s → valid · without priority (uses default) → valid · with optional machine_id → valid … |
 | `src/test/errorHandling.test.ts` | 36 | categorizeError · returns UNKNOWN_ERROR for null/undefined · returns NETWORK_ERROR for network errors · returns TIMEOUT for timeout errors … |
 | `src/test/webhookSimulation.test.ts` | 35 | Webhook — valid combinations (happy path) · source=%s event=%s → 200 · Webhook — data field variations · data=%s → 200 … |
 | `src/test/queryConfig.test.ts` | 34 | calculateRetryDelay · returns a positive number for each attempt index · respects the max delay cap · generally increases with attempt index (exponential growth) … |
@@ -3333,8 +3333,8 @@ _nenhum item encontrado_
 | `src/test/offlineStorage.test.ts` | 29 | sanitize - additional edge cases · sanitizeUrl · allows https URLs · allows http URLs … |
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
+| `src/test/webhookFuzz.test.ts` | 27 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
-| `src/test/webhookFuzz.test.ts` | 25 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
 | `src/test/sanitize.test.ts` | 24 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |

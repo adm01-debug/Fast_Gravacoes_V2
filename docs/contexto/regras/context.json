@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0becad3428a0a768808dcb957740322070cb20cb",
+  "sha": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 22:59 UTC",
-  "files_total": 1587,
-  "code_files": 1391,
-  "code_lines": 206729
+  "generated_at": "2026-11-23 23:54 UTC",
+  "files_total": 1588,
+  "code_files": 1392,
+  "code_lines": 206804
  },
  "version": "1.3.2",
- "facts_hash": "4d2cc2404186a989",
+ "facts_hash": "a703feaa50402e4d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 662,
    ".ts": 400,
-   ".sql": 262,
+   ".sql": 263,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19449,6 +19449,7 @@
    "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
    "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
+   "supabase/migrations/20261125130000_jobs_external_ref.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21428,7 +21429,8 @@
    "column:techniques.medium_threshold": "Threshold em minutos para risco médio de gargalo",
    "column:techniques.high_threshold": "Threshold em minutos para risco alto de gargalo",
    "table:erp_api_keys": "Stores SHA-256 hashed API keys for ERP integration authentication.",
-   "table:csp_violation_reports": "Relatórios de violação de CSP coletados pela edge function csp-report (report-uri). Sem policy de INSERT: apenas service role grava."
+   "table:csp_violation_reports": "Relatórios de violação de CSP coletados pela edge function csp-report (report-uri). Sem policy de INSERT: apenas service role grava.",
+   "column:jobs.external_ref": "Chave de idempotencia do sistema de origem (ex.: service_orders.id do Promo Design)."
   },
   "types_file": "src/integrations/supabase/types.ts",
   "ignored_sources": [
@@ -25360,7 +25362,7 @@
     ],
     "side_effects": [],
     "webhook_events": [],
-    "idempotency": false
+    "idempotency": true
    },
    {
     "name": "excel-export",
@@ -29614,7 +29616,7 @@
   {
    "module": "src/test",
    "files": 31,
-   "lines": 4480,
+   "lines": 4510,
    "tables": [
     "jobs"
    ],
@@ -29734,7 +29736,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11277,
+   "lines": 11306,
    "tables": [
     "backup_logs",
     "backups",
@@ -29872,8 +29874,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 254,
-   "lines": 15656,
+   "files": 255,
+   "lines": 15672,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -31737,6 +31739,7 @@
     "actual_start_time",
     "created_at",
     "estimated_duration",
+    "external_ref",
     "id",
     "lost_pieces",
     "machine_id",
@@ -33052,7 +33055,12 @@
    "technical_sheet_versions",
    "tpm_execution_audit_logs"
   ],
-  "columns_unknown": []
+  "columns_unknown": [
+   {
+    "table": "jobs",
+    "column": "external_ref"
+   }
+  ]
  },
  "rules": {
   "validation_schemas": [
@@ -33480,7 +33488,7 @@
     "file": "supabase/functions/_shared/contracts.ts",
     "name": "ERPJobRequestSchema",
     "kind": "object",
-    "body": "{ order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().uuid(), priority: z.enum([\"low\", \"medium\", \"high\", \"urgent\"]).default(\"medium\"), scheduled_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), }",
+    "body": "{ order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().min(1), priority: z.enum([\"low\", \"medium\", \"high\", \"urgent\"]).default(\"medium\"), scheduled_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), external_ref: z.string().min(1).max(200).optional(), }",
     "refines": [],
     "chain": []
    },
@@ -53108,6 +53116,18 @@
    },
    {
     "file": "src/test/erpApiContracts.test.ts",
+    "name": "technique_id TEXT do banco → valid"
+   },
+   {
+    "file": "src/test/erpApiContracts.test.ts",
+    "name": "com external_ref (idempotencia) → valid"
+   },
+   {
+    "file": "src/test/erpApiContracts.test.ts",
+    "name": "external_ref vazio → invalid"
+   },
+   {
+    "file": "src/test/erpApiContracts.test.ts",
     "name": "ERP Job Create — invalid payloads"
    },
    {
@@ -54857,6 +54877,14 @@
    {
     "file": "src/test/webhookFuzz.test.ts",
     "name": "invalid priority → rejected"
+   },
+   {
+    "file": "src/test/webhookFuzz.test.ts",
+    "name": "technique_id="
+   },
+   {
+    "file": "src/test/webhookFuzz.test.ts",
+    "name": "technique_id="
    },
    {
     "file": "src/test/webhookFuzz.test.ts",
@@ -68217,6 +68245,11 @@
     "where": [
      "filtra:src/features/admin/hooks/useMonitoringData.ts"
     ]
+   },
+   {
+    "kind": "coluna",
+    "msg": "coluna `external_ref` usada no código não existe no schema de `jobs`",
+    "where": []
    },
    {
     "kind": "tabela",
@@ -91795,7 +91828,7 @@
   },
   "src/test/erpApiContracts.test.ts": {
    "path": "src/test/erpApiContracts.test.ts",
-   "lines": 255,
+   "lines": 271,
    "is_test": true,
    "rule_comments": [
     "── Response schema validation ────────────────────────────────────────────"
@@ -91811,6 +91844,9 @@
     "quantity=1 (minimum) → valid",
     "quantity=999999 (large) → valid",
     "quantity=0.5 (fractional) → valid (positive)",
+    "technique_id TEXT do banco → valid",
+    "com external_ref (idempotencia) → valid",
+    "external_ref vazio → invalid",
     "ERP Job Create — invalid payloads",
     "%s → invalid",
     "ERP Job PATCH — valid status transitions",
@@ -92430,7 +92466,7 @@
   },
   "src/test/webhookFuzz.test.ts": {
    "path": "src/test/webhookFuzz.test.ts",
-   "lines": 295,
+   "lines": 309,
    "is_test": true,
    "env": [
     "SECRET"
@@ -92463,6 +92499,8 @@
     "quantity=0 → rejected (positive)",
     "quantity=-1 → rejected",
     "invalid priority → rejected",
+    "technique_id=",
+    "technique_id=",
     "Fuzz — 1000 random malformed webhook payloads",
     "never throws — success:bool e error presente quando inválido (1000 payloads)"
    ]
@@ -92806,7 +92844,7 @@
   },
   "supabase/functions/_shared/contracts.ts": {
    "path": "supabase/functions/_shared/contracts.ts",
-   "lines": 95,
+   "lines": 99,
    "exports": [
     "const ErrorResponseSchema",
     "const WebhookSourceSchema",
@@ -92851,7 +92889,7 @@
     {
      "name": "ERPJobRequestSchema",
      "kind": "object",
-     "body": "{ order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().uuid(), priority: z.enum([\"low\", \"medium\", \"high\", \"urgent\"]).default(\"medium\"), scheduled_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), }",
+     "body": "{ order_number: z.string().min(1), client: z.string().min(1), product: z.string().min(1), quantity: z.number().positive(), technique_id: z.string().min(1), priority: z.enum([\"low\", \"medium\", \"high\", \"urgent\"]).default(\"medium\"), scheduled_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(), machine_id: z.string().uuid().optional(), notes: z.string().optional(), external_ref: z.string().min(1).max(200).optional(), }",
      "refines": [],
      "chain": []
     },
@@ -94154,7 +94192,7 @@
   },
   "supabase/functions/erp-api/index.ts": {
    "path": "supabase/functions/erp-api/index.ts",
-   "lines": 317,
+   "lines": 342,
    "tables": [
     {
      "table": "user_roles",
@@ -94174,7 +94212,15 @@
     },
     {
      "table": "jobs",
+     "op": "select"
+    },
+    {
+     "table": "jobs",
      "op": "insert,select"
+    },
+    {
+     "table": "jobs",
+     "op": "select"
     },
     {
      "table": "jobs",
@@ -94229,6 +94275,7 @@
      "key_hash"
     ],
     "jobs": [
+     "external_ref",
      "id",
      "lost_pieces",
      "produced_quantity",
@@ -96500,6 +96547,10 @@
    "lines": 123,
    "uses_service_role": true
   },
+  "supabase/migrations/20261125130000_jobs_external_ref.sql": {
+   "path": "supabase/migrations/20261125130000_jobs_external_ref.sql",
+   "lines": 16
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -96938,10 +96989,24 @@
   }
  },
  "git": {
-  "sha": "0becad3428a0a768808dcb957740322070cb20cb",
+  "sha": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "17a3af4",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)",
+    "files": [
+     "src/test/erpApiContracts.test.ts",
+     "src/test/webhookFuzz.test.ts",
+     "supabase/functions/_shared/contracts.test.ts",
+     "supabase/functions/_shared/contracts.ts",
+     "supabase/functions/erp-api/index.ts",
+     "supabase/migrations/20261125130000_jobs_external_ref.sql"
+    ]
+   },
    {
     "sha": "0becad3",
     "date": "2026-11-23",
@@ -97299,18 +97364,6 @@
     "files": [
      "docs/pendencias/F-005-allowlist-de-ip-in-cua.md"
     ]
-   },
-   {
-    "sha": "ecaa439",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)",
-    "files": [
-     "src/features/auth/components/AuthProvider.test.tsx",
-     "src/features/auth/components/AuthProvider.tsx",
-     "src/features/auth/services/authService.ts",
-     "supabase/functions/check-login-lockout/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -97347,20 +97400,28 @@
     2
    ],
    [
-    "src/features/auth/components/AuthProvider.test.tsx",
-    2
+    "src/test/erpApiContracts.test.ts",
+    1
    ],
    [
-    "src/features/auth/components/AuthProvider.tsx",
-    2
+    "src/test/webhookFuzz.test.ts",
+    1
    ],
    [
-    "src/features/auth/services/authService.ts",
-    2
+    "supabase/functions/_shared/contracts.test.ts",
+    1
    ],
    [
-    "supabase/functions/check-login-lockout/index.ts",
-    2
+    "supabase/functions/_shared/contracts.ts",
+    1
+   ],
+   [
+    "supabase/functions/erp-api/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261125130000_jobs_external_ref.sql",
+    1
    ],
    [
     "src/test/i18nRuntime.test.ts",
@@ -97384,14 +97445,6 @@
    ],
    [
     "scripts/autofix/unused.mjs",
-    1
-   ],
-   [
-    "scripts/check-any-baseline.test.mjs",
-    1
-   ],
-   [
-    "src/components/auth/PasswordStrengthIndicator.tsx",
     1
    ]
   ]

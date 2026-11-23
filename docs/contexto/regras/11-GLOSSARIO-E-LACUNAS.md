@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0becad3428` · branch `main` · 2026-11-23 22:59 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `17a3af4a9a` · branch `main` · 2026-11-23 23:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T22:38:27Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T23:15:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -240,6 +240,7 @@
 | status | valor `suspended` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/layout/QuickFavoritesBar.tsx`<br>`compara:src/features/notifications/hooks/useNotificationSounds.ts`<br>`compara:src/hooks/useThemeSound.ts`<br>`compara:src/lib/soundFeedback.ts` |
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `failed` para `login_status` usado no código não existe em nenhum enum do banco/TS | `filtra:src/features/admin/hooks/useMonitoringData.ts` |
+| coluna | coluna `external_ref` usada no código não existe no schema de `jobs` |  |
 | tabela | tabela `backups` usada no código não existe no banco real (snapshot) | `supabase/functions/backup-scheduler/index.ts` |
 | tabela | tabela `erp_api_keys` usada no código não existe no banco real (snapshot) | `supabase/functions/erp-api/index.ts` |
 | rls | `profiles`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |

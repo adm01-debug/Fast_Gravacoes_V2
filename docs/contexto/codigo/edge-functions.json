@@ -505,7 +505,7 @@
    "nome": "erp-api",
    "entrada": "supabase/functions/erp-api/index.ts",
    "arquivos": 1,
-   "linhas": 317,
+   "linhas": 342,
    "verify_jwt": true,
    "metodos": [
     "GET",

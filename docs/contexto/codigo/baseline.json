@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0becad3428a0a768808dcb957740322070cb20cb",
+  "commit": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
   "branch": "main",
-  "data_commit": "2026-11-23T19:58:07-03:00",
+  "data_commit": "2026-11-23T20:51:56-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "17a3af4",
+    "data": "2026-11-23",
+    "assunto": "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)"
+   },
    {
     "sha": "0becad3",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "42f66be",
     "data": "2026-11-21",
     "assunto": "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)"
-   },
-   {
-    "sha": "3fc37b3",
-    "data": "2026-11-21",
-    "assunto": "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 201,
+  "arquivos_mudados_7d": 206,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -177,11 +177,11 @@
     "mudancas": 16
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 14
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 16
    },
    {
-    "pasta": "supabase/functions/_shared",
+    "pasta": "package-lock.json",
     "mudancas": 14
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 125
+    "commits": 126
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1589,
+  "arquivos_total": 1590,
   "arquivos_codigo": 1126,
-  "linhas_codigo": 190417,
+  "linhas_codigo": 190476,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 254,
+  "migrations": 255,
   "cron_jobs": 4,
   "testes": 129,
   "workflows": 12,
@@ -533,7 +533,7 @@
   },
   "src/test": {
    "arquivos": 30,
-   "linhas": 4473
+   "linhas": 4503
   },
   "src/types": {
    "arquivos": 2,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11277
+   "linhas": 11306
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
