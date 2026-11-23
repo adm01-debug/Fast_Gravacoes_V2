@@ -2803,6 +2803,7 @@ export type Database = {
           photo_url: string | null
           quantity: number
           reported_by: string | null
+          request_id: string | null
           severity: string
           updated_at: string
         }
@@ -2814,8 +2815,9 @@ export type Database = {
           notes?: string | null
           packaging_task_id: string
           photo_url?: string | null
-          quantity: number
+          quantity?: number
           reported_by?: string | null
+          request_id?: string | null
           severity?: string
           updated_at?: string
         }
@@ -2829,6 +2831,7 @@ export type Database = {
           photo_url?: string | null
           quantity?: number
           reported_by?: string | null
+          request_id?: string | null
           severity?: string
           updated_at?: string
         }
@@ -6075,6 +6078,33 @@ export type Database = {
       }
       increment_sheet_view_count: {
         Args: { sheet_id: string }
+        Returns: undefined
+      }
+      assign_packaging_task: {
+        Args: {
+          p_task_id: string
+        }
+        Returns: undefined
+      }
+      update_shipment_status: {
+        Args: {
+          p_shipment_id: string
+          p_status: string
+        }
+        Returns: string
+      }
+      record_packaging_defect: {
+        Args: {
+          p_task_id: string
+          p_quantity: number
+          p_defect_type: string
+          p_severity?: string
+          p_decision?: string
+          p_photo_url?: string | null
+          p_notes?: string | null
+          p_loss_reason?: string | null
+          p_request_id?: string | null
+        }
         Returns: undefined
       }
       packaging_task_sla_status: {

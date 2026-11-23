@@ -20,9 +20,13 @@ import { useState } from 'react';
 import { packagingService } from '../services/packagingService';
 import { toast } from 'sonner';
 
+export interface DefectTriagePayload extends DefectTriageForm {
+  requestId: string;
+}
+
 interface Props {
   taskId: string;
-  onSubmit: (values: DefectTriageForm) => Promise<void> | void;
+  onSubmit: (values: DefectTriagePayload) => Promise<void> | void;
   submitting?: boolean;
 }
 
@@ -36,6 +40,7 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
       severity: 'minor',
       photo_url: '',
       notes: '',
+      loss_reason: '',
     },
   });
 
@@ -54,16 +59,10 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
   };
 
   const handleFormSubmit = async (values: DefectTriageForm) => {
-    if (values.severity === 'critical') {
-      try {
-        await packagingService.updateStatus(taskId, 'on_hold');
-        toast.info('Tarefa colocada em espera — notifique o coordenador');
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Erro ao colocar tarefa em espera');
-        return;
-      }
-    }
-    await onSubmit(values);
+    // request_id: chave de idempotência única por submissão. O React Query reusa as
+    // mesmas variables no retry automático; a RPC (F-010) retorna sem efeito se a
+    // mesma chave já foi processada, evitando defeito/quantidade duplicados.
+    await onSubmit({ ...values, requestId: crypto.randomUUID() });
   };
 
   return (
@@ -163,6 +162,18 @@ export function DefectTriageForm({ taskId, onSubmit, submitting }: Props) {
         <Textarea id="notes" rows={3} {...form.register('notes')} />
         {form.formState.errors.notes && (
           <p className="text-xs text-destructive mt-1">{form.formState.errors.notes.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="loss_reason">Motivo da perda</Label>
+        <Textarea
+          id="loss_reason"
+          rows={2}
+          placeholder="Obrigatório quando a rejeição superar 5% da quantidade recebida"
+          {...form.register('loss_reason')}
+        />
+        {form.formState.errors.loss_reason && (
+          <p className="text-xs text-destructive mt-1">{form.formState.errors.loss_reason.message}</p>
         )}
       </div>
       {form.watch('severity') === 'critical' && (

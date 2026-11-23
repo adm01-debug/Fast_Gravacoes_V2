@@ -8,7 +8,7 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn() },
+  supabase: { from: vi.fn(), rpc: vi.fn() },
 }));
 
 import { useLogistics, DbShipment } from './useLogistics';
@@ -29,6 +29,8 @@ interface FromOptions {
   jobsUpdateError?: unknown;
   shipmentLookup?: { job_id: string | null } | null;
   updateError?: unknown;
+  shipmentStatusRpc?: 'ok' | 'blocked';
+  rpcUpdateError?: unknown;
 }
 
 function mockSupabaseFrom(opts: FromOptions = {}) {
@@ -63,6 +65,14 @@ function mockSupabaseFrom(opts: FromOptions = {}) {
   const jobsUpdateEq = vi.fn().mockResolvedValue({ error: opts.jobsUpdateError ?? null });
   const jobsUpdate = vi.fn(() => ({ eq: jobsUpdateEq }));
 
+  // RPC update_shipment_status (F-010): default 'ok' a menos que o teste configure blocked.
+  const rpcResult = opts.shipmentStatusRpc === 'blocked' ? 'blocked' : 'ok';
+  const rpcFn = vi.fn().mockResolvedValue({ data: rpcResult, error: opts.rpcUpdateError ?? null });
+  (supabase.rpc as unknown as Mock).mockImplementation((fnName: string, args: Record<string, unknown>) => {
+    if (fnName === 'update_shipment_status') return rpcFn(args);
+    throw new Error(`rpc inesperada: ${fnName}`);
+  });
+
   (supabase.from as unknown as Mock).mockImplementation((table: string) => {
     if (table === 'shipping_providers') return { select: providersSelect };
     if (table === 'shipments') return { select: shipmentsSelect, insert: shipmentsInsert, update: shipmentsUpdate };
@@ -74,7 +84,7 @@ function mockSupabaseFrom(opts: FromOptions = {}) {
     providersEq, providersOrder,
     shipmentsOrder, shipmentsInsert, insertSelect, insertSingle,
     shipmentsUpdate, shipmentsUpdateEq, lookupEq, lookupSingle,
-    jobsUpdate, jobsUpdateEq,
+    jobsUpdate, jobsUpdateEq, rpcFn,
   };
 }
 
@@ -186,8 +196,9 @@ describe('useLogistics', () => {
       await result.current.updateShipment.mutateAsync({ id: 'ship-1', data: input });
     });
 
-    expect(mocks.shipmentsUpdate).toHaveBeenCalledWith({ status: 'delivered' });
-    expect(mocks.shipmentsUpdateEq).toHaveBeenCalledWith('id', 'ship-1');
+    expect(mocks.rpcFn).toHaveBeenCalledWith({ p_shipment_id: 'ship-1', p_status: 'delivered' });
+    // status foi tratado pela RPC: o patch de colunas não inclui status
+    expect(mocks.shipmentsUpdate).not.toHaveBeenCalled();
     expect(mocks.lookupEq).toHaveBeenCalledWith('id', 'ship-1');
     expect(mocks.jobsUpdate).toHaveBeenCalledWith({ shipping_status: 'delivered' });
     expect(mocks.jobsUpdateEq).toHaveBeenCalledWith('id', 'job-2');
@@ -203,6 +214,9 @@ describe('useLogistics', () => {
       await result.current.updateShipment.mutateAsync({ id: 'ship-1', data: { notes: 'atualização de observação' } });
     });
 
+    expect(mocks.rpcFn).not.toHaveBeenCalled();
+    expect(mocks.shipmentsUpdate).toHaveBeenCalledWith({ notes: 'atualização de observação' });
+    expect(mocks.shipmentsUpdateEq).toHaveBeenCalledWith('id', 'ship-1');
     expect(mocks.lookupEq).not.toHaveBeenCalled();
     expect(mocks.jobsUpdate).not.toHaveBeenCalled();
   });
@@ -217,11 +231,12 @@ describe('useLogistics', () => {
       await result.current.updateShipment.mutateAsync({ id: 'ship-1', data: { status: 'in_transit' } });
     });
 
+    expect(mocks.rpcFn).toHaveBeenCalledWith({ p_shipment_id: 'ship-1', p_status: 'in_transit' });
     expect(mocks.jobsUpdate).not.toHaveBeenCalled();
   });
 
   it('propaga erro do Supabase ao atualizar um envio', async () => {
-    mockSupabaseFrom({ updateError: new Error('envio não encontrado') });
+    mockSupabaseFrom({ rpcUpdateError: new Error('envio não encontrado') });
 
     const { result } = renderHook(() => useLogistics(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.providers.isSuccess).toBe(true));
@@ -229,5 +244,40 @@ describe('useLogistics', () => {
     await expect(
       result.current.updateShipment.mutateAsync({ id: 'ship-404', data: { status: 'cancelled' } })
     ).rejects.toThrow('envio não encontrado');
+  });
+
+  it('bloqueia o despacho quando o job tem packaging_task em espera (F-010)', async () => {
+    const mocks = mockSupabaseFrom({ shipmentStatusRpc: 'blocked', shipmentLookup: { job_id: 'job-2' } });
+
+    const { result } = renderHook(() => useLogistics(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.providers.isSuccess).toBe(true));
+
+    await result.current.updateShipment.mutateAsync({ id: 'ship-1', data: { status: 'in_transit' } });
+
+    expect(mocks.rpcFn).toHaveBeenCalledWith({ p_shipment_id: 'ship-1', p_status: 'in_transit' });
+    // bloqueado: não altera colunas e não sincroniza o job
+    expect(mocks.shipmentsUpdate).not.toHaveBeenCalled();
+    expect(mocks.lookupEq).not.toHaveBeenCalled();
+    expect(mocks.jobsUpdate).not.toHaveBeenCalled();
+  });
+
+  it('bloqueia o despacho sem persistir metadados enviados junto (F-010)', async () => {
+    const mocks = mockSupabaseFrom({ shipmentStatusRpc: 'blocked', shipmentLookup: { job_id: 'job-2' } });
+
+    const { result } = renderHook(() => useLogistics(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.providers.isSuccess).toBe(true));
+
+    const res = await result.current.updateShipment.mutateAsync({
+      id: 'ship-1',
+      data: { status: 'in_transit', tracking_code: 'ABC123', notes: 'atualização de observação' },
+    });
+
+    // retido: nada é gravado (nem rastreio, nem observação) — a edição fica
+    // parcial apenas no formulário, não no banco.
+    expect(res).toEqual({ blocked: true });
+    expect(mocks.rpcFn).toHaveBeenCalledWith({ p_shipment_id: 'ship-1', p_status: 'in_transit' });
+    expect(mocks.shipmentsUpdate).not.toHaveBeenCalled();
+    expect(mocks.lookupEq).not.toHaveBeenCalled();
+    expect(mocks.jobsUpdate).not.toHaveBeenCalled();
   });
 });

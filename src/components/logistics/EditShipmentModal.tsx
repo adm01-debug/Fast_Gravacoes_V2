@@ -45,19 +45,32 @@ export function EditShipmentModal({ shipment, open, onOpenChange }: EditShipment
     e.preventDefault();
     if (!shipment) return;
 
+    const data: Partial<DbShipment> = {
+      provider_id: selectedProviderId || null,
+      tracking_code: trackingCode,
+      destination: destination,
+      freight_cost: safeParseFloat(freightCost, 0),
+      estimated_delivery: estimatedDelivery ? new Date(estimatedDelivery).toISOString() : null,
+    };
+    if (status !== shipment.status) {
+      data.status = status;
+      // Só grava a data de entrega na transição para delivered — corrigir
+      // rastreio/frete de um envio já entregue não pode sobrescrever a data
+      // real de entrega pela hora da edição.
+      if (status === 'delivered') data.actual_delivery = new Date().toISOString();
+    } else if (shipment.actual_delivery) {
+      data.actual_delivery = shipment.actual_delivery;
+    }
+
     updateShipment.mutate({
       id: shipment.id,
-      data: {
-        provider_id: selectedProviderId || null,
-        tracking_code: trackingCode,
-        destination: destination,
-        status: status,
-        freight_cost: safeParseFloat(freightCost, 0),
-        estimated_delivery: estimatedDelivery ? new Date(estimatedDelivery).toISOString() : null,
-        actual_delivery: status === 'delivered' ? new Date().toISOString() : shipment.actual_delivery
-      }
+      data,
     }, {
-      onSuccess: () => onOpenChange(false)
+      onSuccess: (result) => {
+        // Despacho retido pela embalagem: mantém o modal aberto para corrigir
+        // o status; nada além do status foi persistido.
+        if (!result?.blocked) onOpenChange(false);
+      }
     });
   };
 

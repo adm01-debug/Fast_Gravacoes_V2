@@ -86,8 +86,15 @@ export default function LogisticsPage() {
     toast.success(t('logistics.copyLink') + '!');
   };
 
-  const handleStatusUpdate = (id: string, status: DbShipment['status']) => {
-    updateShipment.mutate({ id, data: { status } });
+  const handleStatusUpdate = (id: string, status: DbShipment['status'], currentStatus?: DbShipment['status']) => {
+      // Alinhado ao EditShipmentModal: grava a data real na transição para
+      // delivered — o atalho não pode deixar o envio entregue sem data.
+      // Repetir o atalho num envio já entregue preserva a data original.
+      const isDelivering = status === 'delivered' && currentStatus !== 'delivered';
+      updateShipment.mutate({
+        id,
+        data: isDelivering ? { status, actual_delivery: new Date().toISOString() } : { status },
+      });
   };
 
   return (
@@ -307,9 +314,11 @@ export default function LogisticsPage() {
                                 <DropdownMenuItem onClick={() => shipment.job?.order_number && handleCopyLink(shipment.job.order_number, shipment.job_id ?? shipment.job?.id)}>
                                   Copiar Link
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleStatusUpdate(shipment.id, 'delivered')}>
-                                  Marcar como Entregue
-                                </DropdownMenuItem>
+                                {shipment.status !== 'delivered' && (
+                                                                  <DropdownMenuItem onClick={() => handleStatusUpdate(shipment.id, 'delivered', shipment.status)}>
+                                                                    Marcar como Entregue
+                                                                  </DropdownMenuItem>
+                                                                )}
                                 <DropdownMenuItem className="text-destructive" onClick={() => handleStatusUpdate(shipment.id, 'cancelled')}>
                                   Cancelar Envio
                                 </DropdownMenuItem>
