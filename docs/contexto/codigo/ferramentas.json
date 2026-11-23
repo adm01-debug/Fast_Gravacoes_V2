@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1060)",
+   "TypeScript (1061)",
    "SQL (262)",
    "Markdown (108)",
    "JavaScript (54)",
@@ -127,7 +127,7 @@
    "react-intersection-observer": "^9.16.0",
    "react-joyride": "^3.2.0",
    "react-markdown": "^10.1.0",
-   "react-resizable-panels": "^2.1.9",
+   "react-resizable-panels": "^4.24.1",
    "react-router-dom": "^7.18.5",
    "recharts": "^2.15.4",
    "tailwindcss-animate": "^1.0.7",

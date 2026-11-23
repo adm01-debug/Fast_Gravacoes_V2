@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "678916254dab187b517d20a7f68ab565d2de240f",
+  "commit": "c43c1b21ca701f88280e68c39cbc71d4ba2ec196",
   "branch": "main",
-  "data_commit": "2026-11-23T13:00:45-03:00",
+  "data_commit": "2026-11-23T18:21:23-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c43c1b2",
+    "data": "2026-11-23",
+    "assunto": "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)"
+   },
    {
     "sha": "6789162",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "9654a58",
     "data": "2026-11-21",
     "assunto": "fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)"
-   },
-   {
-    "sha": "6d6591c",
-    "data": "2026-11-21",
-    "assunto": "chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 198,
+  "arquivos_mudados_7d": 200,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -165,6 +165,10 @@
     "mudancas": 18
    },
    {
+    "pasta": "package.json",
+    "mudancas": 16
+   },
+   {
     "pasta": "src/components/navigation",
     "mudancas": 16
    },
@@ -173,28 +177,24 @@
     "mudancas": 16
    },
    {
-    "pasta": "package.json",
-    "mudancas": 15
-   },
-   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "pasta": "src/features/inventory",
     "mudancas": 12
    },
    {
-    "pasta": "src/components/layout",
+    "pasta": "deno.lock",
     "mudancas": 11
    },
    {
-    "pasta": "deno.lock",
-    "mudancas": 10
+    "pasta": "src/components/layout",
+    "mudancas": 11
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -204,15 +204,15 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "AGENTS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 123
+    "commits": 124
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1587,
-  "arquivos_codigo": 1124,
-  "linhas_codigo": 190276,
+  "arquivos_total": 1588,
+  "arquivos_codigo": 1125,
+  "linhas_codigo": 190337,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 254,
   "cron_jobs": 4,
-  "testes": 127,
+  "testes": 128,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -480,8 +480,8 @@
    "linhas": 22
   },
   "src/components": {
-   "arquivos": 417,
-   "linhas": 58957
+   "arquivos": 418,
+   "linhas": 59018
   },
   "src/constants": {
    "arquivos": 2,

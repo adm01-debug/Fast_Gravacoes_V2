@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 127,
+ "total": 128,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 103
+  "unit": 104
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 91
+   "arquivos": 92
   },
   {
    "padrao": "outro",
@@ -305,6 +305,16 @@
     "src/components/settings/TwoFactorSetup.tsx"
    ],
    "casos": 2,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/components/ui/resizable.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/ui/resizable.tsx"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1360,6 +1370,7 @@
   "scripts/supabase_snapshot/snapshot.py": 1,
   "src/components/logistics/EditShipmentModal.tsx": 1,
   "src/components/settings/TwoFactorSetup.tsx": 1,
+  "src/components/ui/resizable.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,

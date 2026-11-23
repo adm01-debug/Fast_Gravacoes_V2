@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (91)",
+   "co-localizado (*.test) (92)",
    "outro (18)",
    "tests/ (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)",
    "ci: db push com --include-all para migrations fora de ordem (#273)",
    "fix: corrige import typescript para ESM namespace (TS7) (#270)",
    "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)",
-   "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)",
-   "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)"
+   "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

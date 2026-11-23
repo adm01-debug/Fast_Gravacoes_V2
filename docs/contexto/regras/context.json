@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "678916254dab187b517d20a7f68ab565d2de240f",
+  "sha": "c43c1b21ca701f88280e68c39cbc71d4ba2ec196",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 16:11 UTC",
-  "files_total": 1585,
-  "code_files": 1389,
-  "code_lines": 206588
+  "generated_at": "2026-11-23 21:21 UTC",
+  "files_total": 1586,
+  "code_files": 1390,
+  "code_lines": 206649
  },
  "version": "1.3.2",
- "facts_hash": "317e17022106d4f9",
+ "facts_hash": "c0eff3905d29a67d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 661,
+   ".tsx": 662,
    ".ts": 399,
    ".sql": 262,
    ".mjs": 50,
@@ -26354,7 +26354,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 570,
+  "components_count": 571,
   "hooks": [
    {
     "name": "useContacts",
@@ -27709,8 +27709,8 @@
   },
   {
    "module": "src/components",
-   "files": 417,
-   "lines": 58957,
+   "files": 418,
+   "lines": 59018,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -51168,6 +51168,26 @@
    {
     "file": "src/components/settings/TwoFactorSetup.test.tsx",
     "name": "remove fatores TOTP nao verificados antes de criar um novo (evita 422)"
+   },
+   {
+    "file": "src/components/ui/resizable.test.tsx",
+    "name": "resizable (react-resizable-panels v4)"
+   },
+   {
+    "file": "src/components/ui/resizable.test.tsx",
+    "name": "renderiza paineis e divisor sem quebrar"
+   },
+   {
+    "file": "src/components/ui/resizable.test.tsx",
+    "name": "grupo vertical marca o divisor como aria-orientation=horizontal"
+   },
+   {
+    "file": "src/components/ui/resizable.test.tsx",
+    "name": "grupo horizontal marca o divisor como aria-orientation=vertical"
+   },
+   {
+    "file": "src/components/ui/resizable.test.tsx",
+    "name": "divisor carrega as classes variantes de orientacao que o Tailwind compila"
    },
    {
     "file": "src/features/admin/hooks/useCronHealthHistory.test.ts",
@@ -77462,9 +77482,21 @@
    "path": "src/components/ui/radio-group.tsx",
    "lines": 37
   },
+  "src/components/ui/resizable.test.tsx": {
+   "path": "src/components/ui/resizable.test.tsx",
+   "lines": 64,
+   "is_test": true,
+   "tests": [
+    "resizable (react-resizable-panels v4)",
+    "renderiza paineis e divisor sem quebrar",
+    "grupo vertical marca o divisor como aria-orientation=horizontal",
+    "grupo horizontal marca o divisor como aria-orientation=vertical",
+    "divisor carrega as classes variantes de orientacao que o Tailwind compila"
+   ]
+  },
   "src/components/ui/resizable.tsx": {
    "path": "src/components/ui/resizable.tsx",
-   "lines": 38
+   "lines": 35
   },
   "src/components/ui/responsive-table.tsx": {
    "path": "src/components/ui/responsive-table.tsx",
@@ -96854,10 +96886,23 @@
   }
  },
  "git": {
-  "sha": "678916254dab187b517d20a7f68ab565d2de240f",
+  "sha": "c43c1b21ca701f88280e68c39cbc71d4ba2ec196",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c43c1b2",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "src/components/ui/resizable.test.tsx",
+     "src/components/ui/resizable.tsx"
+    ]
+   },
    {
     "sha": "6789162",
     "date": "2026-11-23",
@@ -97211,43 +97256,19 @@
     "files": [
      "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md"
     ]
-   },
-   {
-    "sha": "46e2219",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: blocked_ips agora bloqueia o login (F-004) (#236)",
-    "files": [
-     "src/features/auth/components/AuthProvider.tsx",
-     "src/features/auth/services/authService.ts",
-     "src/pages/AuthPage.tsx",
-     "supabase/functions/check-login-lockout/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    3
+    4
    ],
    [
     "package.json",
-    3
+    4
    ],
    [
     "src/features/auth/hooks/useRBAC.tsx",
-    3
-   ],
-   [
-    "src/features/auth/components/AuthProvider.tsx",
-    3
-   ],
-   [
-    "src/features/auth/services/authService.ts",
-    3
-   ],
-   [
-    "supabase/functions/check-login-lockout/index.ts",
     3
    ],
    [
@@ -97271,8 +97292,28 @@
     2
    ],
    [
-    "src/pages/AuthPage.tsx",
+    "src/features/auth/components/AuthProvider.tsx",
     2
+   ],
+   [
+    "src/features/auth/services/authService.ts",
+    2
+   ],
+   [
+    "supabase/functions/check-login-lockout/index.ts",
+    2
+   ],
+   [
+    "deno.lock",
+    1
+   ],
+   [
+    "src/components/ui/resizable.test.tsx",
+    1
+   ],
+   [
+    "src/components/ui/resizable.tsx",
+    1
    ],
    [
     ".github/workflows/deploy.yml",
@@ -97296,14 +97337,6 @@
    ],
    [
     "src/hooks/use-swipe-gesture.tsx",
-    1
-   ],
-   [
-    "src/lib/pdfExport.ts",
-    1
-   ],
-   [
-    "supabase/functions/health-monitor/index.ts",
     1
    ]
   ]
