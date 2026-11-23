@@ -332,6 +332,10 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 300 — Regerar o contexto e conferir que os alertas refletem as correções — onda 8 — Média
 
 
+## Backlog (além das 300)
+
+- [ ] B-01 — Fazer os testes de agendamento usarem a mesma definição de "hoje" que o código — onda 2 — Alta
+
 ---
 
 ## Evidências

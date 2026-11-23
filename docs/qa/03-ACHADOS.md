@@ -1352,3 +1352,25 @@ Defeitos encontrados por mais de um auditor, em varreduras separadas — o que e
 - **NAV-03** — Quatro telas de produção sem nenhum ponto de entrada na interface (/logistics, /admin/monitoring, /status, /simulation) _(camada: Navegação (rotas x sidebar x command palette))_
 - **AUT-07** — useRBAC une as permissões do banco com o mapa hard-coded: revogar permissão na tela de permissões nunca tem efeito _(camada: RBAC (front))_
 - **BD-10** — O índice único que limita solicitações de reset pendentes não existe no banco real: anônimo pode inundar a fila de aprovação _(camada: Recuperação de senha (front + banco))_
+
+---
+
+## Causa raiz 10 — O conjunto de testes falha todas as noites, e o portão obrigatório trava os merges nessa janela
+
+### TST-07 · Alta · confiança: confirmado · EXECUTADO (observado no CI, em execução real)
+**Três testes de agendamento quebram quando o CI roda entre 21h e meia-noite de Brasília.**
+
+Evidência:
+- Execução real: run **45093592507**, trabalho *Unit & Integration Tests*, iniciada em 2026-11-23 **01:18 UTC** (= 22:18 de Brasília): `Test Files 1 failed | 69 passed`, `Tests 3 failed | 955 passed`, todos em `src/features/jobs/hooks/useSchedulingData.test.tsx` — `expected undefined to be 'high'`, `expected undefined to be 100` e a contagem de `todayScheduled`.
+- `vitest.config.ts:21` fixa o fuso do ambiente de teste: `process.env.TZ = 'America/Sao_Paulo'` — de propósito, com o comentário "Pin the timezone so date assertions are identical on every machine and in CI".
+- O código sob teste usa data **local**: `src/features/jobs/hooks/useSchedulingData.ts:157` (`const today = formatDateOnly(new Date())`), e `:223,:266` idem; `formatDateOnly` (`src/lib/dateUtils.ts:35-40`) monta a data com `getFullYear/getMonth/getDate`.
+- O teste monta "hoje" em **UTC**: `useSchedulingData.test.tsx:133` e `:199` (`new Date().toISOString().split('T')[0]`) e o auxiliar de datas em `:173-176` (`dt.toISOString().split('T')[0]`).
+- Entre 00:00 e 03:00 UTC, em São Paulo ainda é o dia anterior: o teste procura a chave `2026-11-23` e o código produz `2026-11-22`, então a busca devolve `undefined`.
+
+Causa raiz: a correção de fuso horário do commit `ca42441b` (mergeado em 22/11, que trocou `toISOString().split('T')[0]` por data local em 16 arquivos) **não alcançou os testes**: o código passou a usar data local e o teste continuou montando a data esperada em UTC. Com o fuso do ambiente fixado em São Paulo, as duas definições divergem exatamente na faixa das 21h à meia-noite.
+
+Por que não apareceu antes: as execuções do conjunto na `main` aconteceram fora dessa faixa — a última foi às 19:36 UTC (16:36 de Brasília). A falha é determinística **dentro** da janela e invisível fora dela.
+
+Impacto no negócio: `Quality Gate ✅` é o **único** check obrigatório da `main` (`AGENTS.md`). Entre 21h e meia-noite de Brasília, nenhuma correção pode ser mergeada — e quem tentar vai acreditar que a própria mudança quebrou algo, perdendo tempo procurando no lugar errado. Foi o que aconteceu nesta PR, que só tem documentação.
+
+Não é defeito desta auditoria nem desta PR: o diff da PR #262 contém apenas arquivos `docs/qa/*.md`.

@@ -5906,3 +5906,28 @@ Checklist de conclusão:
 [ ] verificação acima executada, com a evidência registrada
 [ ] deploy confirmado, quando se aplica
 [ ] etapa marcada no arquivo de progresso
+
+---
+
+## Backlog (além das 300)
+
+Achados que surgiram **depois** do fechamento das 300 etapas, com correção já definida. Não entraram na numeração para não renumerar o plano; execute-os na onda indicada, com o mesmo rigor das etapas numeradas.
+
+### Etapa B-01 — Fazer os testes de agendamento usarem a mesma definição de "hoje" que o código
+Onda 2 / Severidade Alta / Camada: testes
+Achados resolvidos: TST-07
+Problema hoje: três testes de `src/features/jobs/hooks/useSchedulingData.test.tsx` falham quando o CI roda entre 21h e meia-noite de Brasília — observado na execução real 45093592507 (01:18 UTC = 22:18 BRT): `Tests 3 failed | 955 passed`. O ambiente de teste tem o fuso fixado em São Paulo (`vitest.config.ts:21`), o código usa data local (`useSchedulingData.ts:157,223,266` via `formatDateOnly`) e o teste monta a data esperada em UTC (`useSchedulingData.test.tsx:133,173-176,199`).
+Causa raiz: a correção de fuso do commit `ca42441b` trocou o código para data local e deixou os testes em UTC.
+Caminho recomendado: no arquivo de teste, troque as três montagens de data por `formatDateOnly` de `src/lib/dateUtils.ts` — a mesma função que o código usa. É a correção de três linhas e elimina a dependência de horário. **Não** mude o fuso fixado no `vitest.config.ts` (ele existe de propósito, para expor exatamente esse tipo de defeito) e **não** fixe a hora do teste com relógio falso para "estabilizar": isso esconderia o problema em vez de corrigi-lo. Depois da correção, prove o resultado rodando o arquivo duas vezes com horários diferentes: `TZ=America/Sao_Paulo npx vitest run src/features/jobs/hooks/useSchedulingData.test.tsx` e o mesmo comando com a máquina ajustada para 22h de Brasília (ou com a variável de ambiente de data que o repositório usar).
+Arquivos e objetos a tocar: `src/features/jobs/hooks/useSchedulingData.test.tsx`.
+Não tocar / armadilhas: não altere o hook (ele está correto desde `ca42441b`); procure outros testes com o mesmo padrão antes de fechar (`grep -rn "toISOString().split('T')\[0\]" src/ --include=*.test.*`) e trate no mesmo PR se encontrar — é a mesma causa raiz.
+Depende de: — · Libera: desbloqueia merges na faixa noturna
+Risco e como reverter: baixo. Reverter = voltar o arquivo de teste.
+Precisa de aprovação humana antes do merge: não
+Como verificar: o arquivo passa nos dois horários testados, e a execução do conjunto completo (`npm run test`) fica verde dentro da janela das 21h à meia-noite. Cole as duas execuções.
+Checklist de conclusão:
+[ ] mudança aplicada só nos arquivos listados
+[ ] typecheck, lint e testes dos arquivos tocados passam
+[ ] verificação acima executada, com a evidência registrada
+[ ] deploy confirmado, quando se aplica
+[ ] etapa marcada no arquivo de progresso
