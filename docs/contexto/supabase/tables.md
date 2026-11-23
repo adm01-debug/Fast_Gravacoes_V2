@@ -28,9 +28,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.document_versions](tables/public/document_versions.md) | table | sim | 2 | 9 | não |  |
 | [public.edge_health_history](tables/public/edge_health_history.md) | table | sim | 1 | 7 | não |  |
 | [public.efficiency_alert_history](tables/public/efficiency_alert_history.md) | table | sim | 3 | 13 | não |  |
-| [public.energy_alerts](tables/public/energy_alerts.md) | table | sim | 2 | 11 | não |  |
-| [public.energy_consumption](tables/public/energy_consumption.md) | table | sim | 2 | 13 | não |  |
-| [public.energy_targets](tables/public/energy_targets.md) | table | sim | 2 | 11 | não |  |
+| [public.energy_alerts](tables/public/energy_alerts.md) | table | sim | 5 | 11 | não |  |
+| [public.energy_consumption](tables/public/energy_consumption.md) | table | sim | 5 | 13 | não |  |
+| [public.energy_targets](tables/public/energy_targets.md) | table | sim | 5 | 11 | não |  |
 | [public.error_logs](tables/public/error_logs.md) | table | sim | 2 | 8 | não |  |
 | [public.feature_flags](tables/public/feature_flags.md) | table | sim | 2 | 7 | não |  |
 | [public.gamification_rewards](tables/public/gamification_rewards.md) | table | sim | 1 | 9 | não |  |

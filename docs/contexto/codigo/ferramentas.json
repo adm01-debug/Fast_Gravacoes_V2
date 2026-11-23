@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1060)",
    "SQL (262)",
-   "Markdown (102)",
+   "Markdown (108)",
    "JavaScript (54)",
    "JSON (33)",
    "YAML (15)",
@@ -108,14 +108,14 @@
   "dependencias": 82,
   "dev_dependencias": 35,
   "principais": {
-   "@supabase/supabase-js": "^2.119.0",
-   "@tanstack/react-query": "^5.107.1",
+   "@supabase/supabase-js": "^2.119.2",
+   "@tanstack/react-query": "^5.108.1",
    "@tanstack/react-virtual": "^3.14.26",
    "date-fns": "^3.6.0",
    "date-fns-tz": "^3.2.0",
    "framer-motion": "^12.39.0",
    "i18next": "^26.1.0",
-   "i18next-browser-languagedetector": "^8.3.0",
+   "i18next-browser-languagedetector": "^8.3.1",
    "next-themes": "^0.4.6",
    "react": "^18.3.1",
    "react-day-picker": "^8.10.1",
@@ -128,7 +128,7 @@
    "react-joyride": "^3.2.0",
    "react-markdown": "^10.1.0",
    "react-resizable-panels": "^2.1.9",
-   "react-router-dom": "^7.18.5",
+   "react-router-dom": "^7.18.6",
    "recharts": "^2.15.4",
    "tailwindcss-animate": "^1.0.7",
    "zod": "^4.6.7",
@@ -734,6 +734,10 @@
    "arquivos_md": 7
   },
   {
+   "pasta": "docs/qa",
+   "arquivos_md": 6
+  },
+  {
    "pasta": "docs/adr",
    "arquivos_md": 5
   },
@@ -895,7 +899,7 @@
    {
     "pacote": "@tanstack/react-query",
     "servico": "react-query",
-    "versao": "^5.107.1"
+    "versao": "^5.108.1"
    },
    {
     "pacote": "resend",
@@ -910,7 +914,7 @@
    {
     "pacote": "@supabase/supabase-js",
     "servico": "Supabase",
-    "versao": "^2.119.0"
+    "versao": "^2.119.2"
    },
    {
     "pacote": "zod",

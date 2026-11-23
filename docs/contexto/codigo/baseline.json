@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
+  "commit": "390d6dac52b6dc727c16e52aa116397e8097067d",
   "branch": "main",
-  "data_commit": "2026-11-23T08:02:23-03:00",
+  "data_commit": "2026-11-23T08:05:59-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "390d6da",
+    "data": "2026-11-23",
+    "assunto": "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)"
+   },
+   {
+    "sha": "8973b0c",
+    "data": "2026-11-23",
+    "assunto": "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)"
+   },
+   {
+    "sha": "414b392",
+    "data": "2026-11-23",
+    "assunto": "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)"
+   },
    {
     "sha": "4b3ed9b",
     "data": "2026-11-23",
@@ -116,25 +131,10 @@
     "sha": "4590899",
     "data": "2026-11-21",
     "assunto": "chore: dossie F-005 marcado resolvida (#239)"
-   },
-   {
-    "sha": "ecaa439",
-    "data": "2026-11-21",
-    "assunto": "fix: enforce allowlist de IP no gate check-login-lockout (F-005) (#238)"
-   },
-   {
-    "sha": "6032d37",
-    "data": "2026-11-20",
-    "assunto": "chore: dossie F-004 marcado resolvido com evidencia (#237)"
-   },
-   {
-    "sha": "46e2219",
-    "data": "2026-11-20",
-    "assunto": "fix: blocked_ips agora bloqueia o login (F-004) (#236)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 187,
+  "arquivos_mudados_7d": 193,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -173,16 +173,20 @@
     "mudancas": 16
    },
    {
+    "pasta": "package.json",
+    "mudancas": 14
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 14
    },
    {
-    "pasta": "package.json",
+    "pasta": "src/features/inventory",
     "mudancas": 12
    },
    {
-    "pasta": "src/features/inventory",
-    "mudancas": 12
+    "pasta": "package-lock.json",
+    "mudancas": 11
    },
    {
     "pasta": "src/components/layout",
@@ -190,10 +194,6 @@
    },
    {
     "pasta": "deno.lock",
-    "mudancas": 10
-   },
-   {
-    "pasta": "src/components/knowledge",
     "mudancas": 10
    }
   ],
@@ -204,11 +204,11 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 18
    },
    {
     "arquivo": "package.json",
-    "mudancas": 16
+    "mudancas": 18
    },
    {
     "arquivo": "deno.lock",
@@ -302,18 +302,18 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 120
+    "commits": 121
    },
    {
     "autor": "devin-ai-integration[bot]",
     "commits": 13
    },
    {
-    "autor": "Copilot",
-    "commits": 2
+    "autor": "dependabot[bot]",
+    "commits": 4
    },
    {
-    "autor": "dependabot[bot]",
+    "autor": "Copilot",
     "commits": 2
    },
    {
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1581,
+  "arquivos_total": 1587,
   "arquivos_codigo": 1124,
   "linhas_codigo": 190273,
   "rotas": 58,
@@ -344,7 +344,7 @@
   "testes": 127,
   "workflows": 12,
   "scripts": 41,
-  "docs_md": 102
+  "docs_md": 108
  },
  "por_pasta": {
   "commitlint.config.js": {

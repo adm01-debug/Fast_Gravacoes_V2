@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
+ "commit_do_grafo": "390d6dac52b6dc727c16e52aa116397e8097067d",
  "grafo_atual": true,
  "nos": 7531,
  "arestas": 22094,
@@ -387,9 +387,9 @@
   {
    "id": 22,
    "nome": "useTechniques",
-   "nos": 69,
-   "callables": 53,
-   "arquivos": 26,
+   "nos": 67,
+   "callables": 51,
+   "arquivos": 25,
    "exemplos_arquivos": [
     "src/components/dashboard/BufferPromotionStatus.tsx",
     "src/components/dashboard/BufferStatusWidget.tsx",
@@ -538,6 +538,23 @@
   },
   {
    "id": 32,
+   "nome": "parseDateOnly",
+   "nos": 55,
+   "callables": 38,
+   "arquivos": 21,
+   "exemplos_arquivos": [
+    "src/components/alerts/AlertCard.tsx",
+    "src/components/alerts/AlertJobCard.tsx",
+    "src/components/alerts/AlertSpecialCards.tsx",
+    "src/components/alerts/AlertStatsGrid.tsx",
+    "src/components/alerts/AlertViewAllModals.tsx",
+    "src/components/calendar/CalendarTimeline.tsx",
+    "src/components/dashboard/AlertScheduleModal.tsx",
+    "src/components/jobs/JobDetailsModal.tsx"
+   ]
+  },
+  {
+   "id": 33,
    "nome": "SystemMonitoringPage.tsx",
    "nos": 55,
    "callables": 30,
@@ -554,54 +571,37 @@
    ]
   },
   {
-   "id": 33,
-   "nome": "parseDateOnly",
-   "nos": 52,
-   "callables": 36,
-   "arquivos": 19,
+   "id": 34,
+   "nome": "jobs/index.ts",
+   "nos": 55,
+   "callables": 28,
+   "arquivos": 21,
    "exemplos_arquivos": [
-    "src/components/alerts/AlertCard.tsx",
-    "src/components/alerts/AlertJobCard.tsx",
-    "src/components/alerts/AlertSpecialCards.tsx",
-    "src/components/alerts/AlertStatsGrid.tsx",
-    "src/components/alerts/AlertViewAllModals.tsx",
-    "src/components/calendar/CalendarTimeline.tsx",
-    "src/components/dashboard/AlertScheduleModal.tsx",
-    "src/components/knowledge/TechnicalSheetVisualReference.tsx"
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/kanban/DragOverlayCard.tsx",
+    "src/components/kanban/KanbanFiltersBar.tsx",
+    "src/components/scheduling/StuckJobsPanel.tsx",
+    "src/features/jobs/hooks/useDailyDragDrop.ts",
+    "src/features/jobs/hooks/useJobs.ts",
+    "src/features/jobs/hooks/useKanbanDragDrop.ts",
+    "src/features/jobs/hooks/useStuckJobsDetection.ts"
    ]
   },
   {
-   "id": 34,
+   "id": 35,
    "nome": "DbJob",
-   "nos": 52,
-   "callables": 40,
-   "arquivos": 27,
+   "nos": 54,
+   "callables": 42,
+   "arquivos": 28,
    "exemplos_arquivos": [
     "src/components/alerts/AlertCard.tsx",
     "src/components/calendar/DensityMinimap.tsx",
     "src/components/calendar/JobBlock.tsx",
     "src/components/calendar/QuickJobDrawer.tsx",
+    "src/components/dashboard/LoadBalancingWidget.tsx",
     "src/components/dashboard/RecentJobsTable.tsx",
     "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/jobs/JobInfoGrid.tsx",
-    "src/components/jobs/JobInfoRow.tsx"
-   ]
-  },
-  {
-   "id": 35,
-   "nome": "jobs/index.ts",
-   "nos": 51,
-   "callables": 28,
-   "arquivos": 21,
-   "exemplos_arquivos": [
-    "src/components/dashboard/BufferStatusWidget.tsx",
-    "src/components/dashboard/SmartSequencingWidget.tsx",
-    "src/components/planning/AISuggestionDetails.tsx",
-    "src/components/planning/SmartSequencingPanel.tsx",
-    "src/features/jobs/hooks/useDailyDragDrop.ts",
-    "src/features/jobs/hooks/useJobs.ts",
-    "src/features/jobs/hooks/useKanbanDragDrop.ts",
-    "src/features/jobs/hooks/useStuckJobsDetection.ts"
+    "src/components/jobs/JobInfoGrid.tsx"
    ]
   },
   {
@@ -779,33 +779,16 @@
   },
   {
    "id": 48,
-   "nome": "PendingQueue.tsx",
-   "nos": 40,
-   "callables": 23,
-   "arquivos": 16,
-   "exemplos_arquivos": [
-    "src/components/jobs/JobDetailsModal.tsx",
-    "src/components/kanban/DragOverlayCard.tsx",
-    "src/components/kanban/KanbanFiltersBar.tsx",
-    "src/components/planning/LoadBalancingPanel.tsx",
-    "src/components/planning/PendingQueueStats.tsx",
-    "src/components/planning/SmartSequencingPanel.tsx",
-    "src/components/planning/pending-queue/PendingJobsView.tsx",
-    "src/components/planning/pending-queue/SmartSuggestionsSection.tsx"
-   ]
-  },
-  {
-   "id": 49,
    "nome": "parse_sql_schema",
-   "nos": 37,
-   "callables": 21,
+   "nos": 39,
+   "callables": 22,
    "arquivos": 1,
    "exemplos_arquivos": [
     "scripts/regras_negocio/generate.py"
    ]
   },
   {
-   "id": 50,
+   "id": 49,
    "nome": "CreateOperatorModal.tsx",
    "nos": 37,
    "callables": 25,
@@ -822,7 +805,7 @@
    ]
   },
   {
-   "id": 51,
+   "id": 50,
    "nome": "ProductionRegistrationModal.tsx",
    "nos": 37,
    "callables": 26,
@@ -839,7 +822,7 @@
    ]
   },
   {
-   "id": 52,
+   "id": 51,
    "nome": "cors.ts",
    "nos": 37,
    "callables": 17,
@@ -856,7 +839,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 52,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -866,7 +849,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 53,
    "nome": "github-settings-guard.mjs",
    "nos": 35,
    "callables": 25,
@@ -877,7 +860,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 54,
    "nome": ".git",
    "nos": 35,
    "callables": 30,
@@ -887,7 +870,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 55,
    "nome": "_shared/validation.ts",
    "nos": 35,
    "callables": 21,
@@ -900,13 +883,30 @@
    ]
   },
   {
-   "id": 57,
+   "id": 56,
    "nome": "audit/run.mjs",
    "nos": 34,
    "callables": 18,
    "arquivos": 1,
    "exemplos_arquivos": [
     "scripts/audit/run.mjs"
+   ]
+  },
+  {
+   "id": 57,
+   "nome": "PendingQueue.tsx",
+   "nos": 33,
+   "callables": 21,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/dashboard/SmartSequencingWidget.tsx",
+    "src/components/planning/AISuggestionDetails.tsx",
+    "src/components/planning/LoadBalancingPanel.tsx",
+    "src/components/planning/PendingQueueStats.tsx",
+    "src/components/planning/SmartSequencingPanel.tsx",
+    "src/components/planning/pending-queue/PendingJobsView.tsx",
+    "src/components/planning/pending-queue/SmartSuggestionsSection.tsx",
+    "src/components/ui/collapsible.tsx"
    ]
   },
   {
@@ -1100,16 +1100,6 @@
   },
   {
    "id": 72,
-   "nome": "generate.py",
-   "nos": 26,
-   "callables": 22,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "scripts/regras_negocio/generate.py"
-   ]
-  },
-  {
-   "id": 73,
    "nome": "SnapshotCatalogContractTests",
    "nos": 26,
    "callables": 25,
@@ -1119,7 +1109,7 @@
    ]
   },
   {
-   "id": 74,
+   "id": 73,
    "nome": "use-toast.ts",
    "nos": 26,
    "callables": 19,
@@ -1134,7 +1124,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 74,
    "nome": "packaging.schema.ts",
    "nos": 26,
    "callables": 11,
@@ -1147,7 +1137,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 75,
    "nome": "gerar-rotas.mjs",
    "nos": 25,
    "callables": 14,
@@ -1162,7 +1152,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "CommandPaletteAdvanced.tsx",
    "nos": 25,
    "callables": 14,
@@ -1175,7 +1165,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "HoverCardsSection.tsx",
    "nos": 24,
    "callables": 14,
@@ -1192,7 +1182,7 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "InteractiveTables.tsx",
    "nos": 24,
    "callables": 15,
@@ -1203,6 +1193,22 @@
     "src/components/design-system/sections/tables/InteractiveTables.tsx",
     "src/components/ui/button.tsx",
     "src/components/ui/pagination.tsx"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "schemas/index.ts",
+   "nos": 24,
+   "callables": 8,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "src/features/jobs/types/job.schema.ts",
+    "src/features/jobs/types/lot.schema.ts",
+    "src/features/production/types/machine.schema.ts",
+    "src/features/production/types/maintenance.schema.ts",
+    "src/features/production/types/operator.schema.ts",
+    "src/schemas/index.ts",
+    "src/schemas/settingsSchema.ts"
    ]
   }
  ],
@@ -2190,7 +2196,7 @@
   "src/components/dashboard/InventoryAlertsWidget.tsx": "button.tsx",
   "src/components/dashboard/LeaderboardWidget.tsx": "Index.tsx",
   "src/components/dashboard/LiveMachineStatusPanel.tsx": "badge.tsx",
-  "src/components/dashboard/LoadBalancingWidget.tsx": "useTechniques",
+  "src/components/dashboard/LoadBalancingWidget.tsx": "DbJob",
   "src/components/dashboard/MaintenanceAlertsWidget.tsx": "OperatorsPage.tsx",
   "src/components/dashboard/OEELoadTrendWidget.tsx": "FuturisticBI.tsx",
   "src/components/dashboard/OccupancyChart.tsx": "Index.tsx",
@@ -2200,7 +2206,7 @@
   "src/components/dashboard/RealtimeIndicator.tsx": "cn",
   "src/components/dashboard/RecentJobsTable.tsx": "DbJob",
   "src/components/dashboard/ShiftHandoverWidget.tsx": "ShiftHandoverPage.tsx",
-  "src/components/dashboard/SmartSequencingWidget.tsx": "jobs/index.ts",
+  "src/components/dashboard/SmartSequencingWidget.tsx": "PendingQueue.tsx",
   "src/components/dashboard/SortableWidgetSection.tsx": "dropdown-menu.tsx",
   "src/components/dashboard/StatsCard.tsx": "Index.tsx",
   "src/components/design-system/HooksExamplesSection.tsx": "card.tsx",
@@ -2304,7 +2310,7 @@
   "src/components/kanban/DraggableJobCard.tsx": "DbJob",
   "src/components/kanban/DroppableColumn.tsx": "DbJob",
   "src/components/kanban/KanbanAIAdvisor.tsx": "useTechniques",
-  "src/components/kanban/KanbanFiltersBar.tsx": "DbJob",
+  "src/components/kanban/KanbanFiltersBar.tsx": "jobs/index.ts",
   "src/components/kanban/KanbanMetricsBar.tsx": "useTechniques",
   "src/components/kiosk/KioskMode.tsx": "badge.tsx",
   "src/components/knowledge/KnowledgeBaseStats.tsx": "TechnicalKnowledgeBase.tsx",
@@ -2413,11 +2419,11 @@
   "src/components/operators/ProductionRadarChart.tsx": "FuturisticBI.tsx",
   "src/components/operators/SkillsMatrix.tsx": "useAuth",
   "src/components/operators/operator-utils.ts": "OperatorDetailsDialog.tsx",
-  "src/components/planning/AISuggestionDetails.tsx": "jobs/index.ts",
+  "src/components/planning/AISuggestionDetails.tsx": "PendingQueue.tsx",
   "src/components/planning/LoadBalancingPanel.tsx": "parseDateOnly",
   "src/components/planning/PendingQueueStats.tsx": "card.tsx",
   "src/components/planning/PlanningEfficiencyDashboard.tsx": "useSchedulingData",
-  "src/components/planning/SmartSequencingPanel.tsx": "jobs/index.ts",
+  "src/components/planning/SmartSequencingPanel.tsx": "PendingQueue.tsx",
   "src/components/planning/pending-queue/PendingJobsView.tsx": "PendingQueue.tsx",
   "src/components/planning/pending-queue/SmartSuggestionsSection.tsx": "PendingQueue.tsx",
   "src/components/production/ProductionPhotos.tsx": "button.tsx",
@@ -2435,7 +2441,7 @@
   "src/components/reports/ReportSourcePanel.tsx": "ReportBuilderPage.tsx",
   "src/components/scheduling/CapacityHealthPanel.tsx": "useAuth",
   "src/components/scheduling/MachineSuggestionPanel.tsx": "production/index.ts",
-  "src/components/scheduling/StuckJobsPanel.tsx": "PendingQueue.tsx",
+  "src/components/scheduling/StuckJobsPanel.tsx": "jobs/index.ts",
   "src/components/scheduling/UtilizationHeatmap.tsx": "UtilizationHeatmap.tsx",
   "src/components/settings/AutoThemeToggle.tsx": "input.tsx",
   "src/components/settings/IPAllowlist.tsx": "scroll-area.tsx",
@@ -2725,7 +2731,7 @@
   "src/features/inventory/services/traceabilityService.ts": "client.ts",
   "src/features/jobs/hooks/useAutoBufferPromotion.ts": "client.ts",
   "src/features/jobs/hooks/useDailyDragDrop.ts": "jobs/index.ts",
-  "src/features/jobs/hooks/useDuplicateJob.ts": "PendingQueue.tsx",
+  "src/features/jobs/hooks/useDuplicateJob.ts": "parseDateOnly",
   "src/features/jobs/hooks/useJobInventoryCheck.ts": "DbJob",
   "src/features/jobs/hooks/useJobStatusHistory.ts": "client.ts",
   "src/features/jobs/hooks/useJobs.realtime.test.tsx": "useJobs.realtime.test.tsx",

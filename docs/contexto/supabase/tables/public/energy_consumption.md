@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 5 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -60,15 +60,45 @@
 | USING | `has_any_active_role()` |
 | WITH CHECK |  |
 
-### `Coordinators can manage energy consumption`
+### `Coordinators can create energy consumption`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | INSERT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
-| WITH CHECK | `app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role)` |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+
+### `Coordinators can delete energy consumption`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| WITH CHECK |  |
+
+### `Coordinators can update energy consumption`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+| WITH CHECK | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
+
+### `Energy readers can view energy consumption`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `has_permission('energy:read'::text)` |
+| WITH CHECK |  |
 
 
 ## Triggers

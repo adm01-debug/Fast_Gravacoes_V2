@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
+  "sha": "390d6dac52b6dc727c16e52aa116397e8097067d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 11:09 UTC",
-  "files_total": 1579,
+  "generated_at": "2026-11-23 11:30 UTC",
+  "files_total": 1585,
   "code_files": 1389,
   "code_lines": 206585
  },
  "version": "1.3.2",
- "facts_hash": "bfe63d0902398940",
+ "facts_hash": "1b90b4d0a3361411",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -22,12 +22,12 @@
     "in": "package.json"
    },
    "@supabase/supabase-js": {
-    "version": "^2.119.0",
+    "version": "^2.119.2",
     "role": "Supabase (DB/Auth/Storage/Functions)",
     "in": "package.json"
    },
    "@tanstack/react-query": {
-    "version": "^5.107.1",
+    "version": "^5.108.1",
     "role": "Cache/fetch de dados (TanStack Query)",
     "in": "package.json"
    },
@@ -47,7 +47,7 @@
     "in": "package.json"
    },
    "lucide-react": {
-    "version": "1.73.0",
+    "version": "1.77.0",
     "role": "Ícones Lucide",
     "in": "package.json"
    },
@@ -62,7 +62,7 @@
     "in": "package.json"
    },
    "react-router-dom": {
-    "version": "^7.18.5",
+    "version": "^7.18.6",
     "role": "Roteamento (React Router)",
     "in": "package.json"
    },
@@ -87,22 +87,22 @@
     "in": "package.json"
    },
    "@playwright/test": {
-    "version": "^1.60.0",
+    "version": "^1.65.1",
     "role": "E2E Playwright",
     "in": "package.json"
    },
    "tailwindcss": {
-    "version": "^3.4.17",
+    "version": "^4.3.5",
     "role": "Tailwind CSS",
     "in": "package.json"
    },
    "vite": {
-    "version": "^7.3.7",
+    "version": "^8.3.8",
     "role": "Bundler Vite",
     "in": "package.json"
    },
    "vitest": {
-    "version": "^4.1.12",
+    "version": "^5.1.1",
     "role": "Testes Vitest",
     "in": "package.json"
    }
@@ -96490,10 +96490,44 @@
   }
  },
  "git": {
-  "sha": "4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7",
+  "sha": "390d6dac52b6dc727c16e52aa116397e8097067d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "390d6da",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "8973b0c",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "414b392",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)",
+    "files": [
+     "docs/qa/00-RESUMO.md",
+     "docs/qa/01-INVENTARIO.md",
+     "docs/qa/02-CENARIOS.md",
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/04-PLANO.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "4b3ed9b",
     "date": "2026-11-23",
@@ -96835,33 +96869,6 @@
      "docs/pendencias/F-003-inventory-movements-sem-escrita.md",
      "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql"
     ]
-   },
-   {
-    "sha": "d7111c9",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)",
-    "files": [
-     "scripts/automation.mjs"
-    ]
-   },
-   {
-    "sha": "25e42b9",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
-   },
-   {
-    "sha": "7e8a0f6",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "infra: cache npm no job de contratos do automation-local (#230)",
-    "files": [
-     ".github/workflows/automation-local.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -96876,6 +96883,14 @@
    [
     "supabase/functions/check-login-lockout/index.ts",
     3
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
+    2
    ],
    [
     "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
@@ -96935,14 +96950,6 @@
    ],
    [
     "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
-    2
-   ],
-   [
-    "docs/pendencias/F-012-assinatura-eletr-nica-falsa.md",
-    2
-   ],
-   [
-    "docs/pendencias/F-006-geo-blocking-sem-enforcement.md",
     2
    ]
   ]

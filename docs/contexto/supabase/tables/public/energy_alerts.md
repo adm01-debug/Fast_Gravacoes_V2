@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 5 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -48,15 +48,35 @@
 
 ## Policies (RLS)
 
-### `Active roles can manage energy alerts`
+### `Active roles can create energy alerts`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | INSERT |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `has_any_active_role()` |
-| WITH CHECK | `has_any_active_role()` |
+| USING |  |
+| WITH CHECK | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+
+### `Active roles can delete energy alerts`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| WITH CHECK |  |
+
+### `Active roles can update energy alerts`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
+| WITH CHECK | `(app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role))` |
 
 ### `Authenticated users can view energy alerts`
 
@@ -66,6 +86,16 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `has_any_active_role()` |
+| WITH CHECK |  |
+
+### `Energy readers can view energy alerts`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `has_permission('energy:read'::text)` |
 | WITH CHECK |  |
 
 

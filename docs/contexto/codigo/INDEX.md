@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4b3ed9b5948beef5bc1f7e84e7cdbe3558cb23a7` (2026-11-23T08:02:23-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `390d6dac52b6dc727c16e52aa116397e8097067d` (2026-11-23T08:05:59-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1060), SQL (262), Markdown (102), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1060), SQL (262), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1581 |
+| arquivos_total | 1587 |
 | arquivos_codigo | 1124 |
 | linhas_codigo | 190273 |
 | rotas | 58 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 127 |
 | workflows | 12 |
 | scripts | 41 |
-| docs_md | 102 |
+| docs_md | 108 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
@@ -246,15 +246,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7531 nós · 22094 arestas · 666 comunidades · grafo do commit `4b3ed9b5`
+- 7531 nós · 22094 arestas · 666 comunidades · grafo do commit `390d6dac`
 - comunidades maiores: card.tsx (195), input.tsx (131), FuturisticBI.tsx (131), analytics/index.ts (128), cn (123), button.tsx (119), MainLayout.tsx (112), snapshot.py (110), client.ts (106), badge.tsx (104), DailyCalendar.tsx (101), gerar.mjs (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (21)
-- package-lock.json (16)
-- package.json (16)
+- package-lock.json (18)
+- package.json (18)
 - deno.lock (15)
 - AGENTS.md (10)
 - .github/workflows/db-admin.yml (9)
@@ -365,10 +365,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/plano-mestre-10-10.md` — Plano mestre de auditoria e evolução — FAST GRAVAÇÕES V2 rumo ao 10/10 (831 linhas)
 - `docs/plano-ux-navegacao-200-etapas-261122.md` — Plano de UX de Navegação e Transição entre Telas — 200 Etapas (1760 linhas)
 - `docs/prod-readiness.md` — Fast Gravacoes V2 - Prontidao para Producao (189 linhas)
-- subpastas de docs/: docs/estado (20), docs/pendencias (17), docs/agentes (7), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/ci (1), docs/post-mortems (1)
+- subpastas de docs/: docs/estado (20), docs/pendencias (17), docs/agentes (7), docs/qa (6), docs/adr (5), docs/contexto (3), docs/operacoes (3), docs/graphify (2), docs/ci (1), docs/post-mortems (1)
 
 
 ## Últimos commits
+- 2026-11-23 `390d6da` chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)
+- 2026-11-23 `8973b0c` chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)
+- 2026-11-23 `414b392` docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)
 - 2026-11-23 `4b3ed9b` fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)
 - 2026-11-23 `1724af5` fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)
 - 2026-11-23 `4b0d871` fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)
@@ -381,9 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `75dc924` fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)
 - 2026-11-22 `82df446` chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)
 - 2026-11-22 `dbb891a` chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)
-- 2026-11-22 `2a1a433` fix: ativa notificações push reais (par VAPID configurado) (#252)
-- 2026-11-22 `eb7c327` chore: atualiza dossies F-009 e F-012 para resolvidas (#250)
-- 2026-11-22 `885b37c` fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
