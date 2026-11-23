@@ -65,7 +65,7 @@ Quatro defeitos somados:
 3. `src/features/auth/services/authService.ts:31-34` chama `resetPasswordForEmail(email)` **sem** `redirectTo`, então o link do e-mail usa o `site_url` defeituoso.
 4. `supabase/functions/approve-password-reset/index.ts:9` usa `APP_URL` com default `https://fastgravacoes.com.br` — domínio que **não responde** (testado ao vivo: conexão fechada) — e `APP_URL` **não está** entre os secrets do projeto (lista completa em `supabase/edge-functions.md`).
 
-Causa raiz: o endereço do aplicativo nunca foi acertado no backend depois que o front mudou de host; e o código usa três fontes diferentes de endereço (site_url implícito, `APP_URL`, `PUBLIC_URL`).
+Causa raiz: o endereço do aplicativo nunca foi acertado no backend depois que o front mudou de host; e o código usa três fontes diferentes de endereço (site_url implícito, `APP_URL`, `PUBLIC_URL`). **Precisão obtida ao vivo em 23/11:** o host configurado (`fast-gravacoes-v2-juca1.vercel.app`) é o domínio do *time* na Vercel, e está sob a proteção de acesso de deployment — o mesmo acontece com o endereço de pré-visualização de uma PR, testado nesta sessão, que também responde "Login – Vercel". O domínio liberado é `fast-gravacoes-v2.vercel.app`. Ou seja: a proteção da Vercel está **correta** (previews não estão expostos); o defeito é o backend apontar para um endereço protegido em vez do endereço público.
 
 Impacto: quem esquece a senha não volta a entrar, mesmo com o gestor aprovando; quem é convidado não confirma a conta. É o tipo de falha que trava a operação num sábado e não tem contorno pela interface.
 
