@@ -66,6 +66,39 @@ versão. O projeto permanece pinado em **0.9.48** — adotar a 0.9.77 é decisã
 separada, pois as +722 nós alteram as métricas do ratchet e exigem revisão da
 `graphify-baseline.json`.
 
+## Adoção da 0.9.115 (23/11/2026)
+
+A decisão que o ensaio acima deixou pendente foi tomada pelo dono em 23/11/2026:
+o pin passou de **0.9.48** para **0.9.115** (a 0.9.77 do ensaio nunca foi adotada).
+O restante deste documento continua descrevendo a validação de 05/10/2026 com a
+0.9.48 e não foi reescrito.
+
+- Mudam juntos: `graphify.config.json`, `graphify.local.json`,
+  `scripts/graphify/requirements.in`, `scripts/graphify/requirements.lock`,
+  `GRAPHIFY_VERSION` em `.github/workflows/contexto.yml` e a config dos testes.
+- A 0.9.115 exige Python `>=3.11.5,<3.15`: o lock passou a ser gerado com
+  `--python-version 3.11.5` (com `3.11` a resolução falha). No lock, além do
+  `graphifyy`, só entrou o `pyyaml==6.0.4` (dependência nova); os demais pacotes
+  ficaram nas mesmas versões.
+- Medido localmente sobre `main` `c43c1b21` (1.372 fontes, perfil `all`, 2 workers):
+
+| Métrica | 0.9.48 | 0.9.115 |
+|---|---|---|
+| Nós / relações exportadas | 7.040 / 21.656 | 7.342 / 30.797 |
+| Relações brutas preservadas | 22.217 | 28.441 |
+| `unresolved_relations` (baseline 3.415) | 3.616 | 3.254 |
+| `parallel_relation_groups` (baseline 490) | 526 | 747 |
+
+- `graph:diff` 0.9.48 → 0.9.115: **+563/−261 nós e +9.480/−339 arestas**. Dos 261
+  nós removidos, 254 não tinham `source_file` (por exemplo os `public_*` vindos
+  de referências SQL).
+- `graph:test` 31/31, `graph:check` com 0 fontes sem nó, `graph:audit` 8/8,
+  `graph:benchmark` 20/20 e build repetido sem extração (no-op).
+- **Pendente**: `graphify-baseline.json` não foi alterada. As duas métricas já
+  estavam acima da baseline na `main` com a 0.9.48; com a 0.9.115 a de endpoints
+  não resolvidos volta a ficar abaixo e a de grupos paralelos sobe para 747. O
+  ratchet segue em modo `report` (não bloqueia); revisar a baseline é decisão à parte.
+
 ## Limitações medidas
 
 Na extração atual do perfil `all` (HEAD `2d424182`):

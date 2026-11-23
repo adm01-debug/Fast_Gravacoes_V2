@@ -1,5 +1,5 @@
 {
-  "version": "0.9.48",
+  "version": "0.9.115",
   "maxWorkers": 4,
   "warnFiles": 500,
   "htmlNodeLimit": 5000,

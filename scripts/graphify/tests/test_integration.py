@@ -25,7 +25,7 @@ class GraphifyIntegrationTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix='fast-graphify-test-')
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        self.config = {'version': '0.9.48', 'maxWorkers': 1, 'warnFiles': 500,
+        self.config = {'version': '0.9.115', 'maxWorkers': 1, 'warnFiles': 500,
                        'extensions': ['.ts', '.sql'], 'profiles': {'all': ['src', 'supabase']}}
         self.write('graphify.config.json', json.dumps(self.config))
         self.write('.graphifyignore', '.env*\ngraphify-out/\nnode_modules/\n')
