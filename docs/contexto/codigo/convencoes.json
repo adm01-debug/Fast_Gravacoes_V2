@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)",
+   "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)",
    "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)",
    "fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)",
-   "fix: confianca da predicao exibida na escala correta (0-100) (#258)",
-   "docs: plano de 200 etapas de UX de navegacao (#260)",
-   "docs: plano de 190 etapas de melhorias e correcoes (#257)"
+   "fix: confianca da predicao exibida na escala correta (0-100) (#258)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

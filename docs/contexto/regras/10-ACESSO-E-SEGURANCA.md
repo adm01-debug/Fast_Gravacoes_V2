@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84eca7c2d3` · branch `main` · 2026-11-23 10:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4b0d871527` · branch `main` · 2026-11-23 11:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -154,7 +154,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 91 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 92 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -246,6 +246,7 @@
 - `supabase/migrations/20261028223000_bitrix_oauth_states.sql`
 - `supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql`
 - `supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql`
+- `supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql`
 - `supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
@@ -328,7 +329,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `has_permission` |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
 | grant | authenticated | select, insert, update, delete | `packaging_tasks`, `packaging_defects`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides` |
-| grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +9 |
+| grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +12 |
 | grant | postgres | all privileges | `cron` |
 | grant | postgres, service_role | execute | `log_technical_sheet_change`, `trigger_auto_promotion` |
 | grant | service_role | all | `packaging_tasks`, `packaging_defects`, `packaging_settings`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_waste`, `packaging_equipment` |
@@ -337,7 +338,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC | all | `log_technical_sheet_change`, `has_any_active_role`, `purge_old_logs`, `get_system_status_summary`, `get_packaging_leaderboard`, `auto_reassign_stale_packaging_tasks`, `get_packaging_manifest`, `app_private.runtime_config`, `app_private.runtime_config_get`, `approve_maintenance_record`, `has_permission` |
 | revoke | PUBLIC | execute | `trigger_auto_promotion`, `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock` … +18 |
 | revoke | PUBLIC, anon | all | `get_cron_health`, `cron_expected_interval_minutes`, `get_system_status_summary` |
-| revoke | PUBLIC, anon | execute | `complete_maintenance_record`, `complete_maintenance_record`, `check_job_overlap` |
+| revoke | PUBLIC, anon | execute | `complete_maintenance_record`, `complete_maintenance_record`, `check_job_overlap`, `audit_job_status_change`, `log_job_status_change` |
 | revoke | PUBLIC, anon, authenticated | all | `count_running_machines`, `count_active_operators_since`, `snapshot_cron_health`, `snapshot_cron_health`, `snapshot_cron_health` |
 | revoke | PUBLIC, anon, authenticated | execute | `check_and_notify_kpi_alert`, `test_rls_policies`, `verify_audit_chain`, `verify_audit_chain`, `has_any_active_role`, `on_packaging_ready_create_shipment`, `on_packaging_defect_create_rework_job`, `enforce_packaging_checklist_before_ship`, `notify_packaging_task_created`, `notify_packaging_defect_critical`, `rollup_cron_p95_daily`, `rollup_cron_p95_daily` |
 | revoke | anon | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `get_system_status_summary`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair`, `get_packaging_manifest`, `get_packaging_leaderboard`, `get_system_status_summary`, `get_cron_health`, `auto_reassign_stale_packaging_tasks` |
@@ -346,6 +347,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | public | all | `get_cron_health`, `get_public_tracking`, `get_public_tracking` |
 | revoke | public | execute | `validate_stock_before_movement`, `log_job_status_change`, `check_and_notify_kpi_alert`, `audit_machine_changes`, `audit_job_changes`, `rollback_inventory_stock`, `audit_log_immutable`, `log_security_violation`, `compute_audit_hash`, `process_audit_log_hashing`, `calculate_audit_hash` |
 | revoke | public, anon | all | `app_private.has_role`, `app_private.has_role` |
+| revoke | public, anon | execute | `verify_audit_chain` |
 | revoke | public, anon, authenticated | execute | `has_role`, `archive_finished_jobs` |
 
 ## Riscos de acesso detectados

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84eca7c2d3` · branch `main` · 2026-11-23 10:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4b0d871527` · branch `main` · 2026-11-23 11:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3674,3 +3674,4 @@ _nenhum item encontrado_
 | Non-broadcast requests must always provide a user_id | `supabase/functions/send-push-notification/index.ts` |
 | 3. Get subscriber emails — must paginate: default listUsers() returns only 50 rows | `supabase/functions/send-tpm-email/index.ts` |
 | Rate limit: 120 webhooks/min per source IP. | `supabase/functions/webhook-handler/index.ts` |
+| confere o elo: previous_hash deve ser o hash do registro anterior com | `supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql` |

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 251,
+ "migrations": 252,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -4978,6 +4978,7 @@
    ],
    "fks": [
     "changed_by->auth",
+    "changed_by->profiles",
     "job_id->jobs"
    ],
    "criada_em": "20260512175348_b2547eed-9616-4252-b364-fac550a1d72b.sql",

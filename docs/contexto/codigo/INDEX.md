@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `84eca7c2d39f0b529eaf3432b5aec4903a1b768d` (2026-11-23T07:50:43-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4b0d87152755301a13e5938157f176c748282a0e` (2026-11-23T08:01:49-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1058), SQL (259), Markdown (102), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1058), SQL (260), Markdown (102), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1576 |
+| arquivos_total | 1577 |
 | arquivos_codigo | 1122 |
 | linhas_codigo | 189899 |
 | rotas | 58 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 196 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 251 |
+| migrations | 252 |
 | cron_jobs | 4 |
 | testes | 125 |
 | workflows | 12 |
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7501 nós · 22059 arestas · 677 comunidades · grafo do commit `84eca7c2`
-- comunidades maiores: card.tsx (135), cn (112), snapshot.py (110), useAuth (107), badge.tsx (106), gerar.mjs (96), GraphifyIntegrationTests (96), .write (96), SPCDashboard.tsx (94), errorHandling.ts (92), button.tsx (91), dialog.tsx (85)
+- 7511 nós · 22067 arestas · 670 comunidades · grafo do commit `4b0d8715`
+- comunidades maiores: card.tsx (172), client.ts (166), input.tsx (162), KPIDashboard.tsx (138), badge.tsx (136), analytics/index.ts (130), MainLayout.tsx (129), button.tsx (119), DailyCalendar.tsx (112), snapshot.py (110), production/index.ts (103), cn (102)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -369,6 +369,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-23 `4b0d871` fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)
+- 2026-11-23 `ac5366c` chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)
 - 2026-11-23 `84eca7c` fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)
 - 2026-11-22 `ca42441` fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)
 - 2026-11-22 `4dc0b5b` fix: confianca da predicao exibida na escala correta (0-100) (#258)
@@ -382,8 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `885b37c` fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)
 - 2026-11-22 `a17c419` fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)
 - 2026-11-21 `42f66be` fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)
-- 2026-11-21 `3fc37b3` fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)
-- 2026-11-21 `9654a58` fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

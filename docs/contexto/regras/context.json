@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
+  "sha": "4b0d87152755301a13e5938157f176c748282a0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 10:51 UTC",
-  "files_total": 1574,
-  "code_files": 1384,
-  "code_lines": 205576
+  "generated_at": "2026-11-23 11:02 UTC",
+  "files_total": 1575,
+  "code_files": 1385,
+  "code_lines": 205782
  },
  "version": "1.3.2",
- "facts_hash": "2d7c747b27d0596e",
+ "facts_hash": "f1456b2e2129320b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 659,
    ".ts": 399,
-   ".sql": 259,
+   ".sql": 260,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19290,6 +19290,7 @@
    "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
    "supabase/migrations/20261120173500_public_tracking_rpc.sql",
    "supabase/migrations/20261120203000_public_tracking_remove_client.sql",
+   "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
    "supabase/migrations/20261122010000_seed_role_permissions.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/seed.sql",
@@ -20932,6 +20933,54 @@
     "objkind": "function",
     "roles": "anon, authenticated",
     "src": "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "audit_job_status_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_job_status_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "audit_job_status_change",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "log_job_status_change",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "verify_audit_chain",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_audit_chain",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
    },
    {
     "kind": "revoke",
@@ -29509,8 +29558,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 251,
-   "lines": 15021,
+   "files": 252,
+   "lines": 15227,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -36856,6 +36905,10 @@
    {
     "file": "supabase/functions/webhook-handler/index.ts",
     "text": "Rate limit: 120 webhooks/min per source IP."
+   },
+   {
+    "file": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
+    "text": "confere o elo: previous_hash deve ser o hash do registro anterior com"
    }
   ],
   "db_constraints": [
@@ -64832,6 +64885,7 @@
    "supabase/migrations/20261028223000_bitrix_oauth_states.sql",
    "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql",
    "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+   "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
   ],
   "security_definer_fns": [
@@ -66398,6 +66452,54 @@
     "objkind": "function",
     "roles": "anon, authenticated",
     "src": "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "audit_job_status_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_job_status_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "audit_job_status_change",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "log_job_status_change",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "verify_audit_chain",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_audit_chain",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
    },
    {
     "kind": "revoke",
@@ -95595,6 +95697,14 @@
    "path": "supabase/migrations/20261120203000_public_tracking_remove_client.sql",
    "lines": 50
   },
+  "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql": {
+   "path": "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
+   "lines": 206,
+   "rule_comments": [
+    "confere o elo: previous_hash deve ser o hash do registro anterior com"
+   ],
+   "uses_service_role": true
+  },
   "supabase/migrations/20261122010000_seed_role_permissions.sql": {
    "path": "supabase/migrations/20261122010000_seed_role_permissions.sql",
    "lines": 178
@@ -96042,10 +96152,26 @@
   }
  },
  "git": {
-  "sha": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
+  "sha": "4b0d87152755301a13e5938157f176c748282a0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "4b0d871",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)",
+    "files": [
+     "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
+    ]
+   },
+   {
+    "sha": "ac5366c",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)",
+    "files": []
+   },
    {
     "sha": "84eca7c",
     "date": "2026-11-23",
@@ -96384,24 +96510,6 @@
      "src/test/cspSync.test.ts",
      "vercel.json"
     ]
-   },
-   {
-    "sha": "a3d0c08",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "docs: marca chave Stripe como resolvida no progresso da auditoria (#227)",
-    "files": [
-     "analise-prs/progresso.json"
-    ]
-   },
-   {
-    "sha": "7c1df38",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "docs: fecha pendencia falsa de chave Stripe (sk_live_fast era ficticia) (#226)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -96482,7 +96590,7 @@
     2
    ],
    [
-    "src/components/auth/ProtectedRoute.tsx",
+    "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
     1
    ]
   ]

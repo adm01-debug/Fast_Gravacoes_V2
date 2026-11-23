@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84eca7c2d3` · branch `main` · 2026-11-23 10:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4b0d871527` · branch `main` · 2026-11-23 11:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.

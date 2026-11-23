@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
+  "commit": "4b0d87152755301a13e5938157f176c748282a0e",
   "branch": "main",
-  "data_commit": "2026-11-23T07:50:43-03:00",
+  "data_commit": "2026-11-23T08:01:49-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "4b0d871",
+    "data": "2026-11-23",
+    "assunto": "fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)"
+   },
+   {
+    "sha": "ac5366c",
+    "data": "2026-11-23",
+    "assunto": "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)"
+   },
    {
     "sha": "84eca7c",
     "data": "2026-11-23",
@@ -121,20 +131,10 @@
     "sha": "53cf28e",
     "data": "2026-11-20",
     "assunto": "fix(inventory): policies INSERT e DELETE para inventory_movements (#235)"
-   },
-   {
-    "sha": "d7111c9",
-    "data": "2026-11-20",
-    "assunto": "fix: runTests usa --test-force-exit (evita pendência em unit tests com timers vivos) (#233)"
-   },
-   {
-    "sha": "25e42b9",
-    "data": "2026-11-20",
-    "assunto": "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 176,
+  "arquivos_mudados_7d": 177,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 116
+    "commits": 118
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1576,
+  "arquivos_total": 1577,
   "arquivos_codigo": 1122,
   "linhas_codigo": 189899,
   "rotas": 58,
@@ -339,7 +339,7 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 251,
+  "migrations": 252,
   "cron_jobs": 4,
   "testes": 125,
   "workflows": 12,
