@@ -1,20 +1,20 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `156312d893` · branch `main` · 2026-11-23 14:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `678916254d` · branch `main` · 2026-11-23 16:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-23T14:20:35Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-23T15:29:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
-`IN`, `admin`, `assistant`, `coordinator`, `denied`, `g`, `granted`, `manager`, `operator`, `p`, `perm`, `role`, `target`, `user`
+`admin`, `assistant`, `coordinator`, `denied`, `g`, `granted`, `manager`, `operator`, `p`, `perm`, `role`, `target`, `user`
 
 - Tabelas de perfil/permissão: `role_permissions`, `user_roles`
 - Colunas de perfil: `rls_test_results.role` (text not null), `role_permissions.role` (app_role not null), `technical_messages.role` (text not null), `user_roles.role` (app_role not null default 'operator'::app_role)
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_permission`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-23T14:20:35Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-23T15:29:08Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -293,6 +293,7 @@
 - `on_job_finished_create_packaging_task`
 - `on_packaging_defect_create_rework_job`
 - `on_packaging_ready_create_shipment`
+- `preventdefault_hold_shipment_update`
 - `purge_old_logs`
 - `record_packaging_defect`
 - `rollback_inventory_stock`
@@ -301,6 +302,7 @@
 - `trigger_auto_promotion`
 - `trigger_send_tpm_email`
 - `update_inventory_stock`
+- `update_shipment_status`
 - `validate_inventory_stock`
 - `validate_stock_before_movement`
 - `verify_audit_chain`

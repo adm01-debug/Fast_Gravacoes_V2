@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "156312d893c702609e5bf6815d3bf96c79dc598f",
+  "sha": "678916254dab187b517d20a7f68ab565d2de240f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 14:52 UTC",
+  "generated_at": "2026-11-23 16:11 UTC",
   "files_total": 1585,
   "code_files": 1389,
   "code_lines": 206588
  },
  "version": "1.3.2",
- "facts_hash": "e184824c4c2ce874",
+ "facts_hash": "317e17022106d4f9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -3092,7 +3092,7 @@
      {
       "name": "changed_by",
       "type": "uuid",
-      "fk": "users.id",
+      "fk": "profiles.id on delete set null",
       "generated": "",
       "src": "docs/contexto/supabase/snapshot.json"
      },
@@ -14660,6 +14660,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_prevent_hold_shipment_update",
+    "when": "BEFORE UPDATE",
+    "table": "shipments",
+    "function": "preventdefault_hold_shipment_update",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_shipments_updated_at",
     "when": "BEFORE UPDATE",
     "table": "shipments",
@@ -15011,11 +15020,11 @@
     "src": "docs/contexto/supabase/functions/public/audit_job_status_change__12ae32cb1ec02d01.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.audit_log ( entity_type, entity_id, action, actor_id, old_values, new_values, changed_fields, metadata ) VALUES ( 'job', NEW.id, 'status_change', auth.uid(), jsonb_build_object('status', OLD.status), jsonb_build_object('status', NEW.status), ARRAY['status'], jsonb_build_object('order_number', NEW.order_number) ); END IF; RETURN NEW; END;",
+    "body": "BEGIN IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.job_status_history (job_id, previous_status, new_status, changed_by) VALUES (NEW.id, OLD.status, NEW.status, auth.uid()); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "NEW",
-     "audit_log"
+     "job_status_history"
     ]
    },
    "audit_log_immutable": {
@@ -15143,7 +15152,7 @@
     "src": "docs/contexto/supabase/functions/public/calculate_audit_hash__64c545909b3767ce.sql",
     "security_definer": false,
     "search_path": false,
-    "body": "BEGIN RETURN md5( COALESCE(rec.previous_hash, '') || rec.entity_type || rec.entity_id || rec.action || rec.actor_id::text || COALESCE(rec.old_data::text, '') || COALESCE(rec.new_data::text, '') || rec.created_at::text ); END;",
+    "body": "BEGIN RETURN md5( COALESCE(rec.previous_hash, '') || rec.entity_type || rec.entity_id || rec.action || COALESCE(rec.actor_id::text, '') || COALESCE(rec.old_data::text, '') || COALESCE(rec.new_data::text, '') || rec.created_at::text ); END;",
     "raises": [],
     "tables": []
    },
@@ -15564,12 +15573,10 @@
     "src": "docs/contexto/supabase/functions/public/log_job_status_change__12ae32cb1ec02d01.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE actor_id UUID; BEGIN -- Try to get current user ID from metadata or auth.uid() actor_id := auth.uid(); IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.audit_log ( entity_type, entity_id, action, old_values, new_values, actor_id, metadata ) VALUES ( 'job', NEW.id, 'status_change', jsonb_build_object('status', OLD.status), jsonb_build_object('status', NEW.status), actor_id, jsonb_build_object( 'job_code', NEW.code, 'client', NEW.client, 'product', NEW.product ) ); -- Also create a notification for relevant users (this is a simple version, -- usually we would target specific roles or the job creator) -- For now, we notify the actor if they are not the one who changed …",
+    "body": "DECLARE actor_id UUID; BEGIN actor_id := auth.uid(); IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.push_notifications ( user_id, title, body, status, data ) SELECT p.user_id, 'Status de Job Alterado', format('O job %s (%s) mudou de %s para %s', NEW.order_number, NEW.client, OLD.status, NEW.status), 'pending', jsonb_build_object( 'type', 'job_status_update', 'job_id', NEW.id, 'old_status', OLD.status, 'new_status', NEW.status, 'severity', 'info', 'actor_id', actor_id ) FROM public.user_roles p WHERE p.role IN ('admin', 'manager'); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "NEW",
-     "audit_log",
-     "metadata",
      "push_notifications",
      "user_roles"
     ]
@@ -15742,6 +15749,25 @@
     "raises": [],
     "tables": []
    },
+   "preventdefault_hold_shipment_update": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "declare v_job_id uuid; begin -- A RPC update_shipment_status seta a flag antes do update e a limpa depois. -- Compara como texto: após o commit, a flag volta ao default (lido como -- texto vazio); cast para boolean quebraria o próximo UPDATE na sessão. if current_setting('app.f010_shipment_rpc', true) = 'on' then return new; end if; if new.status is distinct from old.status then select job_id into v_job_id from public.shipments where id = new.id; if v_job_id is not null then if exists ( select 1 from public.packaging_tasks where job_id = v_job_id and status = 'on_hold' ) then -- Mantém o status anterior; a escrita fora da RPC não vale. new.status := old.status; raise exception 'Envio retido …",
+    "raises": [
+     "Envio retido pela embalagem em espera; use update_shipment_status"
+    ],
+    "tables": [
+     "e",
+     "na",
+     "packaging_tasks",
+     "shipments",
+     "v_job_id"
+    ]
+   },
    "process_audit_log_hashing": {
     "args": "",
     "returns": "trigger",
@@ -15826,17 +15852,20 @@
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_uid uuid := auth.uid(); v_loss_reason text := nullif(btrim(coalesce(p_loss_reason,''), E' \\t\\r\\n'), ''); v_is_staff boolean; v_is_operator boolean; v_processed boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; if p_quantity is null or p_quantity <= 0 then raise exception 'Quantidade deve ser positiva'; end if; -- Papéis ativos: has_any_active_role() rejeita usuário desativado/removido. if not public.has_any_active_role() then raise exception 'Usuário sem papel ativo'; end if; v_is_staff := public.has_role(v_uid, 'coordinator') or public.has_role(v_uid, 'manager') or public.has_role(v_uid, 'admin'); v_is_operator := public.has_role(v_uid, 'oper …",
+    "body": "declare v_uid uuid := auth.uid(); v_loss_reason text := nullif(btrim(coalesce(p_loss_reason,''), E' \\t\\r\\n'), ''); v_is_staff boolean; v_is_operator boolean; v_processed boolean := false; v_new_approved integer; v_rejected_quantity integer; v_received_quantity integer; v_over_rejection boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; if p_quantity is null or p_quantity <= 0 then raise exception 'Quantidade deve ser positiva'; end if; -- Papéis ativos: has_any_active_role() rejeita usuário desativado/removido. if not public.has_any_active_role() then raise exception 'Usuário sem papel ativo'; end if; v_is_staff := public.has_role(v_uid, 'coordinator') o …",
     "raises": [
      "Não autenticado",
      "Quantidade deve ser positiva",
      "Usuário sem papel ativo",
+     "Sem autorização para registrar defeito nesta tarefa",
+     "Rejeição excede a quantidade recebida (restante: %)",
      "Sem autorização para registrar defeito nesta tarefa"
     ],
     "tables": [
      "com",
      "packaging_defects",
      "packaging_tasks",
+     "v_new_approved",
      "v_processed"
     ]
    },
@@ -15952,6 +15981,26 @@
      "inventory_items"
     ]
    },
+   "update_shipment_status": {
+    "args": "p_shipment_id uuid, p_status text",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "declare v_uid uuid := auth.uid(); v_job_id uuid; v_current_status text; v_blocked boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; -- Só staff (coordenador/gerente/admin) altera envio; operador não. if not ( public.has_role(v_uid, 'coordinator') or public.has_role(v_uid, 'manager') or public.has_role(v_uid, 'admin') ) then raise exception 'Sem permissão para alterar envio'; end if; select job_id, status into v_job_id, v_current_status from public.shipments where id = p_shipment_id; if not found then raise exception 'Envio não encontrado'; end if; -- Bloqueio de negócio (thread 12): despacho de job com embalagem em espera -- não pode seguir para in_tran …",
+    "raises": [
+     "Não autenticado",
+     "Sem permissão para alterar envio",
+     "Envio não encontrado"
+    ],
+    "tables": [
+     "packaging_tasks",
+     "shipments",
+     "v_current_status",
+     "v_job_id"
+    ]
+   },
    "update_updated_at_column": {
     "args": "",
     "returns": "trigger",
@@ -16056,11 +16105,12 @@
     "src": "docs/contexto/supabase/functions/public/verify_audit_chain__150fe0300b13032f.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE _rec RECORD; _expected TEXT; _total BIGINT := 0; _ok BIGINT := 0; _bad BIGINT := 0; _first_bad UUID := NULL; BEGIN IF NOT (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator') OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager')) THEN RAISE EXCEPTION 'Access denied' USING ERRCODE = '42501'; END IF; FOR _rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LIMIT _limit LOOP _total := _total + 1; _expected := public.compute_audit_hash( _rec.entity_type, _rec.entity_id, _rec.action, _rec.actor_id, _rec.old_data, _rec.new_data, _rec.previous_hash, _rec.created_at ); IF _expected = _rec.hash THEN _ok := _ok + 1; ELSE _bad := _bad + 1; IF _first_bad …",
+    "body": "DECLARE _rec public.audit_log; _expected TEXT; _anchored TEXT := 'GENESIS'; _total BIGINT := 0; _ok BIGINT := 0; _bad BIGINT := 0; _first_bad UUID := NULL; BEGIN IF NOT (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator') OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager')) THEN RAISE EXCEPTION 'Access denied' USING ERRCODE = '42501'; END IF; FOR _rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LIMIT _limit LOOP _total := _total + 1; -- Registro historico sem hash (pre-fix, actor NULL): preserva e avanca -- sem reescrever. A ancora so avanca quando ha um hash valido. IF _rec.hash IS NULL THEN CONTINUE; END IF; -- 1) ELO: previous_hash deve ser a …",
     "raises": [
      "Access denied"
     ],
     "tables": [
+     "_anchored",
      "audit_log"
     ]
    }
@@ -21218,6 +21268,11 @@
     "src": "docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql"
    },
    {
+    "function": "preventdefault_hold_shipment_update",
+    "msg": "Envio retido pela embalagem em espera; use update_shipment_status",
+    "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql"
+   },
+   {
     "function": "record_packaging_defect",
     "msg": "Não autenticado",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
@@ -21236,6 +21291,31 @@
     "function": "record_packaging_defect",
     "msg": "Sem autorização para registrar defeito nesta tarefa",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "record_packaging_defect",
+    "msg": "Rejeição excede a quantidade recebida (restante: %)",
+    "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "record_packaging_defect",
+    "msg": "Sem autorização para registrar defeito nesta tarefa",
+    "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Não autenticado",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Sem permissão para alterar envio",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Envio não encontrado",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
    },
    {
     "function": "validate_inventory_stock",
@@ -38558,7 +38638,7 @@
    {
     "table": "job_status_history",
     "column": "changed_by",
-    "rule": "FK → users.id"
+    "rule": "FK → profiles.id on delete set null"
    },
    {
     "table": "job_status_history",
@@ -60039,6 +60119,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_prevent_hold_shipment_update",
+    "when": "BEFORE UPDATE",
+    "table": "shipments",
+    "function": "preventdefault_hold_shipment_update",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_shipments_updated_at",
     "when": "BEFORE UPDATE",
     "table": "shipments",
@@ -60390,11 +60479,11 @@
     "src": "docs/contexto/supabase/functions/public/audit_job_status_change__12ae32cb1ec02d01.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.audit_log ( entity_type, entity_id, action, actor_id, old_values, new_values, changed_fields, metadata ) VALUES ( 'job', NEW.id, 'status_change', auth.uid(), jsonb_build_object('status', OLD.status), jsonb_build_object('status', NEW.status), ARRAY['status'], jsonb_build_object('order_number', NEW.order_number) ); END IF; RETURN NEW; END;",
+    "body": "BEGIN IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.job_status_history (job_id, previous_status, new_status, changed_by) VALUES (NEW.id, OLD.status, NEW.status, auth.uid()); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "NEW",
-     "audit_log"
+     "job_status_history"
     ]
    },
    "audit_log_immutable": {
@@ -60522,7 +60611,7 @@
     "src": "docs/contexto/supabase/functions/public/calculate_audit_hash__64c545909b3767ce.sql",
     "security_definer": false,
     "search_path": false,
-    "body": "BEGIN RETURN md5( COALESCE(rec.previous_hash, '') || rec.entity_type || rec.entity_id || rec.action || rec.actor_id::text || COALESCE(rec.old_data::text, '') || COALESCE(rec.new_data::text, '') || rec.created_at::text ); END;",
+    "body": "BEGIN RETURN md5( COALESCE(rec.previous_hash, '') || rec.entity_type || rec.entity_id || rec.action || COALESCE(rec.actor_id::text, '') || COALESCE(rec.old_data::text, '') || COALESCE(rec.new_data::text, '') || rec.created_at::text ); END;",
     "raises": [],
     "tables": []
    },
@@ -60943,12 +61032,10 @@
     "src": "docs/contexto/supabase/functions/public/log_job_status_change__12ae32cb1ec02d01.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE actor_id UUID; BEGIN -- Try to get current user ID from metadata or auth.uid() actor_id := auth.uid(); IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.audit_log ( entity_type, entity_id, action, old_values, new_values, actor_id, metadata ) VALUES ( 'job', NEW.id, 'status_change', jsonb_build_object('status', OLD.status), jsonb_build_object('status', NEW.status), actor_id, jsonb_build_object( 'job_code', NEW.code, 'client', NEW.client, 'product', NEW.product ) ); -- Also create a notification for relevant users (this is a simple version, -- usually we would target specific roles or the job creator) -- For now, we notify the actor if they are not the one who changed …",
+    "body": "DECLARE actor_id UUID; BEGIN actor_id := auth.uid(); IF (OLD.status IS DISTINCT FROM NEW.status) THEN INSERT INTO public.push_notifications ( user_id, title, body, status, data ) SELECT p.user_id, 'Status de Job Alterado', format('O job %s (%s) mudou de %s para %s', NEW.order_number, NEW.client, OLD.status, NEW.status), 'pending', jsonb_build_object( 'type', 'job_status_update', 'job_id', NEW.id, 'old_status', OLD.status, 'new_status', NEW.status, 'severity', 'info', 'actor_id', actor_id ) FROM public.user_roles p WHERE p.role IN ('admin', 'manager'); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "NEW",
-     "audit_log",
-     "metadata",
      "push_notifications",
      "user_roles"
     ]
@@ -61121,6 +61208,25 @@
     "raises": [],
     "tables": []
    },
+   "preventdefault_hold_shipment_update": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "declare v_job_id uuid; begin -- A RPC update_shipment_status seta a flag antes do update e a limpa depois. -- Compara como texto: após o commit, a flag volta ao default (lido como -- texto vazio); cast para boolean quebraria o próximo UPDATE na sessão. if current_setting('app.f010_shipment_rpc', true) = 'on' then return new; end if; if new.status is distinct from old.status then select job_id into v_job_id from public.shipments where id = new.id; if v_job_id is not null then if exists ( select 1 from public.packaging_tasks where job_id = v_job_id and status = 'on_hold' ) then -- Mantém o status anterior; a escrita fora da RPC não vale. new.status := old.status; raise exception 'Envio retido …",
+    "raises": [
+     "Envio retido pela embalagem em espera; use update_shipment_status"
+    ],
+    "tables": [
+     "e",
+     "na",
+     "packaging_tasks",
+     "shipments",
+     "v_job_id"
+    ]
+   },
    "process_audit_log_hashing": {
     "args": "",
     "returns": "trigger",
@@ -61205,17 +61311,20 @@
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_uid uuid := auth.uid(); v_loss_reason text := nullif(btrim(coalesce(p_loss_reason,''), E' \\t\\r\\n'), ''); v_is_staff boolean; v_is_operator boolean; v_processed boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; if p_quantity is null or p_quantity <= 0 then raise exception 'Quantidade deve ser positiva'; end if; -- Papéis ativos: has_any_active_role() rejeita usuário desativado/removido. if not public.has_any_active_role() then raise exception 'Usuário sem papel ativo'; end if; v_is_staff := public.has_role(v_uid, 'coordinator') or public.has_role(v_uid, 'manager') or public.has_role(v_uid, 'admin'); v_is_operator := public.has_role(v_uid, 'oper …",
+    "body": "declare v_uid uuid := auth.uid(); v_loss_reason text := nullif(btrim(coalesce(p_loss_reason,''), E' \\t\\r\\n'), ''); v_is_staff boolean; v_is_operator boolean; v_processed boolean := false; v_new_approved integer; v_rejected_quantity integer; v_received_quantity integer; v_over_rejection boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; if p_quantity is null or p_quantity <= 0 then raise exception 'Quantidade deve ser positiva'; end if; -- Papéis ativos: has_any_active_role() rejeita usuário desativado/removido. if not public.has_any_active_role() then raise exception 'Usuário sem papel ativo'; end if; v_is_staff := public.has_role(v_uid, 'coordinator') o …",
     "raises": [
      "Não autenticado",
      "Quantidade deve ser positiva",
      "Usuário sem papel ativo",
+     "Sem autorização para registrar defeito nesta tarefa",
+     "Rejeição excede a quantidade recebida (restante: %)",
      "Sem autorização para registrar defeito nesta tarefa"
     ],
     "tables": [
      "com",
      "packaging_defects",
      "packaging_tasks",
+     "v_new_approved",
      "v_processed"
     ]
    },
@@ -61331,6 +61440,26 @@
      "inventory_items"
     ]
    },
+   "update_shipment_status": {
+    "args": "p_shipment_id uuid, p_status text",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "declare v_uid uuid := auth.uid(); v_job_id uuid; v_current_status text; v_blocked boolean := false; begin if v_uid is null then raise exception 'Não autenticado'; end if; -- Só staff (coordenador/gerente/admin) altera envio; operador não. if not ( public.has_role(v_uid, 'coordinator') or public.has_role(v_uid, 'manager') or public.has_role(v_uid, 'admin') ) then raise exception 'Sem permissão para alterar envio'; end if; select job_id, status into v_job_id, v_current_status from public.shipments where id = p_shipment_id; if not found then raise exception 'Envio não encontrado'; end if; -- Bloqueio de negócio (thread 12): despacho de job com embalagem em espera -- não pode seguir para in_tran …",
+    "raises": [
+     "Não autenticado",
+     "Sem permissão para alterar envio",
+     "Envio não encontrado"
+    ],
+    "tables": [
+     "packaging_tasks",
+     "shipments",
+     "v_current_status",
+     "v_job_id"
+    ]
+   },
    "update_updated_at_column": {
     "args": "",
     "returns": "trigger",
@@ -61435,11 +61564,12 @@
     "src": "docs/contexto/supabase/functions/public/verify_audit_chain__150fe0300b13032f.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE _rec RECORD; _expected TEXT; _total BIGINT := 0; _ok BIGINT := 0; _bad BIGINT := 0; _first_bad UUID := NULL; BEGIN IF NOT (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator') OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager')) THEN RAISE EXCEPTION 'Access denied' USING ERRCODE = '42501'; END IF; FOR _rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LIMIT _limit LOOP _total := _total + 1; _expected := public.compute_audit_hash( _rec.entity_type, _rec.entity_id, _rec.action, _rec.actor_id, _rec.old_data, _rec.new_data, _rec.previous_hash, _rec.created_at ); IF _expected = _rec.hash THEN _ok := _ok + 1; ELSE _bad := _bad + 1; IF _first_bad …",
+    "body": "DECLARE _rec public.audit_log; _expected TEXT; _anchored TEXT := 'GENESIS'; _total BIGINT := 0; _ok BIGINT := 0; _bad BIGINT := 0; _first_bad UUID := NULL; BEGIN IF NOT (app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator') OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager')) THEN RAISE EXCEPTION 'Access denied' USING ERRCODE = '42501'; END IF; FOR _rec IN SELECT * FROM public.audit_log ORDER BY created_at ASC, id ASC LIMIT _limit LOOP _total := _total + 1; -- Registro historico sem hash (pre-fix, actor NULL): preserva e avanca -- sem reescrever. A ancora so avanca quando ha um hash valido. IF _rec.hash IS NULL THEN CONTINUE; END IF; -- 1) ELO: previous_hash deve ser a …",
     "raises": [
      "Access denied"
     ],
     "tables": [
+     "_anchored",
      "audit_log"
     ]
    }
@@ -61519,6 +61649,11 @@
     "src": "docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql"
    },
    {
+    "function": "preventdefault_hold_shipment_update",
+    "msg": "Envio retido pela embalagem em espera; use update_shipment_status",
+    "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql"
+   },
+   {
     "function": "record_packaging_defect",
     "msg": "Não autenticado",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
@@ -61537,6 +61672,31 @@
     "function": "record_packaging_defect",
     "msg": "Sem autorização para registrar defeito nesta tarefa",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "record_packaging_defect",
+    "msg": "Rejeição excede a quantidade recebida (restante: %)",
+    "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "record_packaging_defect",
+    "msg": "Sem autorização para registrar defeito nesta tarefa",
+    "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Não autenticado",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Sem permissão para alterar envio",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
+   },
+   {
+    "function": "update_shipment_status",
+    "msg": "Envio não encontrado",
+    "src": "docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql"
    },
    {
     "function": "validate_inventory_stock",
@@ -63260,7 +63420,6 @@
  },
  "access": {
   "roles": [
-   "IN",
    "admin",
    "assistant",
    "coordinator",
@@ -65364,6 +65523,7 @@
    "on_job_finished_create_packaging_task",
    "on_packaging_defect_create_rework_job",
    "on_packaging_ready_create_shipment",
+   "preventdefault_hold_shipment_update",
    "purge_old_logs",
    "record_packaging_defect",
    "rollback_inventory_stock",
@@ -65372,6 +65532,7 @@
    "trigger_auto_promotion",
    "trigger_send_tpm_email",
    "update_inventory_stock",
+   "update_shipment_status",
    "validate_inventory_stock",
    "validate_stock_before_movement",
    "verify_audit_chain",
@@ -68047,13 +68208,6 @@
     "msg": "RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot)",
     "where": [
      "src/features/production/hooks/useProductionLosses.ts"
-    ]
-   },
-   {
-    "kind": "rpc",
-    "msg": "RPC `update_shipment_status` chamada mas não definida no banco real (snapshot)",
-    "where": [
-     "src/features/inventory/hooks/useLogistics.ts"
     ]
    },
    {
@@ -96700,10 +96854,19 @@
   }
  },
  "git": {
-  "sha": "156312d893c702609e5bf6815d3bf96c79dc598f",
+  "sha": "678916254dab187b517d20a7f68ab565d2de240f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6789162",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "ci: db push com --include-all para migrations fora de ordem (#273)",
+    "files": [
+     ".github/workflows/deploy.yml"
+    ]
+   },
    {
     "sha": "156312d",
     "date": "2026-11-23",
@@ -97060,36 +97223,6 @@
      "src/pages/AuthPage.tsx",
      "supabase/functions/check-login-lockout/index.ts"
     ]
-   },
-   {
-    "sha": "65e7fc5",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: tracking público /track volta a funcionar (RPC SECURITY DEFINER) (#234)",
-    "files": [
-     "docs/pendencias/F-001-tracking-p-blico-track-sem-acesso.md",
-     "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
-     "docs/pendencias/F-004-bloqueio-de-ip-in-cuo.md",
-     "docs/pendencias/F-005-allowlist-de-ip-in-cua.md",
-     "docs/pendencias/F-006-geo-blocking-sem-enforcement.md",
-     "docs/pendencias/F-007-permissionmanager-in-cuo.md",
-     "docs/pendencias/F-008-web-push-sem-criptografia.md",
-     "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
-     "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
-     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
-     "docs/pendencias/F-012-assinatura-eletr-nica-falsa.md",
-     "docs/pendencias/F-013-upload-de-evid-ncia-bloqueado.md",
-     "docs/pendencias/F-014-jobqrcode-e-qrscanner-incompat-veis.md",
-     "docs/pendencias/F-015-kanbanboard-escreve-jobs-status-direto.md",
-     "docs/pendencias/F-016-troca-de-papel-quebrada.md",
-     "docs/pendencias/_linha-de-base.md",
-     "src/features/inventory/hooks/useLogistics.ts",
-     "src/integrations/supabase/types.ts",
-     "src/pages/LogisticsPage.tsx",
-     "src/pages/PublicTrackingPage.tsx",
-     "supabase/migrations/20261120173500_public_tracking_rpc.sql",
-     "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -97126,27 +97259,7 @@
     2
    ],
    [
-    "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
-    2
-   ],
-   [
-    "src/features/inventory/hooks/useLogistics.ts",
-    2
-   ],
-   [
     "src/features/packaging/services/packagingService.ts",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/pages/LogisticsPage.tsx",
-    2
-   ],
-   [
-    "docs/pendencias/F-007-permissionmanager-in-cuo.md",
     2
    ],
    [
@@ -97154,24 +97267,44 @@
     2
    ],
    [
-    "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
+    "src/features/auth/components/AuthProvider.test.tsx",
     2
    ],
    [
-    "docs/pendencias/F-002-reset-de-senha-inacess-vel.md",
+    "src/pages/AuthPage.tsx",
     2
    ],
    [
-    "docs/pendencias/F-008-web-push-sem-criptografia.md",
-    2
+    ".github/workflows/deploy.yml",
+    1
    ],
    [
-    "docs/pendencias/F-013-upload-de-evid-ncia-bloqueado.md",
-    2
+    "scripts/audit/run.mjs",
+    1
    ],
    [
-    "docs/pendencias/F-015-kanbanboard-escreve-jobs-status-direto.md",
-    2
+    "scripts/autofix/unused.mjs",
+    1
+   ],
+   [
+    "scripts/check-any-baseline.test.mjs",
+    1
+   ],
+   [
+    "src/components/auth/PasswordStrengthIndicator.tsx",
+    1
+   ],
+   [
+    "src/hooks/use-swipe-gesture.tsx",
+    1
+   ],
+   [
+    "src/lib/pdfExport.ts",
+    1
+   ],
+   [
+    "supabase/functions/health-monitor/index.ts",
+    1
    ]
   ]
  }

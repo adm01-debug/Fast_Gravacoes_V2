@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `156312d893` · branch `main` · 2026-11-23 14:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `678916254d` · branch `main` · 2026-11-23 16:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T14:20:35Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T15:29:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -247,7 +247,6 @@
 | rpc | RPC `count_active_operators_since` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
 | rpc | RPC `count_running_machines` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
 | rpc | RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot) | `src/features/production/hooks/useProductionLosses.ts` |
-| rpc | RPC `update_shipment_status` chamada mas não definida no banco real (snapshot) | `src/features/inventory/hooks/useLogistics.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataExport.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/features/admin/hooks/useDataImport.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useBulkActions.ts` |

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `156312d893` · branch `main` · 2026-11-23 14:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `678916254d` · branch `main` · 2026-11-23 16:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T14:20:35Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T15:29:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T14:20:35Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T15:29:08Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -452,7 +452,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T14:20:35Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T15:29:08Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -729,7 +729,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `job_status_history` | `id` | PK; default gen_random_uuid() |
 | `job_status_history` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
 | `job_status_history` | `new_status` | obrigatório |
-| `job_status_history` | `changed_by` | FK → users.id |
+| `job_status_history` | `changed_by` | FK → profiles.id on delete set null |
 | `job_status_history` | `created_at` | default now() |
 | `jobs` | `id` | PK; default gen_random_uuid() |
 | `jobs` | `order_number` | obrigatório; único |
@@ -1495,7 +1495,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T14:20:35Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T15:29:08Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1568,6 +1568,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | update_shift_handovers_updated_at | BEFORE UPDATE | `shift_handovers` | `update_updated_at_column` |  |
 | update_shift_pending_tasks_updated_at | BEFORE UPDATE | `shift_pending_tasks` | `update_updated_at_column` |  |
 | audit_shipments_trigger | AFTER INSERT OR DELETE OR UPDATE | `shipments` | `audit_logistics_changes` |  |
+| trg_prevent_hold_shipment_update | BEFORE UPDATE | `shipments` | `preventdefault_hold_shipment_update` |  |
 | update_shipments_updated_at | BEFORE UPDATE | `shipments` | `update_updated_at_column` |  |
 | audit_shipping_providers_trigger | AFTER INSERT OR DELETE OR UPDATE | `shipping_providers` | `audit_logistics_changes` |  |
 | update_shipping_providers_updated_at | BEFORE UPDATE | `shipping_providers` | `update_updated_at_column` |  |
@@ -1612,10 +1613,16 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `enforce_packaging_checklist_before_ship` | Existem % item(ns) obrigatório(s) do checklist de conferência ainda não marcados. Conclua o checklist antes de liberar para envio. | `docs/contexto/supabase/functions/public/enforce_packaging_checklist_before_ship__12ae32cb1ec02d01.sql` |
 | `get_cron_health` | Access denied | `docs/contexto/supabase/functions/public/get_cron_health__12ae32cb1ec02d01.sql` |
 | `get_system_status_summary` | Access denied | `docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql` |
+| `preventdefault_hold_shipment_update` | Envio retido pela embalagem em espera; use update_shipment_status | `docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql` |
 | `record_packaging_defect` | Não autenticado | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Quantidade deve ser positiva | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Usuário sem papel ativo | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Sem autorização para registrar defeito nesta tarefa | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
+| `record_packaging_defect` | Rejeição excede a quantidade recebida (restante: %) | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
+| `record_packaging_defect` | Sem autorização para registrar defeito nesta tarefa | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
+| `update_shipment_status` | Não autenticado | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
+| `update_shipment_status` | Sem permissão para alterar envio | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
+| `update_shipment_status` | Envio não encontrado | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
 | `validate_inventory_stock` | Estoque insuficiente para o item %: solicitado %, disponível % | `docs/contexto/supabase/functions/public/validate_inventory_stock__12ae32cb1ec02d01.sql` |
 | `validate_job_cancel_reason` | cancel_reason é obrigatório ao cancelar um job | `docs/contexto/supabase/functions/public/validate_job_cancel_reason__12ae32cb1ec02d01.sql` |
 | `validate_job_rework_depth` | Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai) | `docs/contexto/supabase/functions/public/validate_job_rework_depth__12ae32cb1ec02d01.sql` |
@@ -1625,7 +1632,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T14:20:35Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T15:29:08Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|

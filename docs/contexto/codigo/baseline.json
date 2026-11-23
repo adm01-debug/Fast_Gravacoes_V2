@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "156312d893c702609e5bf6815d3bf96c79dc598f",
+  "commit": "678916254dab187b517d20a7f68ab565d2de240f",
   "branch": "main",
-  "data_commit": "2026-11-23T11:45:12-03:00",
+  "data_commit": "2026-11-23T13:00:45-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6789162",
+    "data": "2026-11-23",
+    "assunto": "ci: db push com --include-all para migrations fora de ordem (#273)"
+   },
    {
     "sha": "156312d",
     "data": "2026-11-23",
@@ -126,11 +131,6 @@
     "sha": "6d6591c",
     "data": "2026-11-21",
     "assunto": "chore: remove function orfã rate-limit-check e marca F-006 como resolvida (#241)"
-   },
-   {
-    "sha": "3c05e4e",
-    "data": "2026-11-21",
-    "assunto": "fix: F-006 geo-blocking enforced no login (#240)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -223,12 +223,12 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/audit-gate.mjs",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 8
+    "arquivo": "scripts/audit-gate.mjs",
+    "mudancas": 9
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 122
+    "commits": 123
    },
    {
     "autor": "devin-ai-integration[bot]",
