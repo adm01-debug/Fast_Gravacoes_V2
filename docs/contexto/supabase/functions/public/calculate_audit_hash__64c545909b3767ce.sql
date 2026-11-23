@@ -9,7 +9,7 @@ BEGIN
     rec.entity_type ||
     rec.entity_id ||
     rec.action ||
-    rec.actor_id::text ||
+    COALESCE(rec.actor_id::text, '') ||
     COALESCE(rec.old_data::text, '') ||
     COALESCE(rec.new_data::text, '') ||
     rec.created_at::text

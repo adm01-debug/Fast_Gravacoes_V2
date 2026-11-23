@@ -6,25 +6,8 @@ CREATE OR REPLACE FUNCTION public.audit_job_status_change()
 AS $function$
 BEGIN
     IF (OLD.status IS DISTINCT FROM NEW.status) THEN
-        INSERT INTO public.audit_log (
-            entity_type,
-            entity_id,
-            action,
-            actor_id,
-            old_values,
-            new_values,
-            changed_fields,
-            metadata
-        ) VALUES (
-            'job',
-            NEW.id,
-            'status_change',
-            auth.uid(),
-            jsonb_build_object('status', OLD.status),
-            jsonb_build_object('status', NEW.status),
-            ARRAY['status'],
-            jsonb_build_object('order_number', NEW.order_number)
-        );
+        INSERT INTO public.job_status_history (job_id, previous_status, new_status, changed_by)
+        VALUES (NEW.id, OLD.status, NEW.status, auth.uid());
     END IF;
     RETURN NEW;
 END;

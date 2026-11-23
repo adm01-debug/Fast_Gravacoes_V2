@@ -253,5 +253,8 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261120160000 | [fix_inventory_movements_write_policies](migrations/20261120160000_fix_inventory_movements_write_policies.sql) | 5 |
 | 20261120173500 | [public_tracking_rpc](migrations/20261120173500_public_tracking_rpc.sql) | 4 |
 | 20261120203000 | [public_tracking_remove_client](migrations/20261120203000_public_tracking_remove_client.sql) | 4 |
+| 20261121110000 | [fix_audit_triggers_old_values](migrations/20261121110000_fix_audit_triggers_old_values.sql) | 13 |
 | 20261122010000 | [seed_role_permissions](migrations/20261122010000_seed_role_permissions.sql) | 0 |
+| 20261122120000 | [f010_rpc_record_defect_atomic](migrations/20261122120000_f010_rpc_record_defect_atomic.sql) | 11 |
+| 20261122150000 | [f010_v3_shipment_hold_e_qtde](migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql) | 7 |
 | 20261123000000 | [enforce_energy_read_permission_rls](migrations/20261123000000_enforce_energy_read_permission_rls.sql) | 22 |

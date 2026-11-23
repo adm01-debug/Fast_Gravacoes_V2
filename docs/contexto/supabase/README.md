@@ -22,15 +22,15 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | tabelas | 131 |
 | colunas | 1314 |
 | views | 0 |
-| functions | 79 |
-| triggers | 97 |
+| functions | 81 |
+| triggers | 98 |
 | policies (RLS) | 336 |
 | índices | 379 |
 | tipos/enums | 3 |
 | extensões | 7 |
 | cron jobs | 7 |
 | filas pgmq | 0 |
-| migrations | 251 |
+| migrations | 254 |
 | buckets | 4 |
 | edge functions | 33 |
 | webhooks | 0 |

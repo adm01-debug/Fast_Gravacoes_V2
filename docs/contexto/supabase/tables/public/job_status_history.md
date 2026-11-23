@@ -28,7 +28,7 @@
 
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
-| job_status_history_changed_by_fkey | FOREIGN KEY | `FOREIGN KEY (changed_by) REFERENCES auth.users(id)` | NO ACTION | NO ACTION | sim |
+| job_status_history_changed_by_fkey | FOREIGN KEY | `FOREIGN KEY (changed_by) REFERENCES profiles(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | job_status_history_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | job_status_history_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 

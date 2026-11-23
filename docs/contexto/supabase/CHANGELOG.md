@@ -2,6 +2,17 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 15:29 UTC
+
+- **constraints** alterado (1): `public.job_status_history.job_status_history_changed_by_fkey`
+- **edge functions** alterado (1): `health-monitor`
+- **functions** adicionado (2): `public.preventdefault_hold_shipment_update()`, `public.update_shipment_status(p_shipment_id uuid, p_status text)`
+- **functions** alterado (6): `public.assign_packaging_task(p_task_id uuid)`, `public.audit_job_status_change()`, `public.calculate_audit_hash(rec audit_log)`, `public.log_job_status_change()`, `public.record_packaging_defect(p_task_id uuid, p_quantity integer, p_defect_type text, p_severity text, p_decision text, p_photo_url text, p_notes text, p_loss_reason text, p_request_id uuid)`, `public.verify_audit_chain(_limit integer)`
+- **lints** adicionado (1): `rpc_anon_executable:public.update_shipment_status(p_shipment_id uuid, p_status text)`
+- **lints** removido (1): `rpc_anon_executable:public.verify_audit_chain(_limit integer)`
+- **migrations** adicionado (3): `20261121110000_fix_audit_triggers_old_values`, `20261122120000_f010_rpc_record_defect_atomic`, `20261122150000_f010_v3_shipment_hold_e_qtde`
+- **triggers** adicionado (1): `public.shipments.trg_prevent_hold_shipment_update`
+
 ## 2026-11-23 11:30 UTC
 
 - **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`

@@ -87,6 +87,7 @@
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
 | audit_shipments_trigger | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.audit_logistics_changes |
+| trg_prevent_hold_shipment_update | BEFORE | UPDATE | ROW | enabled | public.preventdefault_hold_shipment_update |
 | update_shipments_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

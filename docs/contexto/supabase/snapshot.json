@@ -503,9 +503,9 @@
         "name": "health-monitor",
         "slug": "health-monitor",
         "status": "ACTIVE",
-        "updated_at": 1795431243367,
+        "updated_at": 1795447683762,
         "verify_jwt": true,
-        "version": 139
+        "version": 140
       },
       {
         "created_at": 1791379408255,
@@ -19400,15 +19400,15 @@
           "changed_by"
         ],
         "deferrable": false,
-        "definition": "FOREIGN KEY (changed_by) REFERENCES auth.users(id)",
+        "definition": "FOREIGN KEY (changed_by) REFERENCES profiles(id) ON DELETE SET NULL",
         "name": "job_status_history_changed_by_fkey",
-        "on_delete": "NO ACTION",
+        "on_delete": "SET NULL",
         "on_update": "NO ACTION",
         "ref_columns": [
           "id"
         ],
-        "ref_schema": "auth",
-        "ref_table": "users",
+        "ref_schema": "public",
+        "ref_table": "profiles",
         "schema": "public",
         "table": "job_status_history",
         "type": "FOREIGN KEY",
@@ -24766,6 +24766,7 @@
             "public.get_cron_health",
             "public.has_permission",
             "public.record_packaging_defect",
+            "public.update_shipment_status",
             "public.verify_audit_chain"
           ],
           "triggers": [],
@@ -24926,7 +24927,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "25f314d897899515",
+        "definition_sha": "13d8dbd9abec246b",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -25016,9 +25017,9 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "a78754d8715f72e1",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "904e5032398c45e4",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -25421,7 +25422,7 @@
         "comment": null,
         "config": null,
         "definition": null,
-        "definition_sha": "6695f9b5f3e268fc",
+        "definition_sha": "6a4afd2ab8e710de",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": false,
@@ -25658,8 +25659,7 @@
           "code_total_files": 4,
           "cron": [],
           "db": [
-            "public.audit_trigger_func",
-            "public.verify_audit_chain"
+            "public.audit_trigger_func"
           ],
           "triggers": [],
           "views": []
@@ -26512,6 +26512,7 @@
             "public.get_cron_health",
             "public.has_permission",
             "public.record_packaging_defect",
+            "public.update_shipment_status",
             "public.verify_audit_chain"
           ],
           "triggers": [],
@@ -26706,9 +26707,9 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "0544191d5b62a5bc",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "62a5378d9e564a16",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -27203,6 +27204,43 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.shipments.trg_prevent_hold_shipment_update"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "21de0cb69e415295",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "preventdefault_hold_shipment_update",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260512180411_f99a244d-b109-4109-9787-0f907e4a9c14.sql",
               "hits": 1
             },
@@ -27400,7 +27438,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "a837ea138a64cdb7",
+        "definition_sha": "353e3e31e3212e54",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -27763,6 +27801,41 @@
         "name": "update_inventory_stock",
         "owner": "postgres",
         "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_shipment_id uuid, p_status text",
+        "callers": {
+          "code": [
+            {
+              "file": "src/features/inventory/hooks/useLogistics.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "a5e724a68fb3411c",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "update_shipment_status",
+        "owner": "postgres",
+        "returns": "text",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -28219,9 +28292,9 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "99f6516443b71834",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "d384de3b0156ffea",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -36965,13 +37038,13 @@
       {
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.verify_audit_chain()",
+        "object": "public.update_shipment_status(p_shipment_id uuid, p_status text)",
         "severity": "INFO"
       },
       {
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.verify_audit_chain(_limit integer)",
+        "object": "public.verify_audit_chain()",
         "severity": "INFO"
       }
     ],
@@ -38470,9 +38543,27 @@
         "version": "20261120203000"
       },
       {
+        "name": "fix_audit_triggers_old_values",
+        "statements": 13,
+        "statements_sha": "f63930384bc05f18",
+        "version": "20261121110000"
+      },
+      {
         "name": "seed_role_permissions",
         "statements": [],
         "version": "20261122010000"
+      },
+      {
+        "name": "f010_rpc_record_defect_atomic",
+        "statements": 11,
+        "statements_sha": "487f20ebb4948581",
+        "version": "20261122120000"
+      },
+      {
+        "name": "f010_v3_shipment_hold_e_qtde",
+        "statements": 7,
+        "statements_sha": "918e04bdb2d52f8d",
+        "version": "20261122150000"
       },
       {
         "name": "enforce_energy_read_permission_rls",
@@ -45606,6 +45697,17 @@
         "status": "enabled",
         "table": "shipments",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_prevent_hold_shipment_update BEFORE UPDATE ON shipments FOR EACH ROW EXECUTE FUNCTION preventdefault_hold_shipment_update()",
+        "events": "UPDATE",
+        "function": "public.preventdefault_hold_shipment_update",
+        "level": "ROW",
+        "name": "trg_prevent_hold_shipment_update",
+        "schema": "public",
+        "status": "enabled",
+        "table": "shipments",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER update_shipments_updated_at BEFORE UPDATE ON shipments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",

@@ -21,7 +21,7 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | excel-export | excel-export | ACTIVE | 140 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/excel-export/index.ts |
 | external-db-bridge | external-db-bridge | ACTIVE | 138 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/external-db-bridge/index.ts |
 | health-check | health-check | ACTIVE | 140 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-check/index.ts |
-| health-monitor | health-monitor | ACTIVE | 139 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts |
+| health-monitor | health-monitor | ACTIVE | 140 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts |
 | image-optimizer | image-optimizer | ACTIVE | 132 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts |
 | metrics-collector | metrics-collector | ACTIVE | 139 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts |
 | ml-predictions | ml-predictions | ACTIVE | 140 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/ml-predictions/index.ts |

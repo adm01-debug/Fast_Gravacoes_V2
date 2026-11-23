@@ -37,6 +37,7 @@
 | tabela | constraint | colunas | on delete |
 |---|---|---|---|
 | public.inventory_movements | inventory_movements_user_id_fkey | user_id | SET NULL |
+| public.job_status_history | job_status_history_changed_by_fkey | changed_by | SET NULL |
 | public.user_roles | user_roles_user_id_fkey | user_id | CASCADE |
 
 

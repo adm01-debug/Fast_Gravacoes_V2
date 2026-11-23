@@ -26,7 +26,7 @@
 | public.ip_allowlist | user_id | auth.users | id | CASCADE | NO ACTION |
 | public.job_status_audit | changed_by | auth.users | id | NO ACTION | NO ACTION |
 | public.job_status_audit | job_id | public.jobs | id | CASCADE | NO ACTION |
-| public.job_status_history | changed_by | auth.users | id | NO ACTION | NO ACTION |
+| public.job_status_history | changed_by | public.profiles | id | SET NULL | NO ACTION |
 | public.job_status_history | job_id | public.jobs | id | CASCADE | NO ACTION |
 | public.jobs | machine_id | public.machines | id | NO ACTION | NO ACTION |
 | public.jobs | operator_id | auth.users | id | NO ACTION | NO ACTION |
