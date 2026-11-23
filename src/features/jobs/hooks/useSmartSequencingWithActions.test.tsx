@@ -26,6 +26,19 @@ vi.mock('@/features/production', () => ({
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
+const dateKeyCalls = vi.hoisted(() => ({ count: 0 }));
+
+vi.mock('@/lib/dateUtils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/dateUtils')>();
+  return {
+    ...actual,
+    formatDateOnly: (date: Date) => {
+      dateKeyCalls.count += 1;
+      return actual.formatDateOnly(date);
+    },
+  };
+});
+
 import { useSmartSequencingWithActions, type SequencingSuggestion } from './useSmartSequencingWithActions';
 import { formatDateOnly } from '@/lib/dateUtils';
 
@@ -61,6 +74,7 @@ function renderSequencing() {
 describe('useSmartSequencingWithActions', () => {
   beforeEach(() => {
     rpcMock.mockReset();
+    dateKeyCalls.count = 0;
     fx.jobs = [];
     fx.machines = [];
     fx.techniques = [];
@@ -84,6 +98,8 @@ describe('useSmartSequencingWithActions', () => {
 
     expect(result.current.suggestions).toHaveLength(1);
     expect(result.current.suggestions[0].date).toBe(todayKey);
+    // A chave do dia vem do helper de data local, nao de toISOString().
+    expect(dateKeyCalls.count).toBeGreaterThan(0);
   });
 
   it('aplica a sequencia via RPC transacional com os horarios calculados', async () => {
