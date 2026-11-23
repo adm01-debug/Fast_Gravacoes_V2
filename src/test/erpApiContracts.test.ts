@@ -47,7 +47,7 @@ describe('ERP Job Create — valid payloads', () => {
     client: 'Cliente',
     product: 'Produto',
     quantity: 100,
-    technique_id: VALID_UUID,
+    technique_id: 'laser-co2',
   };
 
   it.each(PRIORITIES)('priority=%s → valid', (priority) => {
@@ -83,6 +83,22 @@ describe('ERP Job Create — valid payloads', () => {
   it('quantity=0.5 (fractional) → valid (positive)', () => {
     expect(ERPJobRequestSchema.safeParse({ ...base, quantity: 0.5 }).success).toBe(true);
   });
+
+  // technique_id e TEXT no banco (public.techniques.id), nao UUID.
+  it('technique_id TEXT do banco → valid', () => {
+    expect(ERPJobRequestSchema.safeParse({ ...base, technique_id: 'laser-co2' }).success).toBe(true);
+    expect(ERPJobRequestSchema.safeParse({ ...base, technique_id: 'silk-textile' }).success).toBe(true);
+  });
+
+  it('com external_ref (idempotencia) → valid', () => {
+    const result = ERPJobRequestSchema.safeParse({ ...base, external_ref: 'os-uuid-da-origem' });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.external_ref).toBe('os-uuid-da-origem');
+  });
+
+  it('external_ref vazio → invalid', () => {
+    expect(ERPJobRequestSchema.safeParse({ ...base, external_ref: '' }).success).toBe(false);
+  });
 });
 
 // ── Job Create — invalid payloads ─────────────────────────────────────────
@@ -93,7 +109,7 @@ describe('ERP Job Create — invalid payloads', () => {
     client: 'Cliente',
     product: 'Produto',
     quantity: 100,
-    technique_id: VALID_UUID,
+    technique_id: 'laser-co2',
   };
 
   const invalidCases: [string, Record<string, unknown>][] = [
@@ -103,11 +119,11 @@ describe('ERP Job Create — invalid payloads', () => {
     ['quantity=0', { ...base, quantity: 0 }],
     ['quantity=-1', { ...base, quantity: -1 }],
     ['quantity=NaN', { ...base, quantity: NaN }],
-    ['technique_id not UUID', { ...base, technique_id: 'not-a-uuid' }],
+    ['technique_id vazio', { ...base, technique_id: '' }],
     ['machine_id not UUID', { ...base, machine_id: 'bad' }],
     ['scheduled_date wrong format', { ...base, scheduled_date: '20-05-2026' }],
     ['priority invalid', { ...base, priority: 'critical' }],
-    ['missing order_number', { client: 'C', product: 'P', quantity: 1, technique_id: VALID_UUID }],
+    ['missing order_number', { client: 'C', product: 'P', quantity: 1, technique_id: 'laser-co2' }],
     ['missing technique_id', { ...base, technique_id: undefined }],
     ['empty body', {}],
   ];
@@ -241,7 +257,7 @@ describe('ERP — 200 random valid job create payloads', () => {
       client: `Cliente ${Math.random().toString(36).slice(2, 8)}`,
       product: `Produto ${Math.random().toString(36).slice(2, 6)}`,
       quantity: Math.ceil(Math.random() * 1000),
-      technique_id: UUID,
+      technique_id: 'laser-co2',
       priority: PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)],
     };
   }

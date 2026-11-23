@@ -33,11 +33,15 @@ export const ERPJobRequestSchema = z.object({
   client: z.string().min(1),
   product: z.string().min(1),
   quantity: z.number().positive(),
-  technique_id: z.string().uuid(),
+  // public.techniques.id e TEXT ("laser-co2", "silk-textile"), nao UUID.
+  technique_id: z.string().min(1),
   priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
   scheduled_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   machine_id: z.string().uuid().optional(),
   notes: z.string().optional(),
+  // Chave de idempotencia do sistema de origem (ex.: id da OS no Promo Design).
+  // Reenvio com a mesma external_ref devolve o job existente em vez de duplicar.
+  external_ref: z.string().min(1).max(200).optional(),
 });
 
 export const ERPJobResponseSchema = z.object({

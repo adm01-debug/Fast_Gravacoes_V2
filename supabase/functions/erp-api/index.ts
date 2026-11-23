@@ -187,13 +187,38 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
       return jsonResponse(req, { error: validation.error, message: "Invalid job data", details: validation.details }, 400);
     }
 
+    // Idempotencia: reenvio da mesma origem devolve o job ja criado (200) em
+    // vez de estourar o indice unico parcial em external_ref.
+    const externalRef = (validation.data as { external_ref?: string }).external_ref;
+    if (externalRef) {
+      const { data: existing, error: findError } = await supabase
+        .from('jobs')
+        .select()
+        .eq('external_ref', externalRef)
+        .maybeSingle();
+      if (findError) throw findError;
+      if (existing) return jsonResponse(req, existing);
+    }
+
     const { data, error } = await supabase
       .from('jobs')
       .insert({ ...validation.data, status: 'queue' } as any)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // Corrida entre duas entregas simultaneas: a outra transacao gravou
+      // primeiro; devolve o job dela como sucesso.
+      if (error.code === '23505' && externalRef) {
+        const { data: raced } = await supabase
+          .from('jobs')
+          .select()
+          .eq('external_ref', externalRef)
+          .maybeSingle();
+        if (raced) return jsonResponse(req, raced);
+      }
+      throw error;
+    }
     return jsonResponse(req, data, 201);
   }
 

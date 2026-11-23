@@ -34,7 +34,7 @@ Deno.test("ERP Job Contract - Valid Request", async () => {
     client: "Acme Corp",
     product: "Engraved Pen",
     quantity: 50,
-    technique_id: "550e8400-e29b-41d4-a716-446655440000",
+    technique_id: "laser-co2",
     priority: "high",
     scheduled_date: "2026-05-20"
   };
@@ -49,7 +49,7 @@ Deno.test("ERP Job Contract - Missing Required Field", async () => {
     // client missing
     product: "Engraved Pen",
     quantity: 50,
-    technique_id: "550e8400-e29b-41d4-a716-446655440000"
+    technique_id: "laser-co2"
   };
   
   const result = await validateContract(ERPJobRequestSchema, payload);
@@ -62,7 +62,7 @@ Deno.test("ERP Job Contract - Invalid Priority", async () => {
     client: "Acme Corp",
     product: "Engraved Pen",
     quantity: 50,
-    technique_id: "550e8400-e29b-41d4-a716-446655440000",
+    technique_id: "laser-co2",
     priority: "super-urgent" // Invalid enum value
   };
   
