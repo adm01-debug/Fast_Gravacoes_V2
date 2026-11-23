@@ -49,7 +49,7 @@ export function useABCMutations({ activities, activityRates, jobs, techniques }:
         const activityRate = currentRates.find(r => r.activity_id === activity.id);
         if (!activityRate) continue;
 
-        let driverQuantity = 0;
+        let driverQuantity: number;
         switch (activity.cost_driver) {
           case 'machine_hours':
             driverQuantity = durationHours;

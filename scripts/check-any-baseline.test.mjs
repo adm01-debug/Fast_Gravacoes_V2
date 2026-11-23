@@ -6,7 +6,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync, syml
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import ts from 'typescript';
+import { createRequire } from 'module';
+const ts = createRequire(import.meta.url)('typescript');
 import { findAnyLines, isCounted, readBaseline, decide } from './check-any-baseline.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));

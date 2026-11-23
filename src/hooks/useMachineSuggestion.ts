@@ -47,7 +47,7 @@ export function useMachineSuggestion(techniqueId: string | null) {
         const loadPenalty = totalLoad;
         const score = 100 - Math.min(activeJobsPenalty + (loadPenalty / 10), 100);
 
-        let reason = '';
+        let reason: string;
         if (todayJobs.length === 0) {
           reason = 'Máquina livre hoje';
         } else if (todayJobs.length <= 2) {

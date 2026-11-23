@@ -20,7 +20,8 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import ts from 'typescript';
+import { createRequire } from 'module';
+const ts = createRequire(import.meta.url)('typescript');
 
 const args = process.argv.slice(2);
 const ROOT = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();

@@ -20,7 +20,7 @@ test.describe('Offline Syncing and Persistence', () => {
       } catch (err) {
         const crash = await readCrashDump().catch(() => null);
         if (crash) {
-          throw new Error(`${(err as Error).message}\n\n[ErrorBoundary crash detectado]: ${crash}`);
+          throw new Error(`${(err as Error).message}\n\n[ErrorBoundary crash detectado]: ${crash}`, { cause: err });
         }
         throw err;
       }

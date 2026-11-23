@@ -55,7 +55,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 15;
-  let yPosition = margin;
+  let yPosition: number;
 
   // Header
   doc.setFillColor(15, 23, 42); // Dark blue
