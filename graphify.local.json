@@ -2,7 +2,7 @@
   "version": 1,
   "project": "Fast_Gravacoes_V2",
   "environment": ".venv-graphify",
-  "pin": "0.9.48",
+  "pin": "0.9.115",
   "pythonVersion": "3.11",
   "state": ".venv-graphify/graphify-local-state",
     "output": "graphify-local-out",
