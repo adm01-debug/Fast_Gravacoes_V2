@@ -9,6 +9,8 @@ export interface ColorGroup {
 export interface SequencingSuggestion {
   id: string;
   machineId: string;
+  /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode ter uma sugestão por data. */
+  date?: string;
   machineName: string;
   machineCode: string;
   techniqueId: string;

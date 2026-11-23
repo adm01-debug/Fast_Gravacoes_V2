@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useJobs, useTechniques, DbJob } from '../index';
+import type { SequencingSuggestion, ColorGroup } from '../types/sequencing';
 import { useMachines } from '@/features/production';
 import { parseDateOnly } from '@/lib/dateUtils';
 import { toast } from 'sonner';
@@ -12,33 +13,7 @@ const SEQUENCING_ERROR_CONTEXT = {
   applyAllSequencing: { entity: 'jobs', operation: 'apply_all_sequencing' },
 };
 
-export interface SequencingSuggestion {
-  id: string;
-  machineId: string;
-  /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode gerar uma sugestão por data. */
-  date?: string;
-  machineName: string;
-  machineCode: string;
-  techniqueId: string;
-  techniqueName: string;
-  currentSequence: DbJob[];
-  optimizedSequence: DbJob[];
-  estimatedSavings: number; // minutes saved
-  colorGroups: ColorGroup[];
-  bottleneckRisk: 'low' | 'medium' | 'high';
-  totalMinutes: number;
-  currentChanges: number;
-  optimizedChanges: number;
-  totalQuantity: number;
-  aiPriorityScore: number;
-  setupComplexity: 'low' | 'medium' | 'high';
-}
-
-export interface ColorGroup {
-  color: string;
-  jobs: DbJob[];
-  jobCount: number;
-}
+export type { SequencingSuggestion, ColorGroup };
 
 export interface ApplySequencingResult {
   machineId: string;

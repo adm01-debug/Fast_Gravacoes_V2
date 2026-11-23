@@ -7,7 +7,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { DbJob } from '@/features/jobs';
 import { Clock, TrendingUp, AlertTriangle, Zap, Scale, Activity } from 'lucide-react';
 import { differenceInHours, differenceInDays } from 'date-fns';
-import { useSmartSequencing } from '@/features/jobs';
+import { useSmartSequencingWithActions as useSmartSequencing } from '@/features/jobs';
 import { useLoadBalancing } from '@/features/analytics/hooks/useLoadBalancing';
 
 interface KanbanMetricsBarProps {

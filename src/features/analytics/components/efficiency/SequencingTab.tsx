@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ArrowRight, Palette, Package, Loader2 } from 'lucide-react';
-import type { SequencingSuggestion } from '@/features/jobs/hooks/useSmartSequencingWithActions';
+import type { SequencingSuggestion } from '@/features/jobs';
 
 interface SequencingTabProps {
   suggestions: SequencingSuggestion[];
@@ -23,7 +23,12 @@ export function SequencingTab({ suggestions, onApply, isApplying }: SequencingTa
                 </div>
                 <div>
                   <CardTitle className="text-base">{suggestion.machineName}</CardTitle>
-                  <CardDescription>{suggestion.techniqueName}</CardDescription>
+                  <CardDescription>
+                    {suggestion.techniqueName}
+                    {suggestion.date
+                      ? ` · ${new Date(`${suggestion.date}T00:00:00`).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`
+                      : ''}
+                  </CardDescription>
                 </div>
               </div>
               <Badge variant="outline" className="bg-success/10 text-success border-success/30">
