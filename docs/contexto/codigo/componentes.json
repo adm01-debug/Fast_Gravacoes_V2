@@ -409,11 +409,12 @@
     "ProtectedRoute"
    ],
    "export_default": null,
-   "linhas": 156,
+   "linhas": 180,
    "dominio": "components/auth",
    "hooks_locais": [
     "useAuth",
-    "useAuthenticatorAssuranceLevel"
+    "useAuthenticatorAssuranceLevel",
+    "useRBAC"
    ],
    "tabelas": [],
    "edges": [],
@@ -5489,7 +5490,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 307,
+   "usado_por": 308,
    "orfao": false
   },
   {
@@ -6193,7 +6194,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 81,
+   "usado_por": 82,
    "orfao": false
   },
   {
@@ -6905,7 +6906,7 @@
     "PermissionManager"
    ],
    "export_default": null,
-   "linhas": 240,
+   "linhas": 252,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAuth",
@@ -6922,10 +6923,12 @@
     "PermissionMatrix"
    ],
    "export_default": null,
-   "linhas": 146,
+   "linhas": 218,
    "dominio": "features/admin",
    "hooks_locais": [],
-   "tabelas": [],
+   "tabelas": [
+    "role_permissions"
+   ],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -7924,7 +7927,7 @@
     "InventoryCard"
    ],
    "export_default": null,
-   "linhas": 193,
+   "linhas": 201,
    "dominio": "features/inventory",
    "hooks_locais": [],
    "tabelas": [],
@@ -9071,11 +9074,12 @@
     "DigitalTwin"
    ],
    "export_default": "DigitalTwin",
-   "linhas": 162,
+   "linhas": 178,
    "dominio": "pages",
    "hooks_locais": [
     "useEnergy",
-    "useKPIs"
+    "useKPIs",
+    "useRBAC"
    ],
    "tabelas": [],
    "edges": [],
@@ -9210,7 +9214,7 @@
     "InventoryPage"
    ],
    "export_default": "InventoryPage",
-   "linhas": 276,
+   "linhas": 278,
    "dominio": "pages",
    "hooks_locais": [
     "useDebounce",
@@ -9941,7 +9945,7 @@
     "AnimatedRoutes"
    ],
    "export_default": null,
-   "linhas": 279,
+   "linhas": 281,
    "dominio": "routes",
    "hooks_locais": [
     "useRoutePrefetch"

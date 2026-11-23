@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (88)",
+   "co-localizado (*.test) (89)",
    "outro (18)",
    "tests/ (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)",
    "fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)",
    "fix: confianca da predicao exibida na escala correta (0-100) (#258)",
    "docs: plano de 200 etapas de UX de navegacao (#260)",
-   "docs: plano de 190 etapas de melhorias e correcoes (#257)",
-   "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)"
+   "docs: plano de 190 etapas de melhorias e correcoes (#257)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

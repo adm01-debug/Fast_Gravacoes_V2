@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ca42441b1e` · branch `main` · 2026-11-22 19:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84eca7c2d3` · branch `main` · 2026-11-23 10:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-22T18:38:53Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-22T18:38:53Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T10:15:01Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -443,7 +443,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-22T18:38:53Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T10:15:01Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1486,7 +1486,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-22T18:38:53Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T10:15:01Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1616,7 +1616,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-22T18:38:53Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T10:15:01Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1797,7 +1797,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `warning` | compara, escreve | `src/components/dashboard/AlertsWidget.tsx`<br>`src/components/feedback/FeedbackProvider.tsx`<br>`src/components/knowledge/TechnicalSheetTab.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>… +8 |
 | `type` | `webhook` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
 | `type` | `window` | escreve | `public/sw.js` |
-| `role` | `admin` | compara, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>`src/features/auth/hooks/useRBAC.tsx`<br>… +3 |
+| `role` | `admin` | compara, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/admin/components/security/PermissionMatrix.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +4 |
 | `role` | `assistant` | compara, escreve | `src/components/assistant/TechnicalAssistant.tsx`<br>`src/components/technical-assistant/ChatArea.tsx`<br>`src/components/technical-assistant/ChatMessage.tsx`<br>`src/pages/TechnicalAssistantPage.tsx` |
 | `role` | `coordinator` | compara, escreve, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +5 |
 | `role` | `manager` | compara | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/components/navigation/MobileQuickActions.tsx`<br>`src/features/auth/components/AuthProvider.tsx` |
@@ -3161,6 +3161,7 @@ _nenhum item encontrado_
 | Erro ao desativar MFA | `src/features/auth/hooks/useMFA.ts` |
 | Erro ao iniciar cadastro MFA | `src/features/auth/hooks/useMFA.ts` |
 | Saldo insuficiente para realizar a saída | `src/features/inventory/components/inventory-page/InventoryCard.tsx` |
+| Você não tem permissão para registrar saídas de estoque | `src/features/inventory/components/inventory-page/InventoryCard.tsx` |
 | Estoque insuficiente de ${item.name} para realizar esta saída. | `src/features/inventory/hooks/useInventory.ts` |
 | Sessão expirada. Faça login novamente. | `src/features/inventory/hooks/useInventory.ts` |
 | Envio atualizado, mas falha ao sincronizar o job ${shipment.job_id}: ${jobError.message} | `src/features/inventory/hooks/useLogistics.ts` |
@@ -3233,8 +3234,7 @@ _nenhum item encontrado_
 | Erro ao enviar notificação de teste | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao salvar subscription | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Invalid subscription data | `src/features/notifications/hooks/usePushSubscription.ts` |
-| Permissão para notificações negada | `src/features/notifications/hooks/usePushSubscription.ts` |
-| … +238 linhas — lista completa em `context.json` | |
+| … +239 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3263,6 +3263,7 @@ _nenhum item encontrado_
 | `user` | `src/components/technical-assistant/ChatMessage.tsx` |
 | `perm` | `src/features/admin/components/security/PermissionManager.tsx` |
 | `selectedRole` | `src/features/admin/components/security/PermissionManager.tsx` |
+| `admin` | `src/features/admin/components/security/PermissionMatrix.tsx` |
 | `denied` | `src/features/admin/components/security/PushNotificationSettings.tsx` |
 | `admin` | `src/features/auth/components/AuthProvider.tsx` |
 | `coordinator` | `src/features/auth/components/AuthProvider.tsx` |
@@ -3291,7 +3292,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 
-## K. Testes como especificação (1288 testes em 105 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1301 testes em 106 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3325,6 +3326,7 @@ _nenhum item encontrado_
 | `src/test/exportSimulation.test.ts` | 15 | inventoryExport — simulação de cenários · não lança erro em 300 movimentos aleatórios com dados sujos · retorna silenciosamente com array vazio · retorna silenciosamente com null/undefined … |
 | `src/test/validation.test.ts` | 15 | safeParse · returns success:true with parsed data for valid input · returns success:false with ZodError for invalid input · captures missing required fields … |
 | `tests/e2e/navigation.spec.ts` | 15 | Botão Voltar · volta uma entrada do histórico interno · deep-link sem histórico interno cai no fallback (home, não sai do app) · Alt+B navega para trás … |
+| `src/features/auth/hooks/useRBAC.test.tsx` | 14 | useRBAC - permissoes do banco (F-007) · usa permissoes do banco como fonte primaria · faz fallback para o mapa estatico quando a consulta falha · banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007) … |
 | `scripts/audit-gate.test.mjs` | 13 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
 | `src/features/admin/hooks/useSystemStatusSummary.test.ts` | 13 | deriveCronStatus · retorna  · retorna  · retorna  … |
 | `src/features/jobs/services/jobStateMachine.test.ts` | 13 | jobStateMachine · canTransition · permite fluxo padrão: queue → scheduled → ready → production → finished · bloqueia transições ilegais críticas … |
@@ -3362,7 +3364,6 @@ _nenhum item encontrado_
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
-| `src/features/auth/hooks/useRBAC.test.tsx` | 5 | useRBAC - permissoes do banco (F-007) · usa permissoes do banco como fonte primaria · faz fallback para o mapa estatico quando a consulta falha · recurso:all cobre permissoes com dois-pontos e com ponto … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
 | `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico entre vercel.json e index.html · mantem o script-src identico entre vercel.json e index.html · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
@@ -3371,6 +3372,7 @@ _nenhum item encontrado_
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
 | `tests/e2e/production.spec.ts` | 5 | Production and Jobs Flow · should navigate to Kanban and verify jobs · should create a new job · should verify OEE Dashboard … |
 | `src/features/analytics/components/bi/BIStatCard.test.tsx` | 4 | BIStatCard · renders correctly with basic props · shows trend indicator when trend prop is provided · calls onClick when clicked |
+| `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
 | `src/features/analytics/hooks/useRealtimeConnection.test.ts` | 4 | useRealtimeConnection · should connect to realtime channel on mount · should handle connection errors · should remove channel on unmount |
 | `src/features/jobs/services/jobsService.test.ts` | 4 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
@@ -3480,6 +3482,7 @@ _nenhum item encontrado_
 | Hook for password validation | `src/components/auth/PasswordStrengthIndicator.tsx` |
 | precisam de um fator MFA VERIFICADO — não apenas do desafio de login. | `src/components/auth/ProtectedRoute.tsx` |
 | on the permission loader. Redirect to the safest available authenticated route. | `src/components/auth/ProtectedRoute.tsx` |
+| Permission gate: when a required permission is defined, the RBAC runtime | `src/components/auth/ProtectedRoute.tsx` |
 | the exhaustive-deps lint rule when used inside useEffect. | `src/components/autonomous/AutonomousEventLog.tsx` |
 | Determine the bottleneck limit for this specific column if applicable | `src/components/kanban/DroppableColumn.tsx` |
 | deve pedir confirmação de descarte do formulário atr��s dele. | `src/components/layout/MainLayout.tsx` |
@@ -3512,12 +3515,17 @@ _nenhum item encontrado_
 | realtime WS is reachable. The handler must be stable (useCallback) so | `src/contexts/WebSocketContext.tsx` |
 | * Tendência de longo prazo (até 365 dias) do p95 de duração por rotina, | `src/features/admin/components/monitoring/CronP95TrendCard.tsx` |
 | Permission Groups */} | `src/features/admin/components/security/PermissionManager.tsx` |
+| parte do catálogo estático (ex.: admin:all, ou uma permissão cadastrada | `src/features/admin/components/security/PermissionMatrix.tsx` |
+| Mesma fonte do hasPermission: com fallback estatico, permissao presente | `src/features/admin/components/security/PermissionMatrix.tsx` |
 | Info sobre permissão bloqueada */} | `src/features/admin/components/security/PushNotificationSettings.tsx` |
 | apenas por coordenadores/gestores (RLS). | `src/features/admin/hooks/useCronHealthHistory.ts` |
 | degradação de longo prazo, além da janela de 90 dias do histórico bruto. | `src/features/admin/hooks/useCronP95Daily.ts` |
 | limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes. | `src/features/admin/hooks/useDataExport.ts` |
 | Função SECURITY DEFINER que exige apenas um papel ativo — devolve somente | `src/features/admin/hooks/useSystemStatusSummary.ts` |
 | Data validation helpers | `src/features/analytics/hooks/useBottleneckPrediction.ts` |
+| false desativa as consultas (ex.: sem permissao energy:read o RLS | `src/features/analytics/hooks/useEnergy.ts` |
+| enabled=false (ex.: sem energy:read) nao deve computar stats com dados | `src/features/analytics/hooks/useEnergy.ts` |
+| RLS/permissao negando a leitura (energy:read revogada) produz erro de | `src/features/analytics/hooks/useEnergy.ts` |
 | Data validation helpers | `src/features/analytics/hooks/useKPIs.ts` |
 | Data validation helpers | `src/features/analytics/hooks/useLoadBalancing.ts` |
 | Assign jobs to machines with validation | `src/features/analytics/hooks/useLoadBalancing.ts` |
@@ -3530,6 +3538,7 @@ _nenhum item encontrado_
 | verificada, e a sessão recém-emitida não deve entrar. | `src/features/auth/components/AuthProvider.tsx` |
 | `ProtectedRoute` must not treat an AAL1 session as fully authenticated when | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts` |
 | Permission checks | `src/features/auth/hooks/useRBAC.tsx` |
+| enabled=false nenhuma rota pede permissao. Ambos nao consultam o banco. | `src/features/auth/hooks/useRBAC.tsx` |
 | 429 = rate limit esgotado no gate pré-login. Um IP que saturou o | `src/features/auth/services/authService.ts` |
 | bucket de check-login-lockout é exatamente quem a allowlist deve | `src/features/auth/services/authService.ts` |
 | sessão já emitida não deve ser revogada só porque a cota acabou. | `src/features/auth/services/authService.ts` |
@@ -3601,6 +3610,7 @@ _nenhum item encontrado_
 | * Runtime validation utilities using Zod. | `src/lib/validation.ts` |
 | Logs validation failures in dev mode. | `src/lib/validation.ts` |
 | errors must not throw into the caller; the caller already has the data in | `src/lib/offline/offlineQueue.ts` |
+| de consumo zero); por isso a consulta so roda quando a permissao existe | `src/pages/DigitalTwin.tsx` |
 | items antigo SEM modal — voltar até ela não pode restaurar a | `src/pages/InventoryPage.tsx` |
 | ').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; }, | `src/pages/NotificationsPage.tsx` |
 | papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring. | `src/pages/SystemStatusPage.tsx` |

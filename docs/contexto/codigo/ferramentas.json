@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1056)",
-   "SQL (257)",
+   "TypeScript (1058)",
+   "SQL (259)",
    "Markdown (102)",
    "JavaScript (54)",
    "JSON (33)",
@@ -1018,7 +1018,7 @@
    },
    {
     "papel": "admin",
-    "ocorrencias": 4
+    "ocorrencias": 5
    },
    {
     "papel": "assistant",

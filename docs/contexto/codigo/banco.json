@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 249,
+ "migrations": 251,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -74,6 +74,7 @@
   "handle_parameter_alert_notification",
   "handle_tpm_updated_at",
   "has_any_active_role",
+  "has_permission",
   "has_role",
   "increment_job_lost_pieces",
   "increment_sheet_view_count",
@@ -3325,13 +3326,25 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Active roles can manage energy alerts",
-     "comando": "all",
+     "nome": "Active roles can create energy alerts",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "Active users can view energy alerts",
+     "nome": "Active roles can delete energy alerts",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Active roles can update energy alerts",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Energy readers can view energy alerts",
      "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
@@ -3473,15 +3486,27 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Active users can view energy consumption",
-     "comando": "select",
+     "nome": "Coordinators can create energy consumption",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "Coordinators can manage energy consumption",
-     "comando": "all",
-     "para": "public",
+     "nome": "Coordinators can delete energy consumption",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Coordinators can update energy consumption",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Energy readers can view energy consumption",
+     "comando": "select",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -3609,15 +3634,27 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Active users can view energy targets",
-     "comando": "select",
+     "nome": "Coordinators can create energy targets",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "Coordinators can manage energy targets",
-     "comando": "all",
-     "para": "public",
+     "nome": "Coordinators can delete energy targets",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Coordinators can update energy targets",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Energy readers can view energy targets",
+     "comando": "select",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -11784,7 +11821,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 2,
+   "usada_no_front": 3,
    "usada_em_edges": [],
    "triggers": [
     "update_role_permissions_updated_at"

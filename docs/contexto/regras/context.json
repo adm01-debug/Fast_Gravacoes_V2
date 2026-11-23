@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
+  "sha": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-22 19:38 UTC",
-  "files_total": 1570,
-  "code_files": 1380,
-  "code_lines": 204697
+  "generated_at": "2026-11-23 10:51 UTC",
+  "files_total": 1574,
+  "code_files": 1384,
+  "code_lines": 205576
  },
  "version": "1.3.2",
- "facts_hash": "1c76348e280c7c4a",
+ "facts_hash": "2d7c747b27d0596e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,8 +281,8 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 659,
-   ".ts": 397,
-   ".sql": 257,
+   ".ts": 399,
+   ".sql": 259,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19290,6 +19290,8 @@
    "supabase/migrations/20261120160000_fix_inventory_movements_write_policies.sql",
    "supabase/migrations/20261120173500_public_tracking_rpc.sql",
    "supabase/migrations/20261120203000_public_tracking_remove_client.sql",
+   "supabase/migrations/20261122010000_seed_role_permissions.sql",
+   "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -20930,6 +20932,30 @@
     "objkind": "function",
     "roles": "anon, authenticated",
     "src": "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
    }
   ],
   "raises": [
@@ -21245,7 +21271,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 124
+    "deps_count": 125
    },
    {
     "path": "",
@@ -21273,7 +21299,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 86
+    "deps_count": 87
    },
    {
     "path": "",
@@ -21307,7 +21333,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 110
+    "deps_count": 111
    },
    {
     "path": "",
@@ -21410,7 +21436,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 304
+    "deps_count": 305
    },
    {
     "path": "",
@@ -21482,7 +21508,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 191
+    "deps_count": 192
    },
    {
     "path": "",
@@ -21499,7 +21525,7 @@
      "new-device-alert"
     ],
     "rpc_transitive": [],
-    "deps_count": 35
+    "deps_count": 36
    },
    {
     "path": "",
@@ -21591,7 +21617,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 229
+    "deps_count": 230
    },
    {
     "path": "",
@@ -21647,7 +21673,7 @@
     "rpc_transitive": [
      "verify_audit_chain"
     ],
-    "deps_count": 145
+    "deps_count": 146
    },
    {
     "path": "",
@@ -21719,7 +21745,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 187
+    "deps_count": 188
    },
    {
     "path": "",
@@ -21812,7 +21838,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 247
+    "deps_count": 248
    },
    {
     "path": "",
@@ -21847,7 +21873,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -21924,7 +21950,7 @@
      "complete_maintenance_record",
      "verify_audit_chain"
     ],
-    "deps_count": 177
+    "deps_count": 178
    },
    {
     "path": "",
@@ -21969,7 +21995,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 122
+    "deps_count": 123
    },
    {
     "path": "",
@@ -22054,7 +22080,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 213
+    "deps_count": 214
    },
    {
     "path": "",
@@ -22091,7 +22117,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 114
+    "deps_count": 115
    },
    {
     "path": "",
@@ -22171,7 +22197,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 205
+    "deps_count": 206
    },
    {
     "path": "",
@@ -22213,7 +22239,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 112
+    "deps_count": 113
    },
    {
     "path": "",
@@ -22260,7 +22286,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 107
+    "deps_count": 108
    },
    {
     "path": "",
@@ -22305,7 +22331,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 127
+    "deps_count": 128
    },
    {
     "path": "",
@@ -22389,7 +22415,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 213
+    "deps_count": 214
    },
    {
     "path": "",
@@ -22485,7 +22511,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 303
+    "deps_count": 304
    },
    {
     "path": "",
@@ -22563,7 +22589,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 163
+    "deps_count": 164
    },
    {
     "path": "",
@@ -22613,7 +22639,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 153
+    "deps_count": 154
    },
    {
     "path": "",
@@ -22666,7 +22692,7 @@
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 163
+    "deps_count": 164
    },
    {
     "path": "",
@@ -22747,7 +22773,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 186
+    "deps_count": 187
    },
    {
     "path": "",
@@ -22843,7 +22869,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 242
+    "deps_count": 243
    },
    {
     "path": "",
@@ -22878,7 +22904,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 109
+    "deps_count": 110
    },
    {
     "path": "",
@@ -22914,7 +22940,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 108
+    "deps_count": 109
    },
    {
     "path": "",
@@ -22995,7 +23021,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -23078,7 +23104,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 205
+    "deps_count": 206
    },
    {
     "path": "",
@@ -23138,7 +23164,7 @@
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 163
+    "deps_count": 164
    },
    {
     "path": "",
@@ -23224,7 +23250,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 269
+    "deps_count": 270
    },
    {
     "path": "",
@@ -23305,7 +23331,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 187
+    "deps_count": 188
    },
    {
     "path": "",
@@ -23377,7 +23403,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -23471,7 +23497,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 241
+    "deps_count": 242
    },
    {
     "path": "",
@@ -23554,7 +23580,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 219
+    "deps_count": 220
    },
    {
     "path": "",
@@ -23596,7 +23622,7 @@
     "rpc_transitive": [
      "get_packaging_leaderboard"
     ],
-    "deps_count": 157
+    "deps_count": 158
    },
    {
     "path": "",
@@ -23712,7 +23738,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 309
+    "deps_count": 310
    },
    {
     "path": "",
@@ -23756,7 +23782,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 123
+    "deps_count": 124
    },
    {
     "path": "",
@@ -23791,7 +23817,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 117
+    "deps_count": 118
    },
    {
     "path": "",
@@ -23839,7 +23865,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 116
+    "deps_count": 117
    },
    {
     "path": "",
@@ -23915,7 +23941,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 210
+    "deps_count": 211
    },
    {
     "path": "",
@@ -23989,7 +24015,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -24033,7 +24059,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 155
+    "deps_count": 156
    },
    {
     "path": "",
@@ -24069,7 +24095,7 @@
      "webhook-handler"
     ],
     "rpc_transitive": [],
-    "deps_count": 105
+    "deps_count": 106
    },
    {
     "path": "",
@@ -24109,7 +24135,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 117
+    "deps_count": 118
    },
    {
     "path": "",
@@ -24144,7 +24170,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 104
+    "deps_count": 105
    },
    {
     "path": "",
@@ -24218,7 +24244,7 @@
      "complete_maintenance_record",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 215
+    "deps_count": 216
    },
    {
     "path": "",
@@ -24255,7 +24281,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 120
+    "deps_count": 121
    },
    {
     "path": "",
@@ -24341,7 +24367,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 219
+    "deps_count": 220
    },
    {
     "path": "",
@@ -24421,7 +24447,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 219
+    "deps_count": 220
    },
    {
     "path": "",
@@ -24514,7 +24540,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 233
+    "deps_count": 234
    },
    {
     "path": "/rota-fantasma-que-nao-devia-contar",
@@ -24591,7 +24617,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 205
+    "deps_count": 206
    }
   ],
   "edge_functions": [
@@ -27327,7 +27353,7 @@
   {
    "module": "src/components",
    "files": 416,
-   "lines": 58793,
+   "lines": 58817,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -27602,7 +27628,7 @@
   {
    "module": "src/features/admin",
    "files": 55,
-   "lines": 6999,
+   "lines": 7083,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -27627,6 +27653,7 @@
     "query_telemetry",
     "rate_limit_logs",
     "rate_limit_settings",
+    "role_permissions",
     "security_events"
    ],
    "exports": [
@@ -27759,8 +27786,8 @@
   },
   {
    "module": "src/features/analytics",
-   "files": 78,
-   "lines": 11917,
+   "files": 79,
+   "lines": 12073,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -27916,6 +27943,7 @@
     "src/features/analytics/constants/oee.ts",
     "src/features/analytics/hooks/useBottleneckPrediction.ts",
     "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
+    "src/features/analytics/hooks/useEnergy.test.ts",
     "src/features/analytics/hooks/useEnergy.ts",
     "src/features/analytics/hooks/useExecutiveDashboard.ts",
     "src/features/analytics/hooks/useKPIs.test.ts",
@@ -27934,23 +27962,24 @@
   },
   {
    "module": "src/features/auth",
-   "files": 15,
-   "lines": 2538,
+   "files": 16,
+   "lines": 2824,
    "tables": [
     "profiles",
     "role_permissions",
     "user_roles"
    ],
    "exports": [
+    "permissions.ts: Permission, ROLE_PERMISSIONS, RESOURCE_LABELS, ACTION_LABELS, AVAILABLE_PERMISSIONS",
     "AuthProvider.tsx: AuthProvider",
     "useAuth.ts: useAuth",
     "useAuthenticatorAssuranceLevel.ts: useAuthenticatorAssuranceLevel",
     "useMFA.ts: useMFA",
-    "useRBAC.tsx: ROLE_PERMISSIONS, RBACResult, useRBAC, PermissionGate, RoleGate",
+    "useRBAC.tsx: RBACResult, useRBAC, PermissionGate, RoleGate",
     "useRolePermissions.ts: useRolePermissions",
     "useSessionTimeout.tsx: useSessionTimeout, SessionTimeoutDialog, SessionProvider",
     "authService.ts: LockoutStatus, AuthService",
-    "auth.types.ts: AppRole, Profile, AuthContextType, AuthContext, Permission, AVAILABLE_PERMISSIONS"
+    "auth.types.ts: AppRole, Profile, AuthContextType, AuthContext"
    ],
    "docs": [
     "AuthProvider.tsx: eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -27977,6 +28006,7 @@
    ],
    "file_list": [
     "src/features/auth/index.ts",
+    "src/features/auth/permissions.ts",
     "src/features/auth/components/AuthProvider.test.tsx",
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
@@ -27996,7 +28026,7 @@
   {
    "module": "src/features/inventory",
    "files": 13,
-   "lines": 2410,
+   "lines": 2418,
    "tables": [
     "inventory_items",
     "inventory_movements",
@@ -28980,7 +29010,7 @@
   {
    "module": "src/pages",
    "files": 58,
-   "lines": 16840,
+   "lines": 16858,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29180,7 +29210,7 @@
   {
    "module": "src/routes",
    "files": 1,
-   "lines": 279,
+   "lines": 281,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AnimatedRoutes"
@@ -29479,8 +29509,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 249,
-   "lines": 14720,
+   "files": 251,
+   "lines": 15021,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -30667,6 +30697,7 @@
    },
    "role_permissions": {
     "select": [
+     "src/features/admin/components/security/PermissionMatrix.tsx",
      "src/features/auth/hooks/useRBAC.tsx",
      "src/features/auth/hooks/useRolePermissions.ts"
     ],
@@ -34571,6 +34602,10 @@
     "msg": "Saldo insuficiente para realizar a saída"
    },
    {
+    "file": "src/features/inventory/components/inventory-page/InventoryCard.tsx",
+    "msg": "Você não tem permissão para registrar saídas de estoque"
+   },
+   {
     "file": "src/features/inventory/hooks/useInventory.ts",
     "msg": "Estoque insuficiente de ${item.name} para realizar esta saída."
    },
@@ -35909,6 +35944,10 @@
     "value": "selectedRole"
    },
    {
+    "file": "src/features/admin/components/security/PermissionMatrix.tsx",
+    "value": "admin"
+   },
+   {
     "file": "src/features/admin/components/security/PushNotificationSettings.tsx",
     "value": "denied"
    },
@@ -36051,6 +36090,10 @@
     "text": "on the permission loader. Redirect to the safest available authenticated route."
    },
    {
+    "file": "src/components/auth/ProtectedRoute.tsx",
+    "text": "Permission gate: when a required permission is defined, the RBAC runtime"
+   },
+   {
     "file": "src/components/autonomous/AutonomousEventLog.tsx",
     "text": "the exhaustive-deps lint rule when used inside useEffect."
    },
@@ -36179,6 +36222,14 @@
     "text": "Permission Groups */}"
    },
    {
+    "file": "src/features/admin/components/security/PermissionMatrix.tsx",
+    "text": "parte do catálogo estático (ex.: admin:all, ou uma permissão cadastrada"
+   },
+   {
+    "file": "src/features/admin/components/security/PermissionMatrix.tsx",
+    "text": "Mesma fonte do hasPermission: com fallback estatico, permissao presente"
+   },
+   {
     "file": "src/features/admin/components/security/PushNotificationSettings.tsx",
     "text": "Info sobre permissão bloqueada */}"
    },
@@ -36201,6 +36252,18 @@
    {
     "file": "src/features/analytics/hooks/useBottleneckPrediction.ts",
     "text": "Data validation helpers"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.ts",
+    "text": "false desativa as consultas (ex.: sem permissao energy:read o RLS"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.ts",
+    "text": "enabled=false (ex.: sem energy:read) nao deve computar stats com dados"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.ts",
+    "text": "RLS/permissao negando a leitura (energy:read revogada) produz erro de"
    },
    {
     "file": "src/features/analytics/hooks/useKPIs.ts",
@@ -36249,6 +36312,10 @@
    {
     "file": "src/features/auth/hooks/useRBAC.tsx",
     "text": "Permission checks"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.tsx",
+    "text": "enabled=false nenhuma rota pede permissao. Ambos nao consultam o banco."
    },
    {
     "file": "src/features/auth/services/authService.ts",
@@ -36533,6 +36600,10 @@
    {
     "file": "src/lib/offline/offlineQueue.ts",
     "text": "errors must not throw into the caller; the caller already has the data in"
+   },
+   {
+    "file": "src/pages/DigitalTwin.tsx",
+    "text": "de consumo zero); por isso a consulta so roda quando a permissao existe"
    },
    {
     "file": "src/pages/InventoryPage.tsx",
@@ -42564,6 +42635,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/auth/ProtectedRoute.tsx",
+    "field": "role",
+    "value": "operator",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/autonomous/AutonomousEventLog.tsx",
     "field": "type",
     "value": "optimization",
@@ -45108,6 +45185,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/features/admin/components/security/PermissionMatrix.tsx",
+    "field": "role",
+    "value": "admin",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/admin/components/security/PermissionMatrix.tsx",
+    "field": "role",
+    "value": "admin",
+    "kind": "compara"
+   },
+   {
     "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
     "field": "status",
     "value": "pass",
@@ -45765,6 +45854,12 @@
     "file": "src/features/auth/hooks/useMFA.ts",
     "field": "status",
     "value": "verified",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.tsx",
+    "field": "role",
+    "value": "admin",
     "kind": "compara"
    },
    {
@@ -50762,6 +50857,22 @@
     "name": "calls onClick when clicked"
    },
    {
+    "file": "src/features/analytics/hooks/useEnergy.test.ts",
+    "name": "useEnergy (F-007 contrato)"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.test.ts",
+    "name": "enabled=false oculta dados ja carregados do cache e nao refaz fetch"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.test.ts",
+    "name": "falha em alerts/targets nao acende hasError nem esconde o consumo real"
+   },
+   {
+    "file": "src/features/analytics/hooks/useEnergy.test.ts",
+    "name": "falha na consulta principal de consumo acende hasError"
+   },
+   {
     "file": "src/features/analytics/hooks/useKPIs.test.ts",
     "name": "useKPIs"
    },
@@ -50895,11 +51006,47 @@
    },
    {
     "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007)"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
     "name": "recurso:all cobre permissoes com dois-pontos e com ponto"
    },
    {
     "file": "src/features/auth/hooks/useRBAC.test.tsx",
     "name": "admin tem acesso total independente do banco"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "useRBAC - fetch condicional (F-007 threads rodada 2)"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "enabled:false pula a consulta ao banco e usa o mapa estatico"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "isPermissionLoading fica true enquanto o banco nao responde e false ao resolver"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "admin nao consulta o banco e isPermissionLoading fica false (bypass implicito)"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "sem sessao (role null) nunca trava o gate: isPermissionLoading fecha e permissao e negada"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "enquanto a sessao carrega, o gate permanece aberto (isPermissionLoading true) e so fecha depois"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "catalogo deriva do mapa real (fonte unica F-007)"
+   },
+   {
+    "file": "src/features/auth/hooks/useRBAC.test.tsx",
+    "name": "AVAILABLE_PERMISSIONS e a uniao exata de ROLE_PERMISSIONS (sem vocab divergente)"
    },
    {
     "file": "src/features/auth/types/admin_bypass.test.ts",
@@ -61999,6 +62146,7 @@
       "compara:src/components/auth/ProtectedRoute.tsx",
       "compara:src/components/layout/AppSidebar.tsx",
       "compara:src/components/navigation/MobileNavigation.tsx",
+      "compara:src/features/admin/components/security/PermissionMatrix.tsx",
       "compara:src/features/auth/components/AuthProvider.tsx",
       "compara:src/features/auth/hooks/useRBAC.tsx",
       "filtra:supabase/functions/calculate-inventory-intelligence/index.ts",
@@ -64683,7 +64831,8 @@
    "supabase/migrations/20261019140000_validation_hardening.sql",
    "supabase/migrations/20261028223000_bitrix_oauth_states.sql",
    "supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql",
-   "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql"
+   "supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+   "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
   ],
   "security_definer_fns": [
    "app_private.has_role",
@@ -66249,6 +66398,30 @@
     "objkind": "function",
     "roles": "anon, authenticated",
     "src": "supabase/migrations/20261120203000_public_tracking_remove_client.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "has_permission",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
    }
   ],
   "guards": [
@@ -70403,7 +70576,7 @@
   },
   "src/components/auth/ProtectedRoute.tsx": {
    "path": "src/components/auth/ProtectedRoute.tsx",
-   "lines": 156,
+   "lines": 180,
    "exports": [
     "function ProtectedRoute"
    ],
@@ -70439,6 +70612,11 @@
      "field": "role",
      "value": "operator",
      "kind": "compara"
+    },
+    {
+     "field": "role",
+     "value": "operator",
+     "kind": "compara"
     }
    ],
    "role_checks": [
@@ -70450,7 +70628,8 @@
    ],
    "rule_comments": [
     "precisam de um fator MFA VERIFICADO — não apenas do desafio de login.",
-    "on the permission loader. Redirect to the safest available authenticated route."
+    "on the permission loader. Redirect to the safest available authenticated route.",
+    "Permission gate: when a required permission is defined, the RBAC runtime"
    ]
   },
   "src/components/autonomous/AutonomousEventLog.tsx": {
@@ -77195,7 +77374,7 @@
   },
   "src/features/admin/components/security/PermissionManager.tsx": {
    "path": "src/features/admin/components/security/PermissionManager.tsx",
-   "lines": 240,
+   "lines": 252,
    "exports": [
     "function PermissionManager"
    ],
@@ -77209,9 +77388,40 @@
   },
   "src/features/admin/components/security/PermissionMatrix.tsx": {
    "path": "src/features/admin/components/security/PermissionMatrix.tsx",
-   "lines": 146,
+   "lines": 218,
    "exports": [
     "function PermissionMatrix"
+   ],
+   "tables": [
+    {
+     "table": "role_permissions",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "role_permissions": [
+     "permission",
+     "role"
+    ]
+   },
+   "status_values": [
+    {
+     "field": "role",
+     "value": "admin",
+     "kind": "compara"
+    },
+    {
+     "field": "role",
+     "value": "admin",
+     "kind": "compara"
+    }
+   ],
+   "role_checks": [
+    "admin"
+   ],
+   "rule_comments": [
+    "parte do catálogo estático (ex.: admin:all, ou uma permissão cadastrada",
+    "Mesma fonte do hasPermission: com fallback estatico, permissao presente"
    ]
   },
   "src/features/admin/components/security/PushNotificationSettings.tsx": {
@@ -79245,14 +79455,26 @@
     "useEfficiencyAlertHistory"
    ]
   },
+  "src/features/analytics/hooks/useEnergy.test.ts": {
+   "path": "src/features/analytics/hooks/useEnergy.test.ts",
+   "lines": 131,
+   "is_test": true,
+   "tests": [
+    "useEnergy (F-007 contrato)",
+    "enabled=false oculta dados ja carregados do cache e nao refaz fetch",
+    "falha em alerts/targets nao acende hasError nem esconde o consumo real",
+    "falha na consulta principal de consumo acende hasError"
+   ]
+  },
   "src/features/analytics/hooks/useEnergy.ts": {
    "path": "src/features/analytics/hooks/useEnergy.ts",
-   "lines": 299,
+   "lines": 324,
    "exports": [
     "interface EnergyConsumption",
     "interface EnergyAlert",
     "interface EnergyTarget",
     "interface EnergyStats",
+    "interface UseEnergyOptions",
     "function useEnergy"
    ],
    "tables": [
@@ -79298,6 +79520,11 @@
      "is_active"
     ]
    },
+   "rule_comments": [
+    "false desativa as consultas (ex.: sem permissao energy:read o RLS",
+    "enabled=false (ex.: sem energy:read) nao deve computar stats com dados",
+    "RLS/permissao negando a leitura (energy:read revogada) produz erro de"
+   ],
    "hooks": [
     "useEnergy"
    ],
@@ -79865,7 +80092,18 @@
   },
   "src/features/auth/index.ts": {
    "path": "src/features/auth/index.ts",
-   "lines": 11
+   "lines": 12
+  },
+  "src/features/auth/permissions.ts": {
+   "path": "src/features/auth/permissions.ts",
+   "lines": 260,
+   "exports": [
+    "type Permission",
+    "const ROLE_PERMISSIONS",
+    "const RESOURCE_LABELS",
+    "const ACTION_LABELS",
+    "const AVAILABLE_PERMISSIONS"
+   ]
   },
   "src/features/auth/components/AuthProvider.test.tsx": {
    "path": "src/features/auth/components/AuthProvider.test.tsx",
@@ -80090,24 +80328,35 @@
   },
   "src/features/auth/hooks/useRBAC.test.tsx": {
    "path": "src/features/auth/hooks/useRBAC.test.tsx",
-   "lines": 102,
+   "lines": 211,
    "is_test": true,
    "rule_comments": [
-    "Operator tem jobs:read estatico; jobs:create e exclusivo do banco e deve sumir no fallback."
+    "Operator tem jobs:read estatico; jobs:create e exclusivo do banco e deve sumir no fallback.",
+    "Sem role nao ha permissao, mesmo que o banco tivesse linhas.",
+    "Mesmo conjunto, mesmo tamanho (nenhuma permissão órfã nem inventada).",
+    "Vocabulário legado que divergia do runtime (view/edit/manage/register) não pode existir."
    ],
    "tests": [
     "useRBAC - permissoes do banco (F-007)",
     "usa permissoes do banco como fonte primaria",
     "faz fallback para o mapa estatico quando a consulta falha",
+    "banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007)",
     "recurso:all cobre permissoes com dois-pontos e com ponto",
-    "admin tem acesso total independente do banco"
+    "admin tem acesso total independente do banco",
+    "useRBAC - fetch condicional (F-007 threads rodada 2)",
+    "enabled:false pula a consulta ao banco e usa o mapa estatico",
+    "isPermissionLoading fica true enquanto o banco nao responde e false ao resolver",
+    "admin nao consulta o banco e isPermissionLoading fica false (bypass implicito)",
+    "sem sessao (role null) nunca trava o gate: isPermissionLoading fecha e permissao e negada",
+    "enquanto a sessao carrega, o gate permanece aberto (isPermissionLoading true) e so fecha depois",
+    "catalogo deriva do mapa real (fonte unica F-007)",
+    "AVAILABLE_PERMISSIONS e a uniao exata de ROLE_PERMISSIONS (sem vocab divergente)"
    ]
   },
   "src/features/auth/hooks/useRBAC.tsx": {
    "path": "src/features/auth/hooks/useRBAC.tsx",
-   "lines": 286,
+   "lines": 232,
    "exports": [
-    "const ROLE_PERMISSIONS",
     "interface RBACResult",
     "function useRBAC",
     "function PermissionGate",
@@ -80145,6 +80394,11 @@
      "field": "role",
      "value": "admin",
      "kind": "compara"
+    },
+    {
+     "field": "role",
+     "value": "admin",
+     "kind": "compara"
     }
    ],
    "role_checks": [
@@ -80154,7 +80408,8 @@
     "target"
    ],
    "rule_comments": [
-    "Permission checks"
+    "Permission checks",
+    "enabled=false nenhuma rota pede permissao. Ambos nao consultam o banco."
    ],
    "hooks": [
     "useRBAC"
@@ -80247,15 +80502,12 @@
   },
   "src/features/auth/types/auth.types.ts": {
    "path": "src/features/auth/types/auth.types.ts",
-   "lines": 60,
+   "lines": 30,
    "exports": [
     "type AppRole",
     "interface Profile",
     "interface AuthContextType",
-    "const AuthContext",
-    "type Permission",
-    "const AVAILABLE_PERMISSIONS",
-    "const RESOURCE_LABELS"
+    "const AuthContext"
    ],
    "enums": [
     {
@@ -80291,12 +80543,13 @@
   },
   "src/features/inventory/components/inventory-page/InventoryCard.tsx": {
    "path": "src/features/inventory/components/inventory-page/InventoryCard.tsx",
-   "lines": 193,
+   "lines": 201,
    "exports": [
     "function InventoryCard"
    ],
    "errors": [
-    "Saldo insuficiente para realizar a saída"
+    "Saldo insuficiente para realizar a saída",
+    "Você não tem permissão para registrar saídas de estoque"
    ]
   },
   "src/features/inventory/components/inventory-page/InventoryHistoryTable.tsx": {
@@ -89184,9 +89437,12 @@
   },
   "src/pages/DigitalTwin.tsx": {
    "path": "src/pages/DigitalTwin.tsx",
-   "lines": 162,
+   "lines": 178,
    "exports": [
     "function DigitalTwin"
+   ],
+   "rule_comments": [
+    "de consumo zero); por isso a consulta so roda quando a permissao existe"
    ],
    "percents": [
     "A IA identificou que mover o <strong>Almoxarifado de Tintas</strong> 5 metros para a esquerda reduzirá o tempo de deslocamento em 12%."
@@ -89325,7 +89581,7 @@
   },
   "src/pages/InventoryPage.tsx": {
    "path": "src/pages/InventoryPage.tsx",
-   "lines": 276,
+   "lines": 278,
    "exports": [
     "function InventoryPage"
    ],
@@ -90498,7 +90754,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 279,
+   "lines": 281,
    "exports": [
     "function AnimatedRoutes"
    ],
@@ -95339,6 +95595,15 @@
    "path": "supabase/migrations/20261120203000_public_tracking_remove_client.sql",
    "lines": 50
   },
+  "supabase/migrations/20261122010000_seed_role_permissions.sql": {
+   "path": "supabase/migrations/20261122010000_seed_role_permissions.sql",
+   "lines": 178
+  },
+  "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql": {
+   "path": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
+   "lines": 123,
+   "uses_service_role": true
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -95777,10 +96042,36 @@
   }
  },
  "git": {
-  "sha": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
+  "sha": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "84eca7c",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)",
+    "files": [
+     "docs/pendencias/F-007-permissionmanager-in-cuo.md",
+     "src/components/auth/ProtectedRoute.tsx",
+     "src/features/admin/components/security/PermissionManager.tsx",
+     "src/features/admin/components/security/PermissionMatrix.tsx",
+     "src/features/analytics/hooks/useEnergy.test.ts",
+     "src/features/analytics/hooks/useEnergy.ts",
+     "src/features/auth/hooks/useRBAC.test.tsx",
+     "src/features/auth/hooks/useRBAC.tsx",
+     "src/features/auth/hooks/useRolePermissions.ts",
+     "src/features/auth/index.ts",
+     "src/features/auth/permissions.ts",
+     "src/features/auth/types/auth.types.ts",
+     "src/features/inventory/components/inventory-page/InventoryCard.tsx",
+     "src/pages/DigitalTwin.tsx",
+     "src/pages/InventoryPage.tsx",
+     "src/routes/AppRoutes.tsx",
+     "supabase/migrations/20261122010000_seed_role_permissions.sql",
+     "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+    ]
+   },
    {
     "sha": "ca42441",
     "date": "2026-11-22",
@@ -96111,15 +96402,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "3d7a497",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(sw): nao intercepta requisicoes cross-origin (Google Fonts) (#225)",
-    "files": [
-     "public/sw.js"
-    ]
    }
   ],
   "hot_files": [
@@ -96134,6 +96416,18 @@
    [
     "supabase/functions/check-login-lockout/index.ts",
     3
+   ],
+   [
+    "docs/pendencias/F-007-permissionmanager-in-cuo.md",
+    2
+   ],
+   [
+    "src/features/auth/hooks/useRBAC.test.tsx",
+    2
+   ],
+   [
+    "src/features/auth/hooks/useRBAC.tsx",
+    2
    ],
    [
     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
@@ -96188,19 +96482,7 @@
     2
    ],
    [
-    "src/components/abc/ABCActivityRatesCard.tsx",
-    1
-   ],
-   [
-    "src/components/machines/FactoryHeatmap.tsx",
-    1
-   ],
-   [
-    "src/components/machines/MachineReliabilityTab.tsx",
-    1
-   ],
-   [
-    "src/components/operator/ShiftSummaryCard.tsx",
+    "src/components/auth/ProtectedRoute.tsx",
     1
    ]
   ]

@@ -2873,9 +2873,13 @@
   ],
   "src/features/admin/components/security/PermissionMatrix.tsx": [
    "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
    "src/components/ui/table.tsx",
-   "src/features/auth/index.ts"
+   "src/features/auth/index.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/logger.ts"
   ],
   "src/features/admin/components/security/PushNotificationSettings.tsx": [
    "src/components/ui/badge.tsx",
@@ -3587,11 +3591,12 @@
   ],
   "src/features/auth/hooks/useRBAC.tsx": [
    "src/features/auth/index.ts",
+   "src/features/auth/permissions.ts",
    "src/integrations/supabase/client.ts"
   ],
   "src/features/auth/hooks/useRolePermissions.ts": [
-   "src/features/auth/hooks/useRBAC.tsx",
    "src/features/auth/index.ts",
+   "src/features/auth/permissions.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/errorHandling.ts",
    "src/lib/logger.ts"
@@ -3611,7 +3616,11 @@
    "src/features/auth/hooks/useRolePermissions.ts",
    "src/features/auth/hooks/useSessionManager.tsx",
    "src/features/auth/hooks/useSessionTimeout.tsx",
+   "src/features/auth/permissions.ts",
    "src/features/auth/services/authService.ts",
+   "src/features/auth/types/auth.types.ts"
+  ],
+  "src/features/auth/permissions.ts": [
    "src/features/auth/types/auth.types.ts"
   ],
   "src/features/auth/services/authService.ts": [
@@ -3647,7 +3656,6 @@
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
    "src/components/ui/tooltip.tsx",
-   "src/features/auth/index.ts",
    "src/features/inventory/hooks/useInventory.ts",
    "src/lib/utils.ts"
   ],
@@ -5150,7 +5158,8 @@
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/features/analytics/hooks/useEnergy.ts",
-   "src/features/analytics/hooks/useKPIs.ts"
+   "src/features/analytics/hooks/useKPIs.ts",
+   "src/features/auth/index.ts"
   ],
   "src/pages/DocumentsPage.tsx": [
    "src/components/documents/DocumentsList.tsx",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ca42441b1e05a10e1ee26b377fe473c47ae6c264",
+  "commit": "84eca7c2d39f0b529eaf3432b5aec4903a1b768d",
   "branch": "main",
-  "data_commit": "2026-11-22T16:36:33-03:00",
+  "data_commit": "2026-11-23T07:50:43-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "84eca7c",
+    "data": "2026-11-23",
+    "assunto": "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)"
+   },
    {
     "sha": "ca42441",
     "data": "2026-11-22",
@@ -126,19 +131,14 @@
     "sha": "25e42b9",
     "data": "2026-11-20",
     "assunto": "docs: marca chave Stripe como resolvida na auditoria anterior (#226) (#232)"
-   },
-   {
-    "sha": "7e8a0f6",
-    "data": "2026-11-20",
-    "assunto": "infra: cache npm no job de contratos do automation-local (#230)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 161,
+  "arquivos_mudados_7d": 176,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 40
+    "mudancas": 42
    },
    {
     "pasta": "src/features/maintenance",
@@ -147,6 +147,10 @@
    {
     "pasta": "src/features/notifications",
     "mudancas": 21
+   },
+   {
+    "pasta": "src/features/auth",
+    "mudancas": 20
    },
    {
     "pasta": "src/features/jobs",
@@ -162,11 +166,7 @@
    },
    {
     "pasta": "src/features/admin",
-    "mudancas": 14
-   },
-   {
-    "pasta": "src/features/auth",
-    "mudancas": 14
+    "mudancas": 16
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -193,7 +193,7 @@
     "mudancas": 10
    },
    {
-    "pasta": "src/features/production",
+    "pasta": "src/features/inventory",
     "mudancas": 10
    }
   ],
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 115
+    "commits": 116
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1572,
-  "arquivos_codigo": 1120,
-  "linhas_codigo": 189321,
+  "arquivos_total": 1576,
+  "arquivos_codigo": 1122,
+  "linhas_codigo": 189899,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,9 +339,9 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 249,
+  "migrations": 251,
   "cron_jobs": 4,
-  "testes": 124,
+  "testes": 125,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 102
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 416,
-   "linhas": 58793
+   "linhas": 58817
   },
   "src/constants": {
    "arquivos": 2,
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 329,
-   "linhas": 46353
+   "arquivos": 331,
+   "linhas": 46887
   },
   "src/hooks": {
    "arquivos": 61,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 58,
-   "linhas": 16840
+   "linhas": 16858
   },
   "src/providers": {
    "arquivos": 2,
@@ -525,7 +525,7 @@
   },
   "src/routes": {
    "arquivos": 1,
-   "linhas": 279
+   "linhas": 281
   },
   "src/schemas": {
    "arquivos": 2,
@@ -667,7 +667,7 @@
   }
  ],
  "qualidade": {
-  "any": 171,
+  "any": 173,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

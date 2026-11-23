@@ -2669,6 +2669,7 @@
     "useQueries",
     "useQuery",
     "useQueryClient",
+    "useRBAC",
     "useRealtimeChannel",
     "useReducedMotion",
     "useRef",
@@ -2731,6 +2732,7 @@
     "usePageTitle",
     "usePrefersReducedMotion",
     "usePresenceChannel",
+    "useRBAC",
     "useRealtimeChannel",
     "useRipple",
     "useSchedulingData",
@@ -2775,6 +2777,7 @@
     "profiles",
     "push_notifications",
     "qr_scan_history",
+    "role_permissions",
     "technical_sheets",
     "techniques",
     "tpm_execution_alerts",
@@ -2797,14 +2800,15 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 102,
+   "arquivos_puxados": 104,
    "diretos": {
     "tabelas": [
      "energy_alerts",
      "energy_consumption",
      "energy_targets",
      "inventory_items",
-     "jobs"
+     "jobs",
+     "role_permissions"
     ],
     "rpcs": [],
     "edges": []
@@ -4056,7 +4060,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 98,
+   "arquivos_puxados": 99,
    "diretos": {
     "tabelas": [
      "inventory_items",
@@ -7293,7 +7297,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 123,
+   "arquivos_puxados": 124,
    "diretos": {
     "tabelas": [
      "packaging_settings"
@@ -8035,7 +8039,6 @@
     "useQueries",
     "useQuery",
     "useQueryClient",
-    "useRBAC",
     "useRateLimitLogs",
     "useRateLimitSettings",
     "useRealtimeBlockedIPs",
@@ -8110,7 +8113,6 @@
     "usePageTitle",
     "usePrefersReducedMotion",
     "usePresenceChannel",
-    "useRBAC",
     "useRateLimitLogs",
     "useRateLimitSettings",
     "useRealtimeBlockedIPs",
@@ -8190,6 +8192,7 @@
      "profiles",
      "rate_limit_logs",
      "rate_limit_settings",
+     "role_permissions",
      "security_events",
      "user_devices"
     ],

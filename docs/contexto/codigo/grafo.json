@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 990,
- "arestas": 4558,
+ "nos": 991,
+ "arestas": 4565,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 307
+   "importado_por": 308
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 186
+   "importado_por": 188
   },
   {
    "arquivo": "src/features/jobs/index.ts",
@@ -46,7 +46,7 @@
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 81
+   "importado_por": 82
   },
   {
    "arquivo": "src/features/production/index.ts",
@@ -61,11 +61,11 @@
    "importado_por": 62
   },
   {
-   "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 59
+   "arquivo": "src/lib/logger.ts",
+   "importado_por": 60
   },
   {
-   "arquivo": "src/lib/logger.ts",
+   "arquivo": "src/components/ui/scroll-area.tsx",
    "importado_por": 59
   },
   {

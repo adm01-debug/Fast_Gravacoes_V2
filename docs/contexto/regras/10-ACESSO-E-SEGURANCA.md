@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ca42441b1e` · branch `main` · 2026-11-22 19:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84eca7c2d3` · branch `main` · 2026-11-23 10:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-22T18:38:53Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-23T10:15:01Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-22T18:38:53Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-23T10:15:01Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -154,7 +154,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 90 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 91 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -246,6 +246,7 @@
 - `supabase/migrations/20261028223000_bitrix_oauth_states.sql`
 - `supabase/migrations/20261029002000_fix_schedule_policies_and_archive_rpc.sql`
 - `supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql`
+- `supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -324,16 +325,16 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|---|
 | grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
-| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record` |
+| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `has_permission` |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
 | grant | authenticated | select, insert, update, delete | `packaging_tasks`, `packaging_defects`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides` |
 | grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +9 |
 | grant | postgres | all privileges | `cron` |
 | grant | postgres, service_role | execute | `log_technical_sheet_change`, `trigger_auto_promotion` |
 | grant | service_role | all | `packaging_tasks`, `packaging_defects`, `packaging_settings`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_waste`, `packaging_equipment` |
-| grant | service_role | execute | `has_role`, `count_running_machines`, `count_active_operators_since`, `get_user_role`, `increment_sheet_view_count`, `has_role`, `has_any_active_role`, `purge_old_logs`, `purge_old_logs`, `get_cron_health`, `snapshot_cron_health`, `snapshot_cron_health`, `auto_reassign_stale_packaging_tasks`, `rate_limit_check_and_record`, `purge_old_logs` … +3 |
+| grant | service_role | execute | `has_role`, `count_running_machines`, `count_active_operators_since`, `get_user_role`, `increment_sheet_view_count`, `has_role`, `has_any_active_role`, `purge_old_logs`, `purge_old_logs`, `get_cron_health`, `snapshot_cron_health`, `snapshot_cron_health`, `auto_reassign_stale_packaging_tasks`, `rate_limit_check_and_record`, `purge_old_logs` … +4 |
 | grant | service_role, postgres | execute | `snapshot_cron_health` |
-| revoke | PUBLIC | all | `log_technical_sheet_change`, `has_any_active_role`, `purge_old_logs`, `get_system_status_summary`, `get_packaging_leaderboard`, `auto_reassign_stale_packaging_tasks`, `get_packaging_manifest`, `app_private.runtime_config`, `app_private.runtime_config_get`, `approve_maintenance_record` |
+| revoke | PUBLIC | all | `log_technical_sheet_change`, `has_any_active_role`, `purge_old_logs`, `get_system_status_summary`, `get_packaging_leaderboard`, `auto_reassign_stale_packaging_tasks`, `get_packaging_manifest`, `app_private.runtime_config`, `app_private.runtime_config_get`, `approve_maintenance_record`, `has_permission` |
 | revoke | PUBLIC | execute | `trigger_auto_promotion`, `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock` … +18 |
 | revoke | PUBLIC, anon | all | `get_cron_health`, `cron_expected_interval_minutes`, `get_system_status_summary` |
 | revoke | PUBLIC, anon | execute | `complete_maintenance_record`, `complete_maintenance_record`, `check_job_overlap` |

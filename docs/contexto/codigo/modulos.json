@@ -267,7 +267,7 @@
    "modulo": "components/auth",
    "arquivos": 6,
    "testes": 0,
-   "linhas": 760,
+   "linhas": 784,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -278,6 +278,7 @@
     "useDebounce",
     "useDebounceWithLoading",
     "usePasswordStrength",
+    "useRBAC",
     "useRipple",
     "useSearchDebounce"
    ],
@@ -286,7 +287,8 @@
    ],
    "edges": [],
    "tabelas": [
-    "error_logs"
+    "error_logs",
+    "role_permissions"
    ],
    "rpcs": [],
    "buckets": [],
@@ -3345,7 +3347,6 @@
     "useOfflineSyncContext",
     "usePermissionsContext",
     "usePresenceChannel",
-    "useRBAC",
     "useRealtimeChannel",
     "useReauth",
     "useRipple",
@@ -3396,9 +3397,7 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [
-    "admin"
-   ],
+   "papeis": [],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -3440,7 +3439,7 @@
    "modulo": "features/admin",
    "arquivos": 52,
    "testes": 3,
-   "linhas": 6858,
+   "linhas": 6942,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3486,7 +3485,6 @@
     "useNotificationSettings",
     "useOrphanedDataDetection",
     "usePresenceChannel",
-    "useRBAC",
     "useRateLimitLogs",
     "useRateLimitSettings",
     "useRealtimeBlockedIPs",
@@ -3637,6 +3635,7 @@
      "query_telemetry",
      "rate_limit_logs",
      "rate_limit_settings",
+     "role_permissions",
      "security_events"
     ],
     "rpcs": [
@@ -3679,8 +3678,8 @@
   {
    "modulo": "features/analytics",
    "arquivos": 74,
-   "testes": 4,
-   "linhas": 11598,
+   "testes": 5,
+   "linhas": 11623,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3889,9 +3888,9 @@
   },
   {
    "modulo": "features/auth",
-   "arquivos": 11,
+   "arquivos": 12,
    "testes": 4,
-   "linhas": 1647,
+   "linhas": 1824,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3996,7 +3995,7 @@
    "modulo": "features/inventory",
    "arquivos": 9,
    "testes": 4,
-   "linhas": 1364,
+   "linhas": 1372,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4012,7 +4011,6 @@
     "useLotMovements",
     "useProductionLot",
     "useProductionLots",
-    "useRBAC",
     "useRipple",
     "useSearchLots",
     "useTraceabilityMutations"
@@ -4041,7 +4039,6 @@
     "lot_movements",
     "lot_quality_inspections",
     "production_lots",
-    "role_permissions",
     "shipments",
     "shipping_providers"
    ],
@@ -4053,9 +4050,7 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [
-    "admin"
-   ],
+   "papeis": [],
    "diretos": {
     "edges": [
      "calculate-inventory-intelligence"
@@ -5845,7 +5840,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 2,
-   "linhas": 16562,
+   "linhas": 16580,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6502,7 +6497,6 @@
     "usePresenceChannel",
     "usePriorityEscalation",
     "usePushNotifications",
-    "useRBAC",
     "useRealtimeChannel",
     "useRealtimeResetRequests",
     "useReauth",
@@ -6603,7 +6597,7 @@
    "modulo": "routes",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 279,
+   "linhas": 281,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6612,13 +6606,15 @@
     "useAuth",
     "useAuthenticatorAssuranceLevel",
     "usePrefetchRoute",
+    "useRBAC",
     "useRoutePrefetch",
     "useTransitionConfig"
    ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [
-    "error_logs"
+    "error_logs",
+    "role_permissions"
    ],
    "rpcs": [],
    "buckets": [],

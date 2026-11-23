@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 124,
+ "total": 125,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 100
+  "unit": 101
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 88
+   "arquivos": 89
   },
   {
    "padrao": "outro",
@@ -337,6 +337,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/analytics/hooks/useEnergy.test.ts",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/features/analytics/hooks/useEnergy.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/analytics/hooks/useKPIs.test.ts",
    "tipo": "unit",
    "linhas": 136,
@@ -396,13 +407,14 @@
   {
    "arquivo": "src/features/auth/hooks/useRBAC.test.tsx",
    "tipo": "unit",
-   "linhas": 102,
+   "linhas": 211,
    "testa": [
     "src/features/auth/hooks/useRBAC.tsx",
     "src/features/auth/index.ts",
+    "src/features/auth/permissions.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 4,
+   "casos": 11,
    "suporte": false
   },
   {
@@ -1331,6 +1343,7 @@
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
   "src/features/admin/index.ts": 1,
   "src/features/analytics/components/bi/BIStatCard.tsx": 1,
+  "src/features/analytics/hooks/useEnergy.ts": 1,
   "src/features/analytics/hooks/useExecutiveDashboard.ts": 2,
   "src/features/analytics/hooks/useKPIs.ts": 1,
   "src/features/analytics/hooks/useRealtimeConnection.ts": 1,
@@ -1340,6 +1353,7 @@
   "src/features/auth/hooks/useMFA.ts": 1,
   "src/features/auth/hooks/useRBAC.tsx": 1,
   "src/features/auth/index.ts": 2,
+  "src/features/auth/permissions.ts": 1,
   "src/features/auth/services/authService.ts": 1,
   "src/features/auth/types/auth.types.ts": 1,
   "src/features/inventory/hooks/useInventory.ts": 1,
@@ -1364,7 +1378,7 @@
   "src/hooks/use-smart-back.ts": 1,
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,
-  "src/integrations/supabase/client.ts": 12,
+  "src/integrations/supabase/client.ts": 13,
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
   "src/lib/csvSafety.ts": 1,
@@ -1505,7 +1519,6 @@
    "src/features/admin/hooks/useVersionHistory.ts",
    "src/features/analytics/hooks/useBottleneckPrediction.ts",
    "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
-   "src/features/analytics/hooks/useEnergy.ts",
    "src/features/analytics/hooks/useLoadBalancing.ts",
    "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
    "src/features/analytics/hooks/useMLPredictions.ts",

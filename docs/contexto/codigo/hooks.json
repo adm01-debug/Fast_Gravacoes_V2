@@ -1319,7 +1319,7 @@
    "hooks_exportados": [
     "useEnergy"
    ],
-   "linhas": 299,
+   "linhas": 324,
    "dominio": "features/analytics",
    "tabelas": [
     "energy_alerts",
@@ -1342,7 +1342,7 @@
     "src/pages/DigitalTwin.tsx",
     "src/pages/EnergyDashboard.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/analytics/hooks/useExecutiveDashboard.ts",
@@ -1650,7 +1650,7 @@
    "hooks_exportados": [
     "useRBAC"
    ],
-   "linhas": 286,
+   "linhas": 232,
    "dominio": "features/auth",
    "tabelas": [
     "role_permissions"
@@ -1660,12 +1660,12 @@
    "hooks_internos": [
     "useAuth",
     "useEffect",
-    "useMemo"
+    "useMemo",
+    "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "usado_por_arquivos": [
-    "src/features/auth/hooks/useRolePermissions.ts",
     "src/features/auth/index.ts"
    ],
    "coberto_por_testes": 1
