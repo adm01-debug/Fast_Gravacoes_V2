@@ -69,9 +69,9 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   // Poll internal health-check
-  let health: HealthResponse | null = null;
+  let health: HealthResponse | null;
   const startedAt = Date.now();
-  let latencyMs = 0;
+  let latencyMs: number;
   try {
     const res = await fetch(`${supabaseUrl}/functions/v1/health-check`, {
       headers: { Authorization: `Bearer ${serviceRoleKey}` },

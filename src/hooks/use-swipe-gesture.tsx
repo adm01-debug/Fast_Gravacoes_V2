@@ -85,8 +85,8 @@ export function useSwipeGesture<T extends HTMLElement = HTMLElement>(
       const absY = Math.abs(deltaY);
 
       // Determine swipe direction based on dominant axis
-      let direction: SwipeDirection | null = null;
-      let distance = 0;
+      let direction: SwipeDirection | null;
+      let distance: number;
 
       if (absX > absY) {
         direction = deltaX > 0 ? 'right' : 'left';

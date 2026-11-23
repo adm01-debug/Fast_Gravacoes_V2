@@ -134,9 +134,9 @@ export function PasswordStrengthIndicator({
     const metCount = criteria.filter((c) => c.met).length;
     const strength = password.length === 0 ? 0 : Math.round((metCount / criteria.length) * 100);
 
-    let level: 'none' | 'weak' | 'fair' | 'good' | 'strong' = 'none';
-    let label = '';
-    let colorClass = '';
+    let level: 'none' | 'weak' | 'fair' | 'good' | 'strong';
+    let label: string;
+    let colorClass: string;
 
     if (password.length === 0) {
       level = 'none';

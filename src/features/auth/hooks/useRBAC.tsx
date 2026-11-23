@@ -198,7 +198,7 @@ export function PermissionGate({
 
   if (isPermissionLoading) return null;
 
-  let hasAccess = false;
+  let hasAccess: boolean;
 
   if (permission) {
     hasAccess = hasPermission(permission);
