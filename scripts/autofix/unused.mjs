@@ -6,7 +6,8 @@
  * Imports de valor, desestruturações e expressões com coerção/avaliação desconhecida
  * ficam na fila manual: getters, iteradores, módulos e operadores podem ter efeitos.
  */
-import * as ts from 'typescript';
+import { createRequire } from 'module';
+const ts = createRequire(import.meta.url)('typescript');
 import { lstatSync, writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
