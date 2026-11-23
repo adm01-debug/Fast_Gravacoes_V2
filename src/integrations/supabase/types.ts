@@ -6080,6 +6080,12 @@ export type Database = {
         Args: { sheet_id: string }
         Returns: undefined
       }
+      apply_job_sequence: {
+        Args: {
+          p_slots: Json
+        }
+        Returns: number
+      }
       assign_packaging_task: {
         Args: {
           p_task_id: string

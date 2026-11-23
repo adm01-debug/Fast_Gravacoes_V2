@@ -98,20 +98,23 @@ export function useSmartSequencingWithActions() {
     mutationFn: async (suggestion: SequencingSuggestion): Promise<ApplySequencingResult> => {
       const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence); // Start at 07:00
 
-      // Single upsert: one round-trip for all slots
-      const { error } = await supabase
-        .from('jobs')
-        .upsert(
-          timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
-          { onConflict: 'id' }
-        );
+      // RPC transacional: o upsert anterior virava INSERT ... ON CONFLICT e o
+      // banco rejeitava por NOT NULL (order_number, client, product, quantity,
+      // technique_id) antes de resolver o conflito de id.
+      const { data: appliedJobs, error } = await supabase.rpc('apply_job_sequence', {
+        p_slots: timeSlots.map(slot => ({
+          job_id: slot.jobId,
+          start_time: slot.startTime,
+          end_time: slot.endTime,
+        })),
+      });
 
       if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applySequencing);
 
       return {
         machineId: suggestion.machineId,
         machineName: suggestion.machineName,
-        appliedJobs: timeSlots.length,
+        appliedJobs: appliedJobs ?? timeSlots.length,
         estimatedSavings: suggestion.estimatedSavings,
       };
     },
@@ -139,20 +142,22 @@ export function useSmartSequencingWithActions() {
           try {
             const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence);
 
-            // Single upsert per suggestion: one round-trip per machine
-            const { error } = await supabase
-              .from('jobs')
-              .upsert(
-                timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
-                { onConflict: 'id' }
-              );
+            // RPC transacional: atualiza apenas os jobs do lote e valida o
+            // resultado final por maquina/data dentro da mesma transacao.
+            const { data: appliedJobs, error } = await supabase.rpc('apply_job_sequence', {
+              p_slots: timeSlots.map(slot => ({
+                job_id: slot.jobId,
+                start_time: slot.startTime,
+                end_time: slot.endTime,
+              })),
+            });
 
             if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applyAllSequencing);
 
             return {
               machineId: suggestion.machineId,
               machineName: suggestion.machineName,
-              appliedJobs: timeSlots.length,
+              appliedJobs: appliedJobs ?? timeSlots.length,
               estimatedSavings: suggestion.estimatedSavings,
             };
           } catch {
