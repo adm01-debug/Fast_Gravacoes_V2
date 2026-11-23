@@ -139,7 +139,10 @@ jobs:
             exit 1
           fi
 
-          supabase db push --dry-run --remote="$SUPABASE_PROJECT_ID"
+          # --include-all: migrations cujo timestamp fica atrás da última
+          # aplicada no remoto (mergeadas fora de ordem cronológica) passam
+          # a ser aplicadas em vez de travar o pipeline indefinidamente.
+          supabase db push --dry-run --include-all --remote="$SUPABASE_PROJECT_ID"
 
   # Migrations apply before functions deploy — a function expecting a new
   # column/table that hasn't landed yet would error on live traffic during
@@ -168,7 +171,7 @@ jobs:
           : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN não configurado}"
           : "${SUPABASE_PROJECT_ID:?SUPABASE_PROJECT_ID não configurado}"
           : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD não configurado}"
-          supabase db push --remote="$SUPABASE_PROJECT_ID" --yes
+          supabase db push --include-all --remote="$SUPABASE_PROJECT_ID" --yes
 
   deploy-edge-functions:
     name: Deploy Edge Functions
