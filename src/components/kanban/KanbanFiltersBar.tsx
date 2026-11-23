@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { DbMachine } from '@/features/jobs';
 import { useNavigate } from 'react-router-dom';
-import { useSmartSequencing } from '@/features/jobs';
+import { useSmartSequencingWithActions as useSmartSequencing } from '@/features/jobs';
 import { toast } from 'sonner';
 
 export type ViewMode = 'expanded' | 'compact';
@@ -44,14 +44,16 @@ export function KanbanFiltersBar({
   activeFiltersCount, onClearFilters,
 }: KanbanFiltersBarProps) {
   const navigate = useNavigate();
-  const { hasSuggestions, suggestions } = useSmartSequencing();
+  const { hasSuggestions, suggestions, totalSavings } = useSmartSequencing();
 
   const handleSmartOptimization = () => {
     if (!hasSuggestions) {
       toast.info("Nenhuma otimização de setup encontrada para o cenário atual.");
       return;
     }
-    toast.success(`IA identificou ${suggestions.length} máquinas que podem ser otimizadas para reduzir setup.`);
+    toast.success(
+      `IA identificou ${suggestions.length} agrupamentos que podem economizar ${totalSavings} min de setup.`
+    );
   };
 
   return (

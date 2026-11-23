@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useJobs, useTechniques, DbJob } from '../index';
 import type { SequencingSuggestion, ColorGroup } from '../types/sequencing';
 import { useMachines } from '@/features/production';
-import { parseDateOnly } from '@/lib/dateUtils';
+import { parseDateOnly, formatDateOnly } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 import { showErrorToast, createAppError } from '@/lib/errorHandling';
 
@@ -198,7 +198,7 @@ export function useSmartSequencingWithActions() {
 
       // Partição por máquina+dia: slots reiniciam às 07:00 por data —
       // jobs de amanhã não podem continuar a fila de horários de hoje.
-      const groupKey = `${job.machine_id}|${jobDate.toISOString().slice(0, 10)}`;
+      const groupKey = `${job.machine_id}|${formatDateOnly(jobDate)}`;
       const existing = jobsByMachine.get(groupKey) || [];
       existing.push(job);
       jobsByMachine.set(groupKey, existing);

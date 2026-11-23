@@ -5,22 +5,29 @@ import React from 'react';
 
 const rpcMock = vi.fn();
 
+const fx = vi.hoisted(() => ({
+  jobs: [] as unknown[],
+  machines: [] as unknown[],
+  techniques: [] as unknown[],
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: { rpc: (...args: unknown[]) => rpcMock(...args) },
 }));
 
 vi.mock('../index', () => ({
-  useJobs: () => ({ data: [] }),
-  useTechniques: () => ({ data: [] }),
+  useJobs: () => ({ data: fx.jobs }),
+  useTechniques: () => ({ data: fx.techniques }),
 }));
 
 vi.mock('@/features/production', () => ({
-  useMachines: () => ({ data: [] }),
+  useMachines: () => ({ data: fx.machines }),
 }));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import { useSmartSequencingWithActions, type SequencingSuggestion } from './useSmartSequencingWithActions';
+import { formatDateOnly } from '@/lib/dateUtils';
 
 function makeSuggestion(optimizedSequence: unknown[]): SequencingSuggestion {
   return {
@@ -54,6 +61,29 @@ function renderSequencing() {
 describe('useSmartSequencingWithActions', () => {
   beforeEach(() => {
     rpcMock.mockReset();
+    fx.jobs = [];
+    fx.machines = [];
+    fx.techniques = [];
+  });
+
+  it('agrupa por maquina e dia usando a data local do calendario', () => {
+    const today = new Date();
+    const todayKey = formatDateOnly(today);
+    const dayIso = `${todayKey}T00:00:00`;
+
+    fx.techniques = [{ id: 'tech-1', name: 'Bordado', setup_time: 30 }];
+    fx.machines = [{ id: 'machine-a', name: 'Laser 01', code: 'LZ01', technique_id: 'tech-1' }];
+    fx.jobs = [
+      { id: 'job-1', machine_id: 'machine-a', scheduled_date: dayIso, start_time: '07:00:00', end_time: '07:30:00', status: 'scheduled', gravure_color: 'preto', priority: 'medium', estimated_duration: 30 },
+      { id: 'job-2', machine_id: 'machine-a', scheduled_date: dayIso, start_time: '07:30:00', end_time: '08:00:00', status: 'scheduled', gravure_color: 'branco', priority: 'medium', estimated_duration: 30 },
+      { id: 'job-3', machine_id: 'machine-a', scheduled_date: dayIso, start_time: '08:00:00', end_time: '08:30:00', status: 'scheduled', gravure_color: 'preto', priority: 'medium', estimated_duration: 30 },
+      { id: 'job-4', machine_id: 'machine-a', scheduled_date: dayIso, start_time: '08:30:00', end_time: '09:00:00', status: 'scheduled', gravure_color: 'branco', priority: 'medium', estimated_duration: 30 },
+    ];
+
+    const { result } = renderSequencing();
+
+    expect(result.current.suggestions).toHaveLength(1);
+    expect(result.current.suggestions[0].date).toBe(todayKey);
   });
 
   it('aplica a sequencia via RPC transacional com os horarios calculados', async () => {
