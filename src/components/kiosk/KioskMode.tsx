@@ -37,6 +37,7 @@ interface KioskJob {
   techniqueColor?: string;
   machine?: string;
   orderNumber?: string;
+  actualStartTime?: string;
 }
 
 interface KioskModeProps {
@@ -68,6 +69,25 @@ export function KioskMode({
     jobs.find(j => j.status === "production"),
     [jobs]
   );
+
+    // Métricas reais derivadas do job em produção (nada de valores fixos)
+    const productionMetrics = React.useMemo(() => {
+      if (!activeJob) return null;
+      const produced = activeJob.produced || 0;
+      const progress = activeJob.quantity > 0 ? Math.min(100, (produced / activeJob.quantity) * 100) : 0;
+      const startedAt = activeJob.actualStartTime ? new Date(activeJob.actualStartTime).getTime() : null;
+      const elapsedMinutes = startedAt ? Math.max(0, Math.floor((currentTime.getTime() - startedAt) / 60000)) : 0;
+      const avgSecondsPerPiece = produced > 0 && elapsedMinutes > 0 ? (elapsedMinutes * 60) / produced : null;
+      const avgFormatted = avgSecondsPerPiece !== null ? `${avgSecondsPerPiece.toFixed(1)}s` : "—";
+      // Previsão de término: tempo decorrido por peça × quantidade total, a partir do início
+      const eta = avgSecondsPerPiece !== null && startedAt
+        ? new Date(startedAt + activeJob.quantity * avgSecondsPerPiece * 1000)
+        : null;
+      const etaLabel = eta
+        ? eta.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+        : "—";
+      return { progress: progress.toFixed(1), avgFormatted, etaLabel };
+    }, [activeJob, currentTime]);
 
   // Update time every minute
   React.useEffect(() => {
@@ -185,23 +205,30 @@ export function KioskMode({
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
                      <div className="bg-background/50 p-4 rounded-xl border border-border/50 text-center">
                         <Activity className="h-5 w-5 mx-auto mb-2 text-primary" />
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">OEE Estimado</p>
-                        <p className="text-xl font-black">94.2%</p>
+                                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Progresso</p>
+                                          <p className="text-xl font-black">{productionMetrics?.progress ?? "—"}%</p>
                      </div>
                      <div className="bg-background/50 p-4 rounded-xl border border-border/50 text-center">
-                        <Zap className="h-5 w-5 mx-auto mb-2 text-warning" />
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Consumo (kWh)</p>
-                        <p className="text-xl font-black">1.2</p>
+                                          <Clock className="h-5 w-5 mx-auto mb-2 text-blue-500" />
+                                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Tempo Decorrido</p>
+                                          <p className="text-xl font-black">
+                                            {(() => {
+                                              const start = activeJob?.actualStartTime;
+                                              if (!start) return "—";
+                                              const min = Math.max(0, Math.floor((currentTime.getTime() - new Date(start).getTime()) / 60000));
+                                              return min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min}min`;
+                                            })()}
+                                          </p>
                      </div>
                      <div className="bg-background/50 p-4 rounded-xl border border-border/50 text-center">
                         <Target className="h-5 w-5 mx-auto mb-2 text-success" />
                         <p className="text-[10px] font-bold text-muted-foreground uppercase">Tempo Médio</p>
-                        <p className="text-xl font-black">42s</p>
+                                          <p className="text-xl font-black">{productionMetrics?.avgFormatted ?? "—"}</p>
                      </div>
                      <div className="bg-background/50 p-4 rounded-xl border border-border/50 text-center">
                         <Clock className="h-5 w-5 mx-auto mb-2 text-blue-500" />
                         <p className="text-[10px] font-bold text-muted-foreground uppercase">Previsão Fim</p>
-                        <p className="text-xl font-black">16:45</p>
+                                          <p className="text-xl font-black">{productionMetrics?.etaLabel ?? "—"}</p>
                      </div>
                   </div>
 
