@@ -17,11 +17,11 @@ beforeAll(() => {
 const renderGroup = (orientation?: "horizontal" | "vertical") =>
   render(
     <ResizablePanelGroup orientation={orientation} data-testid="group">
-      <ResizablePanel defaultSize={50} data-testid="panel-a">
+      <ResizablePanel defaultSize="50%" data-testid="panel-a">
         A
       </ResizablePanel>
       <ResizableHandle withHandle data-testid="handle" />
-      <ResizablePanel defaultSize={50} data-testid="panel-b">
+      <ResizablePanel defaultSize="50%" data-testid="panel-b">
         B
       </ResizablePanel>
     </ResizablePanelGroup>,
