@@ -247,7 +247,7 @@ export const useTPMNotifications = () => {
         return { success: false, recipients, reason: 'push_not_delivered' };
       }
 
-      toast.success(`Notificação de teste exibida neste navegador via push. Os ${recipients.length} destinatários cadastrados não recebem neste teste — o envio em massa é da edge function.`);
+      toast.success(`Alerta de teste solicitado via push neste navegador. Os ${recipients.length} destinatários cadastrados não recebem neste teste (envio em massa é da edge function) e a exibição depende do próprio sistema operacional.`);
       return { success: true, recipients };
     } catch {
 

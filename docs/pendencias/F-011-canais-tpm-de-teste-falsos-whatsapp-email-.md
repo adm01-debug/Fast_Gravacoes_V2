@@ -34,11 +34,12 @@ useTPMNotifications.ts só envia real para push; demais canais fake
 - Limitação conhecida: o teste de front (`usePushNotifications.sendNotification`) exibe notificação só no navegador atual e não aciona a edge function de envio em massa; a entrega remota exige inscrição real no dispositivo (ver critério de aceite).
 
 ## Pendente (não é push)
-- **Email real**: a edge function de email exige `RESEND_API_KEY` (conta Resend), que não existe — bloqueado por credencial externa. O falso sucesso foi removido (PR #278); resta prover a credencial.
+- **Envio real por email**: a edge function de email exige `RESEND_API_KEY` (conta Resend), que não existe — bloqueado por credencial externa. O falso sucesso foi removido (PR #278); resta prover a credencial.
+- **Teste manual por email/WhatsApp no painel**: fluxo separado do envio real. `sendTestNotification` no front não chama provedor nenhum, então o botão de teste nunca entrega email/WhatsApp — nem depois de configurar `RESEND_API_KEY`. Para o teste manual funcionar seria preciso o painel invocar `send-tpm-email` (e criar o provedor de WhatsApp); hoje ele falha explícito, sem fingir envio.
 - **WhatsApp**: canal não existe (sem integração/credencial de provedor de WhatsApp Business API) — tratar como requisito novo, fora do escopo de "teste falso". Hoje o teste falha explícito em vez de fingir envio.
 
 ## Criterio de aceite
-Push: notificacao entregue de ponta a ponta no navegador com inscricao real (pendente de usuário real se inscrever). Email/WhatsApp: decisao de negocio sobre prover credenciais.
+Push: alerta solicitado no navegador com inscricao real; envio em massa e da edge function. Email: envio real depende de `RESEND_API_KEY` nas edge functions (`send-tpm-email`/`send-loss-risk-alert`) e o teste manual no painel so passa a entregar se o painel chamar a edge function. WhatsApp: decisao de negocio sobre prover provedor.
 
 ## Ordem
 11 de 16 por impacto x custo.
