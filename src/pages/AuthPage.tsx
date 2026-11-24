@@ -49,6 +49,8 @@ export default function AuthPage() {
   const resetCooldownUntilRef = useRef(0);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [mfaBlockedReason, setMfaBlockedReason] = useState<string | null>(null);
+  const [mfaRetry, setMfaRetry] = useState(0);
 
   useEffect(() => { const saved = localStorage.getItem('rememberedEmail'); if (saved) { setLoginEmail(saved); setRememberMe(true); } }, []);
 
@@ -68,12 +70,24 @@ export default function AuthPage() {
       try {
         const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
         if (aal && aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
-          const { data: factors } = await supabase.auth.mfa.listFactors();
+          const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
           const totpFactor = factors?.totp.find(f => f.status === 'verified');
           if (totpFactor) {
             if (!cancelled) setMfaFactorId(totpFactor.id);
             return;
           }
+                    // Etapa 032: quando a sessão exige aal2 mas não existe fator que este
+                    // app saiba desafiar (ou a consulta de fatores falhou), navegar para
+                    // "/" fazia o ProtectedRoute devolver para cá em laço. Assumir o
+                    // bloqueio aqui, com saída explícita, encerra o piscar entre rotas.
+                    if (!cancelled) {
+                      setMfaBlockedReason(
+                        factorsError
+                          ? 'Não foi possível consultar os fatores de segurança da sua conta. Tente novamente em instantes.'
+                          : 'Sua conta exige verificação em dois fatores, mas nenhum aplicativo autenticador está ativo. Fale com o administrador.',
+                      );
+                    }
+                    return;
         }
       } catch {
         // If the AAL check itself fails, fall through to navigate — MFA
@@ -82,9 +96,9 @@ export default function AuthPage() {
       if (!cancelled) navigate('/', { replace: true });
     })();
     return () => { cancelled = true; };
-  }, [user, mfaFactorId, navigate]);
+  }, [user, mfaFactorId, navigate, mfaRetry]);
 
-  if (user && !mfaFactorId) return null;
+  if (user && !mfaFactorId && !mfaBlockedReason) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setErrors({});
@@ -240,7 +254,18 @@ export default function AuthPage() {
 
           <div className="w-full max-w-sm mx-auto">
             <AnimatePresence mode="wait">
-              {mfaFactorId ? (
+              {mfaBlockedReason ? (
+                <motion.div key="mfa-blocked" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                  <div className="mb-8">
+                    <h3 className="text-3xl font-bold mb-2 tracking-tight">Verificação em dois fatores</h3>
+                    <p className="text-muted-foreground text-sm" role="alert">{mfaBlockedReason}</p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Button onClick={() => { setMfaBlockedReason(null); setMfaRetry((n) => n + 1); }}>Tentar novamente</Button>
+                    <Button variant="outline" onClick={() => { setMfaBlockedReason(null); void signOut(); }}>Sair</Button>
+                  </div>
+                </motion.div>
+              ) : mfaFactorId ? (
                 <motion.div key="mfa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                   <MFALoginVerification factorId={mfaFactorId} onSuccess={() => navigate('/')} onCancel={() => { setMfaFactorId(null); void signOut(); }} />
                 </motion.div>
