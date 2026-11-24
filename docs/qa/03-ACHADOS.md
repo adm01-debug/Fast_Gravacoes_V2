@@ -125,6 +125,7 @@ Impacto: a conta mais poderosa vê todos os botões liberados e falha ao salvar 
 **Laço de redirecionamento entre `/` e `/auth` quando o segundo fator não é TOTP ou a consulta de fatores falha.**
 `src/components/auth/ProtectedRoute.tsx:124-127` decide pelo nível da sessão (AAL); `src/pages/AuthPage.tsx:70-82` só segura o usuário se achar um fator `totp` com status `verified`; `src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts:58-67` apenas registra o erro de `listFactors` sem mudar a decisão. Os dois lados usam `replace`, então nem o botão "voltar" resolve.
 Impacto: numa instabilidade do serviço de autenticação, a pessoa fica presa numa tela que pisca entre login e painel, sem mensagem e sem saída.
+- Correção aplicada (PR #291): o AuthPage parou de navegar quando o desafio é impossível — mostra o motivo em `role="alert"` e oferece "Tentar novamente"/"Sair" (src/pages/AuthPage.tsx:73-92); `navigate` não é chamado nesses casos (src/pages/AuthPage.mfaBlocked.test.tsx).
 
 ---
 
