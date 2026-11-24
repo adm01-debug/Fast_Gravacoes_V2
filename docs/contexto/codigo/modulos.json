@@ -3900,8 +3900,8 @@
   {
    "modulo": "features/auth",
    "arquivos": 12,
-   "testes": 5,
-   "linhas": 1873,
+   "testes": 6,
+   "linhas": 1875,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

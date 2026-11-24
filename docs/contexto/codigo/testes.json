@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 139,
+ "total": 140,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 115
+  "unit": 116
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 103
+   "arquivos": 104
   },
   {
    "padrao": "outro",
@@ -477,6 +477,16 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 11,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/auth/services/authService.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [
+    "src/features/auth/services/authService.ts"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -1503,7 +1513,7 @@
   "src/features/auth/hooks/useRBAC.tsx": 1,
   "src/features/auth/index.ts": 2,
   "src/features/auth/permissions.ts": 1,
-  "src/features/auth/services/authService.ts": 1,
+  "src/features/auth/services/authService.ts": 2,
   "src/features/auth/types/auth.types.ts": 1,
   "src/features/inventory/hooks/useInventory.ts": 1,
   "src/features/inventory/hooks/useLogistics.ts": 1,

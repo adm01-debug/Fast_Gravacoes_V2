@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4779aa191cfb2470995609bae17c08a1b0746685",
+  "commit": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
   "branch": "main",
-  "data_commit": "2026-11-24T19:22:28-03:00",
+  "data_commit": "2026-11-24T22:30:55Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "1c4e616",
+    "data": "2026-11-24",
+    "assunto": "fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)"
+   },
    {
     "sha": "4779aa1",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "8973b0c",
     "data": "2026-11-23",
     "assunto": "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)"
-   },
-   {
-    "sha": "414b392",
-    "data": "2026-11-23",
-    "assunto": "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 230,
+  "arquivos_mudados_7d": 231,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -145,12 +145,12 @@
     "mudancas": 27
    },
    {
-    "pasta": "src/features/jobs",
-    "mudancas": 24
+    "pasta": "src/features/auth",
+    "mudancas": 25
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 23
+    "pasta": "src/features/jobs",
+    "mudancas": 24
    },
    {
     "pasta": "src/features/notifications",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 143
+    "commits": 144
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1607,
-  "arquivos_codigo": 1138,
-  "linhas_codigo": 191870,
+  "arquivos_total": 1608,
+  "arquivos_codigo": 1139,
+  "linhas_codigo": 191909,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 260,
   "cron_jobs": 4,
-  "testes": 139,
+  "testes": 140,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 335,
-   "linhas": 47552
+   "arquivos": 336,
+   "linhas": 47591
   },
   "src/hooks": {
    "arquivos": 63,

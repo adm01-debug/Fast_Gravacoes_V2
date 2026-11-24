@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4779aa191cfb2470995609bae17c08a1b0746685",
+  "sha": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 22:23 UTC",
-  "files_total": 1605,
-  "code_files": 1409,
-  "code_lines": 208536
+  "generated_at": "2026-11-24 22:31 UTC",
+  "files_total": 1606,
+  "code_files": 1410,
+  "code_lines": 208575
  },
  "version": "1.3.2",
- "facts_hash": "f5c1ea8d6163eac4",
+ "facts_hash": "4d60cdcb37f862dc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 670,
-   ".ts": 404,
+   ".ts": 405,
    ".sql": 268,
    ".mjs": 50,
    ".py": 13,
@@ -28537,8 +28537,8 @@
   },
   {
    "module": "src/features/auth",
-   "files": 17,
-   "lines": 3025,
+   "files": 18,
+   "lines": 3064,
    "tables": [
     "profiles",
     "role_permissions",
@@ -28594,6 +28594,7 @@
     "src/features/auth/hooks/useRolePermissions.ts",
     "src/features/auth/hooks/useSessionManager.tsx",
     "src/features/auth/hooks/useSessionTimeout.tsx",
+    "src/features/auth/services/authService.test.ts",
     "src/features/auth/services/authService.ts",
     "src/features/auth/types/admin_bypass.test.ts",
     "src/features/auth/types/auth.types.ts"
@@ -51889,6 +51890,18 @@
    {
     "file": "src/features/auth/hooks/useRBAC.test.tsx",
     "name": "AVAILABLE_PERMISSIONS e a uniao exata de ROLE_PERMISSIONS (sem vocab divergente)"
+   },
+   {
+    "file": "src/features/auth/services/authService.test.ts",
+    "name": "AuthService.resetPassword"
+   },
+   {
+    "file": "src/features/auth/services/authService.test.ts",
+    "name": "devolve o link para o host em que o pedido foi feito"
+   },
+   {
+    "file": "src/features/auth/services/authService.test.ts",
+    "name": "propaga o erro do provedor"
    },
    {
     "file": "src/features/auth/types/admin_bypass.test.ts",
@@ -82001,9 +82014,19 @@
     "useSessionTimeout"
    ]
   },
+  "src/features/auth/services/authService.test.ts": {
+   "path": "src/features/auth/services/authService.test.ts",
+   "lines": 37,
+   "is_test": true,
+   "tests": [
+    "AuthService.resetPassword",
+    "devolve o link para o host em que o pedido foi feito",
+    "propaga o erro do provedor"
+   ]
+  },
   "src/features/auth/services/authService.ts": {
    "path": "src/features/auth/services/authService.ts",
-   "lines": 107,
+   "lines": 109,
    "exports": [
     "interface LockoutStatus",
     "const AuthService"
@@ -97788,10 +97811,20 @@
   }
  },
  "git": {
-  "sha": "4779aa191cfb2470995609bae17c08a1b0746685",
+  "sha": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "1c4e616",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)",
+    "files": [
+     "src/features/auth/services/authService.test.ts",
+     "src/features/auth/services/authService.ts"
+    ]
+   },
    {
     "sha": "4779aa1",
     "date": "2026-11-24",
@@ -98135,32 +98168,6 @@
     "author": "adm01-debug",
     "subject": "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)",
     "files": []
-   },
-   {
-    "sha": "84eca7c",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)",
-    "files": [
-     "docs/pendencias/F-007-permissionmanager-in-cuo.md",
-     "src/components/auth/ProtectedRoute.tsx",
-     "src/features/admin/components/security/PermissionManager.tsx",
-     "src/features/admin/components/security/PermissionMatrix.tsx",
-     "src/features/analytics/hooks/useEnergy.test.ts",
-     "src/features/analytics/hooks/useEnergy.ts",
-     "src/features/auth/hooks/useRBAC.test.tsx",
-     "src/features/auth/hooks/useRBAC.tsx",
-     "src/features/auth/hooks/useRolePermissions.ts",
-     "src/features/auth/index.ts",
-     "src/features/auth/permissions.ts",
-     "src/features/auth/types/auth.types.ts",
-     "src/features/inventory/components/inventory-page/InventoryCard.tsx",
-     "src/pages/DigitalTwin.tsx",
-     "src/pages/InventoryPage.tsx",
-     "src/routes/AppRoutes.tsx",
-     "supabase/migrations/20261122010000_seed_role_permissions.sql",
-     "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -98197,8 +98204,12 @@
     2
    ],
    [
-    "src/features/auth/hooks/useRBAC.tsx",
-    2
+    "src/features/auth/services/authService.test.ts",
+    1
+   ],
+   [
+    "src/features/auth/services/authService.ts",
+    1
    ],
    [
     "supabase/migrations/20261127120000_isolate_public_has_role.sql",
@@ -98238,10 +98249,6 @@
    ],
    [
     "src/test/simulationAggregation.test.ts",
-    1
-   ],
-   [
-    "src/components/error/StackTrace.test.tsx",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4779aa191c` · branch `main` · 2026-11-24 22:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1c4e616ade` · branch `main` · 2026-11-24 22:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T22:13:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.

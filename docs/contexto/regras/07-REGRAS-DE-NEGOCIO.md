@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4779aa191c` · branch `main` · 2026-11-24 22:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1c4e616ade` · branch `main` · 2026-11-24 22:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T22:13:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3325,7 +3325,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1385 testes em 120 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1388 testes em 121 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3430,6 +3430,7 @@ _nenhum item encontrado_
 | `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |
 | `src/features/analytics/hooks/useKPIs.test.ts` | 3 | useKPIs · should return null when data is loading · should calculate correct metrics when data is provided |
 | `src/features/auth/hooks/useMFA.test.tsx` | 3 | useMFA.startEnrollment · remove fatores TOTP nao verificados antes de criar um novo (evita 422) · nao remove um fator TOTP ja verificado |
+| `src/features/auth/services/authService.test.ts` | 3 | AuthService.resetPassword · devolve o link para o host em que o pedido foi feito · propaga o erro do provedor |
 | `src/features/jobs/hooks/useJobs.realtime.test.tsx` | 3 | useJobs — Realtime invalidation · refetches when a Realtime postgres_changes event arrives · chama removeChannel no unmount e ignora eventos posteriores |
 | `src/features/jobs/hooks/useTechniques.realtime.test.tsx` | 3 | useTechniques — Realtime invalidation · chama removeChannel no unmount e ignora eventos posteriores · refetches when a Realtime postgres_changes event arrives |
 | `src/features/jobs/hooks/useTechniques.test.tsx` | 3 | useTechniques · fetches techniques once and caches them · reuses the cache across multiple consumers (no duplicate queries) |
