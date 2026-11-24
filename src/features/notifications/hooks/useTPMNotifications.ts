@@ -163,7 +163,7 @@ export const useTPMNotifications = () => {
   }, [sendNotification]);
 
   // Send test notification
-  const sendTestNotification = useCallback(async (machineId: string, channel: 'email' | 'whatsapp' | 'push', forceSend = false): Promise<{ success: boolean; needsValidation?: boolean; recipients: unknown[]; machine?: { name: string; code: string } }> => {
+  const sendTestNotification = useCallback(async (machineId: string, channel: 'email' | 'whatsapp' | 'push', forceSend = false): Promise<{ success: boolean; needsValidation?: boolean; recipients: unknown[]; machine?: { name: string; code: string }; reason?: string }> => {
     try {
       const { data: settings } = await supabase
         .from('user_notification_settings')
@@ -200,6 +200,33 @@ export const useTPMNotifications = () => {
 
       const { data: user } = await supabase.auth.getUser();
 
+      // Email e WhatsApp não têm provedor de envio: registrar falha em vez de 'success' falso.
+      if (channel === 'email' || channel === 'whatsapp') {
+        const { error: logError } = await supabase
+          .from('tpm_notification_logs')
+          .insert({
+            machine_id: machineId,
+            user_id: user.user?.id,
+            channel,
+            severity: 'critical',
+            status: 'failure',
+            error_message: `Canal ${channel} sem provedor de envio configurado`,
+            recipient: `${recipients.length} destinatários`,
+            payload: { test: true, machine_name: machine.name, recipients: recipients.map(r => r.user_id), reason: 'provider_not_configured' }
+          });
+
+        if (logError) throw logError;
+
+        toast.error(`Canal ${channel} sem provedor de envio configurado — nada foi enviado.`);
+        return { success: false, recipients, reason: 'provider_not_configured' };
+      }
+
+      const delivered = sendNotification({
+        title: '🚨 Teste de Notificação TPM',
+        body: `Máquina: ${machine.name} - Este é um teste para ${recipients.length} destinatários.`,
+        tag: 'tpm-test',
+      });
+
       const { error: logError } = await supabase
         .from('tpm_notification_logs')
         .insert({
@@ -207,22 +234,20 @@ export const useTPMNotifications = () => {
           user_id: user.user?.id,
           channel,
           severity: 'critical',
-          status: 'success',
+          status: delivered ? 'success' : 'failure',
+          error_message: delivered ? null : 'Push não entregue (permissão negada ou navegador sem suporte)',
           recipient: `${recipients.length} destinatários`,
           payload: { test: true, machine_name: machine.name, recipients: recipients.map(r => r.user_id) }
         });
 
       if (logError) throw logError;
 
-      if (channel === 'push') {
-        sendNotification({
-          title: '🚨 Teste de Notificação TPM',
-          body: `Máquina: ${machine.name} - Este é um teste para ${recipients.length} destinatários.`,
-          tag: 'tpm-test',
-        });
+      if (!delivered) {
+        toast.error('Notificação push não entregue: permissão negada ou navegador sem suporte.');
+        return { success: false, recipients, reason: 'push_not_delivered' };
       }
 
-      toast.success(`Notificação de teste enviada via ${channel} para ${recipients.length} usuários.`);
+      toast.success(`Notificação de teste enviada via push para ${recipients.length} usuários.`);
       return { success: true, recipients };
     } catch {
 
