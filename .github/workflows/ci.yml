@@ -366,12 +366,51 @@ jobs:
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 6: E2E tests (only on main and PRs targeting main)
 # ──────────────────────────────────────────────────────────────────────────
+  # O mesmo conteudo (tree) validado no PR nao precisa rodar E2E de novo no
+  # push em main: o squash-merge de uma branch atualizada produz exatamente o
+  # tree que o pull_request ja executou. O job abaixo procura o marcador
+  # deixado por uma execucao verde; sem marcador (push direto, base que mudou
+  # entre o PR e o merge, execucao manual) a suite roda normalmente. O artefato
+  # expira em 14 dias, entao nada fica "validado" indefinidamente.
+  e2e-reuse:
+    name: E2E ja validada para este tree?
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      reuse: ${{ steps.lookup.outputs.reuse }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Look up validation marker for HEAD tree
+        id: lookup
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tree="$(git show -s --format=%T HEAD)"
+          found="$(gh api "repos/$REPO/actions/artifacts?name=e2e-validated-$tree" --jq '.total_count')"
+          if [ "$found" -gt 0 ]; then
+            echo "reuse=true" >> "$GITHUB_OUTPUT"
+            echo "E2E ja passou para o tree \`$tree\` em um PR — pulando a execucao duplicada no main." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "reuse=false" >> "$GITHUB_OUTPUT"
+            echo "Sem validacao E2E registrada para o tree \`$tree\` — rodando a suite completa." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   e2e:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: [build]
-    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    needs: [build, e2e-reuse]
+    # Mantem a condicao original (main ou pull_request) e acrescenta o skip
+    # quando o tree ja foi validado. Em pull_request o job `e2e-reuse` fica
+    # skipped e o output vazio nao casa com 'true', entao a suite roda.
+    if: (github.ref == 'refs/heads/main' || github.event_name == 'pull_request') && needs.e2e-reuse.outputs.reuse != 'true'
     concurrency:
       # O concurrency de topo agrupa por branch (ci-${{ github.ref }}), entao PRs
       # de branches diferentes rodavam E2E em paralelo contra o mesmo Supabase
@@ -458,6 +497,29 @@ jobs:
           name: playwright-report-${{ github.sha }}
           path: playwright-report/
           retention-days: 14
+
+      # Marcador consumido pelo job `e2e-reuse` no push em main. O nome carrega
+      # o tree SHA, entao a consulta e uma busca exata — e so existe quando a
+      # suite terminou verde (success()).
+      - name: Record validated tree
+        if: success() && steps.e2e-prereq.outputs.enabled == 'true'
+        id: validated
+        run: |
+          tree="$(git show -s --format=%T HEAD)"
+          echo "tree=$tree" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/e2e-validated"
+          echo "$tree" > "$RUNNER_TEMP/e2e-validated/tree"
+
+      - name: Upload E2E validation marker
+        if: success() && steps.e2e-prereq.outputs.enabled == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-validated-${{ steps.validated.outputs.tree }}
+          path: ${{ runner.temp }}/e2e-validated/
+          retention-days: 14
+          # Um re-run da mesma run reexecuta este upload para o mesmo tree; sem
+          # overwrite o segundo attempt falharia com "artifact already exists".
+          overwrite: true
 
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 7: RLS regression — pega policy de INSERT/UPDATE regredindo em
