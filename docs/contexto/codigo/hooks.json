@@ -2149,12 +2149,12 @@
    "hooks_exportados": [
     "useSmartSequencingWithActions"
    ],
-   "linhas": 338,
+   "linhas": 318,
    "dominio": "features/jobs",
-   "tabelas": [
-    "jobs"
+   "tabelas": [],
+   "rpcs": [
+    "apply_job_sequence"
    ],
-   "rpcs": [],
    "edges": [],
    "hooks_internos": [
     "useCallback",
@@ -2170,7 +2170,7 @@
    "usado_por_arquivos": [
     "src/features/jobs/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/jobs/hooks/useStuckJobsDetection.ts",

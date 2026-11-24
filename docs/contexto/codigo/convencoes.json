@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (94)",
+   "co-localizado (*.test) (97)",
    "outro (18)",
    "tests/ (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)",
    "fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)",
    "fix: não reportar envio de notificação TPM sem provedor configurado (#278)",
    "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)",
-   "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)",
-   "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)"
+   "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

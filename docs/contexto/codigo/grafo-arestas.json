@@ -3227,7 +3227,8 @@
   "src/features/analytics/components/efficiency/SequencingTab.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx"
+   "src/components/ui/card.tsx",
+   "src/features/jobs/index.ts"
   ],
   "src/features/analytics/components/energy/AIEnergyAdvisor.tsx": [
    "src/components/ui/badge.tsx",
@@ -3772,6 +3773,7 @@
   ],
   "src/features/jobs/hooks/useSmartSequencingWithActions.ts": [
    "src/features/jobs/index.ts",
+   "src/features/jobs/types/sequencing.ts",
    "src/features/production/index.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/dateUtils.ts",

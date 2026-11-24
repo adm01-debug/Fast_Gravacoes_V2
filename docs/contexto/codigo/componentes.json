@@ -2676,7 +2676,7 @@
     "ViewMode"
    ],
    "export_default": null,
-   "linhas": 193,
+   "linhas": 195,
    "dominio": "components/kanban",
    "hooks_locais": [
     "useSmartSequencing"
@@ -7404,7 +7404,7 @@
     "SequencingTab"
    ],
    "export_default": null,
-   "linhas": 72,
+   "linhas": 80,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -9115,7 +9115,7 @@
     "useEfficiencyAlertHistory",
     "useLoadBalancing",
     "useOEE",
-    "useSmartSequencing"
+    "useSmartSequencingWithActions"
    ],
    "tabelas": [],
    "edges": [],

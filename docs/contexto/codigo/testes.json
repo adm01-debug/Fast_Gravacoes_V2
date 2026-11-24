@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 130,
+ "total": 133,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 106
+  "unit": 109
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 94
+   "arquivos": 97
   },
   {
    "padrao": "outro",
@@ -358,6 +358,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/features/analytics/components/efficiency/SequencingTab.tsx",
+    "src/features/jobs/index.ts"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/analytics/hooks/useEnergy.test.ts",
    "tipo": "unit",
    "linhas": 131,
@@ -521,6 +532,17 @@
     "src/features/jobs/hooks/useSchedulingData.ts"
    ],
    "casos": 9,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+   "tipo": "unit",
+   "linhas": 143,
+   "testa": [
+    "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+    "src/lib/dateUtils.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -690,6 +712,16 @@
     "src/lib/csvSafety.ts"
    ],
    "casos": 5,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/lib/dateUtils.test.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [
+    "src/lib/dateUtils.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1396,6 +1428,7 @@
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
   "src/features/admin/index.ts": 1,
   "src/features/analytics/components/bi/BIStatCard.tsx": 1,
+  "src/features/analytics/components/efficiency/SequencingTab.tsx": 1,
   "src/features/analytics/hooks/useEnergy.ts": 1,
   "src/features/analytics/hooks/useExecutiveDashboard.ts": 2,
   "src/features/analytics/hooks/useKPIs.ts": 1,
@@ -1417,8 +1450,9 @@
   "src/features/jobs/hooks/useJobs.ts": 1,
   "src/features/jobs/hooks/useSchedulingConflicts.ts": 1,
   "src/features/jobs/hooks/useSchedulingData.ts": 1,
+  "src/features/jobs/hooks/useSmartSequencingWithActions.ts": 1,
   "src/features/jobs/hooks/useTechniques.ts": 2,
-  "src/features/jobs/index.ts": 6,
+  "src/features/jobs/index.ts": 7,
   "src/features/jobs/services/jobStateMachine.ts": 2,
   "src/features/jobs/services/jobsService.ts": 3,
   "src/features/jobs/services/scheduling.ts": 1,
@@ -1437,7 +1471,7 @@
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
   "src/lib/csvSafety.ts": 1,
-  "src/lib/dateUtils.ts": 3,
+  "src/lib/dateUtils.ts": 5,
   "src/lib/errorHandling.ts": 1,
   "src/lib/excel.ts": 2,
   "src/lib/excelExport.ts": 1,
@@ -1592,7 +1626,6 @@
    "src/features/jobs/hooks/usePriorityEscalation.ts",
    "src/features/jobs/hooks/useRecordDuplication.ts",
    "src/features/jobs/hooks/useSmartSequencing.ts",
-   "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
    "src/features/jobs/hooks/useStuckJobsDetection.ts",
    "src/features/jobs/hooks/useWeeklyDragDrop.ts",
    "src/features/maintenance/hooks/index.ts",

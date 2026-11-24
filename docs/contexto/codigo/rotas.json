@@ -1859,6 +1859,7 @@
     "techniques"
    ],
    "rpcs": [
+    "apply_job_sequence",
     "verify_audit_chain"
    ],
    "edges": [
@@ -1872,7 +1873,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 166,
+   "arquivos_puxados": 167,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -3058,6 +3059,7 @@
     "useSessionTimeout",
     "useSmartBack",
     "useSmartSequencing",
+    "useSmartSequencingWithActions",
     "useState",
     "useSwipeGesture",
     "useSyncExternalStore",
@@ -3122,6 +3124,7 @@
     "useSessionTimeout",
     "useSmartBack",
     "useSmartSequencing",
+    "useSmartSequencingWithActions",
     "useSwipeGesture",
     "useTechniques",
     "useTechniquesData",
@@ -3156,7 +3159,9 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "apply_job_sequence"
+   ],
    "edges": [
     "bitrix24-sync",
     "calculate-rankings"
@@ -3169,12 +3174,14 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 117,
+   "arquivos_puxados": 119,
    "diretos": {
     "tabelas": [
      "efficiency_alert_history"
     ],
-    "rpcs": [],
+    "rpcs": [
+     "apply_job_sequence"
+    ],
     "edges": []
    }
   },
@@ -4332,6 +4339,7 @@
     "techniques"
    ],
    "rpcs": [
+    "apply_job_sequence",
     "verify_audit_chain"
    ],
    "edges": [
@@ -7613,6 +7621,7 @@
     "techniques"
    ],
    "rpcs": [
+    "apply_job_sequence",
     "verify_audit_chain"
    ],
    "edges": [
@@ -7635,7 +7644,9 @@
      "profiles",
      "techniques"
     ],
-    "rpcs": [],
+    "rpcs": [
+     "apply_job_sequence"
+    ],
     "edges": [
      "auto-promote-jobs"
     ]

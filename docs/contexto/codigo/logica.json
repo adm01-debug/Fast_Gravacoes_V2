@@ -506,7 +506,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 6308,
+   "linhas": 6314,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -689,7 +689,7 @@
     "lib",
     "pages"
    ],
-   "coberto_por_testes": 3,
+   "coberto_por_testes": 5,
    "orfao": false
   },
   {

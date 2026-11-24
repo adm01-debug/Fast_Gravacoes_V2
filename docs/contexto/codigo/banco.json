@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 255,
+ "migrations": 256,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -39,6 +39,7 @@
  "views": [],
  "funcoes": [
   "app_private",
+  "apply_job_sequence",
   "approve_maintenance_record",
   "archive_finished_jobs",
   "assign_packaging_task",
@@ -5401,7 +5402,7 @@
      "rework_reason"
     ]
    },
-   "usada_no_front": 29,
+   "usada_no_front": 28,
    "usada_em_edges": [
     "auto-promote-jobs",
     "bitrix24-sync",
@@ -17764,6 +17765,11 @@
   "backups"
  ],
  "rpcs_usadas_no_codigo": [
+  {
+   "nome": "apply_job_sequence",
+   "definida": true,
+   "usada_em": 1
+  },
   {
    "nome": "approve_maintenance_record",
    "definida": true,

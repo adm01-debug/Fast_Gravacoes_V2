@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3026b04faf53f0edbc2863e623264ab716db1926",
+  "commit": "bede01f79876991f21ab58cafcdc9624530d61de",
   "branch": "main",
-  "data_commit": "2026-11-24T00:19:26-03:00",
+  "data_commit": "2026-11-24T09:11:24Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "bede01f",
+    "data": "2026-11-24",
+    "assunto": "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)"
+   },
    {
     "sha": "3026b04",
     "data": "2026-11-24",
@@ -126,23 +131,22 @@
     "sha": "2a1a433",
     "data": "2026-11-22",
     "assunto": "fix: ativa notificações push reais (par VAPID configurado) (#252)"
-   },
-   {
-    "sha": "eb7c327",
-    "data": "2026-11-22",
-    "assunto": "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 213,
+  "arquivos_mudados_7d": 223,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 42
+    "mudancas": 44
    },
    {
     "pasta": "src/features/maintenance",
     "mudancas": 27
+   },
+   {
+    "pasta": "src/features/jobs",
+    "mudancas": 24
    },
    {
     "pasta": "src/features/notifications",
@@ -150,10 +154,6 @@
    },
    {
     "pasta": "src/features/auth",
-    "mudancas": 21
-   },
-   {
-    "pasta": "src/features/jobs",
     "mudancas": 21
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 129
+    "commits": 130
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1591,
-  "arquivos_codigo": 1127,
-  "linhas_codigo": 190697,
+  "arquivos_total": 1595,
+  "arquivos_codigo": 1130,
+  "linhas_codigo": 190926,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,9 +339,9 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 255,
+  "migrations": 256,
   "cron_jobs": 4,
-  "testes": 130,
+  "testes": 133,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 418,
-   "linhas": 59018
+   "linhas": 59020
   },
   "src/constants": {
    "arquivos": 2,
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 332,
-   "linhas": 47165
+   "arquivos": 334,
+   "linhas": 47351
   },
   "src/hooks": {
    "arquivos": 61,
@@ -505,11 +505,11 @@
   },
   "src/integrations": {
    "arquivos": 3,
-   "linhas": 6424
+   "linhas": 6430
   },
   "src/lib": {
-   "arquivos": 52,
-   "linhas": 6586
+   "arquivos": 53,
+   "linhas": 6621
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -567,7 +567,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 6308
+   "linhas": 6314
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

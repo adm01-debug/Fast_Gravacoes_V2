@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3026b04faf53f0edbc2863e623264ab716db1926",
+  "sha": "bede01f79876991f21ab58cafcdc9624530d61de",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 03:38 UTC",
-  "files_total": 1589,
-  "code_files": 1393,
-  "code_lines": 207025
+  "generated_at": "2026-11-24 09:11 UTC",
+  "files_total": 1593,
+  "code_files": 1397,
+  "code_lines": 207367
  },
  "version": "1.3.2",
- "facts_hash": "a2b5bcda252c1f04",
+ "facts_hash": "a36c15934f9e0f5a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,9 +280,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 662,
-   ".ts": 401,
-   ".sql": 263,
+   ".tsx": 664,
+   ".ts": 402,
+   ".sql": 264,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19548,6 +19548,7 @@
    "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/migrations/20261125130000_jobs_external_ref.sql",
+   "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21309,6 +21310,14 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "apply_job_sequence",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql"
    }
   ],
   "raises": [
@@ -21816,6 +21825,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -21889,6 +21899,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -21996,6 +22007,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "approve_maintenance_record",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
@@ -22127,6 +22139,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -22220,6 +22233,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -22333,6 +22347,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "approve_maintenance_record",
      "complete_maintenance_record",
      "verify_audit_chain"
@@ -22463,6 +22478,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -22581,6 +22597,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -22804,6 +22821,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -22901,6 +22919,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -22980,6 +22999,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -23027,6 +23047,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "update_shipment_status"
     ],
     "deps_count": 129
@@ -23079,6 +23100,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "update_shipment_status"
     ],
     "deps_count": 154
@@ -23131,6 +23153,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
@@ -23211,6 +23234,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -23306,6 +23330,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "approve_maintenance_record",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
@@ -23461,6 +23486,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -23545,6 +23571,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -23607,6 +23634,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
@@ -23692,6 +23720,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -23773,6 +23802,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -23846,6 +23876,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -23940,6 +23971,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -24024,6 +24056,7 @@
      "update-operator"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -24188,6 +24221,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -24392,6 +24426,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -24466,6 +24501,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -24513,7 +24549,9 @@
      "new-device-alert",
      "send-push-notification"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "apply_job_sequence"
+    ],
     "deps_count": 156
    },
    {
@@ -24694,6 +24732,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "approve_maintenance_record",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
@@ -24818,6 +24857,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -24899,6 +24939,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -24993,6 +25034,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "update_shipment_status",
@@ -25071,6 +25113,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "apply_job_sequence",
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces",
      "verify_audit_chain"
@@ -26455,7 +26498,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 571,
+  "components_count": 572,
   "hooks": [
    {
     "name": "useContacts",
@@ -27811,7 +27854,7 @@
   {
    "module": "src/components",
    "files": 418,
-   "lines": 59018,
+   "lines": 59020,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28244,8 +28287,8 @@
   },
   {
    "module": "src/features/analytics",
-   "files": 79,
-   "lines": 12073,
+   "files": 80,
+   "lines": 12134,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -28366,6 +28409,7 @@
     "src/features/analytics/components/efficiency/BalancingTab.tsx",
     "src/features/analytics/components/efficiency/BottlenecksTab.tsx",
     "src/features/analytics/components/efficiency/HistoryTab.tsx",
+    "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
     "src/features/analytics/components/efficiency/SequencingTab.tsx",
     "src/features/analytics/components/energy/AIEnergyAdvisor.tsx",
     "src/features/analytics/components/energy/EnergyChartTabs.tsx",
@@ -28543,8 +28587,8 @@
   },
   {
    "module": "src/features/jobs",
-   "files": 34,
-   "lines": 3661,
+   "files": 35,
+   "lines": 3786,
    "tables": [
     "job_status_history",
     "jobs",
@@ -28568,7 +28612,7 @@
     "useSchedulingConflicts.ts: SchedulingConflict, ConflictingJob, useSchedulingConflicts",
     "useSchedulingData.ts: useSchedulingData, useJobsData, useTechniquesData, useMachinesData",
     "useSmartSequencing.ts: SequencingSuggestion, ColorGroup, useSmartSequencing",
-    "useSmartSequencingWithActions.ts: SequencingSuggestion, ColorGroup, ApplySequencingResult, useSmartSequencingWithActions",
+    "useSmartSequencingWithActions.ts: ApplySequencingResult, useSmartSequencingWithActions",
     "useStuckJobsDetection.ts: StuckJob, useStuckJobsDetection",
     "useTechniques.ts: useTechniques",
     "useWeeklyDragDrop.ts: useWeeklyDragDrop",
@@ -28626,6 +28670,7 @@
     "src/features/jobs/hooks/useSchedulingData.test.tsx",
     "src/features/jobs/hooks/useSchedulingData.ts",
     "src/features/jobs/hooks/useSmartSequencing.ts",
+    "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
     "src/features/jobs/hooks/useStuckJobsDetection.ts",
     "src/features/jobs/hooks/useTechniques.realtime.test.tsx",
@@ -29301,7 +29346,7 @@
   {
    "module": "src/integrations",
    "files": 3,
-   "lines": 6424,
+   "lines": 6430,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -29325,8 +29370,8 @@
   },
   {
    "module": "src/lib",
-   "files": 52,
-   "lines": 6586,
+   "files": 53,
+   "lines": 6621,
    "tables": [
     "audit_log",
     "error_logs",
@@ -29418,6 +29463,7 @@
     "src/lib/circuitBreaker.ts",
     "src/lib/csvSafety.test.ts",
     "src/lib/csvSafety.ts",
+    "src/lib/dateUtils.test.ts",
     "src/lib/dateUtils.ts",
     "src/lib/edgeFunctionFetch.ts",
     "src/lib/envGuard.ts",
@@ -29974,8 +30020,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 255,
-   "lines": 15672,
+   "files": 256,
+   "lines": 15785,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -30526,7 +30572,6 @@
      "scripts/inventario/gerar-banco.unit.mjs",
      "scripts/inventario/gerar-rotas.unit.mjs",
      "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
-     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
      "src/hooks/useOfflineSync.test.ts",
      "src/test/jobsService.test.ts"
     ],
@@ -32707,6 +32752,9 @@
    ]
   },
   "rpc": {
+   "apply_job_sequence": [
+    "src/features/jobs/hooks/useSmartSequencingWithActions.ts"
+   ],
    "approve_maintenance_record": [
     "src/features/maintenance/hooks/useTPMApprovalMutations.ts"
    ],
@@ -36866,6 +36914,10 @@
    {
     "file": "src/features/jobs/hooks/useSmartSequencing.ts",
     "text": "Data validation helpers"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+    "text": "RPC transacional: atualiza apenas os jobs do lote e valida o"
    },
    {
     "file": "src/features/jobs/services/jobsService.ts",
@@ -51467,6 +51519,22 @@
     "name": "calls onClick when clicked"
    },
    {
+    "file": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+    "name": "SequencingTab"
+   },
+   {
+    "file": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+    "name": "identifica o dia da sugestao no cartao"
+   },
+   {
+    "file": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+    "name": "omite o dia quando a sugestao nao tem data"
+   },
+   {
+    "file": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+    "name": "envia a sugestao do cartao ao aplicar"
+   },
+   {
     "file": "src/features/analytics/hooks/useEnergy.test.ts",
     "name": "useEnergy (F-007 contrato)"
    },
@@ -52075,6 +52143,26 @@
     "name": "refetchAll dispara refetch de jobs, técnicas e máquinas"
    },
    {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    "name": "useSmartSequencingWithActions"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    "name": "agrupa por maquina e dia usando a data local do calendario"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    "name": "aplica a sequencia via RPC transacional com os horarios calculados"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    "name": "usa o tamanho do lote quando o banco nao retorna a contagem"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    "name": "propaga o erro do RPC em vez de reportar sucesso"
+   },
+   {
     "file": "src/features/jobs/hooks/useTechniques.realtime.test.tsx",
     "name": "useTechniques — Realtime invalidation"
    },
@@ -52477,6 +52565,30 @@
    {
     "file": "src/lib/csvSafety.test.ts",
     "name": "does not touch a formula character that is not the first character"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "parseDateOnly"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "interpreta data pura como meia-noite local"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "devolve null para entrada vazia ou invalida"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "formatDateOnly"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "usa o dia local e nao o dia UTC"
+   },
+   {
+    "file": "src/lib/dateUtils.test.ts",
+    "name": "faz o caminho de volta de parseDateOnly"
    },
    {
     "file": "src/lib/excel.test.ts",
@@ -67439,6 +67551,14 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "apply_job_sequence",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql"
    }
   ],
   "guards": [
@@ -68460,6 +68580,13 @@
     "msg": "`tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
     "where": [
      "src/features/maintenance/components/TPMNotificationTemplates.tsx"
+    ]
+   },
+   {
+    "kind": "rpc",
+    "msg": "RPC `apply_job_sequence` chamada mas não definida no banco real (snapshot)",
+    "where": [
+     "src/features/jobs/hooks/useSmartSequencingWithActions.ts"
     ]
    },
    {
@@ -74297,7 +74424,7 @@
   },
   "src/components/kanban/KanbanFiltersBar.tsx": {
    "path": "src/components/kanban/KanbanFiltersBar.tsx",
-   "lines": 193,
+   "lines": 195,
    "exports": [
     "type ViewMode",
     "type SwimlanesMode",
@@ -80023,9 +80150,20 @@
     "function HistoryTab"
    ]
   },
+  "src/features/analytics/components/efficiency/SequencingTab.test.tsx": {
+   "path": "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+   "lines": 53,
+   "is_test": true,
+   "tests": [
+    "SequencingTab",
+    "identifica o dia da sugestao no cartao",
+    "omite o dia quando a sugestao nao tem data",
+    "envia a sugestao do cartao ao aplicar"
+   ]
+  },
   "src/features/analytics/components/efficiency/SequencingTab.tsx": {
    "path": "src/features/analytics/components/efficiency/SequencingTab.tsx",
-   "lines": 72,
+   "lines": 80,
    "exports": [
     "function SequencingTab"
    ]
@@ -82547,27 +82685,33 @@
     }
    ]
   },
+  "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx": {
+   "path": "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+   "lines": 143,
+   "is_test": true,
+   "tests": [
+    "useSmartSequencingWithActions",
+    "agrupa por maquina e dia usando a data local do calendario",
+    "aplica a sequencia via RPC transacional com os horarios calculados",
+    "usa o tamanho do lote quando o banco nao retorna a contagem",
+    "propaga o erro do RPC em vez de reportar sucesso"
+   ]
+  },
   "src/features/jobs/hooks/useSmartSequencingWithActions.ts": {
    "path": "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
-   "lines": 338,
+   "lines": 318,
    "exports": [
-    "interface SequencingSuggestion",
-    "interface ColorGroup",
     "interface ApplySequencingResult",
     "function useSmartSequencingWithActions"
    ],
-   "tables": [
-    {
-     "table": "jobs",
-     "op": "ref"
-    },
-    {
-     "table": "jobs",
-     "op": "ref"
-    }
+   "rpc": [
+    "apply_job_sequence"
    ],
    "errors": [
     "Falha ao otimizar todas as ${failedCount} máquina(s)"
+   ],
+   "rule_comments": [
+    "RPC transacional: atualiza apenas os jobs do lote e valida o"
    ],
    "hooks": [
     "useSmartSequencingWithActions"
@@ -82996,7 +83140,7 @@
   },
   "src/features/jobs/types/sequencing.ts": {
    "path": "src/features/jobs/types/sequencing.ts",
-   "lines": 29,
+   "lines": 31,
    "exports": [
     "interface ColorGroup",
     "interface SequencingSuggestion"
@@ -88879,7 +89023,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 6308,
+   "lines": 6314,
    "exports": [
     "type Json",
     "type Database",
@@ -89012,6 +89156,19 @@
     "every CSV writer must run cell values through this before serializing."
    ],
    "doc": "Neutralizes CSV formula injection. When a cell's first character is one of `= + - @ \\t \\r`, spreadsheet apps (Excel, Google Sheets, LibreOffice) parse it as a formula, not literal text — e.g. `=HYPERLINK(\"http://evil\",\"x\")` executes when the file is opened. Any exported field can carry user-controll …"
+  },
+  "src/lib/dateUtils.test.ts": {
+   "path": "src/lib/dateUtils.test.ts",
+   "lines": 35,
+   "is_test": true,
+   "tests": [
+    "parseDateOnly",
+    "interpreta data pura como meia-noite local",
+    "devolve null para entrada vazia ou invalida",
+    "formatDateOnly",
+    "usa o dia local e nao o dia UTC",
+    "faz o caminho de volta de parseDateOnly"
+   ]
   },
   "src/lib/dateUtils.ts": {
    "path": "src/lib/dateUtils.ts",
@@ -96757,6 +96914,10 @@
    "path": "supabase/migrations/20261125130000_jobs_external_ref.sql",
    "lines": 16
   },
+  "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql": {
+   "path": "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
+   "lines": 113
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -97195,10 +97356,29 @@
   }
  },
  "git": {
-  "sha": "3026b04faf53f0edbc2863e623264ab716db1926",
+  "sha": "bede01f79876991f21ab58cafcdc9624530d61de",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "bede01f",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)",
+    "files": [
+     "src/components/kanban/KanbanFiltersBar.tsx",
+     "src/components/kanban/KanbanMetricsBar.tsx",
+     "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+     "src/features/analytics/components/efficiency/SequencingTab.tsx",
+     "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+     "src/features/jobs/types/sequencing.ts",
+     "src/integrations/supabase/types.ts",
+     "src/lib/dateUtils.test.ts",
+     "src/pages/EfficiencyDashboard.tsx",
+     "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql"
+    ]
+   },
    {
     "sha": "3026b04",
     "date": "2026-11-24",
@@ -97551,20 +97731,6 @@
     "files": [
      "supabase/functions/auto-promote-jobs/index.ts"
     ]
-   },
-   {
-    "sha": "9654a58",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: prefixa uid/ nos uploads de storage e usa signed URLs (#242)",
-    "files": [
-     "src/components/operator/ProductionRegistrationModal.tsx",
-     "src/components/traceability/LotInspectionsTab.tsx",
-     "src/features/maintenance/components/MaintenanceExecutionModal.tsx",
-     "src/features/packaging/services/packagingService.ts",
-     "src/hooks/useDocuments.ts",
-     "src/lib/storage.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -97579,6 +97745,10 @@
    [
     "src/features/auth/hooks/useRBAC.tsx",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
    ],
    [
     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
@@ -97597,55 +97767,51 @@
     2
    ],
    [
-    "src/features/packaging/services/packagingService.ts",
-    2
-   ],
-   [
     "src/features/auth/hooks/useRBAC.test.tsx",
     2
    ],
    [
+    "src/components/kanban/KanbanFiltersBar.tsx",
+    1
+   ],
+   [
+    "src/components/kanban/KanbanMetricsBar.tsx",
+    1
+   ],
+   [
+    "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
+    1
+   ],
+   [
+    "src/features/analytics/components/efficiency/SequencingTab.tsx",
+    1
+   ],
+   [
+    "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
+    1
+   ],
+   [
+    "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
+    1
+   ],
+   [
+    "src/features/jobs/types/sequencing.ts",
+    1
+   ],
+   [
+    "src/lib/dateUtils.test.ts",
+    1
+   ],
+   [
+    "src/pages/EfficiencyDashboard.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
+    1
+   ],
+   [
     "scripts/maintenance/maintenance.unit.mjs",
-    1
-   ],
-   [
-    "src/features/maintenance/components/TPMNotificationSettings.tsx",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useTPMNotifications.test.ts",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useTPMNotifications.ts",
-    1
-   ],
-   [
-    "supabase/functions/send-loss-risk-alert/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/send-tpm-email/index.ts",
-    1
-   ],
-   [
-    "src/features/jobs/hooks/useSchedulingData.test.tsx",
-    1
-   ],
-   [
-    "src/test/erpApiContracts.test.ts",
-    1
-   ],
-   [
-    "src/test/webhookFuzz.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/contracts.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/contracts.ts",
     1
    ]
   ]

@@ -671,6 +671,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "apply_job_sequence",
     "approve_maintenance_record",
     "complete_maintenance_record",
     "verify_audit_chain"
@@ -1330,7 +1331,7 @@
    "modulo": "components/kanban",
    "arquivos": 6,
    "testes": 0,
-   "linhas": 1566,
+   "linhas": 1568,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1376,7 +1377,9 @@
     "technical_sheets",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "apply_job_sequence"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -2400,7 +2403,9 @@
     "profiles",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "apply_job_sequence"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -3680,8 +3685,8 @@
   {
    "modulo": "features/analytics",
    "arquivos": 74,
-   "testes": 5,
-   "linhas": 11623,
+   "testes": 6,
+   "linhas": 11631,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3728,6 +3733,7 @@
     "useSPCMutations",
     "useSPCParameters",
     "useSchedulingData",
+    "useSmartSequencing",
     "useTPM",
     "useTPMAlertMutations",
     "useTPMApprovalMutations",
@@ -4104,8 +4110,8 @@
   {
    "modulo": "features/jobs",
    "arquivos": 26,
-   "testes": 8,
-   "linhas": 2720,
+   "testes": 9,
+   "linhas": 2702,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4188,7 +4194,9 @@
     "technical_sheets",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "apply_job_sequence"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -4212,7 +4220,9 @@
      "technical_sheets",
      "techniques"
     ],
-    "rpcs": []
+    "rpcs": [
+     "apply_job_sequence"
+    ]
    },
    "importado_por_outros_modulos": [
     "components/alerts",
@@ -5501,7 +5511,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 6385,
+   "linhas": 6391,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5571,7 +5581,7 @@
   {
    "modulo": "lib",
    "arquivos": 38,
-   "testes": 10,
+   "testes": 11,
    "linhas": 4422,
    "itens_menu": [],
    "telas": [],
@@ -6313,6 +6323,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "apply_job_sequence",
     "approve_maintenance_record",
     "assign_packaging_task",
     "check_and_notify_kpi_alert",
