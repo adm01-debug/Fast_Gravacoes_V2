@@ -198,6 +198,12 @@ serve(async (req) => {
       }
     }
 
+    // Sem provedor não houve envio: reportar falha em vez de 'success' com notified.
+    if (!resendApiKey) {
+      console.error('[send-loss-risk-alert] RESEND_API_KEY ausente: nenhum e-mail foi enviado.');
+      return new Response(JSON.stringify({ success: false, notified: 0, reason: 'email_provider_not_configured' }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
     return new Response(JSON.stringify({ success: true, notified: subscriberEmails.length }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   } catch (error: unknown) {
     console.error('[send-loss-risk-alert] Error:', error instanceof Error ? error.message : String(error));
