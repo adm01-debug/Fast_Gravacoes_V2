@@ -2720,7 +2720,7 @@
    "hooks_exportados": [
     "useTPMNotifications"
    ],
-   "linhas": 279,
+   "linhas": 304,
    "dominio": "features/notifications",
    "tabelas": [
     "machines",
@@ -2742,7 +2742,7 @@
     "src/features/notifications/components/NotificationIntegrator.tsx",
     "src/features/notifications/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/notifications/hooks/useWebPushNotifications.ts",

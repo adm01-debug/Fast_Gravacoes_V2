@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 129,
+ "total": 130,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 105
+  "unit": 106
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 93
+   "arquivos": 94
   },
   {
    "padrao": "outro",
@@ -583,6 +583,16 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 2,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/features/notifications/hooks/useTPMNotifications.ts"
+   ],
+   "casos": 5,
    "suporte": false
   },
   {
@@ -1413,6 +1423,7 @@
   "src/features/jobs/services/jobsService.ts": 3,
   "src/features/jobs/services/scheduling.ts": 1,
   "src/features/notifications/hooks/useNotifications.ts": 1,
+  "src/features/notifications/hooks/useTPMNotifications.ts": 1,
   "src/features/production/hooks/useMachines.ts": 2,
   "src/features/production/hooks/useOperatorProductivity.ts": 1,
   "src/features/production/index.ts": 1,
@@ -1601,7 +1612,6 @@
    "src/features/notifications/hooks/useNotificationSounds.ts",
    "src/features/notifications/hooks/usePushNotifications.ts",
    "src/features/notifications/hooks/usePushSubscription.ts",
-   "src/features/notifications/hooks/useTPMNotifications.ts",
    "src/features/notifications/hooks/useWebPushNotifications.ts",
    "src/features/packaging/hooks/usePackagingAssignees.ts",
    "src/features/packaging/hooks/usePackagingAuditTimeline.ts",

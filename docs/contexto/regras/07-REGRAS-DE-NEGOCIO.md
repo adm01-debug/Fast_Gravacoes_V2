@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c90ebd5f3b` · branch `main` · 2026-11-24 01:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8bee55491a` · branch `main` · 2026-11-24 02:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T00:32:06Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T01:16:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T00:32:06Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T01:16:00Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T00:32:06Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T01:16:00Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T00:32:06Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T01:16:00Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T00:32:06Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T01:16:00Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1853,6 +1853,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `error` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
 | `status` | `fail` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>`supabase/functions/health-monitor/index.ts` |
 | `status` | `failed` | compara, escreve | `src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`supabase/functions/tpm-notifications/index.ts` |
+| `status` | `failure` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | `status` | `finished` | compara, escreve, filtra | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/jobs/JobTraceabilityTab.tsx`<br>`src/components/kanban/DraggableJobCard.tsx`<br>… +41 |
 | `status` | `fulfilled` | compara | `src/features/auth/components/AuthProvider.tsx`<br>`src/hooks/abc/useABCMutations.ts`<br>`supabase/functions/send-email-report/index.ts` |
 | `status` | `good` | escreve | `src/components/operator/ProductionTimer.tsx` |
@@ -1889,7 +1890,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `sending` | escreve | `supabase/functions/send-push-notification/index.ts` |
 | `status` | `sent` | compara, escreve | `src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`supabase/functions/cron-alert-email/index.ts`<br>`supabase/functions/send-email-report/index.ts`<br>`supabase/functions/tpm-notifications/index.ts` |
 | `status` | `string` | compara | `src/features/analytics/hooks/useBottleneckPrediction.ts`<br>`src/features/analytics/hooks/useKPIs.ts`<br>`src/features/analytics/hooks/useLoadBalancing.ts`<br>`src/features/jobs/hooks/useSmartSequencing.ts` |
-| `status` | `success` | compara, escreve | `src/components/integrations/Bitrix24SyncHistory.tsx`<br>`src/features/maintenance/components/TPMNotificationLogs.tsx`<br>`src/features/notifications/hooks/useTPMNotifications.ts`<br>`supabase/functions/bitrix24-sync/index.ts`<br>`supabase/functions/tpm-notifications/index.ts` |
+| `status` | `success` | compara, escreve | `src/components/integrations/Bitrix24SyncHistory.tsx`<br>`src/features/maintenance/components/TPMNotificationLogs.tsx`<br>`supabase/functions/bitrix24-sync/index.ts`<br>`supabase/functions/tpm-notifications/index.ts` |
 | `status` | `syncing` | escreve | `src/components/traceability/BlockchainIntegrityCard.tsx` |
 | `status` | `upcoming` | compara, escreve | `src/components/design-system/hooks/MaintenanceOperatorDemos.tsx` |
 | `status` | `verified` | compara, escreve | `src/components/settings/TwoFactorSetup.tsx`<br>`src/components/traceability/BlockchainIntegrityCard.tsx`<br>`src/features/admin/components/security/MFASettings.tsx`<br>`src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts`<br>`src/features/auth/hooks/useMFA.ts`<br>… +1 |
@@ -3257,7 +3258,7 @@ _nenhum item encontrado_
 | Erro ao enviar notificação | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao enviar notificação de teste | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao salvar subscription | `src/features/notifications/hooks/usePushSubscription.ts` |
-| … +240 linhas — lista completa em `context.json` | |
+| … +242 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3323,7 +3324,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1327 testes em 110 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1333 testes em 111 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3393,6 +3394,7 @@ _nenhum item encontrado_
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
+| `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |

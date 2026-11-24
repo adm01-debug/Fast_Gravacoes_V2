@@ -900,7 +900,7 @@
    "nome": "send-loss-risk-alert",
    "entrada": "supabase/functions/send-loss-risk-alert/index.ts",
    "arquivos": 1,
-   "linhas": 207,
+   "linhas": 213,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -980,7 +980,7 @@
    "nome": "send-tpm-email",
    "entrada": "supabase/functions/send-tpm-email/index.ts",
    "arquivos": 1,
-   "linhas": 154,
+   "linhas": 160,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

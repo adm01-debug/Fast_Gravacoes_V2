@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
+  "sha": "8bee55491a2528e2c06515022c5a0b809cfe92e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 01:03 UTC",
-  "files_total": 1588,
-  "code_files": 1392,
-  "code_lines": 206823
+  "generated_at": "2026-11-24 02:07 UTC",
+  "files_total": 1589,
+  "code_files": 1393,
+  "code_lines": 207003
  },
  "version": "1.3.2",
- "facts_hash": "615c7b8e61f8630e",
+ "facts_hash": "a899c5a822708701",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 662,
-   ".ts": 400,
+   ".ts": 401,
    ".sql": 263,
    ".mjs": 50,
    ".py": 13,
@@ -28648,7 +28648,7 @@
   {
    "module": "src/features/maintenance",
    "files": 41,
-   "lines": 7397,
+   "lines": 7398,
    "tables": [
     "machine_predictions",
     "machines",
@@ -28787,8 +28787,8 @@
   },
   {
    "module": "src/features/notifications",
-   "files": 27,
-   "lines": 4335,
+   "files": 28,
+   "lines": 4502,
    "tables": [
     "machine_predictions",
     "machines",
@@ -28879,6 +28879,7 @@
     "src/features/notifications/hooks/useNotifications.ts",
     "src/features/notifications/hooks/usePushNotifications.ts",
     "src/features/notifications/hooks/usePushSubscription.ts",
+    "src/features/notifications/hooks/useTPMNotifications.test.ts",
     "src/features/notifications/hooks/useTPMNotifications.ts",
     "src/features/notifications/hooks/useWebPushNotifications.ts",
     "src/features/notifications/types/index.ts"
@@ -29835,7 +29836,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11306,
+   "lines": 11318,
    "tables": [
     "backup_logs",
     "backups",
@@ -35384,6 +35385,10 @@
    },
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.ts",
+    "msg": "Canal ${channel} sem provedor de envio configurado — nada foi enviado."
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.ts",
     "msg": "Erro ao processar notificação de teste"
    },
    {
@@ -35393,6 +35398,10 @@
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.ts",
     "msg": "Nenhum destinatário configurado para este canal e máquina."
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.ts",
+    "msg": "Notificação push não entregue: permissão negada ou navegador sem suporte."
    },
    {
     "file": "src/features/notifications/hooks/useWebPushNotifications.ts",
@@ -47360,7 +47369,7 @@
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.ts",
     "field": "status",
-    "value": "success",
+    "value": "failure",
     "kind": "escreve"
    },
    {
@@ -52224,6 +52233,30 @@
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
     "name": "should handle unread count"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "useTPMNotifications.sendTestNotification"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "registra falha em vez de sucesso quando o canal email não tem provedor"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "registra falha quando o canal whatsapp não tem provedor"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "registra sucesso quando o push é entregue ao navegador"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "registra falha quando o push não é entregue"
+   },
+   {
+    "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    "name": "sem confirmação apenas lista destinatários, sem enviar nem registrar log"
    },
    {
     "file": "src/features/production/hooks/useMachines.realtime.test.tsx",
@@ -63331,7 +63364,6 @@
       "compara:src/components/integrations/Bitrix24SyncHistory.tsx",
       "compara:src/features/maintenance/components/TPMNotificationLogs.tsx",
       "escreve:src/components/integrations/Bitrix24SyncHistory.tsx",
-      "escreve:src/features/notifications/hooks/useTPMNotifications.ts",
       "escreve:supabase/functions/bitrix24-sync/index.ts",
       "escreve:supabase/functions/tpm-notifications/index.ts"
      ],
@@ -63536,6 +63568,9 @@
       "compara:src/features/notifications/hooks/useNotifications.ts",
       "escreve:src/features/notifications/hooks/useNotifications.ts",
       "filtra:src/features/notifications/hooks/useNotifications.ts"
+     ],
+     "failure": [
+      "escreve:src/features/notifications/hooks/useTPMNotifications.ts"
      ],
      "in_triage": [
       "compara:src/features/packaging/components/PackagingStatsCards.tsx",
@@ -83404,7 +83439,7 @@
   },
   "src/features/maintenance/components/TPMNotificationSettings.tsx": {
    "path": "src/features/maintenance/components/TPMNotificationSettings.tsx",
-   "lines": 446,
+   "lines": 447,
    "exports": [
     "function TPMNotificationSettings"
    ],
@@ -84821,9 +84856,25 @@
     "invoke("
    ]
   },
+  "src/features/notifications/hooks/useTPMNotifications.test.ts": {
+   "path": "src/features/notifications/hooks/useTPMNotifications.test.ts",
+   "lines": 142,
+   "is_test": true,
+   "tests": [
+    "useTPMNotifications.sendTestNotification",
+    "registra falha em vez de sucesso quando o canal email não tem provedor",
+    "registra falha quando o canal whatsapp não tem provedor",
+    "registra sucesso quando o push é entregue ao navegador",
+    "registra falha quando o push não é entregue",
+    "sem confirmação apenas lista destinatários, sem enviar nem registrar log"
+   ],
+   "side_effects": [
+    "sendNotification"
+   ]
+  },
   "src/features/notifications/hooks/useTPMNotifications.ts": {
    "path": "src/features/notifications/hooks/useTPMNotifications.ts",
-   "lines": 279,
+   "lines": 304,
    "exports": [
     "interface TPMNotificationPreferences",
     "const saveTPMNotificationPreferences",
@@ -84843,6 +84894,10 @@
      "op": "insert"
     },
     {
+     "table": "tpm_notification_logs",
+     "op": "insert"
+    },
+    {
      "table": "machines",
      "op": "select"
     }
@@ -84855,9 +84910,11 @@
     ]
    },
    "errors": [
+    "Canal ${channel} sem provedor de envio configurado — nada foi enviado.",
     "Erro ao processar notificação de teste",
     "Máquina não encontrada",
-    "Nenhum destinatário configurado para este canal e máquina."
+    "Nenhum destinatário configurado para este canal e máquina.",
+    "Notificação push não entregue: permissão negada ou navegador sem suporte."
    ],
    "status_values": [
     {
@@ -84887,7 +84944,7 @@
     },
     {
      "field": "status",
-     "value": "success",
+     "value": "failure",
      "kind": "escreve"
     }
    ],
@@ -95105,7 +95162,7 @@
   },
   "supabase/functions/send-loss-risk-alert/index.ts": {
    "path": "supabase/functions/send-loss-risk-alert/index.ts",
-   "lines": 207,
+   "lines": 213,
    "tables": [
     {
      "table": "maintenance_records",
@@ -95240,7 +95297,7 @@
   },
   "supabase/functions/send-tpm-email/index.ts": {
    "path": "supabase/functions/send-tpm-email/index.ts",
-   "lines": 154,
+   "lines": 160,
    "tables": [
     {
      "table": "machines",
@@ -97133,10 +97190,24 @@
   }
  },
  "git": {
-  "sha": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
+  "sha": "8bee55491a2528e2c06515022c5a0b809cfe92e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8bee554",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: não reportar envio de notificação TPM sem provedor configurado (#278)",
+    "files": [
+     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
+     "src/features/maintenance/components/TPMNotificationSettings.tsx",
+     "src/features/notifications/hooks/useTPMNotifications.test.ts",
+     "src/features/notifications/hooks/useTPMNotifications.ts",
+     "supabase/functions/send-loss-risk-alert/index.ts",
+     "supabase/functions/send-tpm-email/index.ts"
+    ]
+   },
    {
     "sha": "c90ebd5",
     "date": "2026-11-23",
@@ -97494,20 +97565,6 @@
      "supabase/functions/REGISTRY.md",
      "supabase/functions/rate-limit-check/index.ts"
     ]
-   },
-   {
-    "sha": "3c05e4e",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: F-006 geo-blocking enforced no login (#240)",
-    "files": [
-     "src/features/admin/components/security/GeoBlockingSettings.tsx",
-     "src/features/auth/components/AuthProvider.test.tsx",
-     "src/features/auth/components/AuthProvider.tsx",
-     "src/features/auth/services/authService.ts",
-     "src/pages/AuthPage.tsx",
-     "supabase/functions/check-login-lockout/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -97522,6 +97579,10 @@
    [
     "src/features/auth/hooks/useRBAC.tsx",
     3
+   ],
+   [
+    "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
+    2
    ],
    [
     "deno.lock",
@@ -97542,6 +97603,26 @@
    [
     "src/features/auth/hooks/useRBAC.test.tsx",
     2
+   ],
+   [
+    "src/features/maintenance/components/TPMNotificationSettings.tsx",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    1
+   ],
+   [
+    "supabase/functions/send-loss-risk-alert/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/send-tpm-email/index.ts",
+    1
    ],
    [
     "src/features/jobs/hooks/useSchedulingData.test.tsx",
@@ -97565,30 +97646,6 @@
    ],
    [
     "supabase/functions/erp-api/index.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261125130000_jobs_external_ref.sql",
-    1
-   ],
-   [
-    "src/test/i18nRuntime.test.ts",
-    1
-   ],
-   [
-    "src/components/ui/resizable.test.tsx",
-    1
-   ],
-   [
-    "src/components/ui/resizable.tsx",
-    1
-   ],
-   [
-    ".github/workflows/deploy.yml",
-    1
-   ],
-   [
-    "scripts/audit/run.mjs",
     1
    ]
   ]

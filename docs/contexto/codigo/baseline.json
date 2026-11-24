@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
+  "commit": "8bee55491a2528e2c06515022c5a0b809cfe92e4",
   "branch": "main",
-  "data_commit": "2026-11-23T22:02:56-03:00",
+  "data_commit": "2026-11-23T23:06:27-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "8bee554",
+    "data": "2026-11-23",
+    "assunto": "fix: não reportar envio de notificação TPM sem provedor configurado (#278)"
+   },
    {
     "sha": "c90ebd5",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "885b37c",
     "data": "2026-11-22",
     "assunto": "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)"
-   },
-   {
-    "sha": "a17c419",
-    "data": "2026-11-22",
-    "assunto": "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 207,
+  "arquivos_mudados_7d": 212,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -142,7 +142,11 @@
    },
    {
     "pasta": "src/features/maintenance",
-    "mudancas": 26
+    "mudancas": 27
+   },
+   {
+    "pasta": "src/features/notifications",
+    "mudancas": 23
    },
    {
     "pasta": "src/features/auth",
@@ -150,10 +154,6 @@
    },
    {
     "pasta": "src/features/jobs",
-    "mudancas": 21
-   },
-   {
-    "pasta": "src/features/notifications",
     "mudancas": 21
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 127
+    "commits": 128
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1590,
-  "arquivos_codigo": 1126,
-  "linhas_codigo": 190495,
+  "arquivos_total": 1591,
+  "arquivos_codigo": 1127,
+  "linhas_codigo": 190675,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 255,
   "cron_jobs": 4,
-  "testes": 129,
+  "testes": 130,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 331,
-   "linhas": 46997
+   "arquivos": 332,
+   "linhas": 47165
   },
   "src/hooks": {
    "arquivos": 61,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11306
+   "linhas": 11318
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

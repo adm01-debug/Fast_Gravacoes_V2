@@ -8349,7 +8349,7 @@
     "TPMNotificationSettings"
    ],
    "export_default": null,
-   "linhas": 446,
+   "linhas": 447,
    "dominio": "features/maintenance",
    "hooks_locais": [
     "useNotificationSettings",
