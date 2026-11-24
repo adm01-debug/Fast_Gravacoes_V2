@@ -387,20 +387,31 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          echo "skip=false" >> "$GITHUB_OUTPUT"
-          if [ "$GITHUB_EVENT_NAME" != "push" ] || [ "$GITHUB_REF" != "refs/heads/main" ]; then
-            exit 0
+          # Escreve o output uma única vez: o mesmo nome repetido no arquivo de
+          # output deixa o valor final à mercê da ordem de leitura.
+          skip=false
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            tree="$(git show -s --format=%T HEAD)"
+            # O marcador é o artefato que o próprio job `e2e` publica quando a suíte
+            # passa. Reaproveitar exige mais do que o nome: a run que publicou precisa
+            # ter o mesmo tree e um job "E2E Tests (Playwright)" concluído com
+            # sucesso, o que fecha a brecha de aceitar artefato de origem não verificada.
+            candidates="$(gh api "repos/$REPO/actions/artifacts?name=e2e-validated-$tree" --jq '.artifacts[].workflow_run.id' || true)"
+            for run_id in $candidates; do
+              sha="$(gh api "repos/$REPO/actions/runs/$run_id" --jq '.head_sha' || true)"
+              [ -n "$sha" ] || continue
+              run_tree="$(gh api "repos/$REPO/git/commits/$sha" --jq '.tree.sha' || true)"
+              [ "$run_tree" = "$tree" ] || continue
+              greens="$(gh api "repos/$REPO/actions/runs/$run_id/jobs?per_page=100" --jq '[.jobs[] | select(.name == "E2E Tests (Playwright)" and .conclusion == "success")] | length' || echo 0)"
+              if [ "${greens:-0}" -gt 0 ]; then
+                skip=true
+                echo "## ⏭️ E2E reaproveitado" >> "$GITHUB_STEP_SUMMARY"
+                echo "O tree $tree já passou pela suíte E2E (run $run_id, suíte verde); a execução duplicada no main foi pulada." >> "$GITHUB_STEP_SUMMARY"
+                break
+              fi
+            done
           fi
-          tree="$(git show -s --format=%T HEAD)"
-          # Só vale marcador publicado por um push em main: artefato de uma run
-          # de pull_request tem head_branch igual ao da branch do PR e não pode
-          # atestar o conteúdo que entra na main.
-          count="$(gh api "repos/$REPO/actions/artifacts?name=e2e-validated-$tree" --jq '[.artifacts[] | select(.workflow_run.head_branch == "main")] | length' || echo 0)"
-          if [ "${count:-0}" -gt 0 ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "## ⏭️ E2E reaproveitado" >> "$GITHUB_STEP_SUMMARY"
-            echo "O tree $tree já passou pela suíte E2E no pull request; a execução duplicada no main foi pulada." >> "$GITHUB_STEP_SUMMARY"
-          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
 
 
 # ──────────────────────────────────────────────────────────────────────────
