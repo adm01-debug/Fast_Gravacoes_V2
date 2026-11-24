@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
+  "commit": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
   "branch": "main",
-  "data_commit": "2026-11-24T22:30:55Z",
+  "data_commit": "2026-11-24T22:47:38Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "fa8cd71",
+    "data": "2026-11-24",
+    "assunto": "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)"
+   },
    {
     "sha": "1c4e616",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "390d6da",
     "data": "2026-11-23",
     "assunto": "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)"
-   },
-   {
-    "sha": "8973b0c",
-    "data": "2026-11-23",
-    "assunto": "chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 144
+    "commits": 145
    },
    {
     "autor": "devin-ai-integration[bot]",

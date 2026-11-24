@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1c4e616ade` · branch `main` · 2026-11-24 22:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fa8cd714d0` · branch `main` · 2026-11-24 23:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T22:13:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T22:38:49Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_permission`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T22:13:19Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T22:38:49Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -47,7 +47,7 @@
 | `energy_alerts` | enabled | authenticated: has_any_active_role()<br>authenticated: has_permission('energy:read'::text) | authenticated: WITH CHECK (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)) | authenticated: USING (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)) | authenticated: (app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) OR app_private.has_role(auth.uid(), 'operator'::app_role) OR app_private.has_role(auth.uid(), 'admin'::app_role)) |
 | `energy_consumption` | enabled | authenticated: has_any_active_role()<br>authenticated: has_permission('energy:read'::text) | authenticated: WITH CHECK app_private.has_role(auth.uid(), 'coordinator'::app_role) | authenticated: USING app_private.has_role(auth.uid(), 'coordinator'::app_role) | authenticated: app_private.has_role(auth.uid(), 'coordinator'::app_role) |
 | `energy_targets` | enabled | authenticated: has_any_active_role()<br>authenticated: has_permission('energy:read'::text) | authenticated: WITH CHECK app_private.has_role(auth.uid(), 'coordinator'::app_role) | authenticated: USING app_private.has_role(auth.uid(), 'coordinator'::app_role) | authenticated: app_private.has_role(auth.uid(), 'coordinator'::app_role) |
-| `erp_api_keys` | enabled | public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: WITH CHECK has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: USING has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) |
+| `erp_api_keys` | enabled | public: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | public: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) |
 | `error_logs` | enabled | public: (( SELECT auth.uid() AS uid) = user_id) | public: WITH CHECK (( SELECT auth.uid() AS uid) IS NOT NULL) | — | — |
 | `feature_flags` | enabled | authenticated: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)<br>authenticated: has_any_active_role() | authenticated: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | authenticated: USING app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) | authenticated: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) |
 | `gamification_rewards` | enabled | authenticated: ((is_active = true) AND has_any_active_role()) | — | — | — |

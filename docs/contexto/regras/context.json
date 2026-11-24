@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
+  "sha": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 22:31 UTC",
+  "generated_at": "2026-11-24 23:12 UTC",
   "files_total": 1606,
   "code_files": 1410,
   "code_lines": 208575
  },
  "version": "1.3.2",
- "facts_hash": "4d60cdcb37f862dc",
+ "facts_hash": "99eb7264579841d1",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -11356,8 +11356,8 @@
     "cmd": "ALL",
     "roles": "public",
     "mode": "permissive",
-    "using": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
-    "check": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -13246,7 +13246,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13256,7 +13256,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13266,7 +13266,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13276,7 +13276,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13286,7 +13286,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13296,7 +13296,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13306,7 +13306,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13316,7 +13316,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13326,7 +13326,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13336,7 +13336,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -13346,7 +13346,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -57369,8 +57369,8 @@
     "cmd": "ALL",
     "roles": "public",
     "mode": "permissive",
-    "using": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
-    "check": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "using": "app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "check": "app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -59259,7 +59259,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'production-photos'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59269,7 +59269,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59279,7 +59279,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59289,7 +59289,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR ((storage.foldername(name))[1] = (( SELECT auth.uid() AS uid))::text) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59299,7 +59299,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59309,7 +59309,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59319,7 +59319,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59329,7 +59329,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'execution-evidence'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59339,7 +59339,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm-evidences'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59349,7 +59349,7 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR has_role(auth.uid(), 'coordinator'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))",
+    "using": "((bucket_id = 'tpm_signatures'::text) AND ((owner = auth.uid()) OR app_private.has_role(auth.uid(), 'coordinator'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -59359,7 +59359,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
+    "using": "((bucket_id = 'technical-documents'::text) AND has_any_active_role() AND ((owner = ( SELECT auth.uid() AS uid)) OR app_private.has_role(( SELECT auth.uid() AS uid), 'coordinator'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role) OR app_private.has_role(( SELECT auth.uid() AS uid), 'admin'::app_role)))",
     "check": "",
     "src": "docs/contexto/supabase/snapshot.json"
    },
@@ -64484,16 +64484,16 @@
    "erp_api_keys": {
     "rls": "enabled",
     "SELECT": [
-     "public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
     ],
     "INSERT": [
-     "public: WITH CHECK has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+     "public: WITH CHECK app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
     ],
     "UPDATE": [
-     "public: USING has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+     "public: USING app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
     ],
     "DELETE": [
-     "public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+     "public: app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
     ]
    },
    "error_logs": {
@@ -97811,10 +97811,19 @@
   }
  },
  "git": {
-  "sha": "1c4e616ade0f13fd21f2616faaa0ca4aa77541c9",
+  "sha": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "fa8cd71",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "1c4e616",
     "date": "2026-11-24",
@@ -98161,13 +98170,6 @@
     "files": [
      "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
     ]
-   },
-   {
-    "sha": "ac5366c",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)",
-    "files": []
    }
   ],
   "hot_files": [
@@ -98180,11 +98182,11 @@
     5
    ],
    [
-    "docs/qa/03-ACHADOS.md",
-    3
+    "docs/qa/05-PROGRESSO.md",
+    4
    ],
    [
-    "docs/qa/05-PROGRESSO.md",
+    "docs/qa/03-ACHADOS.md",
     3
    ],
    [
