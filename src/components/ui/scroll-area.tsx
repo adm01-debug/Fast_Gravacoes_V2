@@ -2,32 +2,15 @@ import * as React from "react";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
 import { cn } from "@/lib/utils";
+import { useOverflowing } from "@/hooks/use-overflowing";
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
 >(({ className, children, ...props }, ref) => {
-  const viewportRef = React.useRef<React.ElementRef<typeof ScrollAreaPrimitive.Viewport>>(null);
-  const [overflowing, setOverflowing] = React.useState(false);
-
   // O viewport do Radix recebe overflow-y: scroll; quando o conteudo transborda sem
-  // descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex
-  // entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe.
-  React.useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const sync = () =>
-      setOverflowing(
-        viewport.scrollHeight > viewport.clientHeight + 1 || viewport.scrollWidth > viewport.clientWidth + 1,
-      );
-    sync();
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(sync);
-    observer.observe(viewport);
-    const content = viewport.firstElementChild;
-    if (content) observer.observe(content);
-    return () => observer.disconnect();
-  }, []);
+  // descendente focavel ele viola a regra axe scrollable-region-focusable.
+  const { ref: viewportRef, overflowing } = useOverflowing<HTMLDivElement>();
 
   return (
     <ScrollAreaPrimitive.Root ref={ref} className={cn("relative overflow-hidden", className)} {...props}>
