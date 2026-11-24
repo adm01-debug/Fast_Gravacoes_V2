@@ -172,10 +172,10 @@ export const packagingService = {
       p_defect_type: form.defect_type,
       p_severity: form.severity,
       p_decision: form.decision,
-      p_photo_url: form.photo_url || null,
-      p_notes: form.notes ?? null,
-      p_loss_reason: form.loss_reason || null,
-      p_request_id: form.requestId || null,
+      p_photo_url: form.photo_url || undefined,
+      p_notes: form.notes ?? undefined,
+      p_loss_reason: form.loss_reason || undefined,
+      p_request_id: form.requestId || undefined,
     });
     if (error) throw error;
   },

@@ -77,19 +77,19 @@ export default function PublicTrackingPage() {
 
       if (jobIdParam && UUID_RE.test(jobIdParam)) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: jobIdParam, p_order_number: null }));
+          .rpc('get_public_tracking', { p_job_id: jobIdParam ?? undefined, p_order_number: undefined }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 
       if (!supabaseError && typed.length === 0 && isUUID) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: null }));
+          .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: undefined }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 
       if (!supabaseError && typed.length === 0) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: null, p_order_number: safeQuery }));
+          .rpc('get_public_tracking', { p_job_id: undefined, p_order_number: safeQuery }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 

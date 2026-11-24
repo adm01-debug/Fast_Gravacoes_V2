@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -194,6 +194,114 @@ export type Database = {
           },
         ]
       }
+      archived_jobs: {
+        Row: {
+          actual_end_time: string | null
+          actual_start_time: string | null
+          archived_at: string
+          children: Json
+          client: string
+          created_at: string
+          delay_reason: string | null
+          end_time: string | null
+          estimated_duration: number
+          gravure_color: string | null
+          id: string
+          loss_category: string | null
+          lost_pieces: number | null
+          machine_id: string | null
+          notes: string | null
+          operator_id: string | null
+          order_number: string
+          parent_job_id: string | null
+          priority: string
+          produced_quantity: number | null
+          product: string
+          product_category_id: string | null
+          production_photos: string[] | null
+          quantity: number
+          rework_reason: string | null
+          scheduled_date: string | null
+          shipment_id: string | null
+          shipping_status: string | null
+          sort_order: number | null
+          start_time: string | null
+          status: string
+          technique_id: string
+          updated_at: string
+        }
+        Insert: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          archived_at?: string
+          children?: Json
+          client: string
+          created_at?: string
+          delay_reason?: string | null
+          end_time?: string | null
+          estimated_duration?: number
+          gravure_color?: string | null
+          id?: string
+          loss_category?: string | null
+          lost_pieces?: number | null
+          machine_id?: string | null
+          notes?: string | null
+          operator_id?: string | null
+          order_number: string
+          parent_job_id?: string | null
+          priority?: string
+          produced_quantity?: number | null
+          product: string
+          product_category_id?: string | null
+          production_photos?: string[] | null
+          quantity: number
+          rework_reason?: string | null
+          scheduled_date?: string | null
+          shipment_id?: string | null
+          shipping_status?: string | null
+          sort_order?: number | null
+          start_time?: string | null
+          status?: string
+          technique_id: string
+          updated_at?: string
+        }
+        Update: {
+          actual_end_time?: string | null
+          actual_start_time?: string | null
+          archived_at?: string
+          children?: Json
+          client?: string
+          created_at?: string
+          delay_reason?: string | null
+          end_time?: string | null
+          estimated_duration?: number
+          gravure_color?: string | null
+          id?: string
+          loss_category?: string | null
+          lost_pieces?: number | null
+          machine_id?: string | null
+          notes?: string | null
+          operator_id?: string | null
+          order_number?: string
+          parent_job_id?: string | null
+          priority?: string
+          produced_quantity?: number | null
+          product?: string
+          product_category_id?: string | null
+          production_photos?: string[] | null
+          quantity?: number
+          rework_reason?: string | null
+          scheduled_date?: string | null
+          shipment_id?: string | null
+          shipping_status?: string | null
+          sort_order?: number | null
+          start_time?: string | null
+          status?: string
+          technique_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -242,6 +350,27 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_logs: {
+        Row: {
+          backup_id: string
+          created_at: string
+          id: string
+          tables_backed_up: Json
+        }
+        Insert: {
+          backup_id: string
+          created_at?: string
+          id?: string
+          tables_backed_up?: Json
+        }
+        Update: {
+          backup_id?: string
+          created_at?: string
+          id?: string
+          tables_backed_up?: Json
+        }
+        Relationships: []
+      }
       bitrix24_field_mappings: {
         Row: {
           created_at: string
@@ -272,6 +401,21 @@ export type Database = {
           source_key?: string
           target_key?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      bitrix24_oauth_states: {
+        Row: {
+          created_at: string
+          state: string
+        }
+        Insert: {
+          created_at?: string
+          state: string
+        }
+        Update: {
+          created_at?: string
+          state?: string
         }
         Relationships: []
       }
@@ -530,6 +674,60 @@ export type Database = {
         }
         Relationships: []
       }
+      csp_violation_reports: {
+        Row: {
+          blocked_uri: string | null
+          column_number: number | null
+          created_at: string
+          disposition: string | null
+          document_uri: string | null
+          effective_directive: string | null
+          id: string
+          line_number: number | null
+          original_policy: string | null
+          raw: Json
+          referrer: string | null
+          source_file: string | null
+          status_code: number | null
+          user_agent: string | null
+          violated_directive: string | null
+        }
+        Insert: {
+          blocked_uri?: string | null
+          column_number?: number | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          line_number?: number | null
+          original_policy?: string | null
+          raw?: Json
+          referrer?: string | null
+          source_file?: string | null
+          status_code?: number | null
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Update: {
+          blocked_uri?: string | null
+          column_number?: number | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          line_number?: number | null
+          original_policy?: string | null
+          raw?: Json
+          referrer?: string | null
+          source_file?: string | null
+          status_code?: number | null
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Relationships: []
+      }
       daily_summaries: {
         Row: {
           created_at: string
@@ -741,33 +939,6 @@ export type Database = {
           },
         ]
       }
-      email_verification_tokens: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: string
-          token: string
-          user_id: string
-          verified_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          token: string
-          user_id: string
-          verified_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          token?: string
-          user_id?: string
-          verified_at?: string | null
-        }
-        Relationships: []
-      }
       energy_alerts: {
         Row: {
           alert_type: string
@@ -924,6 +1095,36 @@ export type Database = {
           },
         ]
       }
+      erp_api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          key_hash: string
+          last_used_at: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          last_used_at?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          last_used_at?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
       error_logs: {
         Row: {
           component_name: string | null
@@ -1020,36 +1221,6 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           stock?: number | null
-        }
-        Relationships: []
-      }
-      gamification_settings: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          is_active: boolean
-          setting_key: string
-          setting_value: Json
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          setting_key: string
-          setting_value?: Json
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          setting_key?: string
-          setting_value?: Json
-          updated_at?: string
         }
         Relationships: []
       }
@@ -1374,6 +1545,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "job_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "job_status_history_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
@@ -1386,11 +1564,13 @@ export type Database = {
         Row: {
           actual_end_time: string | null
           actual_start_time: string | null
+          cancel_reason: string | null
           client: string
           created_at: string
           delay_reason: string | null
           end_time: string | null
           estimated_duration: number
+          external_ref: string | null
           gravure_color: string | null
           id: string
           loss_category: string | null
@@ -1419,11 +1599,13 @@ export type Database = {
         Insert: {
           actual_end_time?: string | null
           actual_start_time?: string | null
+          cancel_reason?: string | null
           client: string
           created_at?: string
           delay_reason?: string | null
           end_time?: string | null
           estimated_duration?: number
+          external_ref?: string | null
           gravure_color?: string | null
           id?: string
           loss_category?: string | null
@@ -1452,11 +1634,13 @@ export type Database = {
         Update: {
           actual_end_time?: string | null
           actual_start_time?: string | null
+          cancel_reason?: string | null
           client?: string
           created_at?: string
           delay_reason?: string | null
           end_time?: string | null
           estimated_duration?: number
+          external_ref?: string | null
           gravure_color?: string | null
           id?: string
           loss_category?: string | null
@@ -2815,7 +2999,7 @@ export type Database = {
           notes?: string | null
           packaging_task_id: string
           photo_url?: string | null
-          quantity?: number
+          quantity: number
           reported_by?: string | null
           request_id?: string | null
           severity?: string
@@ -2844,36 +3028,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      packaging_equipment: {
-        Row: {
-          created_at: string | null
-          id: string
-          last_maintenance_at: string | null
-          name: string
-          next_maintenance_at: string | null
-          status: string | null
-          type: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          last_maintenance_at?: string | null
-          name: string
-          next_maintenance_at?: string | null
-          status?: string | null
-          type: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          last_maintenance_at?: string | null
-          name?: string
-          next_maintenance_at?: string | null
-          status?: string | null
-          type?: string
-        }
-        Relationships: []
       }
       packaging_settings: {
         Row: {
@@ -3028,6 +3182,7 @@ export type Database = {
           delay_reason: string | null
           id: string
           job_id: string
+          loss_reason: string | null
           notes: string | null
           package_type: string | null
           packages_count: number | null
@@ -3048,6 +3203,7 @@ export type Database = {
           delay_reason?: string | null
           id?: string
           job_id: string
+          loss_reason?: string | null
           notes?: string | null
           package_type?: string | null
           packages_count?: number | null
@@ -3068,6 +3224,7 @@ export type Database = {
           delay_reason?: string | null
           id?: string
           job_id?: string
+          loss_reason?: string | null
           notes?: string | null
           package_type?: string | null
           packages_count?: number | null
@@ -3085,41 +3242,6 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: true
             referencedRelation: "jobs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      packaging_waste: {
-        Row: {
-          created_at: string | null
-          id: string
-          material_type: string
-          operator_id: string | null
-          task_id: string | null
-          weight_kg: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          material_type: string
-          operator_id?: string | null
-          task_id?: string | null
-          weight_kg: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          material_type?: string
-          operator_id?: string | null
-          task_id?: string | null
-          weight_kg?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "packaging_waste_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "packaging_tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -4126,47 +4248,6 @@ export type Database = {
           },
         ]
       }
-      shipment_costs: {
-        Row: {
-          amount: number
-          cost_type: string
-          created_at: string
-          currency: string
-          description: string | null
-          id: string
-          shipment_id: string
-          updated_at: string
-        }
-        Insert: {
-          amount?: number
-          cost_type: string
-          created_at?: string
-          currency?: string
-          description?: string | null
-          id?: string
-          shipment_id: string
-          updated_at?: string
-        }
-        Update: {
-          amount?: number
-          cost_type?: string
-          created_at?: string
-          currency?: string
-          description?: string | null
-          id?: string
-          shipment_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "shipment_costs_shipment_id_fkey"
-            columns: ["shipment_id"]
-            isOneToOne: false
-            referencedRelation: "shipments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       shipments: {
         Row: {
           actual_delivery: string | null
@@ -4531,6 +4612,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      system_metrics: {
+        Row: {
+          collected_at: string
+          id: string
+          metrics: Json
+        }
+        Insert: {
+          collected_at?: string
+          id?: string
+          metrics?: Json
+        }
+        Update: {
+          collected_at?: string
+          id?: string
+          metrics?: Json
+        }
+        Relationships: []
       }
       technical_conversations: {
         Row: {
@@ -5162,10 +5261,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tpm_execution_alerts_execution_id_fkey"
+            foreignKeyName: "tpm_execution_alerts_execution_id_record_fkey"
             columns: ["execution_id"]
             isOneToOne: false
-            referencedRelation: "tpm_executions"
+            referencedRelation: "maintenance_records"
             referencedColumns: ["id"]
           },
         ]
@@ -5208,44 +5307,6 @@ export type Database = {
           },
         ]
       }
-      tpm_execution_checklist: {
-        Row: {
-          created_at: string | null
-          execution_id: string | null
-          id: string
-          is_compliant: boolean | null
-          item_description: string
-          observation: string | null
-          photo_url: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          execution_id?: string | null
-          id?: string
-          is_compliant?: boolean | null
-          item_description: string
-          observation?: string | null
-          photo_url?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          execution_id?: string | null
-          id?: string
-          is_compliant?: boolean | null
-          item_description?: string
-          observation?: string | null
-          photo_url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tpm_execution_checklist_execution_id_fkey"
-            columns: ["execution_id"]
-            isOneToOne: false
-            referencedRelation: "tpm_executions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       tpm_execution_parts: {
         Row: {
           cost: number | null
@@ -5279,10 +5340,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tpm_execution_parts_execution_id_fkey"
+            foreignKeyName: "tpm_execution_parts_execution_id_record_fkey"
             columns: ["execution_id"]
             isOneToOne: false
-            referencedRelation: "tpm_executions"
+            referencedRelation: "maintenance_records"
             referencedColumns: ["id"]
           },
         ]
@@ -5317,10 +5378,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tpm_execution_supplies_execution_id_fkey"
+            foreignKeyName: "tpm_execution_supplies_execution_id_record_fkey"
             columns: ["execution_id"]
             isOneToOne: false
-            referencedRelation: "tpm_executions"
+            referencedRelation: "maintenance_records"
             referencedColumns: ["id"]
           },
         ]
@@ -5660,10 +5721,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tpm_parameter_alerts_execution_id_fkey"
+            foreignKeyName: "tpm_parameter_alerts_execution_id_record_fkey"
             columns: ["execution_id"]
             isOneToOne: false
-            referencedRelation: "tpm_executions"
+            referencedRelation: "maintenance_records"
             referencedColumns: ["id"]
           },
         ]
@@ -5878,73 +5939,15 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
-      }
-      webauthn_challenges: {
-        Row: {
-          challenge: string
-          created_at: string
-          expires_at: string
-          id: string
-          type: string
-          user_email: string | null
-          user_id: string | null
-        }
-        Insert: {
-          challenge: string
-          created_at?: string
-          expires_at?: string
-          id?: string
-          type: string
-          user_email?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          challenge?: string
-          created_at?: string
-          expires_at?: string
-          id?: string
-          type?: string
-          user_email?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      webauthn_credentials: {
-        Row: {
-          counter: number
-          created_at: string
-          credential_id: string
-          device_name: string | null
-          id: string
-          last_used_at: string | null
-          public_key: string
-          transports: string[] | null
-          user_id: string
-        }
-        Insert: {
-          counter?: number
-          created_at?: string
-          credential_id: string
-          device_name?: string | null
-          id?: string
-          last_used_at?: string | null
-          public_key: string
-          transports?: string[] | null
-          user_id: string
-        }
-        Update: {
-          counter?: number
-          created_at?: string
-          credential_id?: string
-          device_name?: string | null
-          id?: string
-          last_used_at?: string | null
-          public_key?: string
-          transports?: string[] | null
-          user_id?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       webhook_logs: {
         Row: {
@@ -5981,6 +5984,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_job_sequence: { Args: { p_slots: Json }; Returns: number }
+      approve_maintenance_record: {
+        Args: {
+          p_approver_id: string
+          p_next_due: string
+          p_record_id: string
+          p_schedule_id?: string
+        }
+        Returns: undefined
+      }
+      archive_finished_jobs: { Args: { p_older_than: string }; Returns: Json }
+      assign_packaging_task: { Args: { p_task_id: string }; Returns: undefined }
       auto_reassign_stale_packaging_tasks: { Args: never; Returns: undefined }
       calculate_audit_hash: {
         Args: { rec: Database["public"]["Tables"]["audit_log"]["Row"] }
@@ -5997,16 +6012,30 @@ export type Database = {
         Returns: undefined
       }
       check_tpm_schedules_notifications: { Args: never; Returns: undefined }
+      complete_maintenance_record: {
+        Args: { payload: Json }
+        Returns: undefined
+      }
       compute_audit_hash: {
         Args: {
           _action: string
           _actor_id: string
-          _created_at: string
+          _created: string
           _entity_id: string
           _entity_type: string
           _new_data: Json
           _old_data: Json
-          _previous_hash: string
+          _prev_hash: string
+        }
+        Returns: string
+      }
+      create_operator: {
+        Args: {
+          _email: string
+          _full_name: string
+          _password: string
+          _phone?: string
+          _role?: string
         }
         Returns: string
       }
@@ -6014,6 +6043,7 @@ export type Database = {
         Args: { _schedule: string }
         Returns: number
       }
+      exec_sql: { Args: { query: string }; Returns: Json }
       get_cron_health: {
         Args: never
         Returns: {
@@ -6048,6 +6078,10 @@ export type Database = {
           total_weight: number
         }[]
       }
+      get_public_tracking: {
+        Args: { p_job_id?: string; p_order_number?: string }
+        Returns: Json
+      }
       get_system_status_summary: {
         Args: never
         Returns: {
@@ -6060,15 +6094,12 @@ export type Database = {
           total_jobs: number
         }[]
       }
-      get_public_tracking: {
-        Args: { p_job_id: string | null; p_order_number: string | null }
-        Returns: Json
-      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
       has_any_active_role: { Args: never; Returns: boolean }
+      has_permission: { Args: { _permission: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -6080,39 +6111,25 @@ export type Database = {
         Args: { sheet_id: string }
         Returns: undefined
       }
-      apply_job_sequence: {
+      insert_csp_report_dedup: {
         Args: {
-          p_slots: Json
+          p_blocked_uri: string
+          p_column_number: number
+          p_disposition: string
+          p_document_uri: string
+          p_effective_directive: string
+          p_line_number: number
+          p_original_policy: string
+          p_raw: Json
+          p_referrer: string
+          p_source_file: string
+          p_status_code: number
+          p_user_agent: string
+          p_violated_directive: string
         }
-        Returns: number
+        Returns: boolean
       }
-      assign_packaging_task: {
-        Args: {
-          p_task_id: string
-        }
-        Returns: undefined
-      }
-      update_shipment_status: {
-        Args: {
-          p_shipment_id: string
-          p_status: string
-        }
-        Returns: string
-      }
-      record_packaging_defect: {
-        Args: {
-          p_task_id: string
-          p_quantity: number
-          p_defect_type: string
-          p_severity?: string
-          p_decision?: string
-          p_photo_url?: string | null
-          p_notes?: string | null
-          p_loss_reason?: string | null
-          p_request_id?: string | null
-        }
-        Returns: undefined
-      }
+      is_staff: { Args: never; Returns: boolean }
       packaging_task_sla_status: {
         Args: {
           _created_at: string
@@ -6138,21 +6155,51 @@ export type Database = {
           table_name: string
         }[]
       }
+      rate_limit_check_and_record: {
+        Args: {
+          p_endpoint: string
+          p_ip: unknown
+          p_max: number
+          p_user_email: string
+          p_user_id: string
+          p_window_seconds: number
+        }
+        Returns: number
+      }
+      rate_limit_check_and_record_pair: {
+        Args: {
+          p_global_endpoint: string
+          p_global_max: number
+          p_ip: unknown
+          p_per_ip_endpoint: string
+          p_per_ip_max: number
+          p_window_seconds: number
+        }
+        Returns: number
+      }
+      record_packaging_defect: {
+        Args: {
+          p_decision?: string
+          p_defect_type: string
+          p_loss_reason?: string
+          p_notes?: string
+          p_photo_url?: string
+          p_quantity: number
+          p_request_id?: string
+          p_severity?: string
+          p_task_id: string
+        }
+        Returns: undefined
+      }
       refresh_operator_rankings: {
         Args: { p_type: string }
         Returns: undefined
       }
       rollup_cron_p95_daily: { Args: { _days?: number }; Returns: number }
       snapshot_cron_health: { Args: never; Returns: number }
-      test_rls_policies: {
-        Args: { p_role: string; p_table_name: string; p_test_user_id: string }
-        Returns: {
-          can_delete: boolean
-          can_insert: boolean
-          can_select: boolean
-          can_update: boolean
-          operation: string
-        }[]
+      update_shipment_status: {
+        Args: { p_shipment_id: string; p_status: string }
+        Returns: string
       }
       verify_audit_chain:
         | {
@@ -6193,12 +6240,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -6222,11 +6269,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -6247,11 +6294,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -6272,11 +6319,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -6289,11 +6336,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

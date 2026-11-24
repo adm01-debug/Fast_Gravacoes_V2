@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Pause, CheckCircle, RotateCcw, AlertTriangle } from "lucide-react";
+import { Play, Pause, CheckCircle, RotateCcw, AlertTriangle, Ban } from "lucide-react";
 import { DbJob } from "@/features/jobs";
+import { canTransition } from "@/features/jobs/services/jobStateMachine";
 
 interface JobQuickActionsProps {
   job: DbJob;
@@ -66,6 +67,17 @@ export function JobQuickActions({ job, handleAction }: JobQuickActionsProps) {
           <AlertTriangle className="h-4 w-4 mr-2" />
           Job Atrasado
         </Badge>
+      )}
+
+      {canTransition(job.status, 'cancelled') && (
+        <Button
+          onClick={() => handleAction('cancel')}
+          variant="outline"
+          className="border-destructive/30 text-destructive hover:bg-destructive/10"
+        >
+          <Ban className="h-4 w-4 mr-2" />
+          Cancelar OS
+        </Button>
       )}
     </div>
   );

@@ -198,6 +198,33 @@ describe('jobsService.updateStatus', () => {
     const result = await jobsService.updateStatus('job-1', 'finished');
     expect(result).toMatchObject({ status: 'finished' });
   });
+
+  it('sends cancel_reason when cancelling with a reason', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+    const updated = { id: 'job-1', status: 'cancelled', cancel_reason: 'Cliente desistiu' };
+    const updateChain = makeChain(async () => ({ data: updated, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    const result = await jobsService.updateStatus('job-1', 'cancelled', '  Cliente desistiu  ');
+
+    expect(updateChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'cancelled', cancel_reason: 'Cliente desistiu' }),
+    );
+    expect(result).toMatchObject({ status: 'cancelled' });
+  });
+
+  it('refuses to cancel without a reason', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+    const updateChain = makeChain(async () => ({ data: {}, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    await expect(jobsService.updateStatus('job-1', 'cancelled', '   ')).rejects.toThrow(
+      'Informe o motivo do cancelamento.',
+    );
+    expect(updateChain.update).not.toHaveBeenCalled();
+  });
 });
 
 // ── delete ─────────────────────────────────────────────────
