@@ -370,6 +370,9 @@ jobs:
     name: E2E reuse guard
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    # Falha aqui (checkout, rate limit da API) nao pode pular a suite: o job
+    # fica verde e o output vazio mantem skip=false, entao o E2E roda.
+    continue-on-error: true
     permissions:
       contents: read
       actions: read
