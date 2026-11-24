@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -76,6 +76,10 @@ function localNoonIso(offsetDays = 0): string {
 
 describe('useSchedulingData', () => {
   beforeEach(() => {
+    // Relógio fixo ao meio-dia local: fixtures e hook leem a mesma data mesmo
+    // se a meia-noite passar durante a execução. shouldAdvanceTime mantém os
+    // timers reais avançando (waitFor e o backoff de retry continuam funcionando).
+    vi.useFakeTimers({ shouldAdvanceTime: true, now: new Date().setHours(12, 0, 0, 0) });
     getAllJobsMock.mockReset();
     getAllMachinesMock.mockReset();
     useAuthMock.mockReset();
@@ -85,6 +89,10 @@ describe('useSchedulingData', () => {
     getAllMachinesMock.mockResolvedValue([MACHINE_A]);
     supabaseTableData.profiles = { data: [{ id: 'op-1', full_name: 'Operador X', avatar_url: null }], error: null };
     supabaseTableData.techniques = { data: [{ id: 'tech-1', name: 'Bordado' }], error: null };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('mantém as consultas desabilitadas quando não há usuário autenticado', async () => {
