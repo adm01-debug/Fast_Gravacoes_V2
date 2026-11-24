@@ -422,7 +422,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [build, e2e-guard]
-    if: needs.e2e-guard.outputs.skip != 'true' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request')
+    # !cancelled() + needs.build.result mantem o mesmo comportamento de antes
+    # (build quebrado ou run cancelada => E2E nao roda) e garante que uma falha
+    # do job de consulta (opcional) nao transforme o E2E em job pulado: sem
+    # skip=true o output fica vazio e a suite roda.
+    if: "!cancelled() && needs.build.result == 'success' && needs.e2e-guard.outputs.skip != 'true' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request')"
     permissions:
       contents: read
     concurrency:
