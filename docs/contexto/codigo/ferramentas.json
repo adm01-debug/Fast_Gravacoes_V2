@@ -243,6 +243,7 @@
     "simulation-tests",
     "build",
     "bundle-diff",
+    "e2e-guard",
     "e2e",
     "rls-regression",
     "quality-gate"

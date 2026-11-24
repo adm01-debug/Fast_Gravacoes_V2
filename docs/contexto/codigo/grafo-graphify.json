@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
+ "commit_do_grafo": "765030a8020906163a9553466309eb88c7a2adc9",
  "grafo_atual": true,
  "nos": 7562,
  "arestas": 22138,
- "comunidades_total": 687,
+ "comunidades_total": 686,
  "relacoes": {
   "calls": 3228,
   "cites": 6,
@@ -554,23 +554,6 @@
   },
   {
    "id": 33,
-   "nome": "TechnicalKnowledgeBase.tsx",
-   "nos": 46,
-   "callables": 36,
-   "arquivos": 18,
-   "exemplos_arquivos": [
-    "src/components/knowledge/KnowledgeBaseStats.tsx",
-    "src/components/knowledge/KnowledgeSheetList.tsx",
-    "src/components/knowledge/KnowledgeStatusBadge.tsx",
-    "src/components/knowledge/TechnicalSheetEditor.tsx",
-    "src/components/knowledge/TechnicalSheetHeader.tsx",
-    "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
-    "src/components/knowledge/TechnicalSheetTab.tsx",
-    "src/components/knowledge/TechnicalSheetViewer.tsx"
-   ]
-  },
-  {
-   "id": 34,
    "nome": "AppRoutes.tsx",
    "nos": 46,
    "callables": 7,
@@ -582,7 +565,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 34,
    "nome": "queryConfig.ts",
    "nos": 45,
    "callables": 27,
@@ -599,7 +582,7 @@
    ]
   },
   {
-   "id": 36,
+   "id": 35,
    "nome": "useRealtimeChannel",
    "nos": 44,
    "callables": 29,
@@ -616,7 +599,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 36,
    "nome": "devDependencies",
    "nos": 43,
    "callables": 0,
@@ -626,7 +609,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 37,
    "nome": "graphify-local.mjs",
    "nos": 43,
    "callables": 36,
@@ -638,7 +621,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 38,
    "nome": "CronHealthCard.tsx",
    "nos": 43,
    "callables": 24,
@@ -655,7 +638,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 39,
    "nome": "erp-api/index.ts",
    "nos": 43,
    "callables": 23,
@@ -670,7 +653,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 40,
    "nome": "TraceabilityPage.tsx",
    "nos": 42,
    "callables": 31,
@@ -687,7 +670,7 @@
    ]
   },
   {
-   "id": 42,
+   "id": 41,
    "nome": "automation.mjs",
    "nos": 41,
    "callables": 35,
@@ -698,7 +681,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 42,
    "nome": "_shared/logger.ts",
    "nos": 41,
    "callables": 22,
@@ -715,7 +698,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 43,
    "nome": "chunks",
    "nos": 40,
    "callables": 0,
@@ -725,7 +708,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 44,
    "nome": "KPIDashboard.tsx",
    "nos": 40,
    "callables": 29,
@@ -742,7 +725,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 45,
    "nome": "Index.tsx",
    "nos": 40,
    "callables": 10,
@@ -759,7 +742,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 46,
    "nome": "ChecklistTemplatesManager.tsx",
    "nos": 40,
    "callables": 17,
@@ -776,11 +759,11 @@
    ]
   },
   {
-   "id": 48,
+   "id": 47,
    "nome": "PackagingTaskDetail.tsx",
-   "nos": 40,
-   "callables": 21,
-   "arquivos": 10,
+   "nos": 39,
+   "callables": 20,
+   "arquivos": 9,
    "exemplos_arquivos": [
     "src/features/packaging/components/DefectTriageForm.tsx",
     "src/features/packaging/components/DelayReasonDialog.tsx",
@@ -793,7 +776,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 48,
    "nome": "PlanningEfficiencyDashboard.tsx",
    "nos": 37,
    "callables": 26,
@@ -810,24 +793,7 @@
    ]
   },
   {
-   "id": 50,
-   "nome": "PackagingDashboard.tsx",
-   "nos": 37,
-   "callables": 29,
-   "arquivos": 15,
-   "exemplos_arquivos": [
-    "src/features/jobs/hooks/useSchedulingData.ts",
-    "src/features/packaging/components/PackagingLeaderboard.tsx",
-    "src/features/packaging/components/PackagingQueueList.tsx",
-    "src/features/packaging/components/PackagingSlaAlerts.tsx",
-    "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
-    "src/features/packaging/components/PackagingStatsCards.tsx",
-    "src/features/packaging/components/PackagingTaskCard.tsx",
-    "src/features/packaging/components/PackagingTaskDetail.tsx"
-   ]
-  },
-  {
-   "id": 51,
+   "id": 49,
    "nome": "cors.ts",
    "nos": 37,
    "callables": 17,
@@ -844,7 +810,7 @@
    ]
   },
   {
-   "id": 52,
+   "id": 50,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
@@ -854,7 +820,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 51,
    "nome": "audit/run.mjs",
    "nos": 35,
    "callables": 18,
@@ -864,7 +830,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 52,
    "nome": "github-settings-guard.mjs",
    "nos": 35,
    "callables": 25,
@@ -875,7 +841,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 53,
    "nome": ".git",
    "nos": 35,
    "callables": 30,
@@ -885,7 +851,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 54,
    "nome": "ShiftHandoverPage.tsx",
    "nos": 35,
    "callables": 23,
@@ -902,7 +868,7 @@
    ]
   },
   {
-   "id": 57,
+   "id": 55,
    "nome": "_shared/validation.ts",
    "nos": 35,
    "callables": 21,
@@ -915,7 +881,7 @@
    ]
   },
   {
-   "id": 58,
+   "id": 56,
    "nome": "useDevice",
    "nos": 34,
    "callables": 22,
@@ -929,7 +895,24 @@
    ]
   },
   {
-   "id": 59,
+   "id": 57,
+   "nome": "Bitrix24ConfigPage.tsx",
+   "nos": 32,
+   "callables": 24,
+   "arquivos": 9,
+   "exemplos_arquivos": [
+    "src/components/assistant/TechnicalAssistant.tsx",
+    "src/components/integrations/Bitrix24SyncHistory.tsx",
+    "src/components/integrations/Bitrix24SyncPanel.tsx",
+    "src/components/ui/toast.tsx",
+    "src/features/admin/hooks/useBitrix24Sync.ts",
+    "src/features/analytics/components/bitrix24/Bitrix24MappingDialog.tsx",
+    "src/hooks/use-toast.ts",
+    "src/lib/edgeFunctionFetch.ts"
+   ]
+  },
+  {
+   "id": 58,
    "nome": "admin/index.ts",
    "nos": 32,
    "callables": 21,
@@ -946,7 +929,7 @@
    ]
   },
   {
-   "id": 60,
+   "id": 59,
    "nome": "useSchedulingData",
    "nos": 31,
    "callables": 18,
@@ -963,7 +946,7 @@
    ]
   },
   {
-   "id": 61,
+   "id": 60,
    "nome": "e2e-setup.ts",
    "nos": 30,
    "callables": 8,
@@ -980,7 +963,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 61,
    "nome": "rotina.mjs",
    "nos": 30,
    "callables": 8,
@@ -990,7 +973,7 @@
    ]
   },
   {
-   "id": 63,
+   "id": 62,
    "nome": "lib/logger.ts",
    "nos": 30,
    "callables": 22,
@@ -999,6 +982,23 @@
     "src/features/jobs/hooks/usePaginatedJobs.ts",
     "src/lib/logger.test.ts",
     "src/lib/logger.ts"
+   ]
+  },
+  {
+   "id": 63,
+   "nome": "PackagingDashboard.tsx",
+   "nos": 30,
+   "callables": 24,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/features/jobs/hooks/useSchedulingData.ts",
+    "src/features/packaging/components/BulkReassignDialog.tsx",
+    "src/features/packaging/components/PackagingLeaderboard.tsx",
+    "src/features/packaging/components/PackagingSlaAlerts.tsx",
+    "src/features/packaging/components/PackagingSlaHeatmap.tsx",
+    "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
+    "src/features/packaging/components/PackagingStatsCards.tsx",
+    "src/features/packaging/components/PackagingTaskCard.tsx"
    ]
   },
   {
@@ -1171,6 +1171,23 @@
   },
   {
    "id": 77,
+   "nome": "TechnicalKnowledgeBase.tsx",
+   "nos": 25,
+   "callables": 21,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/knowledge/KnowledgeSheetList.tsx",
+    "src/components/knowledge/TechnicalSheetEditor.tsx",
+    "src/components/knowledge/TechnicalSheetHeader.tsx",
+    "src/components/knowledge/TechnicalSheetHistoryTab.tsx",
+    "src/components/knowledge/TechnicalSheetTab.tsx",
+    "src/components/knowledge/TechnicalSheetViewer.tsx",
+    "src/components/knowledge/editor/EditorBasicInfo.tsx",
+    "src/components/knowledge/editor/EditorMaterialsSection.tsx"
+   ]
+  },
+  {
+   "id": 78,
    "nome": "loading/index.ts",
    "nos": 25,
    "callables": 12,
@@ -1181,7 +1198,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 79,
    "nome": "CommandPaletteAdvanced.tsx",
    "nos": 25,
    "callables": 14,
@@ -1191,19 +1208,6 @@
     "src/components/navigation/CommandPaletteCommands.tsx",
     "src/components/navigation/useCommandEntities.tsx",
     "src/components/ui/command.tsx"
-   ]
-  },
-  {
-   "id": 79,
-   "nome": "transitions/index.ts",
-   "nos": 24,
-   "callables": 18,
-   "arquivos": 4,
-   "exemplos_arquivos": [
-    "src/components/layout/PageTransition.tsx",
-    "src/components/settings/TransitionsSettings.tsx",
-    "src/contexts/TransitionConfigContext.tsx",
-    "src/lib/transitions/index.ts"
    ]
   }
  ],
@@ -2308,21 +2312,21 @@
   "src/components/kanban/KanbanFiltersBar.tsx": "DbJob",
   "src/components/kanban/KanbanMetricsBar.tsx": "useTechniques",
   "src/components/kiosk/KioskMode.tsx": "card.tsx",
-  "src/components/knowledge/KnowledgeBaseStats.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/KnowledgeSheetList.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/KnowledgeBaseStats.tsx": "useTechnicalSheets.ts",
+  "src/components/knowledge/KnowledgeSheetList.tsx": "useTechnicalSheets.ts",
   "src/components/knowledge/KnowledgeSheetQRCode.tsx": "card.tsx",
-  "src/components/knowledge/KnowledgeStatusBadge.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/TechnicalSheetEditor.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/TechnicalSheetHeader.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/KnowledgeStatusBadge.tsx": "useTechnicalSheets.ts",
+  "src/components/knowledge/TechnicalSheetEditor.tsx": "useTechnicalSheets.ts",
+  "src/components/knowledge/TechnicalSheetHeader.tsx": "useTechnicalSheets.ts",
   "src/components/knowledge/TechnicalSheetHistoryTab.tsx": "TechnicalKnowledgeBase.tsx",
   "src/components/knowledge/TechnicalSheetMaterialCalculator.tsx": "TechnicalSheetMaterialCalculator.tsx",
-  "src/components/knowledge/TechnicalSheetTab.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/TechnicalSheetTab.tsx": "TechnicalSheetTab.tsx",
   "src/components/knowledge/TechnicalSheetViewer.tsx": "TechnicalKnowledgeBase.tsx",
   "src/components/knowledge/TechnicalSheetVisualReference.tsx": "card.tsx",
   "src/components/knowledge/editor/EditorBasicInfo.tsx": "button.tsx",
-  "src/components/knowledge/editor/EditorMaterialsSection.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/editor/EditorStepsSection.tsx": "TechnicalKnowledgeBase.tsx",
-  "src/components/knowledge/editor/EditorTipsSection.tsx": "TechnicalKnowledgeBase.tsx",
+  "src/components/knowledge/editor/EditorMaterialsSection.tsx": "useTechnicalSheets.ts",
+  "src/components/knowledge/editor/EditorStepsSection.tsx": "useTechnicalSheets.ts",
+  "src/components/knowledge/editor/EditorTipsSection.tsx": "useTechnicalSheets.ts",
   "src/components/layout/AppSidebar.tsx": "MainLayout.tsx",
   "src/components/layout/LanguageSwitcher.tsx": "dropdown-menu.tsx",
   "src/components/layout/MainLayout.tsx": "MainLayout.tsx",
@@ -2540,7 +2544,7 @@
   "src/components/ui/table.tsx": "scroll-area.tsx",
   "src/components/ui/tabs.tsx": "TPMDashboard.tsx",
   "src/components/ui/textarea.tsx": "button.tsx",
-  "src/components/ui/toast.tsx": "use-toast.ts",
+  "src/components/ui/toast.tsx": "Bitrix24ConfigPage.tsx",
   "src/components/ui/toaster.tsx": "App.tsx",
   "src/components/ui/toggle-group.tsx": "toggle.tsx",
   "src/components/ui/toggle.tsx": "toggle.tsx",
@@ -2838,33 +2842,33 @@
   "src/features/packaging/components/PackagingDelayParetoCard.tsx": "recharts.ts",
   "src/features/packaging/components/PackagingLeaderboard.tsx": "card.tsx",
   "src/features/packaging/components/PackagingQualityDashboard.tsx": "recharts.ts",
-  "src/features/packaging/components/PackagingQueueList.tsx": "PackagingDashboard.tsx",
+  "src/features/packaging/components/PackagingQueueList.tsx": "PackagingTaskCard.tsx",
   "src/features/packaging/components/PackagingRegisterForm.tsx": "packagingService.ts",
-  "src/features/packaging/components/PackagingSlaAlerts.tsx": "PackagingDashboard.tsx",
-  "src/features/packaging/components/PackagingSlaHeatmap.tsx": "usePackagingSettings.ts",
+  "src/features/packaging/components/PackagingSlaAlerts.tsx": "PackagingTaskCard.tsx",
+  "src/features/packaging/components/PackagingSlaHeatmap.tsx": "PackagingDashboard.tsx",
   "src/features/packaging/components/PackagingSlaOverridesManager.tsx": "scroll-area.tsx",
-  "src/features/packaging/components/PackagingStatsCards.tsx": "PackagingDashboard.tsx",
-  "src/features/packaging/components/PackagingTaskCard.tsx": "PackagingDashboard.tsx",
+  "src/features/packaging/components/PackagingStatsCards.tsx": "PackagingTaskCard.tsx",
+  "src/features/packaging/components/PackagingTaskCard.tsx": "PackagingTaskCard.tsx",
   "src/features/packaging/components/PackagingTaskDetail.tsx": "PackagingTaskDetail.tsx",
   "src/features/packaging/components/PackagingThermalLabel.tsx": "button.tsx",
   "src/features/packaging/components/PackagingThroughputTable.tsx": "scroll-area.tsx",
-  "src/features/packaging/components/SlaBadge.tsx": "usePackagingSettings.ts",
+  "src/features/packaging/components/SlaBadge.tsx": "PackagingTaskCard.tsx",
   "src/features/packaging/hooks/usePackagingAssignees.ts": "client.ts",
   "src/features/packaging/hooks/usePackagingAuditTimeline.ts": "PackagingAuditTimeline.tsx",
   "src/features/packaging/hooks/usePackagingChecklist.ts": "client.ts",
   "src/features/packaging/hooks/usePackagingDelayPareto.ts": "PackagingTaskDetail.tsx",
   "src/features/packaging/hooks/usePackagingOverdueCount.ts": "PackagingDashboard.tsx",
   "src/features/packaging/hooks/usePackagingQuality.ts": "PackagingTaskDetail.tsx",
-  "src/features/packaging/hooks/usePackagingQueue.ts": "PackagingDashboard.tsx",
+  "src/features/packaging/hooks/usePackagingQueue.ts": "packagingService.ts",
   "src/features/packaging/hooks/usePackagingSettings.ts": "usePackagingSettings.ts",
   "src/features/packaging/hooks/usePackagingSlaHeatmap.ts": "usePackagingSettings.ts",
   "src/features/packaging/hooks/usePackagingSlaOverrides.ts": "PackagingDashboard.tsx",
-  "src/features/packaging/hooks/usePackagingTask.ts": "PackagingTaskDetail.tsx",
+  "src/features/packaging/hooks/usePackagingTask.ts": "packagingService.ts",
   "src/features/packaging/hooks/usePackagingThroughput.ts": "client.ts",
   "src/features/packaging/hooks/useSoundFeedback.ts": "soundFeedback.ts",
   "src/features/packaging/index.ts": "packagingService.ts",
-  "src/features/packaging/services/packagingService.ts": "packagingService.ts",
-  "src/features/packaging/types/packaging.schema.ts": "packagingService.ts",
+  "src/features/packaging/services/packagingService.ts": "PackagingTaskCard.tsx",
+  "src/features/packaging/types/packaging.schema.ts": "PackagingTaskDetail.tsx",
   "src/features/production/hooks/useMTBFMTTR.ts": "queryConfig.ts",
   "src/features/production/hooks/useMachineDowntime.ts": "showErrorToast",
   "src/features/production/hooks/useMachineStatusHub.ts": "useRealtimeChannel",
@@ -2904,7 +2908,7 @@
   "src/hooks/shift-handover/shiftHandoverTypes.ts": "ShiftHandoverPage.tsx",
   "src/hooks/shift-handover/useShiftHandoverMutations.ts": "ShiftHandoverPage.tsx",
   "src/hooks/shift-handover/useShiftHandoverQueries.ts": "ShiftHandoverPage.tsx",
-  "src/hooks/technical-sheets/technicalSheetsTypes.ts": "TechnicalKnowledgeBase.tsx",
+  "src/hooks/technical-sheets/technicalSheetsTypes.ts": "useTechnicalSheets.ts",
   "src/hooks/technical-sheets/useTechnicalSheetMutations.ts": "TechnicalKnowledgeBase.tsx",
   "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts": "TechnicalKnowledgeBase.tsx",
   "src/hooks/use-deeplink-focus.ts": "MainLayout.tsx",
@@ -2920,7 +2924,7 @@
   "src/hooks/use-smart-back.test.tsx": "navHistory.ts",
   "src/hooks/use-smart-back.ts": "MainLayout.tsx",
   "src/hooks/use-swipe-gesture.tsx": "MainLayout.tsx",
-  "src/hooks/use-toast.ts": "use-toast.ts",
+  "src/hooks/use-toast.ts": "Bitrix24ConfigPage.tsx",
   "src/hooks/useABCCosts.ts": "KPIDashboard.tsx",
   "src/hooks/useAlertCount.ts": "MainLayout.tsx",
   "src/hooks/useAutoTheme.ts": "TechnicalSheetTab.tsx",
@@ -2949,7 +2953,7 @@
   "src/hooks/useShiftHandover.ts": "ShiftHandoverPage.tsx",
   "src/hooks/useSmartDelayAlerts.ts": "useSchedulingData",
   "src/hooks/useTechnicalConversations.ts": "errorHandling.ts",
-  "src/hooks/useTechnicalSheets.ts": "TechnicalKnowledgeBase.tsx",
+  "src/hooks/useTechnicalSheets.ts": "useTechnicalSheets.ts",
   "src/hooks/useTechniqueCapacityAlerts.ts": "useSchedulingData",
   "src/hooks/useThemeSound.ts": "soundFeedback.ts",
   "src/hooks/useThrottle.ts": "utils/index.ts",
@@ -3063,7 +3067,7 @@
   "src/pages/OperatorView.tsx": "useAuth",
   "src/pages/OperatorsPage.tsx": "useAuth",
   "src/pages/PackagingDashboard.tsx": "PackagingDashboard.tsx",
-  "src/pages/PackagingKioskPage.tsx": "PackagingDashboard.tsx",
+  "src/pages/PackagingKioskPage.tsx": "packagingService.ts",
   "src/pages/Painel": "gerar.unit.mjs",
   "src/pages/PendingQueue.tsx": "PlanningEfficiencyDashboard.tsx",
   "src/pages/Pesada": "gerar.unit.mjs",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5bc2d128c98a35a57b2de74b5d18377b9dc98c94` (2026-11-24T10:36:53-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `765030a8020906163a9553466309eb88c7a2adc9` (2026-11-24T11:09:53-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -246,13 +246,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7562 nós · 22138 arestas · 687 comunidades · grafo do commit `5bc2d128`
+- 7562 nós · 22138 arestas · 686 comunidades · grafo do commit `765030a8`
 - comunidades maiores: card.tsx (247), button.tsx (241), cn (137), snapshot.py (111), DailyCalendar.tsx (107), analytics/index.ts (105), generate.py (101), TPMDashboard.tsx (101), recharts.ts (99), gerar.mjs (96), .write (96), MainLayout.tsx (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/ci.yml (21)
+- .github/workflows/ci.yml (22)
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `765030a` ci: evita rodar E2E duas vezes para o mesmo tree (#282)
 - 2026-11-24 `5bc2d12` chore: lista public.techniques no db-admin inspect (#284)
 - 2026-11-24 `e16478a` feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)
 - 2026-11-24 `fb794d1` fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `156312d` fix: corrige import typescript para ESM namespace (TS7) (#270)
 - 2026-11-23 `390d6da` chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)
 - 2026-11-23 `8973b0c` chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)
-- 2026-11-23 `414b392` docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

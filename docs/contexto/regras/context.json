@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
+  "sha": "765030a8020906163a9553466309eb88c7a2adc9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 13:37 UTC",
+  "generated_at": "2026-11-24 14:10 UTC",
   "files_total": 1595,
   "code_files": 1399,
   "code_lines": 207429
@@ -97396,10 +97396,19 @@
   }
  },
  "git": {
-  "sha": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
+  "sha": "765030a8020906163a9553466309eb88c7a2adc9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "765030a",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "ci: evita rodar E2E duas vezes para o mesmo tree (#282)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "5bc2d12",
     "date": "2026-11-24",
@@ -97761,15 +97770,6 @@
      "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
      "docs/pendencias/F-012-assinatura-eletr-nica-falsa.md"
     ]
-   },
-   {
-    "sha": "885b37c",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)",
-    "files": [
-     "src/components/settings/UserManagement.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -97810,6 +97810,10 @@
     2
    ],
    [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
     ".github/workflows/db-admin.yml",
     1
    ],
@@ -97847,10 +97851,6 @@
    ],
    [
     "src/features/jobs/types/sequencing.ts",
-    1
-   ],
-   [
-    "src/lib/dateUtils.test.ts",
     1
    ]
   ]

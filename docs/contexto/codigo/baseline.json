@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
+  "commit": "765030a8020906163a9553466309eb88c7a2adc9",
   "branch": "main",
-  "data_commit": "2026-11-24T10:36:53-03:00",
+  "data_commit": "2026-11-24T11:09:53-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "765030a",
+    "data": "2026-11-24",
+    "assunto": "ci: evita rodar E2E duas vezes para o mesmo tree (#282)"
+   },
    {
     "sha": "5bc2d12",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "efca83b",
     "data": "2026-11-22",
     "assunto": "docs: plano de 190 etapas de melhorias e correcoes (#257)"
-   },
-   {
-    "sha": "75dc924",
-    "data": "2026-11-22",
-    "assunto": "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -200,7 +200,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": "package-lock.json",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 133
+    "commits": 134
    },
    {
     "autor": "devin-ai-integration[bot]",
