@@ -361,6 +361,57 @@ jobs:
         with:
           header: bundle-diff
           path: dist/bundle-diff.md
+  # Gate 6a: consulta do marcador de E2E ja validado. Roda FORA do group
+  # `ci-e2e-global`: dentro do job `e2e` a consulta entrava no group antes de
+  # saber que a suíte não rodaria, e o cancel-in-progress derrubava o E2E de um
+  # PR em andamento. Este job sempre conclui verde; com skip=true o job `e2e`
+  # inteiro é pulado (sem npm ci nem Chromium).
+  e2e-guard:
+    name: E2E reuse guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Falha aqui (checkout, rate limit da API) nao pode pular a suite: o job
+    # fica verde e o output vazio mantem skip=false, entao o E2E roda.
+    continue-on-error: true
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      skip: ${{ steps.marker.outputs.skip }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Look up E2E validation marker
+        id: marker
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Escreve o output uma única vez: o mesmo nome repetido no arquivo de
+          # output deixa o valor final à mercê da ordem de leitura.
+          skip=false
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            tree="$(git show -s --format=%T HEAD)"
+            # O marcador é o artefato que o próprio job `e2e` publica quando a suíte
+            # passa. Reaproveitar exige mais do que o nome: a run que publicou precisa
+            # ter o mesmo tree e um job "E2E Tests (Playwright)" concluído com
+            # sucesso, o que fecha a brecha de aceitar artefato de origem não verificada.
+            candidates="$(gh api "repos/$REPO/actions/artifacts?name=e2e-validated-$tree" --jq '.artifacts[].workflow_run.id' || true)"
+            for run_id in $candidates; do
+              sha="$(gh api "repos/$REPO/actions/runs/$run_id" --jq '.head_sha' || true)"
+              [ -n "$sha" ] || continue
+              run_tree="$(gh api "repos/$REPO/git/commits/$sha" --jq '.tree.sha' || true)"
+              [ "$run_tree" = "$tree" ] || continue
+              greens="$(gh api "repos/$REPO/actions/runs/$run_id/jobs?per_page=100" --jq '[.jobs[] | select(.name == "E2E Tests (Playwright)" and .conclusion == "success")] | length' || echo 0)"
+              if [ "${greens:-0}" -gt 0 ]; then
+                skip=true
+                echo "## ⏭️ E2E reaproveitado" >> "$GITHUB_STEP_SUMMARY"
+                echo "O tree $tree já passou pela suíte E2E (run $run_id, suíte verde); a execução duplicada no main foi pulada." >> "$GITHUB_STEP_SUMMARY"
+                break
+              fi
+            done
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -370,18 +421,26 @@ jobs:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: [build]
-    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    needs: [build, e2e-guard]
+    # !cancelled() + needs.build.result mantem o mesmo comportamento de antes
+    # (build quebrado ou run cancelada => E2E nao roda) e garante que uma falha
+    # do job de consulta (opcional) nao transforme o E2E em job pulado: sem
+    # skip=true o output fica vazio e a suite roda.
+    if: "!cancelled() && needs.build.result == 'success' && needs.e2e-guard.outputs.skip != 'true' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request')"
+    permissions:
+      contents: read
     concurrency:
       # O concurrency de topo agrupa por branch (ci-${{ github.ref }}), entao PRs
       # de branches diferentes rodavam E2E em paralelo contra o mesmo Supabase
       # real e o MFA TOTP quebrava (3 runs simultaneas, 10:24-10:41Z de 10/11).
-      # Este group global serializa: so um E2E roda por vez. Com
-      # cancel-in-progress, um push novo cancela o E2E em fila/espera de runs
-      # mais antigos (o mais novo e quem decide), evitando que E2Es obsoletos
-      # monopolizem a fila global de runners.
+      # Este group global serializa: so um E2E roda por vez. cancel-in-progress
+      # fica false porque um PR de outra branch cancelava a suite de um PR que
+      # estava rodando (runs 45385277340 e 45398292642: E2E cancelled no step 8
+      # por push alheio) e com varios agentes em paralelo nenhum PR terminava a
+      # suite. Run obsoleta da mesma branch ja e cancelada pelo concurrency de
+      # topo; aqui a fila apenas espera a vez.
       group: ci-e2e-global
-      cancel-in-progress: true
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -458,6 +517,29 @@ jobs:
           name: playwright-report-${{ github.sha }}
           path: playwright-report/
           retention-days: 14
+
+      # Marcador consumido pelo job "E2E reuse guard" no push em main. O nome
+      # carrega o tree SHA, entao a consulta e uma busca exata e so existe quando
+      # a suite terminou verde (success()).
+      - name: Record validated tree
+        if: success() && steps.e2e-prereq.outputs.enabled == 'true'
+        id: validated
+        run: |
+          tree="$(git show -s --format=%T HEAD)"
+          echo "tree=$tree" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/e2e-validated"
+          echo "$tree" > "$RUNNER_TEMP/e2e-validated/tree"
+
+      - name: Upload E2E validation marker
+        if: success() && steps.e2e-prereq.outputs.enabled == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-validated-${{ steps.validated.outputs.tree }}
+          path: ${{ runner.temp }}/e2e-validated/
+          retention-days: 14
+          # Um re-run da mesma run reexecuta este upload para o mesmo tree; sem
+          # overwrite o segundo attempt falharia com "artifact already exists".
+          overwrite: true
 
 # ──────────────────────────────────────────────────────────────────────────
 # Gate 7: RLS regression — pega policy de INSERT/UPDATE regredindo em
