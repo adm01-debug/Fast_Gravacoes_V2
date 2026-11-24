@@ -53,8 +53,8 @@
 | comando | ALL |
 | tipo | PERMISSIVE |
 | roles | public |
-| USING | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
-| WITH CHECK | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
+| USING | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
+| WITH CHECK | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
 
 
 ## Triggers

@@ -2,6 +2,14 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 22:38 UTC
+
+- **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
+- **functions** alterado (2): `app_private.has_role(_user_id uuid, _role app_role)`, `public.has_role(_user_id uuid, _role app_role)`
+- **lints** removido (1): `rpc_anon_executable:public.has_role(_user_id uuid, _role app_role)`
+- **migrations** adicionado (1): `20261127120000_isolate_public_has_role`
+- **policies (RLS)** alterado (12): `public.erp_api_keys.Managers can manage API keys`, `storage.objects.Owner or staff can view production photos`, `storage.objects.Owner or staff view execution evidence`, `storage.objects.Owner or staff view tpm evidences`, `storage.objects.Owner or staff view tpm signatures`, `storage.objects.Owners and staff can delete execution-evidence`, `storage.objects.Owners and staff can delete tpm-evidences`, `storage.objects.Owners and staff can delete tpm_signatures`, `storage.objects.Owners and staff can update execution-evidence`, `storage.objects.Owners and staff can update tpm-evidences`, `storage.objects.Owners and staff can update tpm_signatures`, `storage.objects.Staff or approved-only view technical documents`
+
 ## 2026-11-24 22:13 UTC
 
 - **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
