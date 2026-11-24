@@ -194,7 +194,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   return (
     <>
-      <Dialog open={open} onOpenChange={(val) => { onOpenChange(val); if (!val) setIsEditing(false); }}>
+      <Dialog open={open} onOpenChange={(val) => { onOpenChange(val); if (!val) { setIsEditing(false); setIsCancelOpen(false); setCancelReason(""); } }}>
       <DialogContent className="max-w-2xl bg-card border-border/50 backdrop-blur-sm" aria-describedby="job-details-description">
         <DialogHeader>
           <div className="flex items-center justify-between">
