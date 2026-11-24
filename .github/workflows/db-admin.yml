@@ -329,6 +329,14 @@ jobs:
             echo "E2E_EMAIL não configurado — pulando simulação."
           fi
 
+          echo "===== dicionario de tecnicas (public.techniques) ====="
+          # Prova, sem escrever nada, quais ids existem de fato no remoto.
+          run_sql -v ON_ERROR_STOP=1 -At <<'SQL' || true
+            SELECT 'technique: ' || id || ' | ' || name || ' | ' || coalesce(short_name, '-')
+                 || ' | setup=' || coalesce(setup_time::text, '-')
+            FROM public.techniques ORDER BY id;
+          SQL
+
           echo "===== edge function secrets (nomes) ====="
           supabase secrets list --project-ref "$SUPABASE_PROJECT_ID" || true
 
