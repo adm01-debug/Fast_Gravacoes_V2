@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/features/auth';
+import { useAuth, useAuthenticatorAssuranceLevel } from '@/features/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,43 +48,52 @@ export default function AuthPage() {
   const [resetCooldownSec, setResetCooldownSec] = useState(0);
   const resetCooldownUntilRef = useRef(0);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [mfaSigningOut, setMfaSigningOut] = useState(false);
+  const [mfaSignOutError, setMfaSignOutError] = useState<string | null>(null);
 
   useEffect(() => { const saved = localStorage.getItem('rememberedEmail'); if (saved) { setLoginEmail(saved); setRememberMe(true); } }, []);
 
-  // A session existing (user truthy) only means AAL1 — signInWithPassword
-  // already succeeded. It does NOT mean MFA was satisfied. Before treating
-  // the user as fully signed in and navigating away, verify the session's
-  // authenticator assurance level; if the account has a verified TOTP
-  // factor and the session hasn't stepped up to aal2 yet, show the
-  // challenge screen instead of entering the app. Without this check the
-  // app previously navigated to "/" the instant `user` became truthy,
-  // regardless of MFA — the challenge screen shown by handleLogin's own
-  // (separate) check could lose this race and never render.
-  useEffect(() => {
-    if (!user || mfaFactorId) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        if (aal && aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
-          const { data: factors } = await supabase.auth.mfa.listFactors();
-          const totpFactor = factors?.totp.find(f => f.status === 'verified');
-          if (totpFactor) {
-            if (!cancelled) setMfaFactorId(totpFactor.id);
-            return;
-          }
-        }
-      } catch {
-        // If the AAL check itself fails, fall through to navigate — MFA
-        // enforcement is also backstopped at ProtectedRoute.
-      }
-      if (!cancelled) navigate('/', { replace: true });
-    })();
-    return () => { cancelled = true; };
-  }, [user, mfaFactorId, navigate]);
+  // Etapa 032 / AUT-04: a decisao de 2FA vem de um unico lugar — o mesmo hook
+  // que o guarda de rota (ProtectedRoute) usa. Antes, esta tela e o guarda
+  // consultavam o Supabase por conta propria e podiam discordar (aqui havia
+  // fator, la nao), o que jogava o usuario para "/" e de volta para "/auth"
+  // em laco. Agora aqui so reagimos a decisao compartilhada:
+  //   - session resolved              -> navega para "/"
+  //   - exige aal2 e ha TOTP          -> mostra o desafio
+  //   - exige aal2 e NAO ha TOTP      -> bloqueio explicito com saida
+  const {
+    checked: mfaChecked,
+    needsMfaChallenge,
+    challengeableFactorId,
+    factorsUnavailable,
+    refresh: refreshMfa,
+  } = useAuthenticatorAssuranceLevel();
 
-  if (user && !mfaFactorId) return null;
+  const mfaChallengeFactorId = needsMfaChallenge ? challengeableFactorId : null;
+  const mfaBlockedReason = mfaChecked && needsMfaChallenge && !challengeableFactorId
+    ? (factorsUnavailable
+      ? 'Não foi possível consultar os fatores de segurança da sua conta. Tente novamente em instantes.'
+      : 'Sua conta exige verificação em dois fatores, mas nenhum aplicativo autenticador está ativo. Fale com o administrador.')
+    : null;
+
+  useEffect(() => {
+    if (!user || !mfaChecked || needsMfaChallenge) return;
+    navigate('/', { replace: true });
+  }, [user, mfaChecked, needsMfaChallenge, navigate]);
+
+  // Sessao encerrada por fora (paleta de comandos, outra aba) precisa largar
+  // tambem o aviso de bloqueio: sem isto o formulario de login ficava escondido
+  // atras de um aviso da sessao anterior.
+  useEffect(() => {
+    if (!user) {
+      setMfaSignOutError(null);
+      setMfaSigningOut(false);
+    }
+  }, [user]);
+
+  // Enquanto a decisao compartilhada nao resolveu, nao renderizar nada evita
+  // piscar o formulario para quem precisa de 2FA.
+  if (user && !mfaChecked) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setErrors({});
@@ -115,11 +124,29 @@ export default function AuthPage() {
       return;
     }
 
-    // Whether this session still needs an MFA challenge (and whether to show
-    // it or navigate away) is decided by the AAL-aware effect above, which
-    // reacts to `user` becoming set — avoids racing two separate checks.
+    // Whether this session still needs an MFA challenge (and whether to show the
+    // challenge, block with an explicit exit, or navigate away) is decided by
+    // useAuthenticatorAssuranceLevel — the same hook ProtectedRoute reads — which
+    // reacts to `user` becoming set; avoids two diverging checks.
     setIsLoading(false);
     toast.success(t('auth.loginSuccess'));
+  };
+
+  // Etapa 032: o aviso de bloqueio so pode desaparecer quando a sessao
+  // realmente termina (`user` vira null). Limpar o aviso antes do logout deixava
+  // a tela em branco quando o proprio logout falhava — sessao viva, sem fator
+  // e sem aviso. A rejeicao agora mantem o aviso e explica a falha.
+  const handleBlockedSignOut = async () => {
+    if (mfaSigningOut) return;
+    setMfaSigningOut(true);
+    setMfaSignOutError(null);
+    try {
+      await signOut();
+    } catch {
+      setMfaSignOutError('Não foi possível encerrar a sessão. Verifique a conexão e tente novamente.');
+    } finally {
+      setMfaSigningOut(false);
+    }
   };
 
   const handleGoogleLogin = async () => { setSocialLoading('google'); try { const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: window.location.origin }); if (result.error) toast.error('Erro ao conectar com Google'); } catch { toast.error('Erro ao iniciar login social'); } finally { setSocialLoading(null); } };
@@ -240,9 +267,30 @@ export default function AuthPage() {
 
           <div className="w-full max-w-sm mx-auto">
             <AnimatePresence mode="wait">
-              {mfaFactorId ? (
+              {mfaBlockedReason ? (
+                <motion.div key="mfa-blocked" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                  <div className="mb-8">
+                    <h3 className="text-3xl font-bold mb-2 tracking-tight">Verificação em dois fatores</h3>
+                    <p className="text-muted-foreground text-sm" role="alert">{mfaBlockedReason}</p>
+                    {mfaSignOutError && (
+                      <p className="text-destructive text-sm mt-3" role="alert">{mfaSignOutError}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Button onClick={refreshMfa}>Tentar novamente</Button>
+                    <Button variant="outline" onClick={() => { void handleBlockedSignOut(); }} disabled={mfaSigningOut}>
+                      {mfaSigningOut ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saindo...</>) : 'Sair'}
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : mfaChallengeFactorId ? (
                 <motion.div key="mfa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <MFALoginVerification factorId={mfaFactorId} onSuccess={() => navigate('/')} onCancel={() => { setMfaFactorId(null); void signOut(); }} />
+                  <MFALoginVerification factorId={mfaChallengeFactorId} onSuccess={() => navigate('/')} onCancel={() => { void handleBlockedSignOut(); }} />
+                  {/* "Voltar para o Login" tambem sai da sessao: se o logout falhar
+                      o motivo precisa aparecer aqui, nao ficar em silencio. */}
+                  {mfaSignOutError && (
+                    <p className="text-destructive text-sm mt-4" role="alert">{mfaSignOutError}</p>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div key="form" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
