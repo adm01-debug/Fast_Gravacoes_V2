@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: restabelece EXECUTE de public.has_role para authenticated (#285)",
    "fix: erp-api responde 400 (nao 500) em dado invalido (#280)",
    "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)",
    "ci: evita rodar E2E duas vezes para o mesmo tree (#282)",
-   "chore: lista public.techniques no db-admin inspect (#284)",
-   "feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)"
+   "chore: lista public.techniques no db-admin inspect (#284)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

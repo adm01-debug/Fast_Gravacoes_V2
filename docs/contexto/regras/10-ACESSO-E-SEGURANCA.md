@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3aafbf1155` · branch `main` · 2026-11-24 16:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `81d45cace1` · branch `main` · 2026-11-24 16:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T16:15:40Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T16:38:27Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_permission`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T16:15:40Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T16:38:27Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -155,7 +155,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 92 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 93 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -249,6 +249,7 @@
 - `supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql`
 - `supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql`
 - `supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql`
+- `supabase/migrations/20261126110000_restore_public_has_role_execute.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -330,7 +331,7 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|---|
 | grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
-| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +5 |
+| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +6 |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
 | grant | authenticated | select, insert, update, delete | `packaging_tasks`, `packaging_defects`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides` |
 | grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +12 |
