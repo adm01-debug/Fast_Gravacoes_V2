@@ -1690,16 +1690,18 @@
    "camada": "lib",
    "exports": [
     "SCENARIOS",
+    "ScenarioAggregate",
     "SimulationPayload",
     "SimulationResult",
     "SimulationScenario",
     "SimulationSource",
+    "aggregateScenarioResults",
     "generateFuzzPayload",
     "generateScenarios",
     "runMassiveSimulation"
    ],
    "export_default": null,
-   "linhas": 168,
+   "linhas": 190,
    "tabelas": [],
    "rpcs": [],
    "edges": [
@@ -1714,7 +1716,7 @@
    "usado_por_modulos": [
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

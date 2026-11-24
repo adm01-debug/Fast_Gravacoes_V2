@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3a296f26fa` · branch `main` · 2026-11-24 17:44 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `828487b36b` · branch `main` · 2026-11-24 17:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T17:41:49Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -2483,7 +2483,7 @@ _nenhum item encontrado_
   ```
 - **generateScenarios(count: number = 10)** — `src/lib/simulation.ts`
   ```
-  const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, name: `Stress Attack Vector ${i}`, desc …
+  const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, baseId: base.id, name: `Stress Attack V …
   ```
 - **applyPreset(preset: DashboardPreset)** — `src/pages/OEEDashboard.tsx`
   ```
@@ -3324,7 +3324,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1360 testes em 117 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1366 testes em 118 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3397,6 +3397,7 @@ _nenhum item encontrado_
 | `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `src/lib/dateUtils.test.ts` | 6 | parseDateOnly · interpreta data pura como meia-noite local · devolve null para entrada vazia ou invalida · formatDateOnly … |
+| `src/test/simulationAggregation.test.ts` | 6 | aggregateScenarioResults · soma variantes e vetores de fuzz no mesmo cenário base · não perde resultado: a soma dos grupos é o total de resultados · devolve as categorias zeradas quando não há resultado … |
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |

@@ -9763,7 +9763,7 @@
     "SimulationDashboard"
    ],
    "export_default": "SimulationDashboard",
-   "linhas": 248,
+   "linhas": 243,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

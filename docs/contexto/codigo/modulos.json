@@ -5587,7 +5587,7 @@
    "modulo": "lib",
    "arquivos": 38,
    "testes": 11,
-   "linhas": 4422,
+   "linhas": 4444,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5865,7 +5865,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 3,
-   "linhas": 16589,
+   "linhas": 16584,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6721,7 +6721,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 30,
+   "testes": 31,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

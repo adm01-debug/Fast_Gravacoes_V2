@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3a296f26faa3151bf4bd2986bfffedb325fbda7f",
+  "sha": "828487b36b55840f607f9d096cf26d247a097017",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 17:44 UTC",
-  "files_total": 1601,
-  "code_files": 1405,
-  "code_lines": 207736
+  "generated_at": "2026-11-24 17:48 UTC",
+  "files_total": 1602,
+  "code_files": 1406,
+  "code_lines": 207820
  },
  "version": "1.3.2",
- "facts_hash": "77c8c09f6ecdb9ca",
+ "facts_hash": "997ba2ed289275ab",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 668,
-   ".ts": 403,
+   ".ts": 404,
    ".sql": 267,
    ".mjs": 50,
    ".py": 13,
@@ -29407,7 +29407,7 @@
   {
    "module": "src/lib",
    "files": 53,
-   "lines": 6621,
+   "lines": 6643,
    "tables": [
     "audit_log",
     "error_logs",
@@ -29551,7 +29551,7 @@
   {
    "module": "src/pages",
    "files": 59,
-   "lines": 16970,
+   "lines": 16965,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29797,8 +29797,8 @@
   },
   {
    "module": "src/test",
-   "files": 31,
-   "lines": 4510,
+   "files": 32,
+   "lines": 4577,
    "tables": [
     "jobs"
    ],
@@ -29862,6 +29862,7 @@
     "src/test/retryWithBackoff.test.ts",
     "src/test/sanitize.test.ts",
     "src/test/setup.ts",
+    "src/test/simulationAggregation.test.ts",
     "src/test/utils.test.ts",
     "src/test/validation.test.ts",
     "src/test/webhookFuzz.test.ts",
@@ -48215,6 +48216,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/lib/simulation.ts",
+    "field": "status",
+    "value": "pass",
+    "kind": "compara"
+   },
+   {
     "file": "src/lib/soundFeedback.ts",
     "field": "state",
     "value": "suspended",
@@ -49057,18 +49064,6 @@
    {
     "file": "src/pages/SimulationDashboard.tsx",
     "field": "status",
-    "value": "fail",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/SimulationDashboard.tsx",
-    "field": "status",
-    "value": "pass",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/SimulationDashboard.tsx",
-    "field": "status",
     "value": "pass",
     "kind": "compara"
    },
@@ -49762,7 +49757,7 @@
     "file": "src/lib/simulation.ts",
     "name": "generateScenarios",
     "params": "count: number = 10",
-    "body": "const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, name: `Stress Attack Vector ${i}`, desc …"
+    "body": "const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, baseId: base.id, name: `Stress Attack V …"
    },
    {
     "file": "src/pages/OEEDashboard.tsx",
@@ -54977,6 +54972,30 @@
    {
     "file": "src/test/sanitize.test.ts",
     "name": "strips tags, escapes HTML, removes control chars"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "aggregateScenarioResults"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "soma variantes e vetores de fuzz no mesmo cenário base"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "não perde resultado: a soma dos grupos é o total de resultados"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "devolve as categorias zeradas quando não há resultado"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "generateScenarios"
+   },
+   {
+    "file": "src/test/simulationAggregation.test.ts",
+    "name": "carimba o cenário base em cada variante"
    },
    {
     "file": "src/test/utils.test.ts",
@@ -90094,7 +90113,7 @@
   },
   "src/lib/simulation.ts": {
    "path": "src/lib/simulation.ts",
-   "lines": 168,
+   "lines": 190,
    "exports": [
     "type SimulationSource",
     "type SimulationPayload",
@@ -90103,7 +90122,9 @@
     "const SCENARIOS",
     "const generateFuzzPayload",
     "const generateScenarios",
-    "function runMassiveSimulation"
+    "function runMassiveSimulation",
+    "interface ScenarioAggregate",
+    "const aggregateScenarioResults"
    ],
    "invokes": [
     "webhook-handler"
@@ -90129,6 +90150,11 @@
      "field": "status",
      "value": "pass",
      "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pass",
+     "kind": "compara"
     }
    ],
    "calc_fns": [
@@ -90140,7 +90166,7 @@
     {
      "name": "generateScenarios",
      "params": "count: number = 10",
-     "body": "const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, name: `Stress Attack Vector ${i}`, desc …"
+     "body": "const baseScenarios = SCENARIOS; const scenarios: SimulationScenario[] = []; for (let i = 0; i < count; i++) { const base = baseScenarios[i % baseScenarios.length]; const isFuzz = Math.random() > 0.3; if (isFuzz) { const basePayload: MutablePayload = { source: base.source, event: base.event, data: { id: i, ts: new Date().toISOString() }, meta: { iteration: i, correlation_id: crypto.randomUUID() }, }; scenarios.push({ ...base, id: `fuzz-${i}-${Date.now()}`, baseId: base.id, name: `Stress Attack V …"
     }
    ],
    "side_effects": [
@@ -91949,7 +91975,7 @@
   },
   "src/pages/SimulationDashboard.tsx": {
    "path": "src/pages/SimulationDashboard.tsx",
-   "lines": 248,
+   "lines": 243,
    "exports": [
     "function SimulationDashboard"
    ],
@@ -91962,16 +91988,6 @@
     {
      "field": "status",
      "value": "fail",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "fail",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "pass",
      "kind": "compara"
     },
     {
@@ -92942,6 +92958,20 @@
    "path": "src/test/setup.ts",
    "lines": 2,
    "is_test": true
+  },
+  "src/test/simulationAggregation.test.ts": {
+   "path": "src/test/simulationAggregation.test.ts",
+   "lines": 67,
+   "is_test": true,
+   "doc": "Gráfico do simulador: os resultados precisam ser agrupados pelo cenário base, porque cada variante recebe um id carimbado com Date.now() (UI-18).",
+   "tests": [
+    "aggregateScenarioResults",
+    "soma variantes e vetores de fuzz no mesmo cenário base",
+    "não perde resultado: a soma dos grupos é o total de resultados",
+    "devolve as categorias zeradas quando não há resultado",
+    "generateScenarios",
+    "carimba o cenário base em cada variante"
+   ]
   },
   "src/test/utils.test.ts": {
    "path": "src/test/utils.test.ts",
@@ -97552,10 +97582,23 @@
   }
  },
  "git": {
-  "sha": "3a296f26faa3151bf4bd2986bfffedb325fbda7f",
+  "sha": "828487b36b55840f607f9d096cf26d247a097017",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "828487b",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)",
+    "files": [
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/05-PROGRESSO.md",
+     "src/lib/simulation.ts",
+     "src/pages/SimulationDashboard.tsx",
+     "src/test/simulationAggregation.test.ts"
+    ]
+   },
    {
     "sha": "3a296f2",
     "date": "2026-11-24",
@@ -97923,15 +97966,6 @@
     "files": [
      "docs/plano-ux-navegacao-200-etapas-261122.md"
     ]
-   },
-   {
-    "sha": "efca83b",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "docs: plano de 190 etapas de melhorias e correcoes (#257)",
-    "files": [
-     "docs/plano-190-etapas-261122.md"
-    ]
    }
   ],
   "hot_files": [
@@ -97942,6 +97976,14 @@
    [
     "package.json",
     5
+   ],
+   [
+    "docs/qa/03-ACHADOS.md",
+    2
+   ],
+   [
+    "docs/qa/05-PROGRESSO.md",
+    2
    ],
    [
     "src/components/ui/scroll-area.tsx",
@@ -97972,6 +98014,18 @@
     2
    ],
    [
+    "src/lib/simulation.ts",
+    1
+   ],
+   [
+    "src/pages/SimulationDashboard.tsx",
+    1
+   ],
+   [
+    "src/test/simulationAggregation.test.ts",
+    1
+   ],
+   [
     "src/components/error/StackTrace.test.tsx",
     1
    ],
@@ -97993,26 +98047,6 @@
    ],
    [
     ".github/workflows/contexto.yml",
-    1
-   ],
-   [
-    "docs/agentes/mapa-repo.md",
-    1
-   ],
-   [
-    "docs/graphify/README.md",
-    1
-   ],
-   [
-    "docs/graphify/VALIDACAO.md",
-    1
-   ],
-   [
-    "graphify.config.json",
-    1
-   ],
-   [
-    "graphify.local.json",
     1
    ]
   ]

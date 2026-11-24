@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 136,
+ "total": 137,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 112
+  "unit": 113
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 100
+   "arquivos": 101
   },
   {
    "padrao": "outro",
@@ -1120,6 +1120,16 @@
    "suporte": true
   },
   {
+   "arquivo": "src/test/simulationAggregation.test.ts",
+   "tipo": "unit",
+   "linhas": 67,
+   "testa": [
+    "src/lib/simulation.ts"
+   ],
+   "casos": 4,
+   "suporte": false
+  },
+  {
    "arquivo": "src/test/utils.test.ts",
    "tipo": "unit",
    "linhas": 184,
@@ -1518,6 +1528,7 @@
   "src/lib/rateLimiter.ts": 4,
   "src/lib/retryWithBackoff.ts": 3,
   "src/lib/sanitize.ts": 3,
+  "src/lib/simulation.ts": 1,
   "src/lib/spcExport.ts": 1,
   "src/lib/utils.ts": 2,
   "src/lib/validation.ts": 2,
