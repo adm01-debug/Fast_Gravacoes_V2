@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect } from "react";
-import { useOverflowing } from '@/hooks/use-overflowing';
+import { StackTrace } from "@/components/error/StackTrace";
 import { format } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { logger } from "@/lib/logger";
@@ -70,25 +70,6 @@ const attrNum = (attrs: Record<string, unknown> | null | undefined, key: string)
   const v = attrs?.[key];
   return typeof v === 'number' ? v : Number(v) || 0;
 };
-
-// Stack trace e texto puro: sem descendente focavel o bloco com max-h + overflow
-// fica inacessivel por teclado (axe scrollable-region-focusable). tabIndex so
-// quando ha rolagem, para nao criar parada de Tab em trace curto.
-function StackTrace({ text }: { text: string }) {
-  const { ref, overflowing } = useOverflowing<HTMLPreElement>();
-  return (
-    <pre
-      ref={ref}
-      role="region"
-      aria-label="Stack trace do erro"
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel sem foco interno precisa ser focavel (axe scrollable-region-focusable)
-      tabIndex={overflowing ? 0 : undefined}
-      className="text-[10px] font-mono whitespace-pre-wrap break-all text-muted-foreground max-h-32 overflow-auto"
-    >
-      {text}
-    </pre>
-  );
-}
 
 export default function AdminTelemetriaPage() {
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");

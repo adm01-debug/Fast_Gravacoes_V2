@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type MutableRefObject } from "react";
 
 /**
  * Detecta se um conteiner rolavel transborda, para expor `tabIndex={0}` apenas
@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
  * `scrollable-region-focusable`; fixar tabIndex sempre cria parada de Tab extra
  * em conteudo que cabe na tela.
  */
-export function useOverflowing<T extends HTMLElement>(target?: RefObject<T | null>) {
+export function useOverflowing<T extends HTMLElement>(target?: MutableRefObject<T | null>) {
   const internalRef = useRef<T | null>(null);
   const ref = target ?? internalRef;
   const [overflowing, setOverflowing] = useState(false);
