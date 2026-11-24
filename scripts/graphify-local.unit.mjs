@@ -473,6 +473,83 @@ test('install trata ambiente divergente do pin como reparavel em vez de aprovado
   await rm(path.join(f.env, 'bin/python'));
   assert.equal(await installedRuntime(ctx), null);
 });
+async function uvStub(f) {
+  const calls = path.join(f.dir, 'uv-calls.jsonl'),
+    backup = path.join(f.dir, 'uv-backup'),
+    bin = path.join(f.env, 'bin');
+  await mkdir(backup, { recursive: true });
+  for (const name of ['python', 'graphify'])
+    await writeFile(
+      path.join(backup, name),
+      await readFile(path.join(bin, name))
+    );
+  const stub = `#!${process.execPath}
+const fs=require('node:fs'),path=require('node:path');
+const args=process.argv.slice(2);
+fs.appendFileSync(${JSON.stringify(calls)},JSON.stringify(args)+'\\n');
+const bin=${JSON.stringify(bin)};
+fs.mkdirSync(bin,{recursive:true});
+for(const name of args[0]==='venv'?['python']:['graphify']){
+ const dest=path.join(bin,name);
+ fs.writeFileSync(dest,fs.readFileSync(path.join(${JSON.stringify(backup)},name)));
+ fs.chmodSync(dest,0o700);
+}
+`;
+  await writeFile(path.join(f.dir, 'uv'), stub, { mode: 0o700 });
+  f.options.fixtureUv = [path.join(f.dir, 'uv')];
+  return async () =>
+    (await readFile(calls, 'utf8'))
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+}
+
+test('executável que não inicia é classificado como runtime reparável', async (t) => {
+  const f = await fixture(t);
+  await writeFile(path.join(f.env, 'bin/graphify'), '#!/nao/existe/python\n', {
+    mode: 0o700,
+  });
+  assert.equal((await f.call('ensure')).report.status, 'missing_runtime');
+  assert.equal(
+    await installedRuntime({
+      root: f.root,
+      envRoot: f.env,
+      python: path.join(f.env, 'bin/python'),
+      env: {},
+      config: f.config,
+    }),
+    null
+  );
+});
+
+test('install repara binário que não inicia e revalida até o fim', async (t) => {
+  const f = await fixture(t),
+    calls = await uvStub(f);
+  await writeFile(path.join(f.env, 'bin/graphify'), '#!/nao/existe/python\n', {
+    mode: 0o700,
+  });
+  const result = await f.call('install');
+  assert.equal(result.exitCode, 0, JSON.stringify(result.report));
+  assert.equal(result.report.status, 'installed');
+  const runs = await calls();
+  assert.equal(runs.length, 2);
+  assert.equal(runs[0][0], 'venv');
+  assert.ok(!runs[0].includes('--reinstall'));
+  assert.deepEqual(runs[1].slice(0, 2), ['pip', 'install']);
+  assert.ok(runs[1].includes('--reinstall'));
+});
+
+test('install de ambiente inexistente não força reinstalação', async (t) => {
+  const f = await fixture(t),
+    calls = await uvStub(f);
+  await rm(path.join(f.env, 'bin/python'));
+  await rm(path.join(f.env, 'bin/graphify'));
+  const result = await f.call('install');
+  assert.equal(result.exitCode, 0, JSON.stringify(result.report));
+  const runs = await calls();
+  assert.deepEqual(runs.map((r) => r[0]), ['venv', 'pip']);
+  assert.ok(runs.every((r) => !r.includes('--reinstall')));
+});
 
 test('chaves do processo pai não chegam ao extrator', async (t) => {
   const f = await fixture(t);

@@ -526,12 +526,11 @@ async function runtime(ctx) {
     !inside(ctx.envRoot, value.module)
   )
     fail('Runtime não corresponde ao ambiente e pin locais', 'missing_runtime');
-  const version = await checked(
-    [binary, '--version'],
-    ctx.root,
-    ctx.env,
-    30000
-  );
+  const started = await run([binary, '--version'], ctx.root, ctx.env, 30000);
+  if (started.canceled) fail('Execução do graphify local foi cancelada');
+  if (started.code !== 0 || started.timedOut || started.overflow)
+    fail('Executável local não inicia; execute install', 'missing_runtime');
+  const version = started.output.trim();
   if (
     !version.split('\n').some((s) => s.trim() === `graphify ${ctx.config.pin}`)
   )
@@ -1001,6 +1000,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
       outputRoot: await confined(root, config.output, { ignored: true }),
       interrupted: () => interrupted,
       fixtureOfflinePrefix: options.fixtureOfflinePrefix,
+    fixtureUv: options.fixtureUv,
       resourceProbe: options.resourceProbe,
     };
     ctx.python = path.join(ctx.envRoot, 'bin/python');
@@ -1022,7 +1022,10 @@ export async function main(args = process.argv.slice(2), options = {}) {
     } else if (parsed.action === 'install') {
       release = await acquire(path.join(ctx.state, 'running.lock'));
       const hasPython = await exists(ctx.python),
-        current = hasPython ? await installedRuntime(ctx) : null;
+        current = hasPython ? await installedRuntime(ctx) : null,
+        // `uv pip sync` não reinstala pacote que já está na versão do lock:
+        // reparo de binário ausente/quebrado precisa forçar a reinstalação.
+        repairFlags = hasPython && !current ? ['--reinstall'] : [];
       if (current) {
         report.runtime = current;
         report.status = 'installed';
@@ -1035,9 +1038,11 @@ export async function main(args = process.argv.slice(2), options = {}) {
             'Ambiente incompleto preservado; reparo precisa ser explícito',
             'missing_runtime'
           );
+        // Injeção só da API de testes; nenhuma flag/config permite isso.
+        const uv = ctx.fixtureUv ?? ['uv'];
         await checked(
           [
-            'uv',
+            ...uv,
             'venv',
             '--allow-existing',
             '--python',
@@ -1053,8 +1058,9 @@ export async function main(args = process.argv.slice(2), options = {}) {
             fail('Ambiente Champions diverge do wrapper');
           await checked(
             [
-              'uv',
+              ...uv,
               'sync',
+              ...repairFlags,
               '--directory',
               path.join(root, 'tools/graphify'),
               '--locked',
@@ -1070,9 +1076,10 @@ export async function main(args = process.argv.slice(2), options = {}) {
           );
           await checked(
             [
-              'uv',
+              ...uv,
               'pip',
               'install',
+              ...repairFlags,
               '--python',
               ctx.python,
               '--link-mode',
@@ -1094,9 +1101,10 @@ export async function main(args = process.argv.slice(2), options = {}) {
           if (await exists(lock))
             await checked(
               [
-                'uv',
+                ...uv,
                 'pip',
                 'sync',
+                ...repairFlags,
                 '--python',
                 ctx.python,
                 '--require-hashes',
@@ -1111,9 +1119,10 @@ export async function main(args = process.argv.slice(2), options = {}) {
           else
             await checked(
               [
-                'uv',
+                ...uv,
                 'pip',
                 'install',
+                ...repairFlags,
                 '--python',
                 ctx.python,
                 '--link-mode',
