@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `765030a802` · branch `main` · 2026-11-24 14:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1b65d05df8` · branch `main` · 2026-11-24 16:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T13:40:31Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T15:39:02Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T13:40:31Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T15:39:02Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T13:40:31Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T15:39:02Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T13:40:31Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T15:39:02Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T13:40:31Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T15:39:02Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3324,7 +3324,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1348 testes em 114 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1353 testes em 115 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3400,6 +3400,7 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/logger.test.ts` | 6 | getOrCreateRequestId reuses valid header · getOrCreateRequestId generates uuid when missing · getOrCreateRequestId ignores oversize header · logger emits structured JSON … |
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
+| `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
@@ -3550,6 +3551,8 @@ _nenhum item encontrado_
 | When asChild, Slot must receive exactly ONE React element child. | `src/components/ui/button.tsx` |
 | best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
 | Persistir o log de erro é best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
+| descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex | `src/components/ui/scroll-area.tsx` |
+| entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe. | `src/components/ui/scroll-area.tsx` |
 | e não pode ser cancelado — a confirmação pendente apontaria para a | `src/contexts/DirtyFormContext.tsx` |
 | (popstate) não pode ser cancelado; formulários com rascunho | `src/contexts/DirtyFormContext.tsx` |
 | Deve ser chamado dentro do provider (MainLayout). | `src/contexts/DirtyFormContext.tsx` |

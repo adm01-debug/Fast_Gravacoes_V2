@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "765030a8020906163a9553466309eb88c7a2adc9",
+  "sha": "1b65d05df846f3350121cf1eac909acae39aeb06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 14:10 UTC",
-  "files_total": 1595,
-  "code_files": 1399,
-  "code_lines": 207429
+  "generated_at": "2026-11-24 16:03 UTC",
+  "files_total": 1596,
+  "code_files": 1400,
+  "code_lines": 207565
  },
  "version": "1.3.2",
- "facts_hash": "b1fa8b5c58cf11c8",
+ "facts_hash": "01e27ae7c64bd46f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 664,
+   ".tsx": 665,
    ".ts": 402,
    ".sql": 266,
    ".mjs": 50,
@@ -26519,7 +26519,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 572,
+  "components_count": 573,
   "hooks": [
    {
     "name": "useContacts",
@@ -27874,8 +27874,8 @@
   },
   {
    "module": "src/components",
-   "files": 418,
-   "lines": 59020,
+   "files": 419,
+   "lines": 59156,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -36787,6 +36787,14 @@
    {
     "file": "src/components/ui/error-boundary.tsx",
     "text": "Persistir o log de erro é best-effort; nunca deve mascarar o erro original."
+   },
+   {
+    "file": "src/components/ui/scroll-area.tsx",
+    "text": "descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex"
+   },
+   {
+    "file": "src/components/ui/scroll-area.tsx",
+    "text": "entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe."
    },
    {
     "file": "src/contexts/DirtyFormContext.tsx",
@@ -51410,6 +51418,26 @@
    {
     "file": "src/components/ui/resizable.test.tsx",
     "name": "divisor carrega as classes variantes de orientacao que o Tailwind compila"
+   },
+   {
+    "file": "src/components/ui/scroll-area.test.tsx",
+    "name": "ScrollArea (axe scrollable-region-focusable)"
+   },
+   {
+    "file": "src/components/ui/scroll-area.test.tsx",
+    "name": "nao cria parada de Tab quando o conteudo cabe no viewport"
+   },
+   {
+    "file": "src/components/ui/scroll-area.test.tsx",
+    "name": "torna a regiao focavel quando o conteudo transborda"
+   },
+   {
+    "file": "src/components/ui/scroll-area.test.tsx",
+    "name": "torna a regiao focavel mesmo sem ResizeObserver"
+   },
+   {
+    "file": "src/components/ui/scroll-area.test.tsx",
+    "name": "torna a regiao focavel quando o conteudo observado cresce depois do mount"
    },
    {
     "file": "src/features/admin/hooks/useCronHealthHistory.test.ts",
@@ -77918,9 +77946,32 @@
     "function ResponsiveTable"
    ]
   },
+  "src/components/ui/scroll-area.test.tsx": {
+   "path": "src/components/ui/scroll-area.test.tsx",
+   "lines": 106,
+   "is_test": true,
+   "rule_comments": [
+    "Simula a notificacao apenas para os observadores que registram o elemento.",
+    "viewport (observar apenas o proprio viewport nao cobriria este caso)."
+   ],
+   "tests": [
+    "ScrollArea (axe scrollable-region-focusable)",
+    "nao cria parada de Tab quando o conteudo cabe no viewport",
+    "torna a regiao focavel quando o conteudo transborda",
+    "torna a regiao focavel mesmo sem ResizeObserver",
+    "torna a regiao focavel quando o conteudo observado cresce depois do mount"
+   ],
+   "side_effects": [
+    "notifyResize"
+   ]
+  },
   "src/components/ui/scroll-area.tsx": {
    "path": "src/components/ui/scroll-area.tsx",
-   "lines": 39
+   "lines": 69,
+   "rule_comments": [
+    "descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex",
+    "entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe."
+   ]
   },
   "src/components/ui/section-error-boundary.tsx": {
    "path": "src/components/ui/section-error-boundary.tsx",
@@ -97396,10 +97447,20 @@
   }
  },
  "git": {
-  "sha": "765030a8020906163a9553466309eb88c7a2adc9",
+  "sha": "1b65d05df846f3350121cf1eac909acae39aeb06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "1b65d05",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)",
+    "files": [
+     "src/components/ui/scroll-area.test.tsx",
+     "src/components/ui/scroll-area.tsx"
+    ]
+   },
    {
     "sha": "765030a",
     "date": "2026-11-24",
@@ -97760,16 +97821,6 @@
      "src/features/notifications/hooks/useWebPushNotifications.ts",
      "supabase/functions/send-push-notification/index.ts"
     ]
-   },
-   {
-    "sha": "eb7c327",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)",
-    "files": [
-     "docs/pendencias/F-009-useautobufferpromotion-promove-todas-as-t-cnicas.md",
-     "docs/pendencias/F-012-assinatura-eletr-nica-falsa.md"
-    ]
    }
   ],
   "hot_files": [
@@ -97810,6 +97861,14 @@
     2
    ],
    [
+    "src/components/ui/scroll-area.test.tsx",
+    1
+   ],
+   [
+    "src/components/ui/scroll-area.tsx",
+    1
+   ],
+   [
     ".github/workflows/ci.yml",
     1
    ],
@@ -97843,14 +97902,6 @@
    ],
    [
     "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
-    1
-   ],
-   [
-    "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
-    1
-   ],
-   [
-    "src/features/jobs/types/sequencing.ts",
     1
    ]
   ]

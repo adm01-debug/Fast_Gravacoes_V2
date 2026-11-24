@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `765030a8020906163a9553466309eb88c7a2adc9` (2026-11-24T11:09:53-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1b65d05df846f3350121cf1eac909acae39aeb06` (2026-11-24T13:02:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1066), SQL (266), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1067), SQL (266), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1597 |
-| arquivos_codigo | 1130 |
-| linhas_codigo | 190926 |
+| arquivos_total | 1598 |
+| arquivos_codigo | 1131 |
+| linhas_codigo | 191062 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 258 |
 | cron_jobs | 4 |
-| testes | 133 |
+| testes | 134 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 108 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (402), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (53), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (97), outro (18), tests/ (18)
+- testes: co-localizado (*.test) (98), outro (18), tests/ (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7562 nós · 22138 arestas · 686 comunidades · grafo do commit `765030a8`
-- comunidades maiores: card.tsx (247), button.tsx (241), cn (137), snapshot.py (111), DailyCalendar.tsx (107), analytics/index.ts (105), generate.py (101), TPMDashboard.tsx (101), recharts.ts (99), gerar.mjs (96), .write (96), MainLayout.tsx (95)
+- 7572 nós · 22149 arestas · 665 comunidades · grafo do commit `1b65d05d`
+- comunidades maiores: card.tsx (250), button.tsx (210), skeleton.tsx (139), select.tsx (117), cn (116), snapshot.py (111), analytics/index.ts (108), utils.ts (102), generate.py (101), gerar.mjs (96), .write (96), errorHandling.ts (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `1b65d05` fix: viewport do ScrollArea focavel so quando ha rolagem (#286)
 - 2026-11-24 `765030a` ci: evita rodar E2E duas vezes para o mesmo tree (#282)
 - 2026-11-24 `5bc2d12` chore: lista public.techniques no db-admin inspect (#284)
 - 2026-11-24 `e16478a` feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `6789162` ci: db push com --include-all para migrations fora de ordem (#273)
 - 2026-11-23 `156312d` fix: corrige import typescript para ESM namespace (TS7) (#270)
 - 2026-11-23 `390d6da` chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)
-- 2026-11-23 `8973b0c` chore(deps)(deps): bump the producao-minor-patch group with 6 updates (#265)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
