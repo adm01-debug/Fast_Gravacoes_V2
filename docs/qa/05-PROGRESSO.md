@@ -357,6 +357,7 @@ PR: esta PR · estado: aguardando merge
 ### 047 — 2026-11-24
 Comando/consulta: `.\node_modules\.bin\vitest.cmd run src/test/jobsService.test.ts src/features/jobs src/features/packaging` e prova de regressão com `git stash push -- jobsService.ts`; prova no banco em transação com `ROLLBACK`.
 Resultado: 10 arquivos, **77 testes passed**. Com `jobsService.ts` original: **2 failed | 15 passed** — os dois casos novos de cancelamento são os que falham. No banco, `UPDATE jobs SET status='cancelled'` sem `cancel_reason` levanta `cancel_reason é obrigatório ao cancelar um job`; com motivo, passa. `tsc` 0 erros, `eslint` 0 erros nos arquivos tocados.
+Limite conhecido: o percurso pela tela (abrir a OS, tentar confirmar sem motivo, ver a gravação) **não** tem teste automatizado de componente — não há infra de teste de render para `JobDetailsModal` no repo. A cobertura é do serviço e da constraint no banco; a leitura do motivo em uma OS cancelada passou a ser renderizada no modal (guarda `job.status === 'cancelled'`).
 PR: esta PR · estado: aguardando merge
 
 ---
@@ -376,6 +377,12 @@ Como foi notado:
 Onde: `src/integrations/supabase/types.ts` (regenerado na etapa 046)
 O que acontece: o arquivo declarava 8 tabelas que não existem no banco (`email_verification_tokens`, `gamification_settings`, `packaging_equipment`, `packaging_waste`, `shipment_costs`, `tpm_execution_checklist`, `webauthn_challenges`, `webauthn_credentials`) e omitia 6 que existem (`archived_jobs`, `backup_logs`, `bitrix24_oauth_states`, `csp_violation_reports`, `erp_api_keys`, `system_metrics`). Nenhum código usava as fantasmas, então o efeito era só tipo errado em consulta nova.
 Como foi notado: comparação do arquivo antigo com a saída da Management API durante a etapa 046.
+
+### 2026-11-24 — RLS de `jobs` não deixa `admin` atualizar OS
+Onde: `public.jobs` (policies de UPDATE), `src/features/jobs/services/jobsService.ts:66`
+O que acontece: as únicas policies de UPDATE são `Coordinators and managers can update jobs` (coordinator/manager) e `Operators can update jobs on assigned machines` (operator da máquina). O app libera o Kanban para quem tem `editJobs` (`src/features/auth/permissions.ts`), o que inclui `admin`, mas o UPDATE não atinge nenhuma linha e `jobsService.update` falha em `.single()` com "no rows returned" — a edição/cancelamento por admin nunca grava. Confirmado no banco de produção por `select policyname, cmd, roles, qual from pg_policies where tablename='jobs'`.
+Como foi notado: revisão automatizada da PR do cancelamento de OS (#297), verificada contra `pg_policies`.
+Efeito: correção exige DDL (policy de UPDATE para `admin`) — não entra nesta PR de front.
 
 ---
 

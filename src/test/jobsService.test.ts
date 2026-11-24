@@ -216,14 +216,12 @@ describe('jobsService.updateStatus', () => {
 
   it('refuses to cancel without a reason', async () => {
     const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
-    const updateChain = makeChain(async () => ({ data: {}, error: null }));
-    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
+      mockFrom.mockReturnValueOnce(currentChain);
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
 
     await expect(jobsService.updateStatus('job-1', 'cancelled', '   ')).rejects.toThrow(
       'Informe o motivo do cancelamento.',
     );
-    expect(updateChain.update).not.toHaveBeenCalled();
   });
 });
 

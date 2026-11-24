@@ -264,6 +264,13 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
           </DialogDescription>
         </DialogHeader>
 
+                {job.status === 'cancelled' && job.cancel_reason && (
+                  <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                    <p className="text-xs font-semibold uppercase text-destructive">Motivo do cancelamento</p>
+                    <p className="mt-1 text-sm text-foreground">{job.cancel_reason}</p>
+                  </div>
+                )}
+
         <Tabs defaultValue="details" className="mt-4">
           <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 h-auto">
             <TabsTrigger value="details" className="text-[10px] sm:text-xs">{t('common.details')}</TabsTrigger>
@@ -481,7 +488,10 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
       </DialogContent>
     </Dialog>
 
-      <Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
+      <Dialog open={isCancelOpen} onOpenChange={(open) => {
+        setIsCancelOpen(open);
+        if (!open) setCancelReason("");
+      }}>
         <DialogContent className="max-w-md bg-card border-border/50">
           <DialogHeader>
             <DialogTitle>Cancelar OS {job.order_number}</DialogTitle>
@@ -500,7 +510,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setIsCancelOpen(false)}>
+            <Button variant="ghost" onClick={() => { setIsCancelOpen(false); setCancelReason(""); }}>
               Voltar
             </Button>
             <Button
