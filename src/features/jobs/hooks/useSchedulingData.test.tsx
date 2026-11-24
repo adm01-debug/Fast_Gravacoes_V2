@@ -58,6 +58,22 @@ function renderScheduling() {
 
 const MACHINE_A = { id: 'machine-a', name: 'Laser 01', technique_id: 'tech-1' };
 
+// O hook agrupa por dia no fuso local; toISOString() devolve o dia em UTC e
+// divergia entre 21h e 23h59 em São Paulo. Meio-dia local converte de volta
+// para o mesmo dia em qualquer fuso.
+function localDate(offsetDays = 0): string {
+  const d = new Date();
+  d.setDate(d.getDate() - offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function localNoonIso(offsetDays = 0): string {
+  const d = new Date();
+  d.setDate(d.getDate() - offsetDays);
+  d.setHours(12, 0, 0, 0);
+  return d.toISOString();
+}
+
 describe('useSchedulingData', () => {
   beforeEach(() => {
     getAllJobsMock.mockReset();
@@ -130,7 +146,7 @@ describe('useSchedulingData', () => {
   });
 
   it('stats: agrega contagens por status e soma peças, incluindo os contadores "hoje"', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDate();
     const yesterday = '2000-01-01';
 
     getAllJobsMock.mockResolvedValue([
@@ -169,12 +185,7 @@ describe('useSchedulingData', () => {
   });
 
   it('capacityTrend classifica risco por carga: high (>480), medium (>300), low (<=300)', async () => {
-    const today = new Date();
-    const d = (offset: number) => {
-      const dt = new Date(today);
-      dt.setDate(today.getDate() - offset);
-      return dt.toISOString().split('T')[0];
-    };
+    const d = (offset: number) => localDate(offset);
 
     getAllJobsMock.mockResolvedValue([
       { id: 'high-1', scheduled_date: d(0), estimated_duration: 500 },
@@ -196,13 +207,13 @@ describe('useSchedulingData', () => {
   });
 
   it('oeeTrend: dia sem jobs finalizados fica com oee 0; job finalizado sem horários reais fica com oee 100', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDate();
 
     getAllJobsMock.mockResolvedValue([
       {
         id: 'finished-no-actuals',
         status: 'finished',
-        actual_end_time: `${today}T18:00:00.000Z`,
+        actual_end_time: localNoonIso(),
         actual_start_time: null,
         estimated_duration: 60,
       },
