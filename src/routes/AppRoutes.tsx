@@ -189,7 +189,7 @@ export function AnimatedRoutes() {
         {/* Public routes */}
         <Route path="/auth" element={<PublicPage direction={direction} fallback={<AuthPageSkeleton />}><AuthPage /></PublicPage>} />
         <Route path="/reset-password" element={<PublicPage direction={direction} fallback={<AuthPageSkeleton />}><ResetPasswordPage /></PublicPage>} />
-        <Route path="/design-system" element={<PublicPage direction={direction} fallback={<DashboardPageSkeleton />}><DesignSystemPage /></PublicPage>} />
+        <Route path="/design-system" element={<ProtectedPage direction={direction} fallback={<DashboardPageSkeleton />}><DesignSystemPage /></ProtectedPage>} />
         <Route path="/install" element={<PublicPage direction={direction} fallback={<DashboardPageSkeleton />}><InstallAppPage /></PublicPage>} />
         <Route path="/track" element={<PublicPage direction={direction} fallback={<DashboardPageSkeleton />}><PublicTrackingPage /></PublicPage>} />
 
