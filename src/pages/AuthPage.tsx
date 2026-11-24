@@ -286,6 +286,11 @@ export default function AuthPage() {
               ) : mfaChallengeFactorId ? (
                 <motion.div key="mfa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                   <MFALoginVerification factorId={mfaChallengeFactorId} onSuccess={() => navigate('/')} onCancel={() => { void handleBlockedSignOut(); }} />
+                  {/* "Voltar para o Login" tambem sai da sessao: se o logout falhar
+                      o motivo precisa aparecer aqui, nao ficar em silencio. */}
+                  {mfaSignOutError && (
+                    <p className="text-destructive text-sm mt-4" role="alert">{mfaSignOutError}</p>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div key="form" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>

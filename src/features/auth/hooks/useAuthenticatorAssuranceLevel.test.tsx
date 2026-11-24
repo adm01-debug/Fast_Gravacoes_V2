@@ -108,6 +108,23 @@ describe('useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 0
     expect(mfa.listFactors.mock.calls.length).toBeGreaterThan(callsBefore);
   });
 
+  it('troca de sessao nao reusa a decisao da sessao anterior', async () => {
+    userRef.current = null;
+
+    const { result, rerender } = renderHook(() => useAuthenticatorAssuranceLevel());
+    await waitFor(() => expect(result.current.checked).toBe(true));
+    expect(result.current.needsMfaChallenge).toBe(false);
+
+    // Login por senha: a decisao da sessao anonima nao pode valer para a nova.
+    userRef.current = { id: 'u2' };
+    rerender();
+
+    expect(result.current.checked).toBe(false);
+    await waitFor(() => expect(result.current.checked).toBe(true));
+    expect(result.current.needsMfaChallenge).toBe(true);
+    expect(result.current.challengeableFactorId).toBe('totp-1');
+  });
+
   it('sem usuario a decisao fica resolvida e sem desafio', async () => {
     userRef.current = null;
 

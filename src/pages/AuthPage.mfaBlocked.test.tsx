@@ -56,8 +56,11 @@ vi.mock('@/components/auth/AuthLoginForm', () => ({
 }));
 
 vi.mock('@/components/auth/MFALoginVerification', () => ({
-  MFALoginVerification: ({ factorId }: { factorId: string }) => (
-    <div data-testid="mfa-challenge">{factorId}</div>
+  MFALoginVerification: ({ factorId, onCancel }: { factorId: string; onCancel: () => void }) => (
+    <div data-testid="mfa-challenge">
+      {factorId}
+      <button onClick={onCancel}>Voltar para o Login</button>
+    </div>
   ),
 }));
 
@@ -129,6 +132,27 @@ describe('AuthPage: 2FA sem desafio possivel (etapa 032)', () => {
 
     expect(await screen.findByTestId('login-form')).toBeInTheDocument();
     expect(navigateMock).toHaveBeenCalledWith('/', { replace: true });
+  });
+
+  it('espera a decisao da sessao atual antes de navegar (sem pular pelo painel)', async () => {
+    shared.aal.checked = false;
+
+    renderPage();
+
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('login-form')).toBeNull();
+  });
+
+  it('mostra a falha do logout tambem na tela do desafio', async () => {
+    shared.aal.challengeableFactorId = 'totp-7';
+    signOutMock.mockRejectedValue(new Error('auth indisponivel'));
+
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Voltar para o Login' }));
+
+    expect(signOutMock).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText(/Não foi possível encerrar a sessão/)).toBeInTheDocument();
+    expect(screen.getByTestId('mfa-challenge')).toBeInTheDocument();
   });
 
   it('sair encerra a sessao', async () => {

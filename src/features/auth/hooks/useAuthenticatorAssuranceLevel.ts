@@ -41,7 +41,9 @@ export interface AALState {
  * aal2 — otherwise MFA is enforced only by client UI and is bypassable by
  * navigating directly to a protected route right after password sign-in.
  */
-const CLEARED: Omit<AALState, 'refresh'> = {
+type AALValue = Omit<AALState, 'refresh'>;
+
+const CLEARED: AALValue = {
   checked: false,
   needsMfaChallenge: false,
   hasNoVerifiedFactor: false,
@@ -49,21 +51,30 @@ const CLEARED: Omit<AALState, 'refresh'> = {
   factorsUnavailable: false,
 };
 
+/** Decisao ja resolvida + a sessao a que ela pertence. */
+interface ResolvedValue {
+  forUserId: string | null;
+  value: AALValue;
+}
+
 export function useAuthenticatorAssuranceLevel(): AALState {
   const { user } = useAuth();
-  const userId = user?.id;
+  const userId = user?.id ?? null;
   const [refreshToken, setRefreshToken] = useState(0);
-  const [state, setState] = useState<Omit<AALState, 'refresh'>>(CLEARED);
+  const [resolved, setResolved] = useState<ResolvedValue>({
+    forUserId: null,
+    value: { ...CLEARED, checked: true },
+  });
   const refresh = useCallback(() => setRefreshToken((n) => n + 1), []);
 
   useEffect(() => {
     if (!userId) {
-      setState({ ...CLEARED, checked: true });
+      setResolved({ forUserId: null, value: { ...CLEARED, checked: true } });
       return;
     }
 
     let cancelled = false;
-    setState(CLEARED);
+    setResolved({ forUserId: userId, value: CLEARED });
 
     const evaluate = async () => {
       try {
@@ -93,12 +104,15 @@ export function useAuthenticatorAssuranceLevel(): AALState {
           ? undefined
           : (factorsRes.data?.totp ?? []).find((f) => f.status === 'verified');
         if (!cancelled) {
-          setState({
-            checked: true,
-            needsMfaChallenge,
-            hasNoVerifiedFactor: !factorsRes.error && !hasVerifiedFactor,
-            challengeableFactorId: challengeableFactor?.id ?? null,
-            factorsUnavailable: !!factorsRes.error,
+          setResolved({
+            forUserId: userId,
+            value: {
+              checked: true,
+              needsMfaChallenge,
+              hasNoVerifiedFactor: !factorsRes.error && !hasVerifiedFactor,
+              challengeableFactorId: challengeableFactor?.id ?? null,
+              factorsUnavailable: !!factorsRes.error,
+            },
           });
         }
       } catch {
@@ -107,7 +121,7 @@ export function useAuthenticatorAssuranceLevel(): AALState {
         // the only gate, so fail open here rather than locking everyone out
         // on a transient Supabase error.
         if (!cancelled) {
-          setState({ ...CLEARED, checked: true });
+          setResolved({ forUserId: userId, value: { ...CLEARED, checked: true } });
         }
       }
     };
@@ -126,5 +140,14 @@ export function useAuthenticatorAssuranceLevel(): AALState {
     };
   }, [userId, refreshToken]);
 
-  return { ...state, refresh };
+  // Nunca devolver a decisao de OUTRA sessao: logo apos o login por senha o
+  // valor resolvido ainda e o da sessao anonima ("liberado"), e usa-lo fazia a
+  // tela de login navegar para "/" antes de saber que a nova sessao exige 2FA
+  // — o guarda de rota entao devolvia para o login. Sessao diferente da
+  // resolvida (inclusive login recem-criado) reporta "ainda checando".
+  const decision = resolved.forUserId === userId
+    ? resolved.value
+    : { ...CLEARED, checked: !userId };
+
+  return { ...decision, refresh };
 }
