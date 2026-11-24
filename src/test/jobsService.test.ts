@@ -88,6 +88,23 @@ describe('jobsService.getAll', () => {
     expect(result.length).toBe(2);
   });
 
+  it('preserves cancel_reason of a cancelled job for the details panel', async () => {
+    setupSuccess([
+      {
+        id: '3f1c1a52-6f36-4b4a-9c3f-6d0f0f6a1b11',
+        order_number: 'OS-900',
+        client: 'ACME',
+        product: 'Adesivo vinil',
+        quantity: 10,
+        technique_id: '9b3c6f4e-1c2a-4d3f-8f5e-0a1b2c3d4e5f',
+        status: 'cancelled',
+        cancel_reason: 'Cliente desistiu',
+      },
+    ]);
+    const [job] = await jobsService.getAll();
+    expect(job.cancel_reason).toBe('Cliente desistiu');
+  });
+
   it('throws when Supabase returns an error', async () => {
     setupError('database connection failed');
     await expect(jobsService.getAll()).rejects.toThrow();

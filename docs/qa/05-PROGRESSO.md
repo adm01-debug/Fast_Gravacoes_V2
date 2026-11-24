@@ -357,7 +357,8 @@ PR: esta PR · estado: aguardando merge
 ### 047 — 2026-11-24
 Comando/consulta: `.\node_modules\.bin\vitest.cmd run src/test/jobsService.test.ts src/features/jobs src/features/packaging` e prova de regressão com `git stash push -- jobsService.ts`; prova no banco em transação com `ROLLBACK`.
 Resultado: 10 arquivos, **77 testes passed**. Com `jobsService.ts` original: **2 failed | 15 passed** — os dois casos novos de cancelamento são os que falham. No banco, `UPDATE jobs SET status='cancelled'` sem `cancel_reason` levanta `cancel_reason é obrigatório ao cancelar um job`; com motivo, passa. `tsc` 0 erros, `eslint` 0 erros nos arquivos tocados.
-Limite conhecido: o percurso pela tela (abrir a OS, tentar confirmar sem motivo, ver a gravação) **não** tem teste automatizado de componente — não há infra de teste de render para `JobDetailsModal` no repo. A cobertura é do serviço e da constraint no banco; a leitura do motivo em uma OS cancelada passou a ser renderizada no modal (guarda `job.status === 'cancelled'`).
+Caminho de leitura do motivo (revisão da #297): `jobsService.getAll` passa cada linha por `jobSchema.safeParse`, que descarta chaves não declaradas; `cancel_reason` foi declarado em `src/features/jobs/types/job.schema.ts:24` e há teste que falha sem essa linha (`src/test/jobsService.test.ts`, "preserves cancel_reason of a cancelled job for the details panel"). O modal renderiza o valor sob a guarda `job.status === 'cancelled'`.
+Limite conhecido: o percurso pela tela (abrir a OS, tentar confirmar sem motivo, ver a gravação) **não** tem teste automatizado de render — o repo tem infra de RTL/jsdom, mas nenhum teste monta `JobDetailsModal`, que depende de ~14 hooks/providers. A cobertura do bloqueio é do serviço e da constraint no banco.
 PR: esta PR · estado: aguardando merge
 
 ---
