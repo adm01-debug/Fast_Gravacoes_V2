@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "81d45cace1e89e5c82ca806a1051ec00ca559f82",
+  "sha": "8777e184658ea89e120abd2970d31e741478bce4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 16:50 UTC",
+  "generated_at": "2026-11-24 17:19 UTC",
   "files_total": 1597,
   "code_files": 1401,
   "code_lines": 207596
@@ -97470,10 +97470,27 @@
   }
  },
  "git": {
-  "sha": "81d45cace1e89e5c82ca806a1051ec00ca559f82",
+  "sha": "8777e184658ea89e120abd2970d31e741478bce4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8777e18",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)",
+    "files": [
+     ".github/workflows/contexto.yml",
+     "docs/agentes/mapa-repo.md",
+     "docs/graphify/README.md",
+     "docs/graphify/VALIDACAO.md",
+     "graphify.config.json",
+     "graphify.local.json",
+     "scripts/graphify/requirements.in",
+     "scripts/graphify/requirements.lock",
+     "scripts/graphify/tests/test_integration.py"
+    ]
+   },
    {
     "sha": "81d45ca",
     "date": "2026-11-24",
@@ -97829,15 +97846,6 @@
      "src/features/auth/hooks/useRBAC.test.tsx",
      "src/features/auth/hooks/useRBAC.tsx"
     ]
-   },
-   {
-    "sha": "82df446",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)",
-    "files": [
-     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md"
-    ]
    }
   ],
   "hot_files": [
@@ -97862,10 +97870,6 @@
     2
    ],
    [
-    "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
-    2
-   ],
-   [
     "deno.lock",
     2
    ],
@@ -97882,43 +97886,47 @@
     2
    ],
    [
+    ".github/workflows/contexto.yml",
+    1
+   ],
+   [
+    "docs/agentes/mapa-repo.md",
+    1
+   ],
+   [
+    "docs/graphify/README.md",
+    1
+   ],
+   [
+    "docs/graphify/VALIDACAO.md",
+    1
+   ],
+   [
+    "graphify.config.json",
+    1
+   ],
+   [
+    "graphify.local.json",
+    1
+   ],
+   [
+    "scripts/graphify/requirements.in",
+    1
+   ],
+   [
+    "scripts/graphify/requirements.lock",
+    1
+   ],
+   [
+    "scripts/graphify/tests/test_integration.py",
+    1
+   ],
+   [
     "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
     1
    ],
    [
     "src/components/ui/scroll-area.test.tsx",
-    1
-   ],
-   [
-    "src/components/ui/scroll-area.tsx",
-    1
-   ],
-   [
-    ".github/workflows/ci.yml",
-    1
-   ],
-   [
-    ".github/workflows/db-admin.yml",
-    1
-   ],
-   [
-    "supabase/migrations/20261124111000_add_techniques_personalizacao.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
-    1
-   ],
-   [
-    "src/components/kanban/KanbanFiltersBar.tsx",
-    1
-   ],
-   [
-    "src/components/kanban/KanbanMetricsBar.tsx",
-    1
-   ],
-   [
-    "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
     1
    ]
   ]

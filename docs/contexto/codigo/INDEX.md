@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `81d45cace1e89e5c82ca806a1051ec00ca559f82` (2026-11-24T13:49:34-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8777e184658ea89e120abd2970d31e741478bce4` (2026-11-24T14:19:05-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -246,9 +246,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7573 nós · 22149 arestas · 665 comunidades · grafo do commit `81d45cac`
-- comunidades maiores: card.tsx (250), button.tsx (210), skeleton.tsx (139), select.tsx (117), cn (116), snapshot.py (111), analytics/index.ts (108), utils.ts (102), generate.py (101), gerar.mjs (96), .write (96), errorHandling.ts (95)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
+- 8443 nós · 32215 arestas · 403 comunidades · grafo do commit `8777e184`
+- comunidades maiores: Card (163), Button (153), MainLayout.tsx (129), package.json (124), TableCell (118), Input (115), generate.py (111), showErrorToast (111), CardTitle (110), snapshot.py (109), cn (109), client.ts (108)
+- símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
@@ -260,12 +260,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - AGENTS.md (10)
 - .github/workflows/deploy.yml (9)
 - scripts/audit-gate.mjs (9)
+- .github/workflows/contexto.yml (7)
 - PENDENCIAS.md (7)
 - index.html (7)
 - supabase/functions/check-login-lockout/index.ts (7)
 - tests/e2e/offline.spec.ts (7)
 - vercel.json (7)
-- .github/workflows/contexto.yml (6)
 - CLAUDE.md (6)
 
 ## Workflows
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `8777e18` chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)
 - 2026-11-24 `81d45ca` fix: restabelece EXECUTE de public.has_role para authenticated (#285)
 - 2026-11-24 `3aafbf1` fix: erp-api responde 400 (nao 500) em dado invalido (#280)
 - 2026-11-24 `1b65d05` fix: viewport do ScrollArea focavel so quando ha rolagem (#286)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `17a3af4` fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)
 - 2026-11-23 `0becad3` chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)
 - 2026-11-23 `c43c1b2` fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)
-- 2026-11-23 `6789162` ci: db push com --include-all para migrations fora de ordem (#273)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

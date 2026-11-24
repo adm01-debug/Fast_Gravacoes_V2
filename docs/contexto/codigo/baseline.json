@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "81d45cace1e89e5c82ca806a1051ec00ca559f82",
+  "commit": "8777e184658ea89e120abd2970d31e741478bce4",
   "branch": "main",
-  "data_commit": "2026-11-24T13:49:34-03:00",
+  "data_commit": "2026-11-24T14:19:05-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "8777e18",
+    "data": "2026-11-24",
+    "assunto": "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)"
+   },
    {
     "sha": "81d45ca",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "84eca7c",
     "data": "2026-11-23",
     "assunto": "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)"
-   },
-   {
-    "sha": "ca42441",
-    "data": "2026-11-22",
-    "assunto": "fix: usa date local (BRT) nas comparacoes de data do dia - cluster B.2 timezone (#261)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 220,
+  "arquivos_mudados_7d": 228,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -231,6 +231,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 7
+   },
+   {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 7
    },
@@ -249,10 +253,6 @@
    {
     "arquivo": "vercel.json",
     "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 6
    },
    {
     "arquivo": "CLAUDE.md",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 137
+    "commits": 138
    },
    {
     "autor": "devin-ai-integration[bot]",
