@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1b65d05df846f3350121cf1eac909acae39aeb06",
+  "commit": "3aafbf1155f714ff39cdc8b5252ecd545922f430",
   "branch": "main",
-  "data_commit": "2026-11-24T13:02:42-03:00",
+  "data_commit": "2026-11-24T13:25:47-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3aafbf1",
+    "data": "2026-11-24",
+    "assunto": "fix: erp-api responde 400 (nao 500) em dado invalido (#280)"
+   },
    {
     "sha": "1b65d05",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "4dc0b5b",
     "data": "2026-11-22",
     "assunto": "fix: confianca da predicao exibida na escala correta (0-100) (#258)"
-   },
-   {
-    "sha": "0a50e73",
-    "data": "2026-11-22",
-    "assunto": "docs: plano de 200 etapas de UX de navegacao (#260)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 135
+    "commits": 136
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1598,
   "arquivos_codigo": 1131,
-  "linhas_codigo": 191062,
+  "linhas_codigo": 191075,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11318
+   "linhas": 11331
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
