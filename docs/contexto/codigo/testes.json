@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 134,
+ "total": 136,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 110
+  "unit": 112
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 98
+   "arquivos": 100
   },
   {
    "padrao": "outro",
@@ -284,6 +284,16 @@
     "scripts/supabase_snapshot/snapshot.py"
    ],
    "casos": 96,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/components/error/StackTrace.test.tsx",
+   "tipo": "unit",
+   "linhas": 41,
+   "testa": [
+    "src/components/error/StackTrace.tsx"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -678,6 +688,16 @@
     "src/hooks/use-modal-param.ts"
    ],
    "casos": 6,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/hooks/use-overflowing.test.tsx",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/hooks/use-overflowing.ts"
+   ],
+   "casos": 3,
    "suporte": false
   },
   {
@@ -1430,6 +1450,7 @@
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
+  "src/components/error/StackTrace.tsx": 1,
   "src/components/logistics/EditShipmentModal.tsx": 1,
   "src/components/settings/TwoFactorSetup.tsx": 1,
   "src/components/ui/resizable.tsx": 1,
@@ -1474,6 +1495,7 @@
   "src/features/production/index.ts": 1,
   "src/features/production/services/oeeCalculations.ts": 2,
   "src/hooks/use-modal-param.ts": 1,
+  "src/hooks/use-overflowing.ts": 1,
   "src/hooks/use-smart-back.ts": 1,
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,

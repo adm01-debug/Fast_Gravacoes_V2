@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 621,
+ "total": 622,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -2311,6 +2311,20 @@
    ],
    "export_default": null,
    "linhas": 126,
+   "dominio": "components/error",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/error/StackTrace.tsx",
+   "exports": [
+    "StackTrace"
+   ],
+   "export_default": null,
+   "linhas": 20,
    "dominio": "components/error",
    "hooks_locais": [],
    "tabelas": [],
@@ -6062,7 +6076,7 @@
     "ScrollBar"
    ],
    "export_default": null,
-   "linhas": 69,
+   "linhas": 52,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -8912,7 +8926,7 @@
     "AdminTelemetriaPage"
    ],
    "export_default": "AdminTelemetriaPage",
-   "linhas": 590,
+   "linhas": 589,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [

@@ -982,13 +982,13 @@
   },
   {
    "modulo": "components/error",
-   "arquivos": 1,
-   "testes": 0,
-   "linhas": 126,
+   "arquivos": 2,
+   "testes": 1,
+   "linhas": 146,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 1,
+   "componentes": 2,
    "hooks_locais": [
     "useRipple"
    ],
@@ -1006,9 +1006,12 @@
     "tabelas": [],
     "rpcs": []
    },
-   "importado_por_outros_modulos": [],
+   "importado_por_outros_modulos": [
+    "pages"
+   ],
    "depende_de_modulos": [
     "components/ui",
+    "hooks",
     "lib"
    ],
    "pacotes_externos": [
@@ -3108,7 +3111,7 @@
    "modulo": "components/ui",
    "arquivos": 61,
    "testes": 2,
-   "linhas": 6512,
+   "linhas": 6495,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4880,9 +4883,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 44,
-   "testes": 3,
-   "linhas": 5846,
+   "arquivos": 45,
+   "testes": 4,
+   "linhas": 5875,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4967,6 +4970,7 @@
     "useHapticInteraction",
     "useModalParam",
     "useNavigationHotkeys",
+    "useOverflowing",
     "usePullToRefresh",
     "useScrollDirection",
     "useSmartBack",
@@ -5117,6 +5121,7 @@
     "components/dashboard",
     "components/design-system",
     "components/documents",
+    "components/error",
     "components/feedback",
     "components/jobs",
     "components/knowledge",
@@ -5860,7 +5865,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 3,
-   "linhas": 16590,
+   "linhas": 16589,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6403,6 +6408,7 @@
     "components/design-system",
     "components/digital-twin",
     "components/documents",
+    "components/error",
     "components/icons",
     "components/integrations",
     "components/inventory",

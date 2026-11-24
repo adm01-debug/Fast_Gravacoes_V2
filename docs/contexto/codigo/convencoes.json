@@ -6,13 +6,13 @@
    "src/pages (56)"
   ],
   "componentes": [
-   "src/components (402)",
+   "src/components (403)",
    "src/features (144)",
    "src/pages (56)"
   ],
   "hooks": [
    "src/features (113)",
-   "src/hooks (53)",
+   "src/hooks (54)",
    "src/components (15)"
   ],
   "servicos_logica": [
@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (98)",
+   "co-localizado (*.test) (100)",
    "outro (18)",
    "tests/ (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 20,
  "extensao_componentes": [
-  ".tsx (621)"
+  ".tsx (622)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)",
    "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)",
    "fix: restabelece EXECUTE de public.has_role para authenticated (#285)",
    "fix: erp-api responde 400 (nao 500) em dado invalido (#280)",
-   "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)",
-   "ci: evita rodar E2E duas vezes para o mesmo tree (#282)"
+   "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 991,
- "arestas": 4568,
+ "nos": 993,
+ "arestas": 4571,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -313,7 +313,7 @@
   },
   {
    "modulo": "pages",
-   "depende_de": 55,
+   "depende_de": 56,
    "importado_por": 3
   },
   {
@@ -324,7 +324,7 @@
   {
    "modulo": "hooks",
    "depende_de": 14,
-   "importado_por": 31
+   "importado_por": 32
   },
   {
    "modulo": "integrations/supabase",

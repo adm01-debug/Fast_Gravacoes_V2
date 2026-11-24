@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8777e184658ea89e120abd2970d31e741478bce4",
+  "commit": "3a296f26faa3151bf4bd2986bfffedb325fbda7f",
   "branch": "main",
-  "data_commit": "2026-11-24T14:19:05-03:00",
+  "data_commit": "2026-11-24T14:37:47-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3a296f2",
+    "data": "2026-11-24",
+    "assunto": "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)"
+   },
    {
     "sha": "8777e18",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "ac5366c",
     "data": "2026-11-23",
     "assunto": "chore: marca F-007 como resolvida com evidencia (PR #254, deploy verificado) (#255)"
-   },
-   {
-    "sha": "84eca7c",
-    "data": "2026-11-23",
-    "assunto": "fix: banco autoritativo na autorizacao - revogacao de permissao real (F-007) (#256)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 228,
+  "arquivos_mudados_7d": 233,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -185,11 +185,11 @@
     "mudancas": 14
    },
    {
-    "pasta": "deno.lock",
-    "mudancas": 12
+    "pasta": "src/components/ui",
+    "mudancas": 13
    },
    {
-    "pasta": "src/components/ui",
+    "pasta": "deno.lock",
     "mudancas": 12
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 138
+    "commits": 139
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,21 +327,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1599,
-  "arquivos_codigo": 1131,
-  "linhas_codigo": 191075,
+  "arquivos_total": 1603,
+  "arquivos_codigo": 1135,
+  "linhas_codigo": 191215,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
   "itens_menu": 69,
   "modulos": 74,
-  "componentes": 621,
-  "hooks": 196,
+  "componentes": 622,
+  "hooks": 197,
   "edge_functions": 33,
   "tabelas": 133,
   "migrations": 259,
   "cron_jobs": 4,
-  "testes": 134,
+  "testes": 136,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -480,8 +480,8 @@
    "linhas": 22
   },
   "src/components": {
-   "arquivos": 419,
-   "linhas": 59156
+   "arquivos": 421,
+   "linhas": 59200
   },
   "src/constants": {
    "arquivos": 2,
@@ -496,8 +496,8 @@
    "linhas": 47351
   },
   "src/hooks": {
-   "arquivos": 61,
-   "linhas": 7796
+   "arquivos": 63,
+   "linhas": 7893
   },
   "src/i18n": {
    "arquivos": 1,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 59,
-   "linhas": 16971
+   "linhas": 16970
   },
   "src/providers": {
    "arquivos": 2,
@@ -619,7 +619,7 @@
   },
   {
    "arquivo": "src/pages/AdminTelemetriaPage.tsx",
-   "linhas": 590
+   "linhas": 589
   },
   {
    "arquivo": "src/pages/OEEDashboard.tsx",

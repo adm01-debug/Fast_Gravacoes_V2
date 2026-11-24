@@ -984,6 +984,9 @@
    "src/lib/errorHandling.ts",
    "src/lib/logger.ts"
   ],
+  "src/components/error/StackTrace.tsx": [
+   "src/hooks/use-overflowing.ts"
+  ],
   "src/components/feedback/CelebrationMoment.tsx": [
    "src/hooks/use-haptic-feedback.tsx",
    "src/lib/utils.ts"
@@ -2641,6 +2644,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/scroll-area.tsx": [
+   "src/hooks/use-overflowing.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/section-error-boundary.tsx": [
@@ -4983,6 +4987,7 @@
    "src/hooks/useABCCosts.ts"
   ],
   "src/pages/AdminTelemetriaPage.tsx": [
+   "src/components/error/StackTrace.tsx",
    "src/components/layout/MainLayout.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",

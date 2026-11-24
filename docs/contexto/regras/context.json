@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8777e184658ea89e120abd2970d31e741478bce4",
+  "sha": "3a296f26faa3151bf4bd2986bfffedb325fbda7f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 17:19 UTC",
-  "files_total": 1597,
-  "code_files": 1401,
-  "code_lines": 207596
+  "generated_at": "2026-11-24 17:44 UTC",
+  "files_total": 1601,
+  "code_files": 1405,
+  "code_lines": 207736
  },
  "version": "1.3.2",
- "facts_hash": "bc9c1327c490333a",
+ "facts_hash": "77c8c09f6ecdb9ca",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,8 +280,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 665,
-   ".ts": 402,
+   ".tsx": 668,
+   ".ts": 403,
    ".sql": 267,
    ".mjs": 50,
    ".py": 13,
@@ -21722,7 +21722,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 87
+    "deps_count": 89
    },
    {
     "path": "",
@@ -21756,7 +21756,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 111
+    "deps_count": 113
    },
    {
     "path": "",
@@ -21861,7 +21861,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 305
+    "deps_count": 306
    },
    {
     "path": "",
@@ -22045,7 +22045,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 230
+    "deps_count": 231
    },
    {
     "path": "",
@@ -22101,7 +22101,7 @@
     "rpc_transitive": [
      "verify_audit_chain"
     ],
-    "deps_count": 146
+    "deps_count": 147
    },
    {
     "path": "",
@@ -22269,7 +22269,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 248
+    "deps_count": 249
    },
    {
     "path": "",
@@ -22427,7 +22427,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 123
+    "deps_count": 124
    },
    {
     "path": "",
@@ -22514,7 +22514,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 214
+    "deps_count": 215
    },
    {
     "path": "",
@@ -22724,7 +22724,7 @@
     "rpc_transitive": [
      "update_shipment_status"
     ],
-    "deps_count": 108
+    "deps_count": 109
    },
    {
     "path": "",
@@ -22771,7 +22771,7 @@
     "rpc_transitive": [
      "update_shipment_status"
     ],
-    "deps_count": 128
+    "deps_count": 129
    },
    {
     "path": "",
@@ -22857,7 +22857,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 214
+    "deps_count": 215
    },
    {
     "path": "",
@@ -22955,7 +22955,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 304
+    "deps_count": 305
    },
    {
     "path": "",
@@ -23035,7 +23035,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 164
+    "deps_count": 165
    },
    {
     "path": "",
@@ -23080,7 +23080,7 @@
      "apply_job_sequence",
      "update_shipment_status"
     ],
-    "deps_count": 129
+    "deps_count": 130
    },
    {
     "path": "",
@@ -23133,7 +23133,7 @@
      "apply_job_sequence",
      "update_shipment_status"
     ],
-    "deps_count": 154
+    "deps_count": 155
    },
    {
     "path": "",
@@ -23368,7 +23368,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 243
+    "deps_count": 244
    },
    {
     "path": "",
@@ -23403,7 +23403,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 110
+    "deps_count": 111
    },
    {
     "path": "",
@@ -23522,7 +23522,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -23668,7 +23668,7 @@
      "check_and_notify_kpi_alert",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 164
+    "deps_count": 165
    },
    {
     "path": "",
@@ -23755,7 +23755,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 270
+    "deps_count": 271
    },
    {
     "path": "",
@@ -23838,7 +23838,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 188
+    "deps_count": 189
    },
    {
     "path": "",
@@ -23911,7 +23911,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -24007,7 +24007,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 242
+    "deps_count": 243
    },
    {
     "path": "",
@@ -24092,7 +24092,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 220
+    "deps_count": 221
    },
    {
     "path": "",
@@ -24257,7 +24257,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 310
+    "deps_count": 311
    },
    {
     "path": "",
@@ -24301,7 +24301,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 124
+    "deps_count": 125
    },
    {
     "path": "",
@@ -24461,7 +24461,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 211
+    "deps_count": 212
    },
    {
     "path": "",
@@ -24536,7 +24536,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 209
+    "deps_count": 210
    },
    {
     "path": "",
@@ -24582,7 +24582,7 @@
     "rpc_transitive": [
      "apply_job_sequence"
     ],
-    "deps_count": 156
+    "deps_count": 157
    },
    {
     "path": "",
@@ -24658,7 +24658,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 118
+    "deps_count": 119
    },
    {
     "path": "",
@@ -24768,7 +24768,7 @@
      "complete_maintenance_record",
      "increment_job_lost_pieces"
     ],
-    "deps_count": 216
+    "deps_count": 217
    },
    {
     "path": "",
@@ -24805,7 +24805,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 121
+    "deps_count": 122
    },
    {
     "path": "",
@@ -24893,7 +24893,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 220
+    "deps_count": 221
    },
    {
     "path": "",
@@ -24975,7 +24975,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 220
+    "deps_count": 221
    },
    {
     "path": "",
@@ -25070,7 +25070,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 234
+    "deps_count": 235
    },
    {
     "path": "/rota-fantasma-que-nao-devia-contar",
@@ -25148,7 +25148,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 206
+    "deps_count": 207
    }
   ],
   "edge_functions": [
@@ -26528,7 +26528,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 573,
+  "components_count": 575,
   "hooks": [
    {
     "name": "useContacts",
@@ -27383,6 +27383,10 @@
     "file": "src/hooks/use-navigation-hotkeys.ts"
    },
    {
+    "name": "useOverflowing",
+    "file": "src/hooks/use-overflowing.ts"
+   },
+   {
     "name": "usePullToRefresh",
     "file": "src/hooks/use-pull-to-refresh.tsx"
    },
@@ -27883,8 +27887,8 @@
   },
   {
    "module": "src/components",
-   "files": 419,
-   "lines": 59156,
+   "files": 421,
+   "lines": 59200,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -29180,8 +29184,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 61,
-   "lines": 7796,
+   "files": 63,
+   "lines": 7893,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -29226,6 +29230,7 @@
     "use-haptic-feedback.tsx: HapticPattern, useHapticFeedback, useHapticButton, useHapticInteraction",
     "use-modal-param.ts: MODAL_PUSHED_STATE, urlOwnedDialogCount, useModalParam",
     "use-navigation-hotkeys.ts: useNavigationHotkeys",
+    "use-overflowing.ts: useOverflowing",
     "use-pull-to-refresh.tsx: usePullToRefresh",
     "use-scroll-direction.tsx: useScrollDirection",
     "use-smart-back.ts: useSmartBack",
@@ -29257,8 +29262,7 @@
     "useRoutePrefetch.ts: useRoutePrefetch, usePrefetchRoute",
     "useSmartDelayAlerts.ts: useSmartDelayAlerts",
     "useTechnicalConversations.ts: TechnicalConversation, TechnicalMessage, useTechnicalConversations, useTechnicalMessages",
-    "useTechniqueCapacityAlerts.ts: CapacityMetric, useTechniqueCapacityAlerts",
-    "useThemeSound.ts: useThemeSound"
+    "useTechniqueCapacityAlerts.ts: CapacityMetric, useTechniqueCapacityAlerts"
    ],
    "docs": [
     "useABCCosts.ts: Main ABC Costing hook - combines data, mutations, and calculations Refactored into smaller modules for maintainability",
@@ -29299,6 +29303,8 @@
     "src/hooks/use-modal-param.test.tsx",
     "src/hooks/use-modal-param.ts",
     "src/hooks/use-navigation-hotkeys.ts",
+    "src/hooks/use-overflowing.test.tsx",
+    "src/hooks/use-overflowing.ts",
     "src/hooks/use-pull-to-refresh.tsx",
     "src/hooks/use-scroll-direction.tsx",
     "src/hooks/use-smart-back.test.tsx",
@@ -29545,7 +29551,7 @@
   {
    "module": "src/pages",
    "files": 59,
-   "lines": 16971,
+   "lines": 16970,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -36799,11 +36805,7 @@
    },
    {
     "file": "src/components/ui/scroll-area.tsx",
-    "text": "descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex"
-   },
-   {
-    "file": "src/components/ui/scroll-area.tsx",
-    "text": "entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe."
+    "text": "descendente focavel ele viola a regra axe scrollable-region-focusable."
    },
    {
     "file": "src/contexts/DirtyFormContext.tsx",
@@ -37072,6 +37074,14 @@
    {
     "file": "src/features/production/services/oeeCalculations.ts",
     "text": "Null produced_quantity means \"not recorded\" — must not be treated as"
+   },
+   {
+    "file": "src/hooks/use-overflowing.ts",
+    "text": "* Detecta se um conteiner rolavel transborda, para expor `tabIndex={0}` apenas"
+   },
+   {
+    "file": "src/hooks/use-overflowing.ts",
+    "text": "quando ha rolagem. Regiao rolavel sem descendente focavel viola a regra axe"
    },
    {
     "file": "src/hooks/use-smart-back.ts",
@@ -51385,6 +51395,18 @@
     "name": "build que falha não carimba (a próxima sessão refaz)"
    },
    {
+    "file": "src/components/error/StackTrace.test.tsx",
+    "name": "StackTrace"
+   },
+   {
+    "file": "src/components/error/StackTrace.test.tsx",
+    "name": "torna o bloco focavel por teclado quando o trace transborda"
+   },
+   {
+    "file": "src/components/error/StackTrace.test.tsx",
+    "name": "nao cria parada de Tab quando o trace cabe"
+   },
+   {
     "file": "src/components/logistics/EditShipmentModal.test.tsx",
     "name": "EditShipmentModal"
    },
@@ -52491,6 +52513,22 @@
    {
     "file": "src/hooks/use-modal-param.test.tsx",
     "name": "preserva outros params ao alternar"
+   },
+   {
+    "file": "src/hooks/use-overflowing.test.tsx",
+    "name": "useOverflowing"
+   },
+   {
+    "file": "src/hooks/use-overflowing.test.tsx",
+    "name": "detecta transbordo a partir do tamanho medido"
+   },
+   {
+    "file": "src/hooks/use-overflowing.test.tsx",
+    "name": "nao marca conteudo que cabe"
+   },
+   {
+    "file": "src/hooks/use-overflowing.test.tsx",
+    "name": "reavalia quando o conteudo cresce depois do mount"
    },
    {
     "file": "src/hooks/use-smart-back.test.tsx",
@@ -74013,6 +74051,23 @@
     "class GlobalErrorBoundary"
    ]
   },
+  "src/components/error/StackTrace.test.tsx": {
+   "path": "src/components/error/StackTrace.test.tsx",
+   "lines": 41,
+   "is_test": true,
+   "tests": [
+    "StackTrace",
+    "torna o bloco focavel por teclado quando o trace transborda",
+    "nao cria parada de Tab quando o trace cabe"
+   ]
+  },
+  "src/components/error/StackTrace.tsx": {
+   "path": "src/components/error/StackTrace.tsx",
+   "lines": 20,
+   "exports": [
+    "function StackTrace"
+   ]
+  },
   "src/components/feedback/CelebrationMoment.tsx": {
    "path": "src/components/feedback/CelebrationMoment.tsx",
    "lines": 302,
@@ -77985,10 +78040,9 @@
   },
   "src/components/ui/scroll-area.tsx": {
    "path": "src/components/ui/scroll-area.tsx",
-   "lines": 69,
+   "lines": 52,
    "rule_comments": [
-    "descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex",
-    "entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe."
+    "descendente focavel ele viola a regra axe scrollable-region-focusable."
    ]
   },
   "src/components/ui/section-error-boundary.tsx": {
@@ -87373,6 +87427,34 @@
     "useNavigationHotkeys"
    ]
   },
+  "src/hooks/use-overflowing.test.tsx": {
+   "path": "src/hooks/use-overflowing.test.tsx",
+   "lines": 68,
+   "is_test": true,
+   "tests": [
+    "useOverflowing",
+    "detecta transbordo a partir do tamanho medido",
+    "nao marca conteudo que cabe",
+    "reavalia quando o conteudo cresce depois do mount"
+   ],
+   "side_effects": [
+    "notifyResize"
+   ]
+  },
+  "src/hooks/use-overflowing.ts": {
+   "path": "src/hooks/use-overflowing.ts",
+   "lines": 29,
+   "exports": [
+    "function useOverflowing"
+   ],
+   "rule_comments": [
+    "* Detecta se um conteiner rolavel transborda, para expor `tabIndex={0}` apenas",
+    "quando ha rolagem. Regiao rolavel sem descendente focavel viola a regra axe"
+   ],
+   "hooks": [
+    "useOverflowing"
+   ]
+  },
   "src/hooks/use-pull-to-refresh.tsx": {
    "path": "src/hooks/use-pull-to-refresh.tsx",
    "lines": 108,
@@ -90394,7 +90476,7 @@
   },
   "src/pages/AdminTelemetriaPage.tsx": {
    "path": "src/pages/AdminTelemetriaPage.tsx",
-   "lines": 590,
+   "lines": 589,
    "exports": [
     "function AdminTelemetriaPage"
    ],
@@ -97470,10 +97552,24 @@
   }
  },
  "git": {
-  "sha": "8777e184658ea89e120abd2970d31e741478bce4",
+  "sha": "3a296f26faa3151bf4bd2986bfffedb325fbda7f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3a296f2",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)",
+    "files": [
+     "src/components/error/StackTrace.test.tsx",
+     "src/components/error/StackTrace.tsx",
+     "src/components/ui/scroll-area.tsx",
+     "src/hooks/use-overflowing.test.tsx",
+     "src/hooks/use-overflowing.ts",
+     "src/pages/AdminTelemetriaPage.tsx"
+    ]
+   },
    {
     "sha": "8777e18",
     "date": "2026-11-24",
@@ -97836,16 +97932,6 @@
     "files": [
      "docs/plano-190-etapas-261122.md"
     ]
-   },
-   {
-    "sha": "75dc924",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)",
-    "files": [
-     "src/features/auth/hooks/useRBAC.test.tsx",
-     "src/features/auth/hooks/useRBAC.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -97858,8 +97944,8 @@
     5
    ],
    [
-    "src/features/auth/hooks/useRBAC.tsx",
-    3
+    "src/components/ui/scroll-area.tsx",
+    2
    ],
    [
     "supabase/functions/erp-api/index.ts",
@@ -97874,6 +97960,10 @@
     2
    ],
    [
+    "src/features/auth/hooks/useRBAC.tsx",
+    2
+   ],
+   [
     "src/hooks/abc/useABCMutations.ts",
     2
    ],
@@ -97882,8 +97972,24 @@
     2
    ],
    [
-    "src/features/auth/hooks/useRBAC.test.tsx",
-    2
+    "src/components/error/StackTrace.test.tsx",
+    1
+   ],
+   [
+    "src/components/error/StackTrace.tsx",
+    1
+   ],
+   [
+    "src/hooks/use-overflowing.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/use-overflowing.ts",
+    1
+   ],
+   [
+    "src/pages/AdminTelemetriaPage.tsx",
+    1
    ],
    [
     ".github/workflows/contexto.yml",
@@ -97907,26 +98013,6 @@
    ],
    [
     "graphify.local.json",
-    1
-   ],
-   [
-    "scripts/graphify/requirements.in",
-    1
-   ],
-   [
-    "scripts/graphify/requirements.lock",
-    1
-   ],
-   [
-    "scripts/graphify/tests/test_integration.py",
-    1
-   ],
-   [
-    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
-    1
-   ],
-   [
-    "src/components/ui/scroll-area.test.tsx",
     1
    ]
   ]

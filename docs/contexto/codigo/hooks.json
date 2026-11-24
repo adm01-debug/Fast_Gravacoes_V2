@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 196,
+ "total": 197,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -3955,6 +3955,28 @@
     "src/components/layout/MainLayout.tsx"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-overflowing.ts",
+   "hooks_exportados": [
+    "useOverflowing"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/error/StackTrace.tsx",
+    "src/components/ui/scroll-area.tsx"
+   ],
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/use-pull-to-refresh.tsx",

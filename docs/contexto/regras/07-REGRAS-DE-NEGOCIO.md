@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8777e18465` · branch `main` · 2026-11-24 17:19 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3a296f26fa` · branch `main` · 2026-11-24 17:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T17:13:49Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T17:41:49Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T17:13:49Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T17:41:49Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T17:13:49Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T17:41:49Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T17:13:49Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T17:41:49Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T17:13:49Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T17:41:49Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3324,7 +3324,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1353 testes em 115 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1360 testes em 117 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3414,12 +3414,14 @@ _nenhum item encontrado_
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
 | `src/features/analytics/hooks/useRealtimeConnection.test.ts` | 4 | useRealtimeConnection · should connect to realtime channel on mount · should handle connection errors · should remove channel on unmount |
 | `src/features/jobs/services/jobsService.test.ts` | 4 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs |
+| `src/hooks/use-overflowing.test.tsx` | 4 | useOverflowing · detecta transbordo a partir do tamanho medido · nao marca conteudo que cabe · reavalia quando o conteudo cresce depois do mount |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
 | `tests/e2e/error-states.spec.ts` | 4 | Error boundaries and fallback states · should not have unhandled page errors on auth page · login with wrong credentials shows error message · navigating to non-existent route shows not found state |
 | `tests/e2e/inventory-intelligence.spec.ts` | 4 | Fluxos de Inventário e Inteligência · deve permitir visualizar e filtrar o inventário · deve abrir o modal de registro de movimentação · deve validar o Mapa WMS e sugestões de IA |
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
 | `tests/e2e/system-status.spec.ts` | 4 | Status do sistema · renderiza o painel consolidado com os agregados · não expõe detalhes de erro interno · painel de monitoramento exibe tendência das rotinas |
 | `tests/e2e/visual-regression.spec.ts` | 4 | Regressão Visual · snapshot da dashboard principal · snapshot da sidebar colapsada e expandida · snapshot responsivo mobile |
+| `src/components/error/StackTrace.test.tsx` | 3 | StackTrace · torna o bloco focavel por teclado quando o trace transborda · nao cria parada de Tab quando o trace cabe |
 | `src/components/logistics/EditShipmentModal.test.tsx` | 3 | EditShipmentModal · nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin) · nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete) |
 | `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |
 | `src/features/analytics/hooks/useKPIs.test.ts` | 3 | useKPIs · should return null when data is loading · should calculate correct metrics when data is provided |
@@ -3551,8 +3553,7 @@ _nenhum item encontrado_
 | When asChild, Slot must receive exactly ONE React element child. | `src/components/ui/button.tsx` |
 | best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
 | Persistir o log de erro é best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
-| descendente focavel ele viola a regra axe scrollable-region-focusable. O tabIndex | `src/components/ui/scroll-area.tsx` |
-| entra apenas quando ha rolagem, para nao criar parada de Tab em conteudo que cabe. | `src/components/ui/scroll-area.tsx` |
+| descendente focavel ele viola a regra axe scrollable-region-focusable. | `src/components/ui/scroll-area.tsx` |
 | e não pode ser cancelado — a confirmação pendente apontaria para a | `src/contexts/DirtyFormContext.tsx` |
 | (popstate) não pode ser cancelado; formulários com rascunho | `src/contexts/DirtyFormContext.tsx` |
 | Deve ser chamado dentro do provider (MainLayout). | `src/contexts/DirtyFormContext.tsx` |
@@ -3620,6 +3621,8 @@ _nenhum item encontrado_
 | must be the same job subset (see note above). | `src/features/production/hooks/useOperatorProductivity.ts` |
 | Throw instead of swallowing: a connectivity/RLS failure must not be | `src/features/production/services/machinesService.ts` |
 | Null produced_quantity means "not recorded" — must not be treated as | `src/features/production/services/oeeCalculations.ts` |
+| * Detecta se um conteiner rolavel transborda, para expor `tabIndex={0}` apenas | `src/hooks/use-overflowing.ts` |
+| quando ha rolagem. Regiao rolavel sem descendente focavel viola a regra axe | `src/hooks/use-overflowing.ts` |
 | * Voltar seguro: navega no histórico apenas quando existe uma entrada | `src/hooks/use-smart-back.ts` |
 | navHistory): o voltar deve consumi-la e fechar o dialog — o | `src/hooks/use-smart-back.ts` |
 | @returns Object with debounced value, loading state, and validation | `src/hooks/useDebounce.ts` |
