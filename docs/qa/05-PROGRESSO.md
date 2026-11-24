@@ -177,7 +177,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 073 — Resolver o painel de "IA" que inventa diagnósticos com nome de operador — onda 4 — Alta
 - [ ] 074 — Decidir o destino do painel de Qualidade de Código, hoje inteiramente fixo — onda 4 — Média
 - [ ] 075 — Tirar os indicadores de desempenho fixos do painel de telemetria — onda 4 — Média
-- [ ] 076 — Corrigir o gráfico do simulador, que mostra zero em todos os cenários — onda 4 — Média
+- [x] 076 — Corrigir o gráfico do simulador, que mostra zero em todos os cenários — onda 4 — Média · agrupado por cenário base (scenarioBaseId em src/lib/simulation.ts:22,134,145 + aggregateScenarioResults em src/lib/simulation.ts:184; chartData em src/pages/SimulationDashboard.tsx:44); teste src/test/simulationAggregation.test.ts 4/4; PR #289
 - [ ] 082 — Ligar ou remover os botões de ação dos alertas preditivos — onda 4 — Alta
 - [ ] 083 — Ligar ou remover os botões das abas de sequenciamento e balanceamento — onda 4 — Alta
 - [ ] 084 — Varrer e resolver os demais botões sem ação — onda 4 — Média
