@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `03ce70b211` · branch `main` · 2026-11-24 21:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4779aa191c` · branch `main` · 2026-11-24 22:23 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T21:13:06Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-24T22:13:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_permission`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T21:13:06Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-24T22:13:19Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -155,7 +155,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 93 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 94 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -250,6 +250,7 @@
 - `supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql`
 - `supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql`
 - `supabase/migrations/20261126110000_restore_public_has_role_execute.sql`
+- `supabase/migrations/20261127120000_isolate_public_has_role.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -329,6 +330,7 @@ Middleware matcher (Next.js): nenhum
 
 | Ação | Para/De | Privilégios | Objetos |
 |---|---|---|---|
+| grant | anon | execute | `app_private.has_role` |
 | grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
 | grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +6 |
@@ -345,7 +347,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon | all | `get_cron_health`, `cron_expected_interval_minutes`, `get_system_status_summary` |
 | revoke | PUBLIC, anon | execute | `complete_maintenance_record`, `complete_maintenance_record`, `check_job_overlap`, `audit_job_status_change`, `log_job_status_change` |
 | revoke | PUBLIC, anon, authenticated | all | `count_running_machines`, `count_active_operators_since`, `snapshot_cron_health`, `snapshot_cron_health`, `snapshot_cron_health` |
-| revoke | PUBLIC, anon, authenticated | execute | `check_and_notify_kpi_alert`, `test_rls_policies`, `verify_audit_chain`, `verify_audit_chain`, `has_any_active_role`, `on_packaging_ready_create_shipment`, `on_packaging_defect_create_rework_job`, `enforce_packaging_checklist_before_ship`, `notify_packaging_task_created`, `notify_packaging_defect_critical`, `rollup_cron_p95_daily`, `rollup_cron_p95_daily` |
+| revoke | PUBLIC, anon, authenticated | execute | `check_and_notify_kpi_alert`, `test_rls_policies`, `verify_audit_chain`, `verify_audit_chain`, `has_any_active_role`, `on_packaging_ready_create_shipment`, `on_packaging_defect_create_rework_job`, `enforce_packaging_checklist_before_ship`, `notify_packaging_task_created`, `notify_packaging_defect_critical`, `rollup_cron_p95_daily`, `rollup_cron_p95_daily`, `has_role` |
 | revoke | anon | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `get_system_status_summary`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair`, `get_packaging_manifest`, `get_packaging_leaderboard`, `get_system_status_summary`, `get_cron_health`, `auto_reassign_stale_packaging_tasks` |
 | revoke | anon, authenticated, public | execute | `get_user_role`, `increment_sheet_view_count` |
 | revoke | authenticated | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair` |

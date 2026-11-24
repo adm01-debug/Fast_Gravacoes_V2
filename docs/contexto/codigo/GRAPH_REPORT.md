@@ -1,17 +1,17 @@
 # Graph Report - Fast_Gravacoes_V2  (2026-11-24)
 
 ## Corpus Check
-- 1462 files · ~830,550 words
+- 1463 files · ~831,272 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 25 file(s) not represented in the graph (top: (none) 13, .toml 5, .csv 2)
 
 ## Summary
-- 8483 nodes · 32292 edges · 407 communities (264 shown, 143 thin omitted)
+- 8484 nodes · 32292 edges · 408 communities (264 shown, 144 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 184 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `03ce70b2`
+- Built from commit: `4779aa19`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -354,7 +354,7 @@
 - 4-file cycle: `src/features/admin/hooks/useOrphanedDataDetection.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useAutoBufferPromotion.ts -> src/features/admin/index.ts -> src/features/admin/hooks/useOrphanedDataDetection.ts`
 - 4-file cycle: `src/features/jobs/hooks/useSchedulingConflicts.ts -> src/features/production/index.ts -> src/features/production/hooks/useMachineUtilization.ts -> src/features/jobs/index.ts -> src/features/jobs/hooks/useSchedulingConflicts.ts`
 
-## Communities (407 total, 143 thin omitted)
+## Communities (408 total, 144 thin omitted)
 
 ### Community 0 - "Button"
 Cohesion: 0.04
@@ -1414,8 +1414,8 @@ Nodes (3): headers, rewrites, $schema
 
 ## Knowledge Gaps
 - **8 isolated node(s):** `@/views/Home.vue`, `GIT_TERMINAL_PROMPT`, `RFC-4180`, `RFC-4180`, `RFC-8291` (+3 more)
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 2859 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **143 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 2860 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **144 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

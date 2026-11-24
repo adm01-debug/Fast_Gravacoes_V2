@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `03ce70b211f87d26a675132d810e1455928921b2` (2026-11-24T18:53:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4779aa191cfb2470995609bae17c08a1b0746685` (2026-11-24T19:22:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1074), SQL (267), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1074), SQL (268), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1606 |
+| arquivos_total | 1607 |
 | arquivos_codigo | 1138 |
 | linhas_codigo | 191870 |
 | rotas | 58 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 197 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 259 |
+| migrations | 260 |
 | cron_jobs | 4 |
 | testes | 139 |
 | workflows | 12 |
@@ -246,7 +246,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8483 nós · 32292 arestas · 407 comunidades · grafo do commit `03ce70b2`
+- 8484 nós · 32292 arestas · 408 comunidades · grafo do commit `4779aa19`
 - comunidades maiores: Button (244), analytics/index.ts (182), lucide-react (175), MainLayout (163), Badge (156), CardHeader (156), SecurityDashboard.tsx (135), client.ts (122), snapshot.py (117), cn (117), package.json (115), badge.tsx (115)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `4779aa1` fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)
 - 2026-11-24 `03ce70b` fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)
 - 2026-11-24 `d5e8d2b` fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)
 - 2026-11-24 `828487b` fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `fb794d1` fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)
 - 2026-11-24 `bede01f` feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)
 - 2026-11-24 `3026b04` fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)
-- 2026-11-23 `8bee554` fix: não reportar envio de notificação TPM sem provedor configurado (#278)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

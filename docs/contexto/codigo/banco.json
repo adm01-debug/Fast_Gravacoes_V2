@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 259,
+ "migrations": 260,
  "seeds": [
   "supabase/seed.sql"
  ],
