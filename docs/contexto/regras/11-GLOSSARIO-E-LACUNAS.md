@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `17a3af4a9a` · branch `main` · 2026-11-23 23:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c90ebd5f3b` · branch `main` · 2026-11-24 01:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-23T23:15:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-24T00:32:06Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -36,6 +36,7 @@
 | `energy_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
 | `energy_consumption` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
 | `energy_targets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | banco real |
+| `erp_api_keys` | Stores SHA-256 hashed API keys for ERP integration authentication. | 7 colunas | banco real |
 | `error_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
 | `feature_flags` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
 | `gamification_rewards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
@@ -47,7 +48,7 @@
 | `ip_allowlist` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
 | `job_status_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
 | `job_status_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
-| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 32 colunas | banco real |
+| `jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 33 colunas | banco real |
 | `kpi_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
 | `login_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
 | `login_lockouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
@@ -240,9 +241,7 @@
 | status | valor `suspended` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/layout/QuickFavoritesBar.tsx`<br>`compara:src/features/notifications/hooks/useNotificationSounds.ts`<br>`compara:src/hooks/useThemeSound.ts`<br>`compara:src/lib/soundFeedback.ts` |
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `failed` para `login_status` usado no código não existe em nenhum enum do banco/TS | `filtra:src/features/admin/hooks/useMonitoringData.ts` |
-| coluna | coluna `external_ref` usada no código não existe no schema de `jobs` |  |
 | tabela | tabela `backups` usada no código não existe no banco real (snapshot) | `supabase/functions/backup-scheduler/index.ts` |
-| tabela | tabela `erp_api_keys` usada no código não existe no banco real (snapshot) | `supabase/functions/erp-api/index.ts` |
 | rls | `profiles`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |
 | rls | `tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/maintenance/components/TPMNotificationTemplates.tsx` |
 | rpc | RPC `count_active_operators_since` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
@@ -282,7 +281,7 @@
 - `telemetry_traces.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 130/131 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …
+- 130/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …
 - Há tabelas usadas no código que não existem no banco real (snapshot) — a chamada falha em produção ou a tabela ainda não foi criada.
 
 ## Regras manuais presentes

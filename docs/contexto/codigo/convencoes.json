@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)",
    "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)",
    "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)",
    "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)",
-   "ci: db push com --include-all para migrations fora de ordem (#273)",
-   "fix: corrige import typescript para ESM namespace (TS7) (#270)"
+   "ci: db push com --include-all para migrations fora de ordem (#273)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

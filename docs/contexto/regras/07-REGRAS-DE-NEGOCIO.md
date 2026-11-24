@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `17a3af4a9a` · branch `main` · 2026-11-23 23:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c90ebd5f3b` · branch `main` · 2026-11-24 01:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-23T23:15:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T00:32:06Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,11 +107,11 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-23T23:15:19Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T00:32:06Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
-336 política(s) em 131 tabela(s), agrupadas por tabela — lista completa, sem cortes.
+337 política(s) em 132 tabela(s), agrupadas por tabela — lista completa, sem cortes.
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
@@ -176,6 +176,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `energy_targets` | Coordinators can create energy targets | INSERT | authenticated | permissive |  | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
 | `energy_targets` | Coordinators can update energy targets | UPDATE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
 | `energy_targets` | Coordinators can delete energy targets | DELETE | authenticated | permissive | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |  |
+| `erp_api_keys` | Managers can manage API keys | ALL | public | permissive | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
 | `error_logs` | Users can view their own error logs | SELECT | public | permissive | `(( SELECT auth.uid() AS uid) = user_id)` |  |
 | `error_logs` | Users can insert error logs | INSERT | public | permissive |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
 | `feature_flags` | Apenas administradores gerenciam flags | ALL | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
@@ -452,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-23T23:15:19Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T00:32:06Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -654,6 +655,12 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `energy_targets` | `is_active` | default true |
 | `energy_targets` | `created_at` | default now() |
 | `energy_targets` | `updated_at` | default now() |
+| `erp_api_keys` | `id` | PK; default gen_random_uuid() |
+| `erp_api_keys` | `name` | obrigatório |
+| `erp_api_keys` | `key_hash` | obrigatório; único |
+| `erp_api_keys` | `is_active` | default true |
+| `erp_api_keys` | `created_by` | FK → users.id |
+| `erp_api_keys` | `created_at` | default now() |
 | `error_logs` | `id` | PK; default gen_random_uuid() |
 | `error_logs` | `message` | obrigatório |
 | `error_logs` | `metadata` | default '{}'::jsonb |
@@ -1495,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-23T23:15:19Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T00:32:06Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1632,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-23T23:15:19Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T00:32:06Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|

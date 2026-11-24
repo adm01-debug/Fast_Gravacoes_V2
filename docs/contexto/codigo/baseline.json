@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
+  "commit": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
   "branch": "main",
-  "data_commit": "2026-11-23T20:51:56-03:00",
+  "data_commit": "2026-11-23T22:02:56-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c90ebd5",
+    "data": "2026-11-23",
+    "assunto": "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)"
+   },
    {
     "sha": "17a3af4",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "a17c419",
     "data": "2026-11-22",
     "assunto": "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)"
-   },
-   {
-    "sha": "42f66be",
-    "data": "2026-11-21",
-    "assunto": "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 206,
+  "arquivos_mudados_7d": 207,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -149,12 +149,12 @@
     "mudancas": 21
    },
    {
-    "pasta": "src/features/notifications",
+    "pasta": "src/features/jobs",
     "mudancas": 21
    },
    {
-    "pasta": "src/features/jobs",
-    "mudancas": 20
+    "pasta": "src/features/notifications",
+    "mudancas": 21
    },
    {
     "pasta": "src/components/dashboard",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 126
+    "commits": 127
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1590,
   "arquivos_codigo": 1126,
-  "linhas_codigo": 190476,
+  "linhas_codigo": 190495,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 331,
-   "linhas": 46978
+   "linhas": 46997
   },
   "src/hooks": {
    "arquivos": 61,

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
+  "sha": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-23 23:54 UTC",
+  "generated_at": "2026-11-24 01:03 UTC",
   "files_total": 1588,
   "code_files": 1392,
-  "code_lines": 206804
+  "code_lines": 206823
  },
  "version": "1.3.2",
- "facts_hash": "a703feaa50402e4d",
+ "facts_hash": "615c7b8e61f8630e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -2329,6 +2329,63 @@
     "comment": "",
     "origin": "banco real"
    },
+   "erp_api_keys": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid not null default gen_random_uuid() primary key",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "name",
+      "type": "text not null",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "key_hash",
+      "type": "text not null unique",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "is_active",
+      "type": "boolean not null default true",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "created_by",
+      "type": "uuid",
+      "fk": "users.id",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamp with time zone not null default now()",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "last_used_at",
+      "type": "timestamp with time zone",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     }
+    ],
+    "constraints": [],
+    "src": "docs/contexto/supabase/snapshot.json",
+    "comment": "Stores SHA-256 hashed API keys for ERP integration authentication.",
+    "origin": "banco real"
+   },
    "error_logs": {
     "columns": [
      {
@@ -3330,6 +3387,13 @@
      },
      {
       "name": "cancel_reason",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "docs/contexto/supabase/snapshot.json"
+     },
+     {
+      "name": "external_ref",
       "type": "text",
       "fk": "",
       "generated": "",
@@ -11287,6 +11351,16 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "Managers can manage API keys",
+    "table": "erp_api_keys",
+    "cmd": "ALL",
+    "roles": "public",
+    "mode": "permissive",
+    "using": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "check": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "Users can insert error logs",
     "table": "error_logs",
     "cmd": "INSERT",
@@ -16775,6 +16849,22 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "erp_api_keys_key_hash_key",
+    "table": "erp_api_keys",
+    "columns": "key_hash",
+    "unique": true,
+    "where": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "erp_api_keys_pkey",
+    "table": "erp_api_keys",
+    "columns": "id",
+    "unique": true,
+    "where": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "error_logs_pkey",
     "table": "error_logs",
     "columns": "id",
@@ -17004,6 +17094,14 @@
     "columns": "created_at",
     "unique": false,
     "where": "",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
+    "name": "idx_jobs_external_ref",
+    "table": "jobs",
+    "columns": "external_ref",
+    "unique": true,
+    "where": "(external_ref IS NOT NULL)",
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
@@ -19481,6 +19579,7 @@
    "energy_alerts": "enabled",
    "energy_consumption": "enabled",
    "energy_targets": "enabled",
+   "erp_api_keys": "enabled",
    "error_logs": "enabled",
    "feature_flags": "enabled",
    "gamification_rewards": "enabled",
@@ -28445,7 +28544,7 @@
   {
    "module": "src/features/jobs",
    "files": 34,
-   "lines": 3642,
+   "lines": 3661,
    "tables": [
     "job_status_history",
     "jobs",
@@ -33042,8 +33141,7 @@
    ]
   },
   "tables_only_in_code": [
-   "backups",
-   "erp_api_keys"
+   "backups"
   ],
   "tables_only_in_schema": [
    "archived_jobs",
@@ -33055,12 +33153,7 @@
    "technical_sheet_versions",
    "tpm_execution_audit_logs"
   ],
-  "columns_unknown": [
-   {
-    "table": "jobs",
-    "column": "external_ref"
-   }
-  ]
+  "columns_unknown": []
  },
  "rules": {
   "validation_schemas": [
@@ -38271,6 +38364,36 @@
    {
     "table": "energy_targets",
     "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "name",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "key_hash",
+    "rule": "obrigatório; único"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "is_active",
+    "rule": "default true"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "created_by",
+    "rule": "FK → users.id"
+   },
+   {
+    "table": "erp_api_keys",
+    "column": "created_at",
     "rule": "default now()"
    },
    {
@@ -56831,6 +56954,16 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "Managers can manage API keys",
+    "table": "erp_api_keys",
+    "cmd": "ALL",
+    "roles": "public",
+    "mode": "permissive",
+    "using": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "check": "has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "Users can insert error logs",
     "table": "error_logs",
     "cmd": "INSERT",
@@ -63919,6 +64052,21 @@
      "authenticated: app_private.has_role(auth.uid(), 'coordinator'::app_role)"
     ]
    },
+   "erp_api_keys": {
+    "rls": "enabled",
+    "SELECT": [
+     "public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+    ],
+    "INSERT": [
+     "public: WITH CHECK has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+    ],
+    "UPDATE": [
+     "public: USING has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+    ],
+    "DELETE": [
+     "public: has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)"
+    ]
+   },
    "error_logs": {
     "rls": "enabled",
     "SELECT": [
@@ -67336,6 +67484,10 @@
     "is_active"
    ],
    [
+    "erp_api_keys",
+    "is_active"
+   ],
+   [
     "gamification_rewards",
     "is_active"
    ],
@@ -67485,6 +67637,10 @@
     "created_at",
     "created_by",
     "updated_at"
+   ],
+   "erp_api_keys": [
+    "created_at",
+    "created_by"
    ],
    "error_logs": [
     "created_at"
@@ -68247,22 +68403,10 @@
     ]
    },
    {
-    "kind": "coluna",
-    "msg": "coluna `external_ref` usada no código não existe no schema de `jobs`",
-    "where": []
-   },
-   {
     "kind": "tabela",
     "msg": "tabela `backups` usada no código não existe no banco real (snapshot)",
     "where": [
      "supabase/functions/backup-scheduler/index.ts"
-    ]
-   },
-   {
-    "kind": "tabela",
-    "msg": "tabela `erp_api_keys` usada no código não existe no banco real (snapshot)",
-    "where": [
-     "supabase/functions/erp-api/index.ts"
     ]
    },
    {
@@ -68411,7 +68555,7 @@
    "`telemetry_traces.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "130/131 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …",
+   "130/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …",
    "Há tabelas usadas no código que não existem no banco real (snapshot) — a chamada falha em produção ou a tabela ainda não foi criada."
   ]
  },
@@ -82227,7 +82371,7 @@
   },
   "src/features/jobs/hooks/useSchedulingData.test.tsx": {
    "path": "src/features/jobs/hooks/useSchedulingData.test.tsx",
-   "lines": 237,
+   "lines": 256,
    "is_test": true,
    "rule_comments": [
     "Apenas j1 e j2 estão agendados para \"hoje\"; o resto é de outro dia (limite do dia).",
@@ -96989,10 +97133,19 @@
   }
  },
  "git": {
-  "sha": "17a3af4a9aeabf346bd6b63cdc5775c9fc5bcc21",
+  "sha": "c90ebd5f3ba9bce67fee694a9f2bc4fe04ad5c3d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c90ebd5",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)",
+    "files": [
+     "src/features/jobs/hooks/useSchedulingData.test.tsx"
+    ]
+   },
    {
     "sha": "17a3af4",
     "date": "2026-11-23",
@@ -97355,15 +97508,6 @@
      "src/pages/AuthPage.tsx",
      "supabase/functions/check-login-lockout/index.ts"
     ]
-   },
-   {
-    "sha": "4590899",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: dossie F-005 marcado resolvida (#239)",
-    "files": [
-     "docs/pendencias/F-005-allowlist-de-ip-in-cua.md"
-    ]
    }
   ],
   "hot_files": [
@@ -97398,6 +97542,10 @@
    [
     "src/features/auth/hooks/useRBAC.test.tsx",
     2
+   ],
+   [
+    "src/features/jobs/hooks/useSchedulingData.test.tsx",
+    1
    ],
    [
     "src/test/erpApiContracts.test.ts",
@@ -97441,10 +97589,6 @@
    ],
    [
     "scripts/audit/run.mjs",
-    1
-   ],
-   [
-    "scripts/autofix/unused.mjs",
     1
    ]
   ]

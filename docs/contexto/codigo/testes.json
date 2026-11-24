@@ -516,7 +516,7 @@
   {
    "arquivo": "src/features/jobs/hooks/useSchedulingData.test.tsx",
    "tipo": "unit",
-   "linhas": 237,
+   "linhas": 256,
    "testa": [
     "src/features/jobs/hooks/useSchedulingData.ts"
    ],
