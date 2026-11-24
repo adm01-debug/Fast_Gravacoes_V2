@@ -429,12 +429,14 @@ jobs:
       # O concurrency de topo agrupa por branch (ci-${{ github.ref }}), entao PRs
       # de branches diferentes rodavam E2E em paralelo contra o mesmo Supabase
       # real e o MFA TOTP quebrava (3 runs simultaneas, 10:24-10:41Z de 10/11).
-      # Este group global serializa: so um E2E roda por vez. Com
-      # cancel-in-progress, um push novo cancela o E2E em fila/espera de runs
-      # mais antigos (o mais novo e quem decide), evitando que E2Es obsoletos
-      # monopolizem a fila global de runners.
+      # Este group global serializa: so um E2E roda por vez. cancel-in-progress
+      # fica false porque um PR de outra branch cancelava a suite de um PR que
+      # estava rodando (runs 45385277340 e 45398292642: E2E cancelled no step 8
+      # por push alheio) e com varios agentes em paralelo nenhum PR terminava a
+      # suite. Run obsoleta da mesma branch ja e cancelada pelo concurrency de
+      # topo; aqui a fila apenas espera a vez.
       group: ci-e2e-global
-      cancel-in-progress: true
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
