@@ -4,7 +4,7 @@
 |---|---|
 | nome | calculate-rankings |
 | status | ACTIVE |
-| versão | 148 |
+| versão | 150 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/calculate-rankings/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
