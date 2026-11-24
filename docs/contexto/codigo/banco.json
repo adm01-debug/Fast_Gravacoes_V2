@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 256,
+ "migrations": 257,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -3759,7 +3759,14 @@
     }
    },
    "rls": true,
-   "policies": [],
+   "policies": [
+    {
+     "nome": "Managers can manage API keys",
+     "comando": "all",
+     "para": "public",
+     "tipo": "permissive"
+    }
+   ],
    "indices": [],
    "fks": [
     "created_by->auth"

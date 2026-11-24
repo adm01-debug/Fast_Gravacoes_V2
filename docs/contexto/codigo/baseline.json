@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bede01f79876991f21ab58cafcdc9624530d61de",
+  "commit": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
   "branch": "main",
-  "data_commit": "2026-11-24T09:11:24Z",
+  "data_commit": "2026-11-24T07:30:41-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "fb794d1",
+    "data": "2026-11-24",
+    "assunto": "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)"
+   },
    {
     "sha": "bede01f",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "dbb891a",
     "data": "2026-11-22",
     "assunto": "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)"
-   },
-   {
-    "sha": "2a1a433",
-    "data": "2026-11-22",
-    "assunto": "fix: ativa notificações push reais (par VAPID configurado) (#252)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 223,
+  "arquivos_mudados_7d": 224,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 130
+    "commits": 131
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1595,
+  "arquivos_total": 1596,
   "arquivos_codigo": 1130,
   "linhas_codigo": 190926,
   "rotas": 58,
@@ -339,7 +339,7 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 256,
+  "migrations": 257,
   "cron_jobs": 4,
   "testes": 133,
   "workflows": 12,

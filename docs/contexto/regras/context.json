@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bede01f79876991f21ab58cafcdc9624530d61de",
+  "sha": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 09:11 UTC",
-  "files_total": 1593,
-  "code_files": 1397,
-  "code_lines": 207367
+  "generated_at": "2026-11-24 10:31 UTC",
+  "files_total": 1594,
+  "code_files": 1398,
+  "code_lines": 207410
  },
  "version": "1.3.2",
- "facts_hash": "a36c15934f9e0f5a",
+ "facts_hash": "2eaf2d14c43225bd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 664,
    ".ts": 402,
-   ".sql": 264,
+   ".sql": 265,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -15022,6 +15022,24 @@
      "app_private"
     ]
    },
+   "apply_job_sequence": {
+    "args": "p_slots jsonb",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/apply_job_sequence__503e78309fcecb80.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "declare v_ids uuid[]; v_expected integer; v_updated integer := 0; v_lost integer := 0; v_conflicts integer := 0; begin if p_slots is null or jsonb_typeof(p_slots) <> 'array' or jsonb_array_length(p_slots) = 0 then return 0; end if; select array_agg(distinct (slot ->> 'job_id')::uuid) into v_ids from jsonb_array_elements(p_slots) as slot; v_expected := coalesce(array_length(v_ids, 1), 0); -- Solta o agendamento do lote: check_job_overlap ignora linhas sem horario, -- o que permite trocar horarios entre jobs da mesma maquina sem falso conflito. update public.jobs set start_time = null, end_time = null where id = any(v_ids); -- Reaplica os novos horarios em uma unica instrucao. update public.jo …",
+    "raises": [],
+    "tables": [
+     "j",
+     "jobs",
+     "jsonb_array_elements",
+     "v_conflicts",
+     "v_ids",
+     "v_lost"
+    ]
+   },
    "approve_maintenance_record": {
     "args": "p_record_id uuid, p_approver_id uuid, p_next_due timestamp with time zone, p_schedule_id uuid",
     "returns": "void",
@@ -19548,6 +19566,7 @@
    "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/migrations/20261125130000_jobs_external_ref.sql",
+   "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -30020,8 +30039,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 256,
-   "lines": 15785,
+   "files": 257,
+   "lines": 15828,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -60774,6 +60793,24 @@
      "app_private"
     ]
    },
+   "apply_job_sequence": {
+    "args": "p_slots jsonb",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/apply_job_sequence__503e78309fcecb80.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "declare v_ids uuid[]; v_expected integer; v_updated integer := 0; v_lost integer := 0; v_conflicts integer := 0; begin if p_slots is null or jsonb_typeof(p_slots) <> 'array' or jsonb_array_length(p_slots) = 0 then return 0; end if; select array_agg(distinct (slot ->> 'job_id')::uuid) into v_ids from jsonb_array_elements(p_slots) as slot; v_expected := coalesce(array_length(v_ids, 1), 0); -- Solta o agendamento do lote: check_job_overlap ignora linhas sem horario, -- o que permite trocar horarios entre jobs da mesma maquina sem falso conflito. update public.jobs set start_time = null, end_time = null where id = any(v_ids); -- Reaplica os novos horarios em uma unica instrucao. update public.jo …",
+    "raises": [],
+    "tables": [
+     "j",
+     "jobs",
+     "jsonb_array_elements",
+     "v_conflicts",
+     "v_ids",
+     "v_lost"
+    ]
+   },
    "approve_maintenance_record": {
     "args": "p_record_id uuid, p_approver_id uuid, p_next_due timestamp with time zone, p_schedule_id uuid",
     "returns": "void",
@@ -68580,13 +68617,6 @@
     "msg": "`tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
     "where": [
      "src/features/maintenance/components/TPMNotificationTemplates.tsx"
-    ]
-   },
-   {
-    "kind": "rpc",
-    "msg": "RPC `apply_job_sequence` chamada mas não definida no banco real (snapshot)",
-    "where": [
-     "src/features/jobs/hooks/useSmartSequencingWithActions.ts"
     ]
    },
    {
@@ -96914,6 +96944,10 @@
    "path": "supabase/migrations/20261125130000_jobs_external_ref.sql",
    "lines": 16
   },
+  "supabase/migrations/20261125170000_restore_erp_api_keys.sql": {
+   "path": "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
+   "lines": 43
+  },
   "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql": {
    "path": "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "lines": 113
@@ -97356,10 +97390,19 @@
   }
  },
  "git": {
-  "sha": "bede01f79876991f21ab58cafcdc9624530d61de",
+  "sha": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "fb794d1",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)",
+    "files": [
+     "supabase/migrations/20261125170000_restore_erp_api_keys.sql"
+    ]
+   },
    {
     "sha": "bede01f",
     "date": "2026-11-24",
@@ -97722,15 +97765,6 @@
      "src/components/traceability/ElectronicSignatureDialog.tsx",
      "src/pages/TraceabilityPage.tsx"
     ]
-   },
-   {
-    "sha": "3fc37b3",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: auto-promote-jobs honra techniqueId do body (F-009) (#243)",
-    "files": [
-     "supabase/functions/auto-promote-jobs/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -97771,6 +97805,10 @@
     2
    ],
    [
+    "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
+    1
+   ],
+   [
     "src/components/kanban/KanbanFiltersBar.tsx",
     1
    ],
@@ -97808,10 +97846,6 @@
    ],
    [
     "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
-    1
-   ],
-   [
-    "scripts/maintenance/maintenance.unit.mjs",
     1
    ]
   ]

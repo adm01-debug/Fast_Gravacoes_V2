@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bede01f79876991f21ab58cafcdc9624530d61de` (2026-11-24T09:11:24Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fb794d1b051cd727f6b89ba6a15b869d3c8bf613` (2026-11-24T07:30:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1066), SQL (264), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1066), SQL (265), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1595 |
+| arquivos_total | 1596 |
 | arquivos_codigo | 1130 |
 | linhas_codigo | 190926 |
 | rotas | 58 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 196 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 256 |
+| migrations | 257 |
 | cron_jobs | 4 |
 | testes | 133 |
 | workflows | 12 |
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 7558 nós · 22136 arestas · 669 comunidades · grafo do commit `bede01f7`
-- comunidades maiores: button.tsx (236), card.tsx (230), snapshot.py (111), select.tsx (106), cn (104), generate.py (101), DailyCalendar.tsx (101), gerar.mjs (96), .write (96), errorHandling.ts (96), client.ts (96), analytics/index.ts (81)
+- 7561 nós · 22138 arestas · 685 comunidades · grafo do commit `fb794d1b`
+- comunidades maiores: card.tsx (247), button.tsx (241), cn (137), analytics/index.ts (115), snapshot.py (111), DailyCalendar.tsx (107), generate.py (101), TPMDashboard.tsx (101), recharts.ts (99), gerar.mjs (96), .write (96), MainLayout.tsx (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useAuth() (src/features/auth/hooks/useAuth.ts), .write() (scripts/regras_negocio/test_generate.py), showErrorToast() (src/lib/errorHandling.ts), .schema() (scripts/regras_negocio/test_generate.py), useSchedulingData() (src/features/jobs/hooks/useSchedulingData.ts), parseDateOnly() (src/lib/dateUtils.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), q() (scripts/supabase_snapshot/snapshot.py), createAppError() (src/lib/errorHandling.ts), useRealtimeChannel() (src/lib/realtimeChannel.ts), .cli() (scripts/regras_negocio/test_generate.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `fb794d1` fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)
 - 2026-11-24 `bede01f` feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)
 - 2026-11-24 `3026b04` fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)
 - 2026-11-23 `8bee554` fix: não reportar envio de notificação TPM sem provedor configurado (#278)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `414b392` docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)
 - 2026-11-23 `4b3ed9b` fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)
 - 2026-11-23 `1724af5` fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)
-- 2026-11-23 `4b0d871` fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

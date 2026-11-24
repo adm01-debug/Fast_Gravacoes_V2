@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bede01f798` · branch `main` · 2026-11-24 09:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fb794d1b05` · branch `main` · 2026-11-24 10:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-24T08:18:50Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-24T09:15:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -244,7 +244,6 @@
 | tabela | tabela `backups` usada no código não existe no banco real (snapshot) | `supabase/functions/backup-scheduler/index.ts` |
 | rls | `profiles`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/UserManagement.tsx` |
 | rls | `tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/features/maintenance/components/TPMNotificationTemplates.tsx` |
-| rpc | RPC `apply_job_sequence` chamada mas não definida no banco real (snapshot) | `src/features/jobs/hooks/useSmartSequencingWithActions.ts` |
 | rpc | RPC `count_active_operators_since` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
 | rpc | RPC `count_running_machines` chamada mas não definida no banco real (snapshot) | `supabase/functions/metrics-collector/index.ts` |
 | rpc | RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot) | `src/features/production/hooks/useProductionLosses.ts` |
