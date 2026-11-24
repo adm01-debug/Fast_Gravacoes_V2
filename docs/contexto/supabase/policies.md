@@ -66,6 +66,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.energy_targets | Coordinators can delete energy targets | DELETE | PERMISSIVE | authenticated | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |  |
 | public.energy_targets | Coordinators can update energy targets | UPDATE | PERMISSIVE | authenticated | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` | `app_private.has_role(auth.uid(), 'coordinator'::app_role)` |
 | public.energy_targets | Energy readers can view energy targets | SELECT | PERMISSIVE | authenticated | `has_permission('energy:read'::text)` |  |
+| public.erp_api_keys | Managers can manage API keys | ALL | PERMISSIVE | public | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |
 | public.error_logs | Users can insert error logs | INSERT | PERMISSIVE | public |  | `(( SELECT auth.uid() AS uid) IS NOT NULL)` |
 | public.error_logs | Users can view their own error logs | SELECT | PERMISSIVE | public | `(( SELECT auth.uid() AS uid) = user_id)` |  |
 | public.feature_flags | Apenas administradores gerenciam flags | ALL | PERMISSIVE | authenticated | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |

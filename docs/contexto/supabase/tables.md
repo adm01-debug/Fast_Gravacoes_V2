@@ -31,6 +31,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.energy_alerts](tables/public/energy_alerts.md) | table | sim | 5 | 11 | não |  |
 | [public.energy_consumption](tables/public/energy_consumption.md) | table | sim | 5 | 13 | não |  |
 | [public.energy_targets](tables/public/energy_targets.md) | table | sim | 5 | 11 | não |  |
+| [public.erp_api_keys](tables/public/erp_api_keys.md) | table | sim | 1 | 7 | não | Stores SHA-256 hashed API keys for ERP integration authentication. |
 | [public.error_logs](tables/public/error_logs.md) | table | sim | 2 | 8 | não |  |
 | [public.feature_flags](tables/public/feature_flags.md) | table | sim | 2 | 7 | não |  |
 | [public.gamification_rewards](tables/public/gamification_rewards.md) | table | sim | 1 | 9 | não |  |
@@ -42,7 +43,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ip_allowlist](tables/public/ip_allowlist.md) | table | sim | 2 | 9 | não |  |
 | [public.job_status_audit](tables/public/job_status_audit.md) | table | sim | 2 | 10 | não |  |
 | [public.job_status_history](tables/public/job_status_history.md) | table | sim | 1 | 6 | não |  |
-| [public.jobs](tables/public/jobs.md) | table | sim | 5 | 32 | não |  |
+| [public.jobs](tables/public/jobs.md) | table | sim | 5 | 33 | não |  |
 | [public.kpi_alerts](tables/public/kpi_alerts.md) | table | sim | 1 | 8 | não |  |
 | [public.login_audit](tables/public/login_audit.md) | table | sim | 3 | 8 | não |  |
 | [public.login_lockouts](tables/public/login_lockouts.md) | table | sim | 1 | 9 | não |  |

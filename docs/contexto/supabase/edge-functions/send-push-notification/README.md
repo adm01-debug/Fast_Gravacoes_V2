@@ -4,7 +4,7 @@
 |---|---|
 | nome | send-push-notification |
 | status | ACTIVE |
-| versão | 146 |
+| versão | 148 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-push-notification/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

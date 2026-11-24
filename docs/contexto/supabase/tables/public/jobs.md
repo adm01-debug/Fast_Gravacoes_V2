@@ -48,6 +48,7 @@
 | 30 | `shipping_status` | `text` | sim |  |  |  |
 | 31 | `parent_job_id` | `uuid` | sim |  |  |  |
 | 32 | `cancel_reason` | `text` | sim |  |  |  |
+| 33 | `external_ref` | `text` | sim |  |  | Chave de idempotencia do sistema de origem (ex.: service_orders.id do Promo Design). |
 
 
 ## Constraints
@@ -98,6 +99,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_jobs_created_at_desc | btree | created_at | não | sim |  | `CREATE INDEX idx_jobs_created_at_desc ON public.jobs USING btree (created_at DESC)` |
+| idx_jobs_external_ref | btree | external_ref | sim | sim | `(external_ref IS NOT NULL)` | `CREATE UNIQUE INDEX idx_jobs_external_ref ON public.jobs USING btree (external_ref) WHERE (external_ref IS NOT NULL)` |
 | idx_jobs_machine_id | btree | machine_id | não | sim |  | `CREATE INDEX idx_jobs_machine_id ON public.jobs USING btree (machine_id)` |
 | idx_jobs_operator_id | btree | operator_id | não | sim |  | `CREATE INDEX idx_jobs_operator_id ON public.jobs USING btree (operator_id)` |
 | idx_jobs_parent_job_id | btree | parent_job_id | não | sim |  | `CREATE INDEX idx_jobs_parent_job_id ON public.jobs USING btree (parent_job_id)` |

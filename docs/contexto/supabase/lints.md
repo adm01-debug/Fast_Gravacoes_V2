@@ -10,6 +10,7 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | ALTA | secdef_mutable_search_path | public.trigger_auto_promotion() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
 | ALTA | secdef_mutable_search_path | public.trigger_send_tpm_email() | SECURITY DEFINER sem `SET search_path`: vulnerável a sequestro de search_path. |
 | BAIXA | extension_in_public | pg_net | Extensão instalada no schema public (recomendado: schema extensions). |
+| BAIXA | fk_without_index | public.erp_api_keys.erp_api_keys_created_by_fkey | FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.packaging_defects.packaging_defects_reported_by_fkey | FK sem índice nas colunas ['reported_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.packaging_task_checklist.packaging_task_checklist_checked_by_fkey | FK sem índice nas colunas ['checked_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.packaging_task_checklist.packaging_task_checklist_item_id_fkey | FK sem índice nas colunas ['item_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |

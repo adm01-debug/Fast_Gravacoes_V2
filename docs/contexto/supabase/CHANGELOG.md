@@ -2,6 +2,18 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 00:32 UTC
+
+- **colunas** adicionado (8): `public.erp_api_keys.created_at`, `public.erp_api_keys.created_by`, `public.erp_api_keys.id`, `public.erp_api_keys.is_active`, `public.erp_api_keys.key_hash`, `public.erp_api_keys.last_used_at`, `public.erp_api_keys.name`, `public.jobs.external_ref`
+- **constraints** adicionado (3): `public.erp_api_keys.erp_api_keys_created_by_fkey`, `public.erp_api_keys.erp_api_keys_key_hash_key`, `public.erp_api_keys.erp_api_keys_pkey`
+- **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
+- **grants** adicionado (3): `public.erp_api_keys:anon`, `public.erp_api_keys:authenticated`, `public.erp_api_keys:service_role`
+- **indexes** adicionado (3): `public.erp_api_keys_key_hash_key`, `public.erp_api_keys_pkey`, `public.idx_jobs_external_ref`
+- **lints** adicionado (1): `fk_without_index:public.erp_api_keys.erp_api_keys_created_by_fkey`
+- **migrations** adicionado (1): `20261125130000_jobs_external_ref`
+- **policies (RLS)** adicionado (1): `public.erp_api_keys.Managers can manage API keys`
+- **tabelas** adicionado (1): `public.erp_api_keys`
+
 ## 2026-11-23 23:15 UTC
 
 - **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`

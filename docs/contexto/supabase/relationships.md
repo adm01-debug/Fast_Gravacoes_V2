@@ -18,6 +18,7 @@
 | public.energy_alerts | machine_id | public.machines | id | NO ACTION | NO ACTION |
 | public.energy_consumption | machine_id | public.machines | id | NO ACTION | NO ACTION |
 | public.energy_targets | machine_id | public.machines | id | NO ACTION | NO ACTION |
+| public.erp_api_keys | created_by | auth.users | id | NO ACTION | NO ACTION |
 | public.geo_blocking_rules | created_by | auth.users | id | NO ACTION | NO ACTION |
 | public.geo_blocking_settings | updated_by | auth.users | id | NO ACTION | NO ACTION |
 | public.inventory_movements | item_id | public.inventory_items | id | CASCADE | NO ACTION |

@@ -84,6 +84,8 @@ Uso e tamanho em `stats.md`.
 | public.energy_consumption | idx_energy_consumption_recorded_at | btree | recorded_at | não | sim |  |
 | public.energy_targets | energy_targets_pkey | btree | id | sim | sim |  |
 | public.energy_targets | idx_energy_targets_machine_id | btree | machine_id | não | sim |  |
+| public.erp_api_keys | erp_api_keys_key_hash_key | btree | key_hash | sim | sim |  |
+| public.erp_api_keys | erp_api_keys_pkey | btree | id | sim | sim |  |
 | public.error_logs | error_logs_pkey | btree | id | sim | sim |  |
 | public.error_logs | idx_error_logs_created_at_desc | btree | created_at | não | sim |  |
 | public.feature_flags | feature_flags_name_key | btree | name | sim | sim |  |
@@ -113,6 +115,7 @@ Uso e tamanho em `stats.md`.
 | public.job_status_history | idx_job_status_history_job_id | btree | job_id | não | sim |  |
 | public.job_status_history | job_status_history_pkey | btree | id | sim | sim |  |
 | public.jobs | idx_jobs_created_at_desc | btree | created_at | não | sim |  |
+| public.jobs | idx_jobs_external_ref | btree | external_ref | sim | sim | `(external_ref IS NOT NULL)` |
 | public.jobs | idx_jobs_machine_id | btree | machine_id | não | sim |  |
 | public.jobs | idx_jobs_operator_id | btree | operator_id | não | sim |  |
 | public.jobs | idx_jobs_parent_job_id | btree | parent_job_id | não | sim |  |

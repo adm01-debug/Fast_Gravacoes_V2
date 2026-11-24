@@ -258,3 +258,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261122120000 | [f010_rpc_record_defect_atomic](migrations/20261122120000_f010_rpc_record_defect_atomic.sql) | 11 |
 | 20261122150000 | [f010_v3_shipment_hold_e_qtde](migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql) | 7 |
 | 20261123000000 | [enforce_energy_read_permission_rls](migrations/20261123000000_enforce_energy_read_permission_rls.sql) | 22 |
+| 20261125130000 | [jobs_external_ref](migrations/20261125130000_jobs_external_ref.sql) | 3 |
