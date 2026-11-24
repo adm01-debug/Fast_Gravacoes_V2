@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
+  "sha": "03ce70b211f87d26a675132d810e1455928921b2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 21:12 UTC",
-  "files_total": 1602,
-  "code_files": 1406,
-  "code_lines": 207942
+  "generated_at": "2026-11-24 21:54 UTC",
+  "files_total": 1604,
+  "code_files": 1408,
+  "code_lines": 208391
  },
  "version": "1.3.2",
- "facts_hash": "0bfd74761701e55b",
+ "facts_hash": "42088955a7803cee",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 668,
+   ".tsx": 670,
    ".ts": 404,
    ".sql": 267,
    ".mjs": 50,
@@ -21938,6 +21938,24 @@
    },
    {
     "path": "",
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "component": "AuthPage.mfaBlocked.test",
+    "tables_transitive": [
+     "error_logs",
+     "password_reset_requests",
+     "profiles",
+     "role_permissions",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "check-login-lockout",
+     "new-device-alert"
+    ],
+    "rpc_transitive": [],
+    "deps_count": 37
+   },
+   {
+    "path": "",
     "file": "src/pages/AuthPage.tsx",
     "component": "AuthPage",
     "tables_transitive": [
@@ -28498,8 +28516,8 @@
   },
   {
    "module": "src/features/auth",
-   "files": 16,
-   "lines": 2824,
+   "files": 17,
+   "lines": 3025,
    "tables": [
     "profiles",
     "role_permissions",
@@ -28509,7 +28527,7 @@
     "permissions.ts: Permission, ROLE_PERMISSIONS, RESOURCE_LABELS, ACTION_LABELS, AVAILABLE_PERMISSIONS",
     "AuthProvider.tsx: AuthProvider",
     "useAuth.ts: useAuth",
-    "useAuthenticatorAssuranceLevel.ts: useAuthenticatorAssuranceLevel",
+    "useAuthenticatorAssuranceLevel.ts: AALState, useAuthenticatorAssuranceLevel",
     "useMFA.ts: useMFA",
     "useRBAC.tsx: RBACResult, useRBAC, PermissionGate, RoleGate",
     "useRolePermissions.ts: useRolePermissions",
@@ -28546,6 +28564,7 @@
     "src/features/auth/components/AuthProvider.test.tsx",
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
+    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
     "src/features/auth/hooks/useMFA.test.tsx",
     "src/features/auth/hooks/useMFA.ts",
@@ -29550,8 +29569,8 @@
   },
   {
    "module": "src/pages",
-   "files": 59,
-   "lines": 16965,
+   "files": 60,
+   "lines": 17213,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29662,6 +29681,7 @@
     "src/pages/AdminTelemetriaPage.tsx",
     "src/pages/AlertsDashboard.tsx",
     "src/pages/AuditTrailPage.tsx",
+    "src/pages/AuthPage.mfaBlocked.test.tsx",
     "src/pages/AuthPage.tsx",
     "src/pages/BIDashboard.tsx",
     "src/pages/Bitrix24ConfigPage.tsx",
@@ -35759,6 +35779,18 @@
    {
     "file": "src/pages/AdminTelemetriaPage.tsx",
     "msg": "Performance Crítica: ${payload.new.operation} em ${payload.new.table_name || "
+   },
+   {
+    "file": "src/pages/AuthPage.tsx",
+    "msg": ">{mfaBlockedReason}</p>\n                    {mfaSignOutError && (\n                      <p className="
+   },
+   {
+    "file": "src/pages/AuthPage.tsx",
+    "msg": ">{mfaSignOutError}</p>\n                    )}\n                  </div>\n                  <div className="
+   },
+   {
+    "file": "src/pages/AuthPage.tsx",
+    "msg": ">{mfaSignOutError}</p>\n                  )}\n                </motion.div>\n              ) : (\n                <motion.div key="
    },
    {
     "file": "src/pages/AuthPage.tsx",
@@ -46494,6 +46526,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+    "field": "status",
+    "value": "verified",
+    "kind": "compara"
+   },
+   {
     "file": "src/features/auth/hooks/useMFA.ts",
     "field": "status",
     "value": "verified",
@@ -48352,12 +48390,6 @@
     "field": "status",
     "value": "pending",
     "kind": "escreve"
-   },
-   {
-    "file": "src/pages/AuthPage.tsx",
-    "field": "status",
-    "value": "verified",
-    "kind": "compara"
    },
    {
     "file": "src/pages/BIDashboard.tsx",
@@ -51734,6 +51766,38 @@
     "name": "should sign out successfully"
    },
    {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032)"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "expoe o fator TOTP verificado que a tela de login sabe desafiar"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "erro em listFactors nao vira "
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "sessao sem exigencia de aal2 nao pede desafio"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "refresh reconsulta e passa a enxergar o fator liberado depois"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "troca de sessao nao reusa a decisao da sessao anterior"
+   },
+   {
+    "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    "name": "sem usuario a decisao fica resolvida e sem desafio"
+   },
+   {
     "file": "src/features/auth/hooks/useMFA.test.tsx",
     "name": "useMFA.startEnrollment"
    },
@@ -53160,6 +53224,50 @@
    {
     "file": "src/pages/AdminTelemetriaPage.test.tsx",
     "name": "deve carregar dados de telemetria e exibir na tabela"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "AuthPage: 2FA sem desafio possivel (etapa 032)"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "mostra saida explicita quando a consulta de fatores falha"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "tentar novamente reconsulta pelo hook compartilhado"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "abre o desafio quando ha fator TOTP verificado"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "navega quando a sessao nao exige um segundo fator"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "espera a decisao da sessao atual antes de navegar (sem pular pelo painel)"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "mostra a falha do logout tambem na tela do desafio"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "sair encerra a sessao"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "mantem o aviso e explica a falha quando o logout falha"
+   },
+   {
+    "file": "src/pages/AuthPage.mfaBlocked.test.tsx",
+    "name": "volta ao formulario quando a sessao termina por fora (paleta de comandos)"
    },
    {
     "file": "src/pages/InventoryPage.test.tsx",
@@ -63689,7 +63797,6 @@
       "compara:src/features/admin/components/security/MFASettings.tsx",
       "compara:src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
       "compara:src/features/auth/hooks/useMFA.ts",
-      "compara:src/pages/AuthPage.tsx",
       "escreve:src/components/traceability/BlockchainIntegrityCard.tsx",
       "escreve:src/features/auth/hooks/useMFA.ts"
      ],
@@ -81614,13 +81721,38 @@
     "useAuth"
    ]
   },
+  "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx": {
+   "path": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+   "lines": 152,
+   "is_test": true,
+   "rule_comments": [
+    "exige 2FA). Ler apenas `result.current` depois do `rerender` nao",
+    "Primeira renderizacao da sessao nova, ainda sem os efeitos: nao pode"
+   ],
+   "tests": [
+    "useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032)",
+    "expoe o fator TOTP verificado que a tela de login sabe desafiar",
+    "sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator",
+    "erro em listFactors nao vira ",
+    "sessao sem exigencia de aal2 nao pede desafio",
+    "refresh reconsulta e passa a enxergar o fator liberado depois",
+    "troca de sessao nao reusa a decisao da sessao anterior",
+    "sem usuario a decisao fica resolvida e sem desafio"
+   ]
+  },
   "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts": {
    "path": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
-   "lines": 105,
+   "lines": 154,
    "exports": [
+    "interface AALState",
     "function useAuthenticatorAssuranceLevel"
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "verified",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "verified",
@@ -90639,9 +90771,34 @@
     "function AuditTrailPage"
    ]
   },
+  "src/pages/AuthPage.mfaBlocked.test.tsx": {
+   "path": "src/pages/AuthPage.mfaBlocked.test.tsx",
+   "lines": 200,
+   "is_test": true,
+   "errors": [
+    ")).toBeNull();\n  });\n\n  it(",
+    ");\n    expect(alert.textContent).toContain("
+   ],
+   "rule_comments": [
+    "Nao pode virar tela em branco: o aviso continua com as saidas disponiveis."
+   ],
+   "tests": [
+    "AuthPage: 2FA sem desafio possivel (etapa 032)",
+    "mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado",
+    "mostra saida explicita quando a consulta de fatores falha",
+    "tentar novamente reconsulta pelo hook compartilhado",
+    "abre o desafio quando ha fator TOTP verificado",
+    "navega quando a sessao nao exige um segundo fator",
+    "espera a decisao da sessao atual antes de navegar (sem pular pelo painel)",
+    "mostra a falha do logout tambem na tela do desafio",
+    "sair encerra a sessao",
+    "mantem o aviso e explica a falha quando o logout falha",
+    "volta ao formulario quando a sessao termina por fora (paleta de comandos)"
+   ]
+  },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 281,
+   "lines": 329,
    "exports": [
     "function AuthPage"
    ],
@@ -90655,6 +90812,9 @@
     "/"
    ],
    "errors": [
+    ">{mfaBlockedReason}</p>\n                    {mfaSignOutError && (\n                      <p className=",
+    ">{mfaSignOutError}</p>\n                    )}\n                  </div>\n                  <div className=",
+    ">{mfaSignOutError}</p>\n                  )}\n                </motion.div>\n              ) : (\n                <motion.div key=",
     "Acesso Bloqueado",
     "Conta Bloqueada",
     "Erro ao conectar com Google",
@@ -90681,11 +90841,6 @@
      "field": "status",
      "value": "pending",
      "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "verified",
-     "kind": "compara"
     }
    ],
    "doc": "eslint-disable react-hooks/set-state-in-effect -- Effects nesse arquivo sincronizam com sistemas externos legítimos (URL params, localStorage, timers, subscriptions Supabase realtime, matchMedia, event listeners DOM, deep-linking) e não são estado derivado. A cascata é intencional para refletir muda …"
@@ -97583,10 +97738,24 @@
   }
  },
  "git": {
-  "sha": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
+  "sha": "03ce70b211f87d26a675132d810e1455928921b2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "03ce70b",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)",
+    "files": [
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/05-PROGRESSO.md",
+     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+     "src/pages/AuthPage.mfaBlocked.test.tsx",
+     "src/pages/AuthPage.tsx"
+    ]
+   },
    {
     "sha": "d5e8d2b",
     "date": "2026-11-24",
@@ -97959,15 +98128,6 @@
      "src/pages/PackagingDashboard.tsx",
      "supabase/functions/daily-maintenance-summary/index.ts"
     ]
-   },
-   {
-    "sha": "4dc0b5b",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: confianca da predicao exibida na escala correta (0-100) (#258)",
-    "files": [
-     "src/features/maintenance/components/PredictiveHealthCard.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -97981,11 +98141,11 @@
    ],
    [
     "docs/qa/03-ACHADOS.md",
-    2
+    3
    ],
    [
     "docs/qa/05-PROGRESSO.md",
-    2
+    3
    ],
    [
     "src/components/ui/scroll-area.tsx",
@@ -98016,6 +98176,22 @@
     2
    ],
    [
+    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+    1
+   ],
+   [
+    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
+    1
+   ],
+   [
+    "src/pages/AuthPage.mfaBlocked.test.tsx",
+    1
+   ],
+   [
+    "src/pages/AuthPage.tsx",
+    1
+   ],
+   [
     "scripts/graphify-local.mjs",
     1
    ],
@@ -98033,22 +98209,6 @@
    ],
    [
     "src/test/simulationAggregation.test.ts",
-    1
-   ],
-   [
-    "src/components/error/StackTrace.test.tsx",
-    1
-   ],
-   [
-    "src/components/error/StackTrace.tsx",
-    1
-   ],
-   [
-    "src/hooks/use-overflowing.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/use-overflowing.ts",
     1
    ]
   ]

@@ -8981,10 +8981,11 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 281,
+   "linhas": 329,
    "dominio": "pages",
    "hooks_locais": [
-    "useAuth"
+    "useAuth",
+    "useAuthenticatorAssuranceLevel"
    ],
    "tabelas": [
     "password_reset_requests"

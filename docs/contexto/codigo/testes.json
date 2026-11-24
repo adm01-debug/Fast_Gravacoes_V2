@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 137,
+ "total": 139,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 18,
   "pytest": 5,
-  "unit": 113
+  "unit": 115
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 101
+   "arquivos": 103
   },
   {
    "padrao": "outro",
@@ -447,6 +447,16 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
+   "tipo": "unit",
+   "linhas": 152,
+   "testa": [
+    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts"
+   ],
+   "casos": 7,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/auth/hooks/useMFA.test.tsx",
    "tipo": "unit",
    "linhas": 85,
@@ -846,6 +856,16 @@
     "src/pages/AdminTelemetriaPage.tsx"
    ],
    "casos": 1,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/pages/AuthPage.mfaBlocked.test.tsx",
+   "tipo": "unit",
+   "linhas": 200,
+   "testa": [
+    "src/pages/AuthPage.tsx"
+   ],
+   "casos": 10,
    "suporte": false
   },
   {
@@ -1478,6 +1498,7 @@
   "src/features/analytics/hooks/useSPC.ts": 1,
   "src/features/auth/components/AuthProvider.tsx": 1,
   "src/features/auth/hooks/useAuth.ts": 1,
+  "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts": 1,
   "src/features/auth/hooks/useMFA.ts": 1,
   "src/features/auth/hooks/useRBAC.tsx": 1,
   "src/features/auth/index.ts": 2,
@@ -1533,6 +1554,7 @@
   "src/lib/utils.ts": 2,
   "src/lib/validation.ts": 2,
   "src/pages/AdminTelemetriaPage.tsx": 1,
+  "src/pages/AuthPage.tsx": 1,
   "src/pages/InventoryPage.tsx": 1,
   "src/pages/LogisticsPage.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
@@ -1549,7 +1571,6 @@
    "src/pages/ABCCostingDashboard.tsx",
    "src/pages/AlertsDashboard.tsx",
    "src/pages/AuditTrailPage.tsx",
-   "src/pages/AuthPage.tsx",
    "src/pages/BIDashboard.tsx",
    "src/pages/Bitrix24ConfigPage.tsx",
    "src/pages/CodeQualityDashboard.tsx",
@@ -1656,7 +1677,6 @@
    "src/features/analytics/hooks/useLoadBalancingWithActions.ts",
    "src/features/analytics/hooks/useMLPredictions.ts",
    "src/features/analytics/hooks/useOEEDashboardFilters.ts",
-   "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
    "src/features/auth/hooks/useRolePermissions.ts",
    "src/features/auth/hooks/useSessionManager.tsx",
    "src/features/auth/hooks/useSessionTimeout.tsx",

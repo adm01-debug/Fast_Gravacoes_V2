@@ -1606,21 +1606,23 @@
    "hooks_exportados": [
     "useAuthenticatorAssuranceLevel"
    ],
-   "linhas": 105,
+   "linhas": 154,
    "dominio": "features/auth",
    "tabelas": [],
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
     "useAuth",
-    "useEffect"
+    "useCallback",
+    "useEffect",
+    "useState"
    ],
    "canais_realtime": [],
    "usado_por": 1,
    "usado_por_arquivos": [
     "src/features/auth/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/auth/hooks/useMFA.ts",

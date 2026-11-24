@@ -1364,6 +1364,7 @@
    "redireciona": null,
    "hooks": [
     "useAuth",
+    "useAuthenticatorAssuranceLevel",
     "useCallback",
     "useContext",
     "useEffect",
@@ -1377,6 +1378,7 @@
    ],
    "hooks_locais": [
     "useAuth",
+    "useAuthenticatorAssuranceLevel",
     "useRipple"
    ],
    "tabelas": [
@@ -1388,7 +1390,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 27,
+   "arquivos_puxados": 29,
    "diretos": {
     "tabelas": [
      "error_logs",

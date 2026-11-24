@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
+  "commit": "03ce70b211f87d26a675132d810e1455928921b2",
   "branch": "main",
-  "data_commit": "2026-11-24T17:59:41-03:00",
+  "data_commit": "2026-11-24T18:53:50-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "03ce70b",
+    "data": "2026-11-24",
+    "assunto": "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)"
+   },
    {
     "sha": "d5e8d2b",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "4b3ed9b",
     "data": "2026-11-23",
     "assunto": "fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)"
-   },
-   {
-    "sha": "1724af5",
-    "data": "2026-11-23",
-    "assunto": "fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -149,12 +149,12 @@
     "mudancas": 24
    },
    {
-    "pasta": "src/features/notifications",
+    "pasta": "src/features/auth",
     "mudancas": 23
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 21
+    "pasta": "src/features/notifications",
+    "mudancas": 23
    },
    {
     "pasta": "src/components/dashboard",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 141
+    "commits": 142
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1604,
-  "arquivos_codigo": 1136,
-  "linhas_codigo": 191421,
+  "arquivos_total": 1606,
+  "arquivos_codigo": 1138,
+  "linhas_codigo": 191870,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 259,
   "cron_jobs": 4,
-  "testes": 137,
+  "testes": 139,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1130
   },
   "src/features": {
-   "arquivos": 334,
-   "linhas": 47351
+   "arquivos": 335,
+   "linhas": 47552
   },
   "src/hooks": {
    "arquivos": 63,
@@ -516,8 +516,8 @@
    "linhas": 84
   },
   "src/pages": {
-   "arquivos": 59,
-   "linhas": 16965
+   "arquivos": 60,
+   "linhas": 17213
   },
   "src/providers": {
    "arquivos": 2,
@@ -667,7 +667,7 @@
   }
  ],
  "qualidade": {
-  "any": 174,
+  "any": 175,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d5e8d2bf51` · branch `main` · 2026-11-24 21:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `03ce70b211` · branch `main` · 2026-11-24 21:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T20:38:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T21:13:06Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T20:38:41Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-24T21:13:06Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T20:38:41Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-24T21:13:06Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T20:38:41Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-24T21:13:06Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T20:38:41Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-24T21:13:06Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1893,7 +1893,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `success` | compara, escreve | `src/components/integrations/Bitrix24SyncHistory.tsx`<br>`src/features/maintenance/components/TPMNotificationLogs.tsx`<br>`supabase/functions/bitrix24-sync/index.ts`<br>`supabase/functions/tpm-notifications/index.ts` |
 | `status` | `syncing` | escreve | `src/components/traceability/BlockchainIntegrityCard.tsx` |
 | `status` | `upcoming` | compara, escreve | `src/components/design-system/hooks/MaintenanceOperatorDemos.tsx` |
-| `status` | `verified` | compara, escreve | `src/components/settings/TwoFactorSetup.tsx`<br>`src/components/traceability/BlockchainIntegrityCard.tsx`<br>`src/features/admin/components/security/MFASettings.tsx`<br>`src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts`<br>`src/features/auth/hooks/useMFA.ts`<br>… +1 |
+| `status` | `verified` | compara, escreve | `src/components/settings/TwoFactorSetup.tsx`<br>`src/components/traceability/BlockchainIntegrityCard.tsx`<br>`src/features/admin/components/security/MFASettings.tsx`<br>`src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts`<br>`src/features/auth/hooks/useMFA.ts` |
 | `status` | `warn` | compara | `src/features/admin/components/security/SecurityOverviewCard.tsx` |
 | `status` | `warning` | compara | `src/components/operator/ProductionTimer.tsx`<br>`src/components/scheduling/CapacityHealthPanel.tsx`<br>`src/hooks/useTechniqueCapacityAlerts.ts` |
 | `state` | `closed` | escreve | `src/lib/circuitBreaker.ts` |
@@ -3258,7 +3258,7 @@ _nenhum item encontrado_
 | Erro ao desativar push notifications | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao enviar notificação | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Erro ao enviar notificação de teste | `src/features/notifications/hooks/usePushSubscription.ts` |
-| … +243 linhas — lista completa em `context.json` | |
+| … +246 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3324,7 +3324,7 @@ _nenhum item encontrado_
 | `manager` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 
-## K. Testes como especificação (1366 testes em 118 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1385 testes em 120 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3367,6 +3367,7 @@ _nenhum item encontrado_
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
+| `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
 | `src/test/retryBackoffAdvanced.test.ts` | 11 | retryWithBackoff — advanced scenarios · returns immediately on first success · retries up to maxRetries times then throws · stops retrying when isRetryable returns false … |
 | `src/test/retryWithBackoff.test.ts` | 11 | retryWithBackoff · resolves immediately on first success · retries after failure and eventually succeeds · throws after exhausting all retries … |
 | `tests/e2e/auth.spec.ts` | 11 | Auth Flow - Login/Logout · should login successfully with valid credentials · should show error with invalid credentials · should logout successfully … |
@@ -3381,6 +3382,7 @@ _nenhum item encontrado_
 | `src/test/dateUtils.test.ts` | 9 | parseDateOnly · parses a date-only string at local midnight (no UTC shift) · keeps the calendar day stable regardless of timezone offset · delegates full timestamps to new Date() … |
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
+| `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
