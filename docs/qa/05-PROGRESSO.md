@@ -9,9 +9,9 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 
 ## Onda 1 — Segurança e risco de perda de dado (80 etapas)
 
-- [ ] 001 — Levantar exatamente qual versão de migration o banco tem e a `main` não tem — onda 1 — Crítica
-- [ ] 002 — Trazer para a `main` a migration que já foi aplicada em produção, de forma idempotente — onda 1 — Crítica · **aprovação do dono**
-- [ ] 003 — Confirmar que o deploy voltou a aplicar banco e funções de servidor — onda 1 — Crítica
+- [x] 001 — Levantar exatamente qual versão de migration o banco tem e a `main` não tem — onda 1 — Crítica · banco com 259 versões, `main` com 259 arquivos, **nenhuma órfã**; `20261122010000_seed_role_permissions.sql` está na `main` (evidência abaixo)
+- [x] 002 — Trazer para a `main` a migration que já foi aplicada em produção, de forma idempotente — onda 1 — Crítica · arquivo já presente na `main` e registrado no banco; `Validate Supabase Target (dry-run)` deixa de acusar versão órfã (run 45452172254)
+- [x] 003 — Confirmar que o deploy voltou a aplicar banco e funções de servidor — onda 1 — Crítica · run 45452172254 na `main`: `Validate Supabase Target`, `Apply DB Migrations` e `Deploy Edge Functions` todos em `success`
 - [ ] 004 — Corrigir as funções de auditoria de OS que gravam em colunas inexistentes — onda 1 — Crítica · **aprovação do dono**
 - [ ] 005 — Apontar o endereço do sistema no Supabase Auth para o host que realmente serve o app — onda 1 — Crítica · **aprovação do dono**
 - [ ] 006 — Passar `redirectTo` explícito no pedido de recuperação de senha feito pelo app — onda 1 — Alta
@@ -348,6 +348,21 @@ Comando/consulta: <o que foi executado>
 Resultado: <saída, colada>
 PR: <link> · estado: mergeada | aguardando dono | CI vermelha (motivo)
 ```
+
+### 001 — 2026-11-24
+Comando/consulta: `select version, name from supabase_migrations.schema_migrations order by version;` no projeto `uoujzvpecohinketylud` (Management API) contra `git ls-tree -r --name-only origin/main -- supabase/migrations`.
+Resultado: **259** versões registradas no banco e **259** arquivos de migration na `main` — diferença vazia nos dois sentidos. `20261122010000_seed_role_permissions.sql` existe na `main`, ou seja, o registro `20261122010000` deixou de ser órfão. Nenhum `migration repair` foi executado.
+PR: (registro, sem mudança de código) · estado: mergeada na `main` @ `828487b3`
+
+### 002 — 2026-11-24
+Comando/consulta: conferência do arquivo em `origin/main` e do job de validação do deploy.
+Resultado: `supabase/migrations/20261122010000_seed_role_permissions.sql` presente na `main`; run `45452172254` do workflow `Deploy` tem `Validate Supabase Target (dry-run)` em `success`, sem o erro `Remote migration versions not found in local migrations directory`.
+PR: arquivo já mergeado em `main` · estado: mergeada
+
+### 003 — 2026-11-24
+Comando/consulta: `gh run view 45452172254 --json jobs` (último `Deploy` da `main`).
+Resultado: `Security Scan`, `Unit Tests`, `Validate Supabase Target (dry-run)`, `Build`, `Apply DB Migrations` e `Deploy Edge Functions` — todos em `success`. Os quatro deploys anteriores da `main` (45441618237, 45447223260, 45450690205, 45452172254) também concluíram em `success`.
+PR: (verificação, sem mudança de código) · estado: concluída
 
 ---
 
