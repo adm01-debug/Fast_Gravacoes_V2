@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect --
    Sincroniza com o estado de sessão/MFA do Supabase Auth (sistema externo),
    incluindo a reação a onAuthStateChange — não é estado derivado de props. */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 import { useAuth } from './useAuth';
 
-interface AALState {
+export interface AALState {
   /** true once the initial AAL check for the current session has resolved */
   checked: boolean;
   /** true when the account has a verified MFA factor that the current session has not stepped up to (aal2) */
@@ -18,6 +18,19 @@ interface AALState {
    * login não basta porque não existe fator para desafiar.
    */
   hasNoVerifiedFactor: boolean;
+  /**
+   * Etapa 032 / AUT-04: id do fator TOTP verificado — o único tipo que a tela de
+   * login sabe desafiar. `null` com `needsMfaChallenge` verdadeiro significa
+   * "não há como desafiar". Login (bloqueio explícito) e guarda de rota
+   * (redirecionamento) leem ESTA mesma decisão; antes cada um consultava o
+   * Supabase por conta própria e as duas conclusões divergiam, produzindo o
+   * laço /auth ⇄ / descrito no achado AUT-04.
+   */
+  challengeableFactorId: string | null;
+  /** true quando `listFactors` falhou: estado indefinido, não "conta sem fator". */
+  factorsUnavailable: boolean;
+  /** Reconsulta AAL + fatores (botão "Tentar novamente" da tela de login). */
+  refresh: () => void;
 }
 
 /**
@@ -28,23 +41,29 @@ interface AALState {
  * aal2 — otherwise MFA is enforced only by client UI and is bypassable by
  * navigating directly to a protected route right after password sign-in.
  */
+const CLEARED: Omit<AALState, 'refresh'> = {
+  checked: false,
+  needsMfaChallenge: false,
+  hasNoVerifiedFactor: false,
+  challengeableFactorId: null,
+  factorsUnavailable: false,
+};
+
 export function useAuthenticatorAssuranceLevel(): AALState {
   const { user } = useAuth();
   const userId = user?.id;
-  const [state, setState] = useState<AALState>({
-    checked: false,
-    needsMfaChallenge: false,
-    hasNoVerifiedFactor: false,
-  });
+  const [refreshToken, setRefreshToken] = useState(0);
+  const [state, setState] = useState<Omit<AALState, 'refresh'>>(CLEARED);
+  const refresh = useCallback(() => setRefreshToken((n) => n + 1), []);
 
   useEffect(() => {
     if (!userId) {
-      setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
+      setState({ ...CLEARED, checked: true });
       return;
     }
 
     let cancelled = false;
-    setState({ checked: false, needsMfaChallenge: false, hasNoVerifiedFactor: false });
+    setState(CLEARED);
 
     const evaluate = async () => {
       try {
@@ -68,11 +87,18 @@ export function useAuthenticatorAssuranceLevel(): AALState {
         const hasVerifiedFactor = !factorsRes.error && (factorsRes.data?.all ?? []).some(
           (f) => f.status === 'verified',
         );
+        // A tela de login só sabe desafiar TOTP: expor o fator desafiavel aqui
+        // é o que permite as duas telas tomarem a mesma decisão.
+        const challengeableFactor = factorsRes.error
+          ? undefined
+          : (factorsRes.data?.totp ?? []).find((f) => f.status === 'verified');
         if (!cancelled) {
           setState({
             checked: true,
             needsMfaChallenge,
             hasNoVerifiedFactor: !factorsRes.error && !hasVerifiedFactor,
+            challengeableFactorId: challengeableFactor?.id ?? null,
+            factorsUnavailable: !!factorsRes.error,
           });
         }
       } catch {
@@ -81,7 +107,7 @@ export function useAuthenticatorAssuranceLevel(): AALState {
         // the only gate, so fail open here rather than locking everyone out
         // on a transient Supabase error.
         if (!cancelled) {
-          setState({ checked: true, needsMfaChallenge: false, hasNoVerifiedFactor: false });
+          setState({ ...CLEARED, checked: true });
         }
       }
     };
@@ -98,7 +124,7 @@ export function useAuthenticatorAssuranceLevel(): AALState {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, [userId]);
+  }, [userId, refreshToken]);
 
-  return state;
+  return { ...state, refresh };
 }

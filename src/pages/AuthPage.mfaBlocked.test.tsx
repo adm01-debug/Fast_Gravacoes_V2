@@ -7,9 +7,19 @@ import AuthPage from './AuthPage';
 
 const navigateMock = vi.hoisted(() => vi.fn());
 const signOutMock = vi.hoisted(() => vi.fn());
-const mfa = vi.hoisted(() => ({
-  getAuthenticatorAssuranceLevel: vi.fn(),
-  listFactors: vi.fn(),
+const refreshMock = vi.hoisted(() => vi.fn());
+
+type TestUser = { id: string; email: string } | null;
+
+const shared = vi.hoisted(() => ({
+  user: { id: 'u1', email: 'a@b.c' } as { id: string; email: string } | null,
+  aal: {
+    checked: true,
+    needsMfaChallenge: true,
+    hasNoVerifiedFactor: false,
+    challengeableFactorId: null as string | null,
+    factorsUnavailable: false,
+  },
 }));
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -23,12 +33,16 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('next-themes', () => ({ useTheme: () => ({ theme: 'dark', setTheme: vi.fn() }) }));
 
+// Etapa 032: o AuthPage consome a decisao compartilhada de 2FA
+// (useAuthenticatorAssuranceLevel) — a mesma que o ProtectedRoute usa. O teste
+// controla essa decisao e verifica a reacao da tela.
 vi.mock('@/features/auth', () => ({
-  useAuth: () => ({ user: { id: 'u1', email: 'a@b.c' }, signIn: vi.fn(), signOut: signOutMock }),
+  useAuth: () => ({ user: shared.user as TestUser, signIn: vi.fn(), signOut: signOutMock }),
+  useAuthenticatorAssuranceLevel: () => ({ ...shared.aal, refresh: refreshMock }),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { auth: { mfa }, from: () => ({ insert: vi.fn() }) },
+  supabase: { auth: { mfa: {} }, from: () => ({ insert: vi.fn() }) },
 }));
 
 vi.mock('@/integrations/lovable/index', () => ({
@@ -59,17 +73,18 @@ const renderPage = () =>
 describe('AuthPage: 2FA sem desafio possivel (etapa 032)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mfa.getAuthenticatorAssuranceLevel.mockResolvedValue({
-      data: { currentLevel: 'aal1', nextLevel: 'aal2' },
-    });
+    shared.user = { id: 'u1', email: 'a@b.c' };
+    shared.aal = {
+      checked: true,
+      needsMfaChallenge: true,
+      hasNoVerifiedFactor: false,
+      challengeableFactorId: null,
+      factorsUnavailable: false,
+    };
+    signOutMock.mockResolvedValue(undefined);
   });
 
   it('mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado', async () => {
-    mfa.listFactors.mockResolvedValue({
-      data: { totp: [], all: [{ id: 'phone-1', factor_type: 'phone', status: 'verified' }] },
-      error: null,
-    });
-
     renderPage();
 
     const alert = await screen.findByRole('alert');
@@ -80,7 +95,7 @@ describe('AuthPage: 2FA sem desafio possivel (etapa 032)', () => {
   });
 
   it('mostra saida explicita quando a consulta de fatores falha', async () => {
-    mfa.listFactors.mockResolvedValue({ data: null, error: { message: 'unavailable' } });
+    shared.aal.factorsUnavailable = true;
 
     renderPage();
 
@@ -89,33 +104,72 @@ describe('AuthPage: 2FA sem desafio possivel (etapa 032)', () => {
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
-  it('sair encerra a sessao', async () => {
-    mfa.listFactors.mockResolvedValue({ data: { totp: [] }, error: null });
+  it('tentar novamente reconsulta pelo hook compartilhado', async () => {
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Tentar novamente' }));
 
+    expect(refreshMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it('abre o desafio quando ha fator TOTP verificado', async () => {
+    shared.aal.challengeableFactorId = 'totp-9';
+
+    renderPage();
+
+    expect(await screen.findByTestId('mfa-challenge')).toHaveTextContent('totp-9');
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('navega quando a sessao nao exige um segundo fator', async () => {
+    shared.aal = { ...shared.aal, needsMfaChallenge: false };
+
+    renderPage();
+
+    expect(await screen.findByTestId('login-form')).toBeInTheDocument();
+    expect(navigateMock).toHaveBeenCalledWith('/', { replace: true });
+  });
+
+  it('sair encerra a sessao', async () => {
     renderPage();
     fireEvent.click(await screen.findByRole('button', { name: 'Sair' }));
 
     expect(signOutMock).toHaveBeenCalledTimes(1);
   });
 
-  it('tentar novamente reconsulta e abre o desafio quando o fator aparece', async () => {
-    mfa.listFactors
-      .mockResolvedValueOnce({ data: { totp: [] }, error: null })
-      .mockResolvedValueOnce({ data: { totp: [{ id: 'totp-1', status: 'verified' }] }, error: null });
+  it('mantem o aviso e explica a falha quando o logout falha', async () => {
+    signOutMock.mockRejectedValue(new Error('auth indisponivel'));
 
     renderPage();
-    fireEvent.click(await screen.findByRole('button', { name: 'Tentar novamente' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Sair' }));
 
-    expect(await screen.findByTestId('mfa-challenge')).toHaveTextContent('totp-1');
+    expect(signOutMock).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText(/Não foi possível encerrar a sessão/)).toBeInTheDocument();
+    // Nao pode virar tela em branco: o aviso continua com as saidas disponiveis.
+    expect(screen.getByText(/nenhum aplicativo autenticador/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sair' })).toBeEnabled();
+    expect(screen.queryByTestId('login-form')).toBeNull();
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
-  it('mantem o desafio quando ha fator TOTP verificado', async () => {
-    mfa.listFactors.mockResolvedValue({ data: { totp: [{ id: 'totp-9', status: 'verified' }] }, error: null });
+  it('volta ao formulario quando a sessao termina por fora (paleta de comandos)', async () => {
+    const { rerender } = renderPage();
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
 
-    renderPage();
+    shared.user = null;
+    shared.aal = { ...shared.aal, checked: true, needsMfaChallenge: false, challengeableFactorId: null };
 
-    expect(await screen.findByTestId('mfa-challenge')).toHaveTextContent('totp-9');
+    rerender(
+      <HelmetProvider>
+        <MemoryRouter>
+          <AuthPage />
+        </MemoryRouter>
+      </HelmetProvider>,
+    );
+
+    expect(await screen.findByTestId('login-form')).toBeInTheDocument();
+    expect(screen.queryByText(/nenhum aplicativo autenticador/)).toBeNull();
     expect(navigateMock).not.toHaveBeenCalled();
   });
 });

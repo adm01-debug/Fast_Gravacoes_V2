@@ -40,7 +40,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 029 — Encurtar a retenção dos registros de erro e recuperar o espaço — onda 1 — Média · **aprovação do dono**
 - [ ] 030 — Corrigir o filtro que impede o registro de falhas de consulta — onda 1 — Média
 - [ ] 031 — Fazer o banco reconhecer o papel `admin` nas tabelas em que o aplicativo já o libera — onda 1 — Alta · **aprovação do dono**
-- [x] 032 — Unificar o critério de segundo fator entre a tela de login e o guarda de rota — onda 1 — Alta · AuthPage deixa de navegar quando não há fator TOTP verificado ou `listFactors` falha (src/pages/AuthPage.tsx:73-92, saídas "Tentar novamente"/"Sair"); teste src/pages/AuthPage.mfaBlocked.test.tsx 5/5; PR #291
+- [x] 032 — Unificar o critério de segundo fator entre a tela de login e o guarda de rota — onda 1 — Alta · `useAuthenticatorAssuranceLevel` passa a ser a única decisão de 2FA (`challengeableFactorId`, `factorsUnavailable`, `refresh`) e é lida pelos dois lados — `src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts:52-121` e `src/components/auth/ProtectedRoute.tsx:76`; com desafio impossível o AuthPage para de navegar e mostra o motivo em `role="alert"` com "Tentar novamente"/"Sair" (`src/pages/AuthPage.tsx:64-96`); testes `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` 6/6 e `src/pages/AuthPage.mfaBlocked.test.tsx` 8/8; PR #291
 - [ ] 033 — Restringir a leitura de defeitos de embalagem a quem tem relação com a tarefa — onda 1 — Baixa · **aprovação do dono**
 - [ ] 034 — Impedir que o operador altere campos comerciais da OS — onda 1 — Média · **aprovação do dono**
 - [ ] 035 — Fazer o portão de qualidade falhar fechado — onda 1 — Média · **aprovação do dono**
