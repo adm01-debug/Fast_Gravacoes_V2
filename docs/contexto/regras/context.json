@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
+  "sha": "e16478a069af801d76364365c62847f2b05da5ba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 10:31 UTC",
-  "files_total": 1594,
-  "code_files": 1398,
-  "code_lines": 207410
+  "generated_at": "2026-11-24 12:36 UTC",
+  "files_total": 1595,
+  "code_files": 1399,
+  "code_lines": 207429
  },
  "version": "1.3.2",
- "facts_hash": "2eaf2d14c43225bd",
+ "facts_hash": "546ad221f1220b9c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -282,7 +282,7 @@
   "languages": {
    ".tsx": 664,
    ".ts": 402,
-   ".sql": 265,
+   ".sql": 266,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19565,6 +19565,7 @@
    "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
    "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
+   "supabase/migrations/20261124111000_add_techniques_personalizacao.sql",
    "supabase/migrations/20261125130000_jobs_external_ref.sql",
    "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
@@ -21557,6 +21558,7 @@
    "column:techniques.high_threshold": "Threshold em minutos para risco alto de gargalo",
    "table:erp_api_keys": "Stores SHA-256 hashed API keys for ERP integration authentication.",
    "table:csp_violation_reports": "Relatórios de violação de CSP coletados pela edge function csp-report (report-uri). Sem policy de INSERT: apenas service role grava.",
+   "table:techniques": "Dicionario de tecnicas de personalizacao. Ids em minusculas sem acento; o Promo Design mapeia o texto livre da OS para estes ids via integration_technique_map.",
    "column:jobs.external_ref": "Chave de idempotencia do sistema de origem (ex.: service_orders.id do Promo Design)."
   },
   "types_file": "src/integrations/supabase/types.ts",
@@ -30039,8 +30041,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 257,
-   "lines": 15828,
+   "files": 258,
+   "lines": 15847,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -96940,6 +96942,10 @@
    "lines": 123,
    "uses_service_role": true
   },
+  "supabase/migrations/20261124111000_add_techniques_personalizacao.sql": {
+   "path": "supabase/migrations/20261124111000_add_techniques_personalizacao.sql",
+   "lines": 19
+  },
   "supabase/migrations/20261125130000_jobs_external_ref.sql": {
    "path": "supabase/migrations/20261125130000_jobs_external_ref.sql",
    "lines": 16
@@ -97390,10 +97396,19 @@
   }
  },
  "git": {
-  "sha": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
+  "sha": "e16478a069af801d76364365c62847f2b05da5ba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "e16478a",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)",
+    "files": [
+     "supabase/migrations/20261124111000_add_techniques_personalizacao.sql"
+    ]
+   },
    {
     "sha": "fb794d1",
     "date": "2026-11-24",
@@ -97755,16 +97770,6 @@
     "files": [
      "src/pages/KanbanBoard.tsx"
     ]
-   },
-   {
-    "sha": "42f66be",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: assinatura eletronica valida senha real contra Supabase Auth (F-012) (#247)",
-    "files": [
-     "src/components/traceability/ElectronicSignatureDialog.tsx",
-     "src/pages/TraceabilityPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -97805,6 +97810,10 @@
     2
    ],
    [
+    "supabase/migrations/20261124111000_add_techniques_personalizacao.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
     1
    ],
@@ -97842,10 +97851,6 @@
    ],
    [
     "src/pages/EfficiencyDashboard.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
     1
    ]
   ]

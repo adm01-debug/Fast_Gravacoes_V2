@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:build); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
+ "commit_do_grafo": "e16478a069af801d76364365c62847f2b05da5ba",
  "grafo_atual": true,
- "nos": 7561,
+ "nos": 7562,
  "arestas": 22138,
- "comunidades_total": 685,
+ "comunidades_total": 687,
  "relacoes": {
   "calls": 3228,
   "cites": 6,
@@ -85,23 +85,6 @@
   },
   {
    "id": 3,
-   "nome": "analytics/index.ts",
-   "nos": 115,
-   "callables": 52,
-   "arquivos": 35,
-   "exemplos_arquivos": [
-    "src/features/analytics/components/bi/BIAlertsWatcher.tsx",
-    "src/features/analytics/components/bi/BIComparisonView.tsx",
-    "src/features/analytics/components/bi/BITooltip.tsx",
-    "src/features/analytics/components/energy/EnergyChartTabs.tsx",
-    "src/features/analytics/components/oee/HyperInsights.tsx",
-    "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
-    "src/features/analytics/components/oee/OEEAuditPanel.tsx",
-    "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx"
-   ]
-  },
-  {
-   "id": 4,
    "nome": "snapshot.py",
    "nos": 111,
    "callables": 88,
@@ -112,7 +95,7 @@
    ]
   },
   {
-   "id": 5,
+   "id": 4,
    "nome": "DailyCalendar.tsx",
    "nos": 107,
    "callables": 65,
@@ -126,6 +109,23 @@
     "src/components/calendar/CalendarOnboarding.tsx",
     "src/components/calendar/CalendarTimeline.tsx",
     "src/components/calendar/CalendarToolbar.tsx"
+   ]
+  },
+  {
+   "id": 5,
+   "nome": "analytics/index.ts",
+   "nos": 105,
+   "callables": 47,
+   "arquivos": 33,
+   "exemplos_arquivos": [
+    "src/features/analytics/components/bi/BIAlertsWatcher.tsx",
+    "src/features/analytics/components/bi/BIComparisonView.tsx",
+    "src/features/analytics/components/energy/EnergyChartTabs.tsx",
+    "src/features/analytics/components/oee/HyperInsights.tsx",
+    "src/features/analytics/components/oee/MaterialEfficiencyChart.tsx",
+    "src/features/analytics/components/oee/OEEAuditPanel.tsx",
+    "src/features/analytics/components/oee/OEEBenchmarkTooltip.tsx",
+    "src/features/analytics/components/oee/OEEGaugeCard.tsx"
    ]
   },
   {
@@ -296,6 +296,23 @@
   },
   {
    "id": 17,
+   "nome": "production/index.ts",
+   "nos": 63,
+   "callables": 48,
+   "arquivos": 26,
+   "exemplos_arquivos": [
+    "src/components/dashboard/OperatorGoalsWidget.tsx",
+    "src/components/operators/AIWorkforceAdvisor.tsx",
+    "src/components/operators/CreateGoalModal.tsx",
+    "src/components/operators/EfficiencyChart.tsx",
+    "src/components/operators/EvolutionChart.tsx",
+    "src/components/operators/GoalAlertsWidget.tsx",
+    "src/components/operators/GoalsHistoryCard.tsx",
+    "src/components/operators/OperatorCardDetailed.tsx"
+   ]
+  },
+  {
+   "id": 18,
    "nome": "auth/index.ts",
    "nos": 62,
    "callables": 35,
@@ -312,7 +329,7 @@
    ]
   },
   {
-   "id": 18,
+   "id": 19,
    "nome": "DbJob",
    "nos": 60,
    "callables": 45,
@@ -326,23 +343,6 @@
     "src/components/jobs/JobDetailsModal.tsx",
     "src/components/jobs/JobInfoGrid.tsx",
     "src/components/jobs/JobInfoRow.tsx"
-   ]
-  },
-  {
-   "id": 19,
-   "nome": "production/index.ts",
-   "nos": 60,
-   "callables": 46,
-   "arquivos": 25,
-   "exemplos_arquivos": [
-    "src/components/dashboard/OperatorGoalsWidget.tsx",
-    "src/components/operators/AIWorkforceAdvisor.tsx",
-    "src/components/operators/CreateGoalModal.tsx",
-    "src/components/operators/EfficiencyChart.tsx",
-    "src/components/operators/EvolutionChart.tsx",
-    "src/components/operators/GoalAlertsWidget.tsx",
-    "src/components/operators/GoalsHistoryCard.tsx",
-    "src/components/operators/OperatorCardDetailed.tsx"
    ]
   },
   {
@@ -418,6 +418,23 @@
   },
   {
    "id": 25,
+   "nome": "FuturisticBI.tsx",
+   "nos": 57,
+   "callables": 34,
+   "arquivos": 22,
+   "exemplos_arquivos": [
+    "src/components/operators/ProductionRadarChart.tsx",
+    "src/constants/biConstants.ts",
+    "src/features/analytics/components/bi/AIInsights.tsx",
+    "src/features/analytics/components/bi/BIComparisonView.tsx",
+    "src/features/analytics/components/bi/BIEmptyState.tsx",
+    "src/features/analytics/components/bi/BIHeader.tsx",
+    "src/features/analytics/components/bi/BILoadingSkeleton.tsx",
+    "src/features/analytics/components/bi/BINormalView.tsx"
+   ]
+  },
+  {
+   "id": 26,
    "nome": "useSchedulingData.ts",
    "nos": 56,
    "callables": 29,
@@ -434,7 +451,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 27,
    "nome": "DesignSystemPage.tsx",
    "nos": 55,
    "callables": 45,
@@ -451,7 +468,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 28,
    "nome": "EfficiencyDashboard.tsx",
    "nos": 54,
    "callables": 29,
@@ -465,23 +482,6 @@
     "src/components/ui/chart.tsx",
     "src/components/ui/kpi-tooltip.tsx",
     "src/components/voice/VoiceCommands.tsx"
-   ]
-  },
-  {
-   "id": 28,
-   "nome": "FuturisticBI.tsx",
-   "nos": 54,
-   "callables": 32,
-   "arquivos": 21,
-   "exemplos_arquivos": [
-    "src/components/operators/ProductionRadarChart.tsx",
-    "src/constants/biConstants.ts",
-    "src/features/analytics/components/bi/AIInsights.tsx",
-    "src/features/analytics/components/bi/BIComparisonView.tsx",
-    "src/features/analytics/components/bi/BIEmptyState.tsx",
-    "src/features/analytics/components/bi/BIHeader.tsx",
-    "src/features/analytics/components/bi/BILoadingSkeleton.tsx",
-    "src/features/analytics/components/bi/BINormalView.tsx"
    ]
   },
   {
@@ -726,6 +726,23 @@
   },
   {
    "id": 45,
+   "nome": "KPIDashboard.tsx",
+   "nos": 40,
+   "callables": 29,
+   "arquivos": 21,
+   "exemplos_arquivos": [
+    "src/components/abc/AIFinancialAdvisor.tsx",
+    "src/components/dashboard/EnergyWidget.tsx",
+    "src/components/jobs/JobCostsTab.tsx",
+    "src/features/analytics/components/bi/BIAIInsights.tsx",
+    "src/features/analytics/components/bi/BIPredictiveROI.tsx",
+    "src/features/analytics/components/bi/drilldown/DrillDownDialog.tsx",
+    "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
+    "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx"
+   ]
+  },
+  {
+   "id": 46,
    "nome": "Index.tsx",
    "nos": 40,
    "callables": 10,
@@ -742,7 +759,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 47,
    "nome": "ChecklistTemplatesManager.tsx",
    "nos": 40,
    "callables": 17,
@@ -759,7 +776,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 48,
    "nome": "PackagingTaskDetail.tsx",
    "nos": 40,
    "callables": 21,
@@ -776,7 +793,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 49,
    "nome": "PlanningEfficiencyDashboard.tsx",
    "nos": 37,
    "callables": 26,
@@ -793,7 +810,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 50,
    "nome": "PackagingDashboard.tsx",
    "nos": 37,
    "callables": 29,
@@ -810,7 +827,7 @@
    ]
   },
   {
-   "id": 50,
+   "id": 51,
    "nome": "cors.ts",
    "nos": 37,
    "callables": 17,
@@ -827,30 +844,13 @@
    ]
   },
   {
-   "id": 51,
+   "id": 52,
    "nome": "bitrix24-sync/index.ts",
    "nos": 37,
    "callables": 26,
    "arquivos": 1,
    "exemplos_arquivos": [
     "supabase/functions/bitrix24-sync/index.ts"
-   ]
-  },
-  {
-   "id": 52,
-   "nome": "KPIDashboard.tsx",
-   "nos": 36,
-   "callables": 28,
-   "arquivos": 20,
-   "exemplos_arquivos": [
-    "src/components/abc/AIFinancialAdvisor.tsx",
-    "src/components/dashboard/EnergyWidget.tsx",
-    "src/components/jobs/JobCostsTab.tsx",
-    "src/features/analytics/components/bi/BIAIInsights.tsx",
-    "src/features/analytics/components/bi/BIPredictiveROI.tsx",
-    "src/features/analytics/components/bi/drilldown/DrillDownDialog.tsx",
-    "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
-    "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx"
    ]
   },
   {
@@ -2629,7 +2629,7 @@
   "src/features/analytics/components/bi/BIPredictiveROI.tsx": "FuturisticBI.tsx",
   "src/features/analytics/components/bi/BIStatCard.test.tsx": "cn",
   "src/features/analytics/components/bi/BIStatCard.tsx": "cn",
-  "src/features/analytics/components/bi/BITooltip.tsx": "analytics/index.ts",
+  "src/features/analytics/components/bi/BITooltip.tsx": "FuturisticBI.tsx",
   "src/features/analytics/components/bi/FuturisticBI.tsx": "FuturisticBI.tsx",
   "src/features/analytics/components/bi/FuturisticStatCard.tsx": "utils.ts",
   "src/features/analytics/components/bi/delays/DelaysAnalysis.tsx": "FuturisticBI.tsx",
@@ -2886,7 +2886,7 @@
   "src/features/production/hooks/useOperatorSkills.ts": "scroll-area.tsx",
   "src/features/production/hooks/useOperators.ts": "OperatorsPage.tsx",
   "src/features/production/hooks/usePerformanceMetrics.ts": "client.ts",
-  "src/features/production/hooks/useProductionLosses.ts": "analytics/index.ts",
+  "src/features/production/hooks/useProductionLosses.ts": "production/index.ts",
   "src/features/production/index.ts": "production/index.ts",
   "src/features/production/services/machinesService.ts": "useSchedulingData.ts",
   "src/features/production/services/maintenanceService.ts": "client.ts",
@@ -2945,7 +2945,7 @@
   "src/hooks/usePageTitle.ts": "MainLayout.tsx",
   "src/hooks/useQuickFavorites.ts": "ChecklistTemplatesManager.tsx",
   "src/hooks/useRealtimeResetRequests.tsx": "useRealtimeChannel",
-  "src/hooks/useRoutePrefetch.ts": "analytics/index.ts",
+  "src/hooks/useRoutePrefetch.ts": "AppRoutes.tsx",
   "src/hooks/useShiftHandover.ts": "ShiftHandoverPage.tsx",
   "src/hooks/useSmartDelayAlerts.ts": "useSchedulingData",
   "src/hooks/useTechnicalConversations.ts": "errorHandling.ts",
@@ -3073,7 +3073,7 @@
   "src/pages/ResetPasswordPage.tsx": "OperatorsPage.tsx",
   "src/pages/SPCDashboard.tsx": "useSPC.ts",
   "src/pages/SecurityDashboard.tsx": "TPMDashboard.tsx",
-  "src/pages/SettingsPage.tsx": "useExecutiveDashboard.ts",
+  "src/pages/SettingsPage.tsx": "SettingsPage",
   "src/pages/ShiftHandoverPage.tsx": "ShiftHandoverPage.tsx",
   "src/pages/SimulationDashboard.tsx": "cn",
   "src/pages/SystemMonitoringPage.tsx": "useMonitoringData.ts",
@@ -3440,6 +3440,7 @@
   "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql": "20261122120000_f010_rpc_record_defect_atomic.sql",
   "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql": "20261122150000_f010_v3_shipment_hold_e_qtde.sql",
   "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql": "public.has_permission",
+  "supabase/migrations/20261124111000_add_techniques_personalizacao.sql": "20261124111000_add_techniques_personalizacao.sql",
   "supabase/migrations/20261125130000_jobs_external_ref.sql": "20261125130000_jobs_external_ref.sql",
   "supabase/migrations/20261125170000_restore_erp_api_keys.sql": "public.erp_api_keys",
   "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql": "20261126100000_f011_rpc_apply_job_sequence.sql",

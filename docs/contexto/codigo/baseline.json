@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fb794d1b051cd727f6b89ba6a15b869d3c8bf613",
+  "commit": "e16478a069af801d76364365c62847f2b05da5ba",
   "branch": "main",
-  "data_commit": "2026-11-24T07:30:41-03:00",
+  "data_commit": "2026-11-24T09:33:17-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "e16478a",
+    "data": "2026-11-24",
+    "assunto": "feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)"
+   },
    {
     "sha": "fb794d1",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "82df446",
     "data": "2026-11-22",
     "assunto": "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)"
-   },
-   {
-    "sha": "dbb891a",
-    "data": "2026-11-22",
-    "assunto": "chore: marca F-002/F-008/F-013/F-015/F-016 como resolvidos com evidencia (#251)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 224,
+  "arquivos_mudados_7d": 225,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 131
+    "commits": 132
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1596,
+  "arquivos_total": 1597,
   "arquivos_codigo": 1130,
   "linhas_codigo": 190926,
   "rotas": 58,
@@ -339,7 +339,7 @@
   "hooks": 196,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 257,
+  "migrations": 258,
   "cron_jobs": 4,
   "testes": 133,
   "workflows": 12,
