@@ -4,7 +4,7 @@
 |---|---|
 | nome | cron-cleanup |
 | status | ACTIVE |
-| versão | 158 |
+| versão | 160 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cron-cleanup/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

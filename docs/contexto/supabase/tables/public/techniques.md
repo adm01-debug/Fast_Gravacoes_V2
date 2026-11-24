@@ -1,5 +1,7 @@
 # public.techniques
 
+> Dicionario de tecnicas de personalizacao. Ids em minusculas sem acento; o Promo Design mapeia o texto livre da OS para estes ids via integration_technique_map.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |

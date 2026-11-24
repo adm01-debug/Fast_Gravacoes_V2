@@ -117,7 +117,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.technical_sheet_tips](tables/public/technical_sheet_tips.md) | table | sim | 2 | 5 | não |  |
 | [public.technical_sheet_versions](tables/public/technical_sheet_versions.md) | table | sim | 2 | 6 | não |  |
 | [public.technical_sheets](tables/public/technical_sheets.md) | table | sim | 3 | 29 | não |  |
-| [public.techniques](tables/public/techniques.md) | table | sim | 2 | 9 | não |  |
+| [public.techniques](tables/public/techniques.md) | table | sim | 2 | 9 | não | Dicionario de tecnicas de personalizacao. Ids em minusculas sem acento; o Promo Design mapeia o texto livre da OS para estes ids via integration_technique_map. |
 | [public.telemetry_traces](tables/public/telemetry_traces.md) | table | sim | 2 | 10 | não |  |
 | [public.tpm_execution_alerts](tables/public/tpm_execution_alerts.md) | table | sim | 2 | 12 | não |  |
 | [public.tpm_execution_audit_logs](tables/public/tpm_execution_audit_logs.md) | table | sim | 1 | 7 | não |  |
