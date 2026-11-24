@@ -151,10 +151,17 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   // InfoRow was moved to JobInfoRow.tsx
 
+  const trimmedCancelReason = cancelReason.trim();
+  const isCancelReasonTooLong = trimmedCancelReason.length > 2000;
+
   const handleCancelJob = async () => {
     const reason = cancelReason.trim();
     if (!reason) {
       toast.error('Informe o motivo do cancelamento.');
+      return;
+    }
+    if (reason.length > 2000) {
+      toast.error('O motivo do cancelamento deve ter no máximo 2000 caracteres.');
       return;
     }
     try {
@@ -507,8 +514,15 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
               onChange={(e) => setCancelReason(e.target.value)}
               placeholder="Ex.: cliente desistiu do pedido"
               rows={3}
-              maxLength={2000}
+              aria-describedby="cancel-reason-counter"
+              aria-invalid={isCancelReasonTooLong}
             />
+            <p
+              id="cancel-reason-counter"
+              className={isCancelReasonTooLong ? "text-xs text-destructive" : "text-xs text-muted-foreground"}
+            >
+              {trimmedCancelReason.length}/2000 caracteres
+            </p>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => { setIsCancelOpen(false); setCancelReason(""); }}>
@@ -517,7 +531,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
             <Button
               variant="destructive"
               onClick={handleCancelJob}
-              disabled={!cancelReason.trim() || updateStatusMutation.isPending}
+              disabled={!trimmedCancelReason || isCancelReasonTooLong || updateStatusMutation.isPending}
             >
               {updateStatusMutation.isPending ? 'Cancelando...' : 'Confirmar cancelamento'}
             </Button>

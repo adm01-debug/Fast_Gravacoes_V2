@@ -42,11 +42,14 @@ vi.mock('./JobQuickActions', () => ({
   ),
 }));
 
-const { passthrough } = vi.hoisted(() => ({
+const { passthrough, dialogPassthrough } = vi.hoisted(() => ({
   passthrough: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  // Respeita a prop `open` para o teste conseguir provar que o diálogo fecha.
+  dialogPassthrough: ({ open, children }: { open?: boolean; children?: React.ReactNode }) =>
+    open === false ? null : <div>{children}</div>,
 }));
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: passthrough,
+  Dialog: dialogPassthrough,
   DialogContent: passthrough,
   DialogHeader: passthrough,
   DialogTitle: passthrough,
@@ -148,7 +151,35 @@ describe('JobDetailsModal - cancelamento de OS', () => {
       cancelReason: 'Cliente desistiu',
     }));
     await vi.waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    await vi.waitFor(() => expect(screen.queryByText('Confirmar cancelamento')).toBeNull());
     expect(toastSuccess).toHaveBeenCalledWith('OS cancelada.');
+  });
+
+  it('blocks a reason longer than the limit without cutting the pasted text', () => {
+    renderModal({});
+    const textarea = openCancelDialog();
+    const pasted = 'a'.repeat(2001);
+    fireEvent.change(textarea, { target: { value: pasted } });
+
+    expect(textarea.value).toBe(pasted);
+    expect(screen.getByText('2001/2000 caracteres')).toBeTruthy();
+    const confirm = screen.getByText('Confirmar cancelamento').closest('button') as HTMLButtonElement;
+    expect(confirm).toBeDisabled();
+    fireEvent.click(confirm);
+    expect(updateStatusMutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('accepts a reason that only exceeds the limit because of outer spaces', async () => {
+    renderModal({});
+    const textarea = openCancelDialog();
+    fireEvent.change(textarea, { target: { value: `  ${'b'.repeat(2000)}  ` } });
+
+    fireEvent.click(screen.getByText('Confirmar cancelamento'));
+    await vi.waitFor(() => expect(updateStatusMutateAsync).toHaveBeenCalledWith({
+      jobId: 'job-1',
+      status: 'cancelled',
+      cancelReason: 'b'.repeat(2000),
+    }));
   });
 
   it('does not keep the typed reason after going back', () => {
