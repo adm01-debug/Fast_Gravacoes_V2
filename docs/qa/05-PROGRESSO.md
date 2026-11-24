@@ -14,7 +14,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [x] 003 — Confirmar que o deploy voltou a aplicar banco e funções de servidor — onda 1 — Crítica · run 45452172254 na `main`: `Validate Supabase Target`, `Apply DB Migrations` e `Deploy Edge Functions` todos em `success`
 - [ ] 004 — Corrigir as funções de auditoria de OS que gravam em colunas inexistentes — onda 1 — Crítica · **aprovação do dono**
 - [ ] 005 — Apontar o endereço do sistema no Supabase Auth para o host que realmente serve o app — onda 1 — Crítica · **aprovação do dono**
-- [ ] 006 — Passar `redirectTo` explícito no pedido de recuperação de senha feito pelo app — onda 1 — Alta
+- [x] 006 — Passar `redirectTo` explícito no pedido de recuperação de senha feito pelo app — onda 1 — Alta · `redirectTo` com `window.location.origin` em src/features/auth/services/authService.ts:34; teste src/features/auth/services/authService.test.ts 2/2 (PR #294)
 - [ ] 007 — Definir o segredo `APP_URL` no projeto Supabase e tirar o endereço morto do código — onda 1 — Alta · **aprovação do dono**
 - [ ] 008 — Configurar servidor de e-mail próprio e aumentar o limite de envio — onda 1 — Alta · **aprovação do dono**
 - [ ] 009 — Traduzir e identificar os e-mails de autenticação — onda 1 — Baixa · **aprovação do dono**
