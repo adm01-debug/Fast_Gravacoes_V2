@@ -577,8 +577,30 @@ test('crash libera flock automaticamente e permite recuperar a trava de PID mort
     { stdio: ['ignore', 'pipe', 'pipe'] }
   );
   t.after(() => child.kill('SIGKILL'));
-  await once(child.stdout, 'data');
   const closed = once(child, 'close');
+    let stderr = '';
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk;
+    });
+    // Sem o guarda, um filho que morre antes de imprimir "ready" deixa o
+    // `once(stdout, 'data')` pendente para sempre e o runner aborta a suíte com
+    // "Promise resolution is still pending".
+    const abort = new AbortController();
+    const ready = once(child.stdout, 'data', { signal: abort.signal });
+    ready.catch(() => {});
+    try {
+      await Promise.race([
+        ready,
+        closed.then(([code, signal]) => {
+          const detail = stderr.trim() || 'sem stderr';
+          throw new Error(
+            `processo auxiliar saiu antes de sinalizar ready (code=${code}, signal=${signal}): ${detail}`
+          );
+        }),
+      ]);
+    } finally {
+      abort.abort();
+    }
   child.kill('SIGKILL');
   await closed;
   let release;

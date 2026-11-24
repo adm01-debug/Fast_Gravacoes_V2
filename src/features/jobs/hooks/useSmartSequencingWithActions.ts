@@ -2,8 +2,9 @@ import { useMemo, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useJobs, useTechniques, DbJob } from '../index';
+import type { SequencingSuggestion, ColorGroup } from '../types/sequencing';
 import { useMachines } from '@/features/production';
-import { parseDateOnly } from '@/lib/dateUtils';
+import { parseDateOnly, formatDateOnly } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 import { showErrorToast, createAppError } from '@/lib/errorHandling';
 
@@ -12,33 +13,7 @@ const SEQUENCING_ERROR_CONTEXT = {
   applyAllSequencing: { entity: 'jobs', operation: 'apply_all_sequencing' },
 };
 
-export interface SequencingSuggestion {
-  id: string;
-  machineId: string;
-  /** Dia (YYYY-MM-DD) do grupo — a mesma máquina pode gerar uma sugestão por data. */
-  date?: string;
-  machineName: string;
-  machineCode: string;
-  techniqueId: string;
-  techniqueName: string;
-  currentSequence: DbJob[];
-  optimizedSequence: DbJob[];
-  estimatedSavings: number; // minutes saved
-  colorGroups: ColorGroup[];
-  bottleneckRisk: 'low' | 'medium' | 'high';
-  totalMinutes: number;
-  currentChanges: number;
-  optimizedChanges: number;
-  totalQuantity: number;
-  aiPriorityScore: number;
-  setupComplexity: 'low' | 'medium' | 'high';
-}
-
-export interface ColorGroup {
-  color: string;
-  jobs: DbJob[];
-  jobCount: number;
-}
+export type { SequencingSuggestion, ColorGroup };
 
 export interface ApplySequencingResult {
   machineId: string;
@@ -98,20 +73,23 @@ export function useSmartSequencingWithActions() {
     mutationFn: async (suggestion: SequencingSuggestion): Promise<ApplySequencingResult> => {
       const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence); // Start at 07:00
 
-      // Single upsert: one round-trip for all slots
-      const { error } = await supabase
-        .from('jobs')
-        .upsert(
-          timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
-          { onConflict: 'id' }
-        );
+      // RPC transacional: o upsert anterior virava INSERT ... ON CONFLICT e o
+      // banco rejeitava por NOT NULL (order_number, client, product, quantity,
+      // technique_id) antes de resolver o conflito de id.
+      const { data: appliedJobs, error } = await supabase.rpc('apply_job_sequence', {
+        p_slots: timeSlots.map(slot => ({
+          job_id: slot.jobId,
+          start_time: slot.startTime,
+          end_time: slot.endTime,
+        })),
+      });
 
       if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applySequencing);
 
       return {
         machineId: suggestion.machineId,
         machineName: suggestion.machineName,
-        appliedJobs: timeSlots.length,
+        appliedJobs: appliedJobs ?? timeSlots.length,
         estimatedSavings: suggestion.estimatedSavings,
       };
     },
@@ -139,20 +117,22 @@ export function useSmartSequencingWithActions() {
           try {
             const timeSlots = generateTimeSlots(7, suggestion.optimizedSequence);
 
-            // Single upsert per suggestion: one round-trip per machine
-            const { error } = await supabase
-              .from('jobs')
-              .upsert(
-                timeSlots.map(slot => ({ id: slot.jobId, start_time: slot.startTime, end_time: slot.endTime })) as never,
-                { onConflict: 'id' }
-              );
+            // RPC transacional: atualiza apenas os jobs do lote e valida o
+            // resultado final por maquina/data dentro da mesma transacao.
+            const { data: appliedJobs, error } = await supabase.rpc('apply_job_sequence', {
+              p_slots: timeSlots.map(slot => ({
+                job_id: slot.jobId,
+                start_time: slot.startTime,
+                end_time: slot.endTime,
+              })),
+            });
 
             if (error) throw createAppError(error, SEQUENCING_ERROR_CONTEXT.applyAllSequencing);
 
             return {
               machineId: suggestion.machineId,
               machineName: suggestion.machineName,
-              appliedJobs: timeSlots.length,
+              appliedJobs: appliedJobs ?? timeSlots.length,
               estimatedSavings: suggestion.estimatedSavings,
             };
           } catch {
@@ -218,7 +198,7 @@ export function useSmartSequencingWithActions() {
 
       // Partição por máquina+dia: slots reiniciam às 07:00 por data —
       // jobs de amanhã não podem continuar a fila de horários de hoje.
-      const groupKey = `${job.machine_id}|${jobDate.toISOString().slice(0, 10)}`;
+      const groupKey = `${job.machine_id}|${formatDateOnly(jobDate)}`;
       const existing = jobsByMachine.get(groupKey) || [];
       existing.push(job);
       jobsByMachine.set(groupKey, existing);

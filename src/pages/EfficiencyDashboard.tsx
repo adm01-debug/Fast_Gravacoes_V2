@@ -8,7 +8,7 @@ import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/Favor
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { KPITooltip } from '@/components/ui/kpi-tooltip';
 import { Layers, Scale, AlertTriangle, TrendingUp, Timer, BarChart3, History, Command, Users } from 'lucide-react';
-import { useSmartSequencing } from '@/features/jobs';
+import { useSmartSequencingWithActions } from '@/features/jobs';
 import { useLoadBalancing } from '@/features/analytics/hooks/useLoadBalancing';
 import { useBottleneckPrediction } from '@/features/analytics/hooks/useBottleneckPrediction';
 import { useEfficiencyAlertHistory } from '@/features/analytics/hooks/useEfficiencyAlertHistory';
@@ -26,7 +26,7 @@ import { VoiceButton } from '@/components/voice/VoiceCommands';
 
 export default function EfficiencyDashboard() {
   const navigate = useNavigate();
-  const { suggestions: sequencingSuggestions, totalSavings } = useSmartSequencing();
+  const { suggestions: sequencingSuggestions, totalSavings, applySequencing, isApplying: isApplyingSequencing } = useSmartSequencingWithActions();
   const { byTechnique, suggestions: balancingSuggestions } = useLoadBalancing();
   const { alerts, capacityByDate, criticalCount } = useBottleneckPrediction();
   const { alerts: allAlertHistory, resolvedAlerts, isLoading: historyLoading } = useEfficiencyAlertHistory();
@@ -101,7 +101,7 @@ export default function EfficiencyDashboard() {
               <TabsTrigger value="history" className="gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"><History className="h-3.5 w-3.5 sm:h-4 sm:w-4" /><span className="hidden xs:inline">Histórico</span></TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="sequencing" className="space-y-4"><SequencingTab suggestions={sequencingSuggestions} /></TabsContent>
+          <TabsContent value="sequencing" className="space-y-4"><SequencingTab suggestions={sequencingSuggestions} onApply={(s) => applySequencing(s).catch(() => undefined)} isApplying={isApplyingSequencing} /></TabsContent>
           <TabsContent value="balancing" className="space-y-4"><BalancingTab machineLoads={allMachineLoads} suggestions={balancingSuggestions} /></TabsContent>
           <TabsContent value="bottlenecks" className="space-y-4"><BottlenecksTab alerts={alerts} capacityByDate={capacityByDate} /></TabsContent>
           <TabsContent value="performance" className="space-y-4">
