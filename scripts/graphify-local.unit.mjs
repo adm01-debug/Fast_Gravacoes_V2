@@ -27,6 +27,7 @@ import {
   run,
   adoptInitial,
   assertResources,
+  installedRuntime,
 } from './graphify-local.mjs';
 
 function git(root, ...args) {
@@ -453,6 +454,24 @@ test('install preserva ambiente individual válido sem chamar CLI global', async
   assert.equal(result.exitCode, 0);
   assert.equal(result.report.runtime.prefix, f.env);
   await assert.rejects(readFile(f.graph), /ENOENT/);
+});
+
+test('install trata ambiente divergente do pin como reparavel em vez de aprovado', async (t) => {
+  const f = await fixture(t);
+  const ctx = {
+    root: f.root,
+    envRoot: f.env,
+    python: path.join(f.env, 'bin/python'),
+    env: {},
+    config: f.config,
+  };
+  assert.equal((await installedRuntime(ctx)).prefix, f.env);
+  assert.equal(
+    await installedRuntime({ ...ctx, config: { ...f.config, pin: '0.9.68' } }),
+    null
+  );
+  await rm(path.join(f.env, 'bin/python'));
+  assert.equal(await installedRuntime(ctx), null);
 });
 
 test('chaves do processo pai não chegam ao extrator', async (t) => {

@@ -538,6 +538,18 @@ async function runtime(ctx) {
     fail('Executável local tem versão divergente', 'missing_runtime');
   return { version: value.version, python, binary, prefix: value.prefix };
 }
+// `install` e o reparo explicito: ambiente existente que nao passa no runtime
+// local (pin antigo, binario ausente, symlink para CLI compartilhada) precisa
+// ser reconstruido do lock, nao reprovado. Sem isso o install falhava em
+// missing_runtime justamente para quem rodava install, sem outro caminho.
+export async function installedRuntime(ctx) {
+  try {
+    return await runtime(ctx);
+  } catch (e) {
+    if (e instanceof GraphError && e.status === 'missing_runtime') return null;
+    throw e;
+  }
+}
 export async function validateGraph(file, partial = false) {
   const descriptor = await open(
     file,
@@ -1009,11 +1021,16 @@ export async function main(args = process.argv.slice(2), options = {}) {
       report.status = 'marked';
     } else if (parsed.action === 'install') {
       release = await acquire(path.join(ctx.state, 'running.lock'));
-      if (await exists(ctx.python)) {
-        report.runtime = await runtime(ctx);
+      const hasPython = await exists(ctx.python),
+        current = hasPython ? await installedRuntime(ctx) : null;
+      if (current) {
+        report.runtime = current;
         report.status = 'installed';
       } else {
-        if (await exists(path.join(ctx.envRoot, 'pyvenv.cfg')))
+        if (
+          !hasPython &&
+          (await exists(path.join(ctx.envRoot, 'pyvenv.cfg')))
+        )
           fail(
             'Ambiente incompleto preservado; reparo precisa ser explícito',
             'missing_runtime'
