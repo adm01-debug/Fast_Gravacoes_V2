@@ -158,19 +158,24 @@ const callBridge = async (action: string, table: string, data: any) => {
 
 ## 5. Exemplos de Chamadas Reais
 
-### Exemplo: Buscar Logs de Auditoria via Hook
+### Exemplo: Buscar Ordens de Serviço via Hook
 ```typescript
 const { data, error } = await supabase.functions.invoke('external-db-bridge', {
   body: {
     action: 'select',
-    table: 'job_status_audit',
+    table: 'jobs',
     params: {
-      columns: '*, profiles:changed_by(full_name)',
+      columns: 'id, order_number, status, client',
       limit: 20
     }
   }
 });
 ```
+
+> Tabelas de auditoria e de segurança (`job_status_audit`, `audit_log`,
+> `user_roles`) ficam fora da allowlist do bridge — pedir uma delas responde
+> erro, nunca dados. A allowlist vive em
+> `supabase/functions/external-db-bridge/index.ts` (`ALLOWED_TABLES`).
 
 ### Exemplo: Executar RPC (Procedure)
 ```typescript

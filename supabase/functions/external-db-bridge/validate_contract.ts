@@ -12,7 +12,7 @@ async function testBridge() {
       name: "Select Action Contract",
       payload: {
         action: "select",
-        table: "job_status_audit",
+        table: "jobs",
         params: { limit: 1 }
       },
       validate: (res: any) => res.data && Array.isArray(res.data) && res.meta && typeof res.meta.duration_ms === "number"
@@ -25,6 +25,16 @@ async function testBridge() {
         params: { p_user_id: "00000000-0000-0000-0000-000000000000" } // Dummy UUID
       },
       validate: (res: any) => res.data !== undefined && res.meta
+    },
+    {
+      name: "Blocked Table Contract",
+      payload: {
+        action: "select",
+        // job_status_audit e a trilha de alteracao de OS: fica fora da
+        // allowlist (SEG-04) e precisa responder 400, nunca dados.
+        table: "job_status_audit"
+      },
+      validate: (res: any) => res.error && res.telemetry && res.telemetry.severity === "error"
     },
     {
       name: "Error Handling Contract",
