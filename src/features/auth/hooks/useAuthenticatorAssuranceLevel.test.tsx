@@ -111,15 +111,28 @@ describe('useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 0
   it('troca de sessao nao reusa a decisao da sessao anterior', async () => {
     userRef.current = null;
 
-    const { result, rerender } = renderHook(() => useAuthenticatorAssuranceLevel());
+    // O valor de cada renderizacao e registrado ANTES de os efeitos rodarem:
+    // e nessa janela que a decisao da sessao anonima podia vazar para a sessao
+    // recem-criada (o login navegava para "/" antes de saber que a nova sessao
+    // exige 2FA). Ler apenas `result.current` depois do `rerender` nao
+    // distingue o comportamento, porque o efeito ja reescreveu o estado.
+    const renders: Array<{ checked: boolean }> = [];
+
+    const { result, rerender } = renderHook(() => {
+      const value = useAuthenticatorAssuranceLevel();
+      renders.push({ checked: value.checked });
+      return value;
+    });
     await waitFor(() => expect(result.current.checked).toBe(true));
     expect(result.current.needsMfaChallenge).toBe(false);
 
-    // Login por senha: a decisao da sessao anonima nao pode valer para a nova.
     userRef.current = { id: 'u2' };
+    const firstAuthenticatedRender = renders.length;
     rerender();
 
-    expect(result.current.checked).toBe(false);
+    // Primeira renderizacao da sessao nova, ainda sem os efeitos: nao pode
+    // carregar a decisao ("liberado") da sessao anterior.
+    expect(renders[firstAuthenticatedRender].checked).toBe(false);
     await waitFor(() => expect(result.current.checked).toBe(true));
     expect(result.current.needsMfaChallenge).toBe(true);
     expect(result.current.challengeableFactorId).toBe('totp-1');
