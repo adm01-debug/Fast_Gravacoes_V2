@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8bee55491a2528e2c06515022c5a0b809cfe92e4",
+  "commit": "3026b04faf53f0edbc2863e623264ab716db1926",
   "branch": "main",
-  "data_commit": "2026-11-23T23:06:27-03:00",
+  "data_commit": "2026-11-24T00:19:26-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3026b04",
+    "data": "2026-11-24",
+    "assunto": "fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)"
+   },
    {
     "sha": "8bee554",
     "data": "2026-11-23",
@@ -126,15 +131,10 @@
     "sha": "eb7c327",
     "data": "2026-11-22",
     "assunto": "chore: atualiza dossies F-009 e F-012 para resolvidas (#250)"
-   },
-   {
-    "sha": "885b37c",
-    "data": "2026-11-22",
-    "assunto": "fix: troca de papel de usuario com delete+insert em user_roles (F-016) (#245)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 212,
+  "arquivos_mudados_7d": 213,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 128
+    "commits": 129
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1591,
   "arquivos_codigo": 1127,
-  "linhas_codigo": 190675,
+  "linhas_codigo": 190697,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -449,7 +449,7 @@
   },
   "scripts/maintenance": {
    "arquivos": 4,
-   "linhas": 3038
+   "linhas": 3060
   },
   "scripts/regras_negocio": {
    "arquivos": 5,

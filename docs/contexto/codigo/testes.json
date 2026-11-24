@@ -222,7 +222,7 @@
   {
    "arquivo": "scripts/maintenance/maintenance.unit.mjs",
    "tipo": "unit",
-   "linhas": 1095,
+   "linhas": 1117,
    "testa": [
     "scripts/maintenance/lib.mjs",
     "scripts/maintenance/run.mjs"
