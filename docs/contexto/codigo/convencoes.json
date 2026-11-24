@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: lista public.techniques no db-admin inspect (#284)",
    "feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)",
    "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)",
    "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)",
-   "fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)",
-   "fix: não reportar envio de notificação TPM sem provedor configurado (#278)"
+   "fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

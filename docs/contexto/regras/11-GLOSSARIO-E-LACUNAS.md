@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e16478a069` · branch `main` · 2026-11-24 12:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5bc2d128c9` · branch `main` · 2026-11-24 13:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-24T12:20:56Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-24T12:40:54Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -122,7 +122,7 @@
 | `technical_sheet_tips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | banco real |
 | `technical_sheet_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | banco real |
 | `technical_sheets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | banco real |
-| `techniques` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
+| `techniques` | Dicionario de tecnicas de personalizacao. Ids em minusculas sem acento; o Promo Design mapeia o texto livre da OS para estes ids via integration_technique_map. | 9 colunas | banco real |
 | `telemetry_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | banco real |
 | `tpm_execution_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | banco real |
 | `tpm_execution_audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | banco real |
@@ -281,7 +281,7 @@
 - `telemetry_traces.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 130/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …
+- 129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …
 - Há tabelas usadas no código que não existem no banco real (snapshot) — a chamada falha em produção ou a tabela ainda não foi criada.
 
 ## Regras manuais presentes

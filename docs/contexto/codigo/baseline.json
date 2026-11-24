@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e16478a069af801d76364365c62847f2b05da5ba",
+  "commit": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
   "branch": "main",
-  "data_commit": "2026-11-24T09:33:17-03:00",
+  "data_commit": "2026-11-24T10:36:53-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "5bc2d12",
+    "data": "2026-11-24",
+    "assunto": "chore: lista public.techniques no db-admin inspect (#284)"
+   },
    {
     "sha": "e16478a",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "75dc924",
     "data": "2026-11-22",
     "assunto": "fix: autorizacao le role_permissions do banco com fallback estatico (F-007) (#254)"
-   },
-   {
-    "sha": "82df446",
-    "data": "2026-11-22",
-    "assunto": "chore: atualiza dossie F-011 com push ativado (VAPID, PR #252) (#253)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -215,12 +215,12 @@
     "mudancas": 17
    },
    {
-    "arquivo": "AGENTS.md",
+    "arquivo": ".github/workflows/db-admin.yml",
     "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/db-admin.yml",
-    "mudancas": 9
+    "arquivo": "AGENTS.md",
+    "mudancas": 10
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 132
+    "commits": 133
    },
    {
     "autor": "devin-ai-integration[bot]",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e16478a069af801d76364365c62847f2b05da5ba",
+  "sha": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 12:36 UTC",
+  "generated_at": "2026-11-24 13:37 UTC",
   "files_total": 1595,
   "code_files": 1399,
   "code_lines": 207429
  },
  "version": "1.3.2",
- "facts_hash": "546ad221f1220b9c",
+ "facts_hash": "b1fa8b5c58cf11c8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -9335,7 +9335,7 @@
     ],
     "constraints": [],
     "src": "docs/contexto/supabase/snapshot.json",
-    "comment": "",
+    "comment": "Dicionario de tecnicas de personalizacao. Ids em minusculas sem acento; o Promo Design mapeia o texto livre da OS para estes ids via integration_technique_map.",
     "origin": "banco real"
    },
    "telemetry_traces": {
@@ -68753,7 +68753,7 @@
    "`telemetry_traces.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`tpm_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`tpm_notification_queue.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "130/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …",
+   "129/132 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `abc_activities`, `abc_activity_rates`, `abc_cost_pools`, `abc_job_costs`, `app_private.runtime_config`, `archived_jobs`, `audit_log`, `backup_logs`, `bitrix24_field_mappings`, `bitrix24_oauth_states`, `bitrix24_oauth_tokens`, `bitrix24_sync_history` …",
    "Há tabelas usadas no código que não existem no banco real (snapshot) — a chamada falha em produção ou a tabela ainda não foi criada."
   ]
  },
@@ -97396,10 +97396,19 @@
   }
  },
  "git": {
-  "sha": "e16478a069af801d76364365c62847f2b05da5ba",
+  "sha": "5bc2d128c98a35a57b2de74b5d18377b9dc98c94",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "5bc2d12",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: lista public.techniques no db-admin inspect (#284)",
+    "files": [
+     ".github/workflows/db-admin.yml"
+    ]
+   },
    {
     "sha": "e16478a",
     "date": "2026-11-24",
@@ -97761,15 +97770,6 @@
     "files": [
      "src/components/settings/UserManagement.tsx"
     ]
-   },
-   {
-    "sha": "a17c419",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: Kanban usa jobsService em vez de escrita direta em jobs (F-015) (#248)",
-    "files": [
-     "src/pages/KanbanBoard.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -97810,6 +97810,10 @@
     2
    ],
    [
+    ".github/workflows/db-admin.yml",
+    1
+   ],
+   [
     "supabase/migrations/20261124111000_add_techniques_personalizacao.sql",
     1
    ],
@@ -97847,10 +97851,6 @@
    ],
    [
     "src/lib/dateUtils.test.ts",
-    1
-   ],
-   [
-    "src/pages/EfficiencyDashboard.tsx",
     1
    ]
   ]
