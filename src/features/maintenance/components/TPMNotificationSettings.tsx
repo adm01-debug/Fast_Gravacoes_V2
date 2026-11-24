@@ -79,10 +79,11 @@ export function TPMNotificationSettings() {
     setIsSendingTest(true);
     const result = await sendTestNotification(testMachineId, testChannel, force);
 
-    if (result && result.needsValidation && result.machine) {
+    if (result?.needsValidation && result.machine) {
       setValidationData({ machine: result.machine, recipients: result.recipients as ValidationRecipient[] });
       setShowValidation(true);
-    } else if (result && result.success) {
+    } else {
+      // Em falha o toast já avisou; manter o diálogo aberto só geraria novo log de erro.
       setShowValidation(false);
     }
 
