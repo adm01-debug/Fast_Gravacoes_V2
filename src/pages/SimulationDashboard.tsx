@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Play, RotateCcw, AlertTriangle, CheckCircle2, Activity, Zap } from 'lucide-react';
-import { runMassiveSimulation as runSimulation, SimulationResult, generateScenarios } from '@/lib/simulation';
-const SCENARIOS = generateScenarios();
+import { runMassiveSimulation as runSimulation, SimulationResult, SCENARIOS, aggregateScenarioResults } from '@/lib/simulation';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell 
@@ -42,11 +41,7 @@ export default function SimulationDashboard() {
     failureRate: results.length > 0 ? (results.filter(r => r.status === 'fail').length / results.length) * 100 : 0
   };
 
-  const chartData = results.length > 0 ? SCENARIOS.map(s => ({
-    name: s.name,
-    passed: results.filter(r => r.scenarioId === s.id && r.status === 'pass').length,
-    failed: results.filter(r => r.scenarioId === s.id && r.status === 'fail').length
-  })) : [];
+  const chartData = results.length > 0 ? aggregateScenarioResults(results) : [];
 
   const pieData = [
     { name: 'Passou', value: stats.passed, color: 'hsl(var(--success))' },
@@ -101,7 +96,7 @@ export default function SimulationDashboard() {
               <CardContent>
                 <div className="text-3xl font-bold">{stats.total}</div>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">{SCENARIOS.length} variantes</Badge>
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">{SCENARIOS.length} categorias</Badge>
                 </div>
               </CardContent>
             </Card>

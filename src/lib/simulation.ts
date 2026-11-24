@@ -14,10 +14,12 @@ export interface SimulationScenario {
   payload?: SimulationPayload;
   expectedStatus: number;
   severity?: 'low' | 'medium' | 'high' | 'critical';
+  baseId?: string;
 }
 
 export interface SimulationResult {
   scenarioId: string;
+  scenarioBaseId: string;
   status: 'pass' | 'fail';
   statusCode: number;
   message: string;
@@ -73,13 +75,14 @@ export const generateScenarios = (count: number = 10): SimulationScenario[] => {
       scenarios.push({
         ...base,
         id: `fuzz-${i}-${Date.now()}`,
+        baseId: base.id,
         name: `Stress Attack Vector ${i}`,
         description: 'Automated robust stress & security test vector',
         payload: generateFuzzPayload(basePayload),
         expectedStatus: 400,
       });
     } else {
-      scenarios.push({ ...base, id: `${base.id}-${i}-${Date.now()}` });
+      scenarios.push({ ...base, id: `${base.id}-${i}-${Date.now()}`, baseId: base.id });
     }
   }
 
@@ -128,6 +131,7 @@ export async function runMassiveSimulation(
 
         results.push({
           scenarioId: scenario.id,
+          scenarioBaseId: scenario.baseId ?? scenario.id,
           status: isPass ? 'pass' : 'fail',
           statusCode: currentStatus,
           message: error?.message || (processed ? 'Processed' : 'Consistent'),
@@ -138,6 +142,7 @@ export async function runMassiveSimulation(
         const message = err instanceof Error ? err.message : String(err);
         results.push({
           scenarioId: scenario.id,
+          scenarioBaseId: scenario.baseId ?? scenario.id,
           status: 'fail',
           statusCode: 500,
           message,
@@ -165,3 +170,20 @@ export async function runMassiveSimulation(
 
   return results;
 }
+
+export interface ScenarioAggregate {
+  name: string;
+  passed: number;
+  failed: number;
+}
+
+/**
+ * Agrupa os resultados pelo cenário base (SCENARIOS), somando as variantes/fuzz
+ * geradas a partir dele.
+ */
+export const aggregateScenarioResults = (results: SimulationResult[]): ScenarioAggregate[] =>
+  SCENARIOS.map((scenario) => {
+    const group = results.filter((r) => r.scenarioBaseId === scenario.id);
+    const passed = group.filter((r) => r.status === 'pass').length;
+    return { name: scenario.name, passed, failed: group.length - passed };
+  });
