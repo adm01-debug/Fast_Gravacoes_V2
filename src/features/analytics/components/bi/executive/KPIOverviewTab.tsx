@@ -247,6 +247,8 @@ const KPIOverviewTabComponent = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Cores por status: o aria-label em cada Cell viaja para o setor do
+                Recharts (role="img"), que sem nome acessível cai em svg-img-alt. */}
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -259,7 +261,11 @@ const KPIOverviewTabComponent = ({
                   dataKey="value"
                 >
                   {statusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.color}
+                      aria-label={`${entry.name}: ${entry.value}`}
+                    />
                   ))}
                 </Pie>
                 <RechartsTooltip
