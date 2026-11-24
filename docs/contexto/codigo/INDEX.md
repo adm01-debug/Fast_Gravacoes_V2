@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `828487b36b55840f607f9d096cf26d247a097017` (2026-11-24T14:45:58-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9` (2026-11-24T17:59:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1604 |
 | arquivos_codigo | 1136 |
-| linhas_codigo | 191299 |
+| linhas_codigo | 191421 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8465 nós · 32258 arestas · 394 comunidades · grafo do commit `828487b3`
-- comunidades maiores: Card (217), client.ts (184), Input (153), MainLayout (146), DialogContent (137), lucide-react (136), Button (134), ScrollArea (133), cn (131), package.json (124), AppRoutes.tsx (124), react (120)
+- 8467 nós · 32264 arestas · 392 comunidades · grafo do commit `d5e8d2bf`
+- comunidades maiores: Input (169), Button (140), Badge (137), MainLayout (131), react (124), useSchedulingData (123), package.json (121), cn (117), CardTitle (116), generate.py (113), snapshot.py (111), Card (110)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-24 `d5e8d2b` fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)
 - 2026-11-24 `828487b` fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)
 - 2026-11-24 `3a296f2` fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)
 - 2026-11-24 `8777e18` chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `3026b04` fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)
 - 2026-11-23 `8bee554` fix: não reportar envio de notificação TPM sem provedor configurado (#278)
 - 2026-11-23 `c90ebd5` fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)
-- 2026-11-23 `17a3af4` fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

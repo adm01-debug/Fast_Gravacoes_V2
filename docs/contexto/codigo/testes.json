@@ -152,11 +152,11 @@
   {
    "arquivo": "scripts/graphify-local.unit.mjs",
    "tipo": "unit",
-   "linhas": 614,
+   "linhas": 710,
    "testa": [
     "scripts/graphify-local.mjs"
    ],
-   "casos": 26,
+   "casos": 30,
    "suporte": false
   },
   {

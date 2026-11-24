@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "828487b36b55840f607f9d096cf26d247a097017",
+  "commit": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
   "branch": "main",
-  "data_commit": "2026-11-24T14:45:58-03:00",
+  "data_commit": "2026-11-24T17:59:41-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d5e8d2b",
+    "data": "2026-11-24",
+    "assunto": "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)"
+   },
    {
     "sha": "828487b",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "1724af5",
     "data": "2026-11-23",
     "assunto": "fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)"
-   },
-   {
-    "sha": "4b0d871",
-    "data": "2026-11-23",
-    "assunto": "fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 236,
+  "arquivos_mudados_7d": 229,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 140
+    "commits": 141
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1604,
   "arquivos_codigo": 1136,
-  "linhas_codigo": 191299,
+  "linhas_codigo": 191421,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -429,11 +429,11 @@
   },
   "scripts/graphify-local.mjs": {
    "arquivos": 1,
-   "linhas": 1271
+   "linhas": 1297
   },
   "scripts/graphify-local.unit.mjs": {
    "arquivos": 1,
-   "linhas": 614
+   "linhas": 710
   },
   "scripts/graphify.mjs": {
    "arquivos": 1,
@@ -583,7 +583,7 @@
   },
   {
    "arquivo": "scripts/graphify-local.mjs",
-   "linhas": 1271
+   "linhas": 1297
   },
   {
    "arquivo": "scripts/automation.mjs",

@@ -288,7 +288,7 @@ Contagens de usuários em `stats.md` (apenas agregados — sem dados pessoais).
   "smtp_port": null,
   "smtp_sender_name": null,
   "smtp_user": null,
-  "uri_allow_list": "https://fast-gravacoes-v2-juca1.vercel.app/,https://fast-gravacoes-v2-juca1.vercel.app/**,https://fast-*-gravacoes-v2-juca1.vercel.app,https://fast-*-gravacoes-v2-juca1.vercel.app/**",
+  "uri_allow_list": "https://fast-gravacoes-v2.vercel.app,https://fast-gravacoes-v2.vercel.app/**,https://fast-*-gravacoes-v2.vercel.app,https://fast-*-gravacoes-v2.vercel.app/**,https://fast-gravacoes-v2-juca1.vercel.app/,https://fast-gravacoes-v2-juca1.vercel.app/**,https://fast-*-gravacoes-v2-juca1.vercel.app,https://fast-*-gravacoes-v2-juca1.vercel.app/**",
   "webauthn_rp_display_name": null,
   "webauthn_rp_id": null,
   "webauthn_rp_origins": null

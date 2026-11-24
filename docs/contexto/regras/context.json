@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "828487b36b55840f607f9d096cf26d247a097017",
+  "sha": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 17:48 UTC",
+  "generated_at": "2026-11-24 21:12 UTC",
   "files_total": 1602,
   "code_files": 1406,
-  "code_lines": 207820
+  "code_lines": 207942
  },
  "version": "1.3.2",
- "facts_hash": "997ba2ed289275ab",
+ "facts_hash": "0bfd74761701e55b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -27664,7 +27664,7 @@
   {
    "module": "scripts",
    "files": 63,
-   "lines": 26383,
+   "lines": 26505,
    "tables": [
     "a",
     "c1",
@@ -27708,7 +27708,7 @@
     "bundle-diff.mjs: validateReport, loadReport, buildDiffMarkdown, main",
     "bundle-report.mjs: DEFAULT_BUDGET, chunkNameFromFile, collectViolations, collectStaleBudgets, validateBudget, measureFiles",
     "check-any-baseline.mjs: isCounted, findAnyLines, collectAny, readBaseline, decide, main",
-    "graphify-local.mjs: GraphError, run, acquire, validateConfig, fingerprint, validateGraph",
+    "graphify-local.mjs: GraphError, run, acquire, validateConfig, fingerprint, installedRuntime",
     "rls-regression.mjs: signInWithRetry",
     "gerar.unit.mjs: AppRoutes, useContacts, Publicas, router, useDeFerramenta, a",
     "unused.mjs: runUnused",
@@ -69271,13 +69271,14 @@
   },
   "scripts/graphify-local.mjs": {
    "path": "scripts/graphify-local.mjs",
-   "lines": 1271,
+   "lines": 1297,
    "exports": [
     "class GraphError",
     "function run",
     "function acquire",
     "function validateConfig",
     "function fingerprint",
+    "function installedRuntime",
     "function validateGraph",
     "function assertResources",
     "function adoptInitial",
@@ -69315,7 +69316,7 @@
   },
   "scripts/graphify-local.unit.mjs": {
    "path": "scripts/graphify-local.unit.mjs",
-   "lines": 614,
+   "lines": 710,
    "env": [
     "GRAPHIFY_FIXTURE_",
     "GRAPHIFY_FIXTURE_SECRET",
@@ -97582,10 +97583,20 @@
   }
  },
  "git": {
-  "sha": "828487b36b55840f607f9d096cf26d247a097017",
+  "sha": "d5e8d2bf51e90597a2ca72b291c8bd7ba45bfdf9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d5e8d2b",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)",
+    "files": [
+     "scripts/graphify-local.mjs",
+     "scripts/graphify-local.unit.mjs"
+    ]
+   },
    {
     "sha": "828487b",
     "date": "2026-11-24",
@@ -97957,15 +97968,6 @@
     "files": [
      "src/features/maintenance/components/PredictiveHealthCard.tsx"
     ]
-   },
-   {
-    "sha": "0a50e73",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "docs: plano de 200 etapas de UX de navegacao (#260)",
-    "files": [
-     "docs/plano-ux-navegacao-200-etapas-261122.md"
-    ]
    }
   ],
   "hot_files": [
@@ -98014,6 +98016,14 @@
     2
    ],
    [
+    "scripts/graphify-local.mjs",
+    1
+   ],
+   [
+    "scripts/graphify-local.unit.mjs",
+    1
+   ],
+   [
     "src/lib/simulation.ts",
     1
    ],
@@ -98039,14 +98049,6 @@
    ],
    [
     "src/hooks/use-overflowing.ts",
-    1
-   ],
-   [
-    "src/pages/AdminTelemetriaPage.tsx",
-    1
-   ],
-   [
-    ".github/workflows/contexto.yml",
     1
    ]
   ]

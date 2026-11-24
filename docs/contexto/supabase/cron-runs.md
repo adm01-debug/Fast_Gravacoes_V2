@@ -7,27 +7,27 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-24 21:00:00 | succeeded | 3.13 | 1 row |
+| 2026-11-24 20:45:01 | succeeded | 4.20 | 1 row |
 | 2026-11-24 20:30:00 | succeeded | 2.77 | 1 row |
-| 2026-11-24 20:15:00 | succeeded | 0.49 | 1 row |
-| 2026-11-24 20:00:00 | succeeded | 2.99 | 1 row |
 
 
 ## 5 · cron-alert-email-every-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-24 21:00:00 | succeeded | 0.04 | 1 row |
 | 2026-11-24 20:30:00 | succeeded | 0.03 | 1 row |
 | 2026-11-24 20:00:00 | succeeded | 0.03 | 1 row |
-| 2026-11-24 19:30:00 | succeeded | 0.02 | 1 row |
 
 
 ## 6 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-24 20:35:00 | succeeded | 0.06 | 1 row |
-| 2026-11-24 20:30:00 | succeeded | 0.03 | 1 row |
-| 2026-11-24 20:25:00 | succeeded | 0.02 | 1 row |
+| 2026-11-24 21:10:00 | succeeded | 0.06 | 1 row |
+| 2026-11-24 21:05:00 | succeeded | 0.05 | 1 row |
+| 2026-11-24 21:00:00 | succeeded | 0.05 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -52,15 +52,15 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-24 20:35:00 | succeeded | 0.02 | 1 row |
-| 2026-11-24 20:30:00 | succeeded | 0.01 | 1 row |
-| 2026-11-24 20:25:00 | succeeded | 0.01 | 1 row |
+| 2026-11-24 21:10:00 | succeeded | 0.04 | 1 row |
+| 2026-11-24 21:05:00 | succeeded | 0.02 | 1 row |
+| 2026-11-24 21:00:00 | succeeded | 0.02 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-24 20:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-24 20:30:00 | succeeded | 0.03 | 1 row |
-| 2026-11-24 20:25:00 | succeeded | 0.01 | 1 row |
+| 2026-11-24 21:10:00 | succeeded | 0.05 | 1 row |
+| 2026-11-24 21:05:00 | succeeded | 0.05 | 1 row |
+| 2026-11-24 21:00:00 | succeeded | 0.05 | 1 row |

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)",
    "fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)",
    "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)",
    "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)",
-   "fix: restabelece EXECUTE de public.has_role para authenticated (#285)",
-   "fix: erp-api responde 400 (nao 500) em dado invalido (#280)"
+   "fix: restabelece EXECUTE de public.has_role para authenticated (#285)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
