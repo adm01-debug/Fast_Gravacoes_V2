@@ -1,6 +1,5 @@
 # docs:
-#   gatilho: PR para main e execução manual (o push pós-merge revalida o mesmo
-#   conteúdo já verificado na PR; remover o push corta o dobro de consumo de Actions).
+#   gatilho: PR para main e execução manual — o push pós-merge revalidaria o mesmo conteúdo já verificado na PR e dobraria o consumo de Actions.
 #   prova: Contratos estáticos e suites locais de automação em fixtures isoladas.
 #   falha: O job falha; nenhum patch, commit, publicação ou deploy é executado.
 #   avisa: O check fica vermelho no GitHub para o autor da PR e mantenedores.

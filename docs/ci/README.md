@@ -8,7 +8,7 @@
 
 | Workflow | Arquivo | Gatilho | O que prova | Quando falha | Quem é avisado | Custo/sem (min) | Falha (7 d) |
 |---|---|---|---|---|---|---|---|
-| Automação local | [`automation-local.yml`](../../.github/workflows/automation-local.yml) | PR para main, push em main e execução manual. | Contratos estáticos e suites locais de automação em fixtures isoladas. | O job falha; nenhum patch, commit, publicação ou deploy é executado. | O check fica vermelho no GitHub para o autor da PR e mantenedores. | — | — |
+| Automação local | [`automation-local.yml`](../../.github/workflows/automation-local.yml) | PR para main e execução manual — o push pós-merge revalidaria o mesmo conteúdo já verificado na PR e dobraria o consumo de Actions. | Contratos estáticos e suites locais de automação em fixtures isoladas. | O job falha; nenhum patch, commit, publicação ou deploy é executado. | O check fica vermelho no GitHub para o autor da PR e mantenedores. | — | — |
 | Branch Hygiene Audit | [`branch-hygiene-audit.yml`](../../.github/workflows/branch-hygiene-audit.yml) | agendado (segunda 07:56 UTC) e dispatch | issue [branch-hygiene] com patch-equivalentes, abandonadas, PRs paradas e comando de poda pronto; issue [kpi-actions] com o consumo de Actions da semana | o job fica vermelho e as issues não são atualizadas | issues [branch-hygiene] e [kpi-actions] (uma de cada, atualizadas no lugar) | — | — |
 | Contexto para agentes de IA (30 min) | [`contexto.yml`](../../.github/workflows/contexto.yml) | push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada 30 min (minutos 3 e 33); dispatch | branch contexto com docs/contexto/{codigo,supabase,regras}/ regerados das três fontes de verdade (código em main, banco oficial, código+migrations+manual/) e docs/contexto/00-INDEX.md montado a partir dos manifests | falha fatal de produtor reprova o workflow; fontes com artefato publicam e as demais mantêm a última versão; erro de download impede a publicação | ninguém (a branch contexto é a prova; errors.md em supabase/ e erros_do_gerador em codigo/ listam seções com falha) | — | — |
 | Dependency Review | [`dependency-review.yml`](../../.github/workflows/dependency-review.yml) | PR para main. | Nenhuma dependência nova do PR tem vulnerabilidade conhecida de severidade alta ou crítica. | O job falha listando a dependência e o CVE; PRs do Dependabot e de forks são pulados. | O check fica vermelho no GitHub para o autor da PR. | — | — |
@@ -19,7 +19,7 @@
 
 ### Automação local (`automation-local.yml`)
 
-- **Gatilho:** PR para main, push em main e execução manual.
+- **Gatilho:** PR para main e execução manual — o push pós-merge revalidaria o mesmo conteúdo já verificado na PR e dobraria o consumo de Actions.
 - **O que prova:** Contratos estáticos e suites locais de automação em fixtures isoladas.
 - **Quando falha:** O job falha; nenhum patch, commit, publicação ou deploy é executado.
 - **Quem é avisado:** O check fica vermelho no GitHub para o autor da PR e mantenedores.
