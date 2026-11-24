@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -58,8 +58,28 @@ function renderScheduling() {
 
 const MACHINE_A = { id: 'machine-a', name: 'Laser 01', technique_id: 'tech-1' };
 
+// O hook agrupa por dia no fuso local; toISOString() devolve o dia em UTC e
+// divergia entre 21h e 23h59 em São Paulo. Meio-dia local converte de volta
+// para o mesmo dia em qualquer fuso.
+function localDate(offsetDays = 0): string {
+  const d = new Date();
+  d.setDate(d.getDate() - offsetDays);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function localNoonIso(offsetDays = 0): string {
+  const d = new Date();
+  d.setDate(d.getDate() - offsetDays);
+  d.setHours(12, 0, 0, 0);
+  return d.toISOString();
+}
+
 describe('useSchedulingData', () => {
   beforeEach(() => {
+    // Relógio fixo ao meio-dia local: fixtures e hook leem a mesma data mesmo
+    // se a meia-noite passar durante a execução. shouldAdvanceTime mantém os
+    // timers reais avançando (waitFor e o backoff de retry continuam funcionando).
+    vi.useFakeTimers({ shouldAdvanceTime: true, now: new Date().setHours(12, 0, 0, 0) });
     getAllJobsMock.mockReset();
     getAllMachinesMock.mockReset();
     useAuthMock.mockReset();
@@ -69,6 +89,10 @@ describe('useSchedulingData', () => {
     getAllMachinesMock.mockResolvedValue([MACHINE_A]);
     supabaseTableData.profiles = { data: [{ id: 'op-1', full_name: 'Operador X', avatar_url: null }], error: null };
     supabaseTableData.techniques = { data: [{ id: 'tech-1', name: 'Bordado' }], error: null };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('mantém as consultas desabilitadas quando não há usuário autenticado', async () => {
@@ -130,7 +154,7 @@ describe('useSchedulingData', () => {
   });
 
   it('stats: agrega contagens por status e soma peças, incluindo os contadores "hoje"', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDate();
     const yesterday = '2000-01-01';
 
     getAllJobsMock.mockResolvedValue([
@@ -169,12 +193,7 @@ describe('useSchedulingData', () => {
   });
 
   it('capacityTrend classifica risco por carga: high (>480), medium (>300), low (<=300)', async () => {
-    const today = new Date();
-    const d = (offset: number) => {
-      const dt = new Date(today);
-      dt.setDate(today.getDate() - offset);
-      return dt.toISOString().split('T')[0];
-    };
+    const d = (offset: number) => localDate(offset);
 
     getAllJobsMock.mockResolvedValue([
       { id: 'high-1', scheduled_date: d(0), estimated_duration: 500 },
@@ -196,13 +215,13 @@ describe('useSchedulingData', () => {
   });
 
   it('oeeTrend: dia sem jobs finalizados fica com oee 0; job finalizado sem horários reais fica com oee 100', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDate();
 
     getAllJobsMock.mockResolvedValue([
       {
         id: 'finished-no-actuals',
         status: 'finished',
-        actual_end_time: `${today}T18:00:00.000Z`,
+        actual_end_time: localNoonIso(),
         actual_start_time: null,
         estimated_duration: 60,
       },
