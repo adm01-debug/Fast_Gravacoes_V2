@@ -138,6 +138,19 @@ serve(async (req: Request) => {
     }
   } catch (error: unknown) {
     log.error("handler.error", error);
+    // Erro de dado (classe 22) ou de integridade (classe 23: FK, unique, check)
+    // vem do corpo enviado, nao do servidor. Sem 4xx explicito um technique_id
+    // inexistente vira 500 e o integrador retenta para sempre em vez de tratar
+    // como falha permanente do evento.
+    const pg = error as { code?: string; message?: string; details?: string } | null;
+    if (pg && typeof pg.code === "string" && /^(22|23)/.test(pg.code)) {
+      return new Response(JSON.stringify({
+        error: pg.message ?? 'Invalid data',
+        code: pg.code,
+        details: pg.details,
+        requestId,
+      }), { status: 400, headers: jsonHeaders });
+    }
     return new Response(JSON.stringify({ error: 'Internal Server Error', requestId }), { status: 500, headers: jsonHeaders });
   }
 
