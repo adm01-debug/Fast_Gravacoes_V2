@@ -148,7 +148,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || inputs.graphify
         continue-on-error: true # grafo é extra: se falhar, o inventário sai sem ele
         env:
-          GRAPHIFY_VERSION: '0.9.48' # mesma versão de graphify.config.json
+          GRAPHIFY_VERSION: '0.9.115' # mesma versão de graphify.config.json
         run: |
           if ! command -v uvx >/dev/null 2>&1; then pip install --quiet --user uv && export PATH="$HOME/.local/bin:$PATH"; fi
           uvx --from "graphifyy[sql]==${GRAPHIFY_VERSION}" graphify update . --force

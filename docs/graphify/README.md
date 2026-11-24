@@ -1,13 +1,14 @@
 # Graphify no FAST GRAVAÇÕES V2
 
 O Graphify é uma ferramenta de engenharia para consultar a estrutura do repositório.
-A integração usa `graphifyy[sql]==0.9.48`, extração AST local e grafos direcionados.
+A integração usa `graphifyy[sql]==0.9.115`, extração AST local e grafos direcionados.
 Não exige credencial de LLM, Supabase ou acesso ao banco. As consultas retornam
 contexto estrutural; cabe ao desenvolvedor verificar o código e os testes.
 
 ## Instalação e primeiro uso
 
-Requisitos: Node.js 22 e Python 3.11. `uv` é recomendado; sem ele, Python precisa
+Requisitos: Node.js 22 e Python 3.11.5 ou mais novo da série 3.11 (a 0.9.115 exige
+`>=3.11.5`). `uv` é recomendado; sem ele, Python precisa
 do módulo `venv`/`ensurepip`. A plataforma exercitada nesta entrega é Linux.
 
 ```bash
