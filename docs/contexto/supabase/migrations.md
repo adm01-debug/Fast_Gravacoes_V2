@@ -262,3 +262,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261125130000 | [jobs_external_ref](migrations/20261125130000_jobs_external_ref.sql) | 3 |
 | 20261125170000 | [restore_erp_api_keys](migrations/20261125170000_restore_erp_api_keys.sql) | 5 |
 | 20261126100000 | [f011_rpc_apply_job_sequence](migrations/20261126100000_f011_rpc_apply_job_sequence.sql) | 3 |
+| 20261126110000 | [restore_public_has_role_execute](migrations/20261126110000_restore_public_has_role_execute.sql) | 1 |
