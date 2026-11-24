@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)",
    "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)",
    "fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)",
    "fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)",
-   "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)",
-   "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)"
+   "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

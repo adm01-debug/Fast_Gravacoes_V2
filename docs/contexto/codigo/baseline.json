@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
+  "commit": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
   "branch": "main",
-  "data_commit": "2026-11-24T22:47:38Z",
+  "data_commit": "2026-11-24T20:52:46-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "fc44f91",
+    "data": "2026-11-24",
+    "assunto": "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)"
+   },
    {
     "sha": "fa8cd71",
     "data": "2026-11-24",
@@ -126,19 +131,14 @@
     "sha": "156312d",
     "data": "2026-11-23",
     "assunto": "fix: corrige import typescript para ESM namespace (TS7) (#270)"
-   },
-   {
-    "sha": "390d6da",
-    "data": "2026-11-23",
-    "assunto": "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 231,
+  "arquivos_mudados_7d": 232,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 44
+    "mudancas": 45
    },
    {
     "pasta": "src/features/maintenance",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 145
+    "commits": 146
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1608,
   "arquivos_codigo": 1139,
-  "linhas_codigo": 191909,
+  "linhas_codigo": 191915,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 336,
-   "linhas": 47591
+   "linhas": 47597
   },
   "src/hooks": {
    "arquivos": 63,

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
+  "sha": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 23:12 UTC",
+  "generated_at": "2026-11-24 23:53 UTC",
   "files_total": 1606,
   "code_files": 1410,
-  "code_lines": 208575
+  "code_lines": 208581
  },
  "version": "1.3.2",
- "facts_hash": "99eb7264579841d1",
+ "facts_hash": "af6c81b151807bc6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -28361,7 +28361,7 @@
   {
    "module": "src/features/analytics",
    "files": 80,
-   "lines": 12134,
+   "lines": 12140,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -80444,7 +80444,7 @@
   },
   "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx": {
    "path": "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
-   "lines": 365,
+   "lines": 371,
    "exports": [
     "const KPIOverviewTab"
    ]
@@ -97811,10 +97811,19 @@
   }
  },
  "git": {
-  "sha": "fa8cd714d098f6b3c6121763fe5502b55bc363b4",
+  "sha": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "fc44f91",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)",
+    "files": [
+     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx"
+    ]
+   },
    {
     "sha": "fa8cd71",
     "date": "2026-11-24",
@@ -98161,15 +98170,6 @@
      "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
      "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
     ]
-   },
-   {
-    "sha": "4b0d871",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrige triggers de auditoria de jobs que quebravam updates (F-009) (#244)",
-    "files": [
-     "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -98204,6 +98204,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
+    1
    ],
    [
     "src/features/auth/services/authService.test.ts",
@@ -98247,10 +98251,6 @@
    ],
    [
     "src/pages/SimulationDashboard.tsx",
-    1
-   ],
-   [
-    "src/test/simulationAggregation.test.ts",
     1
    ]
   ]

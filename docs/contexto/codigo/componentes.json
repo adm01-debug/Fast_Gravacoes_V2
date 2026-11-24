@@ -7300,7 +7300,7 @@
     "KPIOverviewTab"
    ],
    "export_default": null,
-   "linhas": 365,
+   "linhas": 371,
    "dominio": "features/analytics",
    "hooks_locais": [],
    "tabelas": [],
