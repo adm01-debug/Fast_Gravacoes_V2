@@ -87,6 +87,7 @@ export const jobsService = {
       // motivo; a tela precisa barrar antes de chegar no banco.
       const reason = cancelReason?.trim();
       if (!reason) throw new Error('Informe o motivo do cancelamento.');
+      if (reason.length > 2000) throw new Error('O motivo do cancelamento deve ter no máximo 2000 caracteres.');
       updateData.cancel_reason = reason;
     }
 

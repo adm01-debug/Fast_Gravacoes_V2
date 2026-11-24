@@ -507,6 +507,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
               onChange={(e) => setCancelReason(e.target.value)}
               placeholder="Ex.: cliente desistiu do pedido"
               rows={3}
+              maxLength={2000}
             />
           </div>
           <div className="flex justify-end gap-2">

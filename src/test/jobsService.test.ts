@@ -240,6 +240,16 @@ describe('jobsService.updateStatus', () => {
       'Informe o motivo do cancelamento.',
     );
   });
+
+  it('refuses a cancel_reason longer than the 2000-character limit', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    await expect(jobsService.updateStatus('job-1', 'cancelled', 'x'.repeat(2001))).rejects.toThrow(
+      'O motivo do cancelamento deve ter no máximo 2000 caracteres.',
+    );
+  });
 });
 
 // ── delete ─────────────────────────────────────────────────
