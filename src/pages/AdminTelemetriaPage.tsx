@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/immutability, react-hooks/exhaustive-deps -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
 import { useState, useEffect } from "react";
+import { StackTrace } from "@/components/error/StackTrace";
 import { format } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { logger } from "@/lib/logger";
@@ -554,9 +555,7 @@ export default function AdminTelemetriaPage() {
                             {err.stack && (
                               <div className="bg-muted/30 p-3 rounded-lg border">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Stack Trace</p>
-                                <pre className="text-[10px] font-mono whitespace-pre-wrap break-all text-muted-foreground max-h-32 overflow-auto">
-                                  {err.stack}
-                                </pre>
+                                <StackTrace text={err.stack} />
                               </div>
                             )}
                             <div className="flex items-center justify-between text-[10px]">
