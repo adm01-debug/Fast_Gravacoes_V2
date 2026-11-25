@@ -7,27 +7,27 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-25 18:30:02 | succeeded | 5.48 | 1 row |
-| 2026-11-25 18:15:00 | succeeded | 4.00 | 1 row |
-| 2026-11-25 18:00:02 | succeeded | 8.20 | 1 row |
+| 2026-11-25 20:00:00 | succeeded | 5.05 | 1 row |
+| 2026-11-25 19:45:00 | succeeded | 4.04 | 1 row |
+| 2026-11-25 19:30:00 | succeeded | 4.47 | 1 row |
 
 
 ## 5 · cron-alert-email-every-30min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-25 18:30:02 | succeeded | 0.34 | 1 row |
-| 2026-11-25 18:00:01 | succeeded | 0.11 | 1 row |
-| 2026-11-25 17:30:00 | succeeded | 0.05 | 1 row |
+| 2026-11-25 20:00:00 | succeeded | 0.05 | 1 row |
+| 2026-11-25 19:30:00 | succeeded | 0.05 | 1 row |
+| 2026-11-25 19:00:00 | succeeded | 0.04 | 1 row |
 
 
 ## 6 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-25 18:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-25 18:30:02 | succeeded | 0.50 | 1 row |
-| 2026-11-25 18:25:00 | succeeded | 0.03 | 1 row |
+| 2026-11-25 20:10:00 | succeeded | 0.17 | 1 row |
+| 2026-11-25 20:05:00 | succeeded | 0.05 | 1 row |
+| 2026-11-25 20:00:00 | succeeded | 0.05 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -52,18 +52,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-25 18:35:00 | succeeded | 0.02 | 1 row |
-| 2026-11-25 18:30:02 | succeeded | 0.22 | 1 row |
-| 2026-11-25 18:25:00 | succeeded | 0.01 | 1 row |
+| 2026-11-25 20:10:00 | succeeded | 0.06 | 1 row |
+| 2026-11-25 20:05:00 | succeeded | 0.03 | 1 row |
+| 2026-11-25 20:00:00 | succeeded | 0.02 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-25 18:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-25 18:30:02 | succeeded | 0.36 | 1 row |
-| 2026-11-25 18:25:00 | succeeded | 0.03 | 1 row |
+| 2026-11-25 20:10:00 | succeeded | 0.18 | 1 row |
+| 2026-11-25 20:05:00 | succeeded | 0.05 | 1 row |
+| 2026-11-25 20:00:00 | succeeded | 0.05 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
