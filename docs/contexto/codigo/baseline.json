@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "760ed63904f67d3cd9b78cc9720914aad2fc899d",
+  "commit": "035151111f900d91454a08cc1543c422790417ae",
   "branch": "main",
-  "data_commit": "2026-11-25T12:28:59-03:00",
+  "data_commit": "2026-11-25T12:38:02-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "0351511",
+    "data": "2026-11-25",
+    "assunto": "infra: publica push_notifications no realtime (#308)"
+   },
    {
     "sha": "760ed63",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "fb794d1",
     "data": "2026-11-24",
     "assunto": "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)"
-   },
-   {
-    "sha": "bede01f",
-    "data": "2026-11-24",
-    "assunto": "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 255,
+  "arquivos_mudados_7d": 260,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -149,12 +149,12 @@
     "mudancas": 27
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 25
+    "pasta": "src/features/notifications",
+    "mudancas": 26
    },
    {
-    "pasta": "src/features/notifications",
-    "mudancas": 23
+    "pasta": "src/features/auth",
+    "mudancas": 25
    },
    {
     "pasta": "src/components/dashboard",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 154
+    "commits": 155
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1613,
-  "arquivos_codigo": 1144,
-  "linhas_codigo": 193442,
+  "arquivos_total": 1615,
+  "arquivos_codigo": 1145,
+  "linhas_codigo": 193672,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,9 +339,9 @@
   "hooks": 197,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 260,
+  "migrations": 261,
   "cron_jobs": 4,
-  "testes": 145,
+  "testes": 146,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 336,
-   "linhas": 47845
+   "linhas": 47912
   },
   "src/hooks": {
    "arquivos": 63,
@@ -516,8 +516,8 @@
    "linhas": 84
   },
   "src/pages": {
-   "arquivos": 62,
-   "linhas": 17781
+   "arquivos": 63,
+   "linhas": 17944
   },
   "src/providers": {
    "arquivos": 2,

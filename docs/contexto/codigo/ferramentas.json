@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1080)",
-   "SQL (268)",
+   "TypeScript (1081)",
+   "SQL (269)",
    "Markdown (108)",
    "JavaScript (54)",
    "JSON (33)",
@@ -1001,7 +1001,7 @@
    "activity-feed",
    "admin-telemetry-realtime",
    "chat-${channel}",
-   "notifications-page-realtime",
+   "notifications-page-realtime-${userId}",
    "shift-handovers-realtime",
    "user-favorites-${user.id}"
   ]

@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 145,
+ "total": 146,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 120
+  "unit": 121
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 108
+   "arquivos": 109
   },
   {
    "padrao": "tests/",
@@ -659,12 +659,12 @@
   {
    "arquivo": "src/features/notifications/hooks/useNotifications.test.ts",
    "tipo": "unit",
-   "linhas": 86,
+   "linhas": 124,
    "testa": [
     "src/features/notifications/hooks/useNotifications.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 2,
+   "casos": 3,
    "suporte": false
   },
   {
@@ -926,6 +926,16 @@
    "linhas": 103,
    "testa": [
     "src/pages/LogisticsPage.tsx"
+   ],
+   "casos": 2,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/pages/NotificationsPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/pages/NotificationsPage.tsx"
    ],
    "casos": 2,
    "suporte": false
@@ -1621,6 +1631,7 @@
   "src/pages/InventoryPage.tsx": 1,
   "src/pages/KanbanBoard.tsx": 1,
   "src/pages/LogisticsPage.tsx": 1,
+  "src/pages/NotificationsPage.tsx": 1,
   "src/pages/PendingQueue.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
   "supabase/functions/_shared/contracts.ts": 4,
@@ -1659,7 +1670,6 @@
    "src/pages/MonthlyCalendar.tsx",
    "src/pages/NewJobPage.tsx",
    "src/pages/NotFound.tsx",
-   "src/pages/NotificationsPage.tsx",
    "src/pages/OEEDashboard.tsx",
    "src/pages/OperatorHistoryPage.tsx",
    "src/pages/OperatorProductivityPage.tsx",

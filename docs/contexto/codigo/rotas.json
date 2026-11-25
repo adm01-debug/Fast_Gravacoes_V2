@@ -6141,7 +6141,7 @@
     "daily-maintenance-summary"
    ],
    "canais_realtime": [
-    "notifications-page-realtime"
+    "notifications-page-realtime-${userId}"
    ],
    "flags": [],
    "papeis": [

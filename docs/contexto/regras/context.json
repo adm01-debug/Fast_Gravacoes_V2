@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "760ed63904f67d3cd9b78cc9720914aad2fc899d",
+  "sha": "035151111f900d91454a08cc1543c422790417ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 15:29 UTC",
-  "files_total": 1611,
-  "code_files": 1415,
-  "code_lines": 210108
+  "generated_at": "2026-11-25 15:38 UTC",
+  "files_total": 1613,
+  "code_files": 1417,
+  "code_lines": 210376
  },
  "version": "1.3.2",
- "facts_hash": "17e943bc2e518bb5",
+ "facts_hash": "12e0243bfea3567e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,9 +279,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 674,
+   ".tsx": 675,
    ".ts": 406,
-   ".sql": 268,
+   ".sql": 269,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19644,6 +19644,7 @@
    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
+   "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -23848,6 +23849,37 @@
     "invokes_transitive": [],
     "rpc_transitive": [],
     "deps_count": 15
+   },
+   {
+    "path": "",
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "component": "NotificationsPage.test",
+    "tables_transitive": [
+     "daily_summaries",
+     "efficiency_alert_history",
+     "error_logs",
+     "jobs",
+     "machine_predictions",
+     "machines",
+     "maintenance_alerts",
+     "packaging_tasks",
+     "prediction_history",
+     "profiles",
+     "push_notifications",
+     "push_subscriptions",
+     "role_permissions",
+     "tpm_notification_logs",
+     "user_notification_settings",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "check-login-lockout",
+     "daily-maintenance-summary",
+     "ml-predictions",
+     "send-push-notification"
+    ],
+    "rpc_transitive": [],
+    "deps_count": 108
    },
    {
     "path": "",
@@ -29181,7 +29213,7 @@
   {
    "module": "src/features/notifications",
    "files": 28,
-   "lines": 4502,
+   "lines": 4569,
    "tables": [
     "machine_predictions",
     "machines",
@@ -29864,8 +29896,8 @@
   },
   {
    "module": "src/pages",
-   "files": 62,
-   "lines": 17781,
+   "files": 63,
+   "lines": 17944,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -30007,6 +30039,7 @@
     "src/pages/MonthlyCalendar.tsx",
     "src/pages/NewJobPage.tsx",
     "src/pages/NotFound.tsx",
+    "src/pages/NotificationsPage.test.tsx",
     "src/pages/NotificationsPage.tsx",
     "src/pages/OEEDashboard.tsx",
     "src/pages/OperatorHistoryPage.tsx",
@@ -30374,8 +30407,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 260,
-   "lines": 16010,
+   "files": 261,
+   "lines": 16048,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -33322,7 +33355,7 @@
    "chat-${channel}": [
     "src/components/chat/QuickChat.tsx"
    ],
-   "notifications-page-realtime": [
+   "notifications-page-realtime-${userId}": [
     "src/pages/NotificationsPage.tsx"
    ],
    "shift-handovers-realtime": [
@@ -36225,7 +36258,7 @@
    },
    {
     "file": "src/pages/NotificationsPage.tsx",
-    "msg": ");\n    toast.info("
+    "msg": ");\n    const label = type === "
    },
    {
     "file": "src/pages/PackagingKioskPage.tsx",
@@ -43256,6 +43289,11 @@
     "value": "8"
    },
    {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
+    "name": "NOTIFIED_PUSH_IDS_LIMIT",
+    "value": "200"
+   },
+   {
     "file": "src/features/packaging/components/PackagingSlaOverridesManager.tsx",
     "name": "NONE_TECH",
     "value": "'__none__'"
@@ -47581,19 +47619,13 @@
    {
     "file": "src/features/notifications/components/NotificationsList.tsx",
     "field": "type",
-    "value": "maintenance",
-    "kind": "compara"
-   },
-   {
-    "file": "src/features/notifications/components/NotificationsList.tsx",
-    "field": "type",
-    "value": "prediction",
-    "kind": "compara"
-   },
-   {
-    "file": "src/features/notifications/components/NotificationsList.tsx",
-    "field": "type",
     "value": "summary",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/notifications/components/NotificationsList.tsx",
+    "field": "type",
+    "value": "personal",
     "kind": "compara"
    },
    {
@@ -49159,14 +49191,8 @@
    {
     "file": "src/pages/NotificationsPage.tsx",
     "field": "type",
-    "value": "maintenance",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/NotificationsPage.tsx",
-    "field": "type",
-    "value": "prediction",
-    "kind": "compara"
+    "value": "personal",
+    "kind": "escreve"
    },
    {
     "file": "src/pages/NotificationsPage.tsx",
@@ -49182,8 +49208,8 @@
    },
    {
     "file": "src/pages/NotificationsPage.tsx",
-    "field": "status",
-    "value": "SUBSCRIBED",
+    "field": "type",
+    "value": "summary",
     "kind": "compara"
    },
    {
@@ -49202,6 +49228,60 @@
     "file": "src/pages/NotificationsPage.tsx",
     "field": "type",
     "value": "summary",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "status",
+    "value": "SUBSCRIBED",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "urgent",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "error",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "warning",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "success",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "maintenance",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "prediction",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "summary",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "personal",
     "kind": "compara"
    },
    {
@@ -52929,6 +53009,10 @@
     "name": "should handle unread count"
    },
    {
+    "file": "src/features/notifications/hooks/useNotifications.test.ts",
+    "name": "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT"
+   },
+   {
     "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
     "name": "useTPMNotifications.sendTestNotification"
    },
@@ -53775,6 +53859,18 @@
    {
     "file": "src/pages/LogisticsPage.test.tsx",
     "name": "repetir o atalho em envio ja entregue e impossivel e preserva a data original"
+   },
+   {
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "name": "NotificationsPage - avisos pessoais na Central"
+   },
+   {
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "name": "lista o aviso pessoal que gerou o contador do sino"
+   },
+   {
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "name": "rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso"
    },
    {
     "file": "src/pages/PendingQueue.test.tsx",
@@ -57135,6 +57231,10 @@
    {
     "file": "src/features/notifications/hooks/useMLPredictionNotifications.ts",
     "call": "sendNotification"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
+    "call": "notifyPushOnce"
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
@@ -63627,6 +63727,7 @@
       "compara:src/features/analytics/components/bi/AIInsights.tsx",
       "compara:src/features/analytics/components/bi/BIAIInsights.tsx",
       "compara:src/features/packaging/hooks/useSoundFeedback.ts",
+      "compara:src/pages/NotificationsPage.tsx",
       "escreve:src/components/dashboard/AlertsWidget.tsx",
       "escreve:src/components/feedback/FeedbackProvider.tsx",
       "escreve:src/components/operators/AIWorkforceAdvisor.tsx",
@@ -63709,6 +63810,7 @@
       "compara:src/features/analytics/components/bi/AIInsights.tsx",
       "compara:src/features/analytics/components/bi/BIAIInsights.tsx",
       "compara:src/features/packaging/hooks/useSoundFeedback.ts",
+      "compara:src/pages/NotificationsPage.tsx",
       "escreve:src/components/feedback/FeedbackProvider.tsx",
       "escreve:src/components/operators/AIWorkforceAdvisor.tsx",
       "escreve:src/features/analytics/components/bi/AIInsights.tsx",
@@ -63719,6 +63821,7 @@
      ],
      "error": [
       "compara:src/features/packaging/hooks/useSoundFeedback.ts",
+      "compara:src/pages/NotificationsPage.tsx",
       "escreve:src/components/feedback/FeedbackProvider.tsx",
       "escreve:src/features/notifications/components/ToastWithUndo.tsx",
       "escreve:src/hooks/useSmartDelayAlerts.ts",
@@ -63931,6 +64034,11 @@
       "compara:src/pages/NotificationsPage.tsx",
       "escreve:src/pages/NotificationsPage.tsx"
      ],
+     "personal": [
+      "compara:src/features/notifications/components/NotificationsList.tsx",
+      "compara:src/pages/NotificationsPage.tsx",
+      "escreve:src/pages/NotificationsPage.tsx"
+     ],
      "promise": [
       "compara:src/features/notifications/components/ToastWithUndo.tsx"
      ],
@@ -64035,6 +64143,9 @@
      "priority": [
       "compara:src/pages/Bitrix24ConfigPage.tsx",
       "escreve:src/pages/Bitrix24ConfigPage.tsx"
+     ],
+     "urgent": [
+      "compara:src/pages/NotificationsPage.tsx"
      ],
      "recovery": [
       "compara:src/pages/ResetPasswordPage.tsx"
@@ -85444,7 +85555,7 @@
   },
   "src/features/notifications/components/NotificationsList.tsx": {
    "path": "src/features/notifications/components/NotificationsList.tsx",
-   "lines": 111,
+   "lines": 119,
    "exports": [
     "function NotificationsList"
    ],
@@ -85466,17 +85577,12 @@
     },
     {
      "field": "type",
-     "value": "maintenance",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "prediction",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
      "value": "summary",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "personal",
      "kind": "compara"
     }
    ]
@@ -85869,17 +85975,18 @@
   },
   "src/features/notifications/hooks/useNotifications.test.ts": {
    "path": "src/features/notifications/hooks/useNotifications.test.ts",
-   "lines": 86,
+   "lines": 124,
    "is_test": true,
    "tests": [
     "useNotifications",
     "should fetch and transform notifications correctly",
-    "should handle unread count"
+    "should handle unread count",
+    "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT"
    ]
   },
   "src/features/notifications/hooks/useNotifications.ts": {
    "path": "src/features/notifications/hooks/useNotifications.ts",
-   "lines": 216,
+   "lines": 237,
    "exports": [
     "function useNotifications",
     "function notifyStatusChange"
@@ -85941,6 +86048,12 @@
     "Not authenticated",
     "Sem permissão ou registro inexistente"
    ],
+   "params": [
+    {
+     "name": "NOTIFIED_PUSH_IDS_LIMIT",
+     "value": "200"
+    }
+   ],
    "status_values": [
     {
      "field": "status",
@@ -85980,6 +86093,7 @@
     "useNotifications"
    ],
    "side_effects": [
+    "notifyPushOnce",
     "notifyStatusChange"
    ]
   },
@@ -92382,9 +92496,22 @@
     "transition={{ delay: index * 0.05 }}"
    ]
   },
+  "src/pages/NotificationsPage.test.tsx": {
+   "path": "src/pages/NotificationsPage.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "errors": [
+    ",\n  source_system: "
+   ],
+   "tests": [
+    "NotificationsPage - avisos pessoais na Central",
+    "lista o aviso pessoal que gerou o contador do sino",
+    "rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso"
+   ]
+  },
   "src/pages/NotificationsPage.tsx": {
    "path": "src/pages/NotificationsPage.tsx",
-   "lines": 177,
+   "lines": 211,
    "exports": [
     "default NotificationsPage"
    ],
@@ -92403,10 +92530,10 @@
     }
    ],
    "channels": [
-    "notifications-page-realtime"
+    "notifications-page-realtime-${userId}"
    ],
    "errors": [
-    ");\n    toast.info("
+    ");\n    const label = type === "
    ],
    "status_values": [
     {
@@ -92436,13 +92563,8 @@
     },
     {
      "field": "type",
-     "value": "maintenance",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "prediction",
-     "kind": "compara"
+     "value": "personal",
+     "kind": "escreve"
     },
     {
      "field": "type",
@@ -92455,8 +92577,8 @@
      "kind": "compara"
     },
     {
-     "field": "status",
-     "value": "SUBSCRIBED",
+     "field": "type",
+     "value": "summary",
      "kind": "compara"
     },
     {
@@ -92472,6 +92594,51 @@
     {
      "field": "type",
      "value": "summary",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "SUBSCRIBED",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "urgent",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "error",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "warning",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "success",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "maintenance",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "prediction",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "summary",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "personal",
      "kind": "compara"
     }
    ],
@@ -98144,6 +98311,10 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261128140000_realtime_push_notifications.sql": {
+   "path": "supabase/migrations/20261128140000_realtime_push_notifications.sql",
+   "lines": 38
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -98594,10 +98765,24 @@
   }
  },
  "git": {
-  "sha": "760ed63904f67d3cd9b78cc9720914aad2fc899d",
+  "sha": "035151111f900d91454a08cc1543c422790417ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "0351511",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "infra: publica push_notifications no realtime (#308)",
+    "files": [
+     "src/features/notifications/components/NotificationsList.tsx",
+     "src/features/notifications/hooks/useNotifications.test.ts",
+     "src/features/notifications/hooks/useNotifications.ts",
+     "src/pages/NotificationsPage.test.tsx",
+     "src/pages/NotificationsPage.tsx",
+     "supabase/migrations/20261128140000_realtime_push_notifications.sql"
+    ]
+   },
    {
     "sha": "760ed63",
     "date": "2026-11-25",
@@ -98937,18 +99122,6 @@
      "supabase/functions/erp-api/index.ts",
      "supabase/migrations/20261125130000_jobs_external_ref.sql"
     ]
-   },
-   {
-    "sha": "0becad3",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "src/test/i18nRuntime.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -98993,6 +99166,30 @@
     2
    ],
    [
+    "src/features/notifications/components/NotificationsList.tsx",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.test.ts",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.ts",
+    1
+   ],
+   [
+    "src/pages/NotificationsPage.test.tsx",
+    1
+   ],
+   [
+    "src/pages/NotificationsPage.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
+    1
+   ],
+   [
     "src/features/jobs/lib/pending-queue.ts",
     1
    ],
@@ -99006,30 +99203,6 @@
    ],
    [
     "src/pages/KanbanBoard.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/AlertScheduleModal.test.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/AlertScheduleModal.tsx",
-    1
-   ],
-   [
-    "src/constants/index.ts",
-    1
-   ],
-   [
-    "src/features/jobs/hooks/useSchedulingConflicts.ts",
-    1
-   ],
-   [
-    ".github/workflows/automation-local.yml",
-    1
-   ],
-   [
-    "docs/AUTOMACAO_LOCAL.md",
     1
    ]
   ]

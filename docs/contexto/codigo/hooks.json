@@ -2582,7 +2582,7 @@
    "hooks_exportados": [
     "useNotifications"
    ],
-   "linhas": 216,
+   "linhas": 237,
    "dominio": "features/notifications",
    "tabelas": [
     "machine_predictions",

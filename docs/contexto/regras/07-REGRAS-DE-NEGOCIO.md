@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `760ed63904` · branch `main` · 2026-11-25 15:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `035151111f` · branch `main` · 2026-11-25 15:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T15:15:20Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T15:37:59Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T15:15:20Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T15:37:59Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T15:15:20Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T15:37:59Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T15:15:20Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T15:37:59Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T15:15:20Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T15:37:59Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1745,7 +1745,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `due` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | `type` | `eco` | escreve | `src/features/analytics/components/energy/AIEnergyAdvisor.tsx` |
 | `type` | `efficiency` | compara, escreve | `src/components/operators/CreateGoalModal.tsx`<br>`src/components/operators/GoalAlertsWidget.tsx`<br>`src/components/operators/GoalsHistoryCard.tsx`<br>`src/components/operators/OperatorGoalsCard.tsx`<br>`src/components/operators/OperatorGoalsTab.tsx`<br>… +2 |
-| `type` | `error` | compara, escreve | `src/components/feedback/FeedbackProvider.tsx`<br>`src/features/notifications/components/ToastWithUndo.tsx`<br>`src/features/packaging/hooks/useSoundFeedback.ts`<br>`src/hooks/useSmartDelayAlerts.ts`<br>`src/hooks/useTechniqueCapacityAlerts.ts` |
+| `type` | `error` | compara, escreve | `src/components/feedback/FeedbackProvider.tsx`<br>`src/features/notifications/components/ToastWithUndo.tsx`<br>`src/features/packaging/hooks/useSoundFeedback.ts`<br>`src/hooks/useSmartDelayAlerts.ts`<br>`src/hooks/useTechniqueCapacityAlerts.ts`<br>… +1 |
 | `type` | `failure` | escreve | `src/components/design-system/hooks/PredictionHooksDemos.tsx` |
 | `type` | `failure_risk` | compara | `src/features/analytics/hooks/useMLPredictions.ts`<br>`src/features/notifications/hooks/useMLPredictionNotifications.ts` |
 | `type` | `fetch` | escreve | `src/features/production/hooks/usePerformanceMetrics.ts` |
@@ -1788,6 +1788,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `patch` | compara | `src/components/design-system/sections/ChangelogSection.tsx` |
 | `type` | `performance` | compara, escreve | `src/features/analytics/components/oee/OEERecommendations.tsx`<br>`src/features/analytics/components/oee/PredictiveAlerts.tsx`<br>`src/features/production/hooks/useOEE.ts` |
 | `type` | `performance_degradation` | compara | `src/features/analytics/hooks/useMLPredictions.ts`<br>`src/features/notifications/hooks/useMLPredictionNotifications.ts` |
+| `type` | `personal` | compara, escreve | `src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
 | `type` | `pie` | compara | `src/components/loading/SkeletonLibrary.tsx` |
 | `type` | `pieces_produced` | compara | `src/components/operators/CreateGoalModal.tsx`<br>`src/components/operators/GoalAlertsWidget.tsx`<br>`src/components/operators/OperatorGoalsCard.tsx`<br>`src/components/operators/OperatorGoalsTab.tsx` |
 | `type` | `prediction` | compara, escreve | `src/features/notifications/components/NotificationCard.tsx`<br>`src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
@@ -1817,7 +1818,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `started` | escreve | `src/components/dashboard/ActivityFeedWidget.tsx` |
 | `type` | `status` | escreve | `src/features/notifications/hooks/usePushNotifications.ts` |
 | `type` | `stuckJobs` | compara, escreve | `src/pages/AlertsDashboard.tsx` |
-| `type` | `success` | compara, escreve | `src/components/feedback/FeedbackProvider.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>`src/features/analytics/components/bi/BIAIInsights.tsx`<br>`src/features/analytics/components/energy/AIEnergyAdvisor.tsx`<br>… +3 |
+| `type` | `success` | compara, escreve | `src/components/feedback/FeedbackProvider.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>`src/features/analytics/components/bi/BIAIInsights.tsx`<br>`src/features/analytics/components/energy/AIEnergyAdvisor.tsx`<br>… +4 |
 | `type` | `summary` | compara, escreve | `src/features/notifications/components/NotificationCard.tsx`<br>`src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
 | `type` | `sync` | escreve | `src/components/autonomous/AutonomousEventLog.tsx` |
 | `type` | `technique` | compara, escreve | `src/components/calendar/CalendarTimeline.tsx`<br>`src/features/analytics/components/oee/OEERankingGap.tsx`<br>`src/pages/Bitrix24ConfigPage.tsx` |
@@ -1826,7 +1827,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `triangle` | escreve | `src/components/qrcode/scanHistorySounds.ts` |
 | `type` | `upcoming` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | `type` | `update_job` | compara, escreve | `src/lib/offline/offlineQueue.ts`<br>`src/lib/offline/replayPendingAction.ts`<br>`src/lib/offlineStorage.ts` |
-| `type` | `warning` | compara, escreve | `src/components/dashboard/AlertsWidget.tsx`<br>`src/components/feedback/FeedbackProvider.tsx`<br>`src/components/knowledge/TechnicalSheetTab.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>… +8 |
+| `type` | `urgent` | compara | `src/pages/NotificationsPage.tsx` |
+| `type` | `warning` | compara, escreve | `src/components/dashboard/AlertsWidget.tsx`<br>`src/components/feedback/FeedbackProvider.tsx`<br>`src/components/knowledge/TechnicalSheetTab.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>… +9 |
 | `type` | `webhook` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
 | `type` | `window` | escreve | `public/sw.js` |
 | `role` | `admin` | compara, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/admin/components/security/PermissionMatrix.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +4 |
@@ -2701,6 +2703,7 @@ _nenhum item encontrado_
 | `CRITICAL_HOURS` | `24` | `src/features/jobs/hooks/useStuckJobsDetection.ts` |
 | `GLOBAL_TECHNIQUE_VALUE` | `'__global__'` | `src/features/maintenance/components/ChecklistManager.tsx` |
 | `DAILY_SUMMARY_HOUR` | `8` | `src/features/notifications/hooks/useDailySummaryNotifications.ts` |
+| `NOTIFIED_PUSH_IDS_LIMIT` | `200` | `src/features/notifications/hooks/useNotifications.ts` |
 | `NONE_TECH` | `'__none__'` | `src/features/packaging/components/PackagingSlaOverridesManager.tsx` |
 | `SP_TIMEZONE` | `'America/Sao_Paulo'` | `src/features/production/hooks/useOEE.ts` |
 | `CONTEXT` | `'useOEEAlerts'` | `src/features/production/hooks/useOEEAlerts.ts` |
@@ -3335,7 +3338,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1437 testes em 126 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1441 testes em 127 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3431,6 +3434,7 @@ _nenhum item encontrado_
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
 | `src/features/analytics/hooks/useRealtimeConnection.test.ts` | 4 | useRealtimeConnection · should connect to realtime channel on mount · should handle connection errors · should remove channel on unmount |
+| `src/features/notifications/hooks/useNotifications.test.ts` | 4 | useNotifications · should fetch and transform notifications correctly · should handle unread count · abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT |
 | `src/hooks/use-overflowing.test.tsx` | 4 | useOverflowing · detecta transbordo a partir do tamanho medido · nao marca conteudo que cabe · reavalia quando o conteudo cresce depois do mount |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
 | `src/pages/KanbanBoard.test.tsx` | 4 | KanbanBoard - exclusao em massa (etapa 037) · mantem visivel e selecionada a OS que o banco recusou · nao anuncia exclusao quando o banco nao apaga nenhuma linha · avisa quando a chamada de exclusao falha na API |
@@ -3448,11 +3452,11 @@ _nenhum item encontrado_
 | `src/features/jobs/hooks/useJobs.realtime.test.tsx` | 3 | useJobs — Realtime invalidation · refetches when a Realtime postgres_changes event arrives · chama removeChannel no unmount e ignora eventos posteriores |
 | `src/features/jobs/hooks/useTechniques.realtime.test.tsx` | 3 | useTechniques — Realtime invalidation · chama removeChannel no unmount e ignora eventos posteriores · refetches when a Realtime postgres_changes event arrives |
 | `src/features/jobs/hooks/useTechniques.test.tsx` | 3 | useTechniques · fetches techniques once and caches them · reuses the cache across multiple consumers (no duplicate queries) |
-| `src/features/notifications/hooks/useNotifications.test.ts` | 3 | useNotifications · should fetch and transform notifications correctly · should handle unread count |
 | `src/features/production/hooks/useMachines.realtime.test.tsx` | 3 | useMachines — Realtime invalidation · chama removeChannel no unmount e ignora eventos posteriores · refetches when a Realtime postgres_changes event arrives |
 | `src/features/production/hooks/useMachines.test.tsx` | 3 | useMachines · fetches active machines and caches the result · shares cache across multiple consumers (no duplicate queries) |
 | `src/features/production/hooks/useOperatorProductivity.test.ts` | 3 | useOperatorProductivity · should fetch and calculate productivity data · should handle errors gracefully |
 | `src/pages/LogisticsPage.test.tsx` | 3 | LogisticsPage - atalho  · primeira transicao grava actual_delivery · repetir o atalho em envio ja entregue e impossivel e preserva a data original |
+| `src/pages/NotificationsPage.test.tsx` | 3 | NotificationsPage - avisos pessoais na Central · lista o aviso pessoal que gerou o contador do sino · rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso |
 | `src/test/realtimeMock.test.ts` | 3 | createRealtimeMock — contrato de tabelas não assinadas · emitFor lança quando a tabela não tem handler registrado · não dispara callbacks de outras tabelas ao emitir para tabela não assinada |
 | `src/test/zodResolver.test.ts` | 3 | zodResolver + zod v4 · propaga a mensagem de cada campo invalido · retorna os valores ja coagidos quando tudo e valido |
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
@@ -3495,6 +3499,7 @@ _nenhum item encontrado_
 | `sendNotification` | `src/features/notifications/hooks/useDailySummaryNotifications.ts` |
 | `notify` | `src/features/notifications/hooks/useMLPredictionNotifications.ts` |
 | `sendNotification` | `src/features/notifications/hooks/useMLPredictionNotifications.ts` |
+| `notifyPushOnce` | `src/features/notifications/hooks/useNotifications.ts` |
 | `notifyStatusChange` | `src/features/notifications/hooks/useNotifications.ts` |
 | `sendNotification` | `src/features/notifications/hooks/usePushNotifications.ts` |
 | `invoke(` | `src/features/notifications/hooks/usePushSubscription.ts` |

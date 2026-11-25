@@ -4430,7 +4430,7 @@
    "modulo": "features/notifications",
    "arquivos": 26,
    "testes": 2,
-   "linhas": 4274,
+   "linhas": 4303,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5868,8 +5868,8 @@
   {
    "modulo": "pages",
    "arquivos": 56,
-   "testes": 6,
-   "linhas": 16767,
+   "testes": 7,
+   "linhas": 16801,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6350,7 +6350,7 @@
    ],
    "canais_realtime": [
     "admin-telemetry-realtime",
-    "notifications-page-realtime",
+    "notifications-page-realtime-${userId}",
     "shift-handovers-realtime"
    ],
    "env": [
