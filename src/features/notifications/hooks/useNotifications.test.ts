@@ -92,4 +92,47 @@ describe('useNotifications', () => {
       expect(filtro).toContain('data->>type.is.null');
       expect(filtro).toContain('data->>type.neq.cron_email_sent');
   });
+
+        it('deve dispensar alerta de rotina sem apagar a linha do dedupe', async () => {
+          const { supabase } = await import('@/integrations/supabase/client');
+          const eqChain: { eq: () => unknown; then: (onFulfilled: (v: unknown) => unknown) => Promise<unknown> } = {
+                eq: () => eqChain,
+                then: (onFulfilled) => Promise.resolve({ error: null }).then(onFulfilled),
+              };
+    const updateSpy = vi.fn((_payload: unknown) => eqChain);
+
+          // @ts-expect-error mock override em cliente Supabase tipado
+          supabase.from.mockImplementation(() => ({
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            neq: vi.fn().mockReturnThis(),
+            or: vi.fn().mockReturnThis(),
+            order: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+            update: updateSpy,
+          }));
+
+          const queryClient = new QueryClient({
+            defaultOptions: { queries: { retry: false, staleTime: 0 } },
+          });
+          const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+          const wrapper = ({ children }: { children: React.ReactNode }) =>
+            React.createElement(QueryClientProvider, { client: queryClient }, children);
+
+          const { result } = renderHook(() => useNotifications(), { wrapper });
+
+          result.current.dismissNotification({ id: 'push-abc', metadata: { type: 'cron_email_sent' } });
+
+          await waitFor(() => expect(updateSpy).toHaveBeenCalled());
+
+          const payload = updateSpy.mock.calls[0]?.[0] as unknown as { status: string; data: Record<string, unknown> };
+          expect(payload.status).toBe('read');
+          expect(payload.data.dismissed_at).toBeTruthy();
+          // A metadata original é preservada: é ela que a coleta de saúde usa para
+          // não reenviar o mesmo alerta no ciclo seguinte.
+          expect(payload.data.type).toBe('cron_email_sent');
+          await waitFor(() =>
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['push-notifications-history'] })
+          );
+        });
 });

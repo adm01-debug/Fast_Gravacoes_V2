@@ -130,7 +130,7 @@ const NotificationsPage = () => {
               // O mesmo filtro do contador de não lidas, aplicado ANTES do limite:
               // filtrar depois fazia os marcadores de dedupe do e-mail ocuparem
               // vagas das 100 linhas e esconder avisos reais do período.
-              const { data, error } = await supabase.from('push_notifications').select('*').eq('user_id', user.id).gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).or('data->>type.is.null,data->>type.neq.cron_email_sent').order('created_at', { ascending: false }).limit(100);
+              const { data, error } = await supabase.from('push_notifications').select('*').eq('user_id', user.id).gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).or('data->>type.is.null,data->>type.neq.cron_email_sent').is('data->>dismissed_at', null).order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         return data as PushNotificationRecord[];
       },
