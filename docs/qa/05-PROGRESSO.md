@@ -47,7 +47,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
 - [ ] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
-- [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
+- [x] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono** · PR #304: `production_losses_job_id_fkey` e `shipments_job_id_fkey` passam de `CASCADE` para `RESTRICT`; as outras 6 FKs de `jobs` continuam em `CASCADE` porque a trilha de status é gravada automaticamente em OS `delayed` e bloquearia exclusão legítima
 - [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
 - [ ] 056 — Tirar `user_roles` e a trilha de auditoria da lista de tabelas do túnel de banco — onda 1 — Crítica · **aprovação do dono**
 - [ ] 057 — Decidir se o túnel genérico de banco deve continuar existindo — onda 1 — Alta · **aprovação do dono**
