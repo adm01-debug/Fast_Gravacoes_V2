@@ -228,7 +228,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 169 — Estado de erro em QRScannerPage, SystemMonitoringPage, DigitalTwin — onda 5 — Baixa
 - [ ] 237 — Impedir que duas pessoas sobrescrevam a mesma OS sem aviso — onda 5 — Média
 - [ ] 259 — Estado de erro em o quadro de produção — onda 5 — Alta
-- [ ] 260 — Estado de erro em a fila de pendentes — onda 5 — Alta
+- [x] 260 — Estado de erro em a fila de pendentes — onda 5 — Alta · PendingQueue.tsx lê o `error` de useSchedulingData (hooks expõem, nenhum consumidor usava) e mostra EmptyState de erro com "Tentar novamente" via refetchAll; estado vazio legítimo preservado; teste src/pages/PendingQueue.test.tsx 3/3; PR #301
 - [ ] 261 — Estado de erro em a tela do operador — onda 5 — Alta
 - [ ] 262 — Estado de erro em o calendário diário — onda 5 — Alta
 - [ ] 263 — Estado de erro em o calendário semanal — onda 5 — Alta
