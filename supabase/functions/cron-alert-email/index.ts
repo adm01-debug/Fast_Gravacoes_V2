@@ -15,6 +15,7 @@
  * Autenticação: exclusivamente via `x-cron-secret` (fail-closed) — não é um
  * endpoint de usuário.
  */
+import { classifyResendHttp, MOTIVO_SEM_CREDENCIAL } from "../_shared/emailDelivery.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders } from "../_shared/cors.ts";
@@ -179,6 +180,7 @@ serve(async (req) => {
 
     let sent = 0;
     const skipped: number[] = [];
+    const semCredencial: number[] = [];
 
     for (const { row, kind } of problems) {
       if (alreadySent.has(String(row.jobid))) {
@@ -202,12 +204,18 @@ serve(async (req) => {
             html: buildHtml(row, kind),
           }),
         });
-        if (!res.ok) {
-          console.error("[cron-alert-email] Resend error", res.status, await res.text());
+        const entrega = classifyResendHttp(res.status, await res.text());
+        if (!entrega.ok) {
+          console.error("[cron-alert-email] Resend error", entrega.reason);
           continue;
         }
       } else {
-        console.warn("[cron-alert-email] RESEND_API_KEY ausente — apenas marcando envio.");
+        // Sem credencial nada sai. Registrar aqui marcava e-mail enviado para
+        // um envio que nunca existiu; o problema segue pendente e precisa
+        // reaparecer a cada rodada, não sumir atrás de um falso "enviado".
+        console.error(`[cron-alert-email] ${MOTIVO_SEM_CREDENCIAL} — alerta não enviado`);
+        semCredencial.push(row.jobid);
+        continue;
       }
 
       await supabase.from("push_notifications").insert(
@@ -230,7 +238,7 @@ serve(async (req) => {
       sent += 1;
     }
 
-    return json({ problems: problems.length, sent, skipped });
+    return json({ problems: problems.length, sent, skipped, semCredencial });
   } catch (e) {
     console.error("[cron-alert-email] unexpected", e);
     return json({ error: "Internal error" }, 500);

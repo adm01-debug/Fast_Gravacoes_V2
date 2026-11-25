@@ -4,6 +4,7 @@ import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 import { escapeHtml } from '../_shared/htmlEscape.ts';
 import { createLogger, getOrCreateRequestId, withRequestId } from '../_shared/logger.ts';
 import { authenticate } from '../_shared/auth.ts';
+import { classifyResendSend, MOTIVO_SEM_CREDENCIAL } from '../_shared/emailDelivery.ts';
 
 interface DeviceInfo {
   user_id: string;
@@ -167,7 +168,7 @@ Deno.serve(async (req) => {
             timeStyle: 'medium'
           });
 
-          const emailResponse = await resend.emails.send({
+          const { data: sentEmail, error: sendError } = await resend.emails.send({
             from: 'Segurança <onboarding@resend.dev>',
             to: [auth.ctx.email],
             subject: '⚠️ Novo dispositivo detectado na sua conta',
@@ -247,21 +248,28 @@ Deno.serve(async (req) => {
             `,
           });
 
-          console.log('Alert email sent:', emailResponse);
+          const entrega = classifyResendSend({ data: sentEmail, error: sendError });
 
-          // Atualizar alerta com status do email
-          await supabase
-            .from('new_device_alerts')
-            .update({
-              email_sent: true,
-              email_sent_at: now
-            })
-            .eq('device_id', deviceId)
-            .eq('user_id', auth.ctx.userId);
+          if (!entrega.ok) {
+            console.error('Alert email NOT sent:', entrega.reason);
+          } else {
+            console.log('Alert email sent:', sentEmail?.id);
+            // Atualizar alerta com status do email (so quando o provedor aceitou)
+            await supabase
+              .from('new_device_alerts')
+              .update({
+                email_sent: true,
+                email_sent_at: now
+              })
+              .eq('device_id', deviceId)
+              .eq('user_id', auth.ctx.userId);
+          }
 
         } catch (emailError) {
           console.error('Error sending alert email:', emailError);
         }
+      } else if (!resendApiKey) {
+        console.error('Alert email NOT sent:', MOTIVO_SEM_CREDENCIAL);
       }
 
       // Enviar push notification
