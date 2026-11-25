@@ -5582,6 +5582,7 @@
    "src/features/analytics/lib/oeeReportExport.ts",
    "src/features/production/index.ts",
    "src/hooks/use-haptic-feedback.tsx",
+   "src/hooks/use-overflowing.ts",
    "src/lib/lazyWithRetry.ts",
    "src/lib/utils.ts"
   ],
@@ -5980,6 +5981,7 @@
    "src/components/voice/VoiceCommands.tsx",
    "src/features/inventory/index.ts",
    "src/features/jobs/index.ts",
+   "src/hooks/use-overflowing.ts",
    "src/hooks/useDebounce.ts",
    "src/hooks/useFuseSearch.ts",
    "src/integrations/supabase/client.ts",

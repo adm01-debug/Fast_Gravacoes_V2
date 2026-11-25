@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9d7e07682e6b18ee55d67a145a90a4b72e7c25f2` (2026-11-25T18:32:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a` (2026-11-25T19:47:03-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1627 |
 | arquivos_codigo | 1152 |
-| linhas_codigo | 196001 |
+| linhas_codigo | 196062 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8602 nós · 32614 arestas · 406 comunidades · grafo do commit `9d7e0768`
-- comunidades maiores: CardHeader (181), analytics/index.ts (176), Card (151), Button (139), Badge (136), Input (135), package.json (127), cn (125), MainLayout (124), client.ts (124), generate.py (111), ScrollArea (111)
+- 8604 nós · 32625 arestas · 406 comunidades · grafo do commit `8b6619f8`
+- comunidades maiores: Button (342), Card (332), Badge (227), vitest (123), ScrollArea (122), package.json (118), snapshot.py (117), generate.py (113), OEEDashboard.tsx (112), sonner (103), cn (99), gerar.mjs (99)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `8b6619f` fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)
 - 2026-11-25 `9d7e076` fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)
 - 2026-11-25 `8ca53f4` fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)
 - 2026-11-25 `09d2554` fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `760ed63` fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)
 - 2026-11-25 `970aef7` feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)
 - 2026-11-25 `d139424` feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)
-- 2026-11-25 `d0e7a1d` feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

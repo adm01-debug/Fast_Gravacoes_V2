@@ -1413,9 +1413,9 @@
   {
    "arquivo": "tests/e2e/accessibility.spec.ts",
    "tipo": "e2e",
-   "linhas": 95,
+   "linhas": 126,
    "testa": [],
-   "casos": 3,
+   "casos": 4,
    "suporte": false
   },
   {

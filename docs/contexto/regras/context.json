@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
+  "sha": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 21:33 UTC",
+  "generated_at": "2026-11-25 22:49 UTC",
   "files_total": 1625,
   "code_files": 1429,
-  "code_lines": 213469
+  "code_lines": 213530
  },
  "version": "1.3.2",
- "facts_hash": "90881f5c6c1a0da5",
+ "facts_hash": "e77dfc529cf8ff9f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -30070,7 +30070,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18000,
+   "lines": 18030,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -30677,7 +30677,7 @@
   {
    "module": "tests",
    "files": 22,
-   "lines": 1653,
+   "lines": 1684,
    "tables": [],
    "exports": [
     "credentials.ts: E2E_EMAIL, E2E_PASSWORD, E2E_TOTP_SECRET, E2E_OPERATOR_EMAIL, E2E_OPERATOR_PASSWORD",
@@ -57347,6 +57347,14 @@
    {
     "file": "tests/e2e/accessibility.spec.ts",
     "name": "rota ${route} não deve apresentar violações críticas"
+   },
+   {
+    "file": "tests/e2e/accessibility.spec.ts",
+    "name": "TraceabilityPage - regiao rolavel alcancavel por teclado"
+   },
+   {
+    "file": "tests/e2e/accessibility.spec.ts",
+    "name": "/traceability nao deve ter regiao rolavel inacessivel por teclado"
    },
    {
     "file": "tests/e2e/accessibility.spec.ts",
@@ -93509,7 +93517,7 @@
   },
   "src/pages/OEEDashboard.tsx": {
    "path": "src/pages/OEEDashboard.tsx",
-   "lines": 581,
+   "lines": 605,
    "exports": [
     "default OEEDashboard"
    ],
@@ -94131,7 +94139,7 @@
   },
   "src/pages/TraceabilityPage.tsx": {
    "path": "src/pages/TraceabilityPage.tsx",
-   "lines": 520,
+   "lines": 526,
    "exports": [
     "function TraceabilityPage"
    ],
@@ -99281,18 +99289,22 @@
   },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
-   "lines": 95,
+   "lines": 126,
    "is_test": true,
    "rule_comments": [
+    "escopo deste arquivo. A regra que motivou a inclusao da rota (regiao rolavel",
     "Deve existir apenas um paleta montada no DOM"
    ],
    "temporal": [
     "await expect(dialog).toBeHidden({ timeout: 3000 });",
-    "await expect(dialog).toBeVisible({ timeout: 3000 });"
+    "await expect(dialog).toBeVisible({ timeout: 3000 });",
+    "await expect(scrollable).toBeVisible({ timeout: 10000 });"
    ],
    "tests": [
     "Acessibilidade - Sweep axe-core WCAG 2.2 AA",
     "rota ${route} não deve apresentar violações críticas",
+    "TraceabilityPage - regiao rolavel alcancavel por teclado",
+    "/traceability nao deve ter regiao rolavel inacessivel por teclado",
     "CommandPaletteAdvanced - teclado e foco",
     "abre com Cmd+K, navega com setas e fecha com Escape",
     "reabre corretamente e não duplica listeners (Cmd+K duas vezes)"
@@ -99729,10 +99741,22 @@
   }
  },
  "git": {
-  "sha": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
+  "sha": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8b6619f",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)",
+    "files": [
+     ".gitignore",
+     "src/pages/OEEDashboard.tsx",
+     "src/pages/TraceabilityPage.tsx",
+     "tests/e2e/accessibility.spec.ts"
+    ]
+   },
    {
     "sha": "9d7e076",
     "date": "2026-11-25",
@@ -100103,15 +100127,6 @@
     "files": [
      "supabase/migrations/20261126110000_restore_public_has_role_execute.sql"
     ]
-   },
-   {
-    "sha": "3aafbf1",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: erp-api responde 400 (nao 500) em dado invalido (#280)",
-    "files": [
-     "supabase/functions/erp-api/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -100188,11 +100203,11 @@
     2
    ],
    [
-    "supabase/functions/erp-api/index.ts",
+    "src/features/jobs/types/job.schema.ts",
     2
    ],
    [
-    "src/features/jobs/types/job.schema.ts",
+    "src/test/jobsService.test.ts",
     2
    ]
   ]

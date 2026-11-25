@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
+  "commit": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
   "branch": "main",
-  "data_commit": "2026-11-25T18:32:08-03:00",
+  "data_commit": "2026-11-25T19:47:03-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "8b6619f",
+    "data": "2026-11-25",
+    "assunto": "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)"
+   },
    {
     "sha": "9d7e076",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "03ce70b",
     "data": "2026-11-24",
     "assunto": "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)"
-   },
-   {
-    "sha": "d5e8d2b",
-    "data": "2026-11-24",
-    "assunto": "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 165
+    "commits": 166
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1627,
   "arquivos_codigo": 1152,
-  "linhas_codigo": 196001,
+  "linhas_codigo": 196062,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 18000
+   "linhas": 18030
   },
   "src/providers": {
    "arquivos": 2,
@@ -553,7 +553,7 @@
   },
   "tests/e2e": {
    "arquivos": 22,
-   "linhas": 1653
+   "linhas": 1684
   },
   "vite.config.ts": {
    "arquivos": 1,
@@ -622,16 +622,16 @@
    "linhas": 623
   },
   {
+   "arquivo": "src/pages/OEEDashboard.tsx",
+   "linhas": 605
+  },
+  {
    "arquivo": "supabase/functions/check-login-lockout/index.ts",
    "linhas": 596
   },
   {
    "arquivo": "src/pages/AdminTelemetriaPage.tsx",
    "linhas": 589
-  },
-  {
-   "arquivo": "src/pages/OEEDashboard.tsx",
-   "linhas": 581
   },
   {
    "arquivo": "src/pages/KanbanBoard.tsx",
@@ -654,16 +654,16 @@
    "linhas": 531
   },
   {
+   "arquivo": "src/pages/TraceabilityPage.tsx",
+   "linhas": 526
+  },
+  {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
    "linhas": 524
   },
   {
    "arquivo": "src/components/knowledge/editor/EditorBasicInfo.tsx",
    "linhas": 521
-  },
-  {
-   "arquivo": "src/pages/TraceabilityPage.tsx",
-   "linhas": 520
   }
  ],
  "qualidade": {

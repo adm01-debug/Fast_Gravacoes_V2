@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d7e07682e` · branch `main` · 2026-11-25 21:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8b6619f85f` · branch `main` · 2026-11-25 22:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T20:38:32Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T22:38:14Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T20:38:32Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T22:38:14Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T20:38:32Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T22:38:14Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T20:38:32Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T22:38:14Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T20:38:32Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T22:38:14Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3347,7 +3347,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1506 testes em 133 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1508 testes em 133 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3422,6 +3422,7 @@ _nenhum item encontrado_
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
 | `supabase/functions/_shared/cors.test.ts` | 7 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
+| `tests/e2e/accessibility.spec.ts` | 7 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · TraceabilityPage - regiao rolavel alcancavel por teclado · /traceability nao deve ter regiao rolavel inacessivel por teclado … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/contexts/ReauthContext.test.tsx` | 6 | ReauthProvider · não prossegue com senha incorreta (etapa 233) · confere a senha sem trocar a sessão do cliente compartilhado (etapa 233) · mantém a confirmação para o mesmo operador sem novo login (etapa 233) … |
@@ -3442,7 +3443,6 @@ _nenhum item encontrado_
 | `src/pages/NotificationsPage.test.tsx` | 5 | NotificationsPage - avisos pessoais na Central · lista o aviso pessoal que gerou o contador do sino · rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso · rotula alerta de rotina como Sistema, nao como Aviso … |
 | `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico entre vercel.json e index.html · mantem o script-src identico entre vercel.json e index.html · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
 | `supabase/functions/_shared/contracts.test.ts` | 5 | Webhook Contract - Valid Payload · Webhook Contract - Invalid Source · ERP Job Contract - Valid Request · ERP Job Contract - Missing Required Field … |
-| `tests/e2e/accessibility.spec.ts` | 5 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · CommandPaletteAdvanced - teclado e foco · abre com Cmd+K, navega com setas e fecha com Escape … |
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
 | `tests/e2e/production.spec.ts` | 5 | Production and Jobs Flow · should navigate to Kanban and verify jobs · should create a new job · should verify OEE Dashboard … |
 | `src/features/analytics/components/bi/BIStatCard.test.tsx` | 4 | BIStatCard · renders correctly with basic props · shows trend indicator when trend prop is provided · calls onClick when clicked |

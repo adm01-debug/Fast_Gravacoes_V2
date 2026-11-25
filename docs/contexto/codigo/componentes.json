@@ -9494,7 +9494,7 @@
     "OEEDashboard"
    ],
    "export_default": "OEEDashboard",
-   "linhas": 581,
+   "linhas": 605,
    "dominio": "pages",
    "hooks_locais": [
     "useDashboardPresets",
@@ -9894,7 +9894,7 @@
     "TraceabilityPage"
    ],
    "export_default": "TraceabilityPage",
-   "linhas": 520,
+   "linhas": 526,
    "dominio": "pages",
    "hooks_locais": [
     "useDebounce",
