@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 151,
+ "total": 152,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 126
+  "unit": 127
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 114
+   "arquivos": 115
   },
   {
    "padrao": "tests/",
@@ -387,6 +387,16 @@
     "src/features/admin/components/security/MFASettings.tsx"
    ],
    "casos": 2,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/features/admin/components/security/SecurityOverviewCard.tsx"
+   ],
+   "casos": 5,
    "suporte": false
   },
   {
@@ -1614,6 +1624,7 @@
   "src/components/ui/tooltip.tsx": 1,
   "src/contexts/ReauthContext.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
+  "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,

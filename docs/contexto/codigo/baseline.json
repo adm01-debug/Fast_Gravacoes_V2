@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "09d25549d5b1890a1b4035c8f385ef01659ef862",
+  "commit": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
   "branch": "main",
-  "data_commit": "2026-11-25T17:14:18-03:00",
+  "data_commit": "2026-11-25T20:33:57Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "8ca53f4",
+    "data": "2026-11-25",
+    "assunto": "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)"
+   },
    {
     "sha": "09d2554",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "828487b",
     "data": "2026-11-24",
     "assunto": "fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)"
-   },
-   {
-    "sha": "3a296f2",
-    "data": "2026-11-24",
-    "assunto": "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 281,
+  "arquivos_mudados_7d": 279,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -161,12 +161,12 @@
     "mudancas": 22
    },
    {
-    "pasta": "src/features/packaging",
-    "mudancas": 19
+    "pasta": "src/features/admin",
+    "mudancas": 20
    },
    {
-    "pasta": "src/features/admin",
-    "mudancas": 18
+    "pasta": "src/features/packaging",
+    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -177,12 +177,12 @@
     "mudancas": 17
    },
    {
-    "pasta": "src/components/navigation",
+    "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 16
    },
    {
-    "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 15
+    "pasta": "src/components/navigation",
+    "mudancas": 16
    },
    {
     "pasta": "package-lock.json",
@@ -216,7 +216,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 163
+    "commits": 164
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1626,
-  "arquivos_codigo": 1151,
-  "linhas_codigo": 195680,
+  "arquivos_total": 1627,
+  "arquivos_codigo": 1152,
+  "linhas_codigo": 195815,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 266,
   "cron_jobs": 5,
-  "testes": 151,
+  "testes": 152,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 338,
-   "linhas": 48376
+   "arquivos": 339,
+   "linhas": 48511
   },
   "src/hooks": {
    "arquivos": 63,

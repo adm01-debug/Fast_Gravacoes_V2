@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "09d25549d5b1890a1b4035c8f385ef01659ef862",
+  "sha": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 20:16 UTC",
-  "files_total": 1624,
-  "code_files": 1428,
-  "code_lines": 213148
+  "generated_at": "2026-11-25 20:34 UTC",
+  "files_total": 1625,
+  "code_files": 1429,
+  "code_lines": 213283
  },
  "version": "1.3.2",
- "facts_hash": "844234fed4b0c8dc",
+ "facts_hash": "f4be177421fdcc52",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 678,
+   ".tsx": 679,
    ".ts": 409,
    ".sql": 274,
    ".mjs": 50,
@@ -27030,7 +27030,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 579,
+  "components_count": 580,
   "hooks": [
    {
     "name": "useContacts",
@@ -28673,8 +28673,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 56,
-   "lines": 7159,
+   "files": 57,
+   "lines": 7294,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -28798,6 +28798,7 @@
     "src/features/admin/components/security/RateLimitSettings.tsx",
     "src/features/admin/components/security/SecurityAlertsPanel.tsx",
     "src/features/admin/components/security/SecurityEventsLog.tsx",
+    "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
     "src/features/admin/components/security/SecurityOverviewCard.tsx",
     "src/features/admin/components/telemetry/TelemetryCharts.tsx",
     "src/features/admin/hooks/useActivityLog.ts",
@@ -37469,6 +37470,14 @@
    {
     "file": "src/features/admin/components/security/PushNotificationSettings.tsx",
     "text": "Info sobre permissão bloqueada */}"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
+    "text": "* Peso máximo do item. `0` quando o item não é verificável no navegador. */"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
+    "text": "Itens não verificáveis no navegador (maxPoints 0) não entram no máximo,"
    },
    {
     "file": "src/features/admin/hooks/useCronHealthHistory.ts",
@@ -46610,19 +46619,7 @@
    {
     "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
     "field": "status",
-    "value": "pass",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
-    "field": "status",
-    "value": "pass",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/features/admin/components/security/SecurityOverviewCard.tsx",
-    "field": "status",
-    "value": "pass",
+    "value": "warn",
     "kind": "escreve"
    },
    {
@@ -52390,6 +52387,30 @@
    {
     "file": "src/features/admin/components/security/MFASettings.test.tsx",
     "name": "remove o fator depois que a senha é confirmada"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "SecurityOverviewCard (etapa 066)"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "não dá pontos nem aprova itens sem verificação na conta nova"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "aprova e pontua só o que foi verificado de verdade"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "marca a verificação de senha como não verificada em qualquer conta"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "não pontua dispositivo registrado que não está marcado como confiável"
+   },
+   {
+    "file": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+    "name": "pontua a sessão só sob HTTPS"
    },
    {
     "file": "src/features/admin/hooks/useCronHealthHistory.test.ts",
@@ -65169,7 +65190,8 @@
       "escreve:supabase/functions/health-monitor/index.ts"
      ],
      "warn": [
-      "compara:src/features/admin/components/security/SecurityOverviewCard.tsx"
+      "compara:src/features/admin/components/security/SecurityOverviewCard.tsx",
+      "escreve:src/features/admin/components/security/SecurityOverviewCard.tsx"
      ],
      "fail": [
       "compara:src/features/admin/components/security/SecurityOverviewCard.tsx",
@@ -80472,9 +80494,22 @@
     "function SecurityEventsLog"
    ]
   },
+  "src/features/admin/components/security/SecurityOverviewCard.test.tsx": {
+   "path": "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+   "lines": 110,
+   "is_test": true,
+   "tests": [
+    "SecurityOverviewCard (etapa 066)",
+    "não dá pontos nem aprova itens sem verificação na conta nova",
+    "aprova e pontua só o que foi verificado de verdade",
+    "marca a verificação de senha como não verificada em qualquer conta",
+    "não pontua dispositivo registrado que não está marcado como confiável",
+    "pontua a sessão só sob HTTPS"
+   ]
+  },
   "src/features/admin/components/security/SecurityOverviewCard.tsx": {
    "path": "src/features/admin/components/security/SecurityOverviewCard.tsx",
-   "lines": 194,
+   "lines": 219,
    "exports": [
     "function SecurityOverviewCard"
    ],
@@ -80486,17 +80521,7 @@
     },
     {
      "field": "status",
-     "value": "pass",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pass",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pass",
+     "value": "warn",
      "kind": "escreve"
     },
     {
@@ -80519,6 +80544,10 @@
      "value": "fail",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "* Peso máximo do item. `0` quando o item não é verificável no navegador. */",
+    "Itens não verificáveis no navegador (maxPoints 0) não entram no máximo,"
    ]
   },
   "src/features/admin/components/telemetry/TelemetryCharts.tsx": {
@@ -99615,10 +99644,21 @@
   }
  },
  "git": {
-  "sha": "09d25549d5b1890a1b4035c8f385ef01659ef862",
+  "sha": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8ca53f4",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/features/admin/components/security/SecurityOverviewCard.test.tsx",
+     "src/features/admin/components/security/SecurityOverviewCard.tsx"
+    ]
+   },
    {
     "sha": "09d2554",
     "date": "2026-11-25",
@@ -99983,21 +100023,12 @@
      "src/components/ui/scroll-area.test.tsx",
      "src/components/ui/scroll-area.tsx"
     ]
-   },
-   {
-    "sha": "765030a",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "ci: evita rodar E2E duas vezes para o mesmo tree (#282)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    14
+    15
    ],
    [
     "src/features/jobs/services/jobsService.ts",

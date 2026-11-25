@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `09d25549d5b1890a1b4035c8f385ef01659ef862` (2026-11-25T17:14:18-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8ca53f45b7d12c3c9c507a802026a96a58080b08` (2026-11-25T20:33:57Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1087), SQL (274), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1088), SQL (274), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1626 |
-| arquivos_codigo | 1151 |
-| linhas_codigo | 195680 |
+| arquivos_total | 1627 |
+| arquivos_codigo | 1152 |
+| linhas_codigo | 195815 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 266 |
 | cron_jobs | 5 |
-| testes | 151 |
+| testes | 152 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 108 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (403), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (54), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (114), tests/ (19), outro (18)
+- testes: co-localizado (*.test) (115), tests/ (19), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8595 nós · 32602 arestas · 401 comunidades · grafo do commit `09d25549`
-- comunidades maiores: Card (209), analytics/index.ts (188), Button (153), cn (151), Badge (145), PendingQueue.tsx (138), client.ts (125), package.json (119), vitest (113), generate.py (110), TableCell (101), CardTitle (100)
+- 8600 nós · 32612 arestas · 397 comunidades · grafo do commit `8ca53f45`
+- comunidades maiores: Card (218), button.tsx (202), analytics/index.ts (177), Badge (160), client.ts (150), react (143), CardTitle (130), cn (122), package.json (120), DialogContent (119), DailyCalendar.tsx (116), MainLayout (113)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -257,7 +257,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
-- docs/qa/05-PROGRESSO.md (15)
+- docs/qa/05-PROGRESSO.md (16)
 - .github/workflows/db-admin.yml (10)
 - AGENTS.md (10)
 - .github/workflows/deploy.yml (9)
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `8ca53f4` fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)
 - 2026-11-25 `09d2554` fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)
 - 2026-11-25 `d6a4a95` fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)
 - 2026-11-25 `14b0499` fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `d139424` feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)
 - 2026-11-25 `d0e7a1d` feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)
 - 2026-11-25 `cd834ba` infra: remove push em main do automation-local (recupera PR #229) (#298)
-- 2026-11-25 `d0cab10` feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

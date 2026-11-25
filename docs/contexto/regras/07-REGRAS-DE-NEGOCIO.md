@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `09d25549d5` · branch `main` · 2026-11-25 20:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ca53f45b7` · branch `main` · 2026-11-25 20:34 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T20:14:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1904,7 +1904,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `syncing` | escreve | `src/components/traceability/BlockchainIntegrityCard.tsx` |
 | `status` | `upcoming` | compara, escreve | `src/components/design-system/hooks/MaintenanceOperatorDemos.tsx` |
 | `status` | `verified` | compara, escreve | `src/components/settings/TwoFactorSetup.tsx`<br>`src/components/traceability/BlockchainIntegrityCard.tsx`<br>`src/features/admin/components/security/MFASettings.tsx`<br>`src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts`<br>`src/features/auth/hooks/useMFA.ts` |
-| `status` | `warn` | compara | `src/features/admin/components/security/SecurityOverviewCard.tsx` |
+| `status` | `warn` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx` |
 | `status` | `warning` | compara | `src/components/operator/ProductionTimer.tsx`<br>`src/components/scheduling/CapacityHealthPanel.tsx`<br>`src/hooks/useTechniqueCapacityAlerts.ts` |
 | `state` | `closed` | escreve | `src/lib/circuitBreaker.ts` |
 | `state` | `collapsed` | compara | `src/components/ui/sidebar.tsx` |
@@ -3344,7 +3344,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1496 testes em 132 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1502 testes em 133 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3421,6 +3421,7 @@ _nenhum item encontrado_
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
 | `src/contexts/ReauthContext.test.tsx` | 6 | ReauthProvider · não prossegue com senha incorreta (etapa 233) · confere a senha sem trocar a sessão do cliente compartilhado (etapa 233) · mantém a confirmação para o mesmo operador sem novo login (etapa 233) … |
+| `src/features/admin/components/security/SecurityOverviewCard.test.tsx` | 6 | SecurityOverviewCard (etapa 066) · não dá pontos nem aprova itens sem verificação na conta nova · aprova e pontua só o que foi verificado de verdade · marca a verificação de senha como não verificada em qualquer conta … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
@@ -3602,6 +3603,8 @@ _nenhum item encontrado_
 | parte do catálogo estático (ex.: admin:all, ou uma permissão cadastrada | `src/features/admin/components/security/PermissionMatrix.tsx` |
 | Mesma fonte do hasPermission: com fallback estatico, permissao presente | `src/features/admin/components/security/PermissionMatrix.tsx` |
 | Info sobre permissão bloqueada */} | `src/features/admin/components/security/PushNotificationSettings.tsx` |
+| * Peso máximo do item. `0` quando o item não é verificável no navegador. */ | `src/features/admin/components/security/SecurityOverviewCard.tsx` |
+| Itens não verificáveis no navegador (maxPoints 0) não entram no máximo, | `src/features/admin/components/security/SecurityOverviewCard.tsx` |
 | apenas por coordenadores/gestores (RLS). | `src/features/admin/hooks/useCronHealthHistory.ts` |
 | degradação de longo prazo, além da janela de 90 dias do histórico bruto. | `src/features/admin/hooks/useCronP95Daily.ts` |
 | limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes. | `src/features/admin/hooks/useDataExport.ts` |
