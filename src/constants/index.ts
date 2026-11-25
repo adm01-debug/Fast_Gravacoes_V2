@@ -19,6 +19,7 @@ export const JOB_STATUSES = {
 export type JobStatus = (typeof JOB_STATUSES)[keyof typeof JOB_STATUSES];
 
 // Status que o banco trata como ocupando o horário da máquina: `check_job_overlap`
+// Status que o banco trata como ocupando o horário da máquina: `check_job_overlap`
 // recusa a sobreposição de qualquer OS que não esteja cancelada nem finalizada
 // (etapa 053 — trabalho concluído não reserva mais a máquina para sempre).
 // Encurtar esta lista faz a tela deixar de avisar e o banco recusar depois.

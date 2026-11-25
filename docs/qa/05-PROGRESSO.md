@@ -104,7 +104,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 050 — Mostrar no painel o mesmo alvo de buffer que o sistema usa — onda 2 — Média
 - [ ] 051 — Deixar um único lugar carimbando início e fim de produção — onda 2 — Alta
 - [x] 052 — Unificar, no aplicativo, quais status ocupam uma máquina — onda 2 — Alta · MACHINE_BLOCKING_STATUSES e MACHINE_ACTIVE_SCHEDULE_STATUSES em src/constants/index.ts, consumidas por AlertScheduleModal (espelha check_job_overlap: tudo menos cancelado) e useSchedulingConflicts (agenda viva, lista preservada); teste novo src/components/dashboard/AlertScheduleModal.test.tsx 3/3 falhando sem a correção; PR #302
-- [A] 053 — OS concluída deixa de ocupar a máquina (função `check_job_overlap` + `MACHINE_BLOCKING_STATUSES`) — onda 2 — Média · implementada na #307 (aguarda o dono: migration em produção)
+- [A] 053 — OS concluída deixa de ocupar a máquina (função `check_job_overlap` + `MACHINE_BLOCKING_STATUSES`) — onda 2 — Média · implementada na #307: migration `20261128140000_f053_os_concluida_nao_ocupa_maquina.sql` reescreve `check_job_overlap` (deixa de ocupar em `cancelled` e `finished`, e revalida a reabertura `finished -> production`), `MACHINE_BLOCKING_STATUSES` sem `finished` e teste `nao avisa conflito para OS concluida, que o banco libera desde a etapa 053`
 - [ ] 054 — Corrigir o tipo de técnica no esquema de validação de OS — onda 2 — Média
 - [ ] 055 — Unificar os três esquemas concorrentes de OS — onda 2 — Média
 - [ ] 059 — Corrigir o cálculo de ranking que falha em toda execução — onda 2 — Alta

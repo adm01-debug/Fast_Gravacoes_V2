@@ -74,11 +74,14 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
   const machineOccupancy = useMemo(() => {
     if (!scheduleDate) return {};
     const WORK_DAY_MINUTES = 13 * 60;
-    const occupancy: Record<string, { occupiedMinutes: number; jobCount: number; percentage: number }> = {};
+    const occupancy: Record<string, { occupiedMinutes: number; jobCount: number; plannedOnlyCount: number; percentage: number }> = {};
     availableMachines.forEach(machine => {
       const machineJobs = jobs.filter(job => job.machine_id === machine.id && job.scheduled_date === scheduleDate && MACHINE_BLOCKING_STATUSES.includes(job.status));
-      const occupiedMinutes = machineJobs.reduce((total, job) => total + job.estimated_duration, 0);
-      occupancy[machine.id] = { occupiedMinutes, jobCount: machineJobs.length, percentage: Math.min(100, Math.round((occupiedMinutes / WORK_DAY_MINUTES) * 100)) };
+      // Só o que tem hora de início reserva tempo na máquina; OS sem início entram
+      // como carga planejada e não podem inflar o percentual de ocupação.
+      const reservedJobs = machineJobs.filter(job => job.start_time);
+      const occupiedMinutes = reservedJobs.reduce((total, job) => total + job.estimated_duration, 0);
+      occupancy[machine.id] = { occupiedMinutes, jobCount: reservedJobs.length, plannedOnlyCount: machineJobs.length - reservedJobs.length, percentage: Math.min(100, Math.round((occupiedMinutes / WORK_DAY_MINUTES) * 100)) };
     });
     return occupancy;
   }, [availableMachines, jobs, scheduleDate]);
@@ -101,7 +104,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
 
   const machineScheduledJobs = useMemo(() => {
     if (!selectedMachineId || !scheduleDate) return [];
-    return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && MACHINE_BLOCKING_STATUSES.includes(job.status))
+    return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && job.start_time && MACHINE_BLOCKING_STATUSES.includes(job.status))
       .map(job => { const startMinutes = timeToMinutes(job.start_time); const endMinutes = jobEndMinutes(job); return { ...job, endTime: minutesToTime(endMinutes), endMinutes, startMinutes }; })
       .sort((a, b) => a.startMinutes - b.startMinutes);
   }, [selectedMachineId, scheduleDate, jobs]);
@@ -136,8 +139,8 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
   const handleSubmit = async () => {
     if (!selectedJob || !scheduleDate) { toast.error('Selecione uma data'); return; }
     const endMinutes = timeToMinutes(startTime) + selectedJob.estimated_duration;
-    if (endMinutes > 24 * 60) {
-      toast.error('O trabalho terminaria depois da meia-noite. Reduza o horário de início ou a duração estimada.');
+    if (endMinutes >= 24 * 60) {
+      toast.error('A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao');
       return;
     }
     setIsSubmitting(true);
@@ -148,7 +151,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
       toast.success('Job agendado com sucesso!');
       onOpenChange(false);
       onScheduled();
-    } catch (err) { toast.error(err instanceof Error && err.message ? err.message : 'Erro ao agendar job'); } finally { setIsSubmitting(false); }
+    } catch (err) { const message = (err as { message?: string } | null)?.message; toast.error(message || 'Erro ao agendar job'); } finally { setIsSubmitting(false); }
   };
 
   const handleOpenOptimization = () => {
@@ -194,7 +197,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
                           availableMachines.map(machine => {
                             const occ = machineOccupancy[machine.id] || { percentage: 0 };
                             const occColor = occ.percentage >= 80 ? 'bg-destructive' : occ.percentage >= 50 ? 'bg-status-delayed' : 'bg-status-ready';
-                            return (<SelectItem key={machine.id} value={machine.id}><div className="flex items-center justify-between gap-3 w-full"><div className="flex items-center gap-2"><Settings2 className="w-3 h-3 text-muted-foreground" /><span>{machine.code} - {machine.name}</span></div><div className="flex items-center gap-2"><div className="w-16 h-2 bg-secondary rounded-full overflow-hidden"><div className={cn("h-full rounded-full transition-all", occColor)} style={{ width: `${occ.percentage}%` }} /></div><span className="text-xs text-muted-foreground min-w-[3ch]">{occ.percentage}%</span></div></div></SelectItem>);
+                            return (<SelectItem key={machine.id} value={machine.id}><div className="flex items-center justify-between gap-3 w-full"><div className="flex items-center gap-2"><Settings2 className="w-3 h-3 text-muted-foreground" /><span>{machine.code} - {machine.name}</span></div><div className="flex items-center gap-2"><div className="w-16 h-2 bg-secondary rounded-full overflow-hidden"><div className={cn("h-full rounded-full transition-all", occColor)} style={{ width: `${occ.percentage}%` }} /></div><span className="text-xs text-muted-foreground min-w-[3ch]" title={occ.plannedOnlyCount > 0 ? `${occ.plannedOnlyCount} OS sem horario de inicio (carga planejada, nao reservada)` : undefined}>{occ.percentage}%</span>{occ.plannedOnlyCount > 0 && <span className="text-[10px] text-muted-foreground" aria-label={`${occ.plannedOnlyCount} OS sem horario`}>+{occ.plannedOnlyCount}</span>}</div></div></SelectItem>);
                           })
                         )}
                       </SelectContent>
