@@ -15,6 +15,7 @@ const JOBS_ERROR_CONTEXT = {
     updateStatus: { entity: 'jobs', operation: 'update_status' },
     updateJob: { entity: 'jobs', operation: 'update' },
     deleteJob: { entity: 'jobs', operation: 'delete' },
+    archiveJob: { entity: 'jobs', operation: 'archive' },
   }
 };
 
@@ -106,6 +107,26 @@ export function useDeleteJob() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
     },
     onError: createMutationErrorHandler('Erro ao excluir job'),
+  });
+}
+
+export function useArchiveJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (jobId: string) => {
+      try {
+        return await jobsService.archive(jobId);
+      } catch (error) {
+        throw createAppError(error, JOBS_ERROR_CONTEXT.hooks.archiveJob);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
+    },
+    onError: createMutationErrorHandler('Erro ao arquivar OS'),
   });
 }
 

@@ -4,8 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
 
 // Mock Supabase
+const { rpcMock } = vi.hoisted(() => ({ rpcMock: vi.fn() }));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
+    rpc: rpcMock,
     from: vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
@@ -77,5 +80,18 @@ describe('jobsService', () => {
     });
 
     await expect(jobsService.getAll()).rejects.toThrow('Erro de conexão');
+  });
+
+  it('arquiva uma OS pela RPC archive_jobs', async () => {
+    rpcMock.mockResolvedValue({ data: { archived: 1, skipped: 0 }, error: null });
+
+    await expect(jobsService.archive('job-9')).resolves.toEqual({ archived: 1, skipped: 0 });
+    expect(rpcMock).toHaveBeenCalledWith('archive_jobs', { p_job_id: 'job-9' });
+  });
+
+  it('falha quando a RPC não arquiva nada', async () => {
+    rpcMock.mockResolvedValue({ data: { archived: 0, skipped: 1 }, error: null });
+
+    await expect(jobsService.archive('job-9')).rejects.toThrow(/Nenhuma OS foi arquivada/);
   });
 });

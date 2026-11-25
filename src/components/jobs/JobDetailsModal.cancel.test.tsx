@@ -16,6 +16,7 @@ vi.mock('@/features/jobs', () => ({
   useUpdateJob: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useDeleteJob: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useUpdateJobStatus: () => ({ mutateAsync: (...a: unknown[]) => updateStatusMutateAsync(...a), isPending: false }),
+  useArchiveJob: () => ({ mutateAsync: (...a: unknown[]) => archiveMutateAsync(...a), isPending: false }),
   useDuplicateJob: () => ({ duplicateJob: vi.fn() }),
 }));
 
@@ -25,7 +26,7 @@ vi.mock('@/features/admin', () => ({
 }));
 vi.mock('@/features/admin/components/audit/AuditEntryCard', () => ({ AuditEntryCard: () => null }));
 vi.mock('@/features/admin/components/audit/HistoryPeriodFilter', () => ({ HistoryPeriodFilter: () => null }));
-vi.mock('@/contexts/ConfirmationContext', () => ({ useConfirmation: () => ({ confirm: vi.fn() }) }));
+vi.mock('@/contexts/ConfirmationContext', () => ({ useConfirmation: () => ({ confirm: confirmMock }) }));
 vi.mock('@/components/qrcode/JobQRCode', () => ({ JobQRCode: () => null }));
 vi.mock('@/components/production/ProductionPhotos', () => ({ ProductionPhotos: () => null }));
 
@@ -42,11 +43,13 @@ vi.mock('./JobQuickActions', () => ({
   ),
 }));
 
-const { passthrough, dialogPassthrough } = vi.hoisted(() => ({
+const { passthrough, dialogPassthrough, confirmMock, archiveMutateAsync } = vi.hoisted(() => ({
   passthrough: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   // Respeita a prop `open` para o teste conseguir provar que o diálogo fecha.
   dialogPassthrough: ({ open, children }: { open?: boolean; children?: React.ReactNode }) =>
     open === false ? null : <div>{children}</div>,
+  confirmMock: vi.fn(),
+  archiveMutateAsync: vi.fn(),
 }));
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: dialogPassthrough,
@@ -191,5 +194,37 @@ describe('JobDetailsModal - cancelamento de OS', () => {
 
     expect(openCancelDialog().value).toBe('');
     expect(updateStatusMutateAsync).not.toHaveBeenCalled();
+  });
+});
+
+describe('JobDetailsModal - arquivamento de OS', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    confirmMock.mockResolvedValue(true);
+    archiveMutateAsync.mockResolvedValue({ archived: 1, skipped: 0 });
+  });
+
+  it('esconde o botão de arquivar em OS que não está finalizada', () => {
+    renderModal({ status: 'production', produced_quantity: 5 });
+
+    expect(screen.queryByText('Arquivar')).toBeNull();
+  });
+
+  it('arquiva a OS finalizada e fecha o diálogo', async () => {
+    const onOpenChange = renderModal({ status: 'finished', produced_quantity: 10 });
+    fireEvent.click(screen.getByText('Arquivar'));
+
+    await vi.waitFor(() => expect(archiveMutateAsync).toHaveBeenCalledWith('job-1'));
+    await vi.waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    expect(toastSuccess).toHaveBeenCalledWith('OS arquivada.');
+    expect(confirmMock).toHaveBeenCalledWith(expect.objectContaining({ title: 'Arquivar OS' }));
+  });
+
+  it('não arquiva quando o usuário desiste da confirmação', () => {
+    confirmMock.mockResolvedValue(false);
+    renderModal({ status: 'finished', produced_quantity: 10 });
+    fireEvent.click(screen.getByText('Arquivar'));
+
+    expect(archiveMutateAsync).not.toHaveBeenCalled();
   });
 });

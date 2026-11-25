@@ -130,6 +130,17 @@ export const jobsService = {
     if (error) throw error;
   },
 
+  async archive(id: string): Promise<{ archived: number; skipped: number }> {
+    const { data, error } = await supabase.rpc('archive_jobs', { p_job_id: id });
+    if (error) throw error;
+
+    const result = (data || {}) as { archived?: number; skipped?: number };
+    if (!result.archived) {
+      throw new Error('Nenhuma OS foi arquivada: só OS com status "finalizada" podem ser arquivadas.');
+    }
+    return { archived: result.archived, skipped: result.skipped ?? 0 };
+  },
+
   async getByDateRange(start: string, end: string): Promise<JobWithRelations[]> {
     const { data, error } = await supabase
       .from('jobs')
