@@ -4,6 +4,7 @@ import {
   classifyResendHttp,
   classifyResendSend,
   decidirRegistroAlerta,
+  destinatariosPendentes,
   marcadorParaTodos,
   MOTIVO_SEM_CREDENCIAL,
 } from "./emailDelivery.ts";
@@ -91,4 +92,22 @@ Deno.test("marcadorParaTodos: sem destinatários ou sem marcador não avisa", ()
   const map = agruparMarcadores([{ data: { jobid: 3 }, user_id: "ana" }]);
   assertEquals(marcadorParaTodos(map, 3, []), false);
   assertEquals(marcadorParaTodos(map, 4, ["ana"]), false);
+});
+
+Deno.test("destinatariosPendentes: quem entrou depois do envio é o único a receber", () => {
+  // Ana já recebeu o alerta 11; Bruno virou coordenador depois.
+  const map = agruparMarcadores([{ data: { jobid: 11 }, user_id: "ana" }]);
+  assertEquals(destinatariosPendentes(map, 11, ["ana", "bruno"]), ["bruno"]);
+});
+
+Deno.test("destinatariosPendentes: sem marcador, todos continuam pendentes", () => {
+  assertEquals(destinatariosPendentes(new Map(), 11, ["ana", "bruno"]), ["ana", "bruno"]);
+});
+
+Deno.test("destinatariosPendentes: marcador completo não deixa ninguém pendente", () => {
+  const map = agruparMarcadores([
+    { data: { jobid: 11 }, user_id: "ana" },
+    { data: { jobid: 11 }, user_id: "bruno" },
+  ]);
+  assertEquals(destinatariosPendentes(map, 11, ["ana", "bruno"]), []);
 });

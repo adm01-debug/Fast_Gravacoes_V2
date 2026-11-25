@@ -87,7 +87,11 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
           .from('push_notifications')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .neq('status', 'read');
+                  .neq('status', 'read')
+                  // `cron_email_sent` só existe para impedir reenvio do e-mail; não é
+                  // aviso ao usuário e não aparece na Central. Linhas sem `data` são
+                  // avisos normais, por isso o `is.null` no `or`.
+                  .or('data->>type.is.null,data->>type.neq.cron_email_sent');
 
         return count || 0;
       } catch (error) {

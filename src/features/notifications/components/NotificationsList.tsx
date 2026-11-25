@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Bell, Wrench, Brain, Calendar, AlertTriangle, CheckCircle, Clock, BellOff, Trash2, Check } from 'lucide-react';
+import { Bell, Wrench, Brain, Calendar, AlertTriangle, CheckCircle, Clock, BellOff, Trash2, Check, Server } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -10,7 +10,7 @@ import { useNotifications } from '@/features/notifications/hooks/useNotification
 
 interface NotificationItem {
   id: string;
-  type: 'maintenance' | 'prediction' | 'summary';
+  type: 'maintenance' | 'prediction' | 'summary' | 'alert';
   title: string;
   message: string;
   severity: 'critical' | 'warning' | 'info' | 'success';
@@ -33,6 +33,7 @@ function getTypeIcon(type: string) {
     case 'maintenance': return <Wrench className="h-4 w-4" />;
     case 'prediction': return <Brain className="h-4 w-4" />;
     case 'summary': return <Calendar className="h-4 w-4" />;
+    case 'alert': return <Server className="h-4 w-4" />;
     default: return <Bell className="h-4 w-4" />;
   }
 }

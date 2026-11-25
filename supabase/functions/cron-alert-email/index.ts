@@ -28,6 +28,7 @@ import {
   agruparMarcadores,
   classifyResendHttp,
   decidirRegistroAlerta,
+  destinatariosPendentes,
   marcadorParaTodos,
   MOTIVO_SEM_CREDENCIAL,
 } from "../_shared/emailDelivery.ts";
@@ -209,11 +210,12 @@ serve(async (req) => {
     );
 
     const emailRecipientIds = recipientIds.filter((id) => !optedOut.has(id));
-    const emails: string[] = [];
+        const emailPorId = new Map<string, string>();
     for (const id of emailRecipientIds) {
       const { data: u } = await supabase.auth.admin.getUserById(id);
-      if (u?.user?.email) emails.push(u.user.email);
+          if (u?.user?.email) emailPorId.set(id, u.user.email);
     }
+        const emails: string[] = Array.from(emailPorId.values());
 
     if (recipientIds.length === 0) {
       return json({ sent: 0, reason: "sem destinatários ativos" });
@@ -251,7 +253,11 @@ serve(async (req) => {
 
     // `snapshot_cron_health()` já avisa falha/silêncio para os mesmos
     // destinatários: sem isso a central ganharia um segundo aviso idêntico.
+        // O e-mail já aceito pelo provedor também é aviso dado: considerar só os
+        // marcadores da coleta fazia a rodada seguinte acusar "e-mail não enviado"
+        // quando alguém entrava no grupo depois da coleta.
     const jaAvisadoNoApp = (jobid: string, kind: "failure" | "stale") =>
+          marcadorParaTodos(jaEnviadoPorEmail, jobid, recipientIds) ||
       marcadorParaTodos(avisosDaFuncao, jobid, recipientIds) ||
       marcadorParaTodos(kind === "failure" ? falhasDaColeta : silenciosasDaColeta, jobid, recipientIds);
 
@@ -265,12 +271,26 @@ serve(async (req) => {
       const jobid = String(row.jobid);
       let emailSaiu = false;
 
-      if (marcadorParaTodos(jaEnviadoPorEmail, row.jobid, recipientIds)) {
+          // Envia só para quem ainda não tem confirmação. Disparar para a lista
+                // inteira quando um único destinatário entrou no grupo depois do envio
+                // duplicava o alerta para quem já o havia recebido.
+                const pendentes = destinatariosPendentes(jaEnviadoPorEmail, jobid, emailRecipientIds);
+                const emailsPendentes = pendentes
+                  .map((id) => emailPorId.get(id))
+                  .filter((e): e is string => Boolean(e));
+
+                if (pendentes.length === 0) {
         skipped.push(row.jobid);
-      } else if (motivoSemEmail === null && resendApiKey) {
-        const entrega = await enviarAlertaEmail(resendApiKey, emails, row, kind);
+                } else if (motivoSemEmail === null && resendApiKey && emailsPendentes.length > 0) {
+                  const entrega = await enviarAlertaEmail(resendApiKey, emailsPendentes, row, kind);
         if (!entrega.ok) console.error("[cron-alert-email] Resend error", entrega.reason);
         emailSaiu = entrega.ok;
+                } else if (motivoSemEmail === null) {
+                  // Quem falta já recebeu ou desligou o e-mail: não há envio a fazer e
+                  // um aviso de "e-mail não enviado" seria ruído para quem optou por não
+                  // receber. Sai sem gravar marcador; a próxima rodada reavalia.
+                  semDestinatario.push(row.jobid);
+                  continue;
       } else {
         // Falta de credencial ou de e-mail não pode apagar o alerta: ele segue
         // para a central, sem afirmar que um e-mail saiu.

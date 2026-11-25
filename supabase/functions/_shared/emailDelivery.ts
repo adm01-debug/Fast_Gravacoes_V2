@@ -95,3 +95,20 @@ export function marcadorParaTodos(
   if (!quem || recipientIds.length === 0) return false;
   return recipientIds.every((id) => quem.has(id));
 }
+
+/**
+ * Destinatários que ainda não têm confirmação para este `jobid`.
+ *
+ * O envio usa esta lista em vez de `recipientIds`: quando alguém entra no grupo
+ * de coordenadores/gestores depois de um alerta aceito, `marcadorParaTodos`
+ * fica falso e reenviar para o grupo inteiro duplicava o e-mail de quem já o
+ * havia recebido.
+ */
+export function destinatariosPendentes(
+  map: Map<string, Set<string>>,
+  jobid: string | number,
+  recipientIds: string[],
+): string[] {
+  const quem = map.get(String(jobid));
+  return recipientIds.filter((id) => !quem?.has(id));
+}
