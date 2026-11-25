@@ -2447,9 +2447,9 @@
    }
   },
   {
-   "protegida": false,
+   "protegida": true,
    "wrappers": [
-    "PublicPage"
+    "ProtectedPage"
    ],
    "pai": null,
    "indice": false,

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
+  "sha": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 00:02 UTC",
-  "files_total": 1606,
-  "code_files": 1410,
-  "code_lines": 208607
+  "generated_at": "2026-11-25 00:12 UTC",
+  "files_total": 1607,
+  "code_files": 1411,
+  "code_lines": 208617
  },
  "version": "1.3.2",
- "facts_hash": "8a5ac10c40481379",
+ "facts_hash": "e19297cb2a1598ae",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 670,
-   ".ts": 405,
+   ".ts": 406,
    ".sql": 268,
    ".mjs": 50,
    ".py": 13,
@@ -30191,8 +30191,8 @@
   },
   {
    "module": "tests",
-   "files": 21,
-   "lines": 1643,
+   "files": 22,
+   "lines": 1653,
    "tables": [],
    "exports": [
     "credentials.ts: E2E_EMAIL, E2E_PASSWORD, E2E_TOTP_SECRET, E2E_OPERATOR_EMAIL, E2E_OPERATOR_PASSWORD",
@@ -30226,6 +30226,7 @@
     "tests/e2e/offline.spec.ts",
     "tests/e2e/packaging.spec.ts",
     "tests/e2e/production.spec.ts",
+    "tests/e2e/rotas-protegidas.spec.ts",
     "tests/e2e/simulation.spec.ts",
     "tests/e2e/system-status.spec.ts",
     "tests/e2e/visual-regression.spec.ts",
@@ -56482,6 +56483,14 @@
    {
     "file": "tests/e2e/production.spec.ts",
     "name": "should verify Operators Productivity"
+   },
+   {
+    "file": "tests/e2e/rotas-protegidas.spec.ts",
+    "name": "Rotas internas sem login"
+   },
+   {
+    "file": "tests/e2e/rotas-protegidas.spec.ts",
+    "name": "visitante em /design-system vai para /auth"
    },
    {
     "file": "tests/e2e/simulation.spec.ts",
@@ -97707,6 +97716,18 @@
     "should verify Operators Productivity"
    ]
   },
+  "tests/e2e/rotas-protegidas.spec.ts": {
+   "path": "tests/e2e/rotas-protegidas.spec.ts",
+   "lines": 10,
+   "is_test": true,
+   "temporal": [
+    "await expect(page).toHaveURL(/\\/auth$/, { timeout: 15000 });"
+   ],
+   "tests": [
+    "Rotas internas sem login",
+    "visitante em /design-system vai para /auth"
+   ]
+  },
   "tests/e2e/simulation.spec.ts": {
    "path": "tests/e2e/simulation.spec.ts",
    "lines": 57,
@@ -97819,10 +97840,20 @@
   }
  },
  "git": {
-  "sha": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
+  "sha": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "5cc8d77",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)",
+    "files": [
+     "src/routes/AppRoutes.tsx",
+     "tests/e2e/rotas-protegidas.spec.ts"
+    ]
+   },
    {
     "sha": "d592aac",
     "date": "2026-11-24",
@@ -98156,16 +98187,6 @@
      "docs/qa/04-PLANO.md",
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "4b3ed9b",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: quiosque de fabrica mostra metricas reais em vez de numeros fabricados (#259)",
-    "files": [
-     "src/components/kiosk/KioskMode.tsx",
-     "src/pages/KioskPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -98196,6 +98217,14 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
+    1
+   ],
+   [
+    "tests/e2e/rotas-protegidas.spec.ts",
+    1
    ],
    [
     "docs/ARCHITECTURE.md",
@@ -98239,14 +98268,6 @@
    ],
    [
     "src/pages/AuthPage.tsx",
-    1
-   ],
-   [
-    "scripts/graphify-local.mjs",
-    1
-   ],
-   [
-    "scripts/graphify-local.unit.mjs",
     1
    ]
   ]

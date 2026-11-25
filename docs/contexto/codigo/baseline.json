@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
+  "commit": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
   "branch": "main",
-  "data_commit": "2026-11-25T00:01:51Z",
+  "data_commit": "2026-11-25T00:12:23Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "5cc8d77",
+    "data": "2026-11-25",
+    "assunto": "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)"
+   },
    {
     "sha": "d592aac",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "c43c1b2",
     "data": "2026-11-23",
     "assunto": "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)"
-   },
-   {
-    "sha": "6789162",
-    "data": "2026-11-23",
-    "assunto": "ci: db push com --include-all para migrations fora de ordem (#273)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 235,
+  "arquivos_mudados_7d": 236,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -267,6 +267,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/config.toml",
     "mudancas": 6
    },
@@ -293,16 +297,12 @@
    {
     "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
     "mudancas": 5
-   },
-   {
-    "arquivo": "src/features/auth/components/AuthProvider.tsx",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 147
+    "commits": 148
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1608,
-  "arquivos_codigo": 1139,
-  "linhas_codigo": 191941,
+  "arquivos_total": 1609,
+  "arquivos_codigo": 1140,
+  "linhas_codigo": 191951,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 260,
   "cron_jobs": 4,
-  "testes": 140,
+  "testes": 141,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -552,8 +552,8 @@
    "linhas": 300
   },
   "tests/e2e": {
-   "arquivos": 21,
-   "linhas": 1643
+   "arquivos": 22,
+   "linhas": 1653
   },
   "vite.config.ts": {
    "arquivos": 1,

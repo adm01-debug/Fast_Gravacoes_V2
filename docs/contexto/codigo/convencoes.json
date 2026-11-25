@@ -22,8 +22,8 @@
   ],
   "testes": [
    "co-localizado (*.test) (104)",
-   "outro (18)",
-   "tests/ (18)"
+   "tests/ (19)",
+   "outro (18)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)",
    "fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)",
    "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)",
    "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)",
-   "fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)",
-   "fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)"
+   "fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

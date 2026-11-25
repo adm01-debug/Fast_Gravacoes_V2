@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d592aac9ae` · branch `main` · 2026-11-25 00:02 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5cc8d77639` · branch `main` · 2026-11-25 00:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T23:12:16Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3326,7 +3326,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1388 testes em 121 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1390 testes em 122 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3449,6 +3449,7 @@ _nenhum item encontrado_
 | `src/pages/AdminTelemetriaPage.test.tsx` | 2 | Painel de Telemetria (Lite) · deve carregar dados de telemetria e exibir na tabela |
 | `supabase/functions/_shared/webpushEncrypt.test.ts` | 2 | encryptPushPayload produz corpo aes128gcm descriptografável (RFC 8291/8188) · encryptPushPayload aceita p256dh/auth em base64url |
 | `tests/e2e/offline.spec.ts` | 2 | Offline Syncing and Persistence · should queue actions offline and show sync indicators |
+| `tests/e2e/rotas-protegidas.spec.ts` | 2 | Rotas internas sem login · visitante em /design-system vai para /auth |
 | `tests/e2e/simulation.spec.ts` | 2 | Simulation and Stress Testing · should run mass simulation and display results |
 | `src/features/auth/types/admin_bypass.test.ts` | 1 | Admin role should always have bypass on protected routes |
 

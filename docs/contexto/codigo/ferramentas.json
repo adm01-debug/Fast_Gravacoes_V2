@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1075)",
+   "TypeScript (1076)",
    "SQL (268)",
    "Markdown (108)",
    "JavaScript (54)",
@@ -1054,11 +1054,10 @@
    "src/components/auth/ProtectedRoute.tsx",
    "src/contexts/DirtyFormContext.tsx"
   ],
-  "rotas_protegidas": 50,
+  "rotas_protegidas": 51,
   "rotas_publicas": [
    "/*",
    "/auth",
-   "/design-system",
    "/install",
    "/reset-password",
    "/track"
