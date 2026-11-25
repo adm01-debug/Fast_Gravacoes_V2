@@ -3,6 +3,7 @@ import type { Database } from '@/integrations/supabase/types';
 import { logger } from '@/lib/logger';
 import { jobSchema, JobStatus, JobPriority } from '../types/job.schema';
 import { assertTransition } from './jobStateMachine';
+import { bulkDeleteBlocker, DELETE_ALLOWED_STATUSES, DELETE_QUANTITY_FILTERS } from '../lib/pending-queue';
 import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 export type { JobStatus, JobPriority };
@@ -30,6 +31,81 @@ export class ArchiveRefusedError extends Error {
 export interface JobWithRelations extends Job {
   machines: { name: string; code: string } | null;
   techniques: Database['public']['Tables']['techniques']['Row'] | null;
+}
+
+export interface JobDeleteRefusal {
+  id: string;
+  reason: string;
+}
+
+export interface JobDeleteResult {
+  /** IDs que o banco realmente apagou. */
+  deleted: string[];
+  /** IDs preservados, com o motivo em linguagem de negócio. */
+  refused: JobDeleteRefusal[];
+}
+
+/**
+ * Exclusao de uma ou varias OS em uma unica operacao.
+ *
+ * Duas garantias que a exclusao OS por OS nao dava:
+ * 1. o DELETE reaplica no banco os mesmos criterios da tela, entao uma OS
+ *    promovida automaticamente (queue -> ready) entre a leitura e a exclusao
+ *    nao e apagada;
+ * 2. as linhas realmente apagadas voltam via select('id'), entao quem chama
+ *    sabe o que saiu e o que foi recusado — inclusive quando a policy de
+ *    exclusao do banco barra o usuario e o DELETE nao afeta nenhuma linha
+ *    sem devolver erro.
+ */
+async function deleteJobsByIds(ids: string[]): Promise<JobDeleteResult> {
+  if (ids.length === 0) return { deleted: [], refused: [] };
+
+  const { data, error } = await supabase
+    .from('jobs')
+    .select('id, status, produced_quantity, lost_pieces')
+    .in('id', ids);
+  if (error) throw error;
+
+  const rows = new Map((data ?? []).map(row => [row.id, row]));
+  const refused: JobDeleteRefusal[] = [];
+  const allowed: string[] = [];
+
+  for (const id of ids) {
+    const row = rows.get(id);
+    if (!row) {
+      refused.push({ id, reason: 'OS não encontrada' });
+      continue;
+    }
+    const blocker = bulkDeleteBlocker({ ...row, status: row.status as JobStatus });
+    if (blocker) refused.push({ id, reason: blocker });
+    else allowed.push(id);
+  }
+
+  const deleted: string[] = [];
+  if (allowed.length > 0) {
+    // Um unico DELETE para o lote inteiro: uma transacao, o que preserva a
+    // cadeia de auditoria (entradas concorrentes gravariam o mesmo antecessor).
+    const { data: deletedRows, error: deleteError } = await supabase
+      .from('jobs')
+      .delete()
+      .in('id', allowed)
+      .in('status', [...DELETE_ALLOWED_STATUSES])
+      .or(DELETE_QUANTITY_FILTERS.produced)
+      .or(DELETE_QUANTITY_FILTERS.lost)
+      .select('id');
+    if (deleteError) throw deleteError;
+
+    deleted.push(...(deletedRows ?? []).map(row => row.id));
+
+    const deletedIds = new Set(deleted);
+    for (const id of allowed) {
+      if (!deletedIds.has(id)) {
+        refused.push({ id, reason: 'a OS mudou de situação ou o usuário não tem permissão de exclusão' });
+      }
+    }
+  }
+
+  return { deleted, refused };
 }
 
 export const jobsService = {
@@ -137,8 +213,13 @@ export const jobsService = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('jobs').delete().eq('id', id);
-    if (error) throw error;
+    const { refused } = await deleteJobsByIds([id]);
+    const [refusal] = refused;
+    if (refusal) throw new Error(`Esta OS nao pode ser excluida: ${refusal.reason}.`);
+  },
+
+  deleteMany(ids: string[]): Promise<JobDeleteResult> {
+    return deleteJobsByIds(ids);
   },
 
   async archive(id: string): Promise<{ archived: number; skipped: number }> {

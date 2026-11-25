@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useJobs } from '../index';
 import { useMachines } from '@/features/production';
 import { parseISO, parse, isValid, areIntervalsOverlapping } from 'date-fns';
+import { MACHINE_ACTIVE_SCHEDULE_STATUSES } from '@/constants';
 
 export interface SchedulingConflict {
   id: string;
@@ -32,10 +33,11 @@ export const useSchedulingConflicts = () => {
 
     const detectedConflicts: SchedulingConflict[] = [];
 
-    // Filter only scheduled jobs (not finished, cancelled, etc.)
-    const activeStatuses = ['scheduled', 'ready', 'production'];
+    // Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra
+    // qualquer status menos 'cancelled'. Aqui o alerta e sobre quem ainda vai
+    // produzir, entao finished/delayed/paused ficam fora de proposito.
     const activeJobs = jobs.filter(job =>
-      activeStatuses.includes(job.status) &&
+      MACHINE_ACTIVE_SCHEDULE_STATUSES.includes(job.status) &&
       job.scheduled_date &&
       job.start_time &&
       job.end_time &&
