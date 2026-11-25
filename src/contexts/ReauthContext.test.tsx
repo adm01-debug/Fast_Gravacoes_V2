@@ -6,6 +6,7 @@ import { ReauthProvider, useReauth } from './ReauthContext';
 const mocks = vi.hoisted(() => ({
   verifySignIn: vi.fn(),
   verifySignOut: vi.fn(),
+  verifyDispose: vi.fn(),
   getUser: vi.fn(),
   onAuthStateChange: vi.fn(),
   insert: vi.fn(),
@@ -17,6 +18,7 @@ vi.mock('@supabase/supabase-js', () => ({
     auth: {
       signInWithPassword: mocks.verifySignIn,
       signOut: mocks.verifySignOut,
+      dispose: mocks.verifyDispose,
     },
   })),
 }));
@@ -69,6 +71,7 @@ describe('ReauthProvider', () => {
     });
     mocks.verifySignIn.mockResolvedValue({ data: { user: { id: 'user-a' } }, error: null });
     mocks.verifySignOut.mockResolvedValue({ error: null });
+    mocks.verifyDispose.mockResolvedValue(undefined);
     mocks.insert.mockResolvedValue({ error: null });
   });
 
@@ -85,6 +88,8 @@ describe('ReauthProvider', () => {
       password: 'senha-errada',
     }));
     expect(onDone).not.toHaveBeenCalled();
+    // O cliente de verificação é descartado mesmo quando a senha está errada.
+    await waitFor(() => expect(mocks.verifyDispose).toHaveBeenCalled());
     // A tentativa recusada fica registrada para auditoria.
     await waitFor(() => expect(mocks.insert).toHaveBeenCalledWith(
       expect.objectContaining({ event_type: 'reauth_failed' }),
@@ -102,6 +107,42 @@ describe('ReauthProvider', () => {
     await waitFor(() => expect(onDone).toHaveBeenCalledTimes(1));
     expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
     expect(mocks.verifySignOut).toHaveBeenCalled();
+    // Nenhum cliente de verificação fica vivo na aba depois da confirmação.
+    expect(mocks.verifyDispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('mantém a confirmação para o mesmo operador sem novo login (etapa 233)', async () => {
+    const onDone = vi.fn();
+    renderHarness(onDone);
+
+    await userEvent.setup().click(screen.getByRole('button', { name: 'alterar papel' }));
+    await confirmPassword('senha-certa');
+    await waitFor(() => expect(onDone).toHaveBeenCalledTimes(1));
+
+    // Renovação de token não troca o dono da confirmação.
+    mocks.authCb?.('TOKEN_REFRESHED', { user: { id: 'user-a' } });
+
+    await userEvent.setup().click(screen.getByRole('button', { name: 'alterar papel' }));
+
+    await waitFor(() => expect(onDone).toHaveBeenCalledTimes(2));
+    expect(screen.queryByText('Verificação de Segurança')).not.toBeInTheDocument();
+  });
+
+  it('pede a senha quando outra conta entra sem logout prévio (etapa 233)', async () => {
+    const onDone = vi.fn();
+    renderHarness(onDone);
+
+    await userEvent.setup().click(screen.getByRole('button', { name: 'alterar papel' }));
+    await confirmPassword('senha-certa');
+    await waitFor(() => expect(onDone).toHaveBeenCalledTimes(1));
+
+    // Sem SIGNED_OUT: só o evento de entrada da outra conta.
+    mocks.authCb?.('SIGNED_IN', { user: { id: 'user-b' } });
+
+    await userEvent.setup().click(screen.getByRole('button', { name: 'alterar papel' }));
+
+    expect(onDone).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText('Verificação de Segurança')).toBeInTheDocument();
   });
 
   it('não empresta a confirmação para outra conta na mesma aba (etapa 233)', async () => {

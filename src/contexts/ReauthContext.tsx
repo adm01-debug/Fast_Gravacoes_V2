@@ -55,6 +55,10 @@ async function verifyPassword(email: string, password: string, expectedUserId: s
   } finally {
     // Encerra a sessão extra criada pela verificação (só no cliente descartável).
     await verifier.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    // O SDK registra um listener de `visibilitychange` por cliente e o mantém
+    // vivo até o descarte: sem isto, cada confirmação de senha deixaria um
+    // cliente pendurado na aba, acionado a cada retorno ao foco.
+    await verifier.auth.dispose().catch(() => undefined);
   }
 }
 
