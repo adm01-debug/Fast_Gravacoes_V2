@@ -24,8 +24,23 @@ interface Job {
   status: string;
   scheduled_date: string | null;
   start_time: string | null;
+  end_time: string | null;
   machine_id: string | null;
 }
+
+const timeToMinutes = (time: string | null): number => {
+  if (!time) return 0;
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+};
+
+const minutesToTime = (minutes: number): string =>
+  `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+// O fim gravado na OS manda: check_job_overlap compara start_time/end_time salvos,
+// nao a duracao estimada. A estimativa so entra quando a OS ainda nao tem fim gravado.
+const jobEndMinutes = (job: { start_time: string | null; end_time?: string | null; estimated_duration: number }): number =>
+  job.end_time ? timeToMinutes(job.end_time) : timeToMinutes(job.start_time) + job.estimated_duration;
 
 interface Machine {
   id: string;
@@ -61,7 +76,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
     const WORK_DAY_MINUTES = 13 * 60;
     const occupancy: Record<string, { occupiedMinutes: number; jobCount: number; percentage: number }> = {};
     availableMachines.forEach(machine => {
-      const machineJobs = jobs.filter(job => job.machine_id === machine.id && job.scheduled_date === scheduleDate && !['finished', 'cancelled'].includes(job.status));
+      const machineJobs = jobs.filter(job => job.machine_id === machine.id && job.scheduled_date === scheduleDate && MACHINE_BLOCKING_STATUSES.includes(job.status));
       const occupiedMinutes = machineJobs.reduce((total, job) => total + job.estimated_duration, 0);
       occupancy[machine.id] = { occupiedMinutes, jobCount: machineJobs.length, percentage: Math.min(100, Math.round((occupiedMinutes / WORK_DAY_MINUTES) * 100)) };
     });
@@ -73,8 +88,8 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
     const WORK_START = 7 * 60, WORK_END = 20 * 60, duration = selectedJob.estimated_duration;
     let bestMachine: string | null = null, bestTime: string | null = null, lowestOccupancy = Infinity;
     for (const machine of availableMachines) {
-      const machineJobs = jobs.filter(job => job.machine_id === machine.id && job.scheduled_date === scheduleDate && job.start_time && !['finished', 'cancelled'].includes(job.status))
-        .map(job => { const [h, m] = (job.start_time ?? "00:00").split(':').map(Number); const start = h * 60 + m; return { start, end: start + job.estimated_duration }; }).sort((a, b) => a.start - b.start);
+      const machineJobs = jobs.filter(job => job.machine_id === machine.id && job.scheduled_date === scheduleDate && job.start_time && MACHINE_BLOCKING_STATUSES.includes(job.status))
+        .map(job => { const start = timeToMinutes(job.start_time); return { start, end: jobEndMinutes(job) }; }).sort((a, b) => a.start - b.start);
       let currentTime = WORK_START, foundSlot: number | null = null;
       for (const slot of machineJobs) { if (currentTime + duration <= slot.start) { foundSlot = currentTime; break; } currentTime = Math.max(currentTime, slot.end); }
       if (foundSlot === null && currentTime + duration <= WORK_END) foundSlot = currentTime;
@@ -87,7 +102,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
   const machineScheduledJobs = useMemo(() => {
     if (!selectedMachineId || !scheduleDate) return [];
     return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && MACHINE_BLOCKING_STATUSES.includes(job.status))
-      .map(job => { const startMinutes = job.start_time ? parseInt(job.start_time.split(':')[0], 10) * 60 + parseInt(job.start_time.split(':')[1], 10) : 0; const endMinutes = startMinutes + job.estimated_duration; return { ...job, endTime: `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}`, startMinutes }; })
+      .map(job => { const startMinutes = timeToMinutes(job.start_time); const endMinutes = jobEndMinutes(job); return { ...job, endTime: minutesToTime(endMinutes), endMinutes, startMinutes }; })
       .sort((a, b) => a.startMinutes - b.startMinutes);
   }, [selectedMachineId, scheduleDate, jobs]);
 
@@ -96,8 +111,8 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
     const WORK_START = 7 * 60, WORK_END = 20 * 60, MIN = 15;
     const slots: { start: string; end: string; duration: number }[] = [];
     let currentTime = WORK_START;
-    for (const job of machineScheduledJobs) { if (job.startMinutes > currentTime) { const gap = job.startMinutes - currentTime; if (gap >= MIN) slots.push({ start: `${String(Math.floor(currentTime / 60)).padStart(2, '0')}:${String(currentTime % 60).padStart(2, '0')}`, end: `${String(Math.floor(job.startMinutes / 60)).padStart(2, '0')}:${String(job.startMinutes % 60).padStart(2, '0')}`, duration: gap }); } currentTime = Math.max(currentTime, job.startMinutes + job.estimated_duration); }
-    if (currentTime < WORK_END) { const rem = WORK_END - currentTime; if (rem >= MIN) slots.push({ start: `${String(Math.floor(currentTime / 60)).padStart(2, '0')}:${String(currentTime % 60).padStart(2, '0')}`, end: '20:00', duration: rem }); }
+    for (const job of machineScheduledJobs) { if (job.startMinutes > currentTime) { const gap = job.startMinutes - currentTime; if (gap >= MIN) slots.push({ start: minutesToTime(currentTime), end: minutesToTime(job.startMinutes), duration: gap }); } currentTime = Math.max(currentTime, job.endMinutes); }
+    if (currentTime < WORK_END) { const rem = WORK_END - currentTime; if (rem >= MIN) slots.push({ start: minutesToTime(currentTime), end: '20:00', duration: rem }); }
     return slots.sort((a, b) => b.duration - a.duration);
   }, [selectedMachineId, scheduleDate, machineScheduledJobs]);
 
@@ -110,8 +125,8 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
       if (selectedMachineId && job.machine_id !== selectedMachineId) return false;
       if (!selectedMachineId && job.technique_id !== selectedJob.technique_id) return false;
       if (!job.start_time) return false;
-      const jStart = parseInt(job.start_time.split(':')[0], 10) * 60 + parseInt(job.start_time.split(':')[1], 10);
-      const jEnd = jStart + job.estimated_duration;
+      const jStart = timeToMinutes(job.start_time);
+      const jEnd = jobEndMinutes(job);
       return selStart < jEnd && selEnd > jStart;
     });
   }, [selectedJob, scheduleDate, startTime, jobs, selectedMachineId]);
@@ -122,12 +137,13 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
     if (!selectedJob || !scheduleDate) { toast.error('Selecione uma data'); return; }
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('jobs').update({ scheduled_date: scheduleDate, start_time: startTime, status: 'scheduled', machine_id: selectedMachineId || null }).eq('id', selectedJob.id);
+      const endTime = minutesToTime(timeToMinutes(startTime) + selectedJob.estimated_duration);
+      const { error } = await supabase.from('jobs').update({ scheduled_date: scheduleDate, start_time: startTime, end_time: endTime, status: 'scheduled', machine_id: selectedMachineId || null }).eq('id', selectedJob.id);
       if (error) throw error;
       toast.success('Job agendado com sucesso!');
       onOpenChange(false);
       onScheduled();
-    } catch { toast.error('Erro ao agendar job'); } finally { setIsSubmitting(false); }
+    } catch (err) { toast.error(err instanceof Error && err.message ? err.message : 'Erro ao agendar job'); } finally { setIsSubmitting(false); }
   };
 
   const handleOpenOptimization = () => {

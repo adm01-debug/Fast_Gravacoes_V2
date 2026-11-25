@@ -33,7 +33,9 @@ export const useSchedulingConflicts = () => {
 
     const detectedConflicts: SchedulingConflict[] = [];
 
-    // Regra única em src/constants: a mesma que o banco aplica em check_job_overlap.
+    // Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra
+    // qualquer status menos 'cancelled'. Aqui o alerta e sobre quem ainda vai
+    // produzir, entao finished/delayed/paused ficam fora de proposito.
     const activeJobs = jobs.filter(job =>
       MACHINE_ACTIVE_SCHEDULE_STATUSES.includes(job.status) &&
       job.scheduled_date &&
