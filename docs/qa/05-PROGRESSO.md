@@ -45,7 +45,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 034 — Impedir que o operador altere campos comerciais da OS — onda 1 — Média · **aprovação do dono**
 - [ ] 035 — Fazer o portão de qualidade falhar fechado — onda 1 — Média · **aprovação do dono**
 - [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
-- [ ] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta
+- [x] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta · implementada na #306
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
 - [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
 - [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
