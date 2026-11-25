@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { AlertScheduleModal } from './AlertScheduleModal';
@@ -68,6 +68,15 @@ function renderAndChooseTime(jobs: unknown[], job: typeof selectedJob = selected
 }
 
 describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () => {
+  // O jsdom nao implementa as APIs de ponteiro que o Radix Select usa para abrir
+  // a lista; sem isso os itens (percentual e contagem) nunca renderizam.
+  beforeAll(() => {
+    Element.prototype.hasPointerCapture = () => false;
+    Element.prototype.setPointerCapture = () => {};
+    Element.prototype.releasePointerCapture = () => {};
+    Element.prototype.scrollIntoView = () => {};
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     dbError.current = null;
@@ -130,5 +139,37 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
       // só passa se usar o fim que está na OS.
       renderAndChooseTime([otherJob('finished', '10:30')]);
       expect(screen.getByText(/09:00 - 10:30/)).toBeInTheDocument();
+    });
+
+    it('conta separado o que reserva tempo e o que e so carga planejada na maquina', async () => {
+      const machines = [
+        { id: 'm1', code: 'M1', name: 'Maquina Um', technique_id: 't1', is_active: true },
+        { id: 'm2', code: 'M2', name: 'Maquina Dois', technique_id: 't1', is_active: true },
+      ];
+      const reservada = otherJob('scheduled'); // 09:00 + 120 min na m1
+      const semInicio = { ...otherJob('scheduled'), id: 'planejada', machine_id: 'm2', start_time: null };
+
+      render(
+        <AlertScheduleModal
+          open
+          onOpenChange={() => {}}
+          selectedJob={selectedJob}
+          jobs={[reservada, semInicio] as never}
+          machines={machines as never}
+          onScheduled={() => {}}
+        />
+      );
+      fireEvent.change(document.querySelector('input[type="date"]')!, { target: { value: DATE } });
+
+      // A OS sem inicio nao reserva tempo: a m2 fica com 0% e recebe a sugestao,
+      // enquanto a m1 aparece com 15% (120 de 780 minutos uteis).
+      expect(screen.getByText('Maquina Dois')).toBeInTheDocument();
+      expect(screen.getByText('07:00')).toBeInTheDocument();
+
+      fireEvent.pointerDown(screen.getByRole('combobox'), { button: 0, ctrlKey: false, pointerType: 'mouse' });
+
+      await waitFor(() => expect(screen.getByLabelText('1 OS sem horario')).toBeInTheDocument());
+      expect(screen.getByText('15%')).toBeInTheDocument();
+      expect(screen.getByText('0%')).toBeInTheDocument();
     });
 });
