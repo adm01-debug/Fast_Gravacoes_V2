@@ -227,6 +227,35 @@ test('doctor não confunde comentário de workflow com execução', (t) => {
     assert.equal(r.status, 0, r.stdout);
   });
 
+test('ciMainPolicy dispensa o pushmain só quando declarada com motivo', (t) => {
+  const f = fixture(t);
+  f.config.ci[0].events = ['PR'];
+  f.write(
+    '.github/workflows/ci.yml',
+    'name: fixture\non:\n  pull_request: {}\njobs:\n  tools:\n    runs-on: ubuntu-latest\n    steps:\n      - run: node scripts/automation.mjs test\n'
+  );
+  f.save();
+  let result = f.cli('doctor', '--static');
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /testes sem gatilho CI pushmain/);
+  f.config.ciMainPolicy = { mode: 'pr-mirror', reason: 'x'.repeat(60) };
+  f.save();
+  result = f.cli('doctor', '--static');
+  assert.equal(result.status, 0, result.stdout);
+  assert.throws(
+    () => validateConfig({ ...f.config, ciMainPolicy: { mode: 'pr-mirror' } }),
+    /ciMainPolicy/
+  );
+  assert.throws(
+    () => validateConfig({ ...f.config, ciMainPolicy: { mode: 'outro' } }),
+    /ciMainPolicy/
+  );
+  assert.throws(
+    () => validateConfig({ ...f.config, ciMainPolicy: { mode: 'pr-mirror', reason: 'x'.repeat(60), extra: 1 } }),
+    /ciMainPolicy/
+  );
+});
+
 test('CLI/config desconhecidos falham e check/heal exigem ref explícita', (t) => {
   const f = fixture(t);
   for (const args of [
