@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fc44f9176be81dfdfa2151ecf59f8085030de4b5` (2026-11-24T20:52:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d592aac9aeb72527d4790e8eb4f4df825e419f9b` (2026-11-25T00:01:51Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1608 |
 | arquivos_codigo | 1139 |
-| linhas_codigo | 191915 |
+| linhas_codigo | 191941 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -221,7 +221,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): BACKUP_API_KEY, BITRIX24_ACCESS_TOKEN, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_REFRESH_TOKEN, BITRIX24_WEBHOOK_SECRET, BITRIX24_WEBHOOK_TOKEN, BITRIX24_WEBHOOK_URL, CRON_API_KEY, CRON_SECRET, LOVABLE_API_KEY, RESEND_API_KEY, SECRET, SENTRY_DSN, VITE_ALERT_WEBHOOK_URL, VITE_GOOGLE_ANALYTICS_ID, VITE_GOOGLE_MAPS_API_KEY, VITE_SENTRY_DSN, WEBHOOK_API_KEY
 
 ## Permissões / papéis
-- papéis no código: coordinator (8), operator (7), user (7), admin (5), assistant (4), manager (4), system (2)
+- papéis no código: coordinator (8), operator (7), user (7), admin (6), assistant (4), manager (4), system (2)
 - enums de papel: app_role: coordinator|operator|manager|admin
 - guards: src/components/auth/ProtectedRoute.tsx, src/contexts/DirtyFormContext.tsx · rotas protegidas: 50 · públicas: /*, /auth, /design-system, /install, /reset-password, /track
 - feature flags: nenhuma
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8486 nós · 32296 arestas · 398 comunidades · grafo do commit `fc44f917`
-- comunidades maiores: SelectContent (196), Card (171), client.ts (160), Button (144), MainLayout (142), production/index.ts (133), package.json (125), CardHeader (122), test_snapshot.py (121), snapshot.py (120), Input (120), DbJob (113)
+- 8487 nós · 32297 arestas · 410 comunidades · grafo do commit `d592aac9`
+- comunidades maiores: Card (233), client.ts (179), ResponsiveContainer (151), SelectContent (144), Badge (138), DialogContent (134), package.json (127), lucide-react (121), errorHandling.ts (119), useAuth (115), generate.py (113), SecurityDashboard.tsx (111)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -354,7 +354,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `PENDENCIAS.md` — PENDENCIAS — itens que dependem de ação manual do Joaquim (64 linhas)
 - `README.md` — FAST Gravações - Sistema de Gestão Industrial (53 linhas)
 - `RELATORIO_CI.md` — RELATORIO_CI — Inventário e correção dos workflows (2026-10-28) (87 linhas)
-- `docs/ARCHITECTURE.md` — Guia de Arquitetura e Documentação Técnica (244 linhas)
+- `docs/ARCHITECTURE.md` — Guia de Arquitetura e Documentação Técnica (249 linhas)
 - `docs/AUTOMACAO_LOCAL.md` — Automação local — Fast_Gravacoes_V2 (107 linhas)
 - `docs/QA_AUDIT_2026-06-14.md` — QA Audit — FAST GRAVAÇÕES ES v2 (142 linhas)
 - `docs/QA_SIMULACAO_CENARIOS_2026-06-14.md` — Simulação de Cenários & Hardening — FAST GRAVAÇÕES ES v2 (134 linhas)
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `d592aac` fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)
 - 2026-11-24 `fc44f91` fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)
 - 2026-11-24 `fa8cd71` chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)
 - 2026-11-24 `1c4e616` fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `1b65d05` fix: viewport do ScrollArea focavel so quando ha rolagem (#286)
 - 2026-11-24 `765030a` ci: evita rodar E2E duas vezes para o mesmo tree (#282)
 - 2026-11-24 `5bc2d12` chore: lista public.techniques no db-admin inspect (#284)
-- 2026-11-24 `e16478a` feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

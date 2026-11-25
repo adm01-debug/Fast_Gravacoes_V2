@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
+  "commit": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
   "branch": "main",
-  "data_commit": "2026-11-24T20:52:46-03:00",
+  "data_commit": "2026-11-25T00:01:51Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d592aac",
+    "data": "2026-11-25",
+    "assunto": "fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)"
+   },
    {
     "sha": "fc44f91",
     "data": "2026-11-24",
@@ -126,15 +131,10 @@
     "sha": "6789162",
     "data": "2026-11-23",
     "assunto": "ci: db push com --include-all para migrations fora de ordem (#273)"
-   },
-   {
-    "sha": "156312d",
-    "data": "2026-11-23",
-    "assunto": "fix: corrige import typescript para ESM namespace (TS7) (#270)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 232,
+  "arquivos_mudados_7d": 235,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 146
+    "commits": 147
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1608,
   "arquivos_codigo": 1139,
-  "linhas_codigo": 191915,
+  "linhas_codigo": 191941,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11331
+   "linhas": 11357
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -667,7 +667,7 @@
   }
  ],
  "qualidade": {
-  "any": 175,
+  "any": 176,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

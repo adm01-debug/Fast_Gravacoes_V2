@@ -668,7 +668,7 @@
   {
    "arquivo": "docs/ARCHITECTURE.md",
    "titulo": "Guia de Arquitetura e Documentação Técnica",
-   "linhas": 244
+   "linhas": 249
   },
   {
    "arquivo": "docs/AUTOMACAO_LOCAL.md",
@@ -1023,7 +1023,7 @@
    },
    {
     "papel": "admin",
-    "ocorrencias": 5
+    "ocorrencias": 6
    },
    {
     "papel": "assistant",

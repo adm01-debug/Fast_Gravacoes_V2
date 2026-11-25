@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fc44f9176b` · branch `main` · 2026-11-24 23:53 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d592aac9ae` · branch `main` · 2026-11-25 00:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T23:12:16Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3313,6 +3313,7 @@ _nenhum item encontrado_
 | `granted` | `src/pages/NotificationsPage.tsx` |
 | `assistant` | `src/pages/TechnicalAssistantPage.tsx` |
 | `coordinator` | `src/pages/TechnicalKnowledgeBase.tsx` |
+| `admin` | `supabase/functions/external-db-bridge/index.ts` |
 | `user` | `supabase/functions/technical-assistant/index.ts` |
 | `g` | `supabase/migrations/20261019140000_validation_hardening.sql` |
 | `admin` | `supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql` |

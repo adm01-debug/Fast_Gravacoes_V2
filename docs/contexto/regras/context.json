@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
+  "sha": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-24 23:53 UTC",
+  "generated_at": "2026-11-25 00:02 UTC",
   "files_total": 1606,
   "code_files": 1410,
-  "code_lines": 208581
+  "code_lines": 208607
  },
  "version": "1.3.2",
- "facts_hash": "af6c81b151807bc6",
+ "facts_hash": "8a5ac10c40481379",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -29961,7 +29961,7 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11331,
+   "lines": 11357,
    "tables": [
     "backup_logs",
     "backups",
@@ -30022,7 +30022,7 @@
     "validate.ts: ParseContext, ParseResult, parseOrError",
     "validation.ts: webhookPayloadSchema, WebhookPayload, bitrix24DataSchema, stripeDataSchema, mlPredictionPayloadSchema, MLPredictionPayload",
     "webpushEncrypt.ts: encryptPushPayload",
-    "index.ts: classifySeverity, buildTelemetryPayload, emitTelemetry, validateColumns, ALLOWED_TABLES, ALLOWED_RPCS",
+    "index.ts: classifySeverity, buildTelemetryPayload, emitTelemetry, validateColumns, ALLOWED_TABLES, WRITE_ACTIONS",
     "index.ts: handler"
    ],
    "docs": [
@@ -36671,6 +36671,10 @@
    {
     "file": "src/pages/TechnicalKnowledgeBase.tsx",
     "value": "coordinator"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/index.ts",
+    "value": "admin"
    },
    {
     "file": "supabase/functions/technical-assistant/index.ts",
@@ -95274,13 +95278,14 @@
   },
   "supabase/functions/external-db-bridge/index.ts": {
    "path": "supabase/functions/external-db-bridge/index.ts",
-   "lines": 352,
+   "lines": 368,
    "exports": [
     "function classifySeverity",
     "function buildTelemetryPayload",
     "function emitTelemetry",
     "function validateColumns",
     "const ALLOWED_TABLES",
+    "const WRITE_ACTIONS",
     "const ALLOWED_RPCS",
     "function validateBridgeRequest"
    ],
@@ -95294,6 +95299,9 @@
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
+   ],
+   "role_checks": [
+    "admin"
    ],
    "rule_comments": [
     "* Defense-in-depth allowlist. Even admins must not use this bridge to"
@@ -95317,7 +95325,7 @@
   },
   "supabase/functions/external-db-bridge/validate_contract.ts": {
    "path": "supabase/functions/external-db-bridge/validate_contract.ts",
-   "lines": 70,
+   "lines": 80,
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -97811,10 +97819,21 @@
   }
  },
  "git": {
-  "sha": "fc44f9176be81dfdfa2151ecf59f8085030de4b5",
+  "sha": "d592aac9aeb72527d4790e8eb4f4df825e419f9b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d592aac",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)",
+    "files": [
+     "docs/ARCHITECTURE.md",
+     "supabase/functions/external-db-bridge/index.ts",
+     "supabase/functions/external-db-bridge/validate_contract.ts"
+    ]
+   },
    {
     "sha": "fc44f91",
     "date": "2026-11-24",
@@ -98147,29 +98166,6 @@
      "src/components/kiosk/KioskMode.tsx",
      "src/pages/KioskPage.tsx"
     ]
-   },
-   {
-    "sha": "1724af5",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: registro atômico e autorizado de defeito de embalagem (F-010) (#249)",
-    "files": [
-     "docs/pendencias/F-010-corrida-em-rejected-quantity.md",
-     "src/components/logistics/EditShipmentModal.test.tsx",
-     "src/components/logistics/EditShipmentModal.tsx",
-     "src/features/inventory/hooks/useLogistics.test.ts",
-     "src/features/inventory/hooks/useLogistics.ts",
-     "src/features/packaging/components/DefectTriageForm.tsx",
-     "src/features/packaging/components/PackagingTaskDetail.tsx",
-     "src/features/packaging/hooks/usePackagingTask.ts",
-     "src/features/packaging/services/packagingService.ts",
-     "src/features/packaging/types/packaging.schema.ts",
-     "src/integrations/supabase/types.ts",
-     "src/pages/LogisticsPage.test.tsx",
-     "src/pages/LogisticsPage.tsx",
-     "supabase/migrations/20261122120000_f010_rpc_record_defect_atomic.sql",
-     "supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -98198,12 +98194,20 @@
     2
    ],
    [
-    "src/integrations/supabase/types.ts",
+    "deno.lock",
     2
    ],
    [
-    "deno.lock",
-    2
+    "docs/ARCHITECTURE.md",
+    1
+   ],
+   [
+    "supabase/functions/external-db-bridge/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/external-db-bridge/validate_contract.ts",
+    1
    ],
    [
     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
@@ -98243,14 +98247,6 @@
    ],
    [
     "scripts/graphify-local.unit.mjs",
-    1
-   ],
-   [
-    "src/lib/simulation.ts",
-    1
-   ],
-   [
-    "src/pages/SimulationDashboard.tsx",
     1
    ]
   ]
