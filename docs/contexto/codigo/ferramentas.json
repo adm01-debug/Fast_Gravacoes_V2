@@ -170,7 +170,6 @@
    "nome": "Automação local",
    "gatilhos": [
     "pull_request",
-    "push",
     "workflow_dispatch"
    ],
    "crons": [],

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d0cab10e1104eb6ed80607fcb0d5b8ea13ce27cb",
+  "commit": "cd834ba5f902e2a62113ce54e9f57ff3a02ff46e",
   "branch": "main",
-  "data_commit": "2026-11-25T00:32:29Z",
+  "data_commit": "2026-11-25T08:11:15-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "cd834ba",
+    "data": "2026-11-25",
+    "assunto": "infra: remove push em main do automation-local (recupera PR #229) (#298)"
+   },
    {
     "sha": "d0cab10",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "17a3af4",
     "data": "2026-11-23",
     "assunto": "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)"
-   },
-   {
-    "sha": "0becad3",
-    "data": "2026-11-23",
-    "assunto": "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 243,
+  "arquivos_mudados_7d": 247,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 149
+    "commits": 150
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1610,
   "arquivos_codigo": 1141,
-  "linhas_codigo": 192353,
+  "linhas_codigo": 192396,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -393,11 +393,11 @@
   },
   "scripts/automation.mjs": {
    "arquivos": 1,
-   "linhas": 1191
+   "linhas": 1205
   },
   "scripts/automation.unit.mjs": {
    "arquivos": 1,
-   "linhas": 739
+   "linhas": 768
   },
   "scripts/bundle-diff.mjs": {
    "arquivos": 1,
@@ -587,7 +587,7 @@
   },
   {
    "arquivo": "scripts/automation.mjs",
-   "linhas": 1191
+   "linhas": 1205
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",

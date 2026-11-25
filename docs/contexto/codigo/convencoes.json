@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: remove push em main do automation-local (recupera PR #229) (#298)",
    "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)",
    "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)",
    "fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)",
-   "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)",
-   "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)"
+   "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
