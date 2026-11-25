@@ -40,3 +40,18 @@ export function classifyResendHttp(status: number, body: string): EmailSendOutco
   const detalhe = body.trim().slice(0, 200);
   return { ok: false, reason: detalhe ? `HTTP ${status}: ${detalhe}` : `HTTP ${status}` };
 }
+
+/**
+ * O que gravar em `push_notifications` depois de tentar (ou não) o envio.
+ *
+ * `confirmado` marca `cron_email_sent` e só existe para e-mail que o
+ * provedor aceitou — é esse marcador que impede o reenvio. Sem ele, `aviso_no_app`
+ * grava `cron_alert`, que alimenta a central de notificações do aplicativo sem
+ * afirmar envio de e-mail; `nada` evita repetir o aviso a cada rodada.
+ */
+export type RegistroAlerta = "confirmado" | "aviso_no_app" | "nada";
+
+export function decidirRegistroAlerta(emailSaiu: boolean, jaAvisadoNoApp: boolean): RegistroAlerta {
+  if (emailSaiu) return "confirmado";
+  return jaAvisadoNoApp ? "nada" : "aviso_no_app";
+}

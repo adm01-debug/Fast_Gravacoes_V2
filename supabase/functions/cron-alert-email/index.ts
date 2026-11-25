@@ -10,12 +10,17 @@
  *
  * Deduplicação: grava um marcador em `public.push_notifications`
  * (`data->>'type' = 'cron_email_sent'`) e não reenvia para a mesma rotina
- * dentro da janela de `DEDUPE_HOURS`.
+ * dentro da janela de `DEDUPE_HOURS`. O aviso no aplicativo (`cron_alert`)
+ * tem deduplicação própria e é gravado mesmo quando o e-mail não sai.
  *
  * Autenticação: exclusivamente via `x-cron-secret` (fail-closed) — não é um
  * endpoint de usuário.
  */
-import { classifyResendHttp, MOTIVO_SEM_CREDENCIAL } from "../_shared/emailDelivery.ts";
+import {
+  classifyResendHttp,
+  decidirRegistroAlerta,
+  MOTIVO_SEM_CREDENCIAL,
+} from "../_shared/emailDelivery.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders } from "../_shared/cors.ts";
@@ -167,28 +172,41 @@ serve(async (req) => {
 
 
     const dedupeSince = new Date(Date.now() - DEDUPE_HOURS * 60 * 60 * 1000).toISOString();
-    const { data: recent } = await supabase
-      .from("push_notifications")
-      .select("data")
-      .gte("created_at", dedupeSince)
-      .eq("data->>type", "cron_email_sent")
-      .limit(200);
+    const [sentMarkers, appMarkers] = await Promise.all([
+      supabase
+        .from("push_notifications")
+        .select("data")
+        .gte("created_at", dedupeSince)
+        .eq("data->>type", "cron_email_sent")
+        .limit(200),
+      supabase
+        .from("push_notifications")
+        .select("data")
+        .gte("created_at", dedupeSince)
+        .eq("data->>type", "cron_alert")
+        .limit(200),
+    ]);
 
-    const alreadySent = new Set(
-      (recent ?? []).map((r) => String((r.data as Record<string, unknown> | null)?.jobid ?? "")),
-    );
+    const jobidsDe = (rows: { data: unknown }[] | null) =>
+      (rows ?? []).map((r) => String((r.data as Record<string, unknown> | null)?.jobid ?? ""));
+
+    const alreadySent = new Set(jobidsDe(sentMarkers.data));
+    // O aviso no aplicativo também conta como notificado: repetir a cada rodada
+    // enquanto o e-mail estiver sem credencial viraria spam na central.
+    const avisadoNoApp = new Set([...alreadySent, ...jobidsDe(appMarkers.data)]);
 
     let sent = 0;
     const skipped: number[] = [];
     const semCredencial: number[] = [];
+    const avisosNoApp: number[] = [];
 
     for (const { row, kind } of problems) {
-      if (alreadySent.has(String(row.jobid))) {
-        skipped.push(row.jobid);
-        continue;
-      }
+      const jobid = String(row.jobid);
+      let emailSaiu = false;
 
-      if (resendApiKey) {
+      if (alreadySent.has(jobid)) {
+        skipped.push(row.jobid);
+      } else if (resendApiKey) {
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -204,28 +222,36 @@ serve(async (req) => {
             html: buildHtml(row, kind),
           }),
         });
-        const entrega = classifyResendHttp(res.status, await res.text());
-        if (!entrega.ok) {
-          console.error("[cron-alert-email] Resend error", entrega.reason);
-          continue;
-        }
+        // 2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada.
+        const corpo = await res.text().catch(() => "");
+        const entrega = classifyResendHttp(res.status, corpo);
+        if (!entrega.ok) console.error("[cron-alert-email] Resend error", entrega.reason);
+        emailSaiu = entrega.ok;
       } else {
-        // Sem credencial nada sai. Registrar aqui marcava e-mail enviado para
-        // um envio que nunca existiu; o problema segue pendente e precisa
-        // reaparecer a cada rodada, não sumir atrás de um falso "enviado".
-        console.error(`[cron-alert-email] ${MOTIVO_SEM_CREDENCIAL} — alerta não enviado`);
+        // Sem credencial o e-mail não sai. Registrar aqui marcava envio de um
+        // e-mail que nunca existiu; o aviso no aplicativo (abaixo) continua
+        // sendo gravado para o alerta não se perder.
+        console.error(`[cron-alert-email] ${MOTIVO_SEM_CREDENCIAL} — alerta por e-mail não enviado`);
         semCredencial.push(row.jobid);
-        continue;
       }
+
+      const registro = decidirRegistroAlerta(emailSaiu, avisadoNoApp.has(jobid));
+      if (registro === "confirmado") sent += 1;
+      if (registro === "nada") continue;
+      if (registro === "aviso_no_app") avisosNoApp.push(row.jobid);
 
       await supabase.from("push_notifications").insert(
         recipientIds.map((userId) => ({
           user_id: userId,
           title: kind === "failure" ? "Rotina automática falhando" : "Rotina automática silenciosa",
-          body: `E-mail de alerta enviado sobre ${row.jobname ?? `job ${row.jobid}`}.`,
+          body: registro === "confirmado"
+            ? `E-mail de alerta enviado sobre ${row.jobname ?? `job ${row.jobid}`}.`
+            : `Alerta no aplicativo sobre ${row.jobname ?? `job ${row.jobid}`}: e-mail não enviado (${
+              resendApiKey ? "provedor recusou o envio" : MOTIVO_SEM_CREDENCIAL
+            }).`,
           status: "sent",
           data: {
-            type: "cron_email_sent",
+            type: registro === "confirmado" ? "cron_email_sent" : "cron_alert",
             jobid: row.jobid,
             jobname: row.jobname,
             kind,
@@ -234,11 +260,9 @@ serve(async (req) => {
           },
         })),
       );
-
-      sent += 1;
     }
 
-    return json({ problems: problems.length, sent, skipped, semCredencial });
+    return json({ problems: problems.length, sent, skipped, semCredencial, avisosNoApp });
   } catch (e) {
     console.error("[cron-alert-email] unexpected", e);
     return json({ error: "Internal error" }, 500);

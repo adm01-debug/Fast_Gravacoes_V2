@@ -1,5 +1,10 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { classifyResendHttp, classifyResendSend, MOTIVO_SEM_CREDENCIAL } from "./emailDelivery.ts";
+import {
+  classifyResendHttp,
+  classifyResendSend,
+  decidirRegistroAlerta,
+  MOTIVO_SEM_CREDENCIAL,
+} from "./emailDelivery.ts";
 
 Deno.test("classifyResendSend: id presente conta como enviado", () => {
   assertEquals(classifyResendSend({ data: { id: "abc-123" }, error: null }), {
@@ -35,4 +40,17 @@ Deno.test("classifyResendHttp: 2xx é enviado, 4xx/5xx carrega o corpo", () => {
 
 Deno.test("motivo da falta de credencial é explícito", () => {
   assertEquals(MOTIVO_SEM_CREDENCIAL, "RESEND_API_KEY ausente");
+});
+
+Deno.test("rodada sem chave avisa no app e não grava marcador de e-mail", () => {
+  assertEquals(decidirRegistroAlerta(false, false), "aviso_no_app");
+});
+
+Deno.test("rodada seguinte sem avanço não repete o aviso no app", () => {
+  assertEquals(decidirRegistroAlerta(false, true), "nada");
+});
+
+Deno.test("envio aceito grava o marcador mesmo com o app já avisado", () => {
+  assertEquals(decidirRegistroAlerta(true, true), "confirmado");
+  assertEquals(decidirRegistroAlerta(true, false), "confirmado");
 });
