@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryConfig';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth';
+import { useReauth } from '@/contexts/ReauthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +48,7 @@ export function UserManagement() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
+  const { requireReauth } = useReauth();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
@@ -252,6 +254,7 @@ export function UserManagement() {
         return;
       }
 
+    const newRole = editForm.role;
     const profileUpdates: Partial<Profile> = {};
     if (editForm.full_name !== (selectedUser.full_name ?? '')) {
       profileUpdates.full_name = editForm.full_name;
@@ -260,20 +263,25 @@ export function UserManagement() {
       profileUpdates.phone = editForm.phone;
     }
 
-    updateUserMutation.mutate({
-      userId: selectedUser.id,
-      profileUpdates,
-      newRole: editForm.role,
+    // Troca de papel e edição de outro usuário são ações sensíveis (AUT-10):
+        // exigem a senha do dono da conta, não só a sessão aberta neste computador.
+        requireReauth('manage_users', () =>
+          updateUserMutation.mutate({
+            userId: selectedUser.id,
+            profileUpdates,
+            newRole,
         // Revalida o vinculo no momento do save (nao usa o congelado no open):
         // se outro gestor mudou o papel enquanto o modal ficou aberto, a mutacao
         // parte do vínculo ATUAL e substitui o vinculo certo.
-      originalRole: getUserRole(selectedUser.id),
-    });
+            originalRole: getUserRole(selectedUser.id),
+          }),
+        );
   };
 
   const handleConfirmDelete = () => {
     if (!selectedUser) return;
-    deleteUserMutation.mutate(selectedUser.id);
+        const userId = selectedUser.id;
+        requireReauth('manage_users', () => deleteUserMutation.mutate(userId));
   };
 
   const handleInvite = () => {
@@ -281,7 +289,9 @@ export function UserManagement() {
       toast.error('Por favor, insira um email');
       return;
     }
-    inviteUserMutation.mutate({ email: inviteEmail, role: inviteRole });
+      const payload = { email: inviteEmail, role: inviteRole };
+      // Convite cria acesso com papel (inclusive manager): mesma regra da edição.
+      requireReauth('manage_users', () => inviteUserMutation.mutate(payload));
   };
 
   const filteredUsers = users.filter(u =>
