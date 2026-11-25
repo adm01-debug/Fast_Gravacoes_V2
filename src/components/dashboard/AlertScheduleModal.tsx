@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { clickableProps } from '@/lib/a11y';
+import { MACHINE_BLOCKING_STATUSES } from '@/constants';
 
 interface Job {
   id: string;
@@ -85,7 +86,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
 
   const machineScheduledJobs = useMemo(() => {
     if (!selectedMachineId || !scheduleDate) return [];
-    return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && !['finished', 'cancelled'].includes(job.status))
+    return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && MACHINE_BLOCKING_STATUSES.includes(job.status))
       .map(job => { const startMinutes = job.start_time ? parseInt(job.start_time.split(':')[0], 10) * 60 + parseInt(job.start_time.split(':')[1], 10) : 0; const endMinutes = startMinutes + job.estimated_duration; return { ...job, endTime: `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}`, startMinutes }; })
       .sort((a, b) => a.startMinutes - b.startMinutes);
   }, [selectedMachineId, scheduleDate, jobs]);
@@ -105,7 +106,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
     const selStart = parseInt(startTime.split(':')[0], 10) * 60 + parseInt(startTime.split(':')[1], 10);
     const selEnd = selStart + selectedJob.estimated_duration;
     return jobs.filter(job => {
-      if (job.id === selectedJob.id || job.scheduled_date !== scheduleDate || ['finished', 'cancelled'].includes(job.status)) return false;
+      if (job.id === selectedJob.id || job.scheduled_date !== scheduleDate || !MACHINE_BLOCKING_STATUSES.includes(job.status)) return false;
       if (selectedMachineId && job.machine_id !== selectedMachineId) return false;
       if (!selectedMachineId && job.technique_id !== selectedJob.technique_id) return false;
       if (!job.start_time) return false;
