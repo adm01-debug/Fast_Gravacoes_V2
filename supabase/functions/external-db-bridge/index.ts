@@ -97,25 +97,30 @@ export function validateColumns(columns: unknown): string | null {
  * hit auth/storage internals or arbitrary security-definer functions.
  * Extend cautiously — every entry bypasses RLS.
  */
+/**
+ * Tabelas que definem quem e quem (user_roles), o que aconteceu (audit_log) e
+ * os eventos de seguranca ficam fora da allowlist: o bridge roda com
+ * service-role, sem RLS, e era por aqui que um manager podia se promover a
+ * admin e adulterar a trilha (SEG-04).
+ */
 export const ALLOWED_TABLES = new Set<string>([
   "jobs",
-  "job_status_audit",
   "machines",
   "operators",
   "profiles",
-  "user_roles",
   "inventory_items",
   "inventory_movements",
   "technical_sheets",
   "maintenance_records",
   "maintenance_schedules",
-  "audit_log",
-  "security_events",
   "push_subscriptions",
   "query_telemetry",
   "webhook_logs",
   "bitrix24_sync_history",
 ]);
+
+/** Acoes que alteram dados; no bridge exigem o papel admin. */
+export const WRITE_ACTIONS = new Set<string>(["insert", "update", "upsert", "delete"]);
 
 export const ALLOWED_RPCS = new Set<string>([
   "get_user_role",
@@ -219,6 +224,17 @@ Deno.serve(async (req: Request) => {
     }
 
     const { action, table, rpc, params } = validation.data!;
+
+    // Escrita por este caminho (service-role, sem RLS) fica so com admin:
+    // manager mantem a leitura que ja usava. Sem isso, um manager autenticado
+    // alterava qualquer tabela liberada sem passar por nenhuma policy.
+    if (WRITE_ACTIONS.has(action) && !auth.ctx.roles.includes("admin")) {
+      log.warn("guard.write_rejected", { action, roles: auth.ctx.roles });
+      return new Response(
+        JSON.stringify({ error: `Action '${action}' requires the 'admin' role` }),
+        { status: 403, headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
 
     // Defense-in-depth: never allow an unscoped (empty match) update/delete,
     // which would mutate/wipe an entire table.
