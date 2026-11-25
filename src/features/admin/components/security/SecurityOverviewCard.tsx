@@ -15,7 +15,7 @@ import {
   CheckCircle2,
   XCircle
 } from 'lucide-react';
-import { useMFA } from '@/features/auth';
+import { useAuth, useMFA } from '@/features/auth';
 import { useUserDevices } from '@/hooks/useUserDevices';
 import { cn } from '@/lib/utils';
 
@@ -33,11 +33,18 @@ interface SecurityCheck {
   status: 'pass' | 'warn' | 'fail';
   icon: React.ReactNode;
   points: number;
+  /** Peso máximo do item. `0` quando o item não é verificável no navegador. */
+  maxPoints: number;
 }
 
 export function SecurityOverviewCard() {
   const { isMFAEnabled } = useMFA();
   const { devices } = useUserDevices();
+  const { user } = useAuth();
+
+  const emailConfirmed = Boolean(user?.email_confirmed_at);
+  const isSecureConnection =
+    typeof window !== 'undefined' && window.location.protocol === 'https:';
 
   const securityChecks = useMemo<SecurityCheck[]>(() => {
     return [
@@ -48,14 +55,16 @@ export function SecurityOverviewCard() {
         status: isMFAEnabled ? 'pass' : 'fail',
         icon: <Key className="h-4 w-4" />,
         points: isMFAEnabled ? 30 : 0,
+        maxPoints: 30,
       },
       {
         id: 'password',
         label: 'Senha Forte',
-        description: 'Senha segura definida',
-        status: 'pass',
+        description: 'Não verificado — o navegador não mede a força da senha',
+        status: 'warn',
         icon: <Lock className="h-4 w-4" />,
-        points: 20,
+        points: 0,
+        maxPoints: 0,
       },
       {
         id: 'devices',
@@ -63,31 +72,38 @@ export function SecurityOverviewCard() {
         description: `${devices?.length || 0} dispositivo(s) registrado(s)`,
         status: (devices?.length || 0) > 0 ? 'pass' : 'warn',
         icon: <Smartphone className="h-4 w-4" />,
-        points: (devices?.length || 0) > 0 ? 15 : 5,
+        points: (devices?.length || 0) > 0 ? 15 : 0,
+        maxPoints: 15,
       },
       {
         id: 'email',
         label: 'Email Verificado',
-        description: 'Email confirmado',
-        status: 'pass',
+        description: emailConfirmed ? 'Email confirmado' : 'Não verificado — email ainda não confirmado',
+        status: emailConfirmed ? 'pass' : 'warn',
         icon: <UserCheck className="h-4 w-4" />,
-        points: 20,
+        points: emailConfirmed ? 20 : 0,
+        maxPoints: 20,
       },
       {
         id: 'session',
         label: 'Sessão Segura',
-        description: 'Conexão criptografada',
-        status: 'pass',
+        description: isSecureConnection
+          ? 'Conexão criptografada (HTTPS)'
+          : 'Não verificada — conexão sem HTTPS',
+        status: isSecureConnection ? 'pass' : 'warn',
         icon: <Shield className="h-4 w-4" />,
-        points: 15,
+        points: isSecureConnection ? 15 : 0,
+        maxPoints: 15,
       },
     ];
-  }, [isMFAEnabled, devices]);
+  }, [isMFAEnabled, devices, emailConfirmed, isSecureConnection]);
 
   const securityScore = useMemo<SecurityScore>(() => {
     const totalPoints = securityChecks.reduce((acc, check) => acc + check.points, 0);
-    const maxPoints = 100;
-    const score = Math.min(100, Math.round((totalPoints / maxPoints) * 100));
+    // Itens não verificáveis no navegador (maxPoints 0) não entram no máximo,
+    // senão o score normalizaria contra pontos que ninguém consegue obter.
+    const maxPoints = securityChecks.reduce((acc, check) => acc + check.maxPoints, 0);
+    const score = maxPoints > 0 ? Math.min(100, Math.round((totalPoints / maxPoints) * 100)) : 0;
 
     if (score >= 90) return { score, level: 'excellent', color: 'text-green-500', label: 'Excelente' };
     if (score >= 70) return { score, level: 'high', color: 'text-blue-500', label: 'Bom' };
