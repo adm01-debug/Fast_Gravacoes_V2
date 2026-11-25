@@ -1,4 +1,5 @@
-import { useState, createContext, useContext, ReactNode, useCallback, useMemo } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode, useCallback, useMemo } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,39 @@ const ReauthContext = createContext<ReauthContextType | undefined>(undefined);
 
 const REAUTH_VALIDITY_MINUTES = 5; // Re-auth valid for 5 minutes
 
+/**
+ * Confere a senha em um cliente Supabase descartável.
+ *
+ * Usar o cliente compartilhado (`supabase.auth.signInWithPassword`) trocaria a
+ * sessão atual — que pode estar em AAL2 (2FA concluído) — por uma sessão AAL1
+ * recém-criada. As políticas de escrita de papéis exigem AAL2
+ * (`20260910120000_user_roles_writes_require_aal2.sql`), então a alteração
+ * seguinte seria recusada pelo banco. O cliente de verificação fica só em
+ * memória (`persistSession: false`) e é descartado no `finally`.
+ */
+async function verifyPassword(email: string, password: string, expectedUserId: string): Promise<void> {
+  const verifier = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } },
+  );
+
+  try {
+    const { data, error } = await verifier.auth.signInWithPassword({ email, password });
+    // Confere o dono: a senha precisa ser a do usuário que já está na sessão.
+    if (error || !data?.user || data.user.id !== expectedUserId) {
+      throw new Error('Senha incorreta');
+    }
+  } finally {
+    // Encerra a sessão extra criada pela verificação (só no cliente descartável).
+    await verifier.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    // O SDK registra um listener de `visibilitychange` por cliente e o mantém
+    // vivo até o descarte: sem isto, cada confirmação de senha deixaria um
+    // cliente pendurado na aba, acionado a cada retorno ao foco.
+    await verifier.auth.dispose().catch(() => undefined);
+  }
+}
+
 const ACTION_LABELS: Record<SensitiveAction, string> = {
   change_password: 'Alterar Senha',
   change_email: 'Alterar Email',
@@ -46,14 +80,32 @@ export function ReauthProvider({ children }: { children: ReactNode }) {
   const [currentAction, setCurrentAction] = useState<SensitiveAction | null>(null);
   const [onSuccessCallback, setOnSuccessCallback] = useState<(() => void) | null>(null);
   const [lastReauthAt, setLastReauthAt] = useState<Date | null>(null);
+  const [reauthOwnerId, setReauthOwnerId] = useState<string | null>(null);
+  const [sessionUserId, setSessionUserId] = useState<string | null>(null);
+
+  // A confirmação vale para o operador que a fez, não para o aparelho: em
+  // troca de conta na mesma aba (quiosque) a janela de 5 minutos não pode
+  // emprestar a verificação de quem saiu para quem entrou.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setSessionUserId(data.user?.id ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSessionUserId(session?.user?.id ?? null);
+      if (event === 'SIGNED_OUT') {
+        setLastReauthAt(null);
+        setReauthOwnerId(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const isReauthenticated = useCallback(() => {
     if (!lastReauthAt) return false;
+    if (!reauthOwnerId || reauthOwnerId !== sessionUserId) return false;
     const now = new Date();
     const diffMs = now.getTime() - lastReauthAt.getTime();
     const diffMinutes = diffMs / (1000 * 60);
     return diffMinutes < REAUTH_VALIDITY_MINUTES;
-  }, [lastReauthAt]);
+  }, [lastReauthAt, reauthOwnerId, sessionUserId]);
 
   const requireReauth = useCallback((action: SensitiveAction, onSuccess: () => void) => {
     // If recently re-authenticated, proceed directly
@@ -83,15 +135,8 @@ export function ReauthProvider({ children }: { children: ReactNode }) {
         throw new Error('Usuário não encontrado');
       }
 
-      // Verify password by attempting to sign in
-      const { error } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password: password,
-      });
-
-      if (error) {
-        throw new Error('Senha incorreta');
-      }
+      // Verify password without touching the shared client's session (keeps AAL2).
+            await verifyPassword(user.email, password, user.id);
 
       // Log security event
       await supabase.from('security_events').insert({
@@ -103,6 +148,7 @@ export function ReauthProvider({ children }: { children: ReactNode }) {
       });
 
       setLastReauthAt(new Date());
+      setReauthOwnerId(user.id);
       setShowDialog(false);
       setPassword('');
 

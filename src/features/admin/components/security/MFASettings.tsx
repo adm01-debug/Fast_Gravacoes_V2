@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMFA } from '@/features/auth';
+import { useReauth } from '@/contexts/ReauthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,19 +21,28 @@ import { MFAEnroll } from './MFAEnroll';
 
 export function MFASettings() {
   const { factors, isLoading, isMFAEnabled, unenroll, refreshFactors } = useMFA();
+    const { requireReauth } = useReauth();
   const [factorToRemove, setFactorToRemove] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-  const handleRemove = async () => {
-    if (!factorToRemove) return;
-
+    const removeFactor = async (factorId: string) => {
     setIsRemoving(true);
-    const success = await unenroll(factorToRemove);
+      const success = await unenroll(factorId);
     if (success) {
       setFactorToRemove(null);
     }
     setIsRemoving(false);
   };
+
+    const handleRemove = () => {
+      if (!factorToRemove) return;
+      const factorId = factorToRemove;
+      // Remover o autenticador tira uma camada de proteção da conta: exige a senha
+      // do dono, não só a sessão aberta neste computador (AUT-10).
+      requireReauth('disable_mfa', () => {
+        void removeFactor(factorId);
+      });
+    };
 
   if (isLoading) {
     return (
