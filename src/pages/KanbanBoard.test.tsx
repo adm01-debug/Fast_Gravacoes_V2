@@ -171,4 +171,19 @@ describe('KanbanBoard - exclusao em massa (etapa 037)', () => {
     expect(toastError).toHaveBeenCalledWith(expect.stringMatching(/foram exclu/));
     expect(screen.getByTestId('job-j1')).toHaveAttribute('data-selected', 'sim');
   });
+
+  it('avisa quando a chamada de exclusao falha na API', async () => {
+    deleteMany.mockRejectedValue(new Error('falha de rede'));
+    renderPage();
+
+    fireEvent.click(screen.getByTestId('job-j1'));
+    fireEvent.click(screen.getByRole('button', { name: /Excluir/i }));
+
+    await waitFor(() => expect(deleteMany).toHaveBeenCalledWith(['j1']));
+
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringContaining('falha de rede')));
+    expect(toastSuccess).not.toHaveBeenCalled();
+    // Nada saiu do banco: a OS continua no quadro e continua marcada.
+    expect(screen.getByTestId('job-j1')).toHaveAttribute('data-selected', 'sim');
+  });
 });

@@ -359,7 +359,9 @@ export default function PendingQueue() {
         />
 
                 <AlertDialog open={isBulkDeleteOpen} onOpenChange={setIsBulkDeleteOpen}>
-                  <AlertDialogContent>
+                  {/* As listas de impedidas e de ocultas crescem: o limite de altura com
+                      rolagem mantem os botoes (inclusive Cancelar) ao alcance em telas baixas. */}
+                  <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
                     <AlertDialogHeader>
                       <AlertDialogTitle>
                         {bulkDeleteAllowed.length === 0
