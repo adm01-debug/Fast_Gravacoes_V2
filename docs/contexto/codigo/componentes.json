@@ -4856,10 +4856,11 @@
     "UserManagement"
    ],
    "export_default": null,
-   "linhas": 521,
+   "linhas": 531,
    "dominio": "components/settings",
    "hooks_locais": [
-    "useAuth"
+    "useAuth",
+    "useReauth"
    ],
    "tabelas": [
     "profiles",
@@ -6563,7 +6564,7 @@
     "ReauthProvider"
    ],
    "export_default": null,
-   "linhas": 233,
+   "linhas": 279,
    "dominio": "contexts",
    "hooks_locais": [
     "useReauth"
@@ -6572,7 +6573,7 @@
     "security_events"
    ],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -6907,10 +6908,11 @@
     "MFASettings"
    ],
    "export_default": null,
-   "linhas": 175,
+   "linhas": 185,
    "dominio": "features/admin",
    "hooks_locais": [
-    "useMFA"
+    "useMFA",
+    "useReauth"
    ],
    "tabelas": [],
    "edges": [],

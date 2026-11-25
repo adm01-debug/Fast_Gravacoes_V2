@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "14b04998358b0edb0bcb7d5fe95ba2c6e8feabe6",
+  "commit": "d6a4a958bfca64ff377aba2076dc801857372222",
   "branch": "main",
-  "data_commit": "2026-11-25T14:22:58-03:00",
+  "data_commit": "2026-11-25T16:46:13-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d6a4a95",
+    "data": "2026-11-25",
+    "assunto": "fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)"
+   },
    {
     "sha": "14b0499",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "8777e18",
     "data": "2026-11-24",
     "assunto": "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)"
-   },
-   {
-    "sha": "81d45ca",
-    "data": "2026-11-24",
-    "assunto": "fix: restabelece EXECUTE de public.has_role para authenticated (#285)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 274,
+  "arquivos_mudados_7d": 278,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -165,6 +165,10 @@
     "mudancas": 19
    },
    {
+    "pasta": "src/features/admin",
+    "mudancas": 18
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 18
    },
@@ -177,8 +181,8 @@
     "mudancas": 16
    },
    {
-    "pasta": "src/features/admin",
-    "mudancas": 16
+    "pasta": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 14
    },
    {
     "pasta": "package-lock.json",
@@ -187,10 +191,6 @@
    {
     "pasta": "src/components/jobs",
     "mudancas": 14
-   },
-   {
-    "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 13
    },
    {
     "pasta": "src/components/ui",
@@ -216,7 +216,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 161
+    "commits": 162
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1624,
-  "arquivos_codigo": 1149,
-  "linhas_codigo": 194609,
+  "arquivos_total": 1626,
+  "arquivos_codigo": 1151,
+  "linhas_codigo": 194906,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 266,
   "cron_jobs": 5,
-  "testes": 149,
+  "testes": 151,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -481,19 +481,19 @@
   },
   "src/components": {
    "arquivos": 424,
-   "linhas": 59874
+   "linhas": 59884
   },
   "src/constants": {
    "arquivos": 2,
    "linhas": 174
   },
   "src/contexts": {
-   "arquivos": 14,
-   "linhas": 1130
+   "arquivos": 15,
+   "linhas": 1341
   },
   "src/features": {
-   "arquivos": 337,
-   "linhas": 48256
+   "arquivos": 338,
+   "linhas": 48332
   },
   "src/hooks": {
    "arquivos": 63,
@@ -650,15 +650,15 @@
    "linhas": 540
   },
   {
+   "arquivo": "src/components/settings/UserManagement.tsx",
+   "linhas": 531
+  },
+  {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
    "linhas": 524
   },
   {
    "arquivo": "src/components/knowledge/editor/EditorBasicInfo.tsx",
-   "linhas": 521
-  },
-  {
-   "arquivo": "src/components/settings/UserManagement.tsx",
    "linhas": 521
   },
   {

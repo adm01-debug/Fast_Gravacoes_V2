@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 149,
+ "total": 151,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 124
+  "unit": 126
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 112
+   "arquivos": 114
   },
   {
    "padrao": "tests/",
@@ -366,6 +366,27 @@
     "src/components/ui/scroll-area.tsx"
    ],
    "casos": 4,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/contexts/ReauthContext.test.tsx",
+   "tipo": "unit",
+   "linhas": 165,
+   "testa": [
+    "src/contexts/ReauthContext.tsx",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 5,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/components/security/MFASettings.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/features/admin/components/security/MFASettings.tsx"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -1591,6 +1612,8 @@
   "src/components/ui/resizable.tsx": 1,
   "src/components/ui/scroll-area.tsx": 1,
   "src/components/ui/tooltip.tsx": 1,
+  "src/contexts/ReauthContext.tsx": 1,
+  "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
@@ -1640,7 +1663,7 @@
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,
   "src/i18n/index.ts": 1,
-  "src/integrations/supabase/client.ts": 13,
+  "src/integrations/supabase/client.ts": 14,
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
   "src/lib/csvSafety.ts": 1,
@@ -1754,7 +1777,6 @@
    "src/contexts/NotificationsContext.tsx",
    "src/contexts/OfflineSyncContext.tsx",
    "src/contexts/PermissionsContext.tsx",
-   "src/contexts/ReauthContext.tsx",
    "src/contexts/SearchContext.tsx",
    "src/contexts/SidebarContext.tsx",
    "src/contexts/ThemeContext.tsx",

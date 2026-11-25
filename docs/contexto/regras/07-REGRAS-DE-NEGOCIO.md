@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `14b0499835` · branch `main` · 2026-11-25 17:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d6a4a958bf` · branch `main` · 2026-11-25 19:46 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T17:12:44Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T18:38:32Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T17:12:44Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T18:38:32Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T17:12:44Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T18:38:32Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T17:12:44Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T18:38:32Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T17:12:44Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T18:38:32Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3342,7 +3342,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1475 testes em 130 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1484 testes em 132 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3418,6 +3418,7 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
+| `src/contexts/ReauthContext.test.tsx` | 6 | ReauthProvider · não prossegue com senha incorreta (etapa 233) · confere a senha sem trocar a sessão do cliente compartilhado (etapa 233) · mantém a confirmação para o mesmo operador sem novo login (etapa 233) … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
@@ -3453,6 +3454,7 @@ _nenhum item encontrado_
 | `src/components/error/StackTrace.test.tsx` | 3 | StackTrace · torna o bloco focavel por teclado quando o trace transborda · nao cria parada de Tab quando o trace cabe |
 | `src/components/logistics/EditShipmentModal.test.tsx` | 3 | EditShipmentModal · nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin) · nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete) |
 | `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |
+| `src/features/admin/components/security/MFASettings.test.tsx` | 3 | MFASettings — remoção do segundo fator exige re-autenticação (etapa 233) · pede a senha em vez de remover o fator direto · remove o fator depois que a senha é confirmada |
 | `src/features/analytics/hooks/useKPIs.test.ts` | 3 | useKPIs · should return null when data is loading · should calculate correct metrics when data is provided |
 | `src/features/auth/hooks/useMFA.test.tsx` | 3 | useMFA.startEnrollment · remove fatores TOTP nao verificados antes de criar um novo (evita 422) · nao remove um fator TOTP ja verificado |
 | `src/features/auth/services/authService.test.ts` | 3 | AuthService.resetPassword · devolve o link para o host em que o pedido foi feito · propaga o erro do provedor |
@@ -3581,6 +3583,7 @@ _nenhum item encontrado_
 | 3b82f6'} required /> | `src/components/settings/TechniqueManagement.tsx` |
 | Destino ja atribuido em outro vinculo (UNIQUE(user_id, role)): remover apenas | `src/components/settings/UserManagement.tsx` |
 | Troca normal: substitui apenas o vinculo exato sendo alterado (UNIQUE(user_id, role)). | `src/components/settings/UserManagement.tsx` |
+| Convite cria acesso com papel (inclusive manager): mesma regra da edição. | `src/components/settings/UserManagement.tsx` |
 | para inicializar apenas uma vez por sessão. | `src/components/technical-assistant/TechnicalArtifacts.tsx` |
 | Validação Magic Bytes (Segurança 10/10) | `src/components/traceability/LotInspectionsTab.tsx` |
 | When asChild, Slot must receive exactly ONE React element child. | `src/components/ui/button.tsx` |
@@ -3590,6 +3593,7 @@ _nenhum item encontrado_
 | e não pode ser cancelado — a confirmação pendente apontaria para a | `src/contexts/DirtyFormContext.tsx` |
 | (popstate) não pode ser cancelado; formulários com rascunho | `src/contexts/DirtyFormContext.tsx` |
 | Deve ser chamado dentro do provider (MainLayout). | `src/contexts/DirtyFormContext.tsx` |
+| troca de conta na mesma aba (quiosque) a janela de 5 minutos não pode | `src/contexts/ReauthContext.tsx` |
 | realtime WS is reachable. The handler must be stable (useCallback) so | `src/contexts/WebSocketContext.tsx` |
 | * Tendência de longo prazo (até 365 dias) do p95 de duração por rotina, | `src/features/admin/components/monitoring/CronP95TrendCard.tsx` |
 | Permission Groups */} | `src/features/admin/components/security/PermissionManager.tsx` |

@@ -8162,6 +8162,7 @@
     "useRealtimeBlockedIPs",
     "useRealtimeChannel",
     "useRealtimeSecurityEvents",
+    "useReauth",
     "useReducedMotion",
     "useRef",
     "useRemoveCountryRule",
@@ -8236,6 +8237,7 @@
     "useRealtimeBlockedIPs",
     "useRealtimeChannel",
     "useRealtimeSecurityEvents",
+    "useReauth",
     "useRemoveCountryRule",
     "useRipple",
     "useRolePermissions",
@@ -8299,7 +8301,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 119,
+   "arquivos_puxados": 121,
    "diretos": {
     "tabelas": [
      "blocked_ips",
@@ -8389,6 +8391,7 @@
     "useQuery",
     "useQueryClient",
     "useRealtimeChannel",
+    "useReauth",
     "useReducedMotion",
     "useRef",
     "useRipple",
@@ -8450,6 +8453,7 @@
     "usePresenceChannel",
     "usePushSubscription",
     "useRealtimeChannel",
+    "useReauth",
     "useRipple",
     "useSchedulingData",
     "useSessionTimeout",
@@ -8480,6 +8484,7 @@
     "push_notifications",
     "push_subscriptions",
     "qr_scan_history",
+    "security_events",
     "techniques",
     "user_mfa_settings",
     "user_roles"
@@ -8500,7 +8505,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 124,
+   "arquivos_puxados": 126,
    "diretos": {
     "tabelas": [
      "ip_allowlist",

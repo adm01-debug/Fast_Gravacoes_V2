@@ -561,7 +561,7 @@
    "hooks_exportados": [
     "useReauth"
    ],
-   "linhas": 233,
+   "linhas": 279,
    "dominio": "contexts",
    "tabelas": [
     "security_events"
@@ -571,15 +571,18 @@
    "hooks_internos": [
     "useCallback",
     "useContext",
+    "useEffect",
     "useMemo",
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "usado_por_arquivos": [
+    "src/components/settings/UserManagement.tsx",
+    "src/features/admin/components/security/MFASettings.tsx",
     "src/providers/AppProviders.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/contexts/SearchContext.tsx",

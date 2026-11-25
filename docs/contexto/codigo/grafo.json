@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 994,
- "arestas": 4585,
+ "arestas": 4587,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 188
+   "importado_por": 189
   },
   {
    "arquivo": "src/features/jobs/index.ts",
@@ -364,11 +364,11 @@
   {
    "modulo": "contexts",
    "depende_de": 6,
-   "importado_por": 12
+   "importado_por": 13
   },
   {
    "modulo": "features/admin",
-   "depende_de": 9,
+   "depende_de": 10,
    "importado_por": 8
   },
   {

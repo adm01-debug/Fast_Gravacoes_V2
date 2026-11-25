@@ -2252,6 +2252,7 @@
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
+   "src/contexts/ReauthContext.tsx",
    "src/features/auth/index.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/queryConfig.ts"
@@ -2867,6 +2868,7 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
+   "src/contexts/ReauthContext.tsx",
    "src/features/admin/components/security/MFAEnroll.tsx",
    "src/features/auth/index.ts"
   ],
