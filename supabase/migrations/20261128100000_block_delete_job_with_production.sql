@@ -18,11 +18,17 @@
 -- a sessao com set_config('app.archiving_job', 'on', true) e o trigger a
 -- respeita. Nenhum outro caminho de escrita define essa marcacao.
 --
--- A marcacao entra aqui por ALTER FUNCTION ... SET e nao reescrevendo o corpo:
--- a funcao de 20261029002000 continua sendo a unica fonte da logica de
--- arquivamento, e recriar 190 linhas numa migration de trigger criaria duas
--- copias que divergem na proxima mudanca. O parametro e aplicado na entrada da
--- funcao e restaurado na saida, como um SET LOCAL.
+-- A marcacao e feita em runtime pela propria rotina de arquivamento:
+-- ALTER FUNCTION ... SET app.archiving_job = 'on' e' recusado pelo servidor
+-- (42501: permission denied to set parameter, e o role de migration do Supabase
+-- nao e' superuser). A etapa 038 (migration 20261128130000) reescreve
+-- archive_finished_jobs como wrapper que chama archive_jobs, e archive_jobs faz
+-- set_config('app.archiving_job', 'on', true) antes do DELETE.
+--
+-- Consequencia da ordem: esta migration (036) nao pode ser aplicada sozinha com
+-- a rotina de arquivamento antiga (20261029002000), que nao marca a sessao — o
+-- gatilho barraria o DELETE dela. As duas entram na mesma janela, 036 antes de
+-- 038, e o cron roda as 04:07.
 --
 -- ERRCODE estavel 'FG001' para o aplicativo reconhecer a recusa sem depender do
 -- texto da mensagem (o PostgREST devolve o code no corpo do erro).
@@ -55,8 +61,3 @@ DROP TRIGGER IF EXISTS trg_validate_job_delete_allowed ON public.jobs;
 CREATE TRIGGER trg_validate_job_delete_allowed
   BEFORE DELETE ON public.jobs
   FOR EACH ROW EXECUTE FUNCTION public.validate_job_delete_allowed();
-
--- Sem isto o gatilho recusaria a OS finalizada dentro do proprio arquivamento,
--- e archive_finished_jobs cairia no EXCEPTION do loop: a OS nunca sairia de
--- public.jobs e o cron passaria a contar um "skipped" por execucao.
-ALTER FUNCTION public.archive_finished_jobs(timestamptz) SET app.archiving_job = 'on';
