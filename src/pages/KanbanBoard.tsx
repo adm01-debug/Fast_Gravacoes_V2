@@ -252,15 +252,29 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-      const results = await Promise.allSettled(Array.from(selectedJobs).map(id => jobsService.delete(id)));
-      const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
-      if (errors.length > 0) {
-        toast.error(`Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
-        return;
+      const ids = Array.from(selectedJobs);
+      try {
+        // Uma unica operacao para o lote: o banco revalida status/contadores no
+        // proprio DELETE e devolve as linhas que realmente sairam, entao a tela
+        // nao anuncia exclusao que a policy ou a promocao automatica impediram.
+        const { deleted, refused } = await jobsService.deleteMany(ids);
+
+        if (deleted.length > 0) {
+          toast.success(`${deleted.length} jobs excluídos permanentemente`);
+          setSelectedJobs(new Set(refused.map(item => item.id)));
+          handleJobsUpdate();
+        }
+        if (refused.length > 0) {
+          toast.error(
+            `${refused.length} job(s) não foram excluídos: ` +
+              refused.map(item => `${item.id.slice(0, 8)} — ${item.reason}`).join('; ')
+          );
+        }
+      } catch (error) {
+        // A recusa do banco chega em `refused`; este catch cobre a falha da API
+        // (rede/edge), que antes sumia como promessa rejeitada sem nenhum aviso.
+        toast.error(`Erro ao excluir jobs: ${error instanceof Error ? error.message : String(error)}`);
       }
-      toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
-      setSelectedJobs(new Set());
-      handleJobsUpdate();
     }
   }, [selectedJobs, jobs, handleJobsUpdate]);
 
