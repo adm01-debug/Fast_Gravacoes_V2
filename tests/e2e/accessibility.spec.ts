@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { login } from './helpers/e2e-setup';
 
-const ROUTES = ['/', '/operator', '/kpis', '/oee'];
+// `/traceability` entra no sweep porque a lista virtualizada rola dentro de um
+// `div` e ja foi apontada sem parada de Tab (regra scrollable-region-focusable).
+const ROUTES = ['/', '/operator', '/kpis', '/oee', '/traceability'];
 
 test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
   for (const route of ROUTES) {

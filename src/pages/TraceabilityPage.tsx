@@ -4,6 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/lib/utils';
 import { useFuseSearch } from '@/hooks/useFuseSearch';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useOverflowing } from '@/hooks/use-overflowing';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { format, differenceInDays } from 'date-fns';
@@ -82,6 +83,10 @@ export default function TraceabilityPage() {
     const [signatureModal, setSignatureModal] = useState<{ open: boolean; status: string; validLots: ProductionLot[] }>({ open: false, status: '', validLots: [] });
 
   const parentRef = useRef<HTMLDivElement>(null);
+  // A lista rola mas nem sempre tem descendente focavel (tabela vazia durante o
+  // carregamento): sem `tabIndex` a regiao viola `scrollable-region-focusable`,
+  // e fixar `tabIndex` sempre criaria parada de Tab quando tudo cabe na tela.
+  const { overflowing: listaRolavel } = useOverflowing<HTMLDivElement>(parentRef);
 
   const [newLot, setNewLot] = useState({
     lot_number: '', product_name: '', quantity: 0, job_id: '',
@@ -437,7 +442,8 @@ export default function TraceabilityPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="relative h-[600px] overflow-auto scrollbar-thin" ref={parentRef}>
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */}
+            <div className="relative h-[600px] overflow-auto scrollbar-thin" ref={parentRef} tabIndex={listaRolavel ? 0 : undefined}>
               <Table>
                 <TableHeader className="sticky top-0 z-20 bg-card">
                   <TableRow className="bg-muted/30 border-b">

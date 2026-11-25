@@ -55,6 +55,7 @@ import {
 } from 'lucide-react';
 import { useOEE, WORLD_CLASS_OEE, getOEEColor, useOEEAlerts, useProductionLosses } from '@/features/production';
 import { useOEEDashboardFilters } from '@/features/analytics/hooks/useOEEDashboardFilters';
+import { useOverflowing } from '@/hooks/use-overflowing';
 import { exportOeeCsv, exportOeePdf } from '@/features/analytics/lib/oeeReportExport';
 import { STUDIOS, INDUSTRY_BENCHMARKS } from '@/features/analytics/constants/oee';
 import { SectionErrorBoundary } from '@/components/ui/section-error-boundary';
@@ -126,6 +127,9 @@ const OEEDashboard = memo(function OEEDashboard() {
   const [simValues, setSimValues] = useState({ availability: 85, performance: 90, quality: 98 });
   const [presetName, setPresetName] = useState('');
   const { presets, savePreset, deletePreset } = useDashboardPresets('oee');
+  // Lista de presets rola dentro do popover; sem descendente focavel (lista
+  // vazia) a regiao viola `scrollable-region-focusable`.
+  const { ref: presetsRef, overflowing: presetsRolaveis } = useOverflowing<HTMLDivElement>();
   const [showConfig, setShowSimulatorLocal] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
   const [industryBenchmark, setIndustryBenchmark] = useState('world_class');
@@ -260,7 +264,8 @@ const OEEDashboard = memo(function OEEDashboard() {
                       <Save className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div role="region" aria-label="Presets salvos" className="space-y-2 max-h-40 overflow-auto">
+                  {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */}
+                  <div role="region" aria-label="Presets salvos" ref={presetsRef} tabIndex={presetsRolaveis ? 0 : undefined} className="space-y-2 max-h-40 overflow-auto">
                     {presets && presets.length === 0 ? (
                       <p className="text-[10px] text-muted-foreground text-center py-4 italic">Nenhum preset salvo</p>
                     ) : (
