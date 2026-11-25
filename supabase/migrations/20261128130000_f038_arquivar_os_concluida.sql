@@ -21,6 +21,45 @@
 -- (com checagem de papel admin/manager dentro da funcao) e service_role.
 -- A marcacao app.archiving_job e o que libera o trigger BEFORE DELETE da
 -- etapa 036 (migration 20261128100000_block_delete_job_with_production.sql).
+-- Sem isto o arquivo perderia coluna nova em silencio: `archived_jobs` nasceu
+-- com LIKE public.jobs em 2026-10-29 e ficou para tras quando jobs ganhou
+-- cancel_reason (20261108000001) e external_ref (20261125130000). O
+-- jsonb_populate_record casa coluna por nome — coluna ausente no destino e'
+-- simplesmente descartada, entao o motivo do cancelamento e a referencia do
+-- ERP sumiriam do historico. Sincroniza nomes/tipos/defaults que faltam.
+-- (Sem constraints: o arquivo nao deve bloquear nada por indice unico.)
+DO $$
+DECLARE
+  v_col RECORD;
+BEGIN
+  FOR v_col IN
+    SELECT a.attname AS column_name,
+           format_type(a.atttypid, a.atttypmod) AS column_type,
+           pg_get_expr(d.adbin, d.adrelid) AS column_default
+    FROM pg_attribute a
+    LEFT JOIN pg_attrdef d ON d.adrelid = a.attrelid AND d.adnum = a.attnum
+    WHERE a.attrelid = 'public.jobs'::regclass
+      AND a.attnum > 0
+      AND NOT a.attisdropped
+      AND a.attname NOT IN (
+        SELECT attname
+        FROM pg_attribute
+        WHERE attrelid = 'public.archived_jobs'::regclass
+          AND attnum > 0
+          AND NOT attisdropped
+      )
+  LOOP
+    EXECUTE format(
+      'ALTER TABLE public.archived_jobs ADD COLUMN IF NOT EXISTS %I %s%s',
+      v_col.column_name,
+      v_col.column_type,
+      CASE WHEN v_col.column_default IS NOT NULL
+           THEN ' DEFAULT ' || v_col.column_default ELSE '' END
+    );
+  END LOOP;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION public.archive_jobs(
   p_older_than timestamptz DEFAULT NULL,
   p_job_id uuid DEFAULT NULL
@@ -61,6 +100,21 @@ BEGIN
       AND (p_older_than IS NULL OR actual_end_time < p_older_than)
   LOOP
     BEGIN
+      -- Embalagem em andamento trava o arquivamento. O job nasce com
+      -- packaging_tasks 'pending' ao finalizar a producao e o arquivamento
+      -- levaria embora a tarefa que o operador ainda esta executando
+      -- (packaging_tasks e' ON DELETE CASCADE). Job arquivado nao pode
+      -- devolver a tarefa: por isso ele fica e aparece em `skipped`.
+      IF to_regclass('public.packaging_tasks') IS NOT NULL AND EXISTS (
+        SELECT 1
+        FROM public.packaging_tasks pt
+        WHERE pt.job_id = v_job.id
+          AND NOT (pt.status = 'ready_to_ship' AND pt.completed_at IS NOT NULL)
+      ) THEN
+        RAISE EXCEPTION 'OS com embalagem em andamento nao pode ser arquivada.'
+          USING ERRCODE = 'FG002';
+      END IF;
+
       -- 1) Pacote: filhos diretos e netos (tabelas com FK para a filha).
       v_children := '{}'::jsonb;
       FOR v_fk IN
@@ -171,8 +225,12 @@ BEGIN
 
       -- 3) Netos antes dos filhos (ordem de dependÃªncia).
       FOR v_fk IN
-        SELECT kcu.table_name, kcu.column_name
+        SELECT kcu.table_name, kcu.column_name,
+               COALESCE(rc.delete_rule, 'NO ACTION') AS delete_rule
         FROM information_schema.table_constraints tc
+        LEFT JOIN information_schema.referential_constraints rc
+          ON rc.constraint_name = tc.constraint_name
+         AND rc.constraint_schema = tc.table_schema
         JOIN information_schema.key_column_usage kcu
           ON tc.constraint_name = kcu.constraint_name
          AND tc.table_schema = kcu.table_schema
@@ -185,6 +243,19 @@ BEGIN
           AND ccu.column_name = 'id'
           AND kcu.table_name <> 'jobs'  -- filhos jobs ficam (retrabalho ativo)
       LOOP
+        -- ON DELETE SET NULL e' contrato do banco: a linha filha sobrevive,
+        -- so' perde o vinculo. Apagar aqui levava embora o lote de producao
+        -- (production_lots), que sustenta estoque e rastreabilidade — a copia
+        -- em archived_jobs.children e' historico morto e nao serve ao app.
+        -- O vinculo continua reconstruivel pelo pacote.
+        IF v_fk.delete_rule = 'SET NULL' THEN
+          EXECUTE format(
+            'UPDATE public.%I SET %I = NULL WHERE %I = $1',
+            v_fk.table_name, v_fk.column_name, v_fk.column_name
+          ) USING v_job.id;
+          CONTINUE;
+        END IF;
+
         -- Netos bloqueantes: sÃ³ os que impediriam o delete do filho
         -- (NO ACTION/RESTRICT). SET NULL/CASCADE o banco resolve ao
         -- deletar o pai â€” ex.: packaging_waste fica com task_id NULL
@@ -246,3 +317,74 @@ $$;
 
 REVOKE EXECUTE ON FUNCTION public.archive_finished_jobs(timestamptz) FROM public, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.archive_finished_jobs(timestamptz) TO service_role;
+
+-- Arquivo coerente tambem para quem esta fora do sistema: o link de
+-- rastreamento ja entregue ao cliente nao pode voltar vazio depois de a OS ser
+-- arquivada (ela sai de public.jobs). Le public.archived_jobs e usa
+-- archived_jobs.children -> 'shipments' quando o vinculo foi desligado.
+-- Continua sem expor client, custo, notas, operador, tecnica ou lotes.
+CREATE OR REPLACE FUNCTION public.get_public_tracking(
+  p_job_id uuid DEFAULT NULL,
+  p_order_number text DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  WITH fonte AS (
+    SELECT j.id, j.order_number, j.status, j.product, j.scheduled_date,
+           j.production_photos, j.shipment_id, NULL::jsonb AS children
+    FROM public.jobs j
+    UNION ALL
+    SELECT a.id, a.order_number, a.status, a.product, a.scheduled_date,
+           a.production_photos, a.shipment_id, a.children
+    FROM public.archived_jobs a
+  )
+  SELECT COALESCE(
+    jsonb_agg(
+      jsonb_build_object(
+        'id', f.id,
+        'order_number', f.order_number,
+        'status', f.status,
+        'product', f.product,
+        'scheduled_date', f.scheduled_date,
+        'production_photos', f.production_photos,
+        'shipment', CASE
+          WHEN s.id IS NOT NULL THEN
+            jsonb_build_object(
+              'tracking_code', s.tracking_code,
+              'status', s.status,
+              'estimated_delivery', s.estimated_delivery,
+              'actual_delivery', s.actual_delivery,
+              'provider', CASE WHEN p.id IS NOT NULL THEN
+                jsonb_build_object('name', p.name)
+              ELSE NULL END
+            )
+          WHEN f.children -> 'shipments' -> 0 IS NOT NULL THEN
+            jsonb_build_object(
+              'tracking_code', f.children -> 'shipments' -> 0 ->> 'tracking_code',
+              'status', f.children -> 'shipments' -> 0 ->> 'status',
+              'estimated_delivery', f.children -> 'shipments' -> 0 ->> 'estimated_delivery',
+              'actual_delivery', f.children -> 'shipments' -> 0 ->> 'actual_delivery',
+              'provider', NULL
+            )
+          ELSE NULL
+        END
+      )
+    ),
+    '[]'::jsonb
+  )
+  FROM fonte f
+  LEFT JOIN public.shipments s ON s.id = f.shipment_id
+  LEFT JOIN public.shipping_providers p ON p.id = s.provider_id
+  WHERE (p_job_id IS NOT NULL AND f.id = p_job_id)
+     OR (p_job_id IS NULL AND p_order_number IS NOT NULL AND f.order_number = p_order_number);
+$$;
+
+REVOKE ALL ON FUNCTION public.get_public_tracking(uuid, text) FROM public;
+GRANT EXECUTE ON FUNCTION public.get_public_tracking(uuid, text) TO anon, authenticated;
+
+COMMENT ON FUNCTION public.get_public_tracking(uuid, text) IS
+  'Tracking publico minimo: id/status/produto/prazo/fotos/entrega. Nunca expoe client, custo, notas, operador, tecnica ou lotes. Inclui OS arquivadas (archived_jobs) para nao invalidar link ja entregue.';

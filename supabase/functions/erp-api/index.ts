@@ -211,6 +211,18 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
         .maybeSingle();
       if (findError) throw findError;
       if (existing) return jsonResponse(req, existing);
+
+      // OS arquivada saiu de jobs e voltaria a nascer como pedido novo: o ERP
+      // reenvia enquanto o pedido nao estiver concluido do lado dele. A
+      // referencia fica guardada em archived_jobs, entao o reenvio e' atendido
+      // pelo historico em vez de recriar a OS.
+      const { data: archived, error: archivedError } = await supabase
+        .from('archived_jobs')
+        .select()
+        .eq('external_ref', externalRef)
+        .maybeSingle();
+      if (archivedError) throw archivedError;
+      if (archived) return jsonResponse(req, archived);
     }
 
     const { data, error } = await supabase

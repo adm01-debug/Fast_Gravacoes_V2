@@ -56,14 +56,25 @@ export function useOperatorEvolution(days: number = 30) {
   const { data: finishedJobs, isLoading: isLoadingJobs } = useQuery({
     queryKey: ['finished-jobs-evolution', days],
     queryFn: async () => {
+      const columns = 'id, machine_id, operator_id, quantity, produced_quantity, lost_pieces, estimated_duration, actual_start_time, actual_end_time';
       const { data, error } = await supabase
         .from('jobs')
-        .select('id, machine_id, operator_id, quantity, produced_quantity, lost_pieces, estimated_duration, actual_start_time, actual_end_time')
+        .select(columns)
         .eq('status', 'finished')
         .gte('actual_end_time', startDate.toISOString());
 
       if (error) throw error;
-      return (data || []) as FinishedJob[];
+
+      // OS arquivada sai de jobs: sem somar o arquivo, o indicador de
+      // produtividade cai sozinho conforme o cron arquiva o periodo.
+      const { data: archived, error: archivedError } = await supabase
+        .from('archived_jobs')
+        .select(columns)
+        .eq('status', 'finished')
+        .gte('actual_end_time', startDate.toISOString());
+
+      if (archivedError) throw archivedError;
+      return [...(data || []), ...(archived || [])] as FinishedJob[];
     },
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,

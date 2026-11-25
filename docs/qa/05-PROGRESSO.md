@@ -46,7 +46,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 035 — Fazer o portão de qualidade falhar fechado — onda 1 — Média · **aprovação do dono**
 - [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
 - [ ] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta
-- [x] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono** · PR #305: `archive_jobs(p_older_than, p_job_id)` casa colunas por nome (`jsonb_populate_record`) — o `archive_finished_jobs` inseria 35 valores em 33 colunas desde que `jobs` ganhou `cancel_reason`/`external_ref`, estourava e caía em `skipped`, por isso `archived_jobs` está com 0 linhas em produção (erro 42601 reproduzido em Postgres descartável)
+- [A] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono** · PR #305: `archive_jobs(p_older_than, p_job_id)` casa colunas por nome (`jsonb_populate_record`) — o `archive_finished_jobs` inseria 35 valores em 33 colunas desde que `jobs` ganhou `cancel_reason`/`external_ref`, estourava e caía em `skipped`, por isso `archived_jobs` está com 0 linhas em produção (erro 42601 reproduzido em Postgres descartável)
 - [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
 - [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
 - [ ] 056 — Tirar `user_roles` e a trilha de auditoria da lista de tabelas do túnel de banco — onda 1 — Crítica · **aprovação do dono**

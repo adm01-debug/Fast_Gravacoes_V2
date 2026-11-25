@@ -45,6 +45,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDataExport } from "@/features/admin";
 import { useConfirmation } from "@/contexts/ConfirmationContext";
+import { useAuth } from "@/features/auth";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -89,6 +90,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   const { getTechniqueById, getMachineById } = useSchedulingData();
   const { duplicateJob } = useDuplicateJob();
   const { confirm } = useConfirmation();
+  const { isManager, isAdmin } = useAuth();
   const updateJobMutation = useUpdateJob();
   const deleteJobMutation = useDeleteJob();
   const archiveJobMutation = useArchiveJob();
@@ -121,7 +123,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   const technique = getTechniqueById(job.technique_id);
   const machine = getMachineById(job.machine_id);
   const canDelete = !job.produced_quantity && !job.lost_pieces && ['queue', 'scheduled', 'cancelled'].includes(job.status);
-  const canArchive = job.status === 'finished';
+  const canArchive = job.status === 'finished' && (isManager || isAdmin);
 
   const handleSave = async (data: JobEditValues) => {
     try {

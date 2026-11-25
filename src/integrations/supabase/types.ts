@@ -5995,6 +5995,10 @@ export type Database = {
         Returns: undefined
       }
       archive_finished_jobs: { Args: { p_older_than: string }; Returns: Json }
+      archive_jobs: {
+        Args: { p_older_than?: string; p_job_id?: string }
+        Returns: Json
+      }
       assign_packaging_task: { Args: { p_task_id: string }; Returns: undefined }
       auto_reassign_stale_packaging_tasks: { Args: never; Returns: undefined }
       calculate_audit_hash: {

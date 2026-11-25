@@ -24,6 +24,7 @@ vi.mock('@/features/admin', () => ({
   useEntityAuditTrail: () => ({ data: [], isLoading: false, error: null }),
   useDataExport: () => ({ exportAuditTrail: vi.fn() }),
 }));
+vi.mock('@/features/auth', () => ({ useAuth: () => authMock() }));
 vi.mock('@/features/admin/components/audit/AuditEntryCard', () => ({ AuditEntryCard: () => null }));
 vi.mock('@/features/admin/components/audit/HistoryPeriodFilter', () => ({ HistoryPeriodFilter: () => null }));
 vi.mock('@/contexts/ConfirmationContext', () => ({ useConfirmation: () => ({ confirm: confirmMock }) }));
@@ -43,13 +44,14 @@ vi.mock('./JobQuickActions', () => ({
   ),
 }));
 
-const { passthrough, dialogPassthrough, confirmMock, archiveMutateAsync } = vi.hoisted(() => ({
+const { passthrough, dialogPassthrough, confirmMock, archiveMutateAsync, authMock } = vi.hoisted(() => ({
   passthrough: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   // Respeita a prop `open` para o teste conseguir provar que o diálogo fecha.
   dialogPassthrough: ({ open, children }: { open?: boolean; children?: React.ReactNode }) =>
     open === false ? null : <div>{children}</div>,
   confirmMock: vi.fn(),
   archiveMutateAsync: vi.fn(),
+  authMock: vi.fn(() => ({ isManager: true, isAdmin: false })),
 }));
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: dialogPassthrough,
@@ -200,8 +202,16 @@ describe('JobDetailsModal - cancelamento de OS', () => {
 describe('JobDetailsModal - arquivamento de OS', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    authMock.mockReturnValue({ isManager: true, isAdmin: false });
     confirmMock.mockResolvedValue(true);
     archiveMutateAsync.mockResolvedValue({ archived: 1, skipped: 0 });
+  });
+
+  it('esconde o botão de arquivar de quem não é gerente nem admin', () => {
+    authMock.mockReturnValue({ isManager: false, isAdmin: false });
+    renderModal({ status: 'finished', produced_quantity: 10 });
+
+    expect(screen.queryByText('Arquivar')).toBeNull();
   });
 
   it('esconde o botão de arquivar em OS que não está finalizada', () => {
@@ -220,11 +230,14 @@ describe('JobDetailsModal - arquivamento de OS', () => {
     expect(confirmMock).toHaveBeenCalledWith(expect.objectContaining({ title: 'Arquivar OS' }));
   });
 
-  it('não arquiva quando o usuário desiste da confirmação', () => {
+  it('não arquiva quando o usuário desiste da confirmação', async () => {
     confirmMock.mockResolvedValue(false);
     renderModal({ status: 'finished', produced_quantity: 10 });
     fireEvent.click(screen.getByText('Arquivar'));
 
+    // Sem esperar a confirmação, a asserção passaria mesmo se o arquivamento
+    // disparasse depois dela — provava nada.
+    await vi.waitFor(() => expect(confirmMock).toHaveBeenCalled());
     expect(archiveMutateAsync).not.toHaveBeenCalled();
   });
 });
