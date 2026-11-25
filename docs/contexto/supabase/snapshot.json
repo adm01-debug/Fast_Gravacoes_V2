@@ -24951,7 +24951,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 79,
+          "code_total_files": 80,
           "cron": [],
           "db": [
             "public.archive_jobs",
@@ -25108,9 +25108,13 @@
             {
               "file": "supabase/functions/cron-cleanup/index.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [
             "22:archive-finished-jobs-daily"
           ],
@@ -25141,8 +25145,17 @@
       {
         "args": "p_older_than timestamp with time zone, p_job_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/features/jobs/services/jobsService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.archive_finished_jobs"
@@ -26173,8 +26186,13 @@
       {
         "args": "p_since timestamp with time zone, p_limit integer, p_offset integer",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/features/production/hooks/useOperatorEvolution.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -26798,7 +26816,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 79,
+          "code_total_files": 80,
           "cron": [],
           "db": [
             "public.archive_jobs",
@@ -28408,8 +28426,13 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [
