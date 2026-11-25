@@ -24,8 +24,8 @@ vi.mock('@/integrations/supabase/client', () => {
     supabase: {
       from: vi.fn(() => mockTable),
         auth: {
-          onAuthStateChange: vi.fn((cb: (event: string) => void) => {
-            (globalThis as unknown as { __offlineSyncAuthCb: (event: string) => void }).__offlineSyncAuthCb = cb;
+          onAuthStateChange: vi.fn((cb: (event: string, session?: { user?: { id?: string } } | null) => void) => {
+                      (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb = cb;
             return { data: { subscription: { unsubscribe: vi.fn() } } };
           }),
         },
@@ -238,6 +238,10 @@ describe('useOfflineSync', () => {
         // Fila e cache desta fila vivem no localStorage; o IndexedDB limpo em
         // offlineStorage.clearAll() não os alcança.
         setOnline(false);
+              localStorage.setItem(
+                STORAGE_KEYS.CACHED_DATA,
+                JSON.stringify({ jobs: [{ id: 'job-1' }], machines: [], techniques: [], lastSyncedAt: null }),
+              );
         const { result } = renderHook(() => useOfflineSync());
 
         await act(async () => {
@@ -246,14 +250,74 @@ describe('useOfflineSync', () => {
         expect(result.current.pendingActionsCount).toBe(1);
         expect(localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS)).toContain('job-1');
 
-        const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string) => void }).__offlineSyncAuthCb;
+              const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
         expect(authCb).toBeTypeOf('function');
 
         act(() => {
-          authCb('SIGNED_OUT');
+                authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
         });
+              act(() => {
+                authCb('SIGNED_OUT', null);
+              });
 
         await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
         expect(JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS) ?? '[]')).toHaveLength(0);
+              // O cache de leitura do operador anterior não fica no aparelho.
+              expect(localStorage.getItem(STORAGE_KEYS.CACHED_DATA)).toBeNull();
+            });
+
+            it('guarda a alteração não entregue e o próximo operador não a herda (etapa 232)', async () => {
+              setOnline(false);
+              const { result } = renderHook(() => useOfflineSync());
+              const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
+              const quarantineKey = 'fastgravacoes_orphan_queue_operador-a';
+
+              act(() => {
+                authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+              });
+              await act(async () => {
+                result.current.updateJobOffline('job-1', { status: 'production' });
+              });
+              expect(result.current.pendingActionsCount).toBe(1);
+
+              act(() => {
+                authCb('SIGNED_OUT', null);
+              });
+              await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+
+              // A ação não foi entregue ao servidor: não pode ser descartada.
+              expect(localStorage.getItem(quarantineKey)).toContain('job-1');
+
+              act(() => {
+                authCb('SIGNED_IN', { user: { id: 'operador-b' } });
+              });
+              await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+              expect(localStorage.getItem(quarantineKey)).toContain('job-1');
+            });
+
+            it('devolve a fila não entregue quando o mesmo operador volta (etapa 232)', async () => {
+              setOnline(false);
+              const { result } = renderHook(() => useOfflineSync());
+              const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
+
+              act(() => {
+                authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+              });
+              await act(async () => {
+                result.current.updateJobOffline('job-1', { status: 'production' });
+              });
+              act(() => {
+                authCb('SIGNED_OUT', null);
+              });
+              await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+
+              act(() => {
+                authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+              });
+
+              await waitFor(() => expect(result.current.pendingActionsCount).toBe(1));
+              expect(result.current.pendingActions[0].payload).toMatchObject({ jobId: 'job-1' });
+              // E volta a ser a fila ativa, não só um estado em memória.
+              expect(localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS)).toContain('job-1');
       });
 });

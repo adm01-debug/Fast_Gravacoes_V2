@@ -9,7 +9,8 @@ import {
   MAX_RETRIES,
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
-  clearOfflineQueueStorage,
+  quarantineOfflineQueueStorage,
+  takeQuarantinedQueue,
   mergeJobIntoCache,
   readAcknowledgedFromStorage,
   readQueueFromStorage,
@@ -119,14 +120,42 @@ export function useOfflineSync() {
   }, [pendingActions]);
 
     // A fila e o cache desta fila vivem no localStorage e sobrevivem ao logout.
-    // Sem limpar aqui, o próximo operador no mesmo aparelho herda ações
+    // Sem tratar aqui, o próximo operador no mesmo aparelho herda ações
     // pendentes e dados do usuário anterior (etapa 232) — limpar só o IndexedDB
     // (offlineStorage.clearAll) não alcança estas chaves. Cada instância montada
     // se limpa: o provider e os indicadores continuam montados após a saída.
+    // As alterações AINDA NÃO entregues não são descartadas: vão para quarentena
+    // sob o id do dono e voltam quando o mesmo operador entra de novo, porque o
+    // servidor nunca as recebeu e não existe outra cópia.
     useEffect(() => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      let ownerId: string | null = null;
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const currentUserId = session?.user?.id ?? null;
+        if (currentUserId) {
+          const restored = takeQuarantinedQueue(currentUserId);
+          if (restored) {
+                      if (restored.pending.length) {
+                        // Marca como não persistida: o efeito de persistência reconcilia
+                        // com o storage (que está vazio após a saída) e só mantém em
+                        // memória o que estiver marcado — sem isto a fila restaurada
+                        // seria apagada daqui e o sync não a veria.
+                        restored.pending.forEach((action) => unpersistedIdsRef.current.add(action.id));
+                        setPendingActions(restored.pending);
+                      }
+            if (restored.failed.length) setFailedActions(restored.failed);
+            if (restored.acknowledged.length) {
+              acknowledgedIdsRef.current = new Set(restored.acknowledged);
+              safeLocalStorageSet(
+                STORAGE_KEYS.ACKNOWLEDGED_ACTIONS,
+                JSON.stringify(restored.acknowledged)
+              );
+            }
+          }
+          ownerId = currentUserId;
+          return;
+        }
         if (event !== 'SIGNED_OUT') return;
-        clearOfflineQueueStorage();
+        quarantineOfflineQueueStorage(ownerId);
         unpersistedIdsRef.current.clear();
         acknowledgedIdsRef.current.clear();
         pendingActionsRef.current = [];

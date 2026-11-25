@@ -47,6 +47,66 @@ export function clearOfflineQueueStorage(): void {
     /* storage indisponível */
   }
 }
+
+/** Fila guardada de um operador que saiu com alterações ainda não entregues. */
+export interface QuarantinedQueue {
+  pending: PendingAction[];
+  failed: FailedAction[];
+  acknowledged: string[];
+}
+
+const quarantineKey = (ownerId: string) => `fastgravacoes_orphan_queue_${ownerId}`;
+
+function readJsonArray<T>(key: string): T[] {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? (JSON.parse(stored) as T[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Guarda as alterações ainda NÃO entregues sob a identidade do dono e limpa o
+ * resto (cache de leitura e confirmações). A fila não pode ser herdada pelo
+ * próximo operador do mesmo aparelho, mas também não pode ser descartada: no
+ * quiosque offline ela é a única cópia da alteração (o servidor nunca a
+ * recebeu). Sem dono conhecido não há como devolvê-la depois, então nesse caso
+ * nada é guardado — o dado do usuário anterior tem precedência. */
+export function quarantineOfflineQueueStorage(ownerId: string | null): void {
+  try {
+    if (ownerId) {
+      const queue: QuarantinedQueue = {
+        pending: readQueueFromStorage(),
+        failed: readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS),
+        acknowledged: [...readAcknowledgedFromStorage()],
+      };
+      if (queue.pending.length || queue.failed.length || queue.acknowledged.length) {
+        safeLocalStorageSet(quarantineKey(ownerId), JSON.stringify(queue));
+      }
+    }
+  } catch {
+    /* storage indisponível */
+  }
+  clearOfflineQueueStorage();
+}
+
+/** Devolve (e apaga) a fila que ficou guardada para este operador. Outro
+ * operador nunca a recebe: a chave é o id de quem saiu. */
+export function takeQuarantinedQueue(ownerId: string): QuarantinedQueue | null {
+  try {
+    const raw = localStorage.getItem(quarantineKey(ownerId));
+    if (!raw) return null;
+    localStorage.removeItem(quarantineKey(ownerId));
+    const parsed = JSON.parse(raw) as Partial<QuarantinedQueue>;
+    return {
+      pending: parsed.pending ?? [],
+      failed: parsed.failed ?? [],
+      acknowledged: parsed.acknowledged ?? [],
+    };
+  } catch {
+    return null;
+  }
+}
 // Base delay for the exponential backoff between sync passes when actions
 // are re-queued (retryable failures) — without this, a partial-failure pass
 // re-triggers instantly via the pendingActions.length effect dependency,
