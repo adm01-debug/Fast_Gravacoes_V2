@@ -135,9 +135,14 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
 
   const handleSubmit = async () => {
     if (!selectedJob || !scheduleDate) { toast.error('Selecione uma data'); return; }
+    const endMinutes = timeToMinutes(startTime) + selectedJob.estimated_duration;
+    if (endMinutes > 24 * 60) {
+      toast.error('O trabalho terminaria depois da meia-noite. Reduza o horário de início ou a duração estimada.');
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const endTime = minutesToTime(timeToMinutes(startTime) + selectedJob.estimated_duration);
+      const endTime = minutesToTime(endMinutes);
       const { error } = await supabase.from('jobs').update({ scheduled_date: scheduleDate, start_time: startTime, end_time: endTime, status: 'scheduled', machine_id: selectedMachineId || null }).eq('id', selectedJob.id);
       if (error) throw error;
       toast.success('Job agendado com sucesso!');
@@ -207,7 +212,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
                         {machineScheduledJobs.map(job => {
                           const selStart = startTime ? parseInt(startTime.split(':')[0], 10) * 60 + parseInt(startTime.split(':')[1], 10) : 0;
                           const selEnd = selStart + (selectedJob?.estimated_duration || 0);
-                          const isConflicting = startTime && selStart < job.startMinutes + job.estimated_duration && selEnd > job.startMinutes;
+                          const isConflicting = startTime && selStart < job.endMinutes && selEnd > job.startMinutes;
                           return (<div key={job.id} className={cn("flex items-center gap-2 p-2 rounded-md text-xs transition-colors", isConflicting ? "bg-destructive/15 border border-destructive/40" : "bg-secondary/50 border border-border/20")}>
                             <Clock className={cn("w-3.5 h-3.5 shrink-0", isConflicting ? "text-destructive" : "text-muted-foreground")} />
                             <span className={cn("font-mono font-medium", isConflicting ? "text-destructive" : "text-foreground")}>{job.start_time || '--:--'} - {job.endTime}</span>
@@ -236,7 +241,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
               {conflicts.length > 0 && (
                 <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
                   <div className="flex items-center gap-2 text-destructive mb-2"><AlertCircle className="w-4 h-4" /><span className="font-medium text-sm">{conflicts.length} conflito{conflicts.length > 1 ? 's' : ''}</span></div>
-                  <div className="space-y-2">{conflicts.map(c => (<div key={c.id} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{c.order_number}</span>{' - '}{c.client}{c.start_time && (<span className="text-destructive/80">{' '}({c.start_time} - {(() => { const [h, m] = (c.start_time ?? "00:00").split(':').map(Number); const endMin = h * 60 + m + c.estimated_duration; return `${String(Math.floor(endMin / 60)).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`; })()})</span>)}</div>))}</div>
+                  <div className="space-y-2">{conflicts.map(c => (<div key={c.id} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{c.order_number}</span>{' - '}{c.client}{c.start_time && (<span className="text-destructive/80">{' '}({c.start_time} - {minutesToTime(jobEndMinutes(c))})</span>)}</div>))}</div>
                 </div>
               )}
             </div>

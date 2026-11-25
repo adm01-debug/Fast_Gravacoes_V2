@@ -102,4 +102,31 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)'
       expect.objectContaining({ start_time: '09:30', end_time: '10:30', status: 'scheduled' })
     );
   });
+
+  it('mostra o fim gravado na OS no aviso de conflito, e nao a duracao estimada', () => {
+    renderAndChooseTime([otherJob('production', '10:00')]);
+
+    expect(screen.getAllByText(/\(09:00 - 10:00\)/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/\(09:00 - 11:00\)/)).toBeNull();
+  });
+
+  it('recusa agendar quando o trabalho terminaria depois da meia-noite', async () => {
+    updatePayload.mockClear();
+    render(
+      <AlertScheduleModal
+        open
+        onOpenChange={() => {}}
+        selectedJob={selectedJob}
+        jobs={[] as never}
+        machines={[]}
+        onScheduled={() => {}}
+      />
+    );
+    fireEvent.change(document.querySelector('input[type="date"]')!, { target: { value: DATE } });
+    fireEvent.change(document.querySelector('input[type="time"]')!, { target: { value: '23:30' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Agendar' }));
+
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringMatching(/meia-noite/)));
+    expect(updatePayload).not.toHaveBeenCalled();
+  });
 });
