@@ -7638,7 +7638,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 156,
+   "arquivos_puxados": 157,
    "diretos": {
     "tabelas": [
      "audit_log",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cd834ba5f902e2a62113ce54e9f57ff3a02ff46e",
+  "commit": "d0e7a1de0f64c8cb5207fa97b9ab2abed8cccb7c",
   "branch": "main",
-  "data_commit": "2026-11-25T08:11:15-03:00",
+  "data_commit": "2026-11-25T08:12:37-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d0e7a1d",
+    "data": "2026-11-25",
+    "assunto": "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)"
+   },
    {
     "sha": "cd834ba",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "c90ebd5",
     "data": "2026-11-23",
     "assunto": "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)"
-   },
-   {
-    "sha": "17a3af4",
-    "data": "2026-11-23",
-    "assunto": "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 247,
+  "arquivos_mudados_7d": 249,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -263,6 +263,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 6
    },
@@ -287,10 +291,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "scripts/rls-regression.mjs",
     "mudancas": 5
    },
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 150
+    "commits": 151
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1610,
-  "arquivos_codigo": 1141,
-  "linhas_codigo": 192396,
+  "arquivos_total": 1611,
+  "arquivos_codigo": 1142,
+  "linhas_codigo": 192524,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 260,
   "cron_jobs": 4,
-  "testes": 142,
+  "testes": 143,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -516,8 +516,8 @@
    "linhas": 84
   },
   "src/pages": {
-   "arquivos": 60,
-   "linhas": 17215
+   "arquivos": 61,
+   "linhas": 17343
   },
   "src/providers": {
    "arquivos": 2,
@@ -646,6 +646,10 @@
    "linhas": 540
   },
   {
+   "arquivo": "src/pages/PendingQueue.tsx",
+   "linhas": 533
+  },
+  {
    "arquivo": "src/components/loading/SkeletonLibrary.tsx",
    "linhas": 524
   },
@@ -660,14 +664,10 @@
   {
    "arquivo": "src/pages/TraceabilityPage.tsx",
    "linhas": 520
-  },
-  {
-   "arquivo": "src/pages/PendingQueue.tsx",
-   "linhas": 515
   }
  ],
  "qualidade": {
-  "any": 176,
+  "any": 178,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 142,
+ "total": 143,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 117
+  "unit": 118
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 105
+   "arquivos": 106
   },
   {
    "padrao": "tests/",
@@ -910,6 +910,16 @@
    "suporte": false
   },
   {
+   "arquivo": "src/pages/PendingQueue.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/pages/PendingQueue.tsx"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/test/assertNonNull.ts",
    "tipo": "unit",
    "linhas": 12,
@@ -1586,6 +1596,7 @@
   "src/pages/AuthPage.tsx": 1,
   "src/pages/InventoryPage.tsx": 1,
   "src/pages/LogisticsPage.tsx": 1,
+  "src/pages/PendingQueue.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
   "supabase/functions/_shared/contracts.ts": 4,
   "supabase/functions/_shared/cronAuth.ts": 1,
@@ -1632,7 +1643,6 @@
    "src/pages/OperatorsPage.tsx",
    "src/pages/PackagingDashboard.tsx",
    "src/pages/PackagingKioskPage.tsx",
-   "src/pages/PendingQueue.tsx",
    "src/pages/PublicTrackingPage.tsx",
    "src/pages/QRScannerPage.tsx",
    "src/pages/ReportBuilderPage.tsx",

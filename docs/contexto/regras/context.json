@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cd834ba5f902e2a62113ce54e9f57ff3a02ff46e",
+  "sha": "d0e7a1de0f64c8cb5207fa97b9ab2abed8cccb7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 11:13 UTC",
-  "files_total": 1608,
-  "code_files": 1412,
-  "code_lines": 209062
+  "generated_at": "2026-11-25 11:17 UTC",
+  "files_total": 1609,
+  "code_files": 1413,
+  "code_lines": 209190
  },
  "version": "1.3.2",
- "facts_hash": "981e6ef4c4d55352",
+ "facts_hash": "a3a991c284426c88",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 671,
+   ".tsx": 672,
    ".ts": 406,
    ".sql": 268,
    ".mjs": 50,
@@ -24195,6 +24195,85 @@
    },
    {
     "path": "",
+    "file": "src/pages/PendingQueue.test.tsx",
+    "component": "PendingQueue.test",
+    "tables_transitive": [
+     "abc_job_costs",
+     "audit_log",
+     "bitrix24_field_mappings",
+     "bitrix24_sync_history",
+     "blocked_ips",
+     "business_config",
+     "daily_summaries",
+     "dashboard_presets",
+     "document_versions",
+     "efficiency_alert_history",
+     "energy_alerts",
+     "energy_consumption",
+     "energy_targets",
+     "error_logs",
+     "feature_flags",
+     "geo_blocking_logs",
+     "geo_blocking_rules",
+     "geo_blocking_settings",
+     "job_status_audit",
+     "job_status_history",
+     "jobs",
+     "machine_downtime",
+     "machine_event_audit",
+     "machine_health_metrics",
+     "machine_predictions",
+     "machines",
+     "maintenance_alerts",
+     "maintenance_records",
+     "maintenance_schedules",
+     "operator_goals",
+     "operator_machines",
+     "operator_rankings",
+     "operator_skills",
+     "operator_status_audit",
+     "packaging_tasks",
+     "prediction_history",
+     "production_losses",
+     "profiles",
+     "push_notifications",
+     "push_subscriptions",
+     "qr_scan_history",
+     "rate_limit_logs",
+     "rate_limit_settings",
+     "role_permissions",
+     "security_events",
+     "spc_alerts",
+     "spc_capability_history",
+     "spc_control_parameters",
+     "spc_measurements",
+     "technical_documents",
+     "technical_sheet_materials",
+     "technical_sheets",
+     "techniques",
+     "telemetry_traces",
+     "tpm_notification_logs",
+     "user_notification_settings",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "auto-promote-jobs",
+     "bitrix24-sync",
+     "check-login-lockout",
+     "daily-maintenance-summary",
+     "ml-predictions",
+     "send-push-notification"
+    ],
+    "rpc_transitive": [
+     "apply_job_sequence",
+     "check_and_notify_kpi_alert",
+     "increment_job_lost_pieces",
+     "verify_audit_chain"
+    ],
+    "deps_count": 281
+   },
+   {
+    "path": "",
     "file": "src/pages/PendingQueue.tsx",
     "component": "PendingQueue",
     "tables_transitive": [
@@ -24295,7 +24374,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 311
+    "deps_count": 312
    },
    {
     "path": "",
@@ -29590,8 +29669,8 @@
   },
   {
    "module": "src/pages",
-   "files": 60,
-   "lines": 17215,
+   "files": 61,
+   "lines": 17343,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29740,6 +29819,7 @@
     "src/pages/OperatorsPage.tsx",
     "src/pages/PackagingDashboard.tsx",
     "src/pages/PackagingKioskPage.tsx",
+    "src/pages/PendingQueue.test.tsx",
     "src/pages/PendingQueue.tsx",
     "src/pages/PublicTrackingPage.tsx",
     "src/pages/QRScannerPage.tsx",
@@ -53400,6 +53480,22 @@
    {
     "file": "src/pages/LogisticsPage.test.tsx",
     "name": "repetir o atalho em envio ja entregue e impossivel e preserva a data original"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "PendingQueue - estado de erro da fila (etapa 260)"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "mostra bloco de erro com ação de tentar novamente no lugar da fila"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "sem erro e sem jobs mantém o estado vazio legítimo, não o de erro"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "com jobs renderiza a fila normal"
    },
    {
     "file": "src/test/authFlow.test.ts",
@@ -92054,9 +92150,20 @@
     }
    ]
   },
+  "src/pages/PendingQueue.test.tsx": {
+   "path": "src/pages/PendingQueue.test.tsx",
+   "lines": 110,
+   "is_test": true,
+   "tests": [
+    "PendingQueue - estado de erro da fila (etapa 260)",
+    "mostra bloco de erro com ação de tentar novamente no lugar da fila",
+    "sem erro e sem jobs mantém o estado vazio legítimo, não o de erro",
+    "com jobs renderiza a fila normal"
+   ]
+  },
   "src/pages/PendingQueue.tsx": {
    "path": "src/pages/PendingQueue.tsx",
-   "lines": 515,
+   "lines": 533,
    "exports": [
     "function PendingQueue"
    ],
@@ -97963,10 +98070,21 @@
   }
  },
  "git": {
-  "sha": "cd834ba5f902e2a62113ce54e9f57ff3a02ff46e",
+  "sha": "d0e7a1de0f64c8cb5207fa97b9ab2abed8cccb7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d0e7a1d",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/pages/PendingQueue.test.tsx",
+     "src/pages/PendingQueue.tsx"
+    ]
+   },
    {
     "sha": "cd834ba",
     "date": "2026-11-25",
@@ -98309,30 +98427,20 @@
      "supabase/functions/health-monitor/index.ts",
      "tests/e2e/offline.spec.ts"
     ]
-   },
-   {
-    "sha": "390d6da",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps-dev): bump the desenvolvimento group with 27 updates (#266)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    4
+    5
    ],
    [
     "package-lock.json",
-    4
+    3
    ],
    [
     "package.json",
-    4
+    3
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -98353,6 +98461,14 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "src/pages/PendingQueue.test.tsx",
+    1
+   ],
+   [
+    "src/pages/PendingQueue.tsx",
+    1
    ],
    [
     ".github/workflows/automation-local.yml",
@@ -98392,14 +98508,6 @@
    ],
    [
     "src/features/jobs/hooks/useJobs.ts",
-    1
-   ],
-   [
-    "src/features/jobs/services/jobsService.ts",
-    1
-   ],
-   [
-    "src/features/jobs/types/job.schema.ts",
     1
    ]
   ]

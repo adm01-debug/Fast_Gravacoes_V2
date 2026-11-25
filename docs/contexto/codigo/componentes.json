@@ -5797,7 +5797,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -9621,7 +9621,7 @@
     "PendingQueue"
    ],
    "export_default": "PendingQueue",
-   "linhas": 515,
+   "linhas": 533,
    "dominio": "pages",
    "hooks_locais": [
     "useAutoBufferPromotion",

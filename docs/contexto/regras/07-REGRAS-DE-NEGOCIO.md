@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cd834ba5f9` · branch `main` · 2026-11-25 11:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d0e7a1de0f` · branch `main` · 2026-11-25 11:17 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T10:39:56Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3326,7 +3326,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1401 testes em 123 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1405 testes em 124 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3422,6 +3422,7 @@ _nenhum item encontrado_
 | `src/features/jobs/services/jobsService.test.ts` | 4 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs |
 | `src/hooks/use-overflowing.test.tsx` | 4 | useOverflowing · detecta transbordo a partir do tamanho medido · nao marca conteudo que cabe · reavalia quando o conteudo cresce depois do mount |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
+| `src/pages/PendingQueue.test.tsx` | 4 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro · com jobs renderiza a fila normal |
 | `tests/e2e/error-states.spec.ts` | 4 | Error boundaries and fallback states · should not have unhandled page errors on auth page · login with wrong credentials shows error message · navigating to non-existent route shows not found state |
 | `tests/e2e/inventory-intelligence.spec.ts` | 4 | Fluxos de Inventário e Inteligência · deve permitir visualizar e filtrar o inventário · deve abrir o modal de registro de movimentação · deve validar o Mapa WMS e sugestões de IA |
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
