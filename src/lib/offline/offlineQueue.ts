@@ -82,20 +82,33 @@ function readJsonArray<T>(key: string): T[] {
  * nada é guardado — o dado do usuário anterior tem precedência. */
 export function quarantineOfflineQueueStorage(
   ownerId: string | null,
-  batchOutcome?: { pending: PendingAction[]; failed: FailedAction[] } | null,
+  outcome?: {
+    pending: PendingAction[];
+    failed: FailedAction[];
+    /** Ids que ESTE lote já resolveu (aplicados, confirmados ou movidos para a
+     * dead-letter). Cópias antigas deles no storage não devem voltar. */
+    processedIds?: Iterable<string>;
+  } | null,
 ): void {
   try {
     if (ownerId) {
-      // Com um lote recém-terminado, o storage ainda não recebeu o resultado
-      // dele (os estados do React são gravados pelo efeito de persistência,
-      // que perde a corrida para esta quarentena): o resultado do lote é a
-      // verdade e entra no lugar da fila antiga. Somar as duas listas traria
-      // de volta ações que o servidor já aceitou.
+      // A cópia guardada é a última linha de defesa: não encolhe. Duas abas
+      // recebem o mesmo SIGNED_OUT e a segunda pode ter uma memória mais velha
+      // que a cópia recém-gravada pela primeira — substituí-la perderia a ação
+      // mais recente, que nunca chegou ao servidor.
+      const existing = readQuarantinedQueue(ownerId);
+      const processed = new Set(outcome?.processedIds ?? []);
+      // O storage ativo pode conter a fila ANTERIOR ao lote (quando a gravação
+      // do saldo falhou) e ações enfileiradas DEPOIS que o saldo foi congelado:
+      // as primeiras já estão resolvidas (`processed`), as últimas são novas e
+      // precisam sobreviver à limpeza da saída.
+      const storedNow = readQueueFromStorage().filter(a => !processed.has(a.id));
+      const incoming = outcome ? [...outcome.pending, ...storedNow] : storedNow;
       const storedFailed = readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS);
       const queue: QuarantinedQueue = {
-        pending: batchOutcome ? batchOutcome.pending : readQueueFromStorage(),
-        failed: batchOutcome ? mergeById(storedFailed, batchOutcome.failed) : storedFailed,
-        acknowledged: [...readAcknowledgedFromStorage()],
+        pending: mergeById(existing?.pending ?? [], incoming),
+        failed: mergeById([...(existing?.failed ?? []), ...storedFailed], outcome?.failed ?? []),
+        acknowledged: [...new Set([...(existing?.acknowledged ?? []), ...readAcknowledgedFromStorage()])],
         savedAt: Date.now(),
       };
       if (queue.pending.length || queue.failed.length || queue.acknowledged.length) {

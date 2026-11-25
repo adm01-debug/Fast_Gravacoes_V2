@@ -442,7 +442,11 @@ export function useOfflineSync() {
         // Resultado deste lote, para a quarentena de uma saída no meio dele: o
         // estado do React só grava depois, então a quarentena do `finally` não
         // pode ler fila/fracassos do storage — leria a foto anterior ao lote.
-        let batchOutcome: { pending: PendingAction[]; failed: FailedAction[] } | null = null;
+        let batchOutcome: {
+      pending: PendingAction[];
+      failed: FailedAction[];
+      processedIds: Set<string>;
+    } | null = null;
 
     try {
       let successCount = 0;
@@ -544,7 +548,7 @@ export function useOfflineSync() {
       if (newlyFailed.length > 0) {
         setFailedActions(prev => [...prev, ...newlyFailed]);
       }
-            batchOutcome = { pending: remainingMerged, failed: newlyFailed };
+            batchOutcome = { pending: remainingMerged, failed: newlyFailed, processedIds: snapshotIds };
             // A fila ativa está durável: a cópia guardada do mesmo dono virou
             // redundante e, se ficar, reenviaria no próximo carregamento o que já
             // foi sincronizado por memória.
@@ -594,6 +598,7 @@ export function useOfflineSync() {
         quarantineOfflineQueueStorage(pendingSignOut.ownerId, {
           pending: batchOutcome ? batchOutcome.pending : readQueueFromStorage(),
           failed: [...departingFailedRef.current, ...(batchOutcome ? batchOutcome.failed : [])],
+          processedIds: batchOutcome?.processedIds,
         });
         departingFailedRef.current = [];
         unpersistedIdsRef.current.clear();

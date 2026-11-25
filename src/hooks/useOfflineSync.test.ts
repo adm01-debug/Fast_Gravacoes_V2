@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useOfflineSync } from './useOfflineSync';
 import { supabase } from '@/integrations/supabase/client';
-import { STORAGE_KEYS, QUARANTINE_TTL_MS, MAX_RETRIES } from '@/lib/offline/offlineQueue';
+import { STORAGE_KEYS, QUARANTINE_TTL_MS, MAX_RETRIES, quarantineOfflineQueueStorage } from '@/lib/offline/offlineQueue';
 
 // Mock Supabase properly
 vi.mock('@/integrations/supabase/client', () => {
@@ -620,4 +620,53 @@ describe('useOfflineSync', () => {
                             expect(localStorage.getItem(expiredKey)).toBeNull();
                             expect(localStorage.getItem(validKey)).toContain('job-2');
                           });
+  it('saída de outra aba não sobrescreve a cópia já guardada do mesmo operador (thread nova 2)', () => {
+    // Duas abas recebem o mesmo SIGNED_OUT. A segunda tem uma memória mais
+    // velha e as chaves ativas já vazias: substituir a cópia apagaria a
+    // rejeição que só a primeira aba conhecia — e que nunca foi ao servidor.
+    const quarantineKey = 'fastgravacoes_orphan_queue_operador-a';
+    const rejection = (id: string) => ({
+      id,
+      type: 'update_job' as const,
+      payload: { jobId: 'job-1', updates: { status: 'production' } },
+      createdAt: new Date().toISOString(),
+      retryCount: MAX_RETRIES,
+      failedAt: new Date().toISOString(),
+      reason: 'exhausted' as const,
+    });
+    localStorage.setItem(
+      quarantineKey,
+      JSON.stringify({ pending: [], failed: [rejection('r1'), rejection('r2')], acknowledged: [], savedAt: Date.now() }),
+    );
+
+    quarantineOfflineQueueStorage('operador-a', { pending: [], failed: [rejection('r1')] });
+
+    const stored = JSON.parse(localStorage.getItem(quarantineKey) ?? '{}');
+    const ids = (stored.failed ?? []).map((f: { id: string }) => f.id).sort();
+    expect(ids).toEqual(['r1', 'r2']);
+  });
+
+  it('preserva ação enfileirada depois do saldo do lote e descarta as já resolvidas (thread nova 1)', () => {
+    // O saldo do lote é congelado antes de o runSyncPass terminar: uma pausa
+    // salva nesse meio-tempo não está nele e não pode ser apagada na saída.
+    const quarantineKey = 'fastgravacoes_orphan_queue_operador-a';
+    const action = (id: string) => ({
+      id,
+      type: 'update_job' as const,
+      payload: { jobId: 'job-1', updates: { status: 'production' } },
+      createdAt: new Date().toISOString(),
+      retryCount: 0,
+    });
+    localStorage.setItem(STORAGE_KEYS.PENDING_ACTIONS, JSON.stringify([action('aplicada'), action('nova')]));
+
+    quarantineOfflineQueueStorage('operador-a', {
+      pending: [action('retry')],
+      failed: [],
+      processedIds: ['aplicada'],
+    });
+
+    const stored = JSON.parse(localStorage.getItem(quarantineKey) ?? '{}');
+    const ids = (stored.pending ?? []).map((p: { id: string }) => p.id).sort();
+    expect(ids).toEqual(['nova', 'retry']);
+  });
 });
