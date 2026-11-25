@@ -45,6 +45,10 @@ export function SecurityOverviewCard() {
   const emailConfirmed = Boolean(user?.email_confirmed_at);
   const isSecureConnection =
     typeof window !== 'undefined' && window.location.protocol === 'https:';
+    // Só dispositivo marcado como confiável conta: é o mesmo critério que o
+    // resumo em `SecurityDashboard.tsx:62` usa, senão a mesma tela aprovaria
+    // "dispositivos verificados" e mostraria zero dispositivos confiáveis.
+    const trustedDeviceCount = (devices ?? []).filter((device) => device.is_trusted).length;
 
   const securityChecks = useMemo<SecurityCheck[]>(() => {
     return [
@@ -69,10 +73,10 @@ export function SecurityOverviewCard() {
       {
         id: 'devices',
         label: 'Dispositivos Verificados',
-        description: `${devices?.length || 0} dispositivo(s) registrado(s)`,
-        status: (devices?.length || 0) > 0 ? 'pass' : 'warn',
+              description: `${trustedDeviceCount} dispositivo(s) confiável(is)`,
+              status: trustedDeviceCount > 0 ? 'pass' : 'warn',
         icon: <Smartphone className="h-4 w-4" />,
-        points: (devices?.length || 0) > 0 ? 15 : 0,
+              points: trustedDeviceCount > 0 ? 15 : 0,
         maxPoints: 15,
       },
       {
@@ -96,7 +100,7 @@ export function SecurityOverviewCard() {
         maxPoints: 15,
       },
     ];
-  }, [isMFAEnabled, devices, emailConfirmed, isSecureConnection]);
+  }, [isMFAEnabled, trustedDeviceCount, emailConfirmed, isSecureConnection]);
 
   const securityScore = useMemo<SecurityScore>(() => {
     const totalPoints = securityChecks.reduce((acc, check) => acc + check.points, 0);
@@ -173,8 +177,13 @@ export function SecurityOverviewCard() {
             />
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>{securityScore.score}/100 pontos</span>
-              {securityScore.score < 100 && (
-                <span>+{100 - securityScore.score} para segurança máxima</span>
+                            {/* A senha e qualquer item que o navegador não consegue medir
+                                ficam fora do teto: 100 é "tudo o que é verificável", não
+                                "segurança máxima". */}
+                            {securityScore.score < 100 ? (
+                              <span>+{100 - securityScore.score} nos itens verificáveis</span>
+                            ) : (
+                              <span>Todos os itens verificáveis concluídos</span>
               )}
             </div>
           </div>
