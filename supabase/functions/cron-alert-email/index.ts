@@ -13,6 +13,9 @@
  * dentro da janela de `DEDUPE_HOURS`. O aviso no aplicativo (`cron_alert`)
  * tem deduplicação própria e é gravado mesmo quando o e-mail não sai.
  * Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua.
+ * Cada linha grava `data->>'email_enviado'` com o resultado real da
+ * tentativa, e a resposta HTTP devolve `failed` com as rotinas cujo envio o
+ * provedor recusou — inclusive quando o aviso na central já existia.
  *
  * Marcador só conta quando existe para TODOS os destinatários ativos: a RLS
  * deixa cada usuário inserir a própria notificação, então aceitar uma linha
@@ -262,10 +265,12 @@ serve(async (req) => {
       marcadorParaTodos(kind === "failure" ? falhasDaColeta : silenciosasDaColeta, jobid, recipientIds);
 
     let sent = 0;
+    let falhas = 0;
     const skipped: number[] = [];
     const semCredencial: number[] = [];
     const semDestinatario: number[] = [];
     const avisosNoApp: number[] = [];
+    const falhasDeEnvio: number[] = [];
 
     for (const { row, kind } of problems) {
       const jobid = String(row.jobid);
@@ -283,7 +288,13 @@ serve(async (req) => {
         skipped.push(row.jobid);
                 } else if (motivoSemEmail === null && resendApiKey && emailsPendentes.length > 0) {
                   const entrega = await enviarAlertaEmail(resendApiKey, emailsPendentes, row, kind);
-        if (!entrega.ok) console.error("[cron-alert-email] Resend error", entrega.reason);
+        if (!entrega.ok) {
+          console.error("[cron-alert-email] Resend error", entrega.reason);
+          // Recusa do provedor entra na contagem devolvida mesmo quando o aviso
+          // na central já existia: antes ela desaparecia da resposta.
+          falhas += 1;
+          falhasDeEnvio.push(row.jobid);
+        }
         emailSaiu = entrega.ok;
                 } else if (motivoSemEmail === null) {
                   // Quem falta já recebeu ou desligou o e-mail: não há envio a fazer e
@@ -317,6 +328,7 @@ serve(async (req) => {
           status: "sent",
           data: {
             type: registro === "confirmado" ? "cron_email_sent" : "cron_alert",
+            email_enviado: registro === "confirmado",
             jobid: row.jobid,
             jobname: row.jobname,
             kind,
@@ -330,10 +342,12 @@ serve(async (req) => {
     return json({
       problems: problems.length,
       sent,
+      failed: falhas,
       skipped,
       semCredencial,
       semDestinatario,
       avisosNoApp,
+      falhasDeEnvio,
     });
   } catch (e) {
     console.error("[cron-alert-email] unexpected", e);
