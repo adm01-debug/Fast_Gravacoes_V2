@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { jobsService, ArchiveRefusedError } from './jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
@@ -46,8 +46,17 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('jobsService', () => {
+  let warnSpy: { mockRestore: () => void } | null = null;
+
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Sem isso, uma assercao que falha deixa o logger silenciado
+    // (clearAllMocks limpa o historico, mas nao restaura o spy).
+    warnSpy?.mockRestore();
+    warnSpy = null;
   });
 
   it('deve chamar select ao buscar todos os jobs', async () => {
@@ -154,7 +163,7 @@ describe('jobsService', () => {
           }),
         });
 
-        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
+        warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
         const [job] = await jobsService.getAll();
         const linha = job as unknown as Record<string, unknown>;
         expect(linha.technique_id).toBe('bordado');
@@ -164,7 +173,6 @@ describe('jobsService', () => {
         // (o fallback devolve a row crua), entao o aviso de validacao e a prova de
         // que a validacao realmente passou.
         expect(warnSpy).not.toHaveBeenCalled();
-        warnSpy.mockRestore();
       });
 
       it('avisa quando a tecnica esta ausente na linha do banco', async () => {
@@ -182,14 +190,13 @@ describe('jobsService', () => {
           }),
         });
 
-        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
+        warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
         await jobsService.getAll();
         expect(warnSpy).toHaveBeenCalledWith(
           expect.stringContaining('Job validation failed for ID 77777777'),
           expect.anything(),
           'jobsService',
         );
-        warnSpy.mockRestore();
       });
 
       it('recusa a exclusao de OS com producao registrada no proprio servico', async () => {
