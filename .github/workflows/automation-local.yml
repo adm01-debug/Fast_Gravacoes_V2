@@ -1,5 +1,5 @@
 # docs:
-#   gatilho: PR para main, push em main e execução manual.
+#   gatilho: PR para main e execução manual — o push pós-merge revalidaria o mesmo conteúdo já verificado na PR e dobraria o consumo de Actions.
 #   prova: Contratos estáticos e suites locais de automação em fixtures isoladas.
 #   falha: O job falha; nenhum patch, commit, publicação ou deploy é executado.
 #   avisa: O check fica vermelho no GitHub para o autor da PR e mantenedores.
@@ -7,8 +7,6 @@ name: Automação local
 
 on:
   pull_request:
-    branches: [main]
-  push:
     branches: [main]
   workflow_dispatch:
 

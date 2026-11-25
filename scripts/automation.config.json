@@ -1009,12 +1009,15 @@
     {
       "file": ".github/workflows/automation-local.yml",
       "events": [
-        "PR",
-        "pushmain"
+        "PR"
       ],
       "command": "node scripts/automation.mjs test"
     }
   ],
+  "ciMainPolicy": {
+    "mode": "pr-mirror",
+    "reason": "O main so recebe squash merge de PR com check verde em modo estrito: a arvore publicada e exatamente a que o run da PR validou, entao repetir a suite no push pos-merge custa ~3 min de Actions por merge sem cobrir conteudo novo. Declarado aqui, e nao removido em silencio do gatilho, para que o doctor continue reprovando quem tirar o pushmain sem assumir a politica. Decisao da PR #298."
+  },
   "nightly": {
     "command": [
       "node",

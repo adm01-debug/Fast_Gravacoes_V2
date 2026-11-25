@@ -204,6 +204,7 @@ export function validateConfig(c) {
       'aliases',
       'registrations',
       'ci',
+      'ciMainPolicy',
       'nightly',
       'timeoutMs',
       'toolingPatterns',
@@ -305,6 +306,15 @@ export function validateConfig(c) {
       !x.command
     )
       throw fail('ci: contrato inválido');
+  }
+  if (c.ciMainPolicy !== undefined) {
+    onlyKeys(c.ciMainPolicy, ['mode', 'reason'], 'ciMainPolicy');
+    if (
+      c.ciMainPolicy.mode !== 'pr-mirror' ||
+      typeof c.ciMainPolicy.reason !== 'string' ||
+      c.ciMainPolicy.reason.length < 60
+    )
+      throw fail('ciMainPolicy: modo pr-mirror e motivo com 60+ caracteres');
   }
   onlyKeys(c.nightly, ['command', 'file'], 'nightly');
   if (
@@ -619,9 +629,13 @@ async function doctor(ctx, staticOnly) {
             '(?:\\s|$)'
         ).test(value)
     );
-  for (const event of ['PR', 'pushmain'])
-    if (!c.ci.some((x) => x.events.includes(event)))
-      issues.push(`testes sem gatilho CI ${event}`);
+  if (!c.ci.some((x) => x.events.includes('PR')))
+    issues.push('testes sem gatilho CI PR');
+  if (
+    !c.ci.some((x) => x.events.includes('pushmain')) &&
+    c.ciMainPolicy?.mode !== 'pr-mirror'
+  )
+    issues.push('testes sem gatilho CI pushmain');
   for (const item of c.ci) {
     const path = check(() => locate(root, c, config, item.file));
         const text = path ? readFileSync(path, 'utf8').replace(/\r\n/g, '\n') : '';
