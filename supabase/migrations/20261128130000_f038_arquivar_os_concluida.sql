@@ -115,6 +115,21 @@ BEGIN
           USING ERRCODE = 'FG002';
       END IF;
 
+              -- Remessa pendente ou em transito tambem trava. O pacote levaria a
+              -- linha de public.shipments para archived_jobs.children e o DELETE a
+              -- apagaria: a logistica perderia a remessa que ainda esta na rua e nao
+              -- teria como registrar a entrega. O link publico continuaria abrindo
+              -- (get_public_tracking le o arquivo), mas congelado em "em transito".
+              IF to_regclass('public.shipments') IS NOT NULL AND EXISTS (
+                SELECT 1
+                FROM public.shipments s
+                WHERE s.job_id = v_job.id
+                  AND s.status IN ('pending', 'in_transit')
+              ) THEN
+                RAISE EXCEPTION 'OS com remessa em andamento nao pode ser arquivada.'
+                  USING ERRCODE = 'FG003';
+              END IF;
+
       -- 1) Pacote: filhos diretos e netos (tabelas com FK para a filha).
       v_children := '{}'::jsonb;
       FOR v_fk IN
@@ -290,6 +305,12 @@ BEGIN
       DELETE FROM public.jobs WHERE id = v_job.id;
       v_archived := v_archived + 1;
     EXCEPTION WHEN OTHERS THEN
+      -- Chamada individual (botao "Arquivar") precisa do motivo real: sem
+      -- isto o app so' ve {archived:0, skipped:1} e inventa a causa. No lote
+      -- do cron a falha de um job nao compromete os outros, entao segue abaixo.
+      IF p_job_id IS NOT NULL THEN
+        RAISE;
+      END IF;
       -- Falha num job nÃ£o compromete o lote; ele permanece em jobs
       -- e entra na contagem de pulados (visÃ­vel no log do cron).
       v_skipped := v_skipped + 1;
@@ -388,3 +409,70 @@ GRANT EXECUTE ON FUNCTION public.get_public_tracking(uuid, text) TO anon, authen
 
 COMMENT ON FUNCTION public.get_public_tracking(uuid, text) IS
   'Tracking publico minimo: id/status/produto/prazo/fotos/entrega. Nunca expoe client, custo, notas, operador, tecnica ou lotes. Inclui OS arquivadas (archived_jobs) para nao invalidar link ja entregue.';
+
+-- Indicador de produtividade (tela Evolucao da Producao) precisa somar jobs e
+-- archived_jobs. A policy de archived_jobs libera leitura so' para
+-- manager/admin, mas a tela e' do coordenador tambem: em vez de abrir a tabela
+-- (o `children` guarda o pacote inteiro do arquivamento), esta RPC devolve
+-- apenas as colunas do calculo para os mesmos papeis que ja enxergam a tela.
+CREATE OR REPLACE FUNCTION public.get_finished_jobs_for_evolution(
+  p_since timestamptz,
+  p_limit integer DEFAULT 1000,
+  p_offset integer DEFAULT 0
+)
+RETURNS TABLE (
+  id uuid,
+  machine_id uuid,
+  operator_id uuid,
+  quantity integer,
+  produced_quantity integer,
+  lost_pieces integer,
+  estimated_duration integer,
+  actual_start_time timestamptz,
+  actual_end_time timestamptz
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+BEGIN
+  IF auth.uid() IS NOT NULL
+     AND NOT (app_private.has_role(auth.uid(), 'manager'::public.app_role)
+              OR app_private.has_role(auth.uid(), 'admin'::public.app_role)
+              OR app_private.has_role(auth.uid(), 'coordinator'::public.app_role)) THEN
+    RAISE EXCEPTION 'Apenas gerentes, administradores e coordenadores podem ver a evolucao da producao.'
+      USING ERRCODE = '42501';
+  END IF;
+
+  -- Ordem estavel (actual_end_time, id) e' o que garante paginacao sem
+  -- repetir ou perder linha entre uma pagina e a seguinte.
+  RETURN QUERY
+  SELECT t.id, t.machine_id, t.operator_id, t.quantity, t.produced_quantity,
+         t.lost_pieces, t.estimated_duration, t.actual_start_time, t.actual_end_time
+  FROM (
+    SELECT j.id, j.machine_id, j.operator_id, j.quantity, j.produced_quantity,
+           j.lost_pieces, j.estimated_duration, j.actual_start_time, j.actual_end_time
+    FROM public.jobs j
+    WHERE j.status = 'finished'
+      AND j.actual_end_time >= p_since
+    UNION ALL
+    SELECT a.id, a.machine_id, a.operator_id, a.quantity, a.produced_quantity,
+           a.lost_pieces, a.estimated_duration, a.actual_start_time, a.actual_end_time
+    FROM public.archived_jobs a
+    WHERE a.status = 'finished'
+      AND a.actual_end_time >= p_since
+  ) t
+  ORDER BY t.actual_end_time, t.id
+  LIMIT GREATEST(COALESCE(p_limit, 1000), 1)
+  OFFSET GREATEST(COALESCE(p_offset, 0), 0);
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.get_finished_jobs_for_evolution(timestamptz, integer, integer)
+  FROM public, anon;
+GRANT EXECUTE ON FUNCTION public.get_finished_jobs_for_evolution(timestamptz, integer, integer)
+  TO authenticated, service_role;
+
+COMMENT ON FUNCTION public.get_finished_jobs_for_evolution(timestamptz, integer, integer) IS
+  'Jobs finalizadas (jobs + archived_jobs) do periodo, so com as colunas do calculo de produtividade. Coordenador le sem acesso direto a archived_jobs.children.';

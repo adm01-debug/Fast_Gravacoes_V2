@@ -193,6 +193,18 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
     return jsonResponse(req, { data, total: count, limit, offset });
   }
 
+  // Resposta ao ERP com colunas explicitas. `select()` devolvia a linha
+  // inteira e, na OS arquivada, isso significava o service_role lendo
+  // archived_jobs.children (o pacote de filhos do arquivamento) e entregando-o
+  // ao integrador por cima da policy de leitura da tabela.
+  const ERP_JOB_ECHO_COLUMNS =
+    'id, order_number, client, product, quantity, produced_quantity, status, priority, ' +
+    'technique_id, machine_id, operator_id, scheduled_date, start_time, end_time, ' +
+    'actual_start_time, actual_end_time, estimated_duration, gravure_color, lost_pieces, ' +
+    'loss_category, delay_reason, rework_reason, cancel_reason, external_ref, notes, ' +
+    'production_photos, product_category_id, parent_job_id, shipment_id, shipping_status, ' +
+    'sort_order, created_at, updated_at';
+
   if (method === 'POST') {
     const body = await req.json();
     const validation = await validateContract(ERPJobRequestSchema, body);
@@ -206,7 +218,7 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
     if (externalRef) {
       const { data: existing, error: findError } = await supabase
         .from('jobs')
-        .select()
+              .select(ERP_JOB_ECHO_COLUMNS)
         .eq('external_ref', externalRef)
         .maybeSingle();
       if (findError) throw findError;
@@ -218,7 +230,7 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
       // pelo historico em vez de recriar a OS.
       const { data: archived, error: archivedError } = await supabase
         .from('archived_jobs')
-        .select()
+              .select(ERP_JOB_ECHO_COLUMNS)
         .eq('external_ref', externalRef)
         .maybeSingle();
       if (archivedError) throw archivedError;
@@ -228,7 +240,7 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
     const { data, error } = await supabase
       .from('jobs')
       .insert({ ...validation.data, status: 'queue' } as any)
-      .select()
+          .select(ERP_JOB_ECHO_COLUMNS)
       .single();
 
     if (error) {
@@ -237,7 +249,7 @@ async function handleJobs(req: Request, supabase: any, jobId: string | undefined
       if (error.code === '23505' && externalRef) {
         const { data: raced } = await supabase
           .from('jobs')
-          .select()
+                  .select(ERP_JOB_ECHO_COLUMNS)
           .eq('external_ref', externalRef)
           .maybeSingle();
         if (raced) return jsonResponse(req, raced);

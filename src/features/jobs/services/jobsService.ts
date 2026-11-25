@@ -16,6 +16,17 @@ export interface Job extends Omit<Database['public']['Tables']['jobs']['Row'], '
 export type JobInsert = Database['public']['Tables']['jobs']['Insert'];
 export type JobUpdate = Database['public']['Tables']['jobs']['Update'];
 
+/**
+ * Recusa de negocio do arquivamento (OS com embalagem ou remessa em andamento).
+ * Carrega a mensagem da RPC, que e' o motivo que o operador precisa ler.
+ */
+export class ArchiveRefusedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ArchiveRefusedError';
+  }
+}
+
 export interface JobWithRelations extends Job {
   machines: { name: string; code: string } | null;
   techniques: Database['public']['Tables']['techniques']['Row'] | null;
@@ -132,10 +143,23 @@ export const jobsService = {
 
   async archive(id: string): Promise<{ archived: number; skipped: number }> {
     const { data, error } = await supabase.rpc('archive_jobs', { p_job_id: id });
-    if (error) throw error;
+      if (error) {
+        // Recusa de negocio vem do banco com o motivo exato (FG002 embalagem,
+        // FG003 remessa em andamento). Embrulhar isso num AppError generico
+        // trocaria o texto por "confira o status", que e' justamente a causa que
+        // nao aconteceu.
+        const code = (error as { code?: string }).code;
+        if (code === 'FG002' || code === 'FG003') {
+          throw new ArchiveRefusedError(error.message);
+        }
+        throw error;
+      }
 
     const result = (data || {}) as { archived?: number; skipped?: number };
     if (!result.archived) {
+          // Embalagem em andamento e remessa em andamento chegam como erro do
+          // banco (a funcao relanca quando p_job_id e' informado), cada um com sua
+          // mensagem. Sobra aqui o caso silencioso: a OS nao esta finalizada.
       throw new Error('Nenhuma OS foi arquivada: só OS com status "finalizada" podem ser arquivadas.');
     }
     return { archived: result.archived, skipped: result.skipped ?? 0 };

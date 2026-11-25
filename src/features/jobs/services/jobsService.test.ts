@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { jobsService } from './jobsService';
+import { jobsService, ArchiveRefusedError } from './jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
 
@@ -94,4 +94,23 @@ describe('jobsService', () => {
 
     await expect(jobsService.archive('job-9')).rejects.toThrow(/Nenhuma OS foi arquivada/);
   });
+
+    it('preserva o motivo de negócio quando o arquivamento é recusado', async () => {
+      rpcMock.mockResolvedValue({
+        data: null,
+        error: { code: 'FG003', message: 'OS com remessa em andamento nao pode ser arquivada.' },
+      });
+
+      await expect(jobsService.archive('job-9')).rejects.toBeInstanceOf(ArchiveRefusedError);
+      await expect(jobsService.archive('job-9')).rejects.toThrow(/remessa em andamento/);
+    });
+
+    it('não trata erro de infraestrutura como recusa de negócio', async () => {
+      rpcMock.mockResolvedValue({
+        data: null,
+        error: { code: '42501', message: 'permission denied' },
+      });
+
+      await expect(jobsService.archive('job-9')).rejects.not.toBeInstanceOf(ArchiveRefusedError);
+    });
 });
