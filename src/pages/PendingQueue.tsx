@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -48,6 +49,27 @@ import { useAutoBufferPromotion } from "@/features/jobs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { isAfter, subHours } from "date-fns";
 
+const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled', 'cancelled'];
+
+/**
+ * Espelha o trigger trg_validate_job_delete_allowed (etapa 036): a exclusão só é
+ * permitida sem produção registrada e com a OS em fila, agendada ou cancelada.
+ * Devolve o motivo do impedimento, ou null quando a OS pode ser apagada.
+ */
+export function bulkDeleteBlocker(
+  job: Pick<DbJob, 'produced_quantity' | 'lost_pieces' | 'status'>
+): string | null {
+  const produced = Number(job.produced_quantity ?? 0);
+  const lost = Number(job.lost_pieces ?? 0);
+  if (produced > 0 || lost > 0) {
+    return `${produced} peça(s) produzida(s) e ${lost} perdida(s) já registradas`;
+  }
+  if (!DELETE_ALLOWED_STATUSES.includes(String(job.status))) {
+    return `status "${job.status}" não permite exclusão`;
+  }
+  return null;
+}
+
 
 
 export default function PendingQueue() {
@@ -70,6 +92,7 @@ export default function PendingQueue() {
     | null
   >(null);
   const [selectedJobs, setSelectedJobs] = useState<Set<string>>(new Set());
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
   const handleExplainSuggestion = (selection: PendingQueueAISelection) => {
     setSelectedAISuggestion(selection);
@@ -228,15 +251,44 @@ export default function PendingQueue() {
     }
   };
 
-  const handleBulkAction = async (action: 'production' | 'ready' | 'delete') => {
-    if (selectedJobs.size === 0) return;
+  const bulkDeleteTargets = useMemo(
+    () => filteredJobs.filter(j => selectedJobs.has(j.id)),
+    [filteredJobs, selectedJobs]
+  );
+  const bulkDeleteBlocked = useMemo(
+    () => bulkDeleteTargets
+      .map(job => ({ job, reason: bulkDeleteBlocker(job) }))
+      .filter((item): item is { job: DbJob; reason: string } => item.reason !== null),
+    [bulkDeleteTargets]
+  );
+  const bulkDeleteAllowed = useMemo(
+    () => bulkDeleteTargets.filter(job => bulkDeleteBlocker(job) === null),
+    [bulkDeleteTargets]
+  );
+
+  const handleBulkDelete = async (ids: string[]) => {
+      setIsBulkDeleteOpen(false);
+      if (ids.length === 0) return;
 
     try {
-      if (action === 'delete') {
-        const { error } = await supabase.from('jobs').delete().in('id', Array.from(selectedJobs));
+        const { error } = await supabase.from('jobs').delete().in('id', ids);
         if (error) throw error;
-        toast.success(`${selectedJobs.size} jobs excluídos`);
-      } else {
+        toast.success(`${ids.length} OS excluídas`, {
+          description: bulkDeleteBlocked.length > 0
+            ? `${bulkDeleteBlocked.length} OS foram mantidas: produção registrada ou status que não permite exclusão.`
+            : undefined,
+        });
+        setSelectedJobs(new Set());
+        queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      } catch (error) {
+        toast.error('Erro ao excluir as OS selecionadas');
+      }
+    };
+
+    const handleBulkAction = async (action: 'production' | 'ready') => {
+      if (selectedJobs.size === 0) return;
+
+      try {
         const targetStatus = action as JobStatus;
         const selectedJobsList = filteredJobs.filter(j => selectedJobs.has(j.id));
         const invalid = selectedJobsList.filter(j => !canTransition(j.status as JobStatus, targetStatus));
@@ -251,13 +303,12 @@ export default function PendingQueue() {
         };
         if (action === 'production') {
           updateData.actual_start_time = new Date().toISOString();
-        }
+      }
 
         await Promise.all(
           selectedJobsList.map(j => supabase.from('jobs').update(updateData).eq('id', j.id))
         );
         toast.success(`${selectedJobs.size} jobs movidos para "${action === 'production' ? 'Em Produção' : 'No Jeito'}"`);
-      }
 
       setSelectedJobs(new Set());
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
@@ -312,6 +363,53 @@ export default function PendingQueue() {
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         />
+
+                <AlertDialog open={isBulkDeleteOpen} onOpenChange={setIsBulkDeleteOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {bulkDeleteAllowed.length === 0
+                          ? 'Nenhuma OS selecionada pode ser excluída'
+                          : `Excluir ${bulkDeleteAllowed.length} OS permanentemente?`}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription asChild>
+                        <div className="space-y-2 text-sm">
+                          <p>
+                            Esta ação não pode ser desfeita. Junto com a OS são apagados os registros ligados a ela:
+                            perdas de produção, expedições, tarefas de embalagem, histórico de leitura de QR e a trilha
+                            de auditoria de status.
+                          </p>
+                          {bulkDeleteBlocked.length > 0 && (
+                            <div className="rounded-md border border-warning/30 bg-warning/10 p-2">
+                              <p className="font-medium text-warning">
+                                {bulkDeleteBlocked.length} OS selecionada(s) não serão excluídas:
+                              </p>
+                              <ul className="list-disc pl-4">
+                                {bulkDeleteBlocked.slice(0, 5).map(({ job, reason }) => (
+                                  <li key={job.id}>
+                                    {job.order_number} — {reason}
+                                  </li>
+                                ))}
+                              </ul>
+                              {bulkDeleteBlocked.length > 5 && (
+                                <p>e mais {bulkDeleteBlocked.length - 5} OS no mesmo caso.</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleBulkDelete(bulkDeleteAllowed.map(job => job.id))}
+                        disabled={bulkDeleteAllowed.length === 0}
+                      >
+                        Excluir {bulkDeleteAllowed.length} OS
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
 
         <AISuggestionDetails
           isOpen={isAISidePanelOpen}
@@ -495,9 +593,7 @@ export default function PendingQueue() {
             <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-warning/30 text-warning hover:bg-warning/10" onClick={() => handleBulkAction('ready')}>
               <Package className="h-3 w-3" /> Marcar No Jeito
             </Button>
-            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => {
-              if (window.confirm('Excluir permanentemente estes jobs?')) handleBulkAction('delete');
-            }}>
+            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => setIsBulkDeleteOpen(true)}>
               <Trash2 className="h-3 w-3" /> Excluir
             </Button>
             <Button size="sm" variant="ghost" className="h-7 text-[10px] uppercase font-bold tracking-wider ml-auto text-muted-foreground" onClick={() => setSelectedJobs(new Set())}>

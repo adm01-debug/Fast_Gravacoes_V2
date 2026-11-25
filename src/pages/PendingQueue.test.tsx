@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import PendingQueue from './PendingQueue';
+import PendingQueue, { bulkDeleteBlocker } from './PendingQueue';
 
 const refetchAll = vi.fn();
 
@@ -46,7 +46,11 @@ vi.mock('@tanstack/react-virtual', () => ({
 }));
 
 vi.mock('@/components/planning/pending-queue/PendingJobsView', () => ({
-  PendingJobsView: () => <div data-testid="pending-jobs-view" />,
+  PendingJobsView: ({ onSelectAll }: { onSelectAll: () => void }) => (
+    <div data-testid="pending-jobs-view">
+      <button type="button" onClick={onSelectAll}>selecionar todos</button>
+    </div>
+  ),
 }));
 
 vi.mock('@/components/planning/pending-queue/SmartSuggestionsSection', () => ({
@@ -64,6 +68,25 @@ vi.mock('@/components/planning/AISuggestionDetails', () => ({
 vi.mock('@/components/jobs/JobDetailsModal', () => ({ JobDetailsModal: () => null }));
 
 vi.mock('@/components/navigation/Breadcrumbs', () => ({ Breadcrumbs: () => null }));
+
+const { deleteIn } = vi.hoisted(() => ({ deleteIn: vi.fn() }));
+
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    from: () => ({
+      delete: () => ({
+        in: (_column: string, ids: string[]) => {
+          deleteIn(ids);
+          return Promise.resolve({ error: null });
+        },
+      }),
+    }),
+  },
+}));
+
+vi.mock('sonner', () => ({
+  toast: { success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn() },
+}));
 
 const renderPage = () =>
   render(
@@ -108,3 +131,51 @@ describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
     expect(screen.queryByText('Não foi possível carregar a fila')).not.toBeInTheDocument();
   });
 });
+
+    describe('bulkDeleteBlocker - regra do trigger de exclusão (etapas 036/037)', () => {
+      it('impede OS com peças produzidas', () => {
+        expect(bulkDeleteBlocker({ produced_quantity: 12, lost_pieces: 0, status: 'queue' }))
+          .toMatch(/12 peça\(s\) produzida/);
+      });
+
+      it('impede OS com peças perdidas mesmo sem produzidas', () => {
+        expect(bulkDeleteBlocker({ produced_quantity: 0, lost_pieces: 3, status: 'queue' }))
+          .toMatch(/3 perdida/);
+      });
+
+      it('impede status fora de fila, agendada ou cancelada', () => {
+        expect(bulkDeleteBlocker({ produced_quantity: 0, lost_pieces: 0, status: 'finished' }))
+          .toMatch(/status "finished" não permite/);
+      });
+
+      it('libera OS em fila sem produção registrada', () => {
+        expect(bulkDeleteBlocker({ produced_quantity: 0, lost_pieces: 0, status: 'queue' })).toBeNull();
+      });
+    });
+
+    describe('PendingQueue - aviso antes da exclusão em massa (etapa 037)', () => {
+      beforeEach(() => {
+        deleteIn.mockClear();
+        schedulingState.error = null;
+        schedulingState.jobs = [];
+      });
+
+      it('mostra o que será apagado, marca as impedidas e exclui só as permitidas', async () => {
+        schedulingState.jobs = [
+          { id: 'sem-producao', order_number: 'PED-1', status: 'queue', priority: 'normal', technique_id: 't1', produced_quantity: 0, lost_pieces: 0 },
+          { id: 'com-producao', order_number: 'PED-2', status: 'queue', priority: 'normal', technique_id: 't1', produced_quantity: 40, lost_pieces: 2 },
+        ];
+        renderPage();
+
+        fireEvent.click(screen.getByRole('button', { name: /selecionar todos/i }));
+        fireEvent.click(screen.getByRole('button', { name: /^Excluir$/i }));
+
+        expect(await screen.findByText('Excluir 1 OS permanentemente?')).toBeInTheDocument();
+        expect(screen.getByText(/perdas de produção, expedições, tarefas de embalagem/i)).toBeInTheDocument();
+        expect(screen.getByText(/PED-2 — 40 peça\(s\) produzida\(s\) e 2 perdida\(s\)/)).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: /^Excluir 1 OS$/i }));
+
+        await waitFor(() => expect(deleteIn).toHaveBeenCalledWith(['sem-producao']));
+      });
+    });
