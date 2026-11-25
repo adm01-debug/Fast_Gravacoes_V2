@@ -299,9 +299,9 @@
         "name": "approve-password-reset",
         "slug": "approve-password-reset",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566881260,
         "verify_jwt": true,
-        "version": 185
+        "version": 193
       },
       {
         "created_at": 1791379406199,
@@ -311,9 +311,9 @@
         "name": "auto-promote-jobs",
         "slug": "auto-promote-jobs",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566883056,
         "verify_jwt": true,
-        "version": 185
+        "version": 193
       },
       {
         "created_at": 1791379407600,
@@ -323,369 +323,369 @@
         "name": "backup-scheduler",
         "slug": "backup-scheduler",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566885328,
         "verify_jwt": true,
-        "version": 185
+        "version": 193
       },
       {
         "created_at": 1791379395547,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/bitrix24-sync/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/bitrix24-sync/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "bitrix24-sync",
         "slug": "bitrix24-sync",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": false,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379404067,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/calculate-inventory-intelligence/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/calculate-inventory-intelligence/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "calculate-inventory-intelligence",
         "slug": "calculate-inventory-intelligence",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379379734,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/calculate-rankings/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/calculate-rankings/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "calculate-rankings",
         "slug": "calculate-rankings",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379387034,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/check-login-lockout/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/check-login-lockout/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "check-login-lockout",
         "slug": "check-login-lockout",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379382183,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cleanup-security-logs/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/cleanup-security-logs/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "cleanup-security-logs",
         "slug": "cleanup-security-logs",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379380426,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/create-operator/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/create-operator/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "create-operator",
         "slug": "create-operator",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379403284,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cron-alert-email/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/cron-alert-email/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "cron-alert-email",
         "slug": "cron-alert-email",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379391021,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/cron-cleanup/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/cron-cleanup/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "cron-cleanup",
         "slug": "cron-cleanup",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379394898,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/csp-report/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/csp-report/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "csp-report",
         "slug": "csp-report",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": false,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379382723,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/daily-maintenance-summary/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/daily-maintenance-summary/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "daily-maintenance-summary",
         "slug": "daily-maintenance-summary",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379398594,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/erp-api/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/erp-api/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "erp-api",
         "slug": "erp-api",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379391931,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/excel-export/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/excel-export/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "excel-export",
         "slug": "excel-export",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379385545,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/external-db-bridge/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/external-db-bridge/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "external-db-bridge",
         "slug": "external-db-bridge",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 184
+        "version": 191
       },
       {
         "created_at": 1791379381627,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-check/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/health-check/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "health-check",
         "slug": "health-check",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379381034,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/health-monitor/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "health-monitor",
         "slug": "health-monitor",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379408255,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/image-optimizer/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "image-optimizer",
         "slug": "image-optimizer",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 178
+        "version": 185
       },
       {
         "created_at": 1791379393018,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/metrics-collector/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "metrics-collector",
         "slug": "metrics-collector",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379400193,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/ml-predictions/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/ml-predictions/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "ml-predictions",
         "slug": "ml-predictions",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379401186,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/new-device-alert/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/new-device-alert/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "new-device-alert",
         "slug": "new-device-alert",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 193
+        "version": 200
       },
       {
         "created_at": 1791379393997,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/pdf-generator/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/pdf-generator/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "pdf-generator",
         "slug": "pdf-generator",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 184
+        "version": 191
       },
       {
         "created_at": 1791379399176,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/security-alert/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/security-alert/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "security-alert",
         "slug": "security-alert",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379406866,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-email-report/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/send-email-report/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "send-email-report",
         "slug": "send-email-report",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 187
+        "version": 194
       },
       {
         "created_at": 1791379396879,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-loss-risk-alert/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/send-loss-risk-alert/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "send-loss-risk-alert",
         "slug": "send-loss-risk-alert",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379405390,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-push-notification/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/send-push-notification/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "send-push-notification",
         "slug": "send-push-notification",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379388973,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/send-tpm-email/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/send-tpm-email/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "send-tpm-email",
         "slug": "send-tpm-email",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379397843,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/technical-assistant/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/technical-assistant/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "technical-assistant",
         "slug": "technical-assistant",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379384889,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/tpm-notifications/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/tpm-notifications/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "tpm-notifications",
         "slug": "tpm-notifications",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 185
+        "version": 192
       },
       {
         "created_at": 1791379384221,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/update-operator/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/update-operator/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "update-operator",
         "slug": "update-operator",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 184
+        "version": 191
       },
       {
         "created_at": 1791379383546,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/validate-login-ip/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/validate-login-ip/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "validate-login-ip",
         "slug": "validate-login-ip",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       },
       {
         "created_at": 1791379386183,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/webhook-handler/index.ts",
+        "entrypoint_path": "file:///app/supabase/functions/webhook-handler/index.ts",
         "import_map": null,
         "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
         "name": "webhook-handler",
         "slug": "webhook-handler",
         "status": "ACTIVE",
-        "updated_at": 1795560646814,
+        "updated_at": 1795566810601,
         "verify_jwt": true,
-        "version": 186
+        "version": 193
       }
     ],
     "enabled": true,
