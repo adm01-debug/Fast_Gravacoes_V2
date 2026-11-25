@@ -13,9 +13,11 @@
  * dentro da janela de `DEDUPE_HOURS`. O aviso no aplicativo (`cron_alert`)
  * tem deduplicação própria e é gravado mesmo quando o e-mail não sai.
  * Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua.
- * Cada linha grava `data->>'email_enviado'` com o resultado real da
- * tentativa, e a resposta HTTP devolve `failed` com as rotinas cujo envio o
- * provedor recusou — inclusive quando o aviso na central já existia.
+ * Cada linha grava `data->>'email_enviado'` com o resultado da rodada para
+ * AQUELE destinatário (só `true` quando ele tinha e-mail pendente e o
+ * provedor aceitou o lote), e a resposta HTTP devolve `failed` com as rotinas
+ * cujo envio não foi aceito — recusa do provedor ou ausência de resposta —
+ * inclusive quando o aviso na central já existia.
  *
  * Marcador só conta quando existe para TODOS os destinatários ativos: a RLS
  * deixa cada usuário inserir a própria notificação, então aceitar uma linha
@@ -283,6 +285,9 @@ serve(async (req) => {
                 const emailsPendentes = pendentes
                   .map((id) => emailPorId.get(id))
                   .filter((e): e is string => Boolean(e));
+                // Quem de fato tinha e-mail pendente: o resultado do lote vale
+                // por destinatário, não para toda a lista que recebe o aviso.
+                const comEmailPendente = new Set(pendentes.filter((id) => emailPorId.has(id)));
 
                 if (pendentes.length === 0) {
         skipped.push(row.jobid);
@@ -328,7 +333,7 @@ serve(async (req) => {
           status: "sent",
           data: {
             type: registro === "confirmado" ? "cron_email_sent" : "cron_alert",
-            email_enviado: registro === "confirmado",
+            email_enviado: registro === "confirmado" && comEmailPendente.has(userId),
             jobid: row.jobid,
             jobname: row.jobname,
             kind,
