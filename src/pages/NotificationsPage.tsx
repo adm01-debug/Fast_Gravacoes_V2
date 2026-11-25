@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Bell, Wrench, Brain, Calendar, Search, Filter, RefreshCw, Wifi, WifiOff, CheckCircle2 } from 'lucide-react';
+import { Bell, Wrench, Brain, Calendar, Search, Filter, RefreshCw, Wifi, WifiOff, CheckCircle2, Server } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { parseDateOnly } from '@/lib/dateUtils';
@@ -41,10 +41,18 @@ interface DailySummaryRecord {
 }
 
 type NotificationItem = {
-  id: string; type: 'maintenance' | 'prediction' | 'summary' | 'personal'; title: string; message: string;
+  id: string; type: 'maintenance' | 'prediction' | 'summary' | 'personal' | 'alert'; title: string; message: string;
   severity: 'critical' | 'warning' | 'info' | 'success'; timestamp: string;
   isRead?: boolean; isResolved?: boolean; metadata?: Record<string, unknown>;
 };
+
+// `cron_email_sent` e marcador de dedupe do servidor (impede reenvio do e-mail),
+// nao aviso ao usuario: conta-lo no sino deixava um badge que nunca aparecia aqui.
+const MARCADOR_INTERNO = 'cron_email_sent';
+
+// Alertas de rotina carregam o tipo `cron_*` em `data.type`: sao dispensados
+// (mantendo o registro de dedupe) e aparecem na Central como "Sistema".
+const ALERTA_DE_ROTINA = /^cron_/;
 
 const NotificationsPage = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -120,16 +128,26 @@ const NotificationsPage = () => {
     // Sem entrarem aqui, o usuario via o contador subir e abria a Central sem
     // encontrar o aviso (nem pelo botao Atualizar).
     const since = subDays(new Date(), parseInt(dateRange, 10)).getTime();
-    (personalNotifications || []).forEach(n => items.push({
-      id: n.id,
-      type: 'personal',
-      title: n.title,
-      message: n.message,
-      severity: n.type === 'urgent' || n.type === 'error' ? 'critical' : n.type === 'warning' ? 'warning' : n.type === 'success' ? 'success' : 'info',
-      timestamp: n.created_at,
-      isRead: n.is_read,
-      metadata: { action_url: n.action_url, action_label: n.action_label, source_system: n.source_system, type: n.category },
-    }));
+    (personalNotifications || []).forEach(n => {
+          const meta = (n.metadata ?? {}) as Record<string, unknown>;
+          // O marcador interno da coleta de saude nao e aviso para o usuario.
+          if (String(meta.type ?? '') === MARCADOR_INTERNO) return;
+          // Aviso dispensado pelo usuario: a linha fica no banco (registro de
+          // dedupe da coleta) mas nao volta para a lista.
+          if (meta.dismissed_at) return;
+          items.push({
+            id: n.id,
+            // Alerta de rotina aparece como "Sistema" e e dispensado em vez de
+            // apagado; os demais sao avisos pessoais.
+            type: ALERTA_DE_ROTINA.test(String(meta.type ?? '')) ? 'alert' : 'personal',
+            title: n.title,
+            message: n.message,
+            severity: n.type === 'urgent' || n.type === 'error' ? 'critical' : n.type === 'warning' ? 'warning' : n.type === 'success' ? 'success' : 'info',
+            timestamp: n.created_at,
+            isRead: n.is_read,
+            metadata: { ...meta, action_url: n.action_url, action_label: n.action_label, source_system: n.source_system },
+          });
+        });
     return items
       .filter(item => new Date(item.timestamp).getTime() >= since)
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -143,7 +161,7 @@ const NotificationsPage = () => {
     return filtered;
   }, [notifications, activeTab, severityFilter, searchQuery]);
 
-  const stats = useMemo(() => ({ total: notifications.length, critical: notifications.filter(n => n.severity === 'critical').length, warning: notifications.filter(n => n.severity === 'warning').length, unresolved: notifications.filter(n => !n.isResolved).length, maintenance: notifications.filter(n => n.type === 'maintenance').length, predictions: notifications.filter(n => n.type === 'prediction').length, summaries: notifications.filter(n => n.type === 'summary').length, personal: notifications.filter(n => n.type === 'personal').length }), [notifications]);
+  const stats = useMemo(() => ({ total: notifications.length, critical: notifications.filter(n => n.severity === 'critical').length, warning: notifications.filter(n => n.severity === 'warning').length, unresolved: notifications.filter(n => !n.isResolved).length, maintenance: notifications.filter(n => n.type === 'maintenance').length, predictions: notifications.filter(n => n.type === 'prediction').length, summaries: notifications.filter(n => n.type === 'summary').length, personal: notifications.filter(n => n.type === 'personal').length, alerts: notifications.filter(n => n.type === 'alert').length }), [notifications]);
 
   const isLoading = isLoadingAlerts || isLoadingPredictions || isLoadingSummaries || isLoadingPersonal;
   const handleRefreshAll = async () => { await Promise.all([refetchAlerts(), refetchPredictions(), refetchSummaries(), manualRefresh(), queryClient.invalidateQueries({ queryKey: ['notifications'] })]); };
@@ -189,12 +207,13 @@ const NotificationsPage = () => {
         <Card>
           <CardHeader className="pb-3">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5">
+              <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6">
                 <TabsTrigger value="all" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Todas</span><Badge variant="secondary" className="ml-1">{stats.total}</Badge></TabsTrigger>
                 <TabsTrigger value="personal" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Avisos</span><Badge variant="secondary" className="ml-1">{stats.personal}</Badge></TabsTrigger>
                 <TabsTrigger value="maintenance" className="gap-2"><Wrench className="h-4 w-4" /><span className="hidden sm:inline">Manutenção</span><Badge variant="secondary" className="ml-1">{stats.maintenance}</Badge></TabsTrigger>
                 <TabsTrigger value="prediction" className="gap-2"><Brain className="h-4 w-4" /><span className="hidden sm:inline">Predições</span><Badge variant="secondary" className="ml-1">{stats.predictions}</Badge></TabsTrigger>
                 <TabsTrigger value="summary" className="gap-2"><Calendar className="h-4 w-4" /><span className="hidden sm:inline">Resumos</span><Badge variant="secondary" className="ml-1">{stats.summaries}</Badge></TabsTrigger>
+                <TabsTrigger value="alert" className="gap-2"><Server className="h-4 w-4" /><span className="hidden sm:inline">Sistema</span><Badge variant="secondary" className="ml-1">{stats.alerts}</Badge></TabsTrigger>
               </TabsList>
             </Tabs>
           </CardHeader>

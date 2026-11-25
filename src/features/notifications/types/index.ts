@@ -13,6 +13,8 @@ export interface Notification {
   group_count: number;
   is_grouped: boolean;
   created_at: string;
+    /** `data` cru do push: a Central usa `type`/`jobid` para dispensar alerta de rotina sem perder o registro de dedupe. */
+    metadata?: Record<string, unknown>;
 }
 
 export interface NotificationSettings {
