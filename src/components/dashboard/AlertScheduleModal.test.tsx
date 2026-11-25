@@ -67,7 +67,7 @@ function renderAndChooseTime(jobs: unknown[], job: typeof selectedJob = selected
   fireEvent.change(document.querySelector('input[type="time"]')!, { target: { value: time } });
 }
 
-describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () => {
+describe('AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)', () => {
   // O jsdom nao implementa as APIs de ponteiro que o Radix Select usa para abrir
   // a lista; sem isso os itens (percentual e contagem) nunca renderizam.
   beforeAll(() => {
@@ -82,9 +82,9 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
     dbError.current = null;
   });
 
-  it('avisa do conflito ao agendar sobre OS concluida, como o banco recusa', () => {
+  it('nao avisa conflito para OS concluida, que o banco libera desde a etapa 053', () => {
     renderAndChooseTime([otherJob('finished')]);
-    expect(screen.getByText('1 conflito')).toBeInTheDocument();
+    expect(screen.queryByText(/conflito/)).not.toBeInTheDocument();
   });
 
   it('nao avisa conflito para OS cancelada, que o banco libera', () => {
@@ -98,12 +98,12 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
   });
 
   it('usa o fim gravado na OS, e nao a estimativa, quando ele termina antes do horario escolhido', () => {
-    renderAndChooseTime([otherJob('finished', '09:15')]);
+    renderAndChooseTime([otherJob('production', '09:15')]);
     expect(screen.queryByText(/conflito/)).not.toBeInTheDocument();
   });
 
   it('avisa do conflito quando o fim gravado na OS invade o horario escolhido', () => {
-    renderAndChooseTime([otherJob('finished', '10:00')]);
+    renderAndChooseTime([otherJob('production', '10:00')]);
     expect(screen.getByText('1 conflito')).toBeInTheDocument();
   });
 
@@ -137,7 +137,7 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
     it('mostra o fim gravado da OS no aviso de conflito', () => {
       // fim gravado (10:30) difere do estimado (09:00 + 120min = 11:00): o aviso
       // só passa se usar o fim que está na OS.
-      renderAndChooseTime([otherJob('finished', '10:30')]);
+      renderAndChooseTime([otherJob('production', '10:30')]);
       expect(screen.getByText(/09:00 - 10:30/)).toBeInTheDocument();
     });
 
