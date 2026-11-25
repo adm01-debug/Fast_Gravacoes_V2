@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Search,
   Filter,
@@ -104,7 +105,9 @@ export default function PendingQueue() {
     jobs,
     techniques,
     isLoading: isLoadingJobs,
-    isLoadingTechniques  } = useSchedulingData();
+    isLoadingTechniques,
+    error: schedulingError,
+    refetchAll  } = useSchedulingData();
 
   // Pre-filter by status first
   const pendingJobs = useMemo(() => {
@@ -274,6 +277,21 @@ export default function PendingQueue() {
             ))}
           </div>
           <Skeleton className="h-64" />
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (schedulingError) {
+    return (
+      <MainLayout>
+        <div className="p-4 sm:p-6">
+          <EmptyState
+            variant="error"
+            title="Não foi possível carregar a fila"
+            description="A leitura dos jobs falhou, então a lista não representa a fila real. Nada foi alterado: tente novamente para recarregar."
+            action={{ label: "Tentar novamente", onClick: () => refetchAll(), icon: <RotateCcw className="h-4 w-4" /> }}
+          />
         </div>
       </MainLayout>
     );
