@@ -372,7 +372,7 @@
    "nome": "cron-alert-email",
    "entrada": "supabase/functions/cron-alert-email/index.ts",
    "arquivos": 1,
-   "linhas": 343,
+   "linhas": 362,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

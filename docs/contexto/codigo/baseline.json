@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "18240190fbbef08f2e4318ab993117987dd851fb",
+  "commit": "14b04998358b0edb0bcb7d5fe95ba2c6e8feabe6",
   "branch": "main",
-  "data_commit": "2026-11-25T13:42:26-03:00",
+  "data_commit": "2026-11-25T14:22:58-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "14b0499",
+    "data": "2026-11-25",
+    "assunto": "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)"
+   },
    {
     "sha": "1824019",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "81d45ca",
     "data": "2026-11-24",
     "assunto": "fix: restabelece EXECUTE de public.has_role para authenticated (#285)"
-   },
-   {
-    "sha": "3aafbf1",
-    "data": "2026-11-24",
-    "assunto": "fix: erp-api responde 400 (nao 500) em dado invalido (#280)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -189,12 +189,12 @@
     "mudancas": 14
    },
    {
-    "pasta": "src/components/ui",
+    "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 13
    },
    {
-    "pasta": "deno.lock",
-    "mudancas": 12
+    "pasta": "src/components/ui",
+    "mudancas": 13
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -216,7 +216,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 160
+    "commits": 161
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1624,
   "arquivos_codigo": 1149,
-  "linhas_codigo": 194590,
+  "linhas_codigo": 194609,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 56,
-   "linhas": 11722
+   "linhas": 11741
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

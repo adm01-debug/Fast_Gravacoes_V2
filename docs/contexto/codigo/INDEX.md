@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `18240190fbbef08f2e4318ab993117987dd851fb` (2026-11-25T13:42:26-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `14b04998358b0edb0bcb7d5fe95ba2c6e8feabe6` (2026-11-25T14:22:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1624 |
 | arquivos_codigo | 1149 |
-| linhas_codigo | 194590 |
+| linhas_codigo | 194609 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,7 +247,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8576 nós · 32540 arestas · 396 comunidades · grafo do commit `18240190`
+- 8576 nós · 32540 arestas · 396 comunidades · grafo do commit `14b04998`
 - comunidades maiores: Input (183), Button (160), CardContent (160), react (143), MainLayout (128), package.json (123), TableCell (118), Badge (116), cn (115), lucide-react (113), client.ts (112), generate.py (111)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -257,7 +257,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
-- docs/qa/05-PROGRESSO.md (12)
+- docs/qa/05-PROGRESSO.md (13)
 - .github/workflows/db-admin.yml (10)
 - AGENTS.md (10)
 - .github/workflows/deploy.yml (9)
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `14b0499` fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)
 - 2026-11-25 `1824019` fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)
 - 2026-11-25 `108f0a7` feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)
 - 2026-11-25 `3aaa14f` fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `d0cab10` feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)
 - 2026-11-25 `5cc8d77` fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)
 - 2026-11-25 `d592aac` fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)
-- 2026-11-24 `fc44f91` fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

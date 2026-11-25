@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)",
    "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)",
    "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)",
    "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)",
-   "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)",
-   "feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)"
+   "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

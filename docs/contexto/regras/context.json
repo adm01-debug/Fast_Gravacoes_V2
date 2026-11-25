@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "18240190fbbef08f2e4318ab993117987dd851fb",
+  "sha": "14b04998358b0edb0bcb7d5fe95ba2c6e8feabe6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 16:44 UTC",
+  "generated_at": "2026-11-25 17:23 UTC",
   "files_total": 1622,
   "code_files": 1426,
-  "code_lines": 212058
+  "code_lines": 212077
  },
  "version": "1.3.2",
- "facts_hash": "021c9398db57d561",
+ "facts_hash": "b10dacf650204004",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -25929,7 +25929,7 @@
     "invokes": [],
     "doc": "",
     "errors": [
-     ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: ",
+     ",\n            email_enviado: registro === ",
      ", dedupeSince),\n      marcadoresPorTipo("
     ],
     "side_effects": [],
@@ -30434,7 +30434,7 @@
   {
    "module": "supabase/functions",
    "files": 56,
-   "lines": 11722,
+   "lines": 11741,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -36579,7 +36579,7 @@
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
-    "msg": ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: "
+    "msg": ",\n            email_enviado: registro === "
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
@@ -96282,7 +96282,7 @@
   },
   "supabase/functions/cron-alert-email/index.ts": {
    "path": "supabase/functions/cron-alert-email/index.ts",
-   "lines": 343,
+   "lines": 362,
    "tables": [
     {
      "table": "cron_health_history",
@@ -96343,7 +96343,7 @@
     "SUPABASE_URL"
    ],
    "errors": [
-    ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: ",
+    ",\n            email_enviado: registro === ",
     ", dedupeSince),\n      marcadoresPorTipo("
    ],
    "params": [
@@ -99388,10 +99388,20 @@
   }
  },
  "git": {
-  "sha": "18240190fbbef08f2e4318ab993117987dd851fb",
+  "sha": "14b04998358b0edb0bcb7d5fe95ba2c6e8feabe6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "14b0499",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/cron-alert-email/index.ts"
+    ]
+   },
    {
     "sha": "1824019",
     "date": "2026-11-25",
@@ -99745,21 +99755,12 @@
     "files": [
      "supabase/migrations/20261124111000_add_techniques_personalizacao.sql"
     ]
-   },
-   {
-    "sha": "fb794d1",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)",
-    "files": [
-     "supabase/migrations/20261125170000_restore_erp_api_keys.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    11
+    12
    ],
    [
     "src/features/jobs/services/jobsService.ts",
@@ -99772,6 +99773,10 @@
    [
     "src/pages/PendingQueue.tsx",
     3
+   ],
+   [
+    "supabase/functions/cron-alert-email/index.ts",
+    2
    ],
    [
     "src/features/notifications/components/NotificationsList.tsx",
@@ -99831,10 +99836,6 @@
    ],
    [
     "src/test/jobsService.test.ts",
-    2
-   ],
-   [
-    "docs/qa/03-ACHADOS.md",
     2
    ]
   ]
