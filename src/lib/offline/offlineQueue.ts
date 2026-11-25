@@ -63,6 +63,7 @@ export interface QuarantinedQueue {
 export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const quarantineKey = (ownerId: string) => `fastgravacoes_orphan_queue_${ownerId}`;
+const QUARANTINE_PREFIX = 'fastgravacoes_orphan_queue_';
 
 function readJsonArray<T>(key: string): T[] {
   try {
@@ -79,12 +80,21 @@ function readJsonArray<T>(key: string): T[] {
  * quiosque offline ela é a única cópia da alteração (o servidor nunca a
  * recebeu). Sem dono conhecido não há como devolvê-la depois, então nesse caso
  * nada é guardado — o dado do usuário anterior tem precedência. */
-export function quarantineOfflineQueueStorage(ownerId: string | null): void {
+export function quarantineOfflineQueueStorage(
+  ownerId: string | null,
+  batchOutcome?: { pending: PendingAction[]; failed: FailedAction[] } | null,
+): void {
   try {
     if (ownerId) {
+      // Com um lote recém-terminado, o storage ainda não recebeu o resultado
+      // dele (os estados do React são gravados pelo efeito de persistência,
+      // que perde a corrida para esta quarentena): o resultado do lote é a
+      // verdade e entra no lugar da fila antiga. Somar as duas listas traria
+      // de volta ações que o servidor já aceitou.
+      const storedFailed = readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS);
       const queue: QuarantinedQueue = {
-        pending: readQueueFromStorage(),
-        failed: readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS),
+        pending: batchOutcome ? batchOutcome.pending : readQueueFromStorage(),
+        failed: batchOutcome ? mergeById(storedFailed, batchOutcome.failed) : storedFailed,
         acknowledged: [...readAcknowledgedFromStorage()],
         savedAt: Date.now(),
       };
@@ -96,6 +106,35 @@ export function quarantineOfflineQueueStorage(ownerId: string | null): void {
     /* storage indisponível */
   }
   clearOfflineQueueStorage();
+}
+
+function mergeById<T extends { id: string }>(base: T[], extra: T[]): T[] {
+  const byId = new Map(base.map(item => [item.id, item]));
+  extra.forEach(item => byId.set(item.id, item));
+  return [...byId.values()];
+}
+
+/** Remove cópias guardadas já vencidas de qualquer operador. Rodar só ao ler a
+ * cópia do próprio dono não basta: até ele voltar, o prazo não vale para quem
+ * tem acesso ao aparelho. Cópias sem `savedAt` (formato anterior) ficam: idade
+ * desconhecida não é motivo para descartar alteração nunca entregue. */
+export function purgeExpiredQuarantines(): void {
+  try {
+    const expired: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(QUARANTINE_PREFIX)) continue;
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) ?? '') as Partial<QuarantinedQueue>;
+        if (parsed.savedAt && Date.now() - parsed.savedAt > QUARANTINE_TTL_MS) expired.push(key);
+      } catch {
+        expired.push(key);
+      }
+    }
+    expired.forEach(key => localStorage.removeItem(key));
+  } catch {
+    /* storage indisponível */
+  }
 }
 
 /** Lê a fila guardada deste operador sem apagá-la. Quem chama grava a fila

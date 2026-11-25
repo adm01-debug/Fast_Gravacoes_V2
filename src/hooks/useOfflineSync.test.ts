@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useOfflineSync } from './useOfflineSync';
 import { supabase } from '@/integrations/supabase/client';
-import { STORAGE_KEYS, QUARANTINE_TTL_MS } from '@/lib/offline/offlineQueue';
+import { STORAGE_KEYS, QUARANTINE_TTL_MS, MAX_RETRIES } from '@/lib/offline/offlineQueue';
 
 // Mock Supabase properly
 vi.mock('@/integrations/supabase/client', () => {
@@ -56,6 +56,14 @@ describe('useOfflineSync', () => {
     vi.clearAllMocks();
     localStorage.clear();
     setOnline(true);
+      // Um teste que deixa o thenable pendurado (banco "fora do ar") não pode
+      // contaminar os seguintes: volta ao comportamento padrão a cada caso.
+      const jobsTable = supabase.from('jobs') as unknown as {
+        then: { mockImplementation: (fn: unknown) => void };
+      };
+      jobsTable.then.mockImplementation((onFulfilled: (v: unknown) => unknown) =>
+        Promise.resolve({ data: [], error: null }).then(onFulfilled)
+      );
   });
 
   it('should queue actions when offline', async () => {
@@ -447,4 +455,169 @@ describe('useOfflineSync', () => {
                 spy.mockRestore();
               }
             });
+
+                          it('saída durante o lote guarda a ação rejeitada, não a descarta (etapa 232, thread nova 1)', async () => {
+                            // O estado do React só grava depois do lote: quarentenar lendo o
+                            // storage guardava a fila anterior e perdia as rejeições.
+                            setOnline(false);
+                            localStorage.setItem(
+                              STORAGE_KEYS.PENDING_ACTIONS,
+                              JSON.stringify([{
+                                id: 'acao-exausta',
+                                type: 'update_job',
+                                payload: { jobId: 'job-1', updates: { status: 'production' } },
+                                createdAt: new Date().toISOString(),
+                                retryCount: MAX_RETRIES,
+                              }]),
+                            );
+                            // Rejeição anterior: já estava na lista para revisão manual e não
+                            // pode sumir junto com o estado do operador que sai.
+                            localStorage.setItem(
+                              STORAGE_KEYS.FAILED_ACTIONS,
+                              JSON.stringify([{
+                                id: 'acao-antiga',
+                                type: 'update_job',
+                                payload: { jobId: 'job-0', updates: { status: 'production' } },
+                                createdAt: new Date().toISOString(),
+                                retryCount: MAX_RETRIES,
+                                failedAt: new Date().toISOString(),
+                                reason: 'conflict',
+                              }]),
+                            );
+                            const { result } = renderHook(() => useOfflineSync());
+                            const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
+                            type MockTable = {
+                              update: ((...args: unknown[]) => unknown) & { mock: { calls: unknown[][] } };
+                              then: { mockImplementation: (fn: (onFulfilled: (v: unknown) => unknown) => Promise<unknown>) => void };
+                            };
+                            const jobsTable = supabase.from('jobs') as unknown as MockTable;
+                            const quarantineKey = 'fastgravacoes_orphan_queue_operador-a';
+
+                            act(() => {
+                              authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+                            });
+                            expect(result.current.pendingActionsCount).toBe(1);
+
+                            let release: () => void = () => {};
+                                                        jobsTable.then.mockImplementation((onFulfilled: (v: unknown) => unknown) =>
+                                                          new Promise<{ data: unknown[]; error: { message: string } }>((resolve) => {
+                                                            release = () => resolve({ data: [], error: { message: 'boom' } });
+                                                          }).then(onFulfilled)
+                                                        );
+                                                        // O lote começa com o banco pendurado: a saída cai no
+                                                        // meio dele, que é o estado em que as rejeições sumiam.
+                                                        await act(async () => {
+                                                          setOnline(true);
+                                                        });
+                                                        act(() => {
+                                                          authCb('SIGNED_OUT', null);
+                                                        });
+                                                        // Deixa o efeito de persistência do estado zerado rodar: é ele
+                                                        // que apaga a lista antiga do storage antes do fim do lote.
+                                                        await act(async () => {
+                                                          await Promise.resolve();
+                                                        });
+                                                        expect(localStorage.getItem(STORAGE_KEYS.FAILED_ACTIONS)).toBe('[]');
+                                                        await act(async () => {
+                                                          release();
+                                                          await Promise.resolve();
+                                                        });
+
+                            await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+                            const quarantined = JSON.parse(localStorage.getItem(quarantineKey) ?? '{}');
+                            expect(quarantined.pending ?? []).toHaveLength(0);
+                            // Exauriu as tentativas: a alteração nunca foi aplicada.
+                            const failedIds = (quarantined.failed ?? []).map((f: { id: string }) => f.id);
+                            expect(failedIds).toContain('acao-exausta');
+                            expect(failedIds).toContain('acao-antiga');
+                            expect(quarantined.failed).toHaveLength(2);
+                            expect(quarantined.failed.find((f: { id: string }) => f.id === 'acao-exausta')).toMatchObject({ reason: 'exhausted' });
+                          });
+
+                          it('descarta a cópia guardada quando a fila ativa volta a ser gravada (etapa 232, thread nova 2)', async () => {
+                            // Restauração em memória + storage cheio: a cópia antiga ficava e
+                            // reenviaria no próximo login o que já foi sincronizado.
+                            setOnline(false);
+                            localStorage.setItem(
+                              'fastgravacoes_orphan_queue_operador-a',
+                              JSON.stringify({
+                                pending: [{
+                                  id: 'acao-1',
+                                  type: 'update_job',
+                                  payload: { jobId: 'job-1', updates: { status: 'production' } },
+                                  createdAt: new Date().toISOString(),
+                                  retryCount: 0,
+                                }],
+                                failed: [],
+                                acknowledged: [],
+                                savedAt: Date.now(),
+                              }),
+                            );
+                            const { result } = renderHook(() => useOfflineSync());
+                            const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
+
+                            const originalSetItem = Storage.prototype.setItem;
+                            let refusals = 1;
+                            const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+                              this: Storage,
+                              key: string,
+                              value: string,
+                            ) {
+                              if (key === STORAGE_KEYS.PENDING_ACTIONS && refusals > 0) {
+                                refusals--;
+                                throw new Error('QuotaExceededError');
+                              }
+                              return originalSetItem.call(this, key, value);
+                            });
+
+                            try {
+                              act(() => {
+                                authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+                              });
+                              await waitFor(() => expect(result.current.pendingActionsCount).toBe(1));
+                              expect(localStorage.getItem('fastgravacoes_orphan_queue_operador-a')).toContain('acao-1');
+
+                              await act(async () => {
+                                setOnline(true);
+                                await result.current.syncPendingActions();
+                              });
+
+                              await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+                              // A fila ativa foi gravada com sucesso: a cópia virou redundante.
+                              expect(localStorage.getItem('fastgravacoes_orphan_queue_operador-a')).toBeNull();
+                            } finally {
+                              spy.mockRestore();
+                            }
+                          });
+
+                          it('limpa cópias vencidas de outros operadores a cada evento de auth (etapa 232, thread nova 3)', async () => {
+                            // O prazo não pode valer só quando o dono volta: até lá a cópia
+                            // fica legível para quem tem acesso ao aparelho.
+                            setOnline(false);
+                            const expiredKey = 'fastgravacoes_orphan_queue_operador-vencido';
+                            const validKey = 'fastgravacoes_orphan_queue_operador-b';
+                            localStorage.setItem(expiredKey, JSON.stringify({
+                              pending: [{ id: 'job-1' }],
+                              failed: [],
+                              acknowledged: [],
+                              savedAt: Date.now() - QUARANTINE_TTL_MS - 1000,
+                            }));
+                            localStorage.setItem(validKey, JSON.stringify({
+                              pending: [{ id: 'job-2' }],
+                              failed: [],
+                              acknowledged: [],
+                              savedAt: Date.now(),
+                            }));
+
+                            const { result } = renderHook(() => useOfflineSync());
+                            const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string, session?: { user?: { id?: string } } | null) => void }).__offlineSyncAuthCb;
+                            expect(result.current.pendingActionsCount).toBe(0);
+
+                            act(() => {
+                              authCb('INITIAL_SESSION', { user: { id: 'operador-a' } });
+                            });
+
+                            expect(localStorage.getItem(expiredKey)).toBeNull();
+                            expect(localStorage.getItem(validKey)).toContain('job-2');
+                          });
 });
