@@ -103,7 +103,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 049 — Fazer a promoção automática de fila ler o alvo configurado, não uma constante — onda 2 — Alta
 - [ ] 050 — Mostrar no painel o mesmo alvo de buffer que o sistema usa — onda 2 — Média
 - [ ] 051 — Deixar um único lugar carimbando início e fim de produção — onda 2 — Alta
-- [x] 052 — Unificar, no aplicativo, quais status ocupam uma máquina — onda 2 — Alta · MACHINE_BLOCKING_STATUSES e MACHINE_ACTIVE_SCHEDULE_STATUSES em src/constants/index.ts, consumidas por AlertScheduleModal (espelha check_job_overlap: tudo menos cancelado) e useSchedulingConflicts (agenda viva, lista preservada); teste novo src/components/dashboard/AlertScheduleModal.test.tsx 3/3 falhando sem a correção; PR #PRNUM
+- [x] 052 — Unificar, no aplicativo, quais status ocupam uma máquina — onda 2 — Alta · MACHINE_BLOCKING_STATUSES e MACHINE_ACTIVE_SCHEDULE_STATUSES em src/constants/index.ts, consumidas por AlertScheduleModal (espelha check_job_overlap: tudo menos cancelado) e useSchedulingConflicts (agenda viva, lista preservada); teste novo src/components/dashboard/AlertScheduleModal.test.tsx 3/3 falhando sem a correção; PR #302
 - [ ] 053 — Decidir e corrigir, no banco, se OS concluída continua ocupando a máquina — onda 2 — Média · **aprovação do dono**
 - [ ] 054 — Corrigir o tipo de técnica no esquema de validação de OS — onda 2 — Média
 - [ ] 055 — Unificar os três esquemas concorrentes de OS — onda 2 — Média
