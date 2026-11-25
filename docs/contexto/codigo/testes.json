@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 146,
+ "total": 148,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 121
+  "unit": 123
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 109
+   "arquivos": 111
   },
   {
    "padrao": "tests/",
@@ -284,6 +284,17 @@
     "scripts/supabase_snapshot/snapshot.py"
    ],
    "casos": 96,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/components/calendar/CalendarTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/calendar/CalendarTimeline.tsx",
+    "src/components/ui/tooltip.tsx"
+   ],
+   "casos": 2,
    "suporte": false
   },
   {
@@ -562,6 +573,17 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 10,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/jobs/hooks/useDragDrop.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/features/jobs/hooks/useDailyDragDrop.ts",
+    "src/features/jobs/hooks/useWeeklyDragDrop.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1550,6 +1572,7 @@
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
+  "src/components/calendar/CalendarTimeline.tsx": 1,
   "src/components/dashboard/AlertScheduleModal.tsx": 1,
   "src/components/error/StackTrace.tsx": 1,
   "src/components/jobs/JobDetailsModal.tsx": 1,
@@ -1557,6 +1580,7 @@
   "src/components/settings/TwoFactorSetup.tsx": 1,
   "src/components/ui/resizable.tsx": 1,
   "src/components/ui/scroll-area.tsx": 1,
+  "src/components/ui/tooltip.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
@@ -1582,11 +1606,13 @@
   "src/features/inventory/hooks/useTraceability.ts": 1,
   "src/features/inventory/index.ts": 2,
   "src/features/inventory/services/traceabilityService.ts": 1,
+  "src/features/jobs/hooks/useDailyDragDrop.ts": 1,
   "src/features/jobs/hooks/useJobs.ts": 1,
   "src/features/jobs/hooks/useSchedulingConflicts.ts": 1,
   "src/features/jobs/hooks/useSchedulingData.ts": 1,
   "src/features/jobs/hooks/useSmartSequencingWithActions.ts": 1,
   "src/features/jobs/hooks/useTechniques.ts": 2,
+  "src/features/jobs/hooks/useWeeklyDragDrop.ts": 1,
   "src/features/jobs/index.ts": 8,
   "src/features/jobs/lib/pending-queue.ts": 1,
   "src/features/jobs/services/jobStateMachine.ts": 2,
@@ -1754,7 +1780,6 @@
    "src/features/auth/hooks/useSessionManager.tsx",
    "src/features/auth/hooks/useSessionTimeout.tsx",
    "src/features/jobs/hooks/useAutoBufferPromotion.ts",
-   "src/features/jobs/hooks/useDailyDragDrop.ts",
    "src/features/jobs/hooks/useDuplicateJob.ts",
    "src/features/jobs/hooks/useJobInventoryCheck.ts",
    "src/features/jobs/hooks/useJobStatusHistory.ts",
@@ -1764,7 +1789,6 @@
    "src/features/jobs/hooks/useRecordDuplication.ts",
    "src/features/jobs/hooks/useSmartSequencing.ts",
    "src/features/jobs/hooks/useStuckJobsDetection.ts",
-   "src/features/jobs/hooks/useWeeklyDragDrop.ts",
    "src/features/maintenance/hooks/index.ts",
    "src/features/maintenance/hooks/useTPM.ts",
    "src/features/maintenance/hooks/useTPMAlertMutations.ts",

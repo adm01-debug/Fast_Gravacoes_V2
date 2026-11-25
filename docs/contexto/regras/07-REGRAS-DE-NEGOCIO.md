@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3aaa14fe14` · branch `main` · 2026-11-25 16:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `108f0a7ec0` · branch `main` · 2026-11-25 16:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T16:18:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1850,7 +1850,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `approved` | compara, escreve | `src/components/documents/DocumentViewer.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/settings/PasswordResetRequests.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>… +5 |
 | `status` | `blocked` | compara | `src/components/traceability/TraceabilityStatsCards.tsx` |
 | `status` | `buffer` | compara | `src/features/jobs/hooks/useSchedulingData.ts`<br>`src/features/production/hooks/useOperatorDashboardData.ts` |
-| `status` | `cancelled` | compara, escreve, filtra | `src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/hooks/useDailyDragDrop.ts`<br>`src/features/jobs/hooks/useWeeklyDragDrop.ts`<br>… +6 |
+| `status` | `cancelled` | compara, escreve, filtra | `src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/services/jobsService.ts`<br>`src/features/maintenance/components/TPMExecutionHistory.tsx`<br>… +5 |
 | `status` | `completed` | compara, escreve, filtra | `src/components/shift/PendingTasksPanel.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>`src/features/maintenance/components/MachineTPMPanel.tsx`<br>`src/features/maintenance/components/MachineTPMTimeline.tsx`<br>… +7 |
 | `status` | `concluido` | compara, escreve | `src/pages/CodeQualityDashboard.tsx` |
 | `status` | `connected` | compara, escreve | `src/components/integrations/IntegrationHub.tsx`<br>`src/features/analytics/hooks/useRealtimeConnection.ts` |
@@ -3339,7 +3339,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1450 testes em 127 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1458 testes em 129 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3384,7 +3384,7 @@ _nenhum item encontrado_
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 12 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
 | `src/features/jobs/services/jobsService.test.ts` | 12 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
-| `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapa 052) · avisa do conflito ao agendar sobre OS concluida, como o banco recusa · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
+| `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053) · nao avisa conflito para OS concluida, que o banco libera desde a etapa 053 · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
 | `src/test/retryBackoffAdvanced.test.ts` | 11 | retryWithBackoff — advanced scenarios · returns immediately on first success · retries up to maxRetries times then throws · stops retrying when isRetryable returns false … |
@@ -3423,6 +3423,7 @@ _nenhum item encontrado_
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
+| `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
@@ -3444,6 +3445,7 @@ _nenhum item encontrado_
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
 | `tests/e2e/system-status.spec.ts` | 4 | Status do sistema · renderiza o painel consolidado com os agregados · não expõe detalhes de erro interno · painel de monitoramento exibe tendência das rotinas |
 | `tests/e2e/visual-regression.spec.ts` | 4 | Regressão Visual · snapshot da dashboard principal · snapshot da sidebar colapsada e expandida · snapshot responsivo mobile |
+| `src/components/calendar/CalendarTimeline.test.tsx` | 3 | ordem de desenho dos cartoes na linha do tempo (etapa 053) · desenha a OS concluida por baixo da OS ativa que ocupa o mesmo horario · nao eleva no hover a OS concluida, para ela nao roubar o clique da OS ativa |
 | `src/components/error/StackTrace.test.tsx` | 3 | StackTrace · torna o bloco focavel por teclado quando o trace transborda · nao cria parada de Tab quando o trace cabe |
 | `src/components/logistics/EditShipmentModal.test.tsx` | 3 | EditShipmentModal · nao sobrescreve actual_delivery ao corrigir rastreio de envio ja entregue (F-010/Devin) · nao envia status/actual_delivery quando nenhum campo de status muda (correcao de frete) |
 | `src/components/settings/TwoFactorSetup.test.tsx` | 3 | TwoFactorSetup · gera o QR a partir do otpauth uri, nao do svg pronto do Supabase · remove fatores TOTP nao verificados antes de criar um novo (evita 422) |

@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (109)",
+   "co-localizado (*.test) (111)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)",
    "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)",
    "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)",
    "feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)",
-   "infra: publica push_notifications no realtime (#308)",
-   "fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)"
+   "infra: publica push_notifications no realtime (#308)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

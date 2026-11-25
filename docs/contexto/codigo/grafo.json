@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 993,
- "arestas": 4579,
+ "arestas": 4583,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -86,7 +86,7 @@
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 45
+   "importado_por": 46
   },
   {
    "arquivo": "src/lib/recharts.ts",

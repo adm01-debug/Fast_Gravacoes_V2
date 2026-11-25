@@ -374,8 +374,8 @@
   {
    "modulo": "components/calendar",
    "arquivos": 17,
-   "testes": 0,
-   "linhas": 2290,
+   "testes": 1,
+   "linhas": 2304,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -440,6 +440,7 @@
    ],
    "depende_de_modulos": [
     "components/ui",
+    "constants",
     "features/jobs",
     "hooks",
     "integrations/supabase",
@@ -3349,7 +3350,7 @@
    "modulo": "constants",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 171,
+   "linhas": 174,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3370,6 +3371,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/calendar",
     "components/dashboard",
     "features/analytics",
     "features/jobs",
@@ -4161,8 +4163,8 @@
   {
    "modulo": "features/jobs",
    "arquivos": 26,
-   "testes": 9,
-   "linhas": 2923,
+   "testes": 10,
+   "linhas": 2925,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

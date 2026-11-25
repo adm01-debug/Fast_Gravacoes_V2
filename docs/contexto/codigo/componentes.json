@@ -541,7 +541,7 @@
     "CalendarTimeline"
    ],
    "export_default": null,
-   "linhas": 419,
+   "linhas": 425,
    "dominio": "components/calendar",
    "hooks_locais": [
     "useDailyDragDrop",
@@ -600,7 +600,7 @@
     "JobBlock"
    ],
    "export_default": null,
-   "linhas": 95,
+   "linhas": 103,
    "dominio": "components/calendar",
    "hooks_locais": [
     "useHapticFeedback"

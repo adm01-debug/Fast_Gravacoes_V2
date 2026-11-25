@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3aaa14fe14b34cad5933bdc062d98140dc96ac6c",
+  "sha": "108f0a7ec082b42149ffe9b662b67a6c7c05ab8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 16:21 UTC",
-  "files_total": 1617,
-  "code_files": 1421,
-  "code_lines": 211301
+  "generated_at": "2026-11-25 16:22 UTC",
+  "files_total": 1620,
+  "code_files": 1424,
+  "code_lines": 211600
  },
  "version": "1.3.2",
- "facts_hash": "a3c88f66d3c891df",
+ "facts_hash": "0e06d0b8b0e9ccb4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,9 +279,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 675,
-   ".ts": 406,
-   ".sql": 273,
+   ".tsx": 676,
+   ".ts": 407,
+   ".sql": 274,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19649,6 +19649,7 @@
    "supabase/migrations/20261128120000_fk_shipments_restrict.sql",
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
+   "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21506,6 +21507,22 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
    }
   ],
   "raises": [
@@ -27010,7 +27027,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 577,
+  "components_count": 578,
   "hooks": [
    {
     "name": "useContacts",
@@ -28373,8 +28390,8 @@
   },
   {
    "module": "src/components",
-   "files": 423,
-   "lines": 59776,
+   "files": 424,
+   "lines": 59874,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28524,6 +28541,7 @@
     "src/components/calendar/CalendarLegend.tsx",
     "src/components/calendar/CalendarOnboarding.tsx",
     "src/components/calendar/CalendarSkeleton.tsx",
+    "src/components/calendar/CalendarTimeline.test.tsx",
     "src/components/calendar/CalendarTimeline.tsx",
     "src/components/calendar/CalendarToolbar.tsx",
     "src/components/calendar/ConflictResolutionPanel.tsx",
@@ -28568,14 +28586,13 @@
     "src/components/dashboard/SmartSequencingWidget.tsx",
     "src/components/dashboard/SortableWidgetSection.tsx",
     "src/components/dashboard/StatsCard.tsx",
-    "src/components/design-system/HooksExamplesSection.tsx",
-    "src/components/design-system/ProductDesignProvider.tsx"
+    "src/components/design-system/HooksExamplesSection.tsx"
    ]
   },
   {
    "module": "src/constants",
    "files": 2,
-   "lines": 171,
+   "lines": 174,
    "tables": [],
    "exports": [
     "biConstants.ts: CHART_COLORS, GRADIENTS, PIE_COLORS, getStudioName, STUDIO_LIST, STUDIO_MAP",
@@ -29110,8 +29127,8 @@
   },
   {
    "module": "src/features/jobs",
-   "files": 35,
-   "lines": 4136,
+   "files": 36,
+   "lines": 4247,
    "tables": [
     "job_status_history",
     "jobs",
@@ -29180,6 +29197,7 @@
     "src/features/jobs/index.ts",
     "src/features/jobs/hooks/useAutoBufferPromotion.ts",
     "src/features/jobs/hooks/useDailyDragDrop.ts",
+    "src/features/jobs/hooks/useDragDrop.test.ts",
     "src/features/jobs/hooks/useDuplicateJob.ts",
     "src/features/jobs/hooks/useJobInventoryCheck.ts",
     "src/features/jobs/hooks/useJobStatusHistory.ts",
@@ -30552,8 +30570,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 265,
-   "lines": 16725,
+   "files": 266,
+   "lines": 16812,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -47219,12 +47237,6 @@
     "kind": "escreve"
    },
    {
-    "file": "src/features/jobs/hooks/useDailyDragDrop.ts",
-    "field": "status",
-    "value": "cancelled",
-    "kind": "compara"
-   },
-   {
     "file": "src/features/jobs/hooks/useDuplicateJob.ts",
     "field": "status",
     "value": "queue",
@@ -47360,12 +47372,6 @@
     "file": "src/features/jobs/hooks/useStuckJobsDetection.ts",
     "field": "status",
     "value": "production",
-    "kind": "compara"
-   },
-   {
-    "file": "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-    "field": "status",
-    "value": "cancelled",
     "kind": "compara"
    },
    {
@@ -50121,6 +50127,12 @@
     "field": "status",
     "value": "cancelled",
     "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+    "field": "status",
+    "value": "cancelled",
+    "kind": "compara"
    }
   ],
   "calc_fns": [
@@ -52041,12 +52053,24 @@
     "name": "build que falha não carimba (a próxima sessão refaz)"
    },
    {
-    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
-    "name": "AlertScheduleModal - quais status ocupam a maquina (etapa 052)"
+    "file": "src/components/calendar/CalendarTimeline.test.tsx",
+    "name": "ordem de desenho dos cartoes na linha do tempo (etapa 053)"
+   },
+   {
+    "file": "src/components/calendar/CalendarTimeline.test.tsx",
+    "name": "desenha a OS concluida por baixo da OS ativa que ocupa o mesmo horario"
+   },
+   {
+    "file": "src/components/calendar/CalendarTimeline.test.tsx",
+    "name": "nao eleva no hover a OS concluida, para ela nao roubar o clique da OS ativa"
    },
    {
     "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
-    "name": "avisa do conflito ao agendar sobre OS concluida, como o banco recusa"
+    "name": "AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "nao avisa conflito para OS concluida, que o banco libera desde a etapa 053"
    },
    {
     "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
@@ -52891,6 +52915,26 @@
    {
     "file": "src/features/inventory/services/traceabilityService.test.ts",
     "name": "lança o erro do Supabase"
+   },
+   {
+    "file": "src/features/jobs/hooks/useDragDrop.test.ts",
+    "name": "horarios livres ao arrastar uma OS (etapa 053)"
+   },
+   {
+    "file": "src/features/jobs/hooks/useDragDrop.test.ts",
+    "name": "ignora OS concluida na maquina de destino, no calendario do dia"
+   },
+   {
+    "file": "src/features/jobs/hooks/useDragDrop.test.ts",
+    "name": "ignora OS concluida na maquina de destino, no calendario da semana"
+   },
+   {
+    "file": "src/features/jobs/hooks/useDragDrop.test.ts",
+    "name": "continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia"
+   },
+   {
+    "file": "src/features/jobs/hooks/useDragDrop.test.ts",
+    "name": "continua empurrando a OS para depois de uma OS que ainda produz, no calendario da semana"
    },
    {
     "file": "src/features/jobs/hooks/useJobs.realtime.test.tsx",
@@ -64736,13 +64780,12 @@
       "compara:src/components/jobs/JobDetailsModal.tsx",
       "compara:src/components/jobs/JobQuickActions.tsx",
       "compara:src/components/shift/PendingTasksPanel.tsx",
-      "compara:src/features/jobs/hooks/useDailyDragDrop.ts",
-      "compara:src/features/jobs/hooks/useWeeklyDragDrop.ts",
       "compara:src/features/jobs/services/jobsService.ts",
       "compara:src/features/maintenance/components/TPMExecutionHistory.tsx",
       "compara:src/pages/LogisticsPage.tsx",
       "compara:supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql",
       "compara:supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+      "compara:supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
       "escreve:src/components/jobs/JobDetailsModal.tsx",
       "filtra:src/hooks/useGamification.ts"
      ],
@@ -67102,7 +67145,8 @@
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
-   "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+   "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
   ],
   "security_definer_fns": [
    "app_private.has_role",
@@ -68889,6 +68933,22 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_job_overlap",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
    }
   ],
   "guards": [
@@ -73214,9 +73274,19 @@
     "function CalendarSkeleton"
    ]
   },
+  "src/components/calendar/CalendarTimeline.test.tsx": {
+   "path": "src/components/calendar/CalendarTimeline.test.tsx",
+   "lines": 84,
+   "is_test": true,
+   "tests": [
+    "ordem de desenho dos cartoes na linha do tempo (etapa 053)",
+    "desenha a OS concluida por baixo da OS ativa que ocupa o mesmo horario",
+    "nao eleva no hover a OS concluida, para ela nao roubar o clique da OS ativa"
+   ]
+  },
   "src/components/calendar/CalendarTimeline.tsx": {
    "path": "src/components/calendar/CalendarTimeline.tsx",
-   "lines": 419,
+   "lines": 425,
    "exports": [
     "function CalendarTimeline"
    ],
@@ -73282,7 +73352,7 @@
   },
   "src/components/calendar/JobBlock.tsx": {
    "path": "src/components/calendar/JobBlock.tsx",
-   "lines": 95,
+   "lines": 103,
    "exports": [
     "function JobBlock"
    ]
@@ -73455,8 +73525,8 @@
     }
    ],
    "tests": [
-    "AlertScheduleModal - quais status ocupam a maquina (etapa 052)",
-    "avisa do conflito ao agendar sobre OS concluida, como o banco recusa",
+    "AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)",
+    "nao avisa conflito para OS concluida, que o banco libera desde a etapa 053",
     "nao avisa conflito para OS cancelada, que o banco libera",
     "avisa do conflito com OS em producao, comportamento que ja existia",
     "usa o fim gravado na OS, e nao a estimativa, quando ele termina antes do horario escolhido",
@@ -79489,7 +79559,7 @@
   },
   "src/constants/index.ts": {
    "path": "src/constants/index.ts",
-   "lines": 123,
+   "lines": 126,
    "exports": [
     "const JOB_STATUSES",
     "type JobStatus",
@@ -83687,7 +83757,7 @@
   },
   "src/features/jobs/hooks/useDailyDragDrop.ts": {
    "path": "src/features/jobs/hooks/useDailyDragDrop.ts",
-   "lines": 83,
+   "lines": 84,
    "exports": [
     "function useDailyDragDrop"
    ],
@@ -83705,15 +83775,30 @@
    "errors": [
     "Erro ao mover agendamento"
    ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "cancelled",
-     "kind": "compara"
-    }
-   ],
    "hooks": [
     "useDailyDragDrop"
+   ]
+  },
+  "src/features/jobs/hooks/useDragDrop.test.ts": {
+   "path": "src/features/jobs/hooks/useDragDrop.test.ts",
+   "lines": 109,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DATE",
+     "value": "'2026-09-24'"
+    },
+    {
+     "name": "TARGET",
+     "value": "'maquina-2'"
+    }
+   ],
+   "tests": [
+    "horarios livres ao arrastar uma OS (etapa 053)",
+    "ignora OS concluida na maquina de destino, no calendario do dia",
+    "ignora OS concluida na maquina de destino, no calendario da semana",
+    "continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia",
+    "continua empurrando a OS para depois de uma OS que ainda produz, no calendario da semana"
    ]
   },
   "src/features/jobs/hooks/useDuplicateJob.ts": {
@@ -84265,7 +84350,7 @@
   },
   "src/features/jobs/hooks/useWeeklyDragDrop.ts": {
    "path": "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-   "lines": 99,
+   "lines": 100,
    "exports": [
     "function useWeeklyDragDrop"
    ],
@@ -84284,13 +84369,6 @@
     "Atenção: Nenhum slot livre encontrado. Conflito detectado.",
     "Conflito de agendamento: máquina já possui job neste horário.",
     "Erro ao mover agendamento"
-   ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "cancelled",
-     "kind": "compara"
-    }
    ],
    "hooks": [
     "useWeeklyDragDrop"
@@ -98627,6 +98705,18 @@
    "path": "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "lines": 38
   },
+  "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql": {
+   "path": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+   "lines": 87,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "compara"
+    }
+   ],
+   "uses_service_role": true
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 95,
@@ -99077,10 +99167,29 @@
   }
  },
  "git": {
-  "sha": "3aaa14fe14b34cad5933bdc062d98140dc96ac6c",
+  "sha": "108f0a7ec082b42149ffe9b662b67a6c7c05ab8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "108f0a7",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/calendar/CalendarTimeline.test.tsx",
+     "src/components/calendar/CalendarTimeline.tsx",
+     "src/components/calendar/JobBlock.tsx",
+     "src/components/dashboard/AlertScheduleModal.test.tsx",
+     "src/components/dashboard/AlertScheduleModal.tsx",
+     "src/constants/index.ts",
+     "src/features/jobs/hooks/useDailyDragDrop.ts",
+     "src/features/jobs/hooks/useDragDrop.test.ts",
+     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
+     "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+    ]
+   },
    {
     "sha": "3aaa14f",
     "date": "2026-11-25",
@@ -99427,21 +99536,12 @@
      "src/pages/EfficiencyDashboard.tsx",
      "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql"
     ]
-   },
-   {
-    "sha": "3026b04",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: teste de crash da trava falha rapido em vez de pendurar a suite (#281)",
-    "files": [
-     "scripts/maintenance/maintenance.unit.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    10
+    11
    ],
    [
     "src/features/jobs/services/jobsService.ts",
@@ -99458,6 +99558,18 @@
    [
     "src/pages/PendingQueue.tsx",
     3
+   ],
+   [
+    "src/components/dashboard/AlertScheduleModal.test.tsx",
+    2
+   ],
+   [
+    "src/components/dashboard/AlertScheduleModal.tsx",
+    2
+   ],
+   [
+    "src/constants/index.ts",
+    2
    ],
    [
     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
@@ -99496,27 +99608,15 @@
     2
    ],
    [
-    "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
+    "src/components/calendar/CalendarTimeline.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261128120000_fk_shipments_restrict.sql",
+    "src/components/calendar/CalendarTimeline.tsx",
     1
    ],
    [
-    "src/features/production/hooks/useOperatorEvolution.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
-    1
-   ],
-   [
-    "src/features/notifications/components/NotificationsList.tsx",
+    "src/components/calendar/JobBlock.tsx",
     1
    ]
   ]

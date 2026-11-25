@@ -1864,7 +1864,7 @@
    "hooks_exportados": [
     "useDailyDragDrop"
    ],
-   "linhas": 83,
+   "linhas": 84,
    "dominio": "features/jobs",
    "tabelas": [
     "jobs"
@@ -1877,7 +1877,7 @@
    "usado_por_arquivos": [
     "src/features/jobs/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/jobs/hooks/useDuplicateJob.ts",
@@ -2223,7 +2223,7 @@
    "hooks_exportados": [
     "useWeeklyDragDrop"
    ],
-   "linhas": 99,
+   "linhas": 100,
    "dominio": "features/jobs",
    "tabelas": [
     "jobs"
@@ -2236,7 +2236,7 @@
    "usado_por_arquivos": [
     "src/features/jobs/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/maintenance/hooks/index.ts",

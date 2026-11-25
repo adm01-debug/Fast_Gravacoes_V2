@@ -234,6 +234,7 @@
    "src/components/calendar/JobQuickActions.tsx",
    "src/components/calendar/types.ts",
    "src/components/ui/button.tsx",
+   "src/constants/index.ts",
    "src/features/jobs/index.ts",
    "src/lib/a11y.ts",
    "src/lib/utils.ts"
@@ -259,6 +260,7 @@
    "src/components/calendar/types.ts",
    "src/components/ui/badge.tsx",
    "src/components/ui/tooltip.tsx",
+   "src/constants/index.ts",
    "src/features/jobs/index.ts",
    "src/hooks/use-haptic-feedback.tsx",
    "src/lib/utils.ts",
@@ -3710,6 +3712,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/features/jobs/hooks/useDailyDragDrop.ts": [
+   "src/constants/index.ts",
    "src/features/jobs/services/jobsService.ts",
    "src/features/jobs/services/scheduling.ts",
    "src/integrations/supabase/client.ts"
@@ -3798,6 +3801,7 @@
    "src/lib/realtimeChannel.ts"
   ],
   "src/features/jobs/hooks/useWeeklyDragDrop.ts": [
+   "src/constants/index.ts",
    "src/features/jobs/services/jobsService.ts",
    "src/features/jobs/services/scheduling.ts",
    "src/integrations/supabase/client.ts"
