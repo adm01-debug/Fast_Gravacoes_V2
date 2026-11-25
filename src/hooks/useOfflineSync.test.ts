@@ -23,6 +23,12 @@ vi.mock('@/integrations/supabase/client', () => {
   return {
     supabase: {
       from: vi.fn(() => mockTable),
+        auth: {
+          onAuthStateChange: vi.fn((cb: (event: string) => void) => {
+            (globalThis as unknown as { __offlineSyncAuthCb: (event: string) => void }).__offlineSyncAuthCb = cb;
+            return { data: { subscription: { unsubscribe: vi.fn() } } };
+          }),
+        },
     },
   };
 });
@@ -227,4 +233,27 @@ describe('useOfflineSync', () => {
       { onConflict: 'id' }
     );
   });
+
+      it('limpa fila e cache do localStorage na saída de sessão (etapa 232)', async () => {
+        // Fila e cache desta fila vivem no localStorage; o IndexedDB limpo em
+        // offlineStorage.clearAll() não os alcança.
+        setOnline(false);
+        const { result } = renderHook(() => useOfflineSync());
+
+        await act(async () => {
+          result.current.updateJobOffline('job-1', { status: 'production' });
+        });
+        expect(result.current.pendingActionsCount).toBe(1);
+        expect(localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS)).toContain('job-1');
+
+        const authCb = (globalThis as unknown as { __offlineSyncAuthCb: (event: string) => void }).__offlineSyncAuthCb;
+        expect(authCb).toBeTypeOf('function');
+
+        act(() => {
+          authCb('SIGNED_OUT');
+        });
+
+        await waitFor(() => expect(result.current.pendingActionsCount).toBe(0));
+        expect(JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_ACTIONS) ?? '[]')).toHaveLength(0);
+      });
 });

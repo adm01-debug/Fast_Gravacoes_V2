@@ -35,6 +35,18 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const MAX_RETRIES = 3;
+
+/** Apaga fila, cache e confirmações do localStorage. Chamado na saída de
+ * sessão: esses dados são do usuário anterior e o próximo operador no mesmo
+ * aparelho (quiosque de fábrica) não pode herdá-los. Best-effort — storage
+ * indisponível (modo privado) não deve derrubar o logout. */
+export function clearOfflineQueueStorage(): void {
+  try {
+    for (const key of Object.values(STORAGE_KEYS)) localStorage.removeItem(key);
+  } catch {
+    /* storage indisponível */
+  }
+}
 // Base delay for the exponential backoff between sync passes when actions
 // are re-queued (retryable failures) — without this, a partial-failure pass
 // re-triggers instantly via the pendingActions.length effect dependency,

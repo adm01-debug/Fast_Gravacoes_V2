@@ -9,6 +9,7 @@ import {
   MAX_RETRIES,
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
+  clearOfflineQueueStorage,
   mergeJobIntoCache,
   readAcknowledgedFromStorage,
   readQueueFromStorage,
@@ -116,6 +117,25 @@ export function useOfflineSync() {
   useEffect(() => {
     pendingActionsRef.current = pendingActions;
   }, [pendingActions]);
+
+    // A fila e o cache desta fila vivem no localStorage e sobrevivem ao logout.
+    // Sem limpar aqui, o próximo operador no mesmo aparelho herda ações
+    // pendentes e dados do usuário anterior (etapa 232) — limpar só o IndexedDB
+    // (offlineStorage.clearAll) não alcança estas chaves. Cada instância montada
+    // se limpa: o provider e os indicadores continuam montados após a saída.
+    useEffect(() => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+        if (event !== 'SIGNED_OUT') return;
+        clearOfflineQueueStorage();
+        unpersistedIdsRef.current.clear();
+        acknowledgedIdsRef.current.clear();
+        pendingActionsRef.current = [];
+        setPendingActions([]);
+        setCachedData(null);
+        setFailedActions([]);
+      });
+      return () => subscription.unsubscribe();
+    }, []);
 
   // Save failed (conflicted or retry-exhausted) actions — a dead-letter
   // store so writes that couldn't be applied are never silently discarded;
