@@ -104,7 +104,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
 
   const machineScheduledJobs = useMemo(() => {
     if (!selectedMachineId || !scheduleDate) return [];
-      return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && job.start_time && MACHINE_BLOCKING_STATUSES.includes(job.status))
+    return jobs.filter(job => job.machine_id === selectedMachineId && job.scheduled_date === scheduleDate && job.start_time && MACHINE_BLOCKING_STATUSES.includes(job.status))
       .map(job => { const startMinutes = timeToMinutes(job.start_time); const endMinutes = jobEndMinutes(job); return { ...job, endTime: minutesToTime(endMinutes), endMinutes, startMinutes }; })
       .sort((a, b) => a.startMinutes - b.startMinutes);
   }, [selectedMachineId, scheduleDate, jobs]);
@@ -138,20 +138,20 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
 
   const handleSubmit = async () => {
     if (!selectedJob || !scheduleDate) { toast.error('Selecione uma data'); return; }
-      const endMinutes = timeToMinutes(startTime) + selectedJob.estimated_duration;
-      if (endMinutes >= 24 * 60) {
-        toast.error('A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao');
-        return;
-      }
+    const endMinutes = timeToMinutes(startTime) + selectedJob.estimated_duration;
+    if (endMinutes >= 24 * 60) {
+      toast.error('A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao');
+      return;
+    }
     setIsSubmitting(true);
     try {
-        const endTime = minutesToTime(endMinutes);
+      const endTime = minutesToTime(endMinutes);
       const { error } = await supabase.from('jobs').update({ scheduled_date: scheduleDate, start_time: startTime, end_time: endTime, status: 'scheduled', machine_id: selectedMachineId || null }).eq('id', selectedJob.id);
       if (error) throw error;
       toast.success('Job agendado com sucesso!');
       onOpenChange(false);
       onScheduled();
-      } catch (err) { const message = (err as { message?: string } | null)?.message; toast.error(message || 'Erro ao agendar job'); } finally { setIsSubmitting(false); }
+    } catch (err) { const message = (err as { message?: string } | null)?.message; toast.error(message || 'Erro ao agendar job'); } finally { setIsSubmitting(false); }
   };
 
   const handleOpenOptimization = () => {
@@ -215,7 +215,7 @@ export function AlertScheduleModal({ open, onOpenChange, selectedJob, jobs, mach
                         {machineScheduledJobs.map(job => {
                           const selStart = startTime ? parseInt(startTime.split(':')[0], 10) * 60 + parseInt(startTime.split(':')[1], 10) : 0;
                           const selEnd = selStart + (selectedJob?.estimated_duration || 0);
-                          const isConflicting = startTime && selStart < job.startMinutes + job.estimated_duration && selEnd > job.startMinutes;
+                          const isConflicting = startTime && selStart < job.endMinutes && selEnd > job.startMinutes;
                           return (<div key={job.id} className={cn("flex items-center gap-2 p-2 rounded-md text-xs transition-colors", isConflicting ? "bg-destructive/15 border border-destructive/40" : "bg-secondary/50 border border-border/20")}>
                             <Clock className={cn("w-3.5 h-3.5 shrink-0", isConflicting ? "text-destructive" : "text-muted-foreground")} />
                             <span className={cn("font-mono font-medium", isConflicting ? "text-destructive" : "text-foreground")}>{job.start_time || '--:--'} - {job.endTime}</span>

@@ -4,6 +4,7 @@ import { type Job as DbJob, type JobUpdate } from '@/features/jobs/services/jobs
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { findNextAvailableSlot } from '@/features/jobs/services/scheduling';
+import { MACHINE_BLOCKING_STATUSES } from '@/constants';
 
 interface UseDailyDragDropProps {
   onUpdate: () => void;
@@ -41,7 +42,7 @@ export function useDailyDragDrop({ onUpdate, allJobs }: UseDailyDragDropProps) {
         j.machine_id === machineId &&
         j.scheduled_date === date &&
         j.id !== jobId &&
-        j.status !== 'cancelled'
+        MACHINE_BLOCKING_STATUSES.includes(j.status)
       );
 
       const duration = job.estimated_duration || 60;

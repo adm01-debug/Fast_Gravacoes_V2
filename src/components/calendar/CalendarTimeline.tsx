@@ -12,6 +12,7 @@ import { DndContext, closestCenter, useDroppable, DragOverlay } from '@dnd-kit/c
 import { useDailyDragDrop } from '@/features/jobs';
 import { JobQuickActions } from './JobQuickActions';
 import { clickableProps } from '@/lib/a11y';
+import { MACHINE_BLOCKING_STATUSES } from '@/constants';
 
 interface CalendarTimelineProps {
   machines: DbMachine[];
@@ -215,7 +216,12 @@ export function CalendarTimeline({
             </div>
           )}
 
-          {machineJobs.map((job) => {
+          {/* OS concluída/cancelada não reserva a máquina (etapa 053): desenha por baixo,
+              para que a OS que ainda produz no mesmo horário receba o clique. */}
+          {machineJobs
+            .slice()
+            .sort((a, b) => Number(MACHINE_BLOCKING_STATUSES.includes(a.status)) - Number(MACHINE_BLOCKING_STATUSES.includes(b.status)))
+            .map((job) => {
             const actualPos = overlays.showActualVsPlanned ? getActualPosition(job) : null;
             return (
               <Fragment key={job.id}>

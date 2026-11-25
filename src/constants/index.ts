@@ -19,12 +19,15 @@ export const JOB_STATUSES = {
 export type JobStatus = (typeof JOB_STATUSES)[keyof typeof JOB_STATUSES];
 
 // Status que o banco trata como ocupando o horário da máquina: `check_job_overlap`
-// recusa a sobreposição de qualquer OS que não esteja cancelada. Em produção
-// (25/11/2026) existem jobs com data e hora em queue, finished, delayed e scheduled,
-// então encurtar esta lista faz a tela deixar de avisar e o banco recusar depois.
+// Status que o banco trata como ocupando o horário da máquina: `check_job_overlap`
+// recusa a sobreposição de qualquer OS que não esteja cancelada nem finalizada
+// (etapa 053 — trabalho concluído não reserva mais a máquina para sempre).
+// Encurtar esta lista faz a tela deixar de avisar e o banco recusar depois.
 // 'packaging' existe no enum do banco e ainda não em JOB_STATUSES, por isso entra explícito.
 export const MACHINE_BLOCKING_STATUSES: readonly string[] = [
-  ...Object.values(JOB_STATUSES).filter(status => status !== JOB_STATUSES.CANCELLED),
+  ...Object.values(JOB_STATUSES).filter(
+    status => status !== JOB_STATUSES.CANCELLED && status !== JOB_STATUSES.FINISHED
+  ),
   'packaging',
 ];
 
