@@ -97,8 +97,8 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 043 — Resolver o nome do canal antes do efeito para o WebSocket parar de cair — onda 2 — Média
 - [ ] 044 — Separar a chave de cache de "máquinas ativas" de "todas as máquinas" — onda 2 — Alta
 - [ ] 045 — Parar de repetir consultas que foram negadas por permissão — onda 2 — Média
-- [ ] 046 — Expor no aplicativo a coluna de motivo de cancelamento que o banco exige — onda 2 — Alta
-- [ ] 047 — Criar a ação de cancelar OS com motivo obrigatório — onda 2 — Alta
+- [x] 046 — Expor no aplicativo a coluna de motivo de cancelamento que o banco exige — onda 2 — Alta · `src/integrations/supabase/types.ts` regenerado pela Management API (24/11); `cancel_reason` presente em `jobs` (linhas 1567/1602/1637 do arquivo gerado). O arquivo antigo listava 8 tabelas que não existem no banco (`email_verification_tokens`, `gamification_settings`, `packaging_equipment`, `packaging_waste`, `shipment_costs`, `tpm_execution_checklist`, `webauthn_challenges`, `webauthn_credentials`) e omitia 6 que existem (`archived_jobs`, `backup_logs`, `bitrix24_oauth_states`, `csp_violation_reports`, `erp_api_keys`, `system_metrics`) — registro na seção "Achados novos"; nenhum código usava as 8 fantasmas, tsc 0 após a troca
+- [x] 047 — Criar a ação de cancelar OS com motivo obrigatório — onda 2 — Alta · `jobsService.updateStatus(id, status, cancelReason?)` recusa `cancelled` sem motivo (`src/features/jobs/services/jobsService.ts:78-92`) e grava `cancel_reason`; `useUpdateJobStatus` repassa o motivo; botão "Cancelar OS" em `src/components/jobs/JobQuickActions.tsx` (gated por `canTransition`) e Dialog de motivo obrigatório em `src/components/jobs/JobDetailsModal.tsx`; testes `src/test/jobsService.test.ts` 17/17 provados e 2/17 falhando sem o `jobsService` (stash); banco recusou `cancelled` sem motivo em transação com ROLLBACK
 - [ ] 048 — Fazer toda mudança de status de OS passar pela validação de transição — onda 2 — Alta
 - [ ] 049 — Fazer a promoção automática de fila ler o alvo configurado, não uma constante — onda 2 — Alta
 - [ ] 050 — Mostrar no painel o mesmo alvo de buffer que o sistema usa — onda 2 — Média
@@ -363,6 +363,17 @@ PR: arquivo já mergeado em `main` · estado: mergeada
 Comando/consulta: `gh run view 45452172254 --json jobs` (último `Deploy` da `main`).
 Resultado: `Security Scan`, `Unit Tests`, `Validate Supabase Target (dry-run)`, `Build`, `Apply DB Migrations` e `Deploy Edge Functions` — todos em `success`. Os quatro deploys anteriores da `main` (45441618237, 45447223260, 45450690205, 45452172254) também concluíram em `success`.
 PR: (verificação, sem mudança de código) · estado: concluída
+### 046 — 2026-11-24
+Comando/consulta: `GET /v1/projects/uoujzvpecohinketylud/types/typescript` (Management API) gravado em `src/integrations/supabase/types.ts`, comparado com `git show HEAD:src/integrations/supabase/types.ts` por conjunto de nomes de tabela.
+Resultado: 133 tabelas no arquivo antigo, 131 no banco. Só no arquivo antigo: `email_verification_tokens`, `gamification_settings`, `packaging_equipment`, `packaging_waste`, `shipment_costs`, `tpm_execution_checklist`, `webauthn_challenges`, `webauthn_credentials`. Só no banco: `archived_jobs`, `backup_logs`, `bitrix24_oauth_states`, `csp_violation_reports`, `erp_api_keys`, `system_metrics`. `cancel_reason` passou a existir em `jobs` (linhas 1567/1602/1637). Diff de 713 linhas; `npx tsc --noEmit` em 0 erros depois de trocar `null` por `undefined` nos argumentos RPC de `src/features/packaging/services/packagingService.ts:175-178` e `src/pages/PublicTrackingPage.tsx:80,86,92`.
+PR: esta PR · estado: aguardando merge
+
+### 047 — 2026-11-24
+Comando/consulta: `.\node_modules\.bin\vitest.cmd run src/test/jobsService.test.ts src/features/jobs src/features/packaging` e prova de regressão com `git stash push -- jobsService.ts`; prova no banco em transação com `ROLLBACK`.
+Resultado: 10 arquivos, **77 testes passed**. Com `jobsService.ts` original: **2 failed | 15 passed** — os dois casos novos de cancelamento são os que falham. No banco, `UPDATE jobs SET status='cancelled'` sem `cancel_reason` levanta `cancel_reason é obrigatório ao cancelar um job`; com motivo, passa. `tsc` 0 erros, `eslint` 0 erros nos arquivos tocados.
+Caminho de leitura do motivo (revisão da #297): `jobsService.getAll` passa cada linha por `jobSchema.safeParse`, que descarta chaves não declaradas; `cancel_reason` foi declarado em `src/features/jobs/types/job.schema.ts:24` e há teste que falha sem essa linha (`src/test/jobsService.test.ts`, "preserves cancel_reason of a cancelled job for the details panel"). O modal renderiza o valor sob a guarda `job.status === 'cancelled'`.
+Limite conhecido: o percurso pela tela (abrir a OS, tentar confirmar sem motivo, ver a gravação) **não** tem teste automatizado de render — o repo tem infra de RTL/jsdom, mas nenhum teste monta `JobDetailsModal`, que depende de ~14 hooks/providers. A cobertura do bloqueio é do serviço e da constraint no banco.
+PR: esta PR · estado: aguardando merge
 
 ---
 
@@ -376,6 +387,17 @@ Onde: <arquivo:linha>
 O que acontece:
 Como foi notado:
 ```
+
+### 2026-11-24 — Tipos do Supabase desatualizados em relação ao banco
+Onde: `src/integrations/supabase/types.ts` (regenerado na etapa 046)
+O que acontece: o arquivo declarava 8 tabelas que não existem no banco (`email_verification_tokens`, `gamification_settings`, `packaging_equipment`, `packaging_waste`, `shipment_costs`, `tpm_execution_checklist`, `webauthn_challenges`, `webauthn_credentials`) e omitia 6 que existem (`archived_jobs`, `backup_logs`, `bitrix24_oauth_states`, `csp_violation_reports`, `erp_api_keys`, `system_metrics`). Nenhum código usava as fantasmas, então o efeito era só tipo errado em consulta nova.
+Como foi notado: comparação do arquivo antigo com a saída da Management API durante a etapa 046.
+
+### 2026-11-24 — RLS de `jobs` não deixa `admin` atualizar OS
+Onde: `public.jobs` (policies de UPDATE), `src/features/jobs/services/jobsService.ts:66`
+O que acontece: as únicas policies de UPDATE são `Coordinators and managers can update jobs` (coordinator/manager) e `Operators can update jobs on assigned machines` (operator da máquina). O app libera o Kanban para quem tem `editJobs` (`src/features/auth/permissions.ts`), o que inclui `admin`, mas o UPDATE não atinge nenhuma linha e `jobsService.update` falha em `.single()` com "no rows returned" — a edição/cancelamento por admin nunca grava. Confirmado no banco de produção por `select policyname, cmd, roles, qual from pg_policies where tablename='jobs'`.
+Como foi notado: revisão automatizada da PR do cancelamento de OS (#297), verificada contra `pg_policies`.
+Efeito: correção exige DDL (policy de UPDATE para `admin`) — não entra nesta PR de front.
 
 ---
 

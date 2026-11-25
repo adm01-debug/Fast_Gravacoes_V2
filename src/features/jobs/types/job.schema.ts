@@ -21,6 +21,7 @@ export const jobSchema = z.object({
   start_time: z.string().nullable().optional(),
   end_time: z.string().nullable().optional(),
   notes: z.string().max(2000, 'Observações muito longas').nullable().optional(),
+  cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(),
   gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(),
 });
 

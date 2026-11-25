@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   ShieldCheck,
   Calendar,
-  Hash
+  Hash,
+    XCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR, enUS, es } from 'date-fns/locale';
@@ -77,19 +78,19 @@ export default function PublicTrackingPage() {
 
       if (jobIdParam && UUID_RE.test(jobIdParam)) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: jobIdParam, p_order_number: null }));
+          .rpc('get_public_tracking', { p_job_id: jobIdParam ?? undefined, p_order_number: undefined }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 
       if (!supabaseError && typed.length === 0 && isUUID) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: null }));
+          .rpc('get_public_tracking', { p_job_id: safeQuery, p_order_number: undefined }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 
       if (!supabaseError && typed.length === 0) {
         ({ data, error: supabaseError } = await supabase
-          .rpc('get_public_tracking', { p_job_id: null, p_order_number: safeQuery }));
+          .rpc('get_public_tracking', { p_job_id: undefined, p_order_number: safeQuery }));
         typed = (data ?? []) as unknown as TrackingJob[];
       }
 
@@ -124,6 +125,7 @@ export default function PublicTrackingPage() {
       paused: { label: t('jobs.statuses.paused'), color: 'bg-gray-500/10 text-gray-500 border-gray-500/20', icon: AlertTriangle },
       finished: { label: t('jobs.statuses.finished'), color: 'bg-green-500/10 text-green-500 border-green-500/20', icon: CheckCircle2 },
       rework: { label: 'Rework', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: AlertTriangle },
+            cancelled: { label: t('jobs.statuses.cancelled'), color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: XCircle },
     };
     return maps[status] || maps.queue;
   };

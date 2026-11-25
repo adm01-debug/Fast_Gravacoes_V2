@@ -88,6 +88,23 @@ describe('jobsService.getAll', () => {
     expect(result.length).toBe(2);
   });
 
+  it('preserves cancel_reason of a cancelled job for the details panel', async () => {
+    setupSuccess([
+      {
+        id: '3f1c1a52-6f36-4b4a-9c3f-6d0f0f6a1b11',
+        order_number: 'OS-900',
+        client: 'ACME',
+        product: 'Adesivo vinil',
+        quantity: 10,
+        technique_id: '9b3c6f4e-1c2a-4d3f-8f5e-0a1b2c3d4e5f',
+        status: 'cancelled',
+        cancel_reason: 'Cliente desistiu',
+      },
+    ]);
+    const [job] = await jobsService.getAll();
+    expect(job.cancel_reason).toBe('Cliente desistiu');
+  });
+
   it('throws when Supabase returns an error', async () => {
     setupError('database connection failed');
     await expect(jobsService.getAll()).rejects.toThrow();
@@ -197,6 +214,41 @@ describe('jobsService.updateStatus', () => {
 
     const result = await jobsService.updateStatus('job-1', 'finished');
     expect(result).toMatchObject({ status: 'finished' });
+  });
+
+  it('sends cancel_reason when cancelling with a reason', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+    const updated = { id: 'job-1', status: 'cancelled', cancel_reason: 'Cliente desistiu' };
+    const updateChain = makeChain(async () => ({ data: updated, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain).mockReturnValueOnce(updateChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    const result = await jobsService.updateStatus('job-1', 'cancelled', '  Cliente desistiu  ');
+
+    expect(updateChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'cancelled', cancel_reason: 'Cliente desistiu' }),
+    );
+    expect(result).toMatchObject({ status: 'cancelled' });
+  });
+
+  it('refuses to cancel without a reason', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+      mockFrom.mockReturnValueOnce(currentChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    await expect(jobsService.updateStatus('job-1', 'cancelled', '   ')).rejects.toThrow(
+      'Informe o motivo do cancelamento.',
+    );
+  });
+
+  it('refuses a cancel_reason longer than the 2000-character limit', async () => {
+    const currentChain = makeChain(async () => ({ data: { status: 'queue' }, error: null }));
+    mockFrom.mockReturnValueOnce(currentChain);
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+
+    await expect(jobsService.updateStatus('job-1', 'cancelled', 'x'.repeat(2001))).rejects.toThrow(
+      'O motivo do cancelamento deve ter no máximo 2000 caracteres.',
+    );
   });
 });
 

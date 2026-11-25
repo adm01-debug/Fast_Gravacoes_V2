@@ -68,7 +68,7 @@ export const jobsService = {
     return data as unknown as Job;
   },
 
-  async updateStatus(id: string, status: JobStatus): Promise<Job> {
+  async updateStatus(id: string, status: JobStatus, cancelReason?: string): Promise<Job> {
     const [{ data: { user } }, { data: current, error: fetchErr }] = await Promise.all([
       supabase.auth.getUser(),
       supabase.from('jobs').select('status, actual_start_time, actual_end_time, operator_id').eq('id', id).single(),
@@ -81,6 +81,15 @@ export const jobsService = {
       status,
       updated_at: new Date().toISOString()
     };
+
+    if (status === 'cancelled') {
+      // O trigger trg_validate_job_cancel_reason recusa cancelamento sem
+      // motivo; a tela precisa barrar antes de chegar no banco.
+      const reason = cancelReason?.trim();
+      if (!reason) throw new Error('Informe o motivo do cancelamento.');
+      if (reason.length > 2000) throw new Error('O motivo do cancelamento deve ter no máximo 2000 caracteres.');
+      updateData.cancel_reason = reason;
+    }
 
     if (status === 'production') {
       // Retomada (paused/delayed/rework → production) preserva o início

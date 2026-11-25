@@ -27,7 +27,7 @@ import {
   Camera
 } from "lucide-react";
 import { useSchedulingData } from "@/features/jobs";
-import { DbJob, useUpdateJob, useDeleteJob } from "@/features/jobs";
+import { DbJob, useUpdateJob, useDeleteJob, useUpdateJobStatus } from "@/features/jobs";
 import { JobQRCode } from "@/components/qrcode/JobQRCode";
 import { useDuplicateJob } from "@/features/jobs";
 import { useEntityAuditTrail } from "@/features/admin";
@@ -90,7 +90,10 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   const { confirm } = useConfirmation();
   const updateJobMutation = useUpdateJob();
   const deleteJobMutation = useDeleteJob();
+  const updateStatusMutation = useUpdateJobStatus();
   const [isEditing, setIsEditing] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
   const { control, handleSubmit, reset, formState: { isSubmitting, errors } } = useForm<JobEditValues>({
     resolver: zodResolver(jobEditSchema),
@@ -148,7 +151,35 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
   // InfoRow was moved to JobInfoRow.tsx
 
+  const trimmedCancelReason = cancelReason.trim();
+  const isCancelReasonTooLong = trimmedCancelReason.length > 2000;
+
+  const handleCancelJob = async () => {
+    const reason = cancelReason.trim();
+    if (!reason) {
+      toast.error('Informe o motivo do cancelamento.');
+      return;
+    }
+    if (reason.length > 2000) {
+      toast.error('O motivo do cancelamento deve ter no máximo 2000 caracteres.');
+      return;
+    }
+    try {
+      await updateStatusMutation.mutateAsync({ jobId: job.id, status: 'cancelled', cancelReason: reason });
+      toast.success('OS cancelada.');
+      setIsCancelOpen(false);
+      setCancelReason("");
+      onOpenChange(false);
+    } catch {
+      // Erro exibido pelo handler da mutação
+    }
+  };
+
   const handleAction = (action: string) => {
+    if (action === 'cancel') {
+      setIsCancelOpen(true);
+      return;
+    }
     if (onStatusChange) {
       switch (action) {
         case 'start':
@@ -169,7 +200,8 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   };
 
   return (
-    <Dialog open={open} onOpenChange={(val) => { onOpenChange(val); if (!val) setIsEditing(false); }}>
+    <>
+      <Dialog open={open} onOpenChange={(val) => { onOpenChange(val); if (!val) { setIsEditing(false); setIsCancelOpen(false); setCancelReason(""); } }}>
       <DialogContent className="max-w-2xl bg-card border-border/50 backdrop-blur-sm" aria-describedby="job-details-description">
         <DialogHeader>
           <div className="flex items-center justify-between">
@@ -238,6 +270,13 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
             {t('jobs.detailsFor', { order: job.order_number })}
           </DialogDescription>
         </DialogHeader>
+
+                {job.status === 'cancelled' && job.cancel_reason && (
+                  <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                    <p className="text-xs font-semibold uppercase text-destructive">Motivo do cancelamento</p>
+                    <p className="mt-1 text-sm text-foreground">{job.cancel_reason}</p>
+                  </div>
+                )}
 
         <Tabs defaultValue="details" className="mt-4">
           <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 h-auto">
@@ -455,6 +494,51 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
         </Tabs>
       </DialogContent>
     </Dialog>
+
+      <Dialog open={isCancelOpen} onOpenChange={(open) => {
+        setIsCancelOpen(open);
+        if (!open) setCancelReason("");
+      }}>
+        <DialogContent className="max-w-md bg-card border-border/50">
+          <DialogHeader>
+            <DialogTitle>Cancelar OS {job.order_number}</DialogTitle>
+            <DialogDescription>
+              O motivo é obrigatório e fica registrado na OS.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="cancel-reason">Motivo do cancelamento</Label>
+            <Textarea
+              id="cancel-reason"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Ex.: cliente desistiu do pedido"
+              rows={3}
+              aria-describedby="cancel-reason-counter"
+              aria-invalid={isCancelReasonTooLong}
+            />
+            <p
+              id="cancel-reason-counter"
+              className={isCancelReasonTooLong ? "text-xs text-destructive" : "text-xs text-muted-foreground"}
+            >
+              {trimmedCancelReason.length}/2000 caracteres
+            </p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => { setIsCancelOpen(false); setCancelReason(""); }}>
+              Voltar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelJob}
+              disabled={!trimmedCancelReason || isCancelReasonTooLong || updateStatusMutation.isPending}
+            >
+              {updateStatusMutation.isPending ? 'Cancelando...' : 'Confirmar cancelamento'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

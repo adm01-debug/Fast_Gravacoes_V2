@@ -53,9 +53,9 @@ export function useUpdateJobStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ jobId, status }: { jobId: string; status: JobStatus }) => {
+    mutationFn: async ({ jobId, status, cancelReason }: { jobId: string; status: JobStatus; cancelReason?: string }) => {
       try {
-        return await jobsService.updateStatus(jobId, status);
+        return await jobsService.updateStatus(jobId, status, cancelReason);
       } catch (error) {
         throw createAppError(error, JOBS_ERROR_CONTEXT.hooks.updateStatus);
       }
