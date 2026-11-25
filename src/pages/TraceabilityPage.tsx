@@ -484,9 +484,9 @@ export default function TraceabilityPage() {
                         </TableCell>
                         <TableCell className="text-right pr-6">
                            <div className="flex justify-end gap-1">
-                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedLot(lot)}><Eye className="h-4 w-4" /></Button>
-                             <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => { setSelectedLot(lot); setShowGenealogyView(true); }}><GitBranch className="h-4 w-4" /></Button>
-                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQrLot(lot)}><QrCode className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Ver detalhes do lote ${lot.lot_number}`} onClick={() => setSelectedLot(lot)}><Eye className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" aria-label={`Ver genealogia do lote ${lot.lot_number}`} onClick={() => { setSelectedLot(lot); setShowGenealogyView(true); }}><GitBranch className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Abrir QR code do lote ${lot.lot_number}`} onClick={() => setQrLot(lot)}><QrCode className="h-4 w-4" /></Button>
                            </div>
                         </TableCell>
                       </TableRow>

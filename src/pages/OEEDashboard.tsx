@@ -109,6 +109,42 @@ interface OEEPreset {
   };
 }
 
+interface PresetsSalvosProps {
+  presets: DashboardPreset[] | undefined;
+  onApply: (preset: DashboardPreset) => void;
+  onDelete: (id: string) => void;
+}
+
+/**
+ * Lista de presets dentro do popover do Radix, que so monta o conteudo depois
+ * de abrir. Como componente proprio, o `useOverflowing` mede no mount, quando a
+ * referencia existe — no dashboard o popover nasce fechado e a medicao nao
+ * aconteceria de novo.
+ */
+function PresetsSalvos({ presets, onApply, onDelete }: PresetsSalvosProps) {
+  // Lista rola dentro do popover; sem descendente focavel (lista vazia) a
+  // regiao viola `scrollable-region-focusable`.
+  const { ref, overflowing } = useOverflowing<HTMLDivElement>();
+
+  return (
+    /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */
+    <div role="region" aria-label="Presets salvos" ref={ref} tabIndex={overflowing ? 0 : undefined} className="space-y-2 max-h-40 overflow-auto">
+      {presets && presets.length === 0 ? (
+        <p className="text-[10px] text-muted-foreground text-center py-4 italic">Nenhum preset salvo</p>
+      ) : (
+        presets?.map((preset) => (
+          <div key={preset.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+            <span role="button" tabIndex={0} aria-label={`Aplicar preset ${preset.name}`} className="text-xs font-medium truncate flex-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" onClick={() => onApply(preset)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onApply(preset); } }}>{preset.name}</span>
+            <Button variant="ghost" size="icon" aria-label={`Excluir preset ${preset.name}`} className="h-6 w-6 text-destructive" onClick={() => onDelete(preset.id)}>
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
 const OEEDashboard = memo(function OEEDashboard() {
   const { t } = useTranslation();
   const {
@@ -127,9 +163,6 @@ const OEEDashboard = memo(function OEEDashboard() {
   const [simValues, setSimValues] = useState({ availability: 85, performance: 90, quality: 98 });
   const [presetName, setPresetName] = useState('');
   const { presets, savePreset, deletePreset } = useDashboardPresets('oee');
-  // Lista de presets rola dentro do popover; sem descendente focavel (lista
-  // vazia) a regiao viola `scrollable-region-focusable`.
-  const { ref: presetsRef, overflowing: presetsRolaveis } = useOverflowing<HTMLDivElement>();
   const [showConfig, setShowSimulatorLocal] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
   const [industryBenchmark, setIndustryBenchmark] = useState('world_class');
@@ -264,21 +297,7 @@ const OEEDashboard = memo(function OEEDashboard() {
                       <Save className="h-3 w-3" />
                     </Button>
                   </div>
-                  {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */}
-                  <div role="region" aria-label="Presets salvos" ref={presetsRef} tabIndex={presetsRolaveis ? 0 : undefined} className="space-y-2 max-h-40 overflow-auto">
-                    {presets && presets.length === 0 ? (
-                      <p className="text-[10px] text-muted-foreground text-center py-4 italic">Nenhum preset salvo</p>
-                    ) : (
-                      presets?.map((preset) => (
-                        <div key={preset.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
-                          <span role="button" tabIndex={0} aria-label={`Aplicar preset ${preset.name}`} className="text-xs font-medium truncate flex-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded" onClick={() => applyPreset(preset)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyPreset(preset); } }}>{preset.name}</span>
-                          <Button variant="ghost" size="icon" aria-label={`Excluir preset ${preset.name}`} className="h-6 w-6 text-destructive" onClick={() => deletePreset(preset.id)}>
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))
-                    )}
-                  </div>
+                  <PresetsSalvos presets={presets} onApply={applyPreset} onDelete={deletePreset} />
                 </div>
               </PopoverContent>
             </Popover>

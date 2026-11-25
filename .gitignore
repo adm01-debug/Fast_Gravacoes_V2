@@ -69,3 +69,4 @@ docs/contexto/regras/*
 # Relatórios gerados pelos scripts autofix/audit
 .autofix/
 .audit/
+.impeccable/
