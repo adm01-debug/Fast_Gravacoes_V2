@@ -4,6 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/lib/utils';
 import { useFuseSearch } from '@/hooks/useFuseSearch';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useOverflowing } from '@/hooks/use-overflowing';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { format, differenceInDays } from 'date-fns';
@@ -82,6 +83,10 @@ export default function TraceabilityPage() {
     const [signatureModal, setSignatureModal] = useState<{ open: boolean; status: string; validLots: ProductionLot[] }>({ open: false, status: '', validLots: [] });
 
   const parentRef = useRef<HTMLDivElement>(null);
+  // A lista rola mas nem sempre tem descendente focavel (tabela vazia durante o
+  // carregamento): sem `tabIndex` a regiao viola `scrollable-region-focusable`,
+  // e fixar `tabIndex` sempre criaria parada de Tab quando tudo cabe na tela.
+  const { overflowing: listaRolavel } = useOverflowing<HTMLDivElement>(parentRef);
 
   const [newLot, setNewLot] = useState({
     lot_number: '', product_name: '', quantity: 0, job_id: '',
@@ -437,7 +442,8 @@ export default function TraceabilityPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="relative h-[600px] overflow-auto scrollbar-thin" ref={parentRef}>
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */}
+            <div className="relative h-[600px] overflow-auto scrollbar-thin" ref={parentRef} tabIndex={listaRolavel ? 0 : undefined}>
               <Table>
                 <TableHeader className="sticky top-0 z-20 bg-card">
                   <TableRow className="bg-muted/30 border-b">
@@ -478,9 +484,9 @@ export default function TraceabilityPage() {
                         </TableCell>
                         <TableCell className="text-right pr-6">
                            <div className="flex justify-end gap-1">
-                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedLot(lot)}><Eye className="h-4 w-4" /></Button>
-                             <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => { setSelectedLot(lot); setShowGenealogyView(true); }}><GitBranch className="h-4 w-4" /></Button>
-                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQrLot(lot)}><QrCode className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Ver detalhes do lote ${lot.lot_number}`} onClick={() => setSelectedLot(lot)}><Eye className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" aria-label={`Ver genealogia do lote ${lot.lot_number}`} onClick={() => { setSelectedLot(lot); setShowGenealogyView(true); }}><GitBranch className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Abrir QR code do lote ${lot.lot_number}`} onClick={() => setQrLot(lot)}><QrCode className="h-4 w-4" /></Button>
                            </div>
                         </TableCell>
                       </TableRow>
