@@ -10,7 +10,8 @@ import {
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
   quarantineOfflineQueueStorage,
-  takeQuarantinedQueue,
+    readQuarantinedQueue,
+    dropQuarantinedQueue,
   mergeJobIntoCache,
   readAcknowledgedFromStorage,
   readQueueFromStorage,
@@ -61,6 +62,11 @@ export function useOfflineSync() {
   // duplicating replays. This ref is set synchronously the instant a sync
   // pass starts, closing that window.
   const syncInFlightRef = useRef(false);
+  // Dono das ações quando ele sai DURANTE um lote de sync. Quarentenar ali
+  // guardaria a fila anterior ao lote (com ações que o servidor acabou de
+  // aceitar) e a próxima entrada as reenviaria; então a quarentena é adiada
+  // para o fim do lote, quando o resultado já está gravado.
+  const pendingSignOutOwnerRef = useRef<{ ownerId: string | null } | null>(null);
   // Live mirror of the pending queue for the sync pass — the pass can run
   // from a stale closure (the trigger effect calls the syncRef captured in
   // a previous commit), and actions whose localStorage persist failed in
@@ -132,17 +138,29 @@ export function useOfflineSync() {
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         const currentUserId = session?.user?.id ?? null;
         if (currentUserId) {
-          const restored = takeQuarantinedQueue(currentUserId);
+          const restored = readQuarantinedQueue(currentUserId);
           if (restored) {
-                      if (restored.pending.length) {
-                        // Marca como não persistida: o efeito de persistência reconcilia
-                        // com o storage (que está vazio após a saída) e só mantém em
-                        // memória o que estiver marcado — sem isto a fila restaurada
-                        // seria apagada daqui e o sync não a veria.
-                        restored.pending.forEach((action) => unpersistedIdsRef.current.add(action.id));
-                        setPendingActions(restored.pending);
-                      }
-            if (restored.failed.length) setFailedActions(restored.failed);
+            let pendingStored = true;
+            if (restored.pending.length) {
+              // Grava a fila ativa ANTES de apagar a cópia guardada: se a aba
+              // fechar no meio da restauração, a quarentena continua sendo a
+              // última cópia. Marca como não persistida para o efeito de
+              // persistência não reconciliar a memória com o storage e apagar
+              // as ações restauradas.
+              pendingStored = safeLocalStorageSet(
+                STORAGE_KEYS.PENDING_ACTIONS,
+                JSON.stringify(restored.pending)
+              );
+              restored.pending.forEach((action) => unpersistedIdsRef.current.add(action.id));
+              setPendingActions(restored.pending);
+            }
+            if (restored.failed.length) {
+              safeLocalStorageSet(
+                STORAGE_KEYS.FAILED_ACTIONS,
+                JSON.stringify(restored.failed)
+              );
+              setFailedActions(restored.failed);
+            }
             if (restored.acknowledged.length) {
               acknowledgedIdsRef.current = new Set(restored.acknowledged);
               safeLocalStorageSet(
@@ -150,12 +168,19 @@ export function useOfflineSync() {
                 JSON.stringify(restored.acknowledged)
               );
             }
+            // Se a fila ativa não pôde ser gravada, a cópia guardada fica: é a
+            // única cópia durável da alteração até o próximo sync dar conta.
+            if (pendingStored) dropQuarantinedQueue(currentUserId);
           }
           ownerId = currentUserId;
           return;
         }
         if (event !== 'SIGNED_OUT') return;
-        quarantineOfflineQueueStorage(ownerId);
+        if (syncInFlightRef.current) {
+          pendingSignOutOwnerRef.current = { ownerId };
+        } else {
+          quarantineOfflineQueueStorage(ownerId);
+        }
         unpersistedIdsRef.current.clear();
         acknowledgedIdsRef.current.clear();
         pendingActionsRef.current = [];
@@ -487,19 +512,22 @@ export function useOfflineSync() {
         setFailedActions(prev => [...prev, ...newlyFailed]);
       }
 
-      if (successCount > 0) {
+      if (successCount > 0 && !pendingSignOutOwnerRef.current) {
         toast.success(`${successCount} ação(ões) sincronizada(s)`, {
           description: newlyFailed.length > 0 ? `${newlyFailed.length} não puderam ser aplicadas` : undefined,
         });
       }
-      if (newlyFailed.length > 0) {
+      if (newlyFailed.length > 0 && !pendingSignOutOwnerRef.current) {
         toast.error(`${newlyFailed.length} ação(ões) não puderam ser sincronizadas`, {
           description: 'Revise em Ações Pendentes — os dados não foram perdidos, mas não foram aplicados.',
         });
       }
 
-      // Refresh cache after sync
-      await cacheData();
+      // Refresh cache after sync (não depois de uma saída: o cache é do
+      // operador anterior e a quarentena o descarta logo abaixo).
+      if (!pendingSignOutOwnerRef.current) {
+        await cacheData();
+      }
 
       // If some actions are still retryable, schedule the next pass with
       // exponential backoff instead of letting the pendingActions.length
@@ -515,6 +543,21 @@ export function useOfflineSync() {
     } finally {
       syncInFlightRef.current = false;
       setIsSyncing(false);
+      const pendingSignOut = pendingSignOutOwnerRef.current;
+      if (pendingSignOut) {
+        pendingSignOutOwnerRef.current = null;
+        // A saída aconteceu no meio do lote: só agora o resultado dele está
+        // gravado (ações confirmadas já fora da fila), então é agora que a
+        // quarentena representa a verdade — e o cache que o lote reescreveu
+        // para o operador anterior precisa sair junto.
+        quarantineOfflineQueueStorage(pendingSignOut.ownerId);
+        unpersistedIdsRef.current.clear();
+        acknowledgedIdsRef.current.clear();
+        pendingActionsRef.current = [];
+        setPendingActions([]);
+        setCachedData(null);
+        setFailedActions([]);
+      }
     }
     }
   }, [cacheData]);

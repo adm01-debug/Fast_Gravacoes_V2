@@ -53,7 +53,14 @@ export interface QuarantinedQueue {
   pending: PendingAction[];
   failed: FailedAction[];
   acknowledged: string[];
+  /** Quando a cópia foi guardada. Expira para o aparelho compartilhado não
+   * manter dados de produção indefinidamente. */
+  savedAt: number;
 }
+
+/** A cópia guardada some depois disso: é uma rede de segurança de turno, não
+ * um arquivo permanente em um navegador compartilhado. */
+export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const quarantineKey = (ownerId: string) => `fastgravacoes_orphan_queue_${ownerId}`;
 
@@ -79,6 +86,7 @@ export function quarantineOfflineQueueStorage(ownerId: string | null): void {
         pending: readQueueFromStorage(),
         failed: readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS),
         acknowledged: [...readAcknowledgedFromStorage()],
+        savedAt: Date.now(),
       };
       if (queue.pending.length || queue.failed.length || queue.acknowledged.length) {
         safeLocalStorageSet(quarantineKey(ownerId), JSON.stringify(queue));
@@ -90,21 +98,36 @@ export function quarantineOfflineQueueStorage(ownerId: string | null): void {
   clearOfflineQueueStorage();
 }
 
-/** Devolve (e apaga) a fila que ficou guardada para este operador. Outro
- * operador nunca a recebe: a chave é o id de quem saiu. */
-export function takeQuarantinedQueue(ownerId: string): QuarantinedQueue | null {
+/** Lê a fila guardada deste operador sem apagá-la. Quem chama grava a fila
+ * ativa primeiro e só então chama `dropQuarantinedQueue` — apagar antes abriria
+ * uma janela em que fechar a aba perde a única cópia. Outro operador nunca a
+ * recebe: a chave é o id de quem saiu. */
+export function readQuarantinedQueue(ownerId: string): QuarantinedQueue | null {
   try {
     const raw = localStorage.getItem(quarantineKey(ownerId));
     if (!raw) return null;
-    localStorage.removeItem(quarantineKey(ownerId));
     const parsed = JSON.parse(raw) as Partial<QuarantinedQueue>;
+    if (parsed.savedAt && Date.now() - parsed.savedAt > QUARANTINE_TTL_MS) {
+      localStorage.removeItem(quarantineKey(ownerId));
+      return null;
+    }
     return {
       pending: parsed.pending ?? [],
       failed: parsed.failed ?? [],
       acknowledged: parsed.acknowledged ?? [],
+      savedAt: parsed.savedAt ?? 0,
     };
   } catch {
     return null;
+  }
+}
+
+/** Apaga a cópia guardada deste operador (depois que a fila ativa foi gravada). */
+export function dropQuarantinedQueue(ownerId: string): void {
+  try {
+    localStorage.removeItem(quarantineKey(ownerId));
+  } catch {
+    /* storage indisponível */
   }
 }
 // Base delay for the exponential backoff between sync passes when actions
