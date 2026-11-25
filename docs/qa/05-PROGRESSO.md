@@ -47,7 +47,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
 - [ ] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
-- [x] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono** · PR #304: `production_losses_job_id_fkey` e `shipments_job_id_fkey` passam de `CASCADE` para `RESTRICT`; as outras 6 FKs de `jobs` continuam em `CASCADE` porque a trilha de status é gravada automaticamente em OS `delayed` e bloquearia exclusão legítima
+- [A] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono** · PR #304: `production_losses_job_id_fkey` e `shipments_job_id_fkey` passam de `CASCADE` para `RESTRICT`; as outras 6 FKs de `jobs` continuam em `CASCADE` porque a trilha de status é gravada automaticamente em OS `delayed` e bloquearia exclusão legítima
 - [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
 - [ ] 056 — Tirar `user_roles` e a trilha de auditoria da lista de tabelas do túnel de banco — onda 1 — Crítica · **aprovação do dono**
 - [ ] 057 — Decidir se o túnel genérico de banco deve continuar existindo — onda 1 — Alta · **aprovação do dono**
@@ -374,6 +374,12 @@ Resultado: 10 arquivos, **77 testes passed**. Com `jobsService.ts` original: **2
 Caminho de leitura do motivo (revisão da #297): `jobsService.getAll` passa cada linha por `jobSchema.safeParse`, que descarta chaves não declaradas; `cancel_reason` foi declarado em `src/features/jobs/types/job.schema.ts:24` e há teste que falha sem essa linha (`src/test/jobsService.test.ts`, "preserves cancel_reason of a cancelled job for the details panel"). O modal renderiza o valor sob a guarda `job.status === 'cancelled'`.
 Limite conhecido: o percurso pela tela (abrir a OS, tentar confirmar sem motivo, ver a gravação) **não** tem teste automatizado de render — o repo tem infra de RTL/jsdom, mas nenhum teste monta `JobDetailsModal`, que depende de ~14 hooks/providers. A cobertura do bloqueio é do serviço e da constraint no banco.
 PR: esta PR · estado: aguardando merge
+
+### 039 — 2026-11-25
+Comando/consulta: banco descartável `d304` no Postgres 16, com `jobs`, `production_losses` e `shipments` no estado de produção (as duas chaves em `ON DELETE CASCADE`); aplicação das duas migrations e tentativa de `DELETE` em cada cenário.
+Resultado: chaves passam a `confdeltype = 'r'` com `convalidated = true`. `DELETE` de OS com perda → `violates foreign key constraint "production_losses_job_id_fkey"`; `DELETE` de OS com expedição → `violates foreign key constraint "shipments_job_id_fkey"`; `DELETE` de OS sem prova → passa. A chave entra `NOT VALID` e a varredura corre em `VALIDATE CONSTRAINT`, então a migração não bloqueia `INSERT/UPDATE/DELETE` durante a validação; `statement_timeout` de 300s limita o tempo total.
+Decisão registrada no cabeçalho da migration: o arquivamento (etapa 038) copia os filhos para `archived_jobs.children` e depois apaga as linhas originais, então o `RESTRICT` protege a exclusão avulsa e não o arquivamento — `production_losses.job_id` é `NOT NULL`, o que descarta `SET NULL`, e o total perdido continua em `jobs.lost_pieces`. A trilha de status segue em `CASCADE` porque recebe linha automática em OS `delayed`.
+PR: esta PR · estado: aguardando dono (DDL)
 
 ---
 
