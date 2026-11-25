@@ -67,10 +67,10 @@ function renderAndChooseTime(jobs: unknown[]) {
   fireEvent.change(document.querySelector('input[type="time"]')!, { target: { value: '09:30' } });
 }
 
-describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () => {
-  it('avisa do conflito ao agendar sobre OS concluida, como o banco recusa', () => {
+describe('AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)', () => {
+  it('nao avisa conflito para OS concluida, que o banco libera desde a etapa 053', () => {
     renderAndChooseTime([otherJob('finished')]);
-    expect(screen.getByText('1 conflito')).toBeInTheDocument();
+    expect(screen.queryByText(/conflito/)).not.toBeInTheDocument();
   });
 
   it('nao avisa conflito para OS cancelada, que o banco libera', () => {
