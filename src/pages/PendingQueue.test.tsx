@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import PendingQueue, { bulkDeleteBlocker } from './PendingQueue';
+import PendingQueue from './PendingQueue';
+import { bulkDeleteBlocker } from '@/features/jobs/lib/pending-queue';
 
 const refetchAll = vi.fn();
 

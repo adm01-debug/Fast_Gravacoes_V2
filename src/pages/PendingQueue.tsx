@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
-import { TablesUpdate } from '@/integrations/supabase/types';import { pendingStatuses, priorityOrder, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
 import { PendingJobsView } from '@/components/planning/pending-queue/PendingJobsView';
 import { SmartSuggestionsSection, type PendingQueueAISelection } from '@/components/planning/pending-queue/SmartSuggestionsSection';
 
@@ -48,29 +48,6 @@ import type { LoadBalancingSuggestion } from "@/features/analytics";
 import { useAutoBufferPromotion } from "@/features/jobs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { isAfter, subHours } from "date-fns";
-
-const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled', 'cancelled'];
-
-/**
- * Espelha o trigger trg_validate_job_delete_allowed (etapa 036): a exclusão só é
- * permitida sem produção registrada e com a OS em fila, agendada ou cancelada.
- * Devolve o motivo do impedimento, ou null quando a OS pode ser apagada.
- */
-export function bulkDeleteBlocker(
-  job: Pick<DbJob, 'produced_quantity' | 'lost_pieces' | 'status'>
-): string | null {
-  const produced = Number(job.produced_quantity ?? 0);
-  const lost = Number(job.lost_pieces ?? 0);
-  if (produced > 0 || lost > 0) {
-    return `${produced} peça(s) produzida(s) e ${lost} perdida(s) já registradas`;
-  }
-  if (!DELETE_ALLOWED_STATUSES.includes(String(job.status))) {
-    return `status "${job.status}" não permite exclusão`;
-  }
-  return null;
-}
-
-
 
 export default function PendingQueue() {
   const [searchTerm, setSearchTerm] = useState("");
