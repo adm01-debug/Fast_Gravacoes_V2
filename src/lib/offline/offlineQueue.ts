@@ -35,6 +35,153 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const MAX_RETRIES = 3;
+
+/** Apaga fila, cache e confirmações do localStorage. Chamado na saída de
+ * sessão: esses dados são do usuário anterior e o próximo operador no mesmo
+ * aparelho (quiosque de fábrica) não pode herdá-los. Best-effort — storage
+ * indisponível (modo privado) não deve derrubar o logout. */
+export function clearOfflineQueueStorage(): void {
+  try {
+    for (const key of Object.values(STORAGE_KEYS)) localStorage.removeItem(key);
+  } catch {
+    /* storage indisponível */
+  }
+}
+
+/** Fila guardada de um operador que saiu com alterações ainda não entregues. */
+export interface QuarantinedQueue {
+  pending: PendingAction[];
+  failed: FailedAction[];
+  acknowledged: string[];
+  /** Quando a cópia foi guardada. Expira para o aparelho compartilhado não
+   * manter dados de produção indefinidamente. */
+  savedAt: number;
+}
+
+/** A cópia guardada some depois disso: é uma rede de segurança de turno, não
+ * um arquivo permanente em um navegador compartilhado. */
+export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;
+
+const quarantineKey = (ownerId: string) => `fastgravacoes_orphan_queue_${ownerId}`;
+const QUARANTINE_PREFIX = 'fastgravacoes_orphan_queue_';
+
+function readJsonArray<T>(key: string): T[] {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? (JSON.parse(stored) as T[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Guarda as alterações ainda NÃO entregues sob a identidade do dono e limpa o
+ * resto (cache de leitura e confirmações). A fila não pode ser herdada pelo
+ * próximo operador do mesmo aparelho, mas também não pode ser descartada: no
+ * quiosque offline ela é a única cópia da alteração (o servidor nunca a
+ * recebeu). Sem dono conhecido não há como devolvê-la depois, então nesse caso
+ * nada é guardado — o dado do usuário anterior tem precedência. */
+export function quarantineOfflineQueueStorage(
+  ownerId: string | null,
+  outcome?: {
+    pending: PendingAction[];
+    failed: FailedAction[];
+    /** Ids que ESTE lote já resolveu (aplicados, confirmados ou movidos para a
+     * dead-letter). Cópias antigas deles no storage não devem voltar. */
+    processedIds?: Iterable<string>;
+  } | null,
+): void {
+  try {
+    if (ownerId) {
+      // A cópia guardada é a última linha de defesa: não encolhe. Duas abas
+      // recebem o mesmo SIGNED_OUT e a segunda pode ter uma memória mais velha
+      // que a cópia recém-gravada pela primeira — substituí-la perderia a ação
+      // mais recente, que nunca chegou ao servidor.
+      const existing = readQuarantinedQueue(ownerId);
+      const processed = new Set(outcome?.processedIds ?? []);
+      // O storage ativo pode conter a fila ANTERIOR ao lote (quando a gravação
+      // do saldo falhou) e ações enfileiradas DEPOIS que o saldo foi congelado:
+      // as primeiras já estão resolvidas (`processed`), as últimas são novas e
+      // precisam sobreviver à limpeza da saída.
+      const storedNow = readQueueFromStorage().filter(a => !processed.has(a.id));
+      const incoming = outcome ? [...outcome.pending, ...storedNow] : storedNow;
+      const storedFailed = readJsonArray<FailedAction>(STORAGE_KEYS.FAILED_ACTIONS);
+      const queue: QuarantinedQueue = {
+        pending: mergeById(existing?.pending ?? [], incoming),
+        failed: mergeById([...(existing?.failed ?? []), ...storedFailed], outcome?.failed ?? []),
+        acknowledged: [...new Set([...(existing?.acknowledged ?? []), ...readAcknowledgedFromStorage()])],
+        savedAt: Date.now(),
+      };
+      if (queue.pending.length || queue.failed.length || queue.acknowledged.length) {
+        safeLocalStorageSet(quarantineKey(ownerId), JSON.stringify(queue));
+      }
+    }
+  } catch {
+    /* storage indisponível */
+  }
+  clearOfflineQueueStorage();
+}
+
+function mergeById<T extends { id: string }>(base: T[], extra: T[]): T[] {
+  const byId = new Map(base.map(item => [item.id, item]));
+  extra.forEach(item => byId.set(item.id, item));
+  return [...byId.values()];
+}
+
+/** Remove cópias guardadas já vencidas de qualquer operador. Rodar só ao ler a
+ * cópia do próprio dono não basta: até ele voltar, o prazo não vale para quem
+ * tem acesso ao aparelho. Cópias sem `savedAt` (formato anterior) ficam: idade
+ * desconhecida não é motivo para descartar alteração nunca entregue. */
+export function purgeExpiredQuarantines(): void {
+  try {
+    const expired: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(QUARANTINE_PREFIX)) continue;
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) ?? '') as Partial<QuarantinedQueue>;
+        if (parsed.savedAt && Date.now() - parsed.savedAt > QUARANTINE_TTL_MS) expired.push(key);
+      } catch {
+        expired.push(key);
+      }
+    }
+    expired.forEach(key => localStorage.removeItem(key));
+  } catch {
+    /* storage indisponível */
+  }
+}
+
+/** Lê a fila guardada deste operador sem apagá-la. Quem chama grava a fila
+ * ativa primeiro e só então chama `dropQuarantinedQueue` — apagar antes abriria
+ * uma janela em que fechar a aba perde a única cópia. Outro operador nunca a
+ * recebe: a chave é o id de quem saiu. */
+export function readQuarantinedQueue(ownerId: string): QuarantinedQueue | null {
+  try {
+    const raw = localStorage.getItem(quarantineKey(ownerId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<QuarantinedQueue>;
+    if (parsed.savedAt && Date.now() - parsed.savedAt > QUARANTINE_TTL_MS) {
+      localStorage.removeItem(quarantineKey(ownerId));
+      return null;
+    }
+    return {
+      pending: parsed.pending ?? [],
+      failed: parsed.failed ?? [],
+      acknowledged: parsed.acknowledged ?? [],
+      savedAt: parsed.savedAt ?? 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Apaga a cópia guardada deste operador (depois que a fila ativa foi gravada). */
+export function dropQuarantinedQueue(ownerId: string): void {
+  try {
+    localStorage.removeItem(quarantineKey(ownerId));
+  } catch {
+    /* storage indisponível */
+  }
+}
 // Base delay for the exponential backoff between sync passes when actions
 // are re-queued (retryable failures) — without this, a partial-failure pass
 // re-triggers instantly via the pendingActions.length effect dependency,

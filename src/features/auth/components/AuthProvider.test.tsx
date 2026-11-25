@@ -31,6 +31,12 @@ vi.mock('@/hooks/useDeviceDetection', () => ({
   }),
 }));
 
+const offlineStorageMock = vi.hoisted(() => ({
+  clearAll: vi.fn(() => Promise.resolve()),
+}));
+
+vi.mock('@/lib/offlineStorage', () => ({ offlineStorage: offlineStorageMock }));
+
 let queryClient: QueryClient;
 
 describe('AuthContext', () => {
@@ -675,4 +681,41 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull();
     expect(result.current.session).toBeNull();
   });
+
+      it('limpa cache, IndexedDB e rascunhos em toda saída de sessão (etapa 232)', async () => {
+        // Saídas que chamam supabase.auth.signOut() direto (inatividade, gate de
+        // geo/IP, expiração de token) não passam pelo signOut() do contexto.
+        const mockUser = { id: 'saida-user', email: 'saida@example.com' };
+        let authCb: any;
+        (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
+          authCb = cb;
+          queueMicrotask(() => cb('INITIAL_SESSION', { user: mockUser, access_token: 'tok' }));
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        });
+        (supabase.functions.invoke as any).mockResolvedValue({
+          data: { geo_blocked: false, blocked_by_ip: false },
+          error: null,
+        });
+
+        const wrapper = ({ children }: { children: React.ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        );
+
+        const { result } = renderHook(() => useAuth(), { wrapper });
+        await waitFor(() => expect(result.current.user?.id).toBe('saida-user'));
+
+        queryClient.setQueryData(['jobs'], [{ id: 'job-do-usuario-anterior' }]);
+        localStorage.setItem('fg-new-job-draft:saida-user', '{"cliente":"x"}');
+
+        await act(async () => {
+          authCb('SIGNED_OUT', null);
+        });
+
+        // Sem essa limpeza o próximo login no mesmo navegador vê dados do anterior.
+        expect(queryClient.getQueryData(['jobs'])).toBeUndefined();
+        expect(offlineStorageMock.clearAll).toHaveBeenCalled();
+        expect(localStorage.getItem('fg-new-job-draft:saida-user')).toBeNull();
+      });
 });

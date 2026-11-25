@@ -236,13 +236,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       logger.debug('Auth state change event:', { event, hasSession: !!nextSession }, 'AuthProvider');
 
-      // Qualquer saída (logout manual, inatividade, token expirado) limpa
-      // rascunhos com dados de cliente/OS — não só o signOut do contexto.
+      // Toda saída de sessão — logout manual, inatividade, expiração do token e
+      // o gate de geo/IP, que chamam `supabase.auth.signOut()` direto — limpa
+      // cache e dados locais: sem isso o próximo login no mesmo navegador via
+      // dados do usuário anterior.
       if (event === 'SIGNED_OUT') {
         clearFormDrafts(lastUserIdRef.current ?? undefined);
         lastUserIdRef.current = null;
         admittedUsersRef.current.clear();
               pendingUsersRef.current.clear();
+        queryClient.clear();
+        // Best-effort: jobs e ações pendentes ficam no IndexedDB.
+        offlineStorage.clearAll().catch((err) => {
+          logger.warn('Failed to clear offline storage on sign out', err, 'AuthProvider');
+        });
       }
       if (nextSession?.user) lastUserIdRef.current = nextSession.user.id;
 
@@ -447,20 +454,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     authRequestSeqRef.current += 1;
+    // A limpeza do cache (React Query), do IndexedDB e dos rascunhos acontece
+    // no evento SIGNED_OUT, por onde TODAS as saídas passam — mantê-la aqui
+    // deixava as outras saídas sem limpeza.
     await AuthService.signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
     setRole(null);
-    // Wipe React Query cache so a subsequent login never sees another user's data.
-    queryClient.clear();
-    // Best-effort: clear offline IndexedDB data (user-specific jobs, pending actions, etc.)
-    offlineStorage.clearAll().catch((err) => {
-      logger.warn('Failed to clear offline storage on sign out', err, 'AuthProvider');
-    });
-    // Rascunhos de formulário (ex.: Novo Job) guardam dados de cliente/OS
-    // em localStorage por usuário — não podem ficar legíveis após logout.
-    clearFormDrafts(user?.id ?? undefined);
   };
 
   // Memoizado: evita re-render em cascata de todos os consumidores quando

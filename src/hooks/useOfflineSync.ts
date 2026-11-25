@@ -9,6 +9,10 @@ import {
   MAX_RETRIES,
   RETRY_BACKOFF_BASE_MS,
   STORAGE_KEYS,
+  quarantineOfflineQueueStorage,
+    readQuarantinedQueue,
+    dropQuarantinedQueue,
+    purgeExpiredQuarantines,
   mergeJobIntoCache,
   readAcknowledgedFromStorage,
   readQueueFromStorage,
@@ -59,6 +63,24 @@ export function useOfflineSync() {
   // duplicating replays. This ref is set synchronously the instant a sync
   // pass starts, closing that window.
   const syncInFlightRef = useRef(false);
+  // Dono das ações quando ele sai DURANTE um lote de sync. Quarentenar ali
+  // guardaria a fila anterior ao lote (com ações que o servidor acabou de
+  // aceitar) e a próxima entrada as reenviaria; então a quarentena é adiada
+  // para o fim do lote, quando o resultado já está gravado.
+  const pendingSignOutOwnerRef = useRef<{ ownerId: string | null } | null>(null);
+  // Cópia guardada que não pôde ser devolvida à fila ativa (não coube no
+  // storage). Ela só deve ser descartada quando a fila ativa for gravada com
+  // sucesso para ESSE mesmo dono; senão o próximo carregamento reenviaria o
+  // que já foi sincronizado por memória.
+  const quarantineMirrorOwnerRef = useRef<string | null>(null);
+  // Dono da sessão atual (null quando ninguém está logado). Impede que um lote
+  // de um operador descarte a cópia guardada de outro.
+  const currentOwnerIdRef = useRef<string | null>(null);
+  // Espelho de `failedActions` (a lista de rejeições já revisáveis). A saída de
+  // sessão zera o estado, então é preciso tirar a foto dele antes de limpar:
+  // as rejeições do operador que sai não podem sumir junto.
+  const failedActionsRef = useRef<FailedAction[]>([]);
+  const departingFailedRef = useRef<FailedAction[]>([]);
   // Live mirror of the pending queue for the sync pass — the pass can run
   // from a stale closure (the trigger effect calls the syncRef captured in
   // a previous commit), and actions whose localStorage persist failed in
@@ -117,11 +139,91 @@ export function useOfflineSync() {
     pendingActionsRef.current = pendingActions;
   }, [pendingActions]);
 
+    // A fila e o cache desta fila vivem no localStorage e sobrevivem ao logout.
+    // Sem tratar aqui, o próximo operador no mesmo aparelho herda ações
+    // pendentes e dados do usuário anterior (etapa 232) — limpar só o IndexedDB
+    // (offlineStorage.clearAll) não alcança estas chaves. Cada instância montada
+    // se limpa: o provider e os indicadores continuam montados após a saída.
+    // As alterações AINDA NÃO entregues não são descartadas: vão para quarentena
+    // sob o id do dono e voltam quando o mesmo operador entra de novo, porque o
+    // servidor nunca as recebeu e não existe outra cópia.
+    useEffect(() => {
+      let ownerId: string | null = null;
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const currentUserId = session?.user?.id ?? null;
+              currentOwnerIdRef.current = currentUserId;
+              // Qualquer evento de auth é oportunidade de limpar cópias vencidas de
+              // outrem: o prazo não pode depender de o dono voltar a este aparelho.
+              purgeExpiredQuarantines();
+        if (currentUserId) {
+          const restored = readQuarantinedQueue(currentUserId);
+          if (restored) {
+            let pendingStored = true;
+            if (restored.pending.length) {
+              // Grava a fila ativa ANTES de apagar a cópia guardada: se a aba
+              // fechar no meio da restauração, a quarentena continua sendo a
+              // última cópia. Marca como não persistida para o efeito de
+              // persistência não reconciliar a memória com o storage e apagar
+              // as ações restauradas.
+              pendingStored = safeLocalStorageSet(
+                STORAGE_KEYS.PENDING_ACTIONS,
+                JSON.stringify(restored.pending)
+              );
+              restored.pending.forEach((action) => unpersistedIdsRef.current.add(action.id));
+              setPendingActions(restored.pending);
+            }
+            if (restored.failed.length) {
+              safeLocalStorageSet(
+                STORAGE_KEYS.FAILED_ACTIONS,
+                JSON.stringify(restored.failed)
+              );
+              setFailedActions(restored.failed);
+            }
+            if (restored.acknowledged.length) {
+              acknowledgedIdsRef.current = new Set(restored.acknowledged);
+              safeLocalStorageSet(
+                STORAGE_KEYS.ACKNOWLEDGED_ACTIONS,
+                JSON.stringify(restored.acknowledged)
+              );
+            }
+            // Se a fila ativa não pôde ser gravada, a cópia guardada fica: é a
+            // única cópia durável da alteração até o próximo sync dar conta.
+            if (pendingStored) {
+              dropQuarantinedQueue(currentUserId);
+            } else {
+              quarantineMirrorOwnerRef.current = currentUserId;
+            }
+          }
+          ownerId = currentUserId;
+          return;
+        }
+        if (event !== 'SIGNED_OUT') return;
+                currentOwnerIdRef.current = null;
+                // Foto das rejeições do operador que sai: o estado é zerado abaixo,
+                // antes de o efeito de persistência escrever a lista vazia.
+                departingFailedRef.current = failedActionsRef.current;
+        if (syncInFlightRef.current) {
+          pendingSignOutOwnerRef.current = { ownerId };
+        } else {
+                  quarantineOfflineQueueStorage(ownerId, { pending: readQueueFromStorage(), failed: departingFailedRef.current });
+                  departingFailedRef.current = [];
+        }
+        unpersistedIdsRef.current.clear();
+        acknowledgedIdsRef.current.clear();
+        pendingActionsRef.current = [];
+        setPendingActions([]);
+        setCachedData(null);
+        setFailedActions([]);
+      });
+      return () => subscription.unsubscribe();
+    }, []);
+
   // Save failed (conflicted or retry-exhausted) actions — a dead-letter
   // store so writes that couldn't be applied are never silently discarded;
   // they stay visible for manual review/re-entry instead.
   useEffect(() => {
     safeLocalStorageSet(STORAGE_KEYS.FAILED_ACTIONS, JSON.stringify(failedActions));
+      failedActionsRef.current = failedActions;
   }, [failedActions]);
 
   // Listen for online/offline events
@@ -337,6 +439,15 @@ export function useOfflineSync() {
     syncInFlightRef.current = true;
     setIsSyncing(true);
 
+        // Resultado deste lote, para a quarentena de uma saída no meio dele: o
+        // estado do React só grava depois, então a quarentena do `finally` não
+        // pode ler fila/fracassos do storage — leria a foto anterior ao lote.
+        let batchOutcome: {
+      pending: PendingAction[];
+      failed: FailedAction[];
+      processedIds: Set<string>;
+    } | null = null;
+
     try {
       let successCount = 0;
       const remainingActions: PendingAction[] = [];
@@ -437,20 +548,31 @@ export function useOfflineSync() {
       if (newlyFailed.length > 0) {
         setFailedActions(prev => [...prev, ...newlyFailed]);
       }
+            batchOutcome = { pending: remainingMerged, failed: newlyFailed, processedIds: snapshotIds };
+            // A fila ativa está durável: a cópia guardada do mesmo dono virou
+            // redundante e, se ficar, reenviaria no próximo carregamento o que já
+            // foi sincronizado por memória.
+            if (persisted && quarantineMirrorOwnerRef.current && quarantineMirrorOwnerRef.current === currentOwnerIdRef.current) {
+              dropQuarantinedQueue(quarantineMirrorOwnerRef.current);
+              quarantineMirrorOwnerRef.current = null;
+            }
 
-      if (successCount > 0) {
+      if (successCount > 0 && !pendingSignOutOwnerRef.current) {
         toast.success(`${successCount} ação(ões) sincronizada(s)`, {
           description: newlyFailed.length > 0 ? `${newlyFailed.length} não puderam ser aplicadas` : undefined,
         });
       }
-      if (newlyFailed.length > 0) {
+      if (newlyFailed.length > 0 && !pendingSignOutOwnerRef.current) {
         toast.error(`${newlyFailed.length} ação(ões) não puderam ser sincronizadas`, {
           description: 'Revise em Ações Pendentes — os dados não foram perdidos, mas não foram aplicados.',
         });
       }
 
-      // Refresh cache after sync
-      await cacheData();
+      // Refresh cache after sync (não depois de uma saída: o cache é do
+      // operador anterior e a quarentena o descarta logo abaixo).
+      if (!pendingSignOutOwnerRef.current) {
+        await cacheData();
+      }
 
       // If some actions are still retryable, schedule the next pass with
       // exponential backoff instead of letting the pendingActions.length
@@ -466,6 +588,26 @@ export function useOfflineSync() {
     } finally {
       syncInFlightRef.current = false;
       setIsSyncing(false);
+      const pendingSignOut = pendingSignOutOwnerRef.current;
+      if (pendingSignOut) {
+        pendingSignOutOwnerRef.current = null;
+        // A saída aconteceu no meio do lote: só agora o resultado dele está
+        // gravado (ações confirmadas já fora da fila), então é agora que a
+        // quarentena representa a verdade — e o cache que o lote reescreveu
+        // para o operador anterior precisa sair junto.
+        quarantineOfflineQueueStorage(pendingSignOut.ownerId, {
+          pending: batchOutcome ? batchOutcome.pending : readQueueFromStorage(),
+          failed: [...departingFailedRef.current, ...(batchOutcome ? batchOutcome.failed : [])],
+          processedIds: batchOutcome?.processedIds,
+        });
+        departingFailedRef.current = [];
+        unpersistedIdsRef.current.clear();
+        acknowledgedIdsRef.current.clear();
+        pendingActionsRef.current = [];
+        setPendingActions([]);
+        setCachedData(null);
+        setFailedActions([]);
+      }
     }
     }
   }, [cacheData]);
