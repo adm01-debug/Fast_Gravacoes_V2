@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { AlertScheduleModal } from './AlertScheduleModal';
 
-const { updatePayload, toastError } = vi.hoisted(() => ({ updatePayload: vi.fn(), toastError: vi.fn() }));
+const { updatePayload, toastError, dbError } = vi.hoisted(() => ({ updatePayload: vi.fn(), toastError: vi.fn(), dbError: { current: null as null | { message: string } } }));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -11,7 +11,7 @@ vi.mock('@/integrations/supabase/client', () => ({
       update: (payload: unknown) => ({
         eq: () => {
           updatePayload(payload);
-          return Promise.resolve({ error: null });
+          return Promise.resolve({ error: dbError.current });
         },
       }),
     }),
@@ -52,22 +52,27 @@ const otherJob = (status: string, endTime: string | null = null) => ({
   machine_id: 'm1',
 });
 
-function renderAndChooseTime(jobs: unknown[]) {
+function renderAndChooseTime(jobs: unknown[], job: typeof selectedJob = selectedJob, time = '09:30') {
   render(
     <AlertScheduleModal
       open
       onOpenChange={() => {}}
-      selectedJob={selectedJob}
+      selectedJob={job}
       jobs={jobs as never}
       machines={[]}
       onScheduled={() => {}}
     />
   );
   fireEvent.change(document.querySelector('input[type="date"]')!, { target: { value: DATE } });
-  fireEvent.change(document.querySelector('input[type="time"]')!, { target: { value: '09:30' } });
+  fireEvent.change(document.querySelector('input[type="time"]')!, { target: { value: time } });
 }
 
 describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    dbError.current = null;
+  });
+
   it('avisa do conflito ao agendar sobre OS concluida, como o banco recusa', () => {
     renderAndChooseTime([otherJob('finished')]);
     expect(screen.getByText('1 conflito')).toBeInTheDocument();
@@ -102,4 +107,26 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
       expect.objectContaining({ start_time: '09:30', end_time: '10:30', status: 'scheduled' })
     );
   });
+
+    it('recusa agendar quando o fim passaria da meia-noite', () => {
+      renderAndChooseTime([], { ...selectedJob, estimated_duration: 700 }, '13:00');
+      fireEvent.click(screen.getByRole('button', { name: 'Agendar' }));
+
+      expect(updatePayload).not.toHaveBeenCalled();
+      expect(toastError).toHaveBeenCalledWith(expect.stringContaining('meia-noite'));
+    });
+
+    it('mostra a mensagem do banco quando o agendamento e recusado', async () => {
+      dbError.current = { message: 'Horario sobreposto na maquina' };
+      renderAndChooseTime([]);
+      fireEvent.click(screen.getByRole('button', { name: 'Agendar' }));
+
+      await waitFor(() => expect(toastError).toHaveBeenCalledWith('Horario sobreposto na maquina'));
+      dbError.current = null;
+    });
+
+    it('mostra o fim gravado da OS no aviso de conflito', () => {
+      renderAndChooseTime([otherJob('finished', '11:00')]);
+      expect(screen.getByText(/09:00 - 11:00/)).toBeInTheDocument();
+    });
 });
