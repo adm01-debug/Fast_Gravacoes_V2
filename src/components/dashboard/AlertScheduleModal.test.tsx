@@ -126,7 +126,9 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapa 052)', () =>
     });
 
     it('mostra o fim gravado da OS no aviso de conflito', () => {
-      renderAndChooseTime([otherJob('finished', '11:00')]);
-      expect(screen.getByText(/09:00 - 11:00/)).toBeInTheDocument();
+      // fim gravado (10:30) difere do estimado (09:00 + 120min = 11:00): o aviso
+      // só passa se usar o fim que está na OS.
+      renderAndChooseTime([otherJob('finished', '10:30')]);
+      expect(screen.getByText(/09:00 - 10:30/)).toBeInTheDocument();
     });
 });
