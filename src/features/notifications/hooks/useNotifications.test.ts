@@ -121,16 +121,18 @@ describe('useNotifications', () => {
 
           const { result } = renderHook(() => useNotifications(), { wrapper });
 
-          result.current.dismissNotification({ id: 'push-abc', metadata: { type: 'cron_email_sent' } });
+          result.current.dismissNotification({ id: 'push-abc', metadata: { type: 'cron_alert', jobid: 'job-1' } });
 
           await waitFor(() => expect(updateSpy).toHaveBeenCalled());
 
           const payload = updateSpy.mock.calls[0]?.[0] as unknown as { status: string; data: Record<string, unknown> };
           expect(payload.status).toBe('read');
           expect(payload.data.dismissed_at).toBeTruthy();
-          // A metadata original é preservada: é ela que a coleta de saúde usa para
-          // não reenviar o mesmo alerta no ciclo seguinte.
-          expect(payload.data.type).toBe('cron_email_sent');
+          // O item dispensado é um aviso que a Central realmente mostra
+          // (`cron_email_sent` é filtrado dela) e a coleta de saúde usa `jobid`
+          // para não reenviar o mesmo alerta: a dispensa preserva os dois campos.
+          expect(payload.data.type).toBe('cron_alert');
+          expect(payload.data.jobid).toBe('job-1');
           await waitFor(() =>
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['push-notifications-history'] })
           );
