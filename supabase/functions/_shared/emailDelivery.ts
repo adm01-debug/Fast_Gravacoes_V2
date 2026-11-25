@@ -55,3 +55,43 @@ export function decidirRegistroAlerta(emailSaiu: boolean, jaAvisadoNoApp: boolea
   if (emailSaiu) return "confirmado";
   return jaAvisadoNoApp ? "nada" : "aviso_no_app";
 }
+
+export type MarcadorRow = { data: unknown; user_id: string | null };
+
+/**
+ * `jobid` -> destinatários que já têm aquele marcador.
+ *
+ * Serve para os três marcadores lidos em `push_notifications`
+ * (`cron_email_sent`, `cron_alert` e os avisos `cron_failure`/`cron_stale`
+ * gravados por `snapshot_cron_health()`).
+ */
+export function agruparMarcadores(
+  rows: MarcadorRow[] | null | undefined,
+): Map<string, Set<string>> {
+  const map = new Map<string, Set<string>>();
+  for (const row of rows ?? []) {
+    const jobid = String((row.data as Record<string, unknown> | null)?.jobid ?? "");
+    if (!jobid) continue;
+    const quem = map.get(jobid) ?? new Set<string>();
+    if (row.user_id) quem.add(row.user_id);
+    map.set(jobid, quem);
+  }
+  return map;
+}
+
+/**
+ * O marcador só vale quando existe para TODOS os destinatários ativos.
+ *
+ * A RLS de `push_notifications` permite que cada usuário autenticado insira a
+ * própria notificação, então uma linha isolada — inclusive uma forjada — não
+ * pode servir de prova de que o aviso já foi dado ao grupo.
+ */
+export function marcadorParaTodos(
+  map: Map<string, Set<string>>,
+  jobid: string | number,
+  recipientIds: string[],
+): boolean {
+  const quem = map.get(String(jobid));
+  if (!quem || recipientIds.length === 0) return false;
+  return recipientIds.every((id) => quem.has(id));
+}

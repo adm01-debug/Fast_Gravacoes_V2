@@ -12,13 +12,23 @@
  * (`data->>'type' = 'cron_email_sent'`) e não reenvia para a mesma rotina
  * dentro da janela de `DEDUPE_HOURS`. O aviso no aplicativo (`cron_alert`)
  * tem deduplicação própria e é gravado mesmo quando o e-mail não sai.
+ * Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua.
+ *
+ * Marcador só conta quando existe para TODOS os destinatários ativos: a RLS
+ * deixa cada usuário inserir a própria notificação, então aceitar uma linha
+ * isolada permitiria a um usuário suprimir o aviso dos outros. O mesmo
+ * critério vale para os avisos `cron_failure`/`cron_stale` que
+ * `snapshot_cron_health()` já grava, para não duplicar na central o mesmo
+ * problema da mesma rotina.
  *
  * Autenticação: exclusivamente via `x-cron-secret` (fail-closed) — não é um
  * endpoint de usuário.
  */
 import {
+  agruparMarcadores,
   classifyResendHttp,
   decidirRegistroAlerta,
+  marcadorParaTodos,
   MOTIVO_SEM_CREDENCIAL,
 } from "../_shared/emailDelivery.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
@@ -29,6 +39,8 @@ import { escapeHtml } from "../_shared/htmlEscape.ts";
 
 const FAILURE_THRESHOLD = 3;
 const DEDUPE_HOURS = 6;
+/** `snapshot_cron_health()` usa 12h para rotina silenciosa; espelha a janela. */
+const STALE_DEDUPE_HOURS = 12;
 const FROM = "Fast Gravações <alertas@resend.dev>";
 
 interface HealthRow {
@@ -91,6 +103,43 @@ function buildHtml(row: HealthRow, kind: "failure" | "stale"): string {
   }
       <p style="color:#71717a;font-size:12px">Verifique o painel Administração › Monitoramento.</p>
     </div>`;
+}
+
+/**
+ * Dispara o POST no Resend e classifica o resultado.
+ *
+ * Falha de rede (fetch que lança, sem resposta HTTP) conta como "não saiu" em
+ * vez de derrubar a rodada: as rotinas seguintes ainda precisam ser avaliadas
+ * e o aviso na central tem de ser gravado.
+ */
+async function enviarAlertaEmail(
+  apiKey: string,
+  emails: string[],
+  row: HealthRow,
+  kind: "failure" | "stale",
+) {
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: FROM,
+        to: emails,
+        subject: `[Fast Gravações] ${
+          kind === "failure" ? "Rotina falhando" : "Rotina silenciosa"
+        }: ${row.jobname ?? row.jobid}`,
+        html: buildHtml(row, kind),
+      }),
+    });
+    // 2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada.
+    const corpo = await res.text().catch(() => "");
+    return classifyResendHttp(res.status, corpo);
+  } catch (e) {
+    return { ok: false, reason: `sem resposta do provedor: ${String(e)}` };
+  }
 }
 
 serve(async (req) => {
@@ -166,76 +215,72 @@ serve(async (req) => {
       if (u?.user?.email) emails.push(u.user.email);
     }
 
-    if (emails.length === 0) {
-      return json({ sent: 0, reason: "sem destinatários (opt-out ou sem e-mail)" });
+    if (recipientIds.length === 0) {
+      return json({ sent: 0, reason: "sem destinatários ativos" });
     }
 
+    // Motivo pelo qual o e-mail não pode sair nesta rodada (null = pode).
+    // Opt-out de e-mail silencia só o e-mail: o aviso na central continua.
+    const motivoSemEmail = !resendApiKey
+      ? MOTIVO_SEM_CREDENCIAL
+      : emails.length === 0
+      ? "nenhum destinatário com e-mail habilitado"
+      : null;
 
     const dedupeSince = new Date(Date.now() - DEDUPE_HOURS * 60 * 60 * 1000).toISOString();
-    const [sentMarkers, appMarkers] = await Promise.all([
+    const staleSince = new Date(Date.now() - STALE_DEDUPE_HOURS * 60 * 60 * 1000).toISOString();
+    const marcadoresPorTipo = (type: string, since: string) =>
       supabase
         .from("push_notifications")
-        .select("data")
-        .gte("created_at", dedupeSince)
-        .eq("data->>type", "cron_email_sent")
-        .limit(200),
-      supabase
-        .from("push_notifications")
-        .select("data")
-        .gte("created_at", dedupeSince)
-        .eq("data->>type", "cron_alert")
-        .limit(200),
+        .select("data, user_id")
+        .gte("created_at", since)
+        .eq("data->>type", type)
+        .limit(500);
+
+    const [enviados, avisosFuncao, avisosColeta, silenciosasColeta] = await Promise.all([
+      marcadoresPorTipo("cron_email_sent", dedupeSince),
+      marcadoresPorTipo("cron_alert", dedupeSince),
+      marcadoresPorTipo("cron_failure", dedupeSince),
+      marcadoresPorTipo("cron_stale", staleSince),
     ]);
 
-    const jobidsDe = (rows: { data: unknown }[] | null) =>
-      (rows ?? []).map((r) => String((r.data as Record<string, unknown> | null)?.jobid ?? ""));
+    const jaEnviadoPorEmail = agruparMarcadores(enviados.data);
+    const avisosDaFuncao = agruparMarcadores(avisosFuncao.data);
+    const falhasDaColeta = agruparMarcadores(avisosColeta.data);
+    const silenciosasDaColeta = agruparMarcadores(silenciosasColeta.data);
 
-    const alreadySent = new Set(jobidsDe(sentMarkers.data));
-    // O aviso no aplicativo também conta como notificado: repetir a cada rodada
-    // enquanto o e-mail estiver sem credencial viraria spam na central.
-    const avisadoNoApp = new Set([...alreadySent, ...jobidsDe(appMarkers.data)]);
+    // `snapshot_cron_health()` já avisa falha/silêncio para os mesmos
+    // destinatários: sem isso a central ganharia um segundo aviso idêntico.
+    const jaAvisadoNoApp = (jobid: string, kind: "failure" | "stale") =>
+      marcadorParaTodos(avisosDaFuncao, jobid, recipientIds) ||
+      marcadorParaTodos(kind === "failure" ? falhasDaColeta : silenciosasDaColeta, jobid, recipientIds);
 
     let sent = 0;
     const skipped: number[] = [];
     const semCredencial: number[] = [];
+    const semDestinatario: number[] = [];
     const avisosNoApp: number[] = [];
 
     for (const { row, kind } of problems) {
       const jobid = String(row.jobid);
       let emailSaiu = false;
 
-      if (alreadySent.has(jobid)) {
+      if (marcadorParaTodos(jaEnviadoPorEmail, row.jobid, recipientIds)) {
         skipped.push(row.jobid);
-      } else if (resendApiKey) {
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${resendApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: FROM,
-            to: emails,
-            subject: `[Fast Gravações] ${
-              kind === "failure" ? "Rotina falhando" : "Rotina silenciosa"
-            }: ${row.jobname ?? row.jobid}`,
-            html: buildHtml(row, kind),
-          }),
-        });
-        // 2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada.
-        const corpo = await res.text().catch(() => "");
-        const entrega = classifyResendHttp(res.status, corpo);
+      } else if (motivoSemEmail === null && resendApiKey) {
+        const entrega = await enviarAlertaEmail(resendApiKey, emails, row, kind);
         if (!entrega.ok) console.error("[cron-alert-email] Resend error", entrega.reason);
         emailSaiu = entrega.ok;
       } else {
-        // Sem credencial o e-mail não sai. Registrar aqui marcava envio de um
-        // e-mail que nunca existiu; o aviso no aplicativo (abaixo) continua
-        // sendo gravado para o alerta não se perder.
-        console.error(`[cron-alert-email] ${MOTIVO_SEM_CREDENCIAL} — alerta por e-mail não enviado`);
-        semCredencial.push(row.jobid);
+        // Falta de credencial ou de e-mail não pode apagar o alerta: ele segue
+        // para a central, sem afirmar que um e-mail saiu.
+        const motivo = motivoSemEmail ?? MOTIVO_SEM_CREDENCIAL;
+        console.error(`[cron-alert-email] ${motivo} — alerta por e-mail não enviado`);
+        if (motivo === MOTIVO_SEM_CREDENCIAL) semCredencial.push(row.jobid);
+        else semDestinatario.push(row.jobid);
       }
 
-      const registro = decidirRegistroAlerta(emailSaiu, avisadoNoApp.has(jobid));
+      const registro = decidirRegistroAlerta(emailSaiu, jaAvisadoNoApp(jobid, kind));
       if (registro === "confirmado") sent += 1;
       if (registro === "nada") continue;
       if (registro === "aviso_no_app") avisosNoApp.push(row.jobid);
@@ -247,7 +292,7 @@ serve(async (req) => {
           body: registro === "confirmado"
             ? `E-mail de alerta enviado sobre ${row.jobname ?? `job ${row.jobid}`}.`
             : `Alerta no aplicativo sobre ${row.jobname ?? `job ${row.jobid}`}: e-mail não enviado (${
-              resendApiKey ? "provedor recusou o envio" : MOTIVO_SEM_CREDENCIAL
+              motivoSemEmail ?? "provedor recusou o envio"
             }).`,
           status: "sent",
           data: {
@@ -262,7 +307,14 @@ serve(async (req) => {
       );
     }
 
-    return json({ problems: problems.length, sent, skipped, semCredencial, avisosNoApp });
+    return json({
+      problems: problems.length,
+      sent,
+      skipped,
+      semCredencial,
+      semDestinatario,
+      avisosNoApp,
+    });
   } catch (e) {
     console.error("[cron-alert-email] unexpected", e);
     return json({ error: "Internal error" }, 500);

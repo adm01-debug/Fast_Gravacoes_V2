@@ -1,8 +1,10 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
+  agruparMarcadores,
   classifyResendHttp,
   classifyResendSend,
   decidirRegistroAlerta,
+  marcadorParaTodos,
   MOTIVO_SEM_CREDENCIAL,
 } from "./emailDelivery.ts";
 
@@ -53,4 +55,40 @@ Deno.test("rodada seguinte sem avanço não repete o aviso no app", () => {
 Deno.test("envio aceito grava o marcador mesmo com o app já avisado", () => {
   assertEquals(decidirRegistroAlerta(true, true), "confirmado");
   assertEquals(decidirRegistroAlerta(true, false), "confirmado");
+});
+
+Deno.test("agruparMarcadores: ignora linhas sem jobid e aceita user_id nulo", () => {
+  const map = agruparMarcadores([
+    { data: { jobid: 7 }, user_id: "a" },
+    { data: { jobid: 7 }, user_id: "b" },
+    { data: { jobid: null }, user_id: "a" },
+    { data: null, user_id: "a" },
+    { data: { jobid: 9 }, user_id: null },
+  ]);
+  assertEquals(map.get("7"), new Set(["a", "b"]));
+  assertEquals(map.get("9"), new Set());
+  assertEquals(map.size, 2);
+});
+
+Deno.test("marcadorParaTodos: linha isolada não vale como aviso ao grupo", () => {
+  // Um usuário autenticado insere a própria notificação com o mesmo `jobid`;
+  // com isso ele não pode calar o aviso dos demais.
+  const forjado = agruparMarcadores([{ data: { jobid: 11 }, user_id: "ana" }]);
+  assertEquals(marcadorParaTodos(forjado, 11, ["ana", "bruno"]), false);
+  assertEquals(marcadorParaTodos(forjado, 11, ["ana"]), true);
+});
+
+Deno.test("marcadorParaTodos: vale só com todos os destinatários ativos", () => {
+  const completo = agruparMarcadores([
+    { data: { jobid: 11 }, user_id: "ana" },
+    { data: { jobid: 11 }, user_id: "bruno" },
+  ]);
+  assertEquals(marcadorParaTodos(completo, 11, ["ana", "bruno"]), true);
+  assertEquals(marcadorParaTodos(completo, 11, ["ana", "bruno", "carla"]), false);
+});
+
+Deno.test("marcadorParaTodos: sem destinatários ou sem marcador não avisa", () => {
+  const map = agruparMarcadores([{ data: { jobid: 3 }, user_id: "ana" }]);
+  assertEquals(marcadorParaTodos(map, 3, []), false);
+  assertEquals(marcadorParaTodos(map, 4, ["ana"]), false);
 });
