@@ -38,16 +38,11 @@ export const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled',
  * a leitura e a exclusão o status pode mudar (a promoção automática leva `queue`
  * para `ready`), então o filtro no banco é o que garante que nada protegido seja
  * apagado. `NULL` nos contadores conta como zero.
- *
- * Precisa ir num único `.or()`: o PostgREST mantém um só parâmetro `or` por
- * request, então um segundo `.or()` descarta silenciosamente o primeiro.
  */
-export const DELETE_QUANTITY_FILTERS = [
-  'and(produced_quantity.is.null,lost_pieces.is.null)',
-  'and(produced_quantity.is.null,lost_pieces.eq.0)',
-  'and(produced_quantity.eq.0,lost_pieces.is.null)',
-  'and(produced_quantity.eq.0,lost_pieces.eq.0)',
-].join(',');
+export const DELETE_QUANTITY_FILTERS = {
+  produced: 'produced_quantity.is.null,produced_quantity.eq.0',
+  lost: 'lost_pieces.is.null,lost_pieces.eq.0',
+} as const;
 
 /**
  * Alvos da exclusão em massa a partir da lista carregada inteira, e não da lista

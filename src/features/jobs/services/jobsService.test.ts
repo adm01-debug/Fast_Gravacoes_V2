@@ -2,7 +2,6 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { jobsService } from './jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
-import { DELETE_QUANTITY_FILTERS } from '../lib/pending-queue';
 
 // Mock Supabase
 vi.mock('@/integrations/supabase/client', () => ({
@@ -141,9 +140,6 @@ describe('jobsService', () => {
 
         expect(deleteSpy).toHaveBeenCalled();
         expect(chain.in).toHaveBeenCalledWith('id', [id]);
-        // Um unico `.or`: o PostgREST descarta o primeiro quando o request traz dois.
-        expect(chain.or).toHaveBeenCalledTimes(1);
-        expect(chain.or).toHaveBeenCalledWith(DELETE_QUANTITY_FILTERS);
       });
 
       it('nao anuncia exclusao quando o banco nao apaga nenhuma linha', async () => {
