@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import PendingQueue from './PendingQueue';
-import { bulkDeleteBlocker, selectBulkDeleteTargets } from '@/features/jobs/lib/pending-queue';
+import { bulkDeleteBlocker, selectBulkDeleteTargets, selectHiddenDeleteTargets } from '@/features/jobs/lib/pending-queue';
 
 const refetchAll = vi.fn();
 
@@ -82,17 +82,26 @@ vi.mock('@/integrations/supabase/client', () => ({
         eq: (_column: string, id: string) => ({
           maybeSingle: () => ({ data: jobRows[id] ? { id, ...jobRows[id] } : null, error: null }),
         }),
+        in: (_column: string, ids: string[]) => ({
+          data: ids.filter(id => jobRows[id]).map(id => ({ id, ...jobRows[id] })),
+          error: null,
+        }),
       }),
-      delete: () => ({
-        in: (_column: string, ids: string[]) => {
-          deleteIn(ids);
-          return Promise.resolve({ error: null });
-        },
-        eq: (_column: string, id: string) => {
-          deleteIn([id]);
-          return Promise.resolve({ error: null });
-        },
-      }),
+      delete: () => {
+        let pending: string[] = [];
+        const chain = {
+          in: (column: string, ids: string[]) => {
+            if (column === 'id') {
+              pending = ids;
+              deleteIn(ids);
+            }
+            return chain;
+          },
+          or: () => chain,
+          select: () => ({ data: pending.map(id => ({ id })), error: null }),
+        };
+        return chain;
+      },
     }),
   },
 }));
@@ -174,6 +183,12 @@ describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
 
             it('ignora IDs que já não existem na lista carregada', () => {
               expect(selectBulkDeleteTargets([{ id: 'a' }], new Set(['a', 'fantasma']))).toEqual([{ id: 'a' }]);
+            });
+
+            it('sinaliza os alvos que o filtro atual esconde', () => {
+              const targets = [{ id: 'a' }, { id: 'b' }];
+              expect(selectHiddenDeleteTargets(targets, [{ id: 'a' }])).toEqual([{ id: 'b' }]);
+              expect(selectHiddenDeleteTargets(targets, targets)).toEqual([]);
             });
           });
 

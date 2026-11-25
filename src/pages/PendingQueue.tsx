@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
-import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, selectBulkDeleteTargets, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, selectBulkDeleteTargets, selectHiddenDeleteTargets, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
 import { jobsService } from '@/features/jobs/services/jobsService';
 import { PendingJobsView } from '@/components/planning/pending-queue/PendingJobsView';
 import { SmartSuggestionsSection, type PendingQueueAISelection } from '@/components/planning/pending-queue/SmartSuggestionsSection';
@@ -244,20 +244,36 @@ export default function PendingQueue() {
     () => bulkDeleteTargets.filter(job => bulkDeleteBlocker(job) === null),
     [bulkDeleteTargets]
   );
+  // Alvos que a busca/filtro atual esconde: continuam selecionados e serão
+  // apagados, então precisam aparecer no aviso antes da confirmação.
+  const bulkDeleteHidden = useMemo(
+    () => selectHiddenDeleteTargets(bulkDeleteAllowed, filteredJobs),
+    [bulkDeleteAllowed, filteredJobs]
+  );
 
   const handleBulkDelete = async (ids: string[]) => {
       setIsBulkDeleteOpen(false);
       if (ids.length === 0) return;
 
     try {
-        await Promise.all(ids.map(id => jobsService.delete(id)));
-        toast.success(`${ids.length} OS excluídas`, {
-          description: bulkDeleteBlocked.length > 0
-            ? `${bulkDeleteBlocked.length} OS foram mantidas: produção registrada ou status que não permite exclusão.`
-            : undefined,
-        });
-        setSelectedJobs(new Set());
-        queryClient.invalidateQueries({ queryKey: ['jobs'] });
+        const { deleted, refused } = await jobsService.deleteMany(ids);
+
+        if (deleted.length > 0) {
+          toast.success(`${deleted.length} OS excluídas`, {
+            description: refused.length > 0
+              ? `${refused.length} OS foram mantidas: ${refused.map(item => item.reason).join('; ')}.`
+              : undefined,
+          });
+          queryClient.invalidateQueries({ queryKey: ['jobs'] });
+        } else if (refused.length > 0) {
+          toast.error('Nenhuma OS foi excluída', {
+            description: refused.map(item => item.reason).join('; '),
+          });
+        }
+
+        // Só o que sobrou continua selecionado: o que saiu do banco não pode
+        // permanecer marcado na tela.
+        setSelectedJobs(new Set(refused.map(item => item.id)));
       } catch (error) {
         toast.error('Erro ao excluir as OS selecionadas');
       }
@@ -367,6 +383,18 @@ export default function PendingQueue() {
                                   <li key={job.id}>
                                     {job.order_number} — {reason}
                                   </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {bulkDeleteHidden.length > 0 && (
+                            <div className="rounded-md border border-border bg-muted/50 p-2">
+                              <p className="font-medium">
+                                {bulkDeleteHidden.length} OS selecionada(s) estão fora do filtro atual e também serão excluídas:
+                              </p>
+                              <ul className="list-disc pl-4 max-h-40 overflow-y-auto">
+                                {bulkDeleteHidden.map(job => (
+                                  <li key={job.id}>{job.order_number}</li>
                                 ))}
                               </ul>
                             </div>

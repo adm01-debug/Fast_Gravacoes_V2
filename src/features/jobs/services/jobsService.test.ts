@@ -104,11 +104,9 @@ describe('jobsService', () => {
         const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
         fromMock.mockReturnValueOnce({
           select: () => ({
-            eq: () => ({
-              maybeSingle: () => ({
-                data: { id: '33333333-3333-4333-8333-333333333333', status: 'queue', produced_quantity: 12, lost_pieces: 0 },
-                error: null,
-              }),
+            in: () => ({
+              data: [{ id: '33333333-3333-4333-8333-333333333333', status: 'queue', produced_quantity: 12, lost_pieces: 0 }],
+              error: null,
             }),
           }),
         });
@@ -118,21 +116,60 @@ describe('jobsService', () => {
 
       it('exclui a OS sem producao e com status permitido', async () => {
         const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-        const deleteSpy = vi.fn(() => ({ eq: () => ({ error: null }) }));
+        const id = '44444444-4444-4444-8444-444444444444';
+        const chain = {
+          in: vi.fn(),
+          or: vi.fn(),
+          select: vi.fn(() => ({ data: [{ id }], error: null })),
+        };
+        chain.in.mockReturnValue(chain);
+        chain.or.mockReturnValue(chain);
+        const deleteSpy = vi.fn(() => chain);
+
         fromMock.mockReturnValueOnce({
           select: () => ({
-            eq: () => ({
-              maybeSingle: () => ({
-                data: { id: '44444444-4444-4444-8444-444444444444', status: 'queue', produced_quantity: 0, lost_pieces: 0 },
-                error: null,
-              }),
+            in: () => ({
+              data: [{ id, status: 'queue', produced_quantity: 0, lost_pieces: 0 }],
+              error: null,
             }),
           }),
         });
         fromMock.mockReturnValueOnce({ delete: deleteSpy });
 
-        await jobsService.delete('44444444-4444-4444-8444-444444444444');
+        await jobsService.delete(id);
 
         expect(deleteSpy).toHaveBeenCalled();
+        expect(chain.in).toHaveBeenCalledWith('id', [id]);
+      });
+
+      it('nao anuncia exclusao quando o banco nao apaga nenhuma linha', async () => {
+        // Operador sem permissao de exclusao: a policy filtra as linhas, o DELETE
+        // termina sem erro e antes disso a tela contava como exclusao concluida.
+        const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
+        const id = '55555555-5555-4555-8555-555555555555';
+        const chain = {
+          in: vi.fn(),
+          or: vi.fn(),
+          select: vi.fn(() => ({ data: [], error: null })),
+        };
+        chain.in.mockReturnValue(chain);
+        chain.or.mockReturnValue(chain);
+
+        fromMock.mockReturnValueOnce({
+          select: () => ({
+            in: () => ({
+              data: [{ id, status: 'queue', produced_quantity: 0, lost_pieces: 0 }],
+              error: null,
+            }),
+          }),
+        });
+        fromMock.mockReturnValueOnce({ delete: () => chain });
+
+        const result = await jobsService.deleteMany([id]);
+
+        expect(result.deleted).toEqual([]);
+        expect(result.refused).toEqual([
+          { id, reason: 'a OS mudou de situação ou o usuário não tem permissão de exclusão' },
+        ]);
       });
 });

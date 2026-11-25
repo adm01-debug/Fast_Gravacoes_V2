@@ -22,7 +22,7 @@ function makeChain(terminal: () => Promise<unknown>) {
   const chain: Record<string, unknown> = {};
   const builderMethods = [
     'select', 'insert', 'update', 'delete',
-    'or', 'gte', 'lte', 'limit', 'eq', 'order', 'single', 'maybeSingle',
+    'or', 'gte', 'lte', 'limit', 'eq', 'in', 'order', 'single', 'maybeSingle',
   ];
   builderMethods.forEach(m => { chain[m] = vi.fn(() => chain); });
   // Thenable: awaiting any part of the chain executes terminal()
@@ -257,14 +257,37 @@ describe('jobsService.updateStatus', () => {
 describe('jobsService.delete', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
+  // A exclusao virou uma operacao unica: le os alvos e apaga em um DELETE so,
+  // que devolve as linhas efetivamente removidas.
   it('resolves without error on success', async () => {
-    const chain = makeChain(async () => ({ data: null, error: null }));
+    const responses = [
+      { data: [{ id: 'job-1', status: 'queue', produced_quantity: 0, lost_pieces: 0 }], error: null },
+      { data: [{ id: 'job-1' }], error: null },
+    ];
+    let call = 0;
+    const chain = makeChain(async () => responses[call++] ?? { data: null, error: null });
     mockFrom.mockReturnValue(chain);
     await expect(jobsService.delete('job-1')).resolves.toBeUndefined();
   });
 
+  it('throws when the row was not deleted', async () => {
+    const responses = [
+      { data: [{ id: 'job-1', status: 'queue', produced_quantity: 0, lost_pieces: 0 }], error: null },
+      { data: [], error: null },
+    ];
+    let call = 0;
+    const chain = makeChain(async () => responses[call++] ?? { data: null, error: null });
+    mockFrom.mockReturnValue(chain);
+    await expect(jobsService.delete('job-1')).rejects.toThrow(/nao pode ser excluida/);
+  });
+
   it('throws on delete error', async () => {
-    const chain = makeChain(async () => ({ data: null, error: new Error('delete failed') }));
+    const responses = [
+      { data: [{ id: 'job-1', status: 'queue', produced_quantity: 0, lost_pieces: 0 }], error: null },
+      { data: null, error: new Error('delete failed') },
+    ];
+    let call = 0;
+    const chain = makeChain(async () => responses[call++] ?? { data: null, error: null });
     mockFrom.mockReturnValue(chain);
     await expect(jobsService.delete('job-1')).rejects.toThrow();
   });

@@ -31,7 +31,18 @@ export function isJobStuck(job: Job): boolean {
   return isAfter(stuckThreshold, new Date(job.updated_at));
 }
 
-const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled', 'cancelled'];
+export const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled', 'cancelled'];
+
+/**
+ * Critérios de exclusão reaplicados no próprio `DELETE`, e não só na tela: entre
+ * a leitura e a exclusão o status pode mudar (a promoção automática leva `queue`
+ * para `ready`), então o filtro no banco é o que garante que nada protegido seja
+ * apagado. `NULL` nos contadores conta como zero.
+ */
+export const DELETE_QUANTITY_FILTERS = {
+  produced: 'produced_quantity.is.null,produced_quantity.eq.0',
+  lost: 'lost_pieces.is.null,lost_pieces.eq.0',
+} as const;
 
 /**
  * Alvos da exclusão em massa a partir da lista carregada inteira, e não da lista
@@ -43,6 +54,19 @@ export function selectBulkDeleteTargets<T extends { id: string }>(
   selectedIds: ReadonlySet<string>
 ): T[] {
   return jobs.filter(job => selectedIds.has(job.id));
+}
+
+/**
+ * Alvos do lote que a busca/filtro atual esconde. Eles continuam selecionados e
+ * serão apagados, então precisam aparecer no aviso antes da confirmação — sem
+ * isso o operador apaga OS que não está vendo na tela.
+ */
+export function selectHiddenDeleteTargets<T extends { id: string }>(
+  targets: T[],
+  visibleJobs: ReadonlyArray<{ id: string }>
+): T[] {
+  const visible = new Set(visibleJobs.map(job => job.id));
+  return targets.filter(job => !visible.has(job.id));
 }
 
 /**
