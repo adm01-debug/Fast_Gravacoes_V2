@@ -162,6 +162,7 @@ describe('JobDetailsModal - cancelamento de OS', () => {
     fireEvent.change(textarea, { target: { value: pasted } });
 
     expect(textarea.value).toBe(pasted);
+    expect(textarea.hasAttribute('maxlength')).toBe(false);
     expect(screen.getByText('2001/2000 caracteres')).toBeTruthy();
     const confirm = screen.getByText('Confirmar cancelamento').closest('button') as HTMLButtonElement;
     expect(confirm).toBeDisabled();
