@@ -67,4 +67,18 @@ describe('ordem de desenho dos cartoes na linha do tempo (etapa 053)', () => {
     expect(orders[0]).toContain('OS-CONCLUIDA');
     expect(orders[1]).toContain('OS-ATIVA');
   });
+
+  it('nao eleva no hover a OS concluida, para ela nao roubar o clique da OS ativa', () => {
+    renderTimeline([job('ativo', 'OS-ATIVA', 'scheduled'), job('concluida', 'OS-CONCLUIDA', 'finished')]);
+
+    const concluida = document.querySelector('[aria-label*="OS-CONCLUIDA"]');
+    const ativa = document.querySelector('[aria-label*="OS-ATIVA"]');
+
+    expect(concluida).toBeTruthy();
+    expect(ativa).toBeTruthy();
+    // `hover:z-10` tira a OS concluida de baixo do bloco ativo assim que o
+    // ponteiro passa pela parte exposta dela, e o clique seguinte cai nela.
+    expect((concluida as HTMLElement).className).not.toContain('hover:z-10');
+    expect((ativa as HTMLElement).className).toContain('hover:z-10');
+  });
 });

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { DbJob } from '@/features/jobs';
 import { JobStatus } from '@/types/scheduling';
 import { statusColors, statusLabels } from './types';
+import { MACHINE_BLOCKING_STATUSES } from '@/constants';
 import { useHapticFeedback } from '@/hooks/use-haptic-feedback';
 import { useDraggable } from '@dnd-kit/core';
 
@@ -23,6 +24,12 @@ export function JobBlock({ job, position, hasConflict, ghost, onClick, draggable
     id: job.id,
     disabled: !draggable,
   });
+
+  // OS que nao ocupam mais a maquina (concluida/cancelada) sao desenhadas por
+  // baixo. Se elas subissem no hover, roubariam o clique da OS que ainda produz
+  // no mesmo horario (etapa 053). Elevar so no foco mantem o anel visivel para
+  // quem navega pelo teclado.
+  const occupiesMachine = MACHINE_BLOCKING_STATUSES.includes(job.status);
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -48,7 +55,8 @@ export function JobBlock({ job, position, hasConflict, ghost, onClick, draggable
           className={cn(
             'absolute top-2 rounded-md border cursor-grab active:cursor-grabbing',
             'flex items-center justify-center overflow-hidden',
-            'transition-all duration-200 hover:scale-[1.02] hover:z-10',
+            'transition-all duration-200 hover:scale-[1.02] focus:z-10',
+            occupiesMachine && 'hover:z-10',
             'shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40',
             statusColors[job.status as JobStatus],
             ghost ? 'bottom-5 opacity-70 border-dashed' : 'bottom-2',
