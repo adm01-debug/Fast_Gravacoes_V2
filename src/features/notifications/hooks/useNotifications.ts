@@ -49,17 +49,19 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     };
   }, []);
 
-  const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ['notifications', { limit, unreadOnly }],
+  // Escopo de conta: sem o id na chave, o cache do historico sobrevive a um
+    // logout/login no mesmo navegador e o proximo usuario veria os avisos do anterior.
+    const { data: notifications = [], isLoading } = useQuery({
+      queryKey: ['notifications', { limit, unreadOnly, userId }],
+      enabled: !!userId,
     queryFn: async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return EMPTY_NOTIFICATIONS;
+          if (!userId) return EMPTY_NOTIFICATIONS;
 
         const { data } = await supabase
           .from('push_notifications')
           .select('*')
-          .eq('user_id', user.id)
+            .eq('user_id', userId)
           // `cron_email_sent` é marcador de dedupe do servidor (impede o reenvio
           // do e-mail), não aviso ao usuário; linhas sem `data` são avisos normais,
           // por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita
@@ -97,6 +99,9 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
             group_count: 1,
             is_grouped: false,
             created_at: n.created_at,
+                        // `data` cru: a Central usa `type`/`jobid` para dispensar alerta de
+                        // rotina preservando o registro de dedupe da coleta de saude.
+                        metadata,
           };
         });
       } catch {
@@ -106,21 +111,24 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
   });
 
   const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['notifications', 'unread-count'],
+      queryKey: ['notifications', 'unread-count', userId],
+      enabled: !!userId,
     queryFn: async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return 0;
+          if (!userId) return 0;
 
         const { count } = await supabase
           .from('push_notifications')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
+            .eq('user_id', userId)
                   .neq('status', 'read')
                   // `cron_email_sent` só existe para impedir reenvio do e-mail; não é
                   // aviso ao usuário e não aparece na Central. Linhas sem `data` são
                   // avisos normais, por isso o `is.null` no `or`.
-                  .or('data->>type.is.null,data->>type.neq.cron_email_sent');
+                  .or('data->>type.is.null,data->>type.neq.cron_email_sent')
+                  // Aviso dispensado continua no banco (registro de dedupe da
+                  // coleta) mas nao pode inflar o sino, que o lista como lido.
+                  .is('data->>dismissed_at', null);
 
         return count || 0;
       } catch (error) {

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -58,14 +58,18 @@ const personalNotification = {
   created_at: new Date().toISOString(),
 };
 
+// Lista mutavel: cada caso define o que o hook entrega sem reescrever o mock.
+let listaPessoal: Array<Record<string, unknown>> = [{ ...personalNotification }];
+
 vi.mock('@/features/notifications/hooks/useNotifications', () => ({
   useNotifications: () => ({
-    notifications: [personalNotification],
+    notifications: listaPessoal,
     unreadCount: 1,
     isLoading: false,
     markAsRead: vi.fn(),
     markAllAsRead: vi.fn(),
     deleteNotification: vi.fn(),
+    dismissNotification: vi.fn(),
   }),
 }));
 vi.mock('@/features/notifications/hooks/useDailySummaryNotifications', () => ({
@@ -112,6 +116,10 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('NotificationsPage - avisos pessoais na Central', () => {
+  beforeEach(() => {
+    listaPessoal = [{ ...personalNotification }];
+  });
+
   it('lista o aviso pessoal que gerou o contador do sino', async () => {
     render(<NotificationsPage />, { wrapper });
 
@@ -126,4 +134,33 @@ describe('NotificationsPage - avisos pessoais na Central', () => {
     expect(screen.getByText('Avisos')).toBeTruthy();
     expect(screen.getByText('Aviso')).toBeTruthy();
   });
+
+      it('rotula alerta de rotina como Sistema, nao como Aviso', async () => {
+        listaPessoal = [{
+          ...personalNotification,
+          id: 'push-cron',
+          title: 'Rotina de saude parada',
+          metadata: { type: 'cron_stale', jobid: 'saude-1' },
+        }];
+
+        render(<NotificationsPage />, { wrapper });
+
+        expect(await screen.findByText('Rotina de saude parada')).toBeTruthy();
+        expect(screen.getAllByText('Sistema').length).toBeGreaterThanOrEqual(2);
+        expect(screen.queryByText('Aviso')).toBeNull();
+      });
+
+      it('nao lista aviso dispensado nem o marcador interno de e-mail', async () => {
+        listaPessoal = [
+          { ...personalNotification, id: 'push-d1', title: 'Alerta dispensado', metadata: { type: 'cron_stale', dismissed_at: '2026-01-01T00:00:00.000Z' } },
+          { ...personalNotification, id: 'push-m1', title: 'Marcador interno do e-mail', metadata: { type: 'cron_email_sent' } },
+          { ...personalNotification, id: 'push-ok', title: 'Alerta que deve aparecer', metadata: { type: 'cron_stale', jobid: 'saude-2' } },
+        ];
+
+        render(<NotificationsPage />, { wrapper });
+
+        expect(await screen.findByText('Alerta que deve aparecer')).toBeTruthy();
+        expect(screen.queryByText('Alerta dispensado')).toBeNull();
+        expect(screen.queryByText('Marcador interno do e-mail')).toBeNull();
+      });
 });

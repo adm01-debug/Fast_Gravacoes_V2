@@ -59,7 +59,7 @@ describe('useNotifications', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.notifications).toHaveLength(1));
 
     expect(result.current.notifications).toHaveLength(1);
     expect(result.current.notifications[0].title).toBe('Test Notif');
@@ -69,7 +69,8 @@ describe('useNotifications', () => {
 
   it('should handle unread count', async () => {
     const { supabase } = await import('@/integrations/supabase/client');
-      const orSpy = vi.fn().mockResolvedValue({ count: 5, error: null });
+      const orSpy = vi.fn().mockReturnThis();
+            const isSpy = vi.fn().mockResolvedValue({ count: 5, error: null });
     // @ts-expect-error mock override em cliente Supabase tipado
     supabase.from.mockImplementation((table: string) => {
       if (table === 'push_notifications') {
@@ -78,7 +79,7 @@ describe('useNotifications', () => {
           eq: vi.fn().mockReturnThis(),
             neq: vi.fn().mockReturnThis(),
             or: orSpy,
-            is: vi.fn().mockReturnThis(),
+                  is: isSpy,
           order: vi.fn().mockReturnThis(),
           limit: vi.fn().mockResolvedValue({ data: [], error: null }),
         };
@@ -97,6 +98,8 @@ describe('useNotifications', () => {
       const filtro = String(orSpy.mock.calls[0]?.[0] ?? '');
       expect(filtro).toContain('data->>type.is.null');
       expect(filtro).toContain('data->>type.neq.cron_email_sent');
+            // Aviso dispensado fica no banco (dedupe) mas nao pode inflar o sino.
+            expect(isSpy.mock.calls[0]?.[0]).toBe('data->>dismissed_at');
   });
 
         it('deve dispensar alerta de rotina sem apagar a linha do dedupe', async () => {
