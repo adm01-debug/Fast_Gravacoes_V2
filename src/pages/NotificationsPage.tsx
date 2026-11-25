@@ -69,6 +69,19 @@ const NotificationsPage = () => {
   const { playSound, isEnabled: isSoundEnabled } = useNotificationSounds();
   const { markAllAsRead } = useNotifications();
 
+  // Escopo de conta: o cache do histórico de avisos pessoais não pode
+  // sobreviver a um logout/login no mesmo navegador — sem o id na chave o
+  // próximo usuário veria os avisos privados do anterior.
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getUser().then(({ data }) => { if (mounted) setUserId(data.user?.id ?? null); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_evt, session) => {
+      if (mounted) setUserId(session?.user?.id ?? null);
+    });
+    return () => { mounted = false; subscription.unsubscribe(); };
+  }, []);
+
   const handleNewNotification = useCallback((type: 'maintenance' | 'prediction' | 'summary') => {
     setNewNotificationsCount(prev => prev + 1);
     if (isSoundEnabled()) playSound('alert');
@@ -109,11 +122,15 @@ const NotificationsPage = () => {
     // esta tabela, então ela precisa estar listada aqui — sem isso o badge subia
     // e a Central não mostrava nada.
     const { data: pushes, isLoading: isLoadingPushes, refetch: refetchPushes } = useQuery({
-      queryKey: ['push-notifications-history', dateRange],
+      queryKey: ['push-notifications-history', userId, dateRange],
+            enabled: !!userId,
       queryFn: async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return [];
-        const { data, error } = await supabase.from('push_notifications').select('*').eq('user_id', user.id).gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(100);
+              // O mesmo filtro do contador de não lidas, aplicado ANTES do limite:
+              // filtrar depois fazia os marcadores de dedupe do e-mail ocuparem
+              // vagas das 100 linhas e esconder avisos reais do período.
+              const { data, error } = await supabase.from('push_notifications').select('*').eq('user_id', user.id).gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).or('data->>type.is.null,data->>type.neq.cron_email_sent').order('created_at', { ascending: false }).limit(100);
         if (error) throw error;
         return data as PushNotificationRecord[];
       },
@@ -127,6 +144,9 @@ const NotificationsPage = () => {
         (pushes || []).forEach(n => {
           const meta = n.data || {};
           if (String(meta.type ?? '') === MARCADOR_INTERNO) return;
+          // Aviso dispensado pelo usuário: a linha fica no banco (dedupe da
+          // coleta) mas não volta para a lista.
+          if (meta.dismissed_at) return;
           const sev = meta.severity === 'critical' ? 'critical' : meta.severity === 'warning' ? 'warning' : meta.severity === 'success' ? 'success' : 'info';
           items.push({ id: `push-${n.id}`, type: 'alert', title: n.title, message: n.body, severity: sev, timestamp: n.created_at, isRead: n.status === 'read', metadata: meta });
         });
