@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "035151111f900d91454a08cc1543c422790417ae",
+  "commit": "6e755f1d45e89820eccca37865592060bb1f1086",
   "branch": "main",
-  "data_commit": "2026-11-25T12:38:02-03:00",
+  "data_commit": "2026-11-25T12:39:03-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "6e755f1",
+    "data": "2026-11-25",
+    "assunto": "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)"
+   },
+   {
+    "sha": "e5435a5",
+    "data": "2026-11-25",
+    "assunto": "feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)"
+   },
    {
     "sha": "0351511",
     "data": "2026-11-25",
@@ -121,20 +131,10 @@
     "sha": "5bc2d12",
     "data": "2026-11-24",
     "assunto": "chore: lista public.techniques no db-admin inspect (#284)"
-   },
-   {
-    "sha": "e16478a",
-    "data": "2026-11-24",
-    "assunto": "feat: cadastra Embossing, Corte, Decalque e Hot Stamping no dicionario de tecnicas (#283)"
-   },
-   {
-    "sha": "fb794d1",
-    "data": "2026-11-24",
-    "assunto": "fix: recriar public.erp_api_keys (tabela ausente em producao) (#277)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 260,
+  "arquivos_mudados_7d": 263,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -142,7 +142,7 @@
    },
    {
     "pasta": "src/features/jobs",
-    "mudancas": 32
+    "mudancas": 35
    },
    {
     "pasta": "src/features/maintenance",
@@ -185,15 +185,15 @@
     "mudancas": 14
    },
    {
+    "pasta": "src/components/jobs",
+    "mudancas": 14
+   },
+   {
     "pasta": "src/components/ui",
     "mudancas": 13
    },
    {
     "pasta": "deno.lock",
-    "mudancas": 12
-   },
-   {
-    "pasta": "src/components/jobs",
     "mudancas": 12
    }
   ],
@@ -223,16 +223,16 @@
     "mudancas": 10
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 10
+   },
+   {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
     "arquivo": "scripts/audit-gate.mjs",
     "mudancas": 9
-   },
-   {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 8
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 155
+    "commits": 157
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1615,
+  "arquivos_total": 1617,
   "arquivos_codigo": 1145,
-  "linhas_codigo": 193672,
+  "linhas_codigo": 193920,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,8 +339,8 @@
   "hooks": 197,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 261,
-  "cron_jobs": 4,
+  "migrations": 263,
+  "cron_jobs": 5,
   "testes": 146,
   "workflows": 12,
   "scripts": 41,
@@ -481,7 +481,7 @@
   },
   "src/components": {
    "arquivos": 423,
-   "linhas": 59692
+   "linhas": 59776
   },
   "src/constants": {
    "arquivos": 2,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 336,
-   "linhas": 47912
+   "linhas": 48028
   },
   "src/hooks": {
    "arquivos": 63,
@@ -505,7 +505,7 @@
   },
   "src/integrations": {
    "arquivos": 3,
-   "linhas": 6477
+   "linhas": 6501
   },
   "src/lib": {
    "arquivos": 53,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 54,
-   "linhas": 11357
+   "linhas": 11381
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
@@ -567,7 +567,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 6361
+   "linhas": 6385
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -614,12 +614,12 @@
    "linhas": 634
   },
   {
-   "arquivo": "scripts/ci/github-settings-guard.mjs",
-   "linhas": 623
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
+   "linhas": 632
   },
   {
-   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
-   "linhas": 596
+   "arquivo": "scripts/ci/github-settings-guard.mjs",
+   "linhas": 623
   },
   {
    "arquivo": "supabase/functions/check-login-lockout/index.ts",

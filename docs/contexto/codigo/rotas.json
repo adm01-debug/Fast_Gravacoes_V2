@@ -168,7 +168,9 @@
     "techniques",
     "telemetry_traces"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "calculate-rankings"
@@ -437,7 +439,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -596,7 +600,9 @@
     "techniques",
     "user_notification_settings"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -746,7 +752,9 @@
     "techniques",
     "telemetry_traces"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -791,6 +799,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -891,6 +900,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -1008,6 +1018,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -1161,7 +1172,9 @@
     "technical_messages",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "technical-assistant"
@@ -1324,6 +1337,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -1591,6 +1605,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record"
    ],
    "edges": [
@@ -1638,6 +1653,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -1741,6 +1757,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -1862,6 +1879,7 @@
    ],
    "rpcs": [
     "apply_job_sequence",
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -2018,7 +2036,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -2060,6 +2080,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -2160,6 +2181,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -2273,6 +2295,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -2427,7 +2450,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -2589,7 +2614,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -2789,6 +2816,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record"
    ],
    "edges": [
@@ -2961,7 +2989,9 @@
     "technical_sheets",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -2996,6 +3026,7 @@
    "redireciona": null,
    "hooks": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBottleneckPrediction",
     "useBreadcrumbContext",
@@ -3078,6 +3109,7 @@
    ],
    "hooks_locais": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBottleneckPrediction",
     "useBreadcrumbContext",
@@ -3162,7 +3194,8 @@
     "user_roles"
    ],
    "rpcs": [
-    "apply_job_sequence"
+    "apply_job_sequence",
+    "archive_jobs"
    ],
    "edges": [
     "bitrix24-sync",
@@ -3324,7 +3357,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -3487,7 +3522,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -3656,7 +3693,9 @@
     "reward_redemptions",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "calculate-rankings"
@@ -3896,7 +3935,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -4056,7 +4097,9 @@
     "role_permissions",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "calculate-inventory-intelligence"
@@ -4102,6 +4145,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -4214,6 +4258,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -4342,6 +4387,7 @@
    ],
    "rpcs": [
     "apply_job_sequence",
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -4363,7 +4409,9 @@
      "profiles",
      "techniques"
     ],
-    "rpcs": [],
+    "rpcs": [
+     "archive_jobs"
+    ],
     "edges": [
      "bitrix24-sync"
     ]
@@ -4433,7 +4481,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -4613,7 +4663,9 @@
     "technical_sheets",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "calculate-inventory-intelligence"
@@ -4802,7 +4854,9 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -4843,6 +4897,7 @@
    "redireciona": null,
    "hooks": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBreadcrumbContext",
     "useBreadcrumbLabel",
@@ -4909,6 +4964,7 @@
    ],
    "hooks_locais": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBreadcrumbContext",
     "useBreadcrumbLabel",
@@ -4972,6 +5028,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "update_shipment_status"
    ],
    "edges": [
@@ -5179,6 +5236,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record",
     "verify_audit_chain"
    ],
@@ -5341,7 +5399,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -5491,7 +5551,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -5635,7 +5697,9 @@
     "techniques",
     "user_mfa_settings"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -5796,7 +5860,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "ml-predictions"
@@ -5974,7 +6040,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -6135,7 +6203,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "daily-maintenance-summary"
@@ -6316,6 +6386,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "check_and_notify_kpi_alert",
     "increment_job_lost_pieces"
    ],
@@ -6364,6 +6435,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -6460,6 +6532,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -6571,6 +6644,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -6724,7 +6798,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -6890,7 +6966,10 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs",
+    "get_finished_jobs_for_evolution"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -6905,14 +6984,15 @@
    "arquivos_puxados": 108,
    "diretos": {
     "tabelas": [
-     "jobs",
      "operator_goals",
      "operator_machines",
      "profiles",
      "qr_scan_history",
      "user_roles"
     ],
-    "rpcs": [],
+    "rpcs": [
+     "get_finished_jobs_for_evolution"
+    ],
     "edges": []
    }
   },
@@ -7080,7 +7160,10 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs",
+    "get_finished_jobs_for_evolution"
+   ],
    "edges": [
     "bitrix24-sync",
     "create-operator",
@@ -7298,6 +7381,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "archive_jobs",
     "assign_packaging_task",
     "get_packaging_leaderboard",
     "record_packaging_defect"
@@ -7406,6 +7490,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -7507,6 +7592,7 @@
     "useABCData",
     "useABCMutations",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -7624,6 +7710,7 @@
    ],
    "rpcs": [
     "apply_job_sequence",
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "edges": [
@@ -7647,7 +7734,8 @@
      "techniques"
     ],
     "rpcs": [
-     "apply_job_sequence"
+     "apply_job_sequence",
+     "archive_jobs"
     ],
     "edges": [
      "auto-promote-jobs",
@@ -7784,7 +7872,9 @@
     "report_templates",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -7974,7 +8064,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -8192,7 +8284,9 @@
     "techniques",
     "user_devices"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "send-push-notification"
@@ -8243,6 +8337,7 @@
    "hooks": [
     "useAlertCount",
     "useAlertThresholds",
+    "useArchiveJob",
     "useAuth",
     "useAutoTheme",
     "useBitrix24Sync",
@@ -8316,6 +8411,7 @@
    ],
    "hooks_locais": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useAutoTheme",
     "useBitrix24Sync",
@@ -8388,7 +8484,9 @@
     "user_mfa_settings",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "approve-password-reset",
     "bitrix24-sync",
@@ -8574,7 +8672,9 @@
     "shift_pending_tasks",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -8723,7 +8823,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync",
     "webhook-handler"
@@ -8887,7 +8989,9 @@
     "spc_measurements",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -9037,7 +9141,9 @@
     "qr_scan_history",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],
@@ -9245,6 +9351,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record"
    ],
    "edges": [
@@ -9291,6 +9398,7 @@
    "redireciona": null,
    "hooks": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBreadcrumbContext",
     "useBreadcrumbLabel",
@@ -9373,6 +9481,7 @@
    ],
    "hooks_locais": [
     "useAlertCount",
+    "useArchiveJob",
     "useAuth",
     "useBreadcrumbContext",
     "useBreadcrumbLabel",
@@ -9453,7 +9562,9 @@
     "security_events",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "edges": [
     "bitrix24-sync"
    ],

@@ -6,12 +6,12 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 261,
+ "migrations": 263,
  "seeds": [
   "supabase/seed.sql"
  ],
  "avisos": [
-  "28 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "30 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -42,6 +42,7 @@
   "apply_job_sequence",
   "approve_maintenance_record",
   "archive_finished_jobs",
+  "archive_jobs",
   "assign_packaging_task",
   "audit_job_changes",
   "audit_job_status_change",
@@ -66,6 +67,7 @@
   "cron_expected_interval_minutes",
   "enforce_packaging_checklist_before_ship",
   "get_cron_health",
+  "get_finished_jobs_for_evolution",
   "get_packaging_leaderboard",
   "get_packaging_manifest",
   "get_public_tracking",
@@ -114,6 +116,7 @@
   "update_updated_at_column",
   "validate_inventory_stock",
   "validate_job_cancel_reason",
+  "validate_job_delete_allowed",
   "validate_job_rework_depth",
   "validate_packaging_loss_reason",
   "validate_stock_before_movement",
@@ -301,6 +304,13 @@
    "evento": "update",
    "tabela": "jobs",
    "funcao": "on_job_finished_create_packaging_task"
+  },
+  {
+   "nome": "trg_validate_job_delete_allowed",
+   "quando": "before",
+   "evento": "delete",
+   "tabela": "jobs",
+   "funcao": "validate_job_delete_allowed"
   },
   {
    "nome": "trg_validate_job_rework_depth",
@@ -738,6 +748,11 @@
   }
  ],
  "cron_jobs": [
+  {
+   "nome": "archive-finished-jobs-daily",
+   "agenda": "7 4 * * *",
+   "migration": "20261128130000_f038_arquivar_os_concluida.sql"
+  },
   {
    "nome": "auto-promote-jobs-fallback",
    "agenda": "*/5 * * * *",
@@ -1255,6 +1270,13 @@
   },
   "archived_jobs": {
    "colunas": {
+    "CASE": {
+     "tipo": "when",
+     "nn": true,
+     "pk": false,
+     "default": "IS",
+     "ref": null
+    },
     "archived_at": {
      "tipo": "timestamptz",
      "nn": true,
@@ -1286,12 +1308,14 @@
     "actual_end_time": "string | null",
     "actual_start_time": "string | null",
     "archived_at": "string",
+    "cancel_reason": "string | null",
     "children": "Json",
     "client": "string",
     "created_at": "string",
     "delay_reason": "string | null",
     "end_time": "string | null",
     "estimated_duration": "number",
+    "external_ref": "string | null",
     "gravure_color": "string | null",
     "id": "string",
     "loss_category": "string | null",
@@ -1318,15 +1342,19 @@
     "updated_at": "string"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "CASE"
+    ],
     "so_no_types": [
      "actual_end_time",
      "actual_start_time",
+     "cancel_reason",
      "client",
      "created_at",
      "delay_reason",
      "end_time",
      "estimated_duration",
+     "external_ref",
      "gravure_color",
      "id",
      "loss_category",
@@ -1354,10 +1382,12 @@
     ]
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "erp-api"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "audit_log": {
    "colunas": {
@@ -5531,7 +5561,7 @@
      "rework_reason"
     ]
    },
-   "usada_no_front": 28,
+   "usada_no_front": 27,
    "usada_em_edges": [
     "auto-promote-jobs",
     "bitrix24-sync",
@@ -5548,6 +5578,7 @@
     "tr_audit_job_status",
     "trg_job_cancelled_hold_packaging",
     "trg_on_job_finished_create_packaging_task",
+    "trg_validate_job_delete_allowed",
     "trg_validate_job_rework_depth",
     "trigger_check_job_overlap",
     "trigger_log_job_status_change",
@@ -17885,6 +17916,11 @@
    "usada_em": 1
   },
   {
+   "nome": "archive_jobs",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "assign_packaging_task",
    "definida": true,
    "usada_em": 1
@@ -17906,6 +17942,11 @@
   },
   {
    "nome": "count_running_machines",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "get_finished_jobs_for_evolution",
    "definida": true,
    "usada_em": 1
   },

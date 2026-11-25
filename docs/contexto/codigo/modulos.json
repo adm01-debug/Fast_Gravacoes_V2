@@ -157,6 +157,7 @@
    "rotas_http": [],
    "componentes": 6,
    "hooks_locais": [
+    "useArchiveJob",
     "useBufferStatus",
     "useDeleteJob",
     "useJobs",
@@ -177,7 +178,9 @@
     "jobs",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -378,6 +381,7 @@
    "rotas_http": [],
    "componentes": 16,
    "hooks_locais": [
+    "useArchiveJob",
     "useBufferStatus",
     "useDailyDragDrop",
     "useDeleteJob",
@@ -410,7 +414,9 @@
     "machines",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -521,6 +527,7 @@
     "useABCCosts",
     "useABCData",
     "useABCMutations",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -673,6 +680,7 @@
    "rpcs": [
     "apply_job_sequence",
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record",
     "verify_audit_chain"
    ],
@@ -784,7 +792,9 @@
     "profiles",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -883,6 +893,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record"
    ],
    "buckets": [],
@@ -1201,7 +1212,7 @@
    "modulo": "components/jobs",
    "arquivos": 8,
    "testes": 1,
-   "linhas": 1583,
+   "linhas": 1619,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1211,6 +1222,7 @@
     "useABCCosts",
     "useABCData",
     "useABCMutations",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -1286,6 +1298,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "buckets": [],
@@ -1315,6 +1328,7 @@
     "contexts",
     "features/admin",
     "features/analytics",
+    "features/auth",
     "features/inventory",
     "features/jobs",
     "hooks",
@@ -1341,6 +1355,7 @@
    "rotas_http": [],
    "componentes": 6,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useBottleneckPrediction",
     "useBufferStatus",
@@ -1382,7 +1397,8 @@
     "techniques"
    ],
    "rpcs": [
-    "apply_job_sequence"
+    "apply_job_sequence",
+    "archive_jobs"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -1609,7 +1625,9 @@
     "techniques",
     "user_favorites"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [
     "user-favorites-${user.id}"
@@ -1722,6 +1740,7 @@
    "rotas_http": [],
    "componentes": 2,
    "hooks_locais": [
+    "useArchiveJob",
     "useBufferStatus",
     "useDeleteJob",
     "useJobs",
@@ -1745,6 +1764,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "update_shipment_status"
    ],
    "buckets": [],
@@ -1838,6 +1858,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "complete_maintenance_record",
     "verify_audit_chain"
    ],
@@ -2047,7 +2068,9 @@
     "push_notifications",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -2224,7 +2247,9 @@
     "jobs",
     "pre_production_checklists"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -2317,7 +2342,10 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs",
+    "get_finished_jobs_for_evolution"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -2370,6 +2398,7 @@
    "rotas_http": [],
    "componentes": 7,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useBufferStatus",
     "useBusinessConfig",
@@ -2408,7 +2437,8 @@
     "techniques"
    ],
    "rpcs": [
-    "apply_job_sequence"
+    "apply_job_sequence",
+    "archive_jobs"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -2611,6 +2641,7 @@
     "useABCCosts",
     "useABCData",
     "useABCMutations",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -2694,6 +2725,7 @@
     "techniques"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "buckets": [],
@@ -2737,6 +2769,7 @@
    "rotas_http": [],
    "componentes": 12,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useAutoTheme",
     "useBottleneckPrediction",
@@ -2777,7 +2810,9 @@
     "user_mfa_settings",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -2882,7 +2917,9 @@
     "shift_pending_tasks",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -3039,6 +3076,7 @@
    "rotas_http": [],
    "componentes": 13,
    "hooks_locais": [
+    "useArchiveJob",
     "useBufferStatus",
     "useDeleteJob",
     "useJobs",
@@ -3071,7 +3109,9 @@
     "security_events",
     "techniques"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -3464,6 +3504,7 @@
     "useABCMutations",
     "useActivityLog",
     "useAddCountryRule",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -3606,6 +3647,7 @@
     "user_notification_settings"
    ],
    "rpcs": [
+    "archive_jobs",
     "verify_audit_chain"
    ],
    "buckets": [],
@@ -3702,6 +3744,7 @@
     "useABCCosts",
     "useABCData",
     "useABCMutations",
+    "useArchiveJob",
     "useAuth",
     "useBIExport",
     "useBottleneckPrediction",
@@ -3818,6 +3861,7 @@
    ],
    "rpcs": [
     "approve_maintenance_record",
+    "archive_jobs",
     "check_and_notify_kpi_alert",
     "complete_maintenance_record",
     "increment_job_lost_pieces"
@@ -3970,6 +4014,7 @@
     "components/dashboard",
     "components/digital-twin",
     "components/documents",
+    "components/jobs",
     "components/layout",
     "components/navigation",
     "components/onboarding",
@@ -4117,12 +4162,13 @@
    "modulo": "features/jobs",
    "arquivos": 26,
    "testes": 9,
-   "linhas": 2856,
+   "linhas": 2923,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 0,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useAutoBufferPromotion",
     "useBufferStatus",
@@ -4160,6 +4206,7 @@
     "useDailyDragDrop",
     "useDuplicateJob",
     "useJobInventoryCheck",
+    "useArchiveJob",
     "useBufferStatus",
     "useDeleteJob",
     "useJobs",
@@ -4201,7 +4248,8 @@
     "techniques"
    ],
    "rpcs": [
-    "apply_job_sequence"
+    "apply_job_sequence",
+    "archive_jobs"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -4227,7 +4275,8 @@
      "techniques"
     ],
     "rpcs": [
-     "apply_job_sequence"
+     "apply_job_sequence",
+     "archive_jobs"
     ]
    },
    "importado_por_outros_modulos": [
@@ -4436,6 +4485,7 @@
    "rotas_http": [],
    "componentes": 7,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useBottleneckPrediction",
     "useBufferStatus",
@@ -4522,6 +4572,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "archive_jobs",
     "check_and_notify_kpi_alert"
    ],
    "buckets": [],
@@ -4657,6 +4708,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "archive_jobs",
     "assign_packaging_task",
     "get_packaging_leaderboard",
     "record_packaging_defect"
@@ -4721,7 +4773,7 @@
    "modulo": "features/production",
    "arquivos": 27,
    "testes": 4,
-   "linhas": 3196,
+   "linhas": 3210,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4806,7 +4858,9 @@
     "user_roles"
    ],
    "rpcs": [
+    "archive_jobs",
     "check_and_notify_kpi_alert",
+    "get_finished_jobs_for_evolution",
     "increment_job_lost_pieces"
    ],
    "buckets": [],
@@ -4844,6 +4898,7 @@
     ],
     "rpcs": [
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces"
     ]
    },
@@ -5074,7 +5129,9 @@
     "user_devices",
     "user_favorites"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [
     "user-favorites-${user.id}"
@@ -5520,7 +5577,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 6438,
+   "linhas": 6462,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5638,7 +5695,9 @@
     "techniques",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "archive_jobs"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -6006,6 +6065,7 @@
     "useActivityLog",
     "useAddCountryRule",
     "useAlertCount",
+    "useArchiveJob",
     "useAuditChainVerification",
     "useAuditTrail",
     "useAuth",
@@ -6335,9 +6395,11 @@
    "rpcs": [
     "apply_job_sequence",
     "approve_maintenance_record",
+    "archive_jobs",
     "assign_packaging_task",
     "check_and_notify_kpi_alert",
     "complete_maintenance_record",
+    "get_finished_jobs_for_evolution",
     "get_packaging_leaderboard",
     "get_public_tracking",
     "increment_job_lost_pieces",
@@ -6492,6 +6554,7 @@
    "rotas_http": [],
    "componentes": 2,
    "hooks_locais": [
+    "useArchiveJob",
     "useAuth",
     "useBottleneckPrediction",
     "useBreadcrumbContext",
@@ -6582,6 +6645,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "archive_jobs",
     "check_and_notify_kpi_alert"
    ],
    "buckets": [],

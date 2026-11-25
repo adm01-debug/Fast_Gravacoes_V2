@@ -2506,9 +2506,11 @@
     "JobDetailsModal"
    ],
    "export_default": null,
-   "linhas": 596,
+   "linhas": 632,
    "dominio": "components/jobs",
    "hooks_locais": [
+    "useArchiveJob",
+    "useAuth",
     "useConfirmation",
     "useDataExport",
     "useDeleteJob",

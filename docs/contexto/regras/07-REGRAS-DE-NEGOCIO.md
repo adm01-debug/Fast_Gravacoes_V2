@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `035151111f` · branch `main` · 2026-11-25 15:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6e755f1d45` · branch `main` · 2026-11-25 15:41 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T15:37:59Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1865,7 +1865,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `fail` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>`supabase/functions/health-monitor/index.ts` |
 | `status` | `failed` | compara, escreve | `src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`supabase/functions/tpm-notifications/index.ts` |
 | `status` | `failure` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
-| `status` | `finished` | compara, escreve, filtra | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/jobs/JobTraceabilityTab.tsx`<br>`src/components/kanban/DraggableJobCard.tsx`<br>… +41 |
+| `status` | `finished` | compara, escreve, filtra | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/jobs/JobTraceabilityTab.tsx`<br>… +41 |
 | `status` | `fulfilled` | compara | `src/features/auth/components/AuthProvider.tsx`<br>`src/hooks/abc/useABCMutations.ts`<br>`supabase/functions/send-email-report/index.ts` |
 | `status` | `good` | escreve | `src/components/operator/ProductionTimer.tsx` |
 | `status` | `idle` | compara, escreve | `src/components/dashboard/LiveMachineStatusPanel.tsx`<br>`src/features/production/hooks/useMachineStatusHub.ts` |
@@ -2908,6 +2908,7 @@ _nenhum item encontrado_
 | `(started_at < now() - interval '2 hours' AND completed_at IS NULL)` | `supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql` |
 | `(updated_at < now() - interval '30 minutes')` | `supabase/migrations/20260802113515_15352d5c-bbea-4170-9300-d918db96318b.sql` |
 | `AND updated_at < now() - interval '30 minutes';` | `supabase/migrations/20261108000001_business_rules_ddl.sql` |
+| `$cron$SELECT public.archive_finished_jobs(now() - interval '180 days')$cron$` | `supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql` |
 
 ### H.3 Limites de paginação
 
@@ -3218,6 +3219,7 @@ _nenhum item encontrado_
 | Transição inválida:  | `src/features/jobs/services/jobStateMachine.ts` |
 | Esta OS nao pode ser excluida: ${refusal.reason}. | `src/features/jobs/services/jobsService.ts` |
 | Informe o motivo do cancelamento. | `src/features/jobs/services/jobsService.ts` |
+| Nenhuma OS foi arquivada: só OS com status  | `src/features/jobs/services/jobsService.ts` |
 | O motivo do cancelamento deve ter no máximo 2000 caracteres. | `src/features/jobs/services/jobsService.ts` |
 | Erro ao alterar status | `src/features/maintenance/components/ChecklistManager.tsx` |
 | Erro ao salvar checklist | `src/features/maintenance/components/ChecklistManager.tsx` |
@@ -3269,8 +3271,7 @@ _nenhum item encontrado_
 | Erro ao marcar notificações como lidas | `src/features/notifications/hooks/useNotifications.ts` |
 | Not authenticated | `src/features/notifications/hooks/useNotifications.ts` |
 | Sem permissão ou registro inexistente | `src/features/notifications/hooks/useNotifications.ts` |
-| Notificações bloqueadas | `src/features/notifications/hooks/usePushNotifications.ts` |
-| … +254 linhas — lista completa em `context.json` | |
+| … +255 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3338,7 +3339,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1441 testes em 127 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1450 testes em 127 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3381,6 +3382,8 @@ _nenhum item encontrado_
 | `src/lib/oeeExport.test.ts` | 13 | oeeExport · pdf · renders the header row via doc.autoTable with a grid theme · writes an unsanitized (raw) machineName into the PDF body, unlike the CSV path … |
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
+| `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 12 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
+| `src/features/jobs/services/jobsService.test.ts` | 12 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
 | `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapa 052) · avisa do conflito ao agendar sobre OS concluida, como o banco recusa · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
@@ -3399,12 +3402,10 @@ _nenhum item encontrado_
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
-| `src/features/jobs/services/jobsService.test.ts` | 8 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
-| `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 7 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/hooks/useOfflineSync.test.ts` | 7 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · drains a queue hydrated from localStorage on cold mount while online … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
@@ -3613,14 +3614,17 @@ _nenhum item encontrado_
 | bucket de check-login-lockout é exatamente quem a allowlist deve | `src/features/auth/services/authService.ts` |
 | sessão já emitida não deve ser revogada só porque a cota acabou. | `src/features/auth/services/authService.ts` |
 | Validação de segurança: estoque insuficiente | `src/features/inventory/hooks/useInventory.ts` |
+| Recusa de negocio ja' carrega o motivo exato da RPC: embrulhar em | `src/features/jobs/hooks/useJobs.ts` |
 | Runtime validation | `src/features/jobs/hooks/usePaginatedJobs.ts` |
 | Per-job try/catch: one failed update must not abort the loop for | `src/features/jobs/hooks/usePriorityEscalation.ts` |
 | Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra | `src/features/jobs/hooks/useSchedulingConflicts.ts` |
 | Data validation helpers | `src/features/jobs/hooks/useSmartSequencing.ts` |
 | RPC transacional: atualiza apenas os jobs do lote e valida o | `src/features/jobs/hooks/useSmartSequencingWithActions.ts` |
+| * Recusa de negocio do arquivamento (OS com embalagem ou remessa em andamento). | `src/features/jobs/services/jobsService.ts` |
 | * IDs preservados, com o motivo em linguagem de negócio. */ | `src/features/jobs/services/jobsService.ts` |
 | Runtime validation with Schema fallback | `src/features/jobs/services/jobsService.ts` |
 | coordenador/manager não pode roubar a produção do operador | `src/features/jobs/services/jobsService.ts` |
+| Recusa de negocio vem do banco com o motivo exato (FG002 embalagem, | `src/features/jobs/services/jobsService.ts` |
 | Throw instead of swallowing: a connectivity/RLS failure must not be | `src/features/jobs/services/techniquesService.ts` |
 | so "foto obrigatória ausente" (the same rule approveBatch enforces | `src/features/maintenance/components/BatchApprovalPreviewModal.tsx` |
 | Validation Feedback */} | `src/features/maintenance/components/ExecutionRecordView.tsx` |

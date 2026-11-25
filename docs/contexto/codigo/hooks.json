@@ -1929,13 +1929,14 @@
   {
    "arquivo": "src/features/jobs/hooks/useJobs.ts",
    "hooks_exportados": [
+    "useArchiveJob",
     "useBufferStatus",
     "useDeleteJob",
     "useJobs",
     "useUpdateJob",
     "useUpdateJobStatus"
    ],
-   "linhas": 168,
+   "linhas": 200,
    "dominio": "features/jobs",
    "tabelas": [],
    "rpcs": [],
@@ -3301,15 +3302,16 @@
    "hooks_exportados": [
     "useOperatorEvolution"
    ],
-   "linhas": 242,
+   "linhas": 256,
    "dominio": "features/production",
    "tabelas": [
-    "jobs",
     "operator_machines",
     "profiles",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_finished_jobs_for_evolution"
+   ],
    "edges": [],
    "hooks_internos": [
     "useAuth",

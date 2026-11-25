@@ -1080,6 +1080,7 @@
    "src/features/admin/components/audit/AuditEntryCard.tsx",
    "src/features/admin/components/audit/HistoryPeriodFilter.tsx",
    "src/features/admin/index.ts",
+   "src/features/auth/index.ts",
    "src/features/jobs/index.ts",
    "src/lib/utils.ts"
   ],

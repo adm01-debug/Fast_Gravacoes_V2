@@ -309,11 +309,11 @@
   {
    "arquivo": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
    "tipo": "unit",
-   "linhas": 195,
+   "linhas": 243,
    "testa": [
     "src/components/jobs/JobDetailsModal.tsx"
    ],
-   "casos": 6,
+   "casos": 10,
    "suporte": false
   },
   {
@@ -628,12 +628,12 @@
   {
    "arquivo": "src/features/jobs/services/jobsService.test.ts",
    "tipo": "unit",
-   "linhas": 176,
+   "linhas": 211,
    "testa": [
     "src/features/jobs/services/jobsService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 7,
+   "casos": 11,
    "suporte": false
   },
   {

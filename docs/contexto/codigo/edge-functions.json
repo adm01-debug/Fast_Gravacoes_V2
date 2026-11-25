@@ -505,7 +505,7 @@
    "nome": "erp-api",
    "entrada": "supabase/functions/erp-api/index.ts",
    "arquivos": 1,
-   "linhas": 355,
+   "linhas": 379,
    "verify_jwt": true,
    "metodos": [
     "GET",
@@ -513,6 +513,7 @@
     "POST"
    ],
    "tabelas": [
+    "archived_jobs",
     "erp_api_keys",
     "jobs",
     "machines",

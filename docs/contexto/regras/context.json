@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "035151111f900d91454a08cc1543c422790417ae",
+  "sha": "6e755f1d45e89820eccca37865592060bb1f1086",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 15:38 UTC",
-  "files_total": 1613,
-  "code_files": 1417,
-  "code_lines": 210376
+  "generated_at": "2026-11-25 15:41 UTC",
+  "files_total": 1615,
+  "code_files": 1419,
+  "code_lines": 211229
  },
  "version": "1.3.2",
- "facts_hash": "12e0243bfea3567e",
+ "facts_hash": "e3148ef6c2f6bbc4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "languages": {
    ".tsx": 675,
    ".ts": 406,
-   ".sql": 269,
+   ".sql": 271,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19644,6 +19644,8 @@
    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
+   "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
+   "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -21438,6 +21440,70 @@
     "objkind": "function",
     "roles": "anon",
     "src": "supabase/migrations/20261127120000_isolate_public_has_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "archive_jobs",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "archive_jobs",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "archive_finished_jobs",
+    "objkind": "function",
+    "roles": "public, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "archive_finished_jobs",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_public_tracking",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_public_tracking",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_finished_jobs_for_evolution",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_finished_jobs_for_evolution",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
    }
   ],
   "raises": [
@@ -21782,6 +21848,10 @@
    {
     "src": "supabase/migrations/20261127120000_isolate_public_has_role.sql",
     "count": 1
+   },
+   {
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+    "count": 1
    }
   ],
   "unparsed": [],
@@ -21991,7 +22061,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -22065,7 +22137,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -22192,8 +22266,10 @@
     "rpc_transitive": [
      "apply_job_sequence",
      "approve_maintenance_record",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -22323,7 +22399,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -22417,7 +22495,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -22532,6 +22612,7 @@
     "rpc_transitive": [
      "apply_job_sequence",
      "approve_maintenance_record",
+     "archive_jobs",
      "complete_maintenance_record",
      "verify_audit_chain"
     ],
@@ -22662,7 +22743,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -22781,7 +22864,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23005,7 +23090,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23085,7 +23172,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -23182,7 +23271,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23262,7 +23353,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23310,6 +23403,7 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "update_shipment_status"
     ],
     "deps_count": 130
@@ -23363,6 +23457,7 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "update_shipment_status"
     ],
     "deps_count": 157
@@ -23416,7 +23511,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces"
     ],
     "deps_count": 164
@@ -23497,7 +23594,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23594,8 +23693,10 @@
     "rpc_transitive": [
      "apply_job_sequence",
      "approve_maintenance_record",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23749,7 +23850,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23834,7 +23937,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -23928,7 +24033,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces"
     ],
     "deps_count": 165
@@ -24014,7 +24121,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -24096,7 +24205,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -24170,7 +24281,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -24265,7 +24378,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -24350,7 +24465,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -24395,6 +24512,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
+     "archive_jobs",
      "assign_packaging_task",
      "get_packaging_leaderboard",
      "record_packaging_defect"
@@ -24491,7 +24609,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -24594,7 +24714,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -24799,7 +24921,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -24874,7 +24998,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -24922,7 +25048,8 @@
      "send-push-notification"
     ],
     "rpc_transitive": [
-     "apply_job_sequence"
+     "apply_job_sequence",
+     "archive_jobs"
     ],
     "deps_count": 159
    },
@@ -25106,8 +25233,10 @@
     "rpc_transitive": [
      "apply_job_sequence",
      "approve_maintenance_record",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces"
     ],
     "deps_count": 217
@@ -25230,7 +25359,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -25312,7 +25443,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -25407,7 +25540,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
@@ -25486,7 +25621,9 @@
     ],
     "rpc_transitive": [
      "apply_job_sequence",
+     "archive_jobs",
      "check_and_notify_kpi_alert",
+     "get_finished_jobs_for_evolution",
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
@@ -25855,6 +25992,7 @@
     ],
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
+     "archived_jobs",
      "erp_api_keys",
      "jobs",
      "machines",
@@ -27337,6 +27475,10 @@
     "file": "src/features/jobs/hooks/useJobs.ts"
    },
    {
+    "name": "useArchiveJob",
+    "file": "src/features/jobs/hooks/useJobs.ts"
+   },
+   {
     "name": "useBufferStatus",
     "file": "src/features/jobs/hooks/useJobs.ts"
    },
@@ -28230,7 +28372,7 @@
   {
    "module": "src/components",
    "files": 423,
-   "lines": 59692,
+   "lines": 59776,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28967,7 +29109,7 @@
   {
    "module": "src/features/jobs",
    "files": 35,
-   "lines": 4034,
+   "lines": 4136,
    "tables": [
     "job_status_history",
     "jobs",
@@ -28997,7 +29139,7 @@
     "useWeeklyDragDrop.ts: useWeeklyDragDrop",
     "pending-queue.ts: SortField, SortDirection, priorityOrder, priorityColors, priorityLabels, pendingStatuses",
     "jobStateMachine.ts: canTransition, getValidTransitions, assertTransition",
-    "jobsService.ts: Job, JobInsert, JobUpdate, JobWithRelations, JobDeleteRefusal, JobDeleteResult",
+    "jobsService.ts: Job, JobInsert, JobUpdate, ArchiveRefusedError, JobWithRelations, JobDeleteRefusal",
     "scheduling.ts: TimeSlot, findNextAvailableSlot",
     "techniquesService.ts: Technique, TechniqueInsert, TechniqueUpdate, techniquesService",
     "job.schema.ts: jobStatusSchema, JobStatus, jobPrioritySchema, JobPriority, jobSchema, JobFormData",
@@ -29421,7 +29563,7 @@
   {
    "module": "src/features/production",
    "files": 31,
-   "lines": 3552,
+   "lines": 3566,
    "tables": [
     "jobs",
     "machine_downtime",
@@ -29728,7 +29870,7 @@
   {
    "module": "src/integrations",
    "files": 3,
-   "lines": 6477,
+   "lines": 6501,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -30269,8 +30411,9 @@
   {
    "module": "supabase/functions",
    "files": 54,
-   "lines": 11357,
+   "lines": 11381,
    "tables": [
+    "archived_jobs",
     "backup_logs",
     "backups",
     "bitrix24_field_mappings",
@@ -30407,8 +30550,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 261,
-   "lines": 16048,
+   "files": 263,
+   "lines": 16653,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -30582,6 +30725,11 @@
     ],
     "insert": [
      "src/hooks/abc/useABCMutations.ts"
+    ]
+   },
+   "archived_jobs": {
+    "select": [
+     "supabase/functions/erp-api/index.ts"
     ]
    },
    "audit_log": {
@@ -30972,7 +31120,6 @@
      "src/features/jobs/hooks/usePaginatedJobs.ts",
      "src/features/jobs/services/jobsService.ts",
      "src/features/production/hooks/useMachineStatusHub.ts",
-     "src/features/production/hooks/useOperatorEvolution.ts",
      "src/features/production/hooks/useProductionLosses.ts",
      "src/hooks/abc/useABCData.ts",
      "src/hooks/useGamification.ts",
@@ -32121,6 +32268,9 @@
    "abc_job_costs": [
     "job_id"
    ],
+   "archived_jobs": [
+    "external_ref"
+   ],
    "audit_log": [
     "action",
     "actor_email",
@@ -32270,7 +32420,6 @@
     "actual_end_time",
     "actual_start_time",
     "created_at",
-    "estimated_duration",
     "external_ref",
     "id",
     "lost_pieces",
@@ -33148,6 +33297,9 @@
    "archive_finished_jobs": [
     "supabase/functions/cron-cleanup/index.ts"
    ],
+   "archive_jobs": [
+    "src/features/jobs/services/jobsService.ts"
+   ],
    "assign_packaging_task": [
     "src/features/packaging/services/packagingService.ts"
    ],
@@ -33177,6 +33329,9 @@
    ],
    "fn": [
     "scripts/supabase_snapshot/snapshot.py"
+   ],
+   "get_finished_jobs_for_evolution": [
+    "src/features/production/hooks/useOperatorEvolution.ts"
    ],
    "get_packaging_leaderboard": [
     "src/features/packaging/components/PackagingLeaderboard.tsx"
@@ -33578,7 +33733,6 @@
    "backups"
   ],
   "tables_only_in_schema": [
-   "archived_jobs",
    "csp_violation_reports",
    "kpi_alerts",
    "rls_test_results",
@@ -35590,6 +35744,10 @@
    },
    {
     "file": "src/features/jobs/services/jobsService.ts",
+    "msg": "Nenhuma OS foi arquivada: só OS com status "
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
     "msg": "O motivo do cancelamento deve ter no máximo 2000 caracteres."
    },
    {
@@ -37345,6 +37503,10 @@
     "text": "Validação de segurança: estoque insuficiente"
    },
    {
+    "file": "src/features/jobs/hooks/useJobs.ts",
+    "text": "Recusa de negocio ja' carrega o motivo exato da RPC: embrulhar em"
+   },
+   {
     "file": "src/features/jobs/hooks/usePaginatedJobs.ts",
     "text": "Runtime validation"
    },
@@ -37366,6 +37528,10 @@
    },
    {
     "file": "src/features/jobs/services/jobsService.ts",
+    "text": "* Recusa de negocio do arquivamento (OS com embalagem ou remessa em andamento)."
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
     "text": "* IDs preservados, com o motivo em linguagem de negócio. */"
    },
    {
@@ -37375,6 +37541,10 @@
    {
     "file": "src/features/jobs/services/jobsService.ts",
     "text": "coordenador/manager não pode roubar a produção do operador"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
+    "text": "Recusa de negocio vem do banco com o motivo exato (FG002 embalagem,"
    },
    {
     "file": "src/features/jobs/services/techniquesService.ts",
@@ -44949,6 +45119,12 @@
    {
     "file": "src/components/jobs/JobDetailsModal.tsx",
     "field": "status",
+    "value": "finished",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.tsx",
+    "field": "status",
     "value": "cancelled",
     "kind": "compara"
    },
@@ -48158,12 +48334,6 @@
    },
    {
     "file": "src/features/production/hooks/useOperatorEvolution.ts",
-    "field": "status",
-    "value": "finished",
-    "kind": "filtra"
-   },
-   {
-    "file": "src/features/production/hooks/useOperatorEvolution.ts",
     "field": "role",
     "value": "operator",
     "kind": "filtra"
@@ -50887,6 +51057,10 @@
    {
     "file": "supabase/migrations/20261108000001_business_rules_ddl.sql",
     "line": "AND updated_at < now() - interval '30 minutes';"
+   },
+   {
+    "file": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+    "line": "$cron$SELECT public.archive_finished_jobs(now() - interval '180 days')$cron$"
    }
   ],
   "percents": [
@@ -51949,6 +52123,26 @@
     "name": "does not keep the typed reason after going back"
    },
    {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "JobDetailsModal - arquivamento de OS"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "esconde o botão de arquivar de quem não é gerente nem admin"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "esconde o botão de arquivar em OS que não está finalizada"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "arquiva a OS finalizada e fecha o diálogo"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "não arquiva quando o usuário desiste da confirmação"
+   },
+   {
     "file": "src/components/logistics/EditShipmentModal.test.tsx",
     "name": "EditShipmentModal"
    },
@@ -52919,6 +53113,22 @@
    {
     "file": "src/features/jobs/services/jobsService.test.ts",
     "name": "deve lidar com erros na busca de jobs"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "arquiva uma OS pela RPC archive_jobs"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "falha quando a RPC não arquiva nada"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "preserva o motivo de negócio quando o arquivamento é recusado"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "não trata erro de infraestrutura como recusa de negócio"
    },
    {
     "file": "src/features/jobs/services/jobsService.test.ts",
@@ -64319,6 +64529,7 @@
       "escreve:src/pages/OperatorView.tsx"
      ],
      "finished": [
+      "compara:src/components/jobs/JobDetailsModal.tsx",
       "compara:src/components/jobs/JobQuickActions.tsx",
       "compara:src/components/jobs/JobTraceabilityTab.tsx",
       "compara:src/components/kanban/DraggableJobCard.tsx",
@@ -64359,7 +64570,6 @@
       "escreve:src/hooks/useOfflineSync.ts",
       "escreve:src/lib/offline/replayPendingAction.ts",
       "escreve:src/pages/KanbanBoard.tsx",
-      "filtra:src/features/production/hooks/useOperatorEvolution.ts",
       "filtra:src/hooks/abc/useABCData.ts",
       "filtra:src/hooks/useGamification.ts",
       "filtra:src/lib/fetchAllRows.ts",
@@ -66889,7 +67099,8 @@
    "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
-   "supabase/migrations/20261127120000_isolate_public_has_role.sql"
+   "supabase/migrations/20261127120000_isolate_public_has_role.sql",
+   "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
   ],
   "security_definer_fns": [
    "app_private.has_role",
@@ -68612,6 +68823,70 @@
     "objkind": "function",
     "roles": "anon",
     "src": "supabase/migrations/20261127120000_isolate_public_has_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "archive_jobs",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "archive_jobs",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "archive_finished_jobs",
+    "objkind": "function",
+    "roles": "public, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "archive_finished_jobs",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_public_tracking",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_public_tracking",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "get_finished_jobs_for_evolution",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_finished_jobs_for_evolution",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
    }
   ],
   "guards": [
@@ -75310,7 +75585,7 @@
   },
   "src/components/jobs/JobDetailsModal.cancel.test.tsx": {
    "path": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-   "lines": 195,
+   "lines": 243,
    "is_test": true,
    "tests": [
     "JobDetailsModal - cancelamento de OS",
@@ -75319,12 +75594,17 @@
     "sends the trimmed reason and closes the dialog on confirmation",
     "blocks a reason longer than the limit without cutting the pasted text",
     "accepts a reason that only exceeds the limit because of outer spaces",
-    "does not keep the typed reason after going back"
+    "does not keep the typed reason after going back",
+    "JobDetailsModal - arquivamento de OS",
+    "esconde o botão de arquivar de quem não é gerente nem admin",
+    "esconde o botão de arquivar em OS que não está finalizada",
+    "arquiva a OS finalizada e fecha o diálogo",
+    "não arquiva quando o usuário desiste da confirmação"
    ]
   },
   "src/components/jobs/JobDetailsModal.tsx": {
    "path": "src/components/jobs/JobDetailsModal.tsx",
-   "lines": 596,
+   "lines": 632,
    "exports": [
     "function JobDetailsModal"
    ],
@@ -75346,6 +75626,11 @@
      "field": "status",
      "value": "cancelled",
      "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "finished",
+     "kind": "compara"
     },
     {
      "field": "status",
@@ -83531,7 +83816,7 @@
   },
   "src/features/jobs/hooks/useJobs.ts": {
    "path": "src/features/jobs/hooks/useJobs.ts",
-   "lines": 168,
+   "lines": 200,
    "exports": [
     "const STATIC_STALE_TIME",
     "const JOBS_STALE_TIME",
@@ -83539,6 +83824,7 @@
     "function useUpdateJobStatus",
     "function useUpdateJob",
     "function useDeleteJob",
+    "function useArchiveJob",
     "interface BufferTechniqueStatus",
     "function useBufferStatus"
    ],
@@ -83554,11 +83840,15 @@
      "kind": "compara"
     }
    ],
+   "rule_comments": [
+    "Recusa de negocio ja' carrega o motivo exato da RPC: embrulhar em"
+   ],
    "hooks": [
     "useJobs",
     "useUpdateJobStatus",
     "useUpdateJob",
     "useDeleteJob",
+    "useArchiveJob",
     "useBufferStatus"
    ]
   },
@@ -84090,7 +84380,7 @@
   },
   "src/features/jobs/services/jobsService.test.ts": {
    "path": "src/features/jobs/services/jobsService.test.ts",
-   "lines": 176,
+   "lines": 211,
    "is_test": true,
    "rule_comments": [
     "Operador sem permissao de exclusao: a policy filtra as linhas, o DELETE"
@@ -84100,6 +84390,10 @@
     "deve chamar select ao buscar todos os jobs",
     "deve criar um novo job com sucesso",
     "deve lidar com erros na busca de jobs",
+    "arquiva uma OS pela RPC archive_jobs",
+    "falha quando a RPC não arquiva nada",
+    "preserva o motivo de negócio quando o arquivamento é recusado",
+    "não trata erro de infraestrutura como recusa de negócio",
     "mantém produced_quantity e lost_pieces depois da validação do schema",
     "recusa a exclusao de OS com producao registrada no proprio servico",
     "exclui a OS sem producao e com status permitido",
@@ -84108,11 +84402,12 @@
   },
   "src/features/jobs/services/jobsService.ts": {
    "path": "src/features/jobs/services/jobsService.ts",
-   "lines": 225,
+   "lines": 260,
    "exports": [
     "interface Job",
     "type JobInsert",
     "type JobUpdate",
+    "class ArchiveRefusedError",
     "interface JobWithRelations",
     "interface JobDeleteRefusal",
     "interface JobDeleteResult",
@@ -84164,9 +84459,13 @@
      "status"
     ]
    },
+   "rpc": [
+    "archive_jobs"
+   ],
    "errors": [
     "Esta OS nao pode ser excluida: ${refusal.reason}.",
     "Informe o motivo do cancelamento.",
+    "Nenhuma OS foi arquivada: só OS com status ",
     "O motivo do cancelamento deve ter no máximo 2000 caracteres."
    ],
    "status_values": [
@@ -84192,9 +84491,11 @@
     }
    ],
    "rule_comments": [
+    "* Recusa de negocio do arquivamento (OS com embalagem ou remessa em andamento).",
     "* IDs preservados, com o motivo em linguagem de negócio. */",
     "Runtime validation with Schema fallback",
-    "coordenador/manager não pode roubar a produção do operador"
+    "coordenador/manager não pode roubar a produção do operador",
+    "Recusa de negocio vem do banco com o motivo exato (FG002 embalagem,"
    ],
    "temporal": [
     "const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();"
@@ -87618,17 +87919,13 @@
   },
   "src/features/production/hooks/useOperatorEvolution.ts": {
    "path": "src/features/production/hooks/useOperatorEvolution.ts",
-   "lines": 242,
+   "lines": 256,
    "exports": [
     "interface DailyEfficiencyData",
     "interface OperatorEvolutionData",
     "function useOperatorEvolution"
    ],
    "tables": [
-    {
-     "table": "jobs",
-     "op": "select"
-    },
     {
      "table": "operator_machines",
      "op": "select"
@@ -87643,18 +87940,6 @@
     }
    ],
    "table_cols": {
-    "jobs": [
-     "actual_end_time",
-     "actual_start_time",
-     "estimated_duration",
-     "id",
-     "lost_pieces",
-     "machine_id",
-     "operator_id",
-     "produced_quantity",
-     "quantity",
-     "status"
-    ],
     "operator_machines": [
      "machine_id",
      "operator_id"
@@ -87668,12 +87953,10 @@
      "id"
     ]
    },
+   "rpc": [
+    "get_finished_jobs_for_evolution"
+   ],
    "status_values": [
-    {
-     "field": "status",
-     "value": "finished",
-     "kind": "filtra"
-    },
     {
      "field": "role",
      "value": "operator",
@@ -90264,7 +90547,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 6361,
+   "lines": 6385,
    "exports": [
     "type Json",
     "type Database",
@@ -95923,7 +96206,7 @@
   },
   "supabase/functions/erp-api/index.ts": {
    "path": "supabase/functions/erp-api/index.ts",
-   "lines": 355,
+   "lines": 379,
    "tables": [
     {
      "table": "user_roles",
@@ -95943,6 +96226,10 @@
     },
     {
      "table": "jobs",
+     "op": "select"
+    },
+    {
+     "table": "archived_jobs",
      "op": "select"
     },
     {
@@ -96013,6 +96300,9 @@
      "quantity",
      "scheduled_date",
      "status"
+    ],
+    "archived_jobs": [
+     "external_ref"
     ],
     "machines": [
      "is_active"
@@ -98311,6 +98601,18 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261128100000_block_delete_job_with_production.sql": {
+   "path": "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
+   "lines": 64
+  },
+  "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql": {
+   "path": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+   "lines": 541,
+   "temporal": [
+    "$cron$SELECT public.archive_finished_jobs(now() - interval '180 days')$cron$"
+   ],
+   "uses_service_role": true
+  },
   "supabase/migrations/20261128140000_realtime_push_notifications.sql": {
    "path": "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "lines": 38
@@ -98765,10 +99067,38 @@
   }
  },
  "git": {
-  "sha": "035151111f900d91454a08cc1543c422790417ae",
+  "sha": "6e755f1d45e89820eccca37865592060bb1f1086",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "6e755f1",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+     "src/components/jobs/JobDetailsModal.tsx",
+     "src/features/jobs/hooks/useJobs.ts",
+     "src/features/jobs/services/jobsService.test.ts",
+     "src/features/jobs/services/jobsService.ts",
+     "src/features/production/hooks/useOperatorEvolution.ts",
+     "src/integrations/supabase/types.ts",
+     "supabase/functions/erp-api/index.ts",
+     "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
+    ]
+   },
+   {
+    "sha": "e5435a5",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/migrations/20261128100000_block_delete_job_with_production.sql"
+    ]
+   },
    {
     "sha": "0351511",
     "date": "2026-11-25",
@@ -99099,35 +99429,20 @@
      "supabase/functions/send-loss-risk-alert/index.ts",
      "supabase/functions/send-tpm-email/index.ts"
     ]
-   },
-   {
-    "sha": "c90ebd5",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: usar dia local nos testes de agenda (evita falha apos 21h) (#279)",
-    "files": [
-     "src/features/jobs/hooks/useSchedulingData.test.tsx"
-    ]
-   },
-   {
-    "sha": "17a3af4",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: aceitar technique_id TEXT e tornar POST /jobs idempotente (#272)",
-    "files": [
-     "src/test/erpApiContracts.test.ts",
-     "src/test/webhookFuzz.test.ts",
-     "supabase/functions/_shared/contracts.test.ts",
-     "supabase/functions/_shared/contracts.ts",
-     "supabase/functions/erp-api/index.ts",
-     "supabase/migrations/20261125130000_jobs_external_ref.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    7
+    9
+   ],
+   [
+    "src/features/jobs/services/jobsService.ts",
+    3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    3
    ],
    [
     "src/pages/PendingQueue.test.tsx",
@@ -99138,7 +99453,23 @@
     3
    ],
    [
-    "src/features/jobs/services/jobsService.ts",
+    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    2
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.tsx",
+    2
+   ],
+   [
+    "src/features/jobs/hooks/useJobs.ts",
+    2
+   ],
+   [
+    "src/features/jobs/services/jobsService.test.ts",
+    2
+   ],
+   [
+    "supabase/functions/erp-api/index.ts",
     2
    ],
    [
@@ -99150,10 +99481,6 @@
     2
    ],
    [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
     "docs/qa/03-ACHADOS.md",
     2
    ],
@@ -99162,8 +99489,16 @@
     2
    ],
    [
-    "supabase/functions/erp-api/index.ts",
-    2
+    "src/features/production/hooks/useOperatorEvolution.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
+    1
    ],
    [
     "src/features/notifications/components/NotificationsList.tsx",
@@ -99175,34 +99510,6 @@
    ],
    [
     "src/features/notifications/hooks/useNotifications.ts",
-    1
-   ],
-   [
-    "src/pages/NotificationsPage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/NotificationsPage.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
-    1
-   ],
-   [
-    "src/features/jobs/lib/pending-queue.ts",
-    1
-   ],
-   [
-    "src/features/jobs/services/jobsService.test.ts",
-    1
-   ],
-   [
-    "src/pages/KanbanBoard.test.tsx",
-    1
-   ],
-   [
-    "src/pages/KanbanBoard.tsx",
     1
    ]
   ]

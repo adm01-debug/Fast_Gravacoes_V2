@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 993,
- "arestas": 4578,
+ "arestas": 4579,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/features/auth/index.ts",
-   "importado_por": 86
+   "importado_por": 87
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -339,7 +339,7 @@
   {
    "modulo": "features/auth",
    "depende_de": 4,
-   "importado_por": 25
+   "importado_por": 26
   },
   {
    "modulo": "features/analytics",
@@ -377,6 +377,11 @@
    "importado_por": 2
   },
   {
+   "modulo": "components/jobs",
+   "depende_de": 12,
+   "importado_por": 3
+  },
+  {
    "modulo": "components/navigation",
    "depende_de": 8,
    "importado_por": 7
@@ -385,11 +390,6 @@
    "modulo": "features/inventory",
    "depende_de": 6,
    "importado_por": 9
-  },
-  {
-   "modulo": "components/jobs",
-   "depende_de": 11,
-   "importado_por": 3
   },
   {
    "modulo": "components/settings",
