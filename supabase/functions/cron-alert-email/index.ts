@@ -12,6 +12,12 @@
  * (`data->>'type' = 'cron_email_sent'`) e não reenvia para a mesma rotina
  * dentro da janela de `DEDUPE_HOURS`.
  *
+ * Sem `RESEND_API_KEY` (ou com o provedor recusando o envio) o e-mail não sai.
+ * Nesse caso o marcador de envio NÃO é gravado: grava-se
+ * `data->>'type' = 'cron_alert_undelivered'` com `data->>'email_enviado' = false`,
+ * que é o aviso no app (único canal que chega) e tem deduplicação própria, de
+ * modo que a configuração corrigida ainda consiga entregar o e-mail.
+ *
  * Autenticação: exclusivamente via `x-cron-secret` (fail-closed) — não é um
  * endpoint de usuário.
  */
@@ -20,6 +26,7 @@ import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 import { escapeHtml } from "../_shared/htmlEscape.ts";
+import { buildAlertNotification } from "../_shared/alertNotification.ts";
 
 const FAILURE_THRESHOLD = 3;
 const DEDUPE_HOURS = 6;
@@ -46,6 +53,13 @@ function latestPerJob(rows: HealthRow[]): HealthRow[] {
     if (!current || row.captured_at > current.captured_at) map.set(row.jobid, row);
   }
   return Array.from(map.values());
+}
+
+/** jobids de notificações já gravadas, para deduplicar por rotina. */
+function jobIdsOf(rows: { data: unknown }[] | null): Set<string> {
+  return new Set(
+    (rows ?? []).map((r) => String((r.data as Record<string, unknown> | null)?.jobid ?? "")),
+  );
 }
 
 function isProblem(row: HealthRow): "failure" | "stale" | null {
@@ -123,7 +137,7 @@ serve(async (req) => {
       .map((row) => ({ row, kind: isProblem(row) }))
       .filter((p): p is { row: HealthRow; kind: "failure" | "stale" } => p.kind !== null);
 
-    if (problems.length === 0) return json({ checked: data?.length ?? 0, sent: 0 });
+    if (problems.length === 0) return json({ checked: data?.length ?? 0, sent: 0, failed: 0 });
 
     // Destinatários: coordenadores e gestores ativos.
     const { data: roles } = await supabase
@@ -161,7 +175,7 @@ serve(async (req) => {
     }
 
     if (emails.length === 0) {
-      return json({ sent: 0, reason: "sem destinatários (opt-out ou sem e-mail)" });
+      return json({ sent: 0, failed: 0, reason: "sem destinatários (opt-out ou sem e-mail)" });
     }
 
 
@@ -173,18 +187,31 @@ serve(async (req) => {
       .eq("data->>type", "cron_email_sent")
       .limit(200);
 
-    const alreadySent = new Set(
-      (recent ?? []).map((r) => String((r.data as Record<string, unknown> | null)?.jobid ?? "")),
-    );
+    // Avisos de "e-mail não enviado" têm deduplicação própria: não contam como
+    // envio concluído, então o e-mail ainda sai quando a configuração for
+    // corrigida.
+    const { data: undelivered } = await supabase
+      .from("push_notifications")
+      .select("data")
+      .gte("created_at", dedupeSince)
+      .eq("data->>type", "cron_alert_undelivered")
+      .limit(200);
+
+    const alreadySent = jobIdsOf(recent);
+    const alreadyNotified = jobIdsOf(undelivered);
 
     let sent = 0;
+    let failed = 0;
     const skipped: number[] = [];
 
     for (const { row, kind } of problems) {
-      if (alreadySent.has(String(row.jobid))) {
+      if (alreadySent.has(String(row.jobid)) || alreadyNotified.has(String(row.jobid))) {
         skipped.push(row.jobid);
         continue;
       }
+
+      const label = row.jobname ?? `job ${row.jobid}`;
+      let delivered = false;
 
       if (resendApiKey) {
         const res = await fetch("https://api.resend.com/emails", {
@@ -198,39 +225,47 @@ serve(async (req) => {
             to: emails,
             subject: `[Fast Gravações] ${
               kind === "failure" ? "Rotina falhando" : "Rotina silenciosa"
-            }: ${row.jobname ?? row.jobid}`,
+            }: ${label}`,
             html: buildHtml(row, kind),
           }),
         });
         if (!res.ok) {
-          console.error("[cron-alert-email] Resend error", res.status, await res.text());
-          continue;
+          console.error("[cron-alert-email] Resend recusou o envio", res.status, await res.text());
+        } else {
+          delivered = true;
         }
       } else {
-        console.warn("[cron-alert-email] RESEND_API_KEY ausente — apenas marcando envio.");
+        console.error(
+          "[cron-alert-email] RESEND_API_KEY ausente — e-mail de alerta NÃO enviado; registrando aviso no app.",
+        );
       }
+
+      const notification = buildAlertNotification({
+        label,
+        kind,
+        delivered,
+        providerRejected: Boolean(resendApiKey),
+      });
 
       await supabase.from("push_notifications").insert(
         recipientIds.map((userId) => ({
           user_id: userId,
-          title: kind === "failure" ? "Rotina automática falhando" : "Rotina automática silenciosa",
-          body: `E-mail de alerta enviado sobre ${row.jobname ?? `job ${row.jobid}`}.`,
+          title: notification.title,
+          body: notification.body,
           status: "sent",
           data: {
-            type: "cron_email_sent",
+            ...notification.data,
             jobid: row.jobid,
             jobname: row.jobname,
-            kind,
-            route: "/admin/monitoring",
-            severity: kind === "failure" ? "critical" : "warning",
           },
         })),
       );
 
-      sent += 1;
+      if (delivered) sent += 1;
+      else failed += 1;
     }
 
-    return json({ problems: problems.length, sent, skipped });
+    return json({ problems: problems.length, sent, failed, skipped });
   } catch (e) {
     console.error("[cron-alert-email] unexpected", e);
     return json({ error: "Internal error" }, 500);
