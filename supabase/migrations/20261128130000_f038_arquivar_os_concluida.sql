@@ -87,6 +87,16 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
+  -- ProtectedRoute (src/components/auth/ProtectedRoute.tsx:107-132) exige
+  -- sessao aal2 para papeis elevados; esta funcao roda como SECURITY DEFINER
+  -- e apaga dado fora da RLS, entao repete a exigencia no banco. Sessao de
+  -- cron/service_role nao tem auth.uid() e segue passando.
+  IF auth.uid() IS NOT NULL
+     AND coalesce(auth.jwt() ->> 'aal', 'aal1') <> 'aal2' THEN
+    RAISE EXCEPTION 'Arquivar OS exige sessao com MFA verificado (aal2).'
+      USING ERRCODE = '42501';
+  END IF;
+
   -- O trigger BEFORE DELETE da etapa 036 recusa apagar OS concluida com
   -- producao ou fora de queue/scheduled/cancelled. O arquivamento e
   -- intencional e auditado (o pacote vai inteiro para archived_jobs), entao
@@ -98,8 +108,25 @@ BEGIN
     WHERE status = 'finished'
       AND (p_job_id IS NULL OR id = p_job_id)
       AND (p_older_than IS NULL OR actual_end_time < p_older_than)
+    -- Lote do cron: 200 OS por execucao, das mais antigas para as novas.
+    -- Sem teto, o primeiro agendamento depois de meses sem arquivar
+    -- (`archived_jobs` esta' com 0 linhas em producao) arrastaria a tabela
+    -- `jobs` inteira numa unica transacao. A chamada individual (p_job_id)
+    -- continua exatamente uma OS. NULLS FIRST garante que OS finished sem
+    -- actual_end_time tambem progridem no lote.
+    ORDER BY actual_end_time NULLS FIRST, id
+    LIMIT CASE WHEN p_job_id IS NULL THEN 200 ELSE 1 END
   LOOP
     BEGIN
+      -- Fecha a corrida com a logistica. O cadastro de remessa
+      -- (CreateShipmentModal) insere em public.shipments e a FK exige FOR
+      -- KEY SHARE na linha do job. Travar aqui serializa as duas
+      -- transacoes: ou a remessa ja' commitou antes e entra no pacote
+      -- abaixo, ou tenta depois e falha na FK porque o job saiu de
+      -- public.jobs. Sem isto, a remessa criada entre a leitura dos filhos
+      -- e o DELETE era apagada em cascata sem ficar no historico.
+      PERFORM 1 FROM public.jobs WHERE id = v_job.id FOR UPDATE;
+
       -- Embalagem em andamento trava o arquivamento. O job nasce com
       -- packaging_tasks 'pending' ao finalizar a producao e o arquivamento
       -- levaria embora a tarefa que o operador ainda esta executando
@@ -445,6 +472,15 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
+  -- Mesma exigencia do ProtectedRoute (linhas 107-132): papel elevado com
+  -- sessao so' de senha (aal1) nao le o historico. A RPC e' SECURITY DEFINER
+  -- e le archived_jobs com privilegios do owner, fora da RLS.
+  IF auth.uid() IS NOT NULL
+     AND coalesce(auth.jwt() ->> 'aal', 'aal1') <> 'aal2' THEN
+    RAISE EXCEPTION 'Historico arquivado exige sessao com MFA verificado (aal2).'
+      USING ERRCODE = '42501';
+  END IF;
+
   -- Ordem estavel (actual_end_time, id) e' o que garante paginacao sem
   -- repetir ou perder linha entre uma pagina e a seguinte.
   RETURN QUERY
@@ -476,3 +512,30 @@ GRANT EXECUTE ON FUNCTION public.get_finished_jobs_for_evolution(timestamptz, in
 
 COMMENT ON FUNCTION public.get_finished_jobs_for_evolution(timestamptz, integer, integer) IS
   'Jobs finalizadas (jobs + archived_jobs) do periodo, so com as colunas do calculo de produtividade. Coordenador le sem acesso direto a archived_jobs.children.';
+
+-- Arquivamento periodico versionado. Sem isto o unico caminho era a edge
+-- function cron-cleanup (supabase/functions/cron-cleanup/index.ts:42), que nao
+-- tem agendamento em nenhum lugar do repositorio: publicado o banco, a rotina
+-- descrita na etapa 038 nunca comeca. Producao (uoujzvpecohinketylud) tem 7
+-- jobs em cron.job e nenhum deles arquiva. O horario 04:07 UTC nao colide com
+-- purge-old-logs-daily (03:15), rollup-cron-p95-daily (03:20) nem com os jobs
+-- de 5/15/30 minutos. O lote de 200 OS por execucao (acima) mantem a duracao
+-- previsivel mesmo na primeira rodada.
+-- Verificacao: SELECT jobname, schedule, active FROM cron.job
+--              WHERE jobname = 'archive-finished-jobs-daily';
+DO $$
+BEGIN
+  IF to_regprocedure('cron.schedule(text,text,text)') IS NULL THEN
+    RAISE WARNING 'pg_cron ausente: agendamento do arquivamento (etapa 038) nao foi criado.';
+  ELSE
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'archive-finished-jobs-daily') THEN
+      PERFORM cron.unschedule('archive-finished-jobs-daily');
+    END IF;
+    PERFORM cron.schedule(
+      'archive-finished-jobs-daily',
+      '7 4 * * *',
+      $cron$SELECT public.archive_finished_jobs(now() - interval '180 days')$cron$
+    );
+  END IF;
+END;
+$$;
