@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d139424fb83fc3c347dd57f07b6fe2979c2c37ae",
+  "sha": "970aef7d24c4573bb0bc3454592c18f8101bcf51",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 13:31 UTC",
-  "files_total": 1610,
-  "code_files": 1414,
-  "code_lines": 209411
+  "generated_at": "2026-11-25 14:16 UTC",
+  "files_total": 1611,
+  "code_files": 1415,
+  "code_lines": 210088
  },
  "version": "1.3.2",
- "facts_hash": "0e2b1eb44327e840",
+ "facts_hash": "5629f0c1c46c0e9a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 673,
+   ".tsx": 674,
    ".ts": 406,
    ".sql": 268,
    ".mjs": 50,
@@ -21881,7 +21881,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 307
+    "deps_count": 309
    },
    {
     "path": "",
@@ -22083,7 +22083,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 232
+    "deps_count": 234
    },
    {
     "path": "",
@@ -22307,7 +22307,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 250
+    "deps_count": 251
    },
    {
     "path": "",
@@ -22420,7 +22420,7 @@
      "complete_maintenance_record",
      "verify_audit_chain"
     ],
-    "deps_count": 179
+    "deps_count": 180
    },
    {
     "path": "",
@@ -22552,7 +22552,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 216
+    "deps_count": 218
    },
    {
     "path": "",
@@ -22671,7 +22671,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 207
+    "deps_count": 209
    },
    {
     "path": "",
@@ -22895,7 +22895,86 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 216
+    "deps_count": 218
+   },
+   {
+    "path": "",
+    "file": "src/pages/KanbanBoard.test.tsx",
+    "component": "KanbanBoard.test",
+    "tables_transitive": [
+     "abc_job_costs",
+     "audit_log",
+     "bitrix24_field_mappings",
+     "bitrix24_sync_history",
+     "blocked_ips",
+     "business_config",
+     "daily_summaries",
+     "dashboard_presets",
+     "document_versions",
+     "efficiency_alert_history",
+     "energy_alerts",
+     "energy_consumption",
+     "energy_targets",
+     "error_logs",
+     "feature_flags",
+     "geo_blocking_logs",
+     "geo_blocking_rules",
+     "geo_blocking_settings",
+     "job_status_audit",
+     "job_status_history",
+     "jobs",
+     "machine_downtime",
+     "machine_event_audit",
+     "machine_health_metrics",
+     "machine_predictions",
+     "machines",
+     "maintenance_alerts",
+     "maintenance_records",
+     "maintenance_schedules",
+     "operator_goals",
+     "operator_machines",
+     "operator_rankings",
+     "operator_skills",
+     "operator_status_audit",
+     "packaging_tasks",
+     "prediction_history",
+     "production_losses",
+     "profiles",
+     "push_notifications",
+     "push_subscriptions",
+     "qr_scan_history",
+     "rate_limit_logs",
+     "rate_limit_settings",
+     "role_permissions",
+     "security_events",
+     "spc_alerts",
+     "spc_capability_history",
+     "spc_control_parameters",
+     "spc_measurements",
+     "technical_documents",
+     "technical_sheet_materials",
+     "technical_sheets",
+     "techniques",
+     "telemetry_traces",
+     "tpm_notification_logs",
+     "user_notification_settings",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "auto-promote-jobs",
+     "bitrix24-sync",
+     "check-login-lockout",
+     "daily-maintenance-summary",
+     "ml-predictions",
+     "send-push-notification"
+    ],
+    "rpc_transitive": [
+     "apply_job_sequence",
+     "check_and_notify_kpi_alert",
+     "increment_job_lost_pieces",
+     "verify_audit_chain"
+    ],
+    "deps_count": 271
    },
    {
     "path": "",
@@ -22993,7 +23072,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 306
+    "deps_count": 307
    },
    {
     "path": "",
@@ -23073,7 +23152,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 166
+    "deps_count": 167
    },
    {
     "path": "",
@@ -23171,7 +23250,7 @@
      "apply_job_sequence",
      "update_shipment_status"
     ],
-    "deps_count": 156
+    "deps_count": 157
    },
    {
     "path": "",
@@ -23308,7 +23387,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 188
+    "deps_count": 190
    },
    {
     "path": "",
@@ -23406,7 +23485,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 245
+    "deps_count": 247
    },
    {
     "path": "",
@@ -23560,7 +23639,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -23645,7 +23724,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 207
+    "deps_count": 209
    },
    {
     "path": "",
@@ -23876,7 +23955,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 190
+    "deps_count": 192
    },
    {
     "path": "",
@@ -24045,7 +24124,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 244
+    "deps_count": 245
    },
    {
     "path": "",
@@ -24130,7 +24209,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 222
+    "deps_count": 224
    },
    {
     "path": "",
@@ -24174,7 +24253,7 @@
      "get_packaging_leaderboard",
      "record_packaging_defect"
     ],
-    "deps_count": 158
+    "deps_count": 159
    },
    {
     "path": "",
@@ -24653,7 +24732,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 211
+    "deps_count": 212
    },
    {
     "path": "",
@@ -24699,7 +24778,7 @@
     "rpc_transitive": [
      "apply_job_sequence"
     ],
-    "deps_count": 158
+    "deps_count": 159
    },
    {
     "path": "",
@@ -25010,7 +25089,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 222
+    "deps_count": 224
    },
    {
     "path": "",
@@ -25092,7 +25171,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 222
+    "deps_count": 224
    },
    {
     "path": "",
@@ -25187,7 +25266,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 236
+    "deps_count": 237
    },
    {
     "path": "/rota-fantasma-que-nao-devia-contar",
@@ -25265,7 +25344,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 208
+    "deps_count": 209
    }
   ],
   "edge_functions": [
@@ -28742,7 +28821,7 @@
   {
    "module": "src/features/jobs",
    "files": 35,
-   "lines": 3798,
+   "lines": 4034,
    "tables": [
     "job_status_history",
     "jobs",
@@ -28772,10 +28851,10 @@
     "useWeeklyDragDrop.ts: useWeeklyDragDrop",
     "pending-queue.ts: SortField, SortDirection, priorityOrder, priorityColors, priorityLabels, pendingStatuses",
     "jobStateMachine.ts: canTransition, getValidTransitions, assertTransition",
-    "jobsService.ts: Job, JobInsert, JobUpdate, JobWithRelations, jobsService",
+    "jobsService.ts: Job, JobInsert, JobUpdate, JobWithRelations, JobDeleteRefusal, JobDeleteResult",
     "scheduling.ts: TimeSlot, findNextAvailableSlot",
     "techniquesService.ts: Technique, TechniqueInsert, TechniqueUpdate, techniquesService",
-    "job.schema.ts: jobStatusSchema, JobStatus, jobPrioritySchema, JobPriority, jobSchema, jobFormSchema",
+    "job.schema.ts: jobStatusSchema, JobStatus, jobPrioritySchema, JobPriority, jobSchema, JobFormData",
     "lot.schema.ts: lotSchema, lotFormSchema, LotFormData",
     "sequencing.ts: ColorGroup, SequencingSuggestion"
    ],
@@ -29671,8 +29750,8 @@
   },
   {
    "module": "src/pages",
-   "files": 61,
-   "lines": 17343,
+   "files": 62,
+   "lines": 17761,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29801,6 +29880,7 @@
     "src/pages/InventoryPage.test.tsx",
     "src/pages/InventoryPage.tsx",
     "src/pages/KPIDashboard.tsx",
+    "src/pages/KanbanBoard.test.tsx",
     "src/pages/KanbanBoard.tsx",
     "src/pages/KioskPage.tsx",
     "src/pages/LogisticsPage.test.tsx",
@@ -29921,7 +30001,7 @@
   {
    "module": "src/test",
    "files": 32,
-   "lines": 4629,
+   "lines": 4652,
    "tables": [
     "jobs"
    ],
@@ -30793,8 +30873,7 @@
      "src/features/jobs/hooks/useKanbanDragDrop.ts"
     ],
     "delete": [
-     "src/features/jobs/services/jobsService.ts",
-     "src/pages/PendingQueue.tsx"
+     "src/features/jobs/services/jobsService.ts"
     ]
    },
    "login_audit": {
@@ -33483,7 +33562,7 @@
     "file": "src/features/jobs/types/job.schema.ts",
     "name": "jobSchema",
     "kind": "object",
-    "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
+    "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -33492,7 +33571,7 @@
     "name": "jobFormSchema",
     "kind": "derived",
     "base": "jobSchema",
-    "body": "jobSchema.omit({ id: true, status: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
+    "body": "jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
     "refines": [],
     "chain": [
      "extend",
@@ -35358,6 +35437,10 @@
    },
    {
     "file": "src/features/jobs/services/jobsService.ts",
+    "msg": "Esta OS nao pode ser excluida: ${refusal.reason}."
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
     "msg": "Informe o motivo do cancelamento."
    },
    {
@@ -35982,11 +36065,15 @@
    },
    {
     "file": "src/pages/KanbanBoard.tsx",
+    "msg": "${refused.length} job(s) não foram excluídos: "
+   },
+   {
+    "file": "src/pages/KanbanBoard.tsx",
     "msg": "Erro ao atualizar status"
    },
    {
     "file": "src/pages/KanbanBoard.tsx",
-    "msg": "Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === "
+    "msg": "Erro ao excluir jobs: ${error instanceof Error ? error.message : String(error)}"
    },
    {
     "file": "src/pages/KanbanBoard.tsx",
@@ -36038,7 +36125,15 @@
    },
    {
     "file": "src/pages/PendingQueue.tsx",
+    "msg": "Erro ao excluir as OS selecionadas"
+   },
+   {
+    "file": "src/pages/PendingQueue.tsx",
     "msg": "Erro ao processar ação em massa"
+   },
+   {
+    "file": "src/pages/PendingQueue.tsx",
+    "msg": "Nenhuma OS foi excluída"
    },
    {
     "file": "src/pages/ReportBuilderPage.tsx",
@@ -37126,6 +37221,10 @@
    },
    {
     "file": "src/features/jobs/services/jobsService.ts",
+    "text": "* IDs preservados, com o motivo em linguagem de negócio. */"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
     "text": "Runtime validation with Schema fallback"
    },
    {
@@ -37403,6 +37502,14 @@
    {
     "file": "src/pages/NotificationsPage.tsx",
     "text": "').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; },"
+   },
+   {
+    "file": "src/pages/PendingQueue.tsx",
+    "text": "Só o que sobrou continua selecionado: o que saiu do banco não pode"
+   },
+   {
+    "file": "src/pages/PendingQueue.tsx",
+    "text": "As listas de impedidas e de ocultas crescem: o limite de altura com"
    },
    {
     "file": "src/pages/SystemStatusPage.tsx",
@@ -48824,12 +48931,6 @@
     "kind": "compara"
    },
    {
-    "file": "src/pages/KanbanBoard.tsx",
-    "field": "status",
-    "value": "rejected",
-    "kind": "compara"
-   },
-   {
     "file": "src/pages/KioskPage.tsx",
     "field": "status",
     "value": "production",
@@ -52628,6 +52729,22 @@
     "name": "deve lidar com erros na busca de jobs"
    },
    {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "mantém produced_quantity e lost_pieces depois da validação do schema"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "recusa a exclusao de OS com producao registrada no proprio servico"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "exclui a OS sem producao e com status permitido"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "nao anuncia exclusao quando o banco nao apaga nenhuma linha"
+   },
+   {
     "file": "src/features/jobs/services/scheduling.test.ts",
     "name": "findNextAvailableSlot"
    },
@@ -53520,6 +53637,22 @@
     "name": "deve filtrar itens corretamente"
    },
    {
+    "file": "src/pages/KanbanBoard.test.tsx",
+    "name": "KanbanBoard - exclusao em massa (etapa 037)"
+   },
+   {
+    "file": "src/pages/KanbanBoard.test.tsx",
+    "name": "mantem visivel e selecionada a OS que o banco recusou"
+   },
+   {
+    "file": "src/pages/KanbanBoard.test.tsx",
+    "name": "nao anuncia exclusao quando o banco nao apaga nenhuma linha"
+   },
+   {
+    "file": "src/pages/KanbanBoard.test.tsx",
+    "name": "avisa quando a chamada de exclusao falha na API"
+   },
+   {
     "file": "src/pages/LogisticsPage.test.tsx",
     "name": "LogisticsPage - atalho "
    },
@@ -53546,6 +53679,50 @@
    {
     "file": "src/pages/PendingQueue.test.tsx",
     "name": "com jobs renderiza a fila normal"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "bulkDeleteBlocker - regra do trigger de exclusão (etapas 036/037)"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "impede OS com peças produzidas"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "impede OS com peças perdidas mesmo sem produzidas"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "impede status fora de fila, agendada ou cancelada"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "libera OS em fila sem produção registrada"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "selectBulkDeleteTargets - seleção sobrevive ao filtro (etapa 037)"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "inclui OS marcadas que a busca atual escondeu"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "ignora IDs que já não existem na lista carregada"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "sinaliza os alvos que o filtro atual esconde"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "PendingQueue - aviso antes da exclusão em massa (etapa 037)"
+   },
+   {
+    "file": "src/pages/PendingQueue.test.tsx",
+    "name": "mostra o que será apagado, marca as impedidas e exclui só as permitidas"
    },
    {
     "file": "src/test/authFlow.test.ts",
@@ -54662,6 +54839,10 @@
    {
     "file": "src/test/jobsService.test.ts",
     "name": "resolves without error on success"
+   },
+   {
+    "file": "src/test/jobsService.test.ts",
+    "name": "throws when the row was not deleted"
    },
    {
     "file": "src/test/jobsService.test.ts",
@@ -83496,7 +83677,7 @@
   },
   "src/features/jobs/lib/pending-queue.ts": {
    "path": "src/features/jobs/lib/pending-queue.ts",
-   "lines": 33,
+   "lines": 90,
    "exports": [
     "type SortField",
     "type SortDirection",
@@ -83504,7 +83685,12 @@
     "const priorityColors",
     "const priorityLabels",
     "const pendingStatuses",
-    "function isJobStuck"
+    "function isJobStuck",
+    "const DELETE_ALLOWED_STATUSES",
+    "const DELETE_QUANTITY_FILTERS",
+    "function selectBulkDeleteTargets",
+    "function selectHiddenDeleteTargets",
+    "function bulkDeleteBlocker"
    ],
    "enums": [
     {
@@ -83575,26 +83761,43 @@
   },
   "src/features/jobs/services/jobsService.test.ts": {
    "path": "src/features/jobs/services/jobsService.test.ts",
-   "lines": 82,
+   "lines": 176,
    "is_test": true,
+   "rule_comments": [
+    "Operador sem permissao de exclusao: a policy filtra as linhas, o DELETE"
+   ],
    "tests": [
     "jobsService",
     "deve chamar select ao buscar todos os jobs",
     "deve criar um novo job com sucesso",
-    "deve lidar com erros na busca de jobs"
+    "deve lidar com erros na busca de jobs",
+    "mantém produced_quantity e lost_pieces depois da validação do schema",
+    "recusa a exclusao de OS com producao registrada no proprio servico",
+    "exclui a OS sem producao e com status permitido",
+    "nao anuncia exclusao quando o banco nao apaga nenhuma linha"
    ]
   },
   "src/features/jobs/services/jobsService.ts": {
    "path": "src/features/jobs/services/jobsService.ts",
-   "lines": 144,
+   "lines": 225,
    "exports": [
     "interface Job",
     "type JobInsert",
     "type JobUpdate",
     "interface JobWithRelations",
+    "interface JobDeleteRefusal",
+    "interface JobDeleteResult",
     "const jobsService"
    ],
    "tables": [
+    {
+     "table": "jobs",
+     "op": "select"
+    },
+    {
+     "table": "jobs",
+     "op": "delete,select"
+    },
     {
      "table": "jobs",
      "op": "select"
@@ -83617,10 +83820,6 @@
     },
     {
      "table": "jobs",
-     "op": "delete"
-    },
-    {
-     "table": "jobs",
      "op": "select"
     }
    ],
@@ -83629,12 +83828,15 @@
      "actual_end_time",
      "actual_start_time",
      "id",
+     "lost_pieces",
      "operator_id",
+     "produced_quantity",
      "scheduled_date",
      "status"
     ]
    },
    "errors": [
+    "Esta OS nao pode ser excluida: ${refusal.reason}.",
     "Informe o motivo do cancelamento.",
     "O motivo do cancelamento deve ter no máximo 2000 caracteres."
    ],
@@ -83661,6 +83863,7 @@
     }
    ],
    "rule_comments": [
+    "* IDs preservados, com o motivo em linguagem de negócio. */",
     "Runtime validation with Schema fallback",
     "coordenador/manager não pode roubar a produção do operador"
    ],
@@ -83744,14 +83947,13 @@
   },
   "src/features/jobs/types/job.schema.ts": {
    "path": "src/features/jobs/types/job.schema.ts",
-   "lines": 34,
+   "lines": 38,
    "exports": [
     "const jobStatusSchema",
     "type JobStatus",
     "const jobPrioritySchema",
     "type JobPriority",
     "const jobSchema",
-    "const jobFormSchema",
     "type JobFormData"
    ],
    "zod": [
@@ -83772,7 +83974,7 @@
     {
      "name": "jobSchema",
      "kind": "object",
-     "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
+     "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
      "refines": [],
      "chain": []
     },
@@ -83780,7 +83982,7 @@
      "name": "jobFormSchema",
      "kind": "derived",
      "base": "jobSchema",
-     "body": "jobSchema.omit({ id: true, status: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
+     "body": "jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
      "refines": [],
      "chain": [
       "extend",
@@ -91601,17 +91803,32 @@
     }
    ]
   },
+  "src/pages/KanbanBoard.test.tsx": {
+   "path": "src/pages/KanbanBoard.test.tsx",
+   "lines": 190,
+   "is_test": true,
+   "rule_comments": [
+    "Cartao minimo que expoe selecao e identidade da OS, no lugar do card real."
+   ],
+   "tests": [
+    "KanbanBoard - exclusao em massa (etapa 037)",
+    "mantem visivel e selecionada a OS que o banco recusou",
+    "nao anuncia exclusao quando o banco nao apaga nenhuma linha",
+    "avisa quando a chamada de exclusao falha na API"
+   ]
+  },
   "src/pages/KanbanBoard.tsx": {
    "path": "src/pages/KanbanBoard.tsx",
-   "lines": 562,
+   "lines": 576,
    "exports": [
     "function KanbanBoard"
    ],
    "errors": [
     "${invalid.length} job(s) não podem ser enviados para Retrabalho a partir do estado atual",
     "${invalid.length} job(s) não podem ser movidos para ",
+    "${refused.length} job(s) não foram excluídos: ",
     "Erro ao atualizar status",
-    "Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === ",
+    "Erro ao excluir jobs: ${error instanceof Error ? error.message : String(error)}",
     "Erro ao marcar retrabalho: ${errors.map((e) => (e && typeof e === ",
     "Erro ao mover jobs: ${errors.map((e) => (e && typeof e === ",
     "Transição não permitida"
@@ -91690,11 +91907,6 @@
     {
      "field": "status",
      "value": "finished",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "rejected",
      "kind": "compara"
     },
     {
@@ -92231,26 +92443,33 @@
   },
   "src/pages/PendingQueue.test.tsx": {
    "path": "src/pages/PendingQueue.test.tsx",
-   "lines": 110,
+   "lines": 223,
    "is_test": true,
    "tests": [
     "PendingQueue - estado de erro da fila (etapa 260)",
     "mostra bloco de erro com ação de tentar novamente no lugar da fila",
     "sem erro e sem jobs mantém o estado vazio legítimo, não o de erro",
-    "com jobs renderiza a fila normal"
+    "com jobs renderiza a fila normal",
+    "bulkDeleteBlocker - regra do trigger de exclusão (etapas 036/037)",
+    "impede OS com peças produzidas",
+    "impede OS com peças perdidas mesmo sem produzidas",
+    "impede status fora de fila, agendada ou cancelada",
+    "libera OS em fila sem produção registrada",
+    "selectBulkDeleteTargets - seleção sobrevive ao filtro (etapa 037)",
+    "inclui OS marcadas que a busca atual escondeu",
+    "ignora IDs que já não existem na lista carregada",
+    "sinaliza os alvos que o filtro atual esconde",
+    "PendingQueue - aviso antes da exclusão em massa (etapa 037)",
+    "mostra o que será apagado, marca as impedidas e exclui só as permitidas"
    ]
   },
   "src/pages/PendingQueue.tsx": {
    "path": "src/pages/PendingQueue.tsx",
-   "lines": 533,
+   "lines": 634,
    "exports": [
     "function PendingQueue"
    ],
    "tables": [
-    {
-     "table": "jobs",
-     "op": "delete"
-    },
     {
      "table": "jobs",
      "op": "update"
@@ -92263,7 +92482,9 @@
    },
    "errors": [
     "${invalid.length} job(s) não podem ser movidos para ",
-    "Erro ao processar ação em massa"
+    "Erro ao excluir as OS selecionadas",
+    "Erro ao processar ação em massa",
+    "Nenhuma OS foi excluída"
    ],
    "status_values": [
     {
@@ -92291,6 +92512,10 @@
      "value": "ready",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "Só o que sobrou continua selecionado: o que saiu do banco não pode",
+    "As listas de impedidas e de ocultas crescem: o limite de altura com"
    ],
    "doc": "eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
    "temporal": [
@@ -93183,7 +93408,7 @@
   },
   "src/test/jobsService.test.ts": {
    "path": "src/test/jobsService.test.ts",
-   "lines": 293,
+   "lines": 316,
    "is_test": true,
    "tables": [
     {
@@ -93214,6 +93439,7 @@
     "refuses a cancel_reason longer than the 2000-character limit",
     "jobsService.delete",
     "resolves without error on success",
+    "throws when the row was not deleted",
     "throws on delete error",
     "jobsService.getByDateRange",
     "returns array of jobs in range",
@@ -98149,10 +98375,28 @@
   }
  },
  "git": {
-  "sha": "d139424fb83fc3c347dd57f07b6fe2979c2c37ae",
+  "sha": "970aef7d24c4573bb0bc3454592c18f8101bcf51",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "970aef7",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/features/jobs/lib/pending-queue.ts",
+     "src/features/jobs/services/jobsService.test.ts",
+     "src/features/jobs/services/jobsService.ts",
+     "src/features/jobs/types/job.schema.ts",
+     "src/pages/KanbanBoard.test.tsx",
+     "src/pages/KanbanBoard.tsx",
+     "src/pages/PendingQueue.test.tsx",
+     "src/pages/PendingQueue.tsx",
+     "src/test/jobsService.test.ts"
+    ]
+   },
    {
     "sha": "d139424",
     "date": "2026-11-25",
@@ -98489,21 +98733,32 @@
      "src/components/ui/resizable.test.tsx",
      "src/components/ui/resizable.tsx"
     ]
-   },
-   {
-    "sha": "6789162",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "ci: db push com --include-all para migrations fora de ordem (#273)",
-    "files": [
-     ".github/workflows/deploy.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    6
+    7
+   ],
+   [
+    "src/features/jobs/services/jobsService.ts",
+    2
+   ],
+   [
+    "src/features/jobs/types/job.schema.ts",
+    2
+   ],
+   [
+    "src/pages/PendingQueue.test.tsx",
+    2
+   ],
+   [
+    "src/pages/PendingQueue.tsx",
+    2
+   ],
+   [
+    "src/test/jobsService.test.ts",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -98534,6 +98789,22 @@
     2
    ],
    [
+    "src/features/jobs/lib/pending-queue.ts",
+    1
+   ],
+   [
+    "src/features/jobs/services/jobsService.test.ts",
+    1
+   ],
+   [
+    "src/pages/KanbanBoard.test.tsx",
+    1
+   ],
+   [
+    "src/pages/KanbanBoard.tsx",
+    1
+   ],
+   [
     "src/components/dashboard/AlertScheduleModal.test.tsx",
     1
    ],
@@ -98543,42 +98814,6 @@
    ],
    [
     "src/constants/index.ts",
-    1
-   ],
-   [
-    "src/features/jobs/hooks/useSchedulingConflicts.ts",
-    1
-   ],
-   [
-    "src/pages/PendingQueue.test.tsx",
-    1
-   ],
-   [
-    "src/pages/PendingQueue.tsx",
-    1
-   ],
-   [
-    ".github/workflows/automation-local.yml",
-    1
-   ],
-   [
-    "docs/AUTOMACAO_LOCAL.md",
-    1
-   ],
-   [
-    "docs/ci/README.md",
-    1
-   ],
-   [
-    "scripts/automation.config.json",
-    1
-   ],
-   [
-    "scripts/automation.mjs",
-    1
-   ],
-   [
-    "scripts/automation.unit.mjs",
     1
    ]
   ]

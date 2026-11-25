@@ -5403,7 +5403,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -9252,7 +9252,7 @@
     "KanbanBoard"
    ],
    "export_default": "KanbanBoard",
-   "linhas": 562,
+   "linhas": 576,
    "dominio": "pages",
    "hooks_locais": [
     "useFuseSearch",
@@ -9621,7 +9621,7 @@
     "PendingQueue"
    ],
    "export_default": "PendingQueue",
-   "linhas": 533,
+   "linhas": 634,
    "dominio": "pages",
    "hooks_locais": [
     "useAutoBufferPromotion",

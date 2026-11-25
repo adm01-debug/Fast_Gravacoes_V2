@@ -4117,7 +4117,7 @@
    "modulo": "features/jobs",
    "arquivos": 26,
    "testes": 9,
-   "linhas": 2714,
+   "linhas": 2856,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5868,8 +5868,8 @@
   {
    "modulo": "pages",
    "arquivos": 56,
-   "testes": 5,
-   "linhas": 16652,
+   "testes": 6,
+   "linhas": 16767,
    "itens_menu": [
     "Agenda",
     "Alertas",

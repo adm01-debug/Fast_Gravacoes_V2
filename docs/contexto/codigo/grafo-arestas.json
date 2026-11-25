@@ -3834,6 +3834,7 @@
    "src/features/jobs/services/jobsService.ts"
   ],
   "src/features/jobs/services/jobsService.ts": [
+   "src/features/jobs/lib/pending-queue.ts",
    "src/features/jobs/services/jobStateMachine.ts",
    "src/features/jobs/types/job.schema.ts",
    "src/integrations/supabase/client.ts",
@@ -5707,6 +5708,7 @@
    "src/components/planning/PendingQueueStats.tsx",
    "src/components/planning/pending-queue/PendingJobsView.tsx",
    "src/components/planning/pending-queue/SmartSuggestionsSection.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -5721,6 +5723,7 @@
    "src/features/jobs/index.ts",
    "src/features/jobs/lib/pending-queue.ts",
    "src/features/jobs/services/jobStateMachine.ts",
+   "src/features/jobs/services/jobsService.ts",
    "src/hooks/useFuseSearch.ts",
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts",

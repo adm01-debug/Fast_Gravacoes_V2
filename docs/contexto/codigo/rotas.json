@@ -181,7 +181,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 109,
+   "arquivos_puxados": 111,
    "diretos": {
     "tabelas": [
      "dashboard_layouts",
@@ -449,7 +449,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 97,
+   "arquivos_puxados": 99,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -608,7 +608,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 93,
+   "arquivos_puxados": 95,
    "diretos": {
     "tabelas": [
      "error_logs",
@@ -760,7 +760,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 84,
+   "arquivos_puxados": 86,
    "diretos": {
     "tabelas": [
      "error_logs",
@@ -1021,7 +1021,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 150,
+   "arquivos_puxados": 152,
    "diretos": {
     "tabelas": [
      "profiles",
@@ -1176,7 +1176,7 @@
     "operator",
     "user"
    ],
-   "arquivos_puxados": 91,
+   "arquivos_puxados": 93,
    "diretos": {
     "tabelas": [
      "technical_conversations",
@@ -1337,7 +1337,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 89,
+   "arquivos_puxados": 91,
    "diretos": {
     "tabelas": [
      "audit_log"
@@ -1605,7 +1605,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 135,
+   "arquivos_puxados": 137,
    "diretos": {
     "tabelas": [
      "operator_machines",
@@ -1875,7 +1875,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 169,
+   "arquivos_puxados": 170,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -2030,7 +2030,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 88,
+   "arquivos_puxados": 89,
    "diretos": {
     "tabelas": [
      "profiles",
@@ -2286,7 +2286,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 149,
+   "arquivos_puxados": 150,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -2439,7 +2439,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 83,
+   "arquivos_puxados": 85,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -2601,7 +2601,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 169,
+   "arquivos_puxados": 171,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -2803,7 +2803,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 104,
+   "arquivos_puxados": 106,
    "diretos": {
     "tabelas": [
      "energy_alerts",
@@ -2973,7 +2973,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 95,
+   "arquivos_puxados": 97,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -3176,7 +3176,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 120,
+   "arquivos_puxados": 122,
    "diretos": {
     "tabelas": [
      "efficiency_alert_history"
@@ -3336,7 +3336,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 88,
+   "arquivos_puxados": 90,
    "diretos": {
     "tabelas": [
      "energy_alerts",
@@ -3499,7 +3499,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 101,
+   "arquivos_puxados": 103,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -3669,7 +3669,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 86,
+   "arquivos_puxados": 88,
    "diretos": {
     "tabelas": [
      "gamification_rewards",
@@ -3908,7 +3908,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 95,
+   "arquivos_puxados": 97,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -4069,7 +4069,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 100,
+   "arquivos_puxados": 102,
    "diretos": {
     "tabelas": [
      "inventory_items",
@@ -4356,7 +4356,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 168,
+   "arquivos_puxados": 169,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -4440,7 +4440,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 45,
+   "arquivos_puxados": 46,
    "diretos": {
     "tabelas": [
      "error_logs",
@@ -4626,7 +4626,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 115,
+   "arquivos_puxados": 117,
    "diretos": {
     "tabelas": [
      "machines"
@@ -4814,7 +4814,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 116,
+   "arquivos_puxados": 118,
    "diretos": {
     "tabelas": [
      "operator_machines",
@@ -4985,7 +4985,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 91,
+   "arquivos_puxados": 93,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -5195,7 +5195,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 145,
+   "arquivos_puxados": 147,
    "diretos": {
     "tabelas": [
      "audit_log",
@@ -5353,7 +5353,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 83,
+   "arquivos_puxados": 85,
    "diretos": {
     "tabelas": [
      "profiles",
@@ -5503,7 +5503,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 82,
+   "arquivos_puxados": 84,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -5647,7 +5647,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 80,
+   "arquivos_puxados": 82,
    "diretos": {
     "tabelas": [
      "user_mfa_settings"
@@ -5809,7 +5809,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 92,
+   "arquivos_puxados": 94,
    "diretos": {
     "tabelas": [
      "error_logs",
@@ -5986,7 +5986,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 99,
+   "arquivos_puxados": 101,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -6150,7 +6150,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 91,
+   "arquivos_puxados": 93,
    "diretos": {
     "tabelas": [
      "daily_summaries",
@@ -6330,7 +6330,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 110,
+   "arquivos_puxados": 112,
    "diretos": {
     "tabelas": [
      "dashboard_presets",
@@ -6584,7 +6584,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 149,
+   "arquivos_puxados": 150,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -6736,7 +6736,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 80,
+   "arquivos_puxados": 82,
    "diretos": {
     "tabelas": [
      "profiles",
@@ -6902,7 +6902,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 106,
+   "arquivos_puxados": 108,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -7094,7 +7094,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 122,
+   "arquivos_puxados": 124,
    "diretos": {
     "tabelas": [
      "operator_machines",
@@ -7313,7 +7313,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 124,
+   "arquivos_puxados": 126,
    "diretos": {
     "tabelas": [
      "packaging_settings"
@@ -7650,7 +7650,8 @@
      "apply_job_sequence"
     ],
     "edges": [
-     "auto-promote-jobs"
+     "auto-promote-jobs",
+     "bitrix24-sync"
     ]
    }
   },
@@ -7795,7 +7796,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 89,
+   "arquivos_puxados": 91,
    "diretos": {
     "tabelas": [
      "report_templates"
@@ -7985,7 +7986,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 95,
+   "arquivos_puxados": 97,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -8204,7 +8205,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 117,
+   "arquivos_puxados": 119,
    "diretos": {
     "tabelas": [
      "blocked_ips",
@@ -8401,7 +8402,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 122,
+   "arquivos_puxados": 124,
    "diretos": {
     "tabelas": [
      "ip_allowlist",
@@ -8587,7 +8588,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 103,
+   "arquivos_puxados": 105,
    "diretos": {
     "tabelas": [
      "machines",
@@ -8735,7 +8736,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 77,
+   "arquivos_puxados": 79,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -8898,7 +8899,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 88,
+   "arquivos_puxados": 90,
    "diretos": {
     "tabelas": [
      "spc_alerts",
@@ -9048,7 +9049,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 77,
+   "arquivos_puxados": 79,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -9259,7 +9260,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 148,
+   "arquivos_puxados": 150,
    "diretos": {
     "tabelas": [
      "machine_predictions",
@@ -9464,7 +9465,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 112,
+   "arquivos_puxados": 114,
    "diretos": {
     "tabelas": [
      "lot_components",

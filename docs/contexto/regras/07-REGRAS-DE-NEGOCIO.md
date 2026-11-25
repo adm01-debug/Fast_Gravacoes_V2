@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d139424fb8` · branch `main` · 2026-11-25 13:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `970aef7d24` · branch `main` · 2026-11-25 14:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T12:42:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T13:38:44Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T12:42:41Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T13:38:44Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T12:42:41Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T13:38:44Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T12:42:41Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T13:38:44Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T12:42:41Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T13:38:44Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2019,11 +2019,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **jobSchema** (`src/features/jobs/types/job.schema.ts`, z.object):
   ```ts
-  { id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }
+  { id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }
   ```
 - **jobFormSchema** (`src/features/jobs/types/job.schema.ts`, derivado de `jobSchema`, encadeia extend, omit):
   ```ts
-  jobSchema.omit({ id: true, status: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })
+  jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })
   ```
 - **lotSchema** (`src/features/jobs/types/lot.schema.ts`, z.object):
   ```ts
@@ -3204,6 +3204,7 @@ _nenhum item encontrado_
 | Conflito de agendamento: máquina já possui job neste horário. | `src/features/jobs/hooks/useWeeklyDragDrop.ts` |
 | Erro ao mover agendamento | `src/features/jobs/hooks/useWeeklyDragDrop.ts` |
 | Transição inválida:  | `src/features/jobs/services/jobStateMachine.ts` |
+| Esta OS nao pode ser excluida: ${refusal.reason}. | `src/features/jobs/services/jobsService.ts` |
 | Informe o motivo do cancelamento. | `src/features/jobs/services/jobsService.ts` |
 | O motivo do cancelamento deve ter no máximo 2000 caracteres. | `src/features/jobs/services/jobsService.ts` |
 | Erro ao alterar status | `src/features/maintenance/components/ChecklistManager.tsx` |
@@ -3257,8 +3258,7 @@ _nenhum item encontrado_
 | Not authenticated | `src/features/notifications/hooks/useNotifications.ts` |
 | Sem permissão ou registro inexistente | `src/features/notifications/hooks/useNotifications.ts` |
 | Notificações bloqueadas | `src/features/notifications/hooks/usePushNotifications.ts` |
-| Notificações não suportadas | `src/features/notifications/hooks/usePushNotifications.ts` |
-| … +250 linhas — lista completa em `context.json` | |
+| … +254 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3326,7 +3326,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1416 testes em 125 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1436 testes em 126 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3343,8 +3343,8 @@ _nenhum item encontrado_
 | `src/test/offlineStorage.test.ts` | 29 | sanitize - additional edge cases · sanitizeUrl · allows https URLs · allows http URLs … |
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
+| `src/test/jobsService.test.ts` | 27 | jobsService.getAll · returns an array of jobs on success · preserves cancel_reason of a cancelled job for the details panel · throws when Supabase returns an error … |
 | `src/test/webhookFuzz.test.ts` | 27 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
-| `src/test/jobsService.test.ts` | 26 | jobsService.getAll · returns an array of jobs on success · preserves cancel_reason of a cancelled job for the details panel · throws when Supabase returns an error … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/sanitize.test.ts` | 24 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
@@ -3357,6 +3357,7 @@ _nenhum item encontrado_
 | `src/features/jobs/hooks/useSchedulingConflicts.test.tsx` | 15 | useSchedulingConflicts · retorna lista vazia enquanto jobs ou machines ainda não carregaram · não aponta conflito quando só há um job na máquina/data · detecta sobreposição de horário entre dois jobs na mesma máquina e data … |
 | `src/features/jobs/services/scheduling.test.ts` | 15 | findNextAvailableSlot · retorna o início do expediente quando não há jobs existentes · encontra um espaço antes do primeiro job quando ele é grande o suficiente · pula para depois do job quando o espaço antes dele é pequeno demais … |
 | `src/lib/calendarExports.test.ts` | 15 | calendarExports · exportElementToPdf · captures the element and saves a landscape PDF when width > height · uses portrait orientation when height >= width … |
+| `src/pages/PendingQueue.test.tsx` | 15 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro · com jobs renderiza a fila normal … |
 | `src/test/exportSimulation.test.ts` | 15 | inventoryExport — simulação de cenários · não lança erro em 300 movimentos aleatórios com dados sujos · retorna silenciosamente com array vazio · retorna silenciosamente com null/undefined … |
 | `src/test/validation.test.ts` | 15 | safeParse · returns success:true with parsed data for valid input · returns success:false with ZodError for invalid input · captures missing required fields … |
 | `tests/e2e/navigation.spec.ts` | 15 | Botão Voltar · volta uma entrada do histórico interno · deep-link sem histórico interno cai no fallback (home, não sai do app) · Alt+B navega para trás … |
@@ -3386,6 +3387,7 @@ _nenhum item encontrado_
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
+| `src/features/jobs/services/jobsService.test.ts` | 8 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
@@ -3420,10 +3422,9 @@ _nenhum item encontrado_
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
 | `src/features/analytics/hooks/useRealtimeConnection.test.ts` | 4 | useRealtimeConnection · should connect to realtime channel on mount · should handle connection errors · should remove channel on unmount |
-| `src/features/jobs/services/jobsService.test.ts` | 4 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs |
 | `src/hooks/use-overflowing.test.tsx` | 4 | useOverflowing · detecta transbordo a partir do tamanho medido · nao marca conteudo que cabe · reavalia quando o conteudo cresce depois do mount |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
-| `src/pages/PendingQueue.test.tsx` | 4 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro · com jobs renderiza a fila normal |
+| `src/pages/KanbanBoard.test.tsx` | 4 | KanbanBoard - exclusao em massa (etapa 037) · mantem visivel e selecionada a OS que o banco recusou · nao anuncia exclusao quando o banco nao apaga nenhuma linha · avisa quando a chamada de exclusao falha na API |
 | `tests/e2e/error-states.spec.ts` | 4 | Error boundaries and fallback states · should not have unhandled page errors on auth page · login with wrong credentials shows error message · navigating to non-existent route shows not found state |
 | `tests/e2e/inventory-intelligence.spec.ts` | 4 | Fluxos de Inventário e Inteligência · deve permitir visualizar e filtrar o inventário · deve abrir o modal de registro de movimentação · deve validar o Mapa WMS e sugestões de IA |
 | `tests/e2e/logistics.spec.ts` | 4 | Logistics Flow · should verify Logistics page structure · should verify Fleet Management tab · should verify public tracking page |
@@ -3603,6 +3604,7 @@ _nenhum item encontrado_
 | Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra | `src/features/jobs/hooks/useSchedulingConflicts.ts` |
 | Data validation helpers | `src/features/jobs/hooks/useSmartSequencing.ts` |
 | RPC transacional: atualiza apenas os jobs do lote e valida o | `src/features/jobs/hooks/useSmartSequencingWithActions.ts` |
+| * IDs preservados, com o motivo em linguagem de negócio. */ | `src/features/jobs/services/jobsService.ts` |
 | Runtime validation with Schema fallback | `src/features/jobs/services/jobsService.ts` |
 | coordenador/manager não pode roubar a produção do operador | `src/features/jobs/services/jobsService.ts` |
 | Throw instead of swallowing: a connectivity/RLS failure must not be | `src/features/jobs/services/techniquesService.ts` |
@@ -3673,6 +3675,8 @@ _nenhum item encontrado_
 | items antigo SEM modal — voltar até ela não pode restaurar a | `src/pages/InventoryPage.tsx` |
 | delivered — o atalho não pode deixar o envio entregue sem data. | `src/pages/LogisticsPage.tsx` |
 | ').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; }, | `src/pages/NotificationsPage.tsx` |
+| Só o que sobrou continua selecionado: o que saiu do banco não pode | `src/pages/PendingQueue.tsx` |
+| As listas de impedidas e de ocultas crescem: o limite de altura com | `src/pages/PendingQueue.tsx` |
 | papel ativo. Mostra apenas agregados; detalhes ficam em /admin/monitoring. | `src/pages/SystemStatusPage.tsx` |
 | Seed que não criou todos os usuários não pode sair 0 (quem chama acharia que semeou). | `supabase/seed-users.mjs` |
 | const forbidden = requireRole(auth.ctx, ['admin']); if (forbidden) return forbidden; | `supabase/functions/_shared/auth.ts` |

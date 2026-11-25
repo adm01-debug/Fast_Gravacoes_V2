@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (107)",
+   "co-localizado (*.test) (108)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)",
    "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)",
    "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)",
    "infra: remove push em main do automation-local (recupera PR #229) (#298)",
-   "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)",
-   "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)"
+   "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 993,
- "arestas": 4575,
+ "arestas": 4578,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/features/jobs/index.ts",
-   "importado_por": 110
+   "importado_por": 111
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -153,15 +153,15 @@
    "importado_por": 19
   },
   {
+   "arquivo": "src/components/ui/alert-dialog.tsx",
+   "importado_por": 16
+  },
+  {
    "arquivo": "src/contexts/DirtyFormContext.tsx",
    "importado_por": 16
   },
   {
    "arquivo": "src/features/notifications/index.ts",
-   "importado_por": 16
-  },
-  {
-   "arquivo": "supabase/functions/_shared/cronAuth.ts",
    "importado_por": 16
   }
  ],
@@ -222,8 +222,9 @@
     ]
    },
    {
-    "tamanho": 2,
+    "tamanho": 3,
     "arquivos": [
+     "src/features/jobs/lib/pending-queue.ts",
      "src/features/jobs/services/jobStateMachine.ts",
      "src/features/jobs/services/jobsService.ts"
     ]

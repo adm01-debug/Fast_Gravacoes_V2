@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 144,
+ "total": 145,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 119
+  "unit": 120
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 107
+   "arquivos": 108
   },
   {
    "padrao": "tests/",
@@ -628,12 +628,12 @@
   {
    "arquivo": "src/features/jobs/services/jobsService.test.ts",
    "tipo": "unit",
-   "linhas": 82,
+   "linhas": 176,
    "testa": [
     "src/features/jobs/services/jobsService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 3,
+   "casos": 7,
    "suporte": false
   },
   {
@@ -910,6 +910,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/pages/KanbanBoard.test.tsx",
+   "tipo": "unit",
+   "linhas": 190,
+   "testa": [
+    "src/features/jobs/index.ts",
+    "src/pages/KanbanBoard.tsx"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/pages/LogisticsPage.test.tsx",
    "tipo": "unit",
    "linhas": 103,
@@ -922,11 +933,12 @@
   {
    "arquivo": "src/pages/PendingQueue.test.tsx",
    "tipo": "unit",
-   "linhas": 110,
+   "linhas": 223,
    "testa": [
+    "src/features/jobs/lib/pending-queue.ts",
     "src/pages/PendingQueue.tsx"
    ],
-   "casos": 3,
+   "casos": 11,
    "suporte": false
   },
   {
@@ -1042,12 +1054,12 @@
   {
    "arquivo": "src/test/jobsService.test.ts",
    "tipo": "unit",
-   "linhas": 293,
+   "linhas": 316,
    "testa": [
     "src/features/jobs/services/jobsService.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 19,
+   "casos": 20,
    "suporte": false
   },
   {
@@ -1565,7 +1577,8 @@
   "src/features/jobs/hooks/useSchedulingData.ts": 1,
   "src/features/jobs/hooks/useSmartSequencingWithActions.ts": 1,
   "src/features/jobs/hooks/useTechniques.ts": 2,
-  "src/features/jobs/index.ts": 7,
+  "src/features/jobs/index.ts": 8,
+  "src/features/jobs/lib/pending-queue.ts": 1,
   "src/features/jobs/services/jobStateMachine.ts": 2,
   "src/features/jobs/services/jobsService.ts": 3,
   "src/features/jobs/services/scheduling.ts": 1,
@@ -1606,6 +1619,7 @@
   "src/pages/AdminTelemetriaPage.tsx": 1,
   "src/pages/AuthPage.tsx": 1,
   "src/pages/InventoryPage.tsx": 1,
+  "src/pages/KanbanBoard.tsx": 1,
   "src/pages/LogisticsPage.tsx": 1,
   "src/pages/PendingQueue.tsx": 1,
   "supabase/functions/_shared/auth.ts": 1,
@@ -1636,7 +1650,6 @@
    "src/pages/Index.tsx",
    "src/pages/InstallAppPage.tsx",
    "src/pages/KPIDashboard.tsx",
-   "src/pages/KanbanBoard.tsx",
    "src/pages/KioskPage.tsx",
    "src/pages/MLPredictionsDashboard.tsx",
    "src/pages/MachineComparisonPage.tsx",
