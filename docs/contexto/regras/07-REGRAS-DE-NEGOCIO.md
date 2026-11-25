@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d6a4a958bf` · branch `main` · 2026-11-25 19:46 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `09d25549d5` · branch `main` · 2026-11-25 20:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T18:38:32Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T20:14:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T18:38:32Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T20:14:00Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T18:38:32Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T20:14:00Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T18:38:32Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T20:14:00Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T18:38:32Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T20:14:00Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2732,6 +2732,7 @@ _nenhum item encontrado_
 | `DEFAULT_PAGE_SIZE` | `50` | `src/lib/queryConfig.ts` |
 | `MAX_PAGE_SIZE` | `200` | `src/lib/queryConfig.ts` |
 | `MAX_RETRIES` | `3` | `src/lib/offline/offlineQueue.ts` |
+| `QUARANTINE_TTL_MS` | `24` | `src/lib/offline/offlineQueue.ts` |
 | `RETRY_BACKOFF_BASE_MS` | `3000` | `src/lib/offline/offlineQueue.ts` |
 | `START_HOUR` | `7` | `src/pages/DailyCalendar.tsx` |
 | `END_HOUR` | `21` | `src/pages/DailyCalendar.tsx` |
@@ -2850,6 +2851,7 @@ _nenhum item encontrado_
 | `STATIC: 15 * 60 * 1000, // 15 minutes for static data (techniques, machines)` | `src/lib/queryConfig.ts` |
 | `USER: 5 * 60 * 1000, // 5 minutes for user data` | `src/lib/queryConfig.ts` |
 | `gcTime: 10 * 60 * 1000, // 10 minutes garbage collection` | `src/lib/queryConfig.ts` |
+| `export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;` | `src/lib/offline/offlineQueue.ts` |
 | `const threshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();` | `src/pages/AdminTelemetriaPage.tsx` |
 | `const [customRange, setCustomRange] = useState<DateRange>({ from: subDays(new Date(), 30), to: new Date() });` | `src/pages/BIDashboard.tsx` |
 | `const [customRange2, setCustomRange2] = useState<DateRange>({ from: subDays(new Date(), 60), to: subDays(new Date(), 31) });` | `src/pages/BIDashboard.tsx` |
@@ -3342,7 +3344,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1484 testes em 132 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1496 testes em 132 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3364,9 +3366,10 @@ _nenhum item encontrado_
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/sanitize.test.ts` | 24 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
+| `src/features/auth/components/AuthProvider.test.tsx` | 19 | AuthContext · should initialize with loading state · should sign in successfully · should re-gate a Google session after a failed password sign-in (YTJ_) … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
-| `src/features/auth/components/AuthProvider.test.tsx` | 18 | AuthContext · should initialize with loading state · should sign in successfully · should re-gate a Google session after a failed password sign-in (YTJ_) … |
 | `src/features/inventory/hooks/useInventory.test.ts` | 18 | useInventoryMovements · não consulta quando não há usuário autenticado · busca todas as movimentações ordenadas por data quando nenhum item é informado · filtra movimentações por item_id quando um itemId é informado … |
+| `src/hooks/useOfflineSync.test.ts` | 18 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · drains a queue hydrated from localStorage on cold mount while online … |
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
 | `src/test/rateLimiterAdvanced.test.ts` | 18 | RateLimiter — advanced scenarios · basic token consumption · allows requests up to maxTokens · rejects when tokens are exhausted … |
 | `src/pages/PendingQueue.test.tsx` | 16 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · depois da nova tentativa bem-sucedida a fila volta na mesma montagem · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro … |
@@ -3411,7 +3414,6 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
-| `src/hooks/useOfflineSync.test.ts` | 7 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · drains a queue hydrated from localStorage on cold mount while online … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
 | `supabase/functions/_shared/cors.test.ts` | 7 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
@@ -3670,8 +3672,10 @@ _nenhum item encontrado_
 | navHistory): o voltar deve consumi-la e fechar o dialog — o | `src/hooks/use-smart-back.ts` |
 | @returns Object with debounced value, loading state, and validation | `src/hooks/useDebounce.ts` |
 | @param options - Fuse.js options with required 'keys' field | `src/hooks/useFuseSearch.ts` |
+| storage). Ela só deve ser descartada quando a fila ativa for gravada com | `src/hooks/useOfflineSync.ts` |
 | from storage must NOT re-enter the queue (it would duplicate the write | `src/hooks/useOfflineSync.ts` |
 | queue as ghosts). Future passes must skip them or the same write gets | `src/hooks/useOfflineSync.ts` |
+| outrem: o prazo não pode depender de o dono voltar a este aparelho. | `src/hooks/useOfflineSync.ts` |
 | ').order('created_at', { ascending: false }).limit(100), | `src/hooks/useOfflineSync.ts` |
 | storage that aren't part of this pass's snapshot must survive the | `src/hooks/useOfflineSync.ts` |
 | Tenta encontrar em CRITICAL_ROUTES ou RELATED_ROUTES ou apenas tenta importar se for um padrão conhecido | `src/hooks/useRoutePrefetch.ts` |
@@ -3700,6 +3704,12 @@ _nenhum item encontrado_
 | ownership prefix (`<uid>/...`), required by the storage RLS policies | `src/lib/storage.ts` |
 | * Runtime validation utilities using Zod. | `src/lib/validation.ts` |
 | Logs validation failures in dev mode. | `src/lib/validation.ts` |
+| aparelho (quiosque de fábrica) não pode herdá-los. Best-effort — storage | `src/lib/offline/offlineQueue.ts` |
+| indisponível (modo privado) não deve derrubar o logout. */ | `src/lib/offline/offlineQueue.ts` |
+| * Quando a cópia foi guardada. Expira para o aparelho compartilhado não | `src/lib/offline/offlineQueue.ts` |
+| resto (cache de leitura e confirmações). A fila não pode ser herdada pelo | `src/lib/offline/offlineQueue.ts` |
+| próximo operador do mesmo aparelho, mas também não pode ser descartada: no | `src/lib/offline/offlineQueue.ts` |
+| cópia do próprio dono não basta: até ele voltar, o prazo não vale para quem | `src/lib/offline/offlineQueue.ts` |
 | errors must not throw into the caller; the caller already has the data in | `src/lib/offline/offlineQueue.ts` |
 | de consumo zero); por isso a consulta so roda quando a permissao existe | `src/pages/DigitalTwin.tsx` |
 | items antigo SEM modal — voltar até ela não pode restaurar a | `src/pages/InventoryPage.tsx` |

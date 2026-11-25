@@ -4594,7 +4594,7 @@
    "hooks_exportados": [
     "useOfflineSync"
    ],
-   "linhas": 663,
+   "linhas": 805,
    "dominio": "hooks",
    "tabelas": [
     "jobs",

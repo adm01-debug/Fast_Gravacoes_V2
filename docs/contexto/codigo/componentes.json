@@ -7880,7 +7880,7 @@
     "AuthProvider"
    ],
    "export_default": null,
-   "linhas": 485,
+   "linhas": 486,
    "dominio": "features/auth",
    "hooks_locais": [
     "useDeviceDetection"

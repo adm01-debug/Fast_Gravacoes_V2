@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)",
    "fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)",
    "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)",
    "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)",
-   "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)",
-   "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)"
+   "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

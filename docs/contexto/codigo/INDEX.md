@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d6a4a958bfca64ff377aba2076dc801857372222` (2026-11-25T16:46:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `09d25549d5b1890a1b4035c8f385ef01659ef862` (2026-11-25T17:14:18-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1626 |
 | arquivos_codigo | 1151 |
-| linhas_codigo | 194906 |
+| linhas_codigo | 195680 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,8 +247,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8584 nós · 32568 arestas · 391 comunidades · grafo do commit `d6a4a958`
-- comunidades maiores: Card (207), ResponsiveContainer (166), Button (140), client.ts (136), CardTitle (134), vitest (133), date-fns (130), cn (130), package.json (129), Badge (125), DailyCalendar.tsx (122), snapshot.py (120)
+- 8595 nós · 32602 arestas · 401 comunidades · grafo do commit `09d25549`
+- comunidades maiores: Card (209), analytics/index.ts (188), Button (153), cn (151), Badge (145), PendingQueue.tsx (138), client.ts (125), package.json (119), vitest (113), generate.py (110), TableCell (101), CardTitle (100)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -257,7 +257,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
-- docs/qa/05-PROGRESSO.md (14)
+- docs/qa/05-PROGRESSO.md (15)
 - .github/workflows/db-admin.yml (10)
 - AGENTS.md (10)
 - .github/workflows/deploy.yml (9)
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `09d2554` fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)
 - 2026-11-25 `d6a4a95` fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)
 - 2026-11-25 `14b0499` fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)
 - 2026-11-25 `1824019` fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `d0e7a1d` feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)
 - 2026-11-25 `cd834ba` infra: remove push em main do automation-local (recupera PR #229) (#298)
 - 2026-11-25 `d0cab10` feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)
-- 2026-11-25 `5cc8d77` fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

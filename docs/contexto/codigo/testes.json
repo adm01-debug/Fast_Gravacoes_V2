@@ -489,13 +489,13 @@
   {
    "arquivo": "src/features/auth/components/AuthProvider.test.tsx",
    "tipo": "unit",
-   "linhas": 679,
+   "linhas": 722,
    "testa": [
     "src/features/auth/components/AuthProvider.tsx",
     "src/features/auth/hooks/useAuth.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 17,
+   "casos": 18,
    "suporte": false
   },
   {
@@ -797,13 +797,13 @@
   {
    "arquivo": "src/hooks/useOfflineSync.test.ts",
    "tipo": "unit",
-   "linhas": 231,
+   "linhas": 672,
    "testa": [
     "src/hooks/useOfflineSync.ts",
     "src/integrations/supabase/client.ts",
     "src/lib/offline/offlineQueue.ts"
    ],
-   "casos": 6,
+   "casos": 17,
    "suporte": false
   },
   {

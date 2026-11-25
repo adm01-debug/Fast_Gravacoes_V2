@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d6a4a958bfca64ff377aba2076dc801857372222",
+  "commit": "09d25549d5b1890a1b4035c8f385ef01659ef862",
   "branch": "main",
-  "data_commit": "2026-11-25T16:46:13-03:00",
+  "data_commit": "2026-11-25T17:14:18-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "09d2554",
+    "data": "2026-11-25",
+    "assunto": "fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)"
+   },
    {
     "sha": "d6a4a95",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "3a296f2",
     "data": "2026-11-24",
     "assunto": "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)"
-   },
-   {
-    "sha": "8777e18",
-    "data": "2026-11-24",
-    "assunto": "chore(graphify): sobe o pin de 0.9.48 para 0.9.115 (#287)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 278,
+  "arquivos_mudados_7d": 281,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -149,12 +149,12 @@
     "mudancas": 29
    },
    {
-    "pasta": "src/features/maintenance",
+    "pasta": "src/features/auth",
     "mudancas": 27
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 25
+    "pasta": "src/features/maintenance",
+    "mudancas": 27
    },
    {
     "pasta": "src/components/dashboard",
@@ -182,7 +182,7 @@
    },
    {
     "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "pasta": "package-lock.json",
@@ -216,7 +216,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
@@ -271,6 +271,14 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/features/auth/components/AuthProvider.tsx",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/hooks/useOfflineSync.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/routes/AppRoutes.tsx",
     "mudancas": 6
    },
@@ -289,20 +297,12 @@
    {
     "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
     "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/rls-regression.mjs",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 162
+    "commits": 163
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1626,
   "arquivos_codigo": 1151,
-  "linhas_codigo": 194906,
+  "linhas_codigo": 195680,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,11 +493,11 @@
   },
   "src/features": {
    "arquivos": 338,
-   "linhas": 48332
+   "linhas": 48376
   },
   "src/hooks": {
    "arquivos": 63,
-   "linhas": 7893
+   "linhas": 8476
   },
   "src/i18n": {
    "arquivos": 1,
@@ -509,7 +509,7 @@
   },
   "src/lib": {
    "arquivos": 53,
-   "linhas": 6643
+   "linhas": 6790
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -603,7 +603,7 @@
   },
   {
    "arquivo": "src/hooks/useOfflineSync.ts",
-   "linhas": 663
+   "linhas": 805
   },
   {
    "arquivo": "src/components/ui/sidebar.tsx",
@@ -667,7 +667,7 @@
   }
  ],
  "qualidade": {
-  "any": 178,
+  "any": 182,
   "console_log": 177,
   "ts_ignore": 3,
   "eslint_disable": 2,

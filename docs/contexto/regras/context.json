@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d6a4a958bfca64ff377aba2076dc801857372222",
+  "sha": "09d25549d5b1890a1b4035c8f385ef01659ef862",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 19:46 UTC",
+  "generated_at": "2026-11-25 20:16 UTC",
   "files_total": 1624,
   "code_files": 1428,
-  "code_lines": 212374
+  "code_lines": 213148
  },
  "version": "1.3.2",
- "facts_hash": "e8fc37ba879296b9",
+ "facts_hash": "844234fed4b0c8dc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -29013,7 +29013,7 @@
   {
    "module": "src/features/auth",
    "files": 18,
-   "lines": 3064,
+   "lines": 3108,
    "tables": [
     "profiles",
     "role_permissions",
@@ -29703,7 +29703,7 @@
   {
    "module": "src/hooks",
    "files": 63,
-   "lines": 7893,
+   "lines": 8476,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -29925,7 +29925,7 @@
   {
    "module": "src/lib",
    "files": 53,
-   "lines": 6643,
+   "lines": 6790,
    "tables": [
     "audit_log",
     "error_logs",
@@ -37752,11 +37752,19 @@
    },
    {
     "file": "src/hooks/useOfflineSync.ts",
+    "text": "storage). Ela só deve ser descartada quando a fila ativa for gravada com"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.ts",
     "text": "from storage must NOT re-enter the queue (it would duplicate the write"
    },
    {
     "file": "src/hooks/useOfflineSync.ts",
     "text": "queue as ghosts). Future passes must skip them or the same write gets"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.ts",
+    "text": "outrem: o prazo não pode depender de o dono voltar a este aparelho."
    },
    {
     "file": "src/hooks/useOfflineSync.ts",
@@ -37869,6 +37877,30 @@
    {
     "file": "src/lib/validation.ts",
     "text": "Logs validation failures in dev mode."
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "aparelho (quiosque de fábrica) não pode herdá-los. Best-effort — storage"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "indisponível (modo privado) não deve derrubar o logout. */"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "* Quando a cópia foi guardada. Expira para o aparelho compartilhado não"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "resto (cache de leitura e confirmações). A fila não pode ser herdada pelo"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "próximo operador do mesmo aparelho, mas também não pode ser descartada: no"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "text": "cópia do próprio dono não basta: até ele voltar, o prazo não vale para quem"
    },
    {
     "file": "src/lib/offline/offlineQueue.ts",
@@ -43690,6 +43722,11 @@
     "file": "src/lib/offline/offlineQueue.ts",
     "name": "MAX_RETRIES",
     "value": "3"
+   },
+   {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "name": "QUARANTINE_TTL_MS",
+    "value": "24"
    },
    {
     "file": "src/lib/offline/offlineQueue.ts",
@@ -50911,6 +50948,10 @@
     "line": "gcTime: 10 * 60 * 1000, // 10 minutes garbage collection"
    },
    {
+    "file": "src/lib/offline/offlineQueue.ts",
+    "line": "export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;"
+   },
+   {
     "file": "src/pages/AdminTelemetriaPage.tsx",
     "line": "const threshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();"
    },
@@ -52619,6 +52660,10 @@
     "name": "should sign out successfully"
    },
    {
+    "file": "src/features/auth/components/AuthProvider.test.tsx",
+    "name": "limpa cache, IndexedDB e rascunhos em toda saída de sessão (etapa 232)"
+   },
+   {
     "file": "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
     "name": "useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032)"
    },
@@ -53561,6 +53606,50 @@
    {
     "file": "src/hooks/useOfflineSync.test.ts",
     "name": "replays a queued QR scan via upsert keyed on the action id (idempotent retry)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "limpa fila e cache do localStorage na saída de sessão (etapa 232)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "guarda a alteração não entregue e o próximo operador não a herda (etapa 232)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "devolve a fila não entregue quando o mesmo operador volta (etapa 232)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "saída durante o sync não guarda ação que o servidor já aceitou (etapa 232, thread 1)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "não devolve cópia guardada antiga demais (etapa 232, thread 3)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "mantém a cópia guardada quando a fila ativa não pôde ser gravada (etapa 232, thread 2)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "saída durante o lote guarda a ação rejeitada, não a descarta (etapa 232, thread nova 1)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "descarta a cópia guardada quando a fila ativa volta a ser gravada (etapa 232, thread nova 2)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "limpa cópias vencidas de outros operadores a cada evento de auth (etapa 232, thread nova 3)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "saída de outra aba não sobrescreve a cópia já guardada do mesmo operador (thread nova 2)"
+   },
+   {
+    "file": "src/hooks/useOfflineSync.test.ts",
+    "name": "preserva ação enfileirada depois do saldo do lote e descarta as já resolvidas (thread nova 1)"
    },
    {
     "file": "src/lib/calendarExports.test.ts",
@@ -83006,7 +83095,7 @@
   },
   "src/features/auth/components/AuthProvider.test.tsx": {
    "path": "src/features/auth/components/AuthProvider.test.tsx",
-   "lines": 679,
+   "lines": 722,
    "is_test": true,
    "rule_comments": [
     "XP_W/YTJ_: falha de senha não pode deixar o marker de sessão-password ativo,",
@@ -83031,12 +83120,13 @@
     "should NOT sign out a pending restored session on refocus 429 (YQbV)",
     "should sign out a pending restored session once geo blocks after the refocus 429s (YWzd)",
     "should NOT re-gate an admitted session on TOKEN_REFRESHED (YQbx)",
-    "should sign out successfully"
+    "should sign out successfully",
+    "limpa cache, IndexedDB e rascunhos em toda saída de sessão (etapa 232)"
    ]
   },
   "src/features/auth/components/AuthProvider.tsx": {
    "path": "src/features/auth/components/AuthProvider.tsx",
-   "lines": 485,
+   "lines": 486,
    "exports": [
     "function AuthProvider"
    ],
@@ -89800,7 +89890,7 @@
   },
   "src/hooks/useOfflineSync.test.ts": {
    "path": "src/hooks/useOfflineSync.test.ts",
-   "lines": 231,
+   "lines": 672,
    "is_test": true,
    "tables": [
     {
@@ -89820,13 +89910,33 @@
      "op": "ref"
     },
     {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
      "table": "qr_scan_history",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
+     "op": "ref"
+    },
+    {
+     "table": "jobs",
      "op": "ref"
     }
    ],
+   "errors": [
+    "QuotaExceededError"
+   ],
    "rule_comments": [
+    "Um teste que deixa o thenable pendurado (banco \"fora do ar\") não pode",
     "ref, and nothing re-fired it. The assignment effect must kick the pass",
-    "zero rows. That must surface as a conflict, not a silent no-op success."
+    "zero rows. That must surface as a conflict, not a silent no-op success.",
+    "A ação não foi entregue ao servidor: não pode ser descartada.",
+    "A ação foi entregue: não pode voltar como pendência.",
+    "O prazo não pode valer só quando o dono volta: até lá a cópia",
+    "salva nesse meio-tempo não está nele e não pode ser apagada na saída."
    ],
    "tests": [
     "useOfflineSync",
@@ -89835,12 +89945,23 @@
     "drains a queue hydrated from localStorage on cold mount while online",
     "should handle sync failures and retries",
     "detects a conflict instead of blindly overwriting a job that changed on the server while queued",
-    "replays a queued QR scan via upsert keyed on the action id (idempotent retry)"
+    "replays a queued QR scan via upsert keyed on the action id (idempotent retry)",
+    "limpa fila e cache do localStorage na saída de sessão (etapa 232)",
+    "guarda a alteração não entregue e o próximo operador não a herda (etapa 232)",
+    "devolve a fila não entregue quando o mesmo operador volta (etapa 232)",
+    "saída durante o sync não guarda ação que o servidor já aceitou (etapa 232, thread 1)",
+    "não devolve cópia guardada antiga demais (etapa 232, thread 3)",
+    "mantém a cópia guardada quando a fila ativa não pôde ser gravada (etapa 232, thread 2)",
+    "saída durante o lote guarda a ação rejeitada, não a descarta (etapa 232, thread nova 1)",
+    "descarta a cópia guardada quando a fila ativa volta a ser gravada (etapa 232, thread nova 2)",
+    "limpa cópias vencidas de outros operadores a cada evento de auth (etapa 232, thread nova 3)",
+    "saída de outra aba não sobrescreve a cópia já guardada do mesmo operador (thread nova 2)",
+    "preserva ação enfileirada depois do saldo do lote e descarta as já resolvidas (thread nova 1)"
    ]
   },
   "src/hooks/useOfflineSync.ts": {
    "path": "src/hooks/useOfflineSync.ts",
-   "lines": 663,
+   "lines": 805,
    "exports": [
     "function useOfflineSync"
    ],
@@ -89900,8 +90021,10 @@
     }
    ],
    "rule_comments": [
+    "storage). Ela só deve ser descartada quando a fila ativa for gravada com",
     "from storage must NOT re-enter the queue (it would duplicate the write",
     "queue as ghosts). Future passes must skip them or the same write gets",
+    "outrem: o prazo não pode depender de o dono voltar a este aparelho.",
     "').order('created_at', { ascending: false }).limit(100),",
     "storage that aren't part of this pass's snapshot must survive the"
    ],
@@ -91941,7 +92064,7 @@
   },
   "src/lib/offline/offlineQueue.ts": {
    "path": "src/lib/offline/offlineQueue.ts",
-   "lines": 97,
+   "lines": 244,
    "exports": [
     "interface PendingAction",
     "type ReplayResult",
@@ -91952,6 +92075,13 @@
     "interface CachedData",
     "const STORAGE_KEYS",
     "const MAX_RETRIES",
+    "function clearOfflineQueueStorage",
+    "interface QuarantinedQueue",
+    "const QUARANTINE_TTL_MS",
+    "function quarantineOfflineQueueStorage",
+    "function purgeExpiredQuarantines",
+    "function readQuarantinedQueue",
+    "function dropQuarantinedQueue",
     "const RETRY_BACKOFF_BASE_MS",
     "function readQueueFromStorage",
     "function readAcknowledgedFromStorage",
@@ -91970,6 +92100,10 @@
      "value": "3"
     },
     {
+     "name": "QUARANTINE_TTL_MS",
+     "value": "24"
+    },
+    {
      "name": "RETRY_BACKOFF_BASE_MS",
      "value": "3000"
     }
@@ -91982,7 +92116,16 @@
     }
    ],
    "rule_comments": [
+    "aparelho (quiosque de fábrica) não pode herdá-los. Best-effort — storage",
+    "indisponível (modo privado) não deve derrubar o logout. */",
+    "* Quando a cópia foi guardada. Expira para o aparelho compartilhado não",
+    "resto (cache de leitura e confirmações). A fila não pode ser herdada pelo",
+    "próximo operador do mesmo aparelho, mas também não pode ser descartada: no",
+    "cópia do próprio dono não basta: até ele voltar, o prazo não vale para quem",
     "errors must not throw into the caller; the caller already has the data in"
+   ],
+   "temporal": [
+    "export const QUARANTINE_TTL_MS = 24 * 60 * 60 * 1000;"
    ]
   },
   "src/lib/offline/replayPendingAction.ts": {
@@ -99472,10 +99615,24 @@
   }
  },
  "git": {
-  "sha": "d6a4a958bfca64ff377aba2076dc801857372222",
+  "sha": "09d25549d5b1890a1b4035c8f385ef01659ef862",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "09d2554",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/features/auth/components/AuthProvider.test.tsx",
+     "src/features/auth/components/AuthProvider.tsx",
+     "src/hooks/useOfflineSync.test.ts",
+     "src/hooks/useOfflineSync.ts",
+     "src/lib/offline/offlineQueue.ts"
+    ]
+   },
    {
     "sha": "d6a4a95",
     "date": "2026-11-25",
@@ -99835,21 +99992,12 @@
     "files": [
      ".github/workflows/ci.yml"
     ]
-   },
-   {
-    "sha": "5bc2d12",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore: lista public.techniques no db-admin inspect (#284)",
-    "files": [
-     ".github/workflows/db-admin.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    14
    ],
    [
     "src/features/jobs/services/jobsService.ts",
