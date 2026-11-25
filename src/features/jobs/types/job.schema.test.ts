@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { jobSchema } from './job.schema';
+import { jobSchema, jobFormSchema } from './job.schema';
 
 // Linha como o PostgREST devolve de public.jobs: technique_id textual
 // (public.techniques.id) e as relações juntadas na consulta de jobsService.
@@ -44,5 +44,17 @@ describe('jobSchema', () => {
       machine_id: '77777777-7777-7777-7777-777777777777',
     });
     expect(resultado.success).toBe(true);
+  });
+
+  it('o schema do formulario segue descartando os campos fora do contrato', () => {
+    const form = jobFormSchema.parse({
+      order_number: 'ORD-1', client: 'Cliente', product: 'Caneca', quantity: 10,
+      technique_id: 'bordado', machine_id: null, priority: 'medium',
+      status: 'queue', produced_quantity: 40, lost_pieces: 2,
+      created_at: '2026-11-25T12:00:00.000Z',
+    }) as unknown as Record<string, unknown>;
+    expect('status' in form).toBe(false);
+    expect('produced_quantity' in form).toBe(false);
+    expect('created_at' in form).toBe(false);
   });
 });

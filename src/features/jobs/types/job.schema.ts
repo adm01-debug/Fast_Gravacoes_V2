@@ -15,7 +15,7 @@ const uuidDoBanco = z.string().regex(
   'UUID inválido',
 );
 
-export const jobSchema = z.object({
+const jobCamposBase = z.object({
   id: uuidDoBanco,
   order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'),
   client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'),
@@ -37,11 +37,14 @@ export const jobSchema = z.object({
     // usa esses numeros para impedir apagar OS com producao registrada.
     produced_quantity: z.coerce.number().nullable().optional(),
     lost_pieces: z.coerce.number().nullable().optional(),
-  // .loose(): a consulta de jobs traz relações (machines, techniques) e timestamps
-  // que não fazem parte deste schema; sem isso o safeParse os descartaria.
-}).loose();
+});
 
-  export const jobFormSchema = jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({
+// .loose() apenas na schema de leitura: a consulta de jobs traz relacoes
+// (machines, techniques) e timestamps fora do contrato deste schema; sem isso
+// o safeParse os descartaria. O formulario segue descartando campos extras.
+export const jobSchema = jobCamposBase.loose();
+
+  export const jobFormSchema = jobCamposBase.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({
   quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'),
   estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60),
 });

@@ -2,6 +2,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { jobsService, ArchiveRefusedError } from './jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
+import { logger } from '@/lib/logger';
 
 // Mock Supabase
 const { rpcMock } = vi.hoisted(() => ({ rpcMock: vi.fn() }));
@@ -153,11 +154,42 @@ describe('jobsService', () => {
           }),
         });
 
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
         const [job] = await jobsService.getAll();
         const linha = job as unknown as Record<string, unknown>;
         expect(linha.technique_id).toBe('bordado');
         expect(linha.machines).toEqual({ name: 'Bordado 1', code: 'BRD1' });
         expect(linha.techniques).toEqual({ id: 'bordado', name: 'Bordado' });
+        // A linha original tambem passaria no teste acima quando o safeParse falha
+        // (o fallback devolve a row crua), entao o aviso de validacao e a prova de
+        // que a validacao realmente passou.
+        expect(warnSpy).not.toHaveBeenCalled();
+        warnSpy.mockRestore();
+      });
+
+      it('avisa quando a tecnica esta ausente na linha do banco', async () => {
+        (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+          select: () => ({
+            order: () => ({
+              data: [{
+                id: '77777777-7777-4777-8777-777777777777',
+                order_number: 'PED-12', client: 'Cliente', product: 'Caneca', quantity: 10,
+                technique_id: '', machine_id: null,
+                priority: 'medium', status: 'queue', estimated_duration: 60,
+              }],
+              error: null,
+            }),
+          }),
+        });
+
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
+        await jobsService.getAll();
+        expect(warnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Job validation failed for ID 77777777'),
+          expect.anything(),
+          'jobsService',
+        );
+        warnSpy.mockRestore();
       });
 
       it('recusa a exclusao de OS com producao registrada no proprio servico', async () => {
