@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { createAppError, createMutationErrorHandler } from '@/lib/errorHandling';
+import { createAppError, createMutationErrorHandler, showErrorToast } from '@/lib/errorHandling';
 import { QUERY_KEYS, STALE_TIMES } from '@/lib/queryConfig';
 import { useRealtimeChannel } from '@/lib/realtimeChannel';
-import { jobsService } from '../services/jobsService';
+import { jobsService, ArchiveRefusedError } from '../services/jobsService';
 import type { Job, JobStatus } from '../services/jobsService';
 import { useTechniques } from '../index';
 import type { Technique } from '../services/techniquesService';
@@ -15,6 +15,7 @@ const JOBS_ERROR_CONTEXT = {
     updateStatus: { entity: 'jobs', operation: 'update_status' },
     updateJob: { entity: 'jobs', operation: 'update' },
     deleteJob: { entity: 'jobs', operation: 'delete' },
+    archiveJob: { entity: 'jobs', operation: 'archive' },
   }
 };
 
@@ -106,6 +107,37 @@ export function useDeleteJob() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
     },
     onError: createMutationErrorHandler('Erro ao excluir job'),
+  });
+}
+
+export function useArchiveJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (jobId: string) => {
+      try {
+        return await jobsService.archive(jobId);
+      } catch (error) {
+            // Recusa de negocio ja' carrega o motivo exato da RPC: embrulhar em
+            // AppError trocaria o texto por uma mensagem generica.
+            if (error instanceof ArchiveRefusedError) throw error;
+        throw createAppError(error, JOBS_ERROR_CONTEXT.hooks.archiveJob);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.JOBS_RECENT });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PAGINATED_JOBS });
+    },
+        onError: (error) => {
+          // O handler padrao fixa "Erro ao arquivar OS" e esconde se a OS parou por
+          // embalagem ou por remessa em andamento.
+          showErrorToast(
+            error,
+            error instanceof ArchiveRefusedError ? error.message : 'Erro ao arquivar OS',
+            JOBS_ERROR_CONTEXT.hooks.archiveJob
+          );
+        },
   });
 }
 

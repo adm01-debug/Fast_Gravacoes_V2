@@ -24,10 +24,11 @@ import {
   Trash2,
   Save,
   X,
-  Camera
+  Camera,
+  Archive
 } from "lucide-react";
 import { useSchedulingData } from "@/features/jobs";
-import { DbJob, useUpdateJob, useDeleteJob, useUpdateJobStatus } from "@/features/jobs";
+import { DbJob, useUpdateJob, useDeleteJob, useUpdateJobStatus, useArchiveJob } from "@/features/jobs";
 import { JobQRCode } from "@/components/qrcode/JobQRCode";
 import { useDuplicateJob } from "@/features/jobs";
 import { useEntityAuditTrail } from "@/features/admin";
@@ -44,6 +45,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDataExport } from "@/features/admin";
 import { useConfirmation } from "@/contexts/ConfirmationContext";
+import { useAuth } from "@/features/auth";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -88,8 +90,10 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   const { getTechniqueById, getMachineById } = useSchedulingData();
   const { duplicateJob } = useDuplicateJob();
   const { confirm } = useConfirmation();
+  const { isManager, isAdmin } = useAuth();
   const updateJobMutation = useUpdateJob();
   const deleteJobMutation = useDeleteJob();
+  const archiveJobMutation = useArchiveJob();
   const updateStatusMutation = useUpdateJobStatus();
   const [isEditing, setIsEditing] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
@@ -119,6 +123,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
   const technique = getTechniqueById(job.technique_id);
   const machine = getMachineById(job.machine_id);
   const canDelete = !job.produced_quantity && !job.lost_pieces && ['queue', 'scheduled', 'cancelled'].includes(job.status);
+  const canArchive = job.status === 'finished' && (isManager || isAdmin);
 
   const handleSave = async (data: JobEditValues) => {
     try {
@@ -142,6 +147,24 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
       try {
         await deleteJobMutation.mutateAsync(job.id);
         toast.success(t('jobs.jobDeleted'));
+        onOpenChange(false);
+      } catch (error) {
+        // Error handled by mutation
+      }
+    }
+  };
+
+  const handleArchive = async () => {
+    const confirmed = await confirm({
+      title: 'Arquivar OS',
+      description: `A OS ${job.order_number} sairá da listagem de operação e ficará no histórico de arquivadas, com toda a produção registrada. Deseja arquivar?`,
+      confirmLabel: 'Arquivar',
+    });
+
+    if (confirmed) {
+      try {
+        await archiveJobMutation.mutateAsync(job.id);
+        toast.success('OS arquivada.');
         onOpenChange(false);
       } catch (error) {
         // Error handled by mutation
@@ -236,6 +259,19 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
                     <Pencil className="h-4 w-4 mr-1" />
                     {t('common.edit')}
                   </Button>
+                  {canArchive && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleArchive}
+                      disabled={archiveJobMutation.isPending}
+                      title="Arquivar OS finalizada: sai da operação e fica no histórico, com a produção registrada"
+                      className="border-border/50 text-muted-foreground hover:text-foreground"
+                    >
+                      <Archive className="h-4 w-4 mr-1" />
+                      Arquivar
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"

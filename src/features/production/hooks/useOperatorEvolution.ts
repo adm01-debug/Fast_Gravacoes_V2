@@ -56,14 +56,28 @@ export function useOperatorEvolution(days: number = 30) {
   const { data: finishedJobs, isLoading: isLoadingJobs } = useQuery({
     queryKey: ['finished-jobs-evolution', days],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('id, machine_id, operator_id, quantity, produced_quantity, lost_pieces, estimated_duration, actual_start_time, actual_end_time')
-        .eq('status', 'finished')
-        .gte('actual_end_time', startDate.toISOString());
+      // OS arquivada sai de jobs: sem somar o arquivo, o indicador de
+            // produtividade cai sozinho conforme o cron arquiva o periodo. A leitura
+            // vai pela RPC (jobs + archived_jobs) porque archived_jobs.children e'
+            // restrito a manager/admin, e coordenador tambem abre esta tela.
+            // Paginado: o PostgREST corta a resposta e o grafico perderia dias.
+            const pageSize = 1000;
+            const rows: FinishedJob[] = [];
+            for (let offset = 0; ; offset += pageSize) {
+              const { data, error } = await supabase.rpc('get_finished_jobs_for_evolution', {
+                p_since: startDate.toISOString(),
+                p_limit: pageSize,
+                p_offset: offset,
+              });
 
-      if (error) throw error;
-      return (data || []) as FinishedJob[];
+              if (error) throw error;
+
+              const page = (data || []) as FinishedJob[];
+              rows.push(...page);
+              if (page.length < pageSize) break;
+            }
+
+            return rows;
     },
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,
