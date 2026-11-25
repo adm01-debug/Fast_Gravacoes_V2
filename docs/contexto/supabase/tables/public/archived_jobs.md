@@ -49,6 +49,8 @@
 | 31 | `parent_job_id` | `uuid` | sim |  |  |  |
 | 32 | `archived_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 33 | `children` | `jsonb` | não | `'{}'::jsonb` |  |  |
+| 34 | `cancel_reason` | `text` | sim |  |  |  |
+| 35 | `external_ref` | `text` | sim |  |  |  |
 
 
 ## Constraints

@@ -8,14 +8,14 @@ DECLARE
     overlap_count INTEGER;
     machine_name TEXT;
 BEGIN
-    -- Update que nao altera o agendamento nem o estado de cancelamento nao pode
-    -- ser barrado por um conflito que ja existia antes dele.
+    -- Update que nao altera o agendamento nem o estado que ocupa o horario nao
+    -- pode ser barrado por um conflito que ja existia antes dele.
     IF TG_OP = 'UPDATE'
        AND NEW.machine_id IS NOT DISTINCT FROM OLD.machine_id
        AND NEW.scheduled_date IS NOT DISTINCT FROM OLD.scheduled_date
        AND NEW.start_time IS NOT DISTINCT FROM OLD.start_time
        AND NEW.end_time IS NOT DISTINCT FROM OLD.end_time
-       AND (NEW.status = 'cancelled') IS NOT DISTINCT FROM (OLD.status = 'cancelled') THEN
+       AND (NEW.status IN ('cancelled', 'finished')) IS NOT DISTINCT FROM (OLD.status IN ('cancelled', 'finished')) THEN
         RETURN NEW;
     END IF;
 
@@ -24,8 +24,8 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    -- Skip check if status is 'cancelled'
-    IF NEW.status = 'cancelled' THEN
+    -- Skip check if the job itself does not occupy the machine slot
+    IF NEW.status IN ('cancelled', 'finished') THEN
         RETURN NEW;
     END IF;
 
@@ -37,7 +37,7 @@ BEGIN
     WHERE machine_id = NEW.machine_id
       AND scheduled_date = NEW.scheduled_date
       AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000'::uuid)
-      AND status != 'cancelled'
+      AND status NOT IN ('cancelled', 'finished')
       AND (
         (NEW.start_time < end_time AND NEW.end_time > start_time)
       );

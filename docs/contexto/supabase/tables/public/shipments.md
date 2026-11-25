@@ -38,7 +38,7 @@
 
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
-| shipments_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
+| shipments_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE RESTRICT` | RESTRICT | NO ACTION | sim |
 | shipments_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | shipments_provider_id_fkey | FOREIGN KEY | `FOREIGN KEY (provider_id) REFERENCES shipping_providers(id)` | NO ACTION | NO ACTION | sim |
 

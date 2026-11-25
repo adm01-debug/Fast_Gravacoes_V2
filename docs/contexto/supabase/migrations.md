@@ -264,3 +264,9 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261126100000 | [f011_rpc_apply_job_sequence](migrations/20261126100000_f011_rpc_apply_job_sequence.sql) | 3 |
 | 20261126110000 | [restore_public_has_role_execute](migrations/20261126110000_restore_public_has_role_execute.sql) | 1 |
 | 20261127120000 | [isolate_public_has_role](migrations/20261127120000_isolate_public_has_role.sql) | 5 |
+| 20261128100000 | [block_delete_job_with_production](migrations/20261128100000_block_delete_job_with_production.sql) | 0 |
+| 20261128110000 | [fk_production_losses_restrict](migrations/20261128110000_fk_production_losses_restrict.sql) | 0 |
+| 20261128120000 | [fk_shipments_restrict](migrations/20261128120000_fk_shipments_restrict.sql) | 0 |
+| 20261128130000 | [f038_arquivar_os_concluida](migrations/20261128130000_f038_arquivar_os_concluida.sql) | 0 |
+| 20261128140000 | [realtime_push_notifications](migrations/20261128140000_realtime_push_notifications.sql) | 0 |
+| 20261128150000 | [f053_os_concluida_nao_ocupa_maquina](migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql) | 0 |

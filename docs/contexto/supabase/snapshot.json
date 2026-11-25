@@ -1682,6 +1682,32 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "cancel_reason",
+        "nullable": true,
+        "position": 34,
+        "schema": "public",
+        "table": "archived_jobs",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "external_ref",
+        "nullable": true,
+        "position": 35,
+        "schema": "public",
+        "table": "archived_jobs",
+        "type": "text"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -21929,9 +21955,9 @@
           "job_id"
         ],
         "deferrable": false,
-        "definition": "FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE",
+        "definition": "FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE RESTRICT",
         "name": "production_losses_job_id_fkey",
-        "on_delete": "CASCADE",
+        "on_delete": "RESTRICT",
         "on_update": "NO ACTION",
         "ref_columns": [
           "id"
@@ -22897,9 +22923,9 @@
           "job_id"
         ],
         "deferrable": false,
-        "definition": "FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE",
+        "definition": "FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE RESTRICT",
         "name": "shipments_job_id_fkey",
-        "on_delete": "CASCADE",
+        "on_delete": "RESTRICT",
         "on_update": "NO ACTION",
         "ref_columns": [
           "id"
@@ -24742,6 +24768,15 @@
           "jobname": "auto-promote-jobs-fallback",
           "schedule": "*/5 * * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "chama: public.archive_finished_jobs",
+          "database": "postgres",
+          "jobid": 22,
+          "jobname": "archive-finished-jobs-daily",
+          "schedule": "7 4 * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -24919,8 +24954,10 @@
           "code_total_files": 79,
           "cron": [],
           "db": [
+            "public.archive_jobs",
             "public.assign_packaging_task",
             "public.get_cron_health",
+            "public.get_finished_jobs_for_evolution",
             "public.has_permission",
             "public.record_packaging_defect",
             "public.update_shipment_status",
@@ -25074,7 +25111,9 @@
             }
           ],
           "code_total_files": 1,
-          "cron": [],
+          "cron": [
+            "22:archive-finished-jobs-daily"
+          ],
           "db": [],
           "triggers": [],
           "views": []
@@ -25084,14 +25123,46 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "c0bb711754ba4090",
+        "definition_sha": "a2b85f6e700798dc",
         "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "archive_finished_jobs",
+        "owner": "postgres",
+        "returns": "jsonb",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_older_than timestamp with time zone, p_job_id uuid",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [
+            "public.archive_finished_jobs"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "b0fc6f94a104f570",
+        "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
         "leakproof": false,
-        "name": "archive_finished_jobs",
+        "name": "archive_jobs",
         "owner": "postgres",
         "returns": "jsonb",
         "schema": "public",
@@ -25743,7 +25814,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "c8bb4ec03b8c4cd2",
+        "definition_sha": "a7dcc94935fd2751",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -26100,6 +26171,36 @@
         "volatility": "stable"
       },
       {
+        "args": "p_since timestamp with time zone, p_limit integer, p_offset integer",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Jobs finalizadas (jobs + archived_jobs) do periodo, so com as colunas do calculo de produtividade. Coordenador le sem acesso direto a archived_jobs.children.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "17bfa39eb2726fae",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "get_finished_jobs_for_evolution",
+        "owner": "postgres",
+        "returns": "TABLE(id uuid, machine_id uuid, operator_id uuid, quantity integer, produced_quantity integer, lost_pieces integer, estimated_duration integer, actual_start_time timestamp with time zone, actual_end_time timestamp with time zone)",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -26179,12 +26280,12 @@
           "triggers": [],
           "views": []
         },
-        "comment": "Tracking publico minimo: id/status/produto/prazo/fotos/entrega. Nunca expoe client, custo, notas, operador, tecnica ou lotes.",
+        "comment": "Tracking publico minimo: id/status/produto/prazo/fotos/entrega. Nunca expoe client, custo, notas, operador, tecnica ou lotes. Inclui OS arquivadas (archived_jobs) para nao invalidar link ja entregue.",
         "config": [
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "3375a5d37281df0d",
+        "definition_sha": "47cafe3c6967ee35",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -26700,8 +26801,10 @@
           "code_total_files": 79,
           "cron": [],
           "db": [
+            "public.archive_jobs",
             "public.assign_packaging_task",
             "public.get_cron_health",
+            "public.get_finished_jobs_for_evolution",
             "public.has_permission",
             "public.record_packaging_defect",
             "public.update_shipment_status",
@@ -28295,6 +28398,36 @@
         "language": "plpgsql",
         "leakproof": false,
         "name": "validate_job_cancel_reason",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.jobs.trg_validate_job_delete_allowed"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "5e538adeb557a79d",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "validate_job_delete_allowed",
         "owner": "postgres",
         "returns": "trigger",
         "schema": "public",
@@ -38858,6 +38991,36 @@
         "statements": 5,
         "statements_sha": "a375f4be8f994f95",
         "version": "20261127120000"
+      },
+      {
+        "name": "block_delete_job_with_production",
+        "statements": null,
+        "version": "20261128100000"
+      },
+      {
+        "name": "fk_production_losses_restrict",
+        "statements": null,
+        "version": "20261128110000"
+      },
+      {
+        "name": "fk_shipments_restrict",
+        "statements": null,
+        "version": "20261128120000"
+      },
+      {
+        "name": "f038_arquivar_os_concluida",
+        "statements": null,
+        "version": "20261128130000"
+      },
+      {
+        "name": "realtime_push_notifications",
+        "statements": null,
+        "version": "20261128140000"
+      },
+      {
+        "name": "f053_os_concluida_nao_ocupa_maquina",
+        "statements": null,
+        "version": "20261128150000"
       }
     ],
     "policies": [
@@ -42941,6 +43104,11 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "packaging_tasks"
+        },
+        {
+          "publication": "supabase_realtime",
+          "schema": "public",
+          "table": "push_notifications"
         }
       ]
     },
@@ -44467,7 +44635,7 @@
         "parent": null,
         "partition_bound": null,
         "partition_key": null,
-        "replica_identity": "default",
+        "replica_identity": "full",
         "rls_enabled": true,
         "rls_forced": false,
         "schema": "public"
@@ -45535,6 +45703,17 @@
         "function": "public.validate_job_cancel_reason",
         "level": "ROW",
         "name": "trg_validate_job_cancel_reason",
+        "schema": "public",
+        "status": "enabled",
+        "table": "jobs",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_validate_job_delete_allowed BEFORE DELETE ON jobs FOR EACH ROW EXECUTE FUNCTION validate_job_delete_allowed()",
+        "events": "DELETE",
+        "function": "public.validate_job_delete_allowed",
+        "level": "ROW",
+        "name": "trg_validate_job_delete_allowed",
         "schema": "public",
         "status": "enabled",
         "table": "jobs",

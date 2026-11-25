@@ -85,12 +85,12 @@
 | public.machine_downtime | machine_downtime_job_id_fkey | job_id | NO ACTION |
 | public.packaging_tasks | packaging_tasks_job_id_fkey | job_id | CASCADE |
 | public.pre_production_checklists | pre_production_checklists_job_id_fkey | job_id | CASCADE |
-| public.production_losses | production_losses_job_id_fkey | job_id | CASCADE |
+| public.production_losses | production_losses_job_id_fkey | job_id | RESTRICT |
 | public.production_lots | production_lots_job_id_fkey | job_id | SET NULL |
 | public.qr_scan_history | qr_scan_history_job_id_fkey | job_id | CASCADE |
 | public.shift_occurrences | shift_occurrences_job_id_fkey | job_id | NO ACTION |
 | public.shift_pending_tasks | shift_pending_tasks_job_id_fkey | job_id | NO ACTION |
-| public.shipments | shipments_job_id_fkey | job_id | CASCADE |
+| public.shipments | shipments_job_id_fkey | job_id | RESTRICT |
 | public.spc_measurements | spc_measurements_job_id_fkey | job_id | SET NULL |
 
 
@@ -180,6 +180,7 @@
 | trg_job_cancelled_hold_packaging | AFTER | UPDATE | ROW | enabled | public.on_job_cancelled_hold_packaging |
 | trg_on_job_finished_create_packaging_task | AFTER | UPDATE | ROW | enabled | public.on_job_finished_create_packaging_task |
 | trg_validate_job_cancel_reason | BEFORE | INSERT OR UPDATE | ROW | enabled | public.validate_job_cancel_reason |
+| trg_validate_job_delete_allowed | BEFORE | DELETE | ROW | enabled | public.validate_job_delete_allowed |
 | trg_validate_job_rework_depth | BEFORE | INSERT OR UPDATE | ROW | enabled | public.validate_job_rework_depth |
 | trigger_check_job_overlap | BEFORE | INSERT OR UPDATE | ROW | enabled | public.check_job_overlap |
 | trigger_log_job_status_change | AFTER | UPDATE | ROW | enabled | public.log_job_status_change |

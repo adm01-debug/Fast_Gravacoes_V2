@@ -9,7 +9,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.abc_activity_rates](tables/public/abc_activity_rates.md) | table | sim | 2 | 8 | não |  |
 | [public.abc_cost_pools](tables/public/abc_cost_pools.md) | table | sim | 2 | 8 | não |  |
 | [public.abc_job_costs](tables/public/abc_job_costs.md) | table | sim | 2 | 9 | não |  |
-| [public.archived_jobs](tables/public/archived_jobs.md) | table | sim | 1 | 33 | não |  |
+| [public.archived_jobs](tables/public/archived_jobs.md) | table | sim | 1 | 35 | não |  |
 | [public.audit_log](tables/public/audit_log.md) | table | sim | 2 | 13 | não |  |
 | [public.backup_logs](tables/public/backup_logs.md) | table | sim | 1 | 4 | não |  |
 | [public.bitrix24_field_mappings](tables/public/bitrix24_field_mappings.md) | table | sim | 2 | 8 | não |  |
@@ -83,7 +83,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.production_losses](tables/public/production_losses.md) | table | sim | 2 | 8 | não |  |
 | [public.production_lots](tables/public/production_lots.md) | table | sim | 2 | 12 | não |  |
 | [public.profiles](tables/public/profiles.md) | table | sim | 7 | 6 | não |  |
-| [public.push_notifications](tables/public/push_notifications.md) | table | sim | 4 | 10 | não |  |
+| [public.push_notifications](tables/public/push_notifications.md) | table | sim | 4 | 10 | sim |  |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 1 | 7 | não |  |
 | [public.qr_scan_history](tables/public/qr_scan_history.md) | table | sim | 2 | 7 | não |  |
 | [public.query_telemetry](tables/public/query_telemetry.md) | table | sim | 3 | 13 | não |  |

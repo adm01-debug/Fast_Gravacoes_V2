@@ -2,6 +2,18 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-25 15:15 UTC
+
+- **colunas** adicionado (2): `public.archived_jobs.cancel_reason`, `public.archived_jobs.external_ref`
+- **constraints** alterado (2): `public.production_losses.production_losses_job_id_fkey`, `public.shipments.shipments_job_id_fkey`
+- **cron jobs** adicionado (1): `22:archive-finished-jobs-daily`
+- **functions** adicionado (3): `public.archive_jobs(p_older_than timestamp with time zone, p_job_id uuid)`, `public.get_finished_jobs_for_evolution(p_since timestamp with time zone, p_limit integer, p_offset integer)`, `public.validate_job_delete_allowed()`
+- **functions** alterado (3): `public.archive_finished_jobs(p_older_than timestamp with time zone)`, `public.check_job_overlap()`, `public.get_public_tracking(p_job_id uuid, p_order_number text)`
+- **migrations** adicionado (6): `20261128100000_block_delete_job_with_production`, `20261128110000_fk_production_losses_restrict`, `20261128120000_fk_shipments_restrict`, `20261128130000_f038_arquivar_os_concluida`, `20261128140000_realtime_push_notifications`, `20261128150000_f053_os_concluida_nao_ocupa_maquina`
+- **realtime** adicionado (1): `supabase_realtime:public.push_notifications`
+- **tabelas** alterado (1): `public.push_notifications`
+- **triggers** adicionado (1): `public.jobs.trg_validate_job_delete_allowed`
+
 ## 2026-11-25 14:39 UTC
 
 - **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`

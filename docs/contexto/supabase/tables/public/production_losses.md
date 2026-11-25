@@ -30,7 +30,7 @@
 
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
-| production_losses_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
+| production_losses_job_id_fkey | FOREIGN KEY | `FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE RESTRICT` | RESTRICT | NO ACTION | sim |
 | production_losses_loss_type_check | CHECK | `CHECK (loss_type = ANY (ARRAY['availability'::text, 'performance'::text, 'quality'::text]))` |  |  | sim |
 | production_losses_operator_id_fkey | FOREIGN KEY | `FOREIGN KEY (operator_id) REFERENCES auth.users(id)` | NO ACTION | NO ACTION | sim |
 | production_losses_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |

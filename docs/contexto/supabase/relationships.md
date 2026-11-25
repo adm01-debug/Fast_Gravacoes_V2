@@ -83,7 +83,7 @@
 | public.pre_production_checklists | job_id | public.jobs | id | CASCADE | NO ACTION |
 | public.prediction_history | machine_id | public.machines | id | NO ACTION | NO ACTION |
 | public.prediction_history | prediction_id | public.machine_predictions | id | CASCADE | NO ACTION |
-| public.production_losses | job_id | public.jobs | id | CASCADE | NO ACTION |
+| public.production_losses | job_id | public.jobs | id | RESTRICT | NO ACTION |
 | public.production_losses | operator_id | auth.users | id | NO ACTION | NO ACTION |
 | public.production_lots | job_id | public.jobs | id | SET NULL | NO ACTION |
 | public.profiles | id | auth.users | id | CASCADE | NO ACTION |
@@ -107,7 +107,7 @@
 | public.shift_pending_tasks | handover_id | public.shift_handovers | id | CASCADE | NO ACTION |
 | public.shift_pending_tasks | job_id | public.jobs | id | NO ACTION | NO ACTION |
 | public.shift_pending_tasks | machine_id | public.machines | id | NO ACTION | NO ACTION |
-| public.shipments | job_id | public.jobs | id | CASCADE | NO ACTION |
+| public.shipments | job_id | public.jobs | id | RESTRICT | NO ACTION |
 | public.shipments | provider_id | public.shipping_providers | id | NO ACTION | NO ACTION |
 | public.spc_alerts | measurement_id | public.spc_measurements | id | SET NULL | NO ACTION |
 | public.spc_alerts | parameter_id | public.spc_control_parameters | id | CASCADE | NO ACTION |

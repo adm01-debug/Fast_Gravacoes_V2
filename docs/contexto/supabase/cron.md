@@ -11,3 +11,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`. O `command` de cada jo
 | 9 | rollup-cron-p95-daily | `20 3 * * *` | sim | postgres | postgres | `chama: public.rollup_cron_p95_daily` |
 | 12 | auto-reassign-packaging-30min | `*/5 * * * *` | sim | postgres | postgres | `chama: public.auto_reassign_stale_packaging_tasks` |
 | 13 | auto-promote-jobs-fallback | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
+| 22 | archive-finished-jobs-daily | `7 4 * * *` | sim | postgres | postgres | `chama: public.archive_finished_jobs` |

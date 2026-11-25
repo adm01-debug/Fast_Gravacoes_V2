@@ -13,6 +13,7 @@
 |---|---|---|
 | supabase_realtime | public.packaging_defects | default |
 | supabase_realtime | public.packaging_tasks | default |
+| supabase_realtime | public.push_notifications | full |
 
 ## Broadcast / Presence (policies em realtime.messages)
 
