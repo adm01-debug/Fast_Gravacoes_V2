@@ -12,7 +12,8 @@ export const jobSchema = z.object({
   client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'),
   product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'),
   quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'),
-  technique_id: z.string().uuid('Técnica é obrigatória'),
+  // public.techniques.id é TEXT no banco (ex.: 'bordado'), não UUID.
+  technique_id: z.string().min(1, 'Técnica é obrigatória'),
   machine_id: z.string().uuid().nullable().optional(),
   priority: jobPrioritySchema.catch('medium'),
   status: jobStatusSchema.catch('queue'),
@@ -27,7 +28,9 @@ export const jobSchema = z.object({
     // usa esses numeros para impedir apagar OS com producao registrada.
     produced_quantity: z.coerce.number().nullable().optional(),
     lost_pieces: z.coerce.number().nullable().optional(),
-});
+  // .loose(): a consulta de jobs traz relações (machines, techniques) e timestamps
+  // que não fazem parte deste schema; sem isso o safeParse os descartaria.
+}).loose();
 
   export const jobFormSchema = jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({
   quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'),

@@ -135,6 +135,31 @@ describe('jobsService', () => {
         expect(job.lost_pieces).toBe(2);
       });
 
+      it('devolve a OS com a técnica textual e as relações da consulta', async () => {
+        (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+          select: () => ({
+            order: () => ({
+              data: [{
+                id: '66666666-6666-4666-8666-666666666666',
+                order_number: 'PED-11', client: 'Cliente', product: 'Caneca', quantity: 10,
+                technique_id: 'bordado', machine_id: null,
+                priority: 'medium', status: 'queue', estimated_duration: 520,
+                created_at: '2026-11-25T12:00:00.000Z',
+                machines: { name: 'Bordado 1', code: 'BRD1' },
+                techniques: { id: 'bordado', name: 'Bordado' },
+              }],
+              error: null,
+            }),
+          }),
+        });
+
+        const [job] = await jobsService.getAll();
+        const linha = job as unknown as Record<string, unknown>;
+        expect(linha.technique_id).toBe('bordado');
+        expect(linha.machines).toEqual({ name: 'Bordado 1', code: 'BRD1' });
+        expect(linha.techniques).toEqual({ id: 'bordado', name: 'Bordado' });
+      });
+
       it('recusa a exclusao de OS com producao registrada no proprio servico', async () => {
         const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
         fromMock.mockReturnValueOnce({
