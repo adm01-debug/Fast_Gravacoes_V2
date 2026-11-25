@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 143,
+ "total": 144,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 118
+  "unit": 119
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 106
+   "arquivos": 107
   },
   {
    "padrao": "tests/",
@@ -284,6 +284,16 @@
     "scripts/supabase_snapshot/snapshot.py"
    ],
    "casos": 96,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/components/dashboard/AlertScheduleModal.test.tsx",
+   "tipo": "unit",
+   "linhas": 176,
+   "testa": [
+    "src/components/dashboard/AlertScheduleModal.tsx"
+   ],
+   "casos": 10,
    "suporte": false
   },
   {
@@ -1518,6 +1528,7 @@
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
+  "src/components/dashboard/AlertScheduleModal.tsx": 1,
   "src/components/error/StackTrace.tsx": 1,
   "src/components/jobs/JobDetailsModal.tsx": 1,
   "src/components/logistics/EditShipmentModal.tsx": 1,

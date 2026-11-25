@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d0e7a1de0f64c8cb5207fa97b9ab2abed8cccb7c",
+  "sha": "d139424fb83fc3c347dd57f07b6fe2979c2c37ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 11:17 UTC",
-  "files_total": 1609,
-  "code_files": 1413,
-  "code_lines": 209190
+  "generated_at": "2026-11-25 13:31 UTC",
+  "files_total": 1610,
+  "code_files": 1414,
+  "code_lines": 209411
  },
  "version": "1.3.2",
- "facts_hash": "a3a991c284426c88",
+ "facts_hash": "0e2b1eb44327e840",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 672,
+   ".tsx": 673,
    ".ts": 406,
    ".sql": 268,
    ".mjs": 50,
@@ -21881,7 +21881,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 306
+    "deps_count": 307
    },
    {
     "path": "",
@@ -22083,7 +22083,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 231
+    "deps_count": 232
    },
    {
     "path": "",
@@ -22307,7 +22307,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 249
+    "deps_count": 250
    },
    {
     "path": "",
@@ -22420,7 +22420,7 @@
      "complete_maintenance_record",
      "verify_audit_chain"
     ],
-    "deps_count": 178
+    "deps_count": 179
    },
    {
     "path": "",
@@ -22552,7 +22552,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 215
+    "deps_count": 216
    },
    {
     "path": "",
@@ -22671,7 +22671,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 206
+    "deps_count": 207
    },
    {
     "path": "",
@@ -22895,7 +22895,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 215
+    "deps_count": 216
    },
    {
     "path": "",
@@ -22993,7 +22993,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 305
+    "deps_count": 306
    },
    {
     "path": "",
@@ -23073,7 +23073,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 165
+    "deps_count": 166
    },
    {
     "path": "",
@@ -23171,7 +23171,7 @@
      "apply_job_sequence",
      "update_shipment_status"
     ],
-    "deps_count": 155
+    "deps_count": 156
    },
    {
     "path": "",
@@ -23308,7 +23308,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 187
+    "deps_count": 188
    },
    {
     "path": "",
@@ -23406,7 +23406,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 244
+    "deps_count": 245
    },
    {
     "path": "",
@@ -23560,7 +23560,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -23645,7 +23645,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 206
+    "deps_count": 207
    },
    {
     "path": "",
@@ -23876,7 +23876,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 189
+    "deps_count": 190
    },
    {
     "path": "",
@@ -24045,7 +24045,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 243
+    "deps_count": 244
    },
    {
     "path": "",
@@ -24130,7 +24130,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 221
+    "deps_count": 222
    },
    {
     "path": "",
@@ -24270,7 +24270,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 281
+    "deps_count": 282
    },
    {
     "path": "",
@@ -24374,7 +24374,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 312
+    "deps_count": 313
    },
    {
     "path": "",
@@ -24653,7 +24653,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 210
+    "deps_count": 211
    },
    {
     "path": "",
@@ -24699,7 +24699,7 @@
     "rpc_transitive": [
      "apply_job_sequence"
     ],
-    "deps_count": 157
+    "deps_count": 158
    },
    {
     "path": "",
@@ -25010,7 +25010,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 221
+    "deps_count": 222
    },
    {
     "path": "",
@@ -25092,7 +25092,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 221
+    "deps_count": 222
    },
    {
     "path": "",
@@ -25187,7 +25187,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 235
+    "deps_count": 236
    },
    {
     "path": "/rota-fantasma-que-nao-devia-contar",
@@ -25265,7 +25265,7 @@
      "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
-    "deps_count": 207
+    "deps_count": 208
    }
   ],
   "edge_functions": [
@@ -26645,7 +26645,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 576,
+  "components_count": 577,
   "hooks": [
    {
     "name": "useContacts",
@@ -28004,8 +28004,8 @@
   },
   {
    "module": "src/components",
-   "files": 422,
-   "lines": 59491,
+   "files": 423,
+   "lines": 59692,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28103,6 +28103,7 @@
     "@radix-ui/react-tabs"
    ],
    "imports_modules": [
+    "src/constants",
     "src/contexts",
     "src/features/admin",
     "src/features/analytics",
@@ -28166,6 +28167,7 @@
     "src/components/calendar/types.ts",
     "src/components/chat/QuickChat.tsx",
     "src/components/dashboard/ActivityFeedWidget.tsx",
+    "src/components/dashboard/AlertScheduleModal.test.tsx",
     "src/components/dashboard/AlertScheduleModal.tsx",
     "src/components/dashboard/AlertsWidget.tsx",
     "src/components/dashboard/BottleneckWidget.tsx",
@@ -28198,18 +28200,17 @@
     "src/components/dashboard/SortableWidgetSection.tsx",
     "src/components/dashboard/StatsCard.tsx",
     "src/components/design-system/HooksExamplesSection.tsx",
-    "src/components/design-system/ProductDesignProvider.tsx",
-    "src/components/design-system/hooks/DataHooksDemos.tsx"
+    "src/components/design-system/ProductDesignProvider.tsx"
    ]
   },
   {
    "module": "src/constants",
    "files": 2,
-   "lines": 153,
+   "lines": 171,
    "tables": [],
    "exports": [
     "biConstants.ts: CHART_COLORS, GRADIENTS, PIE_COLORS, getStudioName, STUDIO_LIST, STUDIO_MAP",
-    "index.ts: JOB_STATUSES, JobStatus, PRIORITIES, Priority, TECHNIQUES, USER_ROLES"
+    "index.ts: JOB_STATUSES, JobStatus, MACHINE_BLOCKING_STATUSES, MACHINE_ACTIVE_SCHEDULE_STATUSES, PRIORITIES, Priority"
    ],
    "docs": [
     "index.ts: ============================================================ Constantes do sistema Fast-Grava-ES ============================================================"
@@ -28741,7 +28742,7 @@
   {
    "module": "src/features/jobs",
    "files": 35,
-   "lines": 3796,
+   "lines": 3798,
    "tables": [
     "job_status_history",
     "jobs",
@@ -28795,6 +28796,7 @@
     "zod"
    ],
    "imports_modules": [
+    "src/constants",
     "src/contexts",
     "src/features/admin",
     "src/features/auth",
@@ -34812,7 +34814,7 @@
    },
    {
     "file": "src/components/dashboard/AlertScheduleModal.tsx",
-    "msg": "Erro ao agendar job"
+    "msg": "A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao"
    },
    {
     "file": "src/components/dashboard/AlertScheduleModal.tsx",
@@ -37109,6 +37111,10 @@
    {
     "file": "src/features/jobs/hooks/usePriorityEscalation.ts",
     "text": "Per-job try/catch: one failed update must not abort the loop for"
+   },
+   {
+    "file": "src/features/jobs/hooks/useSchedulingConflicts.ts",
+    "text": "Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra"
    },
    {
     "file": "src/features/jobs/hooks/useSmartSequencing.ts",
@@ -51564,6 +51570,50 @@
    {
     "file": "scripts/ci/session-start.test.mjs",
     "name": "build que falha não carimba (a próxima sessão refaz)"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "AlertScheduleModal - quais status ocupam a maquina (etapa 052)"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "avisa do conflito ao agendar sobre OS concluida, como o banco recusa"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "nao avisa conflito para OS cancelada, que o banco libera"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "avisa do conflito com OS em producao, comportamento que ja existia"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "usa o fim gravado na OS, e nao a estimativa, quando ele termina antes do horario escolhido"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "avisa do conflito quando o fim gravado na OS invade o horario escolhido"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "grava o fim do agendamento para o gatilho do banco poder recusar a sobreposicao"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "recusa agendar quando o fim passaria da meia-noite"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "mostra a mensagem do banco quando o agendamento e recusado"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "mostra o fim gravado da OS no aviso de conflito"
+   },
+   {
+    "file": "src/components/dashboard/AlertScheduleModal.test.tsx",
+    "name": "conta separado o que reserva tempo e o que e so carga planejada na maquina"
    },
    {
     "file": "src/components/error/StackTrace.test.tsx",
@@ -72607,9 +72657,33 @@
     }
    ]
   },
+  "src/components/dashboard/AlertScheduleModal.test.tsx": {
+   "path": "src/components/dashboard/AlertScheduleModal.test.tsx",
+   "lines": 176,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DATE",
+     "value": "'2026-09-24'"
+    }
+   ],
+   "tests": [
+    "AlertScheduleModal - quais status ocupam a maquina (etapa 052)",
+    "avisa do conflito ao agendar sobre OS concluida, como o banco recusa",
+    "nao avisa conflito para OS cancelada, que o banco libera",
+    "avisa do conflito com OS em producao, comportamento que ja existia",
+    "usa o fim gravado na OS, e nao a estimativa, quando ele termina antes do horario escolhido",
+    "avisa do conflito quando o fim gravado na OS invade o horario escolhido",
+    "grava o fim do agendamento para o gatilho do banco poder recusar a sobreposicao",
+    "recusa agendar quando o fim passaria da meia-noite",
+    "mostra a mensagem do banco quando o agendamento e recusado",
+    "mostra o fim gravado da OS no aviso de conflito",
+    "conta separado o que reserva tempo e o que e so carga planejada na maquina"
+   ]
+  },
   "src/components/dashboard/AlertScheduleModal.tsx": {
    "path": "src/components/dashboard/AlertScheduleModal.tsx",
-   "lines": 331,
+   "lines": 356,
    "exports": [
     "function AlertScheduleModal"
    ],
@@ -72625,7 +72699,7 @@
     ]
    },
    "errors": [
-    "Erro ao agendar job",
+    "A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao",
     "Selecione uma data"
    ],
    "params": [
@@ -78618,10 +78692,12 @@
   },
   "src/constants/index.ts": {
    "path": "src/constants/index.ts",
-   "lines": 105,
+   "lines": 123,
    "exports": [
     "const JOB_STATUSES",
     "type JobStatus",
+    "const MACHINE_BLOCKING_STATUSES",
+    "const MACHINE_ACTIVE_SCHEDULE_STATUSES",
     "const PRIORITIES",
     "type Priority",
     "const TECHNIQUES",
@@ -83121,7 +83197,7 @@
   },
   "src/features/jobs/hooks/useSchedulingConflicts.ts": {
    "path": "src/features/jobs/hooks/useSchedulingConflicts.ts",
-   "lines": 157,
+   "lines": 159,
    "exports": [
     "interface SchedulingConflict",
     "interface ConflictingJob",
@@ -83133,6 +83209,9 @@
      "value": "production",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra"
    ],
    "hooks": [
     "useSchedulingConflicts"
@@ -98070,10 +98149,23 @@
   }
  },
  "git": {
-  "sha": "d0e7a1de0f64c8cb5207fa97b9ab2abed8cccb7c",
+  "sha": "d139424fb83fc3c347dd57f07b6fe2979c2c37ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d139424",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/dashboard/AlertScheduleModal.test.tsx",
+     "src/components/dashboard/AlertScheduleModal.tsx",
+     "src/constants/index.ts",
+     "src/features/jobs/hooks/useSchedulingConflicts.ts"
+    ]
+   },
    {
     "sha": "d0e7a1d",
     "date": "2026-11-25",
@@ -98406,41 +98498,12 @@
     "files": [
      ".github/workflows/deploy.yml"
     ]
-   },
-   {
-    "sha": "156312d",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrige import typescript para ESM namespace (TS7) (#270)",
-    "files": [
-     "package-lock.json",
-     "package.json",
-     "scripts/audit/run.mjs",
-     "scripts/autofix/unused.mjs",
-     "scripts/check-any-baseline.test.mjs",
-     "src/components/auth/PasswordStrengthIndicator.tsx",
-     "src/features/auth/hooks/useRBAC.tsx",
-     "src/hooks/abc/useABCMutations.ts",
-     "src/hooks/use-swipe-gesture.tsx",
-     "src/hooks/useMachineSuggestion.ts",
-     "src/lib/pdfExport.ts",
-     "supabase/functions/health-monitor/index.ts",
-     "tests/e2e/offline.spec.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    5
-   ],
-   [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
-    3
+    6
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -98461,6 +98524,30 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
+    "src/components/dashboard/AlertScheduleModal.test.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/AlertScheduleModal.tsx",
+    1
+   ],
+   [
+    "src/constants/index.ts",
+    1
+   ],
+   [
+    "src/features/jobs/hooks/useSchedulingConflicts.ts",
+    1
    ],
    [
     "src/pages/PendingQueue.test.tsx",
@@ -98492,22 +98579,6 @@
    ],
    [
     "scripts/automation.unit.mjs",
-    1
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-    1
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.tsx",
-    1
-   ],
-   [
-    "src/components/jobs/JobQuickActions.tsx",
-    1
-   ],
-   [
-    "src/features/jobs/hooks/useJobs.ts",
     1
    ]
   ]

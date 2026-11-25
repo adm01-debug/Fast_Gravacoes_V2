@@ -510,8 +510,8 @@
   {
    "modulo": "components/dashboard",
    "arquivos": 32,
-   "testes": 0,
-   "linhas": 4183,
+   "testes": 1,
+   "linhas": 4208,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -704,6 +704,7 @@
    "depende_de_modulos": [
     "components/jobs",
     "components/ui",
+    "constants",
     "features/analytics",
     "features/auth",
     "features/inventory",
@@ -3308,7 +3309,7 @@
    "modulo": "constants",
    "arquivos": 2,
    "testes": 0,
-   "linhas": 153,
+   "linhas": 171,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3329,7 +3330,9 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/dashboard",
     "features/analytics",
+    "features/jobs",
     "pages"
    ],
    "depende_de_modulos": [],
@@ -4114,7 +4117,7 @@
    "modulo": "features/jobs",
    "arquivos": 26,
    "testes": 9,
-   "linhas": 2712,
+   "linhas": 2714,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4254,6 +4257,7 @@
     "schemas"
    ],
    "depende_de_modulos": [
+    "constants",
     "contexts",
     "features/admin",
     "features/auth",

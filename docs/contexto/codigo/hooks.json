@@ -2075,7 +2075,7 @@
    "hooks_exportados": [
     "useSchedulingConflicts"
    ],
-   "linhas": 157,
+   "linhas": 159,
    "dominio": "features/jobs",
    "tabelas": [],
    "rpcs": [],

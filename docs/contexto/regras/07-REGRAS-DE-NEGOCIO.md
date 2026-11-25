@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d0e7a1de0f` · branch `main` · 2026-11-25 11:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d139424fb8` · branch `main` · 2026-11-25 13:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T10:39:56Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T12:42:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T10:39:56Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T12:42:41Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T10:39:56Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T12:42:41Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T10:39:56Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T12:42:41Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1639,7 +1639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T10:39:56Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T12:42:41Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3068,7 +3068,7 @@ _nenhum item encontrado_
 | Conflito de agendamento: máquina já possui job neste horário. | `src/components/calendar/QuickJobDrawer.tsx` |
 | Erro ao agendar job | `src/components/calendar/QuickJobDrawer.tsx` |
 | Não foi possível enviar a mensagem | `src/components/chat/QuickChat.tsx` |
-| Erro ao agendar job | `src/components/dashboard/AlertScheduleModal.tsx` |
+| A OS passaria da meia-noite; escolha um inicio mais cedo ou divida a producao | `src/components/dashboard/AlertScheduleModal.tsx` |
 | Selecione uma data | `src/components/dashboard/AlertScheduleModal.tsx` |
 | Dashboard element not found | `src/components/dashboard/DashboardExport.tsx` |
 | Erro ao exportar dashboard | `src/components/dashboard/DashboardExport.tsx` |
@@ -3326,7 +3326,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1405 testes em 124 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1416 testes em 125 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3368,6 +3368,7 @@ _nenhum item encontrado_
 | `src/lib/oeeExport.test.ts` | 13 | oeeExport · pdf · renders the header row via doc.autoTable with a grid theme · writes an unsanitized (raw) machineName into the PDF body, unlike the CSV path … |
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
+| `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapa 052) · avisa do conflito ao agendar sobre OS concluida, como o banco recusa · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
 | `src/test/retryBackoffAdvanced.test.ts` | 11 | retryWithBackoff — advanced scenarios · returns immediately on first success · retries up to maxRetries times then throws · stops retrying when isRetryable returns false … |
@@ -3599,6 +3600,7 @@ _nenhum item encontrado_
 | Validação de segurança: estoque insuficiente | `src/features/inventory/hooks/useInventory.ts` |
 | Runtime validation | `src/features/jobs/hooks/usePaginatedJobs.ts` |
 | Per-job try/catch: one failed update must not abort the loop for | `src/features/jobs/hooks/usePriorityEscalation.ts` |
+| Recorte de agenda viva (nao e a regra do banco): check_job_overlap barra | `src/features/jobs/hooks/useSchedulingConflicts.ts` |
 | Data validation helpers | `src/features/jobs/hooks/useSmartSequencing.ts` |
 | RPC transacional: atualiza apenas os jobs do lote e valida o | `src/features/jobs/hooks/useSmartSequencingWithActions.ts` |
 | Runtime validation with Schema fallback | `src/features/jobs/services/jobsService.ts` |

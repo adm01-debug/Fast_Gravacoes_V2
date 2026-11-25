@@ -1875,7 +1875,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 168,
+   "arquivos_puxados": 169,
    "diretos": {
     "tabelas": [
      "jobs",
@@ -2286,7 +2286,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 148,
+   "arquivos_puxados": 149,
    "diretos": {
     "tabelas": [
      "jobs",
