@@ -79,8 +79,7 @@ async function deleteJobsByIds(ids: string[]): Promise<JobDeleteResult> {
       .delete()
       .in('id', allowed)
       .in('status', [...DELETE_ALLOWED_STATUSES])
-      .or(DELETE_QUANTITY_FILTERS.produced)
-      .or(DELETE_QUANTITY_FILTERS.lost)
+      .or(DELETE_QUANTITY_FILTERS)
       .select('id');
     if (deleteError) throw deleteError;
 
