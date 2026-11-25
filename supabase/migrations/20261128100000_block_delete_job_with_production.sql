@@ -18,6 +18,12 @@
 -- a sessao com set_config('app.archiving_job', 'on', true) e o trigger a
 -- respeita. Nenhum outro caminho de escrita define essa marcacao.
 --
+-- A marcacao entra aqui por ALTER FUNCTION ... SET e nao reescrevendo o corpo:
+-- a funcao de 20261029002000 continua sendo a unica fonte da logica de
+-- arquivamento, e recriar 190 linhas numa migration de trigger criaria duas
+-- copias que divergem na proxima mudanca. O parametro e aplicado na entrada da
+-- funcao e restaurado na saida, como um SET LOCAL.
+--
 -- ERRCODE estavel 'FG001' para o aplicativo reconhecer a recusa sem depender do
 -- texto da mensagem (o PostgREST devolve o code no corpo do erro).
 
@@ -49,3 +55,8 @@ DROP TRIGGER IF EXISTS trg_validate_job_delete_allowed ON public.jobs;
 CREATE TRIGGER trg_validate_job_delete_allowed
   BEFORE DELETE ON public.jobs
   FOR EACH ROW EXECUTE FUNCTION public.validate_job_delete_allowed();
+
+-- Sem isto o gatilho recusaria a OS finalizada dentro do proprio arquivamento,
+-- e archive_finished_jobs cairia no EXCEPTION do loop: a OS nunca sairia de
+-- public.jobs e o cron passaria a contar um "skipped" por execucao.
+ALTER FUNCTION public.archive_finished_jobs(timestamptz) SET app.archiving_job = 'on';

@@ -28,7 +28,7 @@ import {
   Zap,
   LayoutGrid,
   List} from "lucide-react";
-import { useSchedulingData } from "@/features/jobs";
+import { useSchedulingData, jobsService } from "@/features/jobs";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -233,9 +233,21 @@ export default function PendingQueue() {
 
     try {
       if (action === 'delete') {
-        const { error } = await supabase.from('jobs').delete().in('id', Array.from(selectedJobs));
-        if (error) throw error;
-        toast.success(`${selectedJobs.size} jobs excluídos`);
+        // Exclusao uma a uma: o banco recusa OS com producao registrada
+              // (trigger da etapa 036) e um delete em lote por `.in()` levaria a
+              // transacao inteira junto, sem excluir nem as OS permitidas.
+              const ids = Array.from(selectedJobs);
+              const results = await Promise.allSettled(ids.map(id => jobsService.delete(id)));
+              const failures = results.filter(r => r.status === 'rejected');
+              const removed = ids.length - failures.length;
+
+              if (removed > 0) toast.success(`${removed} jobs excluídos`);
+              if (failures.length > 0) {
+                const reasons = failures
+                  .map(r => (r as PromiseRejectedResult).reason)
+                  .map(e => (e && typeof e === 'object' && 'message' in e ? e.message : String(e)));
+                toast.error(`Não foi possível excluir ${failures.length} job(s): ${reasons.join('; ')}`);
+              }
       } else {
         const targetStatus = action as JobStatus;
         const selectedJobsList = filteredJobs.filter(j => selectedJobs.has(j.id));

@@ -252,13 +252,18 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
+          // Exclusao uma a uma: o banco recusa OS com producao registrada
+          // (trigger da etapa 036), entao o lote pode ser parcial. As recusas sao
+          // mostradas e a lista e recarregada de qualquer forma, senao o Kanban
+          // continua exibindo as OS que ja sairam.
       const results = await Promise.allSettled(Array.from(selectedJobs).map(id => jobsService.delete(id)));
-      const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
+          const errors = results.filter(r => r.status === 'rejected').map(r => (r as PromiseRejectedResult).reason);
+          const removed = results.length - errors.length;
+
+          if (removed > 0) toast.success(`${removed} jobs excluídos permanentemente`);
       if (errors.length > 0) {
         toast.error(`Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
-        return;
       }
-      toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
       setSelectedJobs(new Set());
       handleJobsUpdate();
     }
