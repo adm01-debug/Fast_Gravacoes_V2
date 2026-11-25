@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
+  "commit": "d0cab10e1104eb6ed80607fcb0d5b8ea13ce27cb",
   "branch": "main",
-  "data_commit": "2026-11-25T00:12:23Z",
+  "data_commit": "2026-11-25T00:32:29Z",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d0cab10",
+    "data": "2026-11-25",
+    "assunto": "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)"
+   },
    {
     "sha": "5cc8d77",
     "data": "2026-11-25",
@@ -126,19 +131,18 @@
     "sha": "0becad3",
     "data": "2026-11-23",
     "assunto": "chore: i18next 27 e react-i18next 18 (bumps acoplados + deno.lock) (#274)"
-   },
-   {
-    "sha": "c43c1b2",
-    "data": "2026-11-23",
-    "assunto": "fix: migra resizable para react-resizable-panels v4 (supersede #267) (#275)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 236,
+  "arquivos_mudados_7d": 243,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
     "mudancas": 45
+   },
+   {
+    "pasta": "src/features/jobs",
+    "mudancas": 27
    },
    {
     "pasta": "src/features/maintenance",
@@ -149,19 +153,15 @@
     "mudancas": 25
    },
    {
-    "pasta": "src/features/jobs",
-    "mudancas": 24
-   },
-   {
     "pasta": "src/features/notifications",
     "mudancas": 23
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 18
+    "pasta": "src/features/packaging",
+    "mudancas": 19
    },
    {
-    "pasta": "src/features/packaging",
+    "pasta": "src/components/dashboard",
     "mudancas": 18
    },
    {
@@ -193,7 +193,7 @@
     "mudancas": 12
    },
    {
-    "pasta": "src/features/inventory",
+    "pasta": "src/components/jobs",
     "mudancas": 12
    }
   ],
@@ -243,6 +243,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/pages/PublicTrackingPage.tsx",
+    "mudancas": 7
+   },
+   {
     "arquivo": "supabase/functions/check-login-lockout/index.ts",
     "mudancas": 7
    },
@@ -260,10 +264,6 @@
    },
    {
     "arquivo": "src/components/layout/AppSidebar.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/pages/PublicTrackingPage.tsx",
     "mudancas": 6
    },
    {
@@ -287,22 +287,22 @@
     "mudancas": 5
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "scripts/rls-regression.mjs",
     "mudancas": 5
    },
    {
     "arquivo": "scripts/supabase_snapshot/snapshot.py",
     "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 148
+    "commits": 149
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1609,
-  "arquivos_codigo": 1140,
-  "linhas_codigo": 191951,
+  "arquivos_total": 1610,
+  "arquivos_codigo": 1141,
+  "linhas_codigo": 192353,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 260,
   "cron_jobs": 4,
-  "testes": 141,
+  "testes": 142,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -480,8 +480,8 @@
    "linhas": 22
   },
   "src/components": {
-   "arquivos": 421,
-   "linhas": 59200
+   "arquivos": 422,
+   "linhas": 59491
   },
   "src/constants": {
    "arquivos": 2,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 336,
-   "linhas": 47597
+   "linhas": 47607
   },
   "src/hooks": {
    "arquivos": 63,
@@ -505,7 +505,7 @@
   },
   "src/integrations": {
    "arquivos": 3,
-   "linhas": 6430
+   "linhas": 6477
   },
   "src/lib": {
    "arquivos": 53,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 60,
-   "linhas": 17213
+   "linhas": 17215
   },
   "src/providers": {
    "arquivos": 2,
@@ -533,7 +533,7 @@
   },
   "src/test": {
    "arquivos": 31,
-   "linhas": 4570
+   "linhas": 4622
   },
   "src/types": {
    "arquivos": 2,
@@ -567,7 +567,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 6314
+   "linhas": 6361
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -612,6 +612,10 @@
   {
    "arquivo": "scripts/ci/github-settings-guard.mjs",
    "linhas": 623
+  },
+  {
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
+   "linhas": 596
   },
   {
    "arquivo": "supabase/functions/check-login-lockout/index.ts",
@@ -660,10 +664,6 @@
   {
    "arquivo": "src/pages/PendingQueue.tsx",
    "linhas": 515
-  },
-  {
-   "arquivo": "src/pages/NewJobPage.tsx",
-   "linhas": 514
   }
  ],
  "qualidade": {
@@ -764,23 +764,14 @@
   "tabelas_usadas_sem_definicao": [
    "backups"
   ],
-  "tabelas_so_no_types": [
-   "email_verification_tokens",
-   "gamification_settings",
-   "packaging_equipment",
-   "packaging_waste",
-   "shipment_costs",
-   "tpm_execution_checklist",
-   "webauthn_challenges",
-   "webauthn_credentials"
-  ],
+  "tabelas_so_no_types": [],
   "tabelas_com_drift_migration_vs_types": [
+   "archived_jobs",
    "business_config",
    "jobs",
    "operator_rankings",
    "operator_skills",
    "operator_status_audit",
-   "packaging_tasks",
    "pre_production_checklists",
    "technical_sheets",
    "tpm_execution_supplies"

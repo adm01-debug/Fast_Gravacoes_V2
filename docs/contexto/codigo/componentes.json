@@ -2506,7 +2506,7 @@
     "JobDetailsModal"
    ],
    "export_default": null,
-   "linhas": 512,
+   "linhas": 596,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useConfirmation",
@@ -2515,7 +2515,8 @@
     "useDuplicateJob",
     "useEntityAuditTrail",
     "useSchedulingData",
-    "useUpdateJob"
+    "useUpdateJob",
+    "useUpdateJobStatus"
    ],
    "tabelas": [],
    "edges": [],
@@ -2591,7 +2592,7 @@
     "JobQuickActions"
    ],
    "export_default": null,
-   "linhas": 73,
+   "linhas": 85,
    "dominio": "components/jobs",
    "hooks_locais": [],
    "tabelas": [],
@@ -9643,7 +9644,7 @@
     "PublicTrackingPage"
    ],
    "export_default": "PublicTrackingPage",
-   "linhas": 311,
+   "linhas": 313,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5cc8d776397cfada0df7d598f7e245c28f20fa26` (2026-11-25T00:12:23Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d0cab10e1104eb6ed80607fcb0d5b8ea13ce27cb` (2026-11-25T00:32:29Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1076), SQL (268), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1077), SQL (268), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1609 |
-| arquivos_codigo | 1140 |
-| linhas_codigo | 191951 |
+| arquivos_total | 1610 |
+| arquivos_codigo | 1141 |
+| linhas_codigo | 192353 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 133 |
 | migrations | 260 |
 | cron_jobs | 4 |
-| testes | 141 |
+| testes | 142 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 108 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (403), src/features (144), src/pages (56)
 - hooks: src/features (113), src/hooks (54), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (104), tests/ (19), outro (18)
+- testes: co-localizado (*.test) (105), tests/ (19), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -235,8 +235,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 0
 - tabelas_usadas_sem_definicao: 1 — ex.: backups
-- tabelas_so_no_types: 8 — ex.: email_verification_tokens, gamification_settings, packaging_equipment
-- tabelas_com_drift_migration_vs_types: 9 — ex.: business_config, jobs, operator_rankings
+- tabelas_so_no_types: 0
+- tabelas_com_drift_migration_vs_types: 9 — ex.: archived_jobs, business_config, jobs
 - rpcs_sem_definicao: 0
 - componentes_orfaos: 30 — ex.: src/components/accessibility/AccessibleIconButton.tsx, src/components/accessibility/FocusTrap.tsx, src/components/alerts/AlertCard.tsx
 - componentes_com_nome_duplicado: 6 — ex.: AdjustmentParameters, DashboardSkeleton, JobQuickActions
@@ -246,8 +246,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8488 nós · 32298 arestas · 397 comunidades · grafo do commit `5cc8d776`
-- comunidades maiores: Card (233), analytics/index.ts (203), cn (180), client.ts (173), Button (167), SelectContent (141), TableCell (141), card.tsx (126), BlockedIPsPanel.tsx (126), package.json (115), badge.tsx (114), generate.py (113)
+- 8496 nós · 32316 arestas · 388 comunidades · grafo do commit `d0cab10e`
+- comunidades maiores: package.json (229), react (229), Card (228), lucide-react (193), ResponsiveContainer (154), Button (141), jobs/index.ts (140), Input (132), MainLayout.tsx (123), snapshot.py (120), DbJob (117), generate.py (111)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -263,10 +263,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/contexto.yml (7)
 - PENDENCIAS.md (7)
 - index.html (7)
+- src/pages/PublicTrackingPage.tsx (7)
 - supabase/functions/check-login-lockout/index.ts (7)
 - tests/e2e/offline.spec.ts (7)
 - vercel.json (7)
-- CLAUDE.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -369,6 +369,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `d0cab10` feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)
 - 2026-11-25 `5cc8d77` fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)
 - 2026-11-25 `d592aac` fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)
 - 2026-11-24 `fc44f91` fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)
@@ -383,7 +384,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `81d45ca` fix: restabelece EXECUTE de public.has_role para authenticated (#285)
 - 2026-11-24 `3aafbf1` fix: erp-api responde 400 (nao 500) em dado invalido (#280)
 - 2026-11-24 `1b65d05` fix: viewport do ScrollArea focavel so quando ha rolagem (#286)
-- 2026-11-24 `765030a` ci: evita rodar E2E duas vezes para o mesmo tree (#282)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

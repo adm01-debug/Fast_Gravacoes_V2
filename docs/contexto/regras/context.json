@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
+  "sha": "d0cab10e1104eb6ed80607fcb0d5b8ea13ce27cb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 00:12 UTC",
-  "files_total": 1607,
-  "code_files": 1411,
-  "code_lines": 208617
+  "generated_at": "2026-11-25 00:32 UTC",
+  "files_total": 1608,
+  "code_files": 1412,
+  "code_lines": 209019
  },
  "version": "1.3.2",
- "facts_hash": "e19297cb2a1598ae",
+ "facts_hash": "dc500ca25b5a693c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 670,
+   ".tsx": 671,
    ".ts": 406,
    ".sql": 268,
    ".mjs": 50,
@@ -26567,7 +26567,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 575,
+  "components_count": 576,
   "hooks": [
    {
     "name": "useContacts",
@@ -27926,8 +27926,8 @@
   },
   {
    "module": "src/components",
-   "files": 421,
-   "lines": 59200,
+   "files": 422,
+   "lines": 59491,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28663,7 +28663,7 @@
   {
    "module": "src/features/jobs",
    "files": 35,
-   "lines": 3786,
+   "lines": 3796,
    "tables": [
     "job_status_history",
     "jobs",
@@ -29423,7 +29423,7 @@
   {
    "module": "src/integrations",
    "files": 3,
-   "lines": 6430,
+   "lines": 6477,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -29592,7 +29592,7 @@
   {
    "module": "src/pages",
    "files": 60,
-   "lines": 17213,
+   "lines": 17215,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -29840,7 +29840,7 @@
   {
    "module": "src/test",
    "files": 32,
-   "lines": 4577,
+   "lines": 4629,
    "tables": [
     "jobs"
    ],
@@ -33402,7 +33402,7 @@
     "file": "src/features/jobs/types/job.schema.ts",
     "name": "jobSchema",
     "kind": "object",
-    "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
+    "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -34788,6 +34788,14 @@
     "msg": "O destino não pode ser igual à origem"
    },
    {
+    "file": "src/components/jobs/JobDetailsModal.tsx",
+    "msg": "Informe o motivo do cancelamento."
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.tsx",
+    "msg": "O motivo do cancelamento deve ter no máximo 2000 caracteres."
+   },
+   {
     "file": "src/components/knowledge/TechnicalSheetEditor.tsx",
     "msg": "Preencha a técnica e o título"
    },
@@ -35266,6 +35274,14 @@
    {
     "file": "src/features/jobs/services/jobStateMachine.ts",
     "msg": "Transição inválida: "
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
+    "msg": "Informe o motivo do cancelamento."
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
+    "msg": "O motivo do cancelamento deve ter no máximo 2000 caracteres."
    },
    {
     "file": "src/features/maintenance/components/ChecklistManager.tsx",
@@ -44583,6 +44599,18 @@
     "kind": "escreve"
    },
    {
+    "file": "src/components/jobs/JobDetailsModal.tsx",
+    "field": "status",
+    "value": "cancelled",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.tsx",
+    "field": "status",
+    "value": "cancelled",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/jobs/JobQuickActions.tsx",
     "field": "status",
     "value": "queue",
@@ -46824,6 +46852,12 @@
     "file": "src/features/jobs/lib/pending-queue.ts",
     "field": "status",
     "value": "ready",
+    "kind": "compara"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.ts",
+    "field": "status",
+    "value": "cancelled",
     "kind": "compara"
    },
    {
@@ -51465,6 +51499,34 @@
     "name": "nao cria parada de Tab quando o trace cabe"
    },
    {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "JobDetailsModal - cancelamento de OS"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "shows the cancel reason of a cancelled job"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "keeps the confirmation disabled while the reason is empty"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "sends the trimmed reason and closes the dialog on confirmation"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "blocks a reason longer than the limit without cutting the pasted text"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "accepts a reason that only exceeds the limit because of outer spaces"
+   },
+   {
+    "file": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    "name": "does not keep the typed reason after going back"
+   },
+   {
     "file": "src/components/logistics/EditShipmentModal.test.tsx",
     "name": "EditShipmentModal"
    },
@@ -54378,6 +54440,10 @@
    },
    {
     "file": "src/test/jobsService.test.ts",
+    "name": "preserves cancel_reason of a cancelled job for the details panel"
+   },
+   {
+    "file": "src/test/jobsService.test.ts",
     "name": "throws when Supabase returns an error"
    },
    {
@@ -54431,6 +54497,18 @@
    {
     "file": "src/test/jobsService.test.ts",
     "name": "sets actual_end_time when transitioning to finished"
+   },
+   {
+    "file": "src/test/jobsService.test.ts",
+    "name": "sends cancel_reason when cancelling with a reason"
+   },
+   {
+    "file": "src/test/jobsService.test.ts",
+    "name": "refuses to cancel without a reason"
+   },
+   {
+    "file": "src/test/jobsService.test.ts",
+    "name": "refuses a cancel_reason longer than the 2000-character limit"
    },
    {
     "file": "src/test/jobsService.test.ts",
@@ -63789,6 +63867,20 @@
      "disconnected": [
       "escreve:src/components/integrations/IntegrationHub.tsx"
      ],
+     "cancelled": [
+      "compara:src/components/jobs/JobDetailsModal.tsx",
+      "compara:src/components/jobs/JobQuickActions.tsx",
+      "compara:src/components/shift/PendingTasksPanel.tsx",
+      "compara:src/features/jobs/hooks/useDailyDragDrop.ts",
+      "compara:src/features/jobs/hooks/useWeeklyDragDrop.ts",
+      "compara:src/features/jobs/services/jobsService.ts",
+      "compara:src/features/maintenance/components/TPMExecutionHistory.tsx",
+      "compara:src/pages/LogisticsPage.tsx",
+      "compara:supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql",
+      "compara:supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
+      "escreve:src/components/jobs/JobDetailsModal.tsx",
+      "filtra:src/hooks/useGamification.ts"
+     ],
      "rework": [
       "compara:src/components/jobs/JobQuickActions.tsx",
       "compara:src/features/jobs/hooks/useSchedulingData.ts",
@@ -63798,17 +63890,6 @@
       "compara:src/pages/OperatorHistoryPage.tsx",
       "compara:src/pages/PendingQueue.tsx",
       "escreve:src/pages/KanbanBoard.tsx"
-     ],
-     "cancelled": [
-      "compara:src/components/jobs/JobQuickActions.tsx",
-      "compara:src/components/shift/PendingTasksPanel.tsx",
-      "compara:src/features/jobs/hooks/useDailyDragDrop.ts",
-      "compara:src/features/jobs/hooks/useWeeklyDragDrop.ts",
-      "compara:src/features/maintenance/components/TPMExecutionHistory.tsx",
-      "compara:src/pages/LogisticsPage.tsx",
-      "compara:supabase/migrations/20260511192402_c6c4fbcf-9983-4e89-9e99-ea48b6af942d.sql",
-      "compara:supabase/migrations/20261118100000_fix_check_job_overlap_update_sem_mudanca.sql",
-      "filtra:src/hooks/useGamification.ts"
      ],
      "published": [
       "compara:src/components/knowledge/KnowledgeStatusBadge.tsx",
@@ -74548,11 +74629,29 @@
     "function JobCostsTab"
    ]
   },
+  "src/components/jobs/JobDetailsModal.cancel.test.tsx": {
+   "path": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+   "lines": 195,
+   "is_test": true,
+   "tests": [
+    "JobDetailsModal - cancelamento de OS",
+    "shows the cancel reason of a cancelled job",
+    "keeps the confirmation disabled while the reason is empty",
+    "sends the trimmed reason and closes the dialog on confirmation",
+    "blocks a reason longer than the limit without cutting the pasted text",
+    "accepts a reason that only exceeds the limit because of outer spaces",
+    "does not keep the typed reason after going back"
+   ]
+  },
   "src/components/jobs/JobDetailsModal.tsx": {
    "path": "src/components/jobs/JobDetailsModal.tsx",
-   "lines": 512,
+   "lines": 596,
    "exports": [
     "function JobDetailsModal"
+   ],
+   "errors": [
+    "Informe o motivo do cancelamento.",
+    "O motivo do cancelamento deve ter no máximo 2000 caracteres."
    ],
    "zod": [
     {
@@ -74561,6 +74660,18 @@
      "body": "{ order_number: z.string().min(1, 'Número da OS é obrigatório'), client: z.string().min(1, 'Cliente é obrigatório'), product: z.string().min(1, 'Produto é obrigatório'), quantity: z.number().min(1, 'Quantidade é obrigatória'), gravure_color: z.string().optional(), notes: z.string().optional(), priority: z.enum(['low', 'medium', 'high', 'urgent']), }",
      "refines": [],
      "chain": []
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "compara"
     }
    ]
   },
@@ -74594,7 +74705,7 @@
   },
   "src/components/jobs/JobQuickActions.tsx": {
    "path": "src/components/jobs/JobQuickActions.tsx",
-   "lines": 73,
+   "lines": 85,
    "exports": [
     "function JobQuickActions"
    ],
@@ -83301,7 +83412,7 @@
   },
   "src/features/jobs/services/jobsService.ts": {
    "path": "src/features/jobs/services/jobsService.ts",
-   "lines": 135,
+   "lines": 144,
    "exports": [
     "interface Job",
     "type JobInsert",
@@ -83349,7 +83460,16 @@
      "status"
     ]
    },
+   "errors": [
+    "Informe o motivo do cancelamento.",
+    "O motivo do cancelamento deve ter no máximo 2000 caracteres."
+   ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "production",
@@ -83450,7 +83570,7 @@
   },
   "src/features/jobs/types/job.schema.ts": {
    "path": "src/features/jobs/types/job.schema.ts",
-   "lines": 33,
+   "lines": 34,
    "exports": [
     "const jobStatusSchema",
     "type JobStatus",
@@ -83478,7 +83598,7 @@
     {
      "name": "jobSchema",
      "kind": "object",
-     "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
+     "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }",
      "refines": [],
      "chain": []
     },
@@ -89436,7 +89556,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 6314,
+   "lines": 6361,
    "exports": [
     "type Json",
     "type Database",
@@ -91994,7 +92114,7 @@
   },
   "src/pages/PublicTrackingPage.tsx": {
    "path": "src/pages/PublicTrackingPage.tsx",
-   "lines": 311,
+   "lines": 313,
    "exports": [
     "function PublicTrackingPage"
    ],
@@ -92878,7 +92998,7 @@
   },
   "src/test/jobsService.test.ts": {
    "path": "src/test/jobsService.test.ts",
-   "lines": 241,
+   "lines": 293,
    "is_test": true,
    "tables": [
     {
@@ -92889,6 +93009,7 @@
    "tests": [
     "jobsService.getAll",
     "returns an array of jobs on success",
+    "preserves cancel_reason of a cancelled job for the details panel",
     "throws when Supabase returns an error",
     "returns empty array when data is null",
     "jobsService.getById",
@@ -92903,6 +93024,9 @@
     "jobsService.updateStatus",
     "sets actual_start_time when transitioning to production",
     "sets actual_end_time when transitioning to finished",
+    "sends cancel_reason when cancelling with a reason",
+    "refuses to cancel without a reason",
+    "refuses a cancel_reason longer than the 2000-character limit",
     "jobsService.delete",
     "resolves without error on success",
     "throws on delete error",
@@ -97840,10 +97964,29 @@
   }
  },
  "git": {
-  "sha": "5cc8d776397cfada0df7d598f7e245c28f20fa26",
+  "sha": "d0cab10e1104eb6ed80607fcb0d5b8ea13ce27cb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d0cab10",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+     "src/components/jobs/JobDetailsModal.tsx",
+     "src/components/jobs/JobQuickActions.tsx",
+     "src/features/jobs/hooks/useJobs.ts",
+     "src/features/jobs/services/jobsService.ts",
+     "src/features/jobs/types/job.schema.ts",
+     "src/features/packaging/services/packagingService.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/PublicTrackingPage.tsx",
+     "src/test/jobsService.test.ts"
+    ]
+   },
    {
     "sha": "5cc8d77",
     "date": "2026-11-24",
@@ -98173,20 +98316,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "414b392",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "docs(qa): auditoria de QA completa e plano de correção em 300 etapas (#262)",
-    "files": [
-     "docs/qa/00-RESUMO.md",
-     "docs/qa/01-INVENTARIO.md",
-     "docs/qa/02-CENARIOS.md",
-     "docs/qa/03-ACHADOS.md",
-     "docs/qa/04-PLANO.md",
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
@@ -98203,8 +98332,12 @@
     4
    ],
    [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
     "docs/qa/03-ACHADOS.md",
-    3
+    2
    ],
    [
     "src/components/ui/scroll-area.tsx",
@@ -98219,6 +98352,42 @@
     2
    ],
    [
+    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    1
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.tsx",
+    1
+   ],
+   [
+    "src/components/jobs/JobQuickActions.tsx",
+    1
+   ],
+   [
+    "src/features/jobs/hooks/useJobs.ts",
+    1
+   ],
+   [
+    "src/features/jobs/services/jobsService.ts",
+    1
+   ],
+   [
+    "src/features/jobs/types/job.schema.ts",
+    1
+   ],
+   [
+    "src/features/packaging/services/packagingService.ts",
+    1
+   ],
+   [
+    "src/pages/PublicTrackingPage.tsx",
+    1
+   ],
+   [
+    "src/test/jobsService.test.ts",
+    1
+   ],
+   [
     "src/routes/AppRoutes.tsx",
     1
    ],
@@ -98228,46 +98397,6 @@
    ],
    [
     "docs/ARCHITECTURE.md",
-    1
-   ],
-   [
-    "supabase/functions/external-db-bridge/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/external-db-bridge/validate_contract.ts",
-    1
-   ],
-   [
-    "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
-    1
-   ],
-   [
-    "src/features/auth/services/authService.test.ts",
-    1
-   ],
-   [
-    "src/features/auth/services/authService.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
-    1
-   ],
-   [
-    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
-    1
-   ],
-   [
-    "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
-    1
-   ],
-   [
-    "src/pages/AuthPage.mfaBlocked.test.tsx",
-    1
-   ],
-   [
-    "src/pages/AuthPage.tsx",
     1
    ]
   ]

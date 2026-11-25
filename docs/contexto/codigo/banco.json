@@ -1282,6 +1282,77 @@
    "indices": [],
    "fks": [],
    "criada_em": "20261029001000_missing_internal_tables.sql",
+   "colunas_types": {
+    "actual_end_time": "string | null",
+    "actual_start_time": "string | null",
+    "archived_at": "string",
+    "children": "Json",
+    "client": "string",
+    "created_at": "string",
+    "delay_reason": "string | null",
+    "end_time": "string | null",
+    "estimated_duration": "number",
+    "gravure_color": "string | null",
+    "id": "string",
+    "loss_category": "string | null",
+    "lost_pieces": "number | null",
+    "machine_id": "string | null",
+    "notes": "string | null",
+    "operator_id": "string | null",
+    "order_number": "string",
+    "parent_job_id": "string | null",
+    "priority": "string",
+    "produced_quantity": "number | null",
+    "product": "string",
+    "product_category_id": "string | null",
+    "production_photos": "string[] | null",
+    "quantity": "number",
+    "rework_reason": "string | null",
+    "scheduled_date": "string | null",
+    "shipment_id": "string | null",
+    "shipping_status": "string | null",
+    "sort_order": "number | null",
+    "start_time": "string | null",
+    "status": "string",
+    "technique_id": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": [
+     "actual_end_time",
+     "actual_start_time",
+     "client",
+     "created_at",
+     "delay_reason",
+     "end_time",
+     "estimated_duration",
+     "gravure_color",
+     "id",
+     "loss_category",
+     "lost_pieces",
+     "machine_id",
+     "notes",
+     "operator_id",
+     "order_number",
+     "parent_job_id",
+     "priority",
+     "produced_quantity",
+     "product",
+     "product_category_id",
+     "production_photos",
+     "quantity",
+     "rework_reason",
+     "scheduled_date",
+     "shipment_id",
+     "shipping_status",
+     "sort_order",
+     "start_time",
+     "status",
+     "technique_id",
+     "updated_at"
+    ]
+   },
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
@@ -1498,6 +1569,16 @@
    "indices": [],
    "fks": [],
    "criada_em": "20261029001000_missing_internal_tables.sql",
+   "colunas_types": {
+    "backup_id": "string",
+    "created_at": "string",
+    "id": "string",
+    "tables_backed_up": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [
     "backup-scheduler"
@@ -1636,6 +1717,14 @@
    "indices": [],
    "fks": [],
    "criada_em": "20261028223000_bitrix_oauth_states.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "state": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [
     "bitrix24-sync"
@@ -2589,6 +2678,27 @@
    ],
    "fks": [],
    "criada_em": "20261001152000_csp_violation_reports.sql",
+   "colunas_types": {
+    "blocked_uri": "string | null",
+    "column_number": "number | null",
+    "created_at": "string",
+    "disposition": "string | null",
+    "document_uri": "string | null",
+    "effective_directive": "string | null",
+    "id": "string",
+    "line_number": "number | null",
+    "original_policy": "string | null",
+    "raw": "Json",
+    "referrer": "string | null",
+    "source_file": "string | null",
+    "status_code": "number | null",
+    "user_agent": "string | null",
+    "violated_directive": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
@@ -3772,6 +3882,19 @@
     "created_by->auth"
    ],
    "criada_em": "20260520000001_security_rls_indexes_fixes.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "created_by": "string | null",
+    "id": "string",
+    "is_active": "boolean",
+    "key_hash": "string",
+    "last_used_at": "string | null",
+    "name": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [
     "erp-api"
@@ -5367,11 +5490,13 @@
    "colunas_types": {
     "actual_end_time": "string | null",
     "actual_start_time": "string | null",
+    "cancel_reason": "string | null",
     "client": "string",
     "created_at": "string",
     "delay_reason": "string | null",
     "end_time": "string | null",
     "estimated_duration": "number",
+    "external_ref": "string | null",
     "gravure_color": "string | null",
     "id": "string",
     "loss_category": "string | null",
@@ -5398,10 +5523,7 @@
     "updated_at": "string"
    },
    "drift": {
-    "so_na_migration": [
-     "cancel_reason",
-     "external_ref"
-    ],
+    "so_na_migration": [],
     "so_no_types": [
      "delay_reason",
      "loss_category",
@@ -9730,6 +9852,7 @@
     "delay_reason": "string | null",
     "id": "string",
     "job_id": "string",
+    "loss_reason": "string | null",
     "notes": "string | null",
     "package_type": "string | null",
     "packages_count": "number | null",
@@ -9742,9 +9865,7 @@
     "was_overdue_on_complete": "boolean"
    },
    "drift": {
-    "so_na_migration": [
-     "loss_reason"
-    ],
+    "so_na_migration": [],
     "so_no_types": []
    },
    "usada_no_front": 6,
@@ -13936,6 +14057,15 @@
    "indices": [],
    "fks": [],
    "criada_em": "20261029001000_missing_internal_tables.sql",
+   "colunas_types": {
+    "collected_at": "string",
+    "id": "string",
+    "metrics": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [
     "metrics-collector"
@@ -17734,40 +17864,7 @@
    "nao_usada": false
   }
  },
- "tabelas_so_no_types": [
-  {
-   "tabela": "email_verification_tokens",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "gamification_settings",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "packaging_equipment",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "packaging_waste",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "shipment_costs",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "tpm_execution_checklist",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "webauthn_challenges",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  },
-  {
-   "tabela": "webauthn_credentials",
-   "motivo": "dropada em 20261001150000_drop_dead_tables_and_functions.sql"
-  }
- ],
+ "tabelas_so_no_types": [],
  "tabelas_usadas_no_codigo_sem_definicao": [
   "backups"
  ],

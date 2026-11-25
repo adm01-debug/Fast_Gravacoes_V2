@@ -1111,7 +1111,8 @@
   "src/components/jobs/JobQuickActions.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
-   "src/features/jobs/index.ts"
+   "src/features/jobs/index.ts",
+   "src/features/jobs/services/jobStateMachine.ts"
   ],
   "src/components/jobs/JobTraceabilityTab.tsx": [
    "src/components/ui/badge.tsx",

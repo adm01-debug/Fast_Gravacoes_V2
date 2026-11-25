@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5cc8d77639` · branch `main` · 2026-11-25 00:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d0cab10e11` · branch `main` · 2026-11-25 00:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-24T23:12:16Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1839,7 +1839,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `approved` | compara, escreve | `src/components/documents/DocumentViewer.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/settings/PasswordResetRequests.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>… +5 |
 | `status` | `blocked` | compara | `src/components/traceability/TraceabilityStatsCards.tsx` |
 | `status` | `buffer` | compara | `src/features/jobs/hooks/useSchedulingData.ts`<br>`src/features/production/hooks/useOperatorDashboardData.ts` |
-| `status` | `cancelled` | compara, filtra | `src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/hooks/useDailyDragDrop.ts`<br>`src/features/jobs/hooks/useWeeklyDragDrop.ts`<br>`src/features/maintenance/components/TPMExecutionHistory.tsx`<br>… +4 |
+| `status` | `cancelled` | compara, escreve, filtra | `src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/shift/PendingTasksPanel.tsx`<br>`src/features/jobs/hooks/useDailyDragDrop.ts`<br>`src/features/jobs/hooks/useWeeklyDragDrop.ts`<br>… +6 |
 | `status` | `completed` | compara, escreve, filtra | `src/components/shift/PendingTasksPanel.tsx`<br>`src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`src/features/maintenance/components/ExecutionRecordView.tsx`<br>`src/features/maintenance/components/MachineTPMPanel.tsx`<br>`src/features/maintenance/components/MachineTPMTimeline.tsx`<br>… +7 |
 | `status` | `concluido` | compara, escreve | `src/pages/CodeQualityDashboard.tsx` |
 | `status` | `connected` | compara, escreve | `src/components/integrations/IntegrationHub.tsx`<br>`src/features/analytics/hooks/useRealtimeConnection.ts` |
@@ -2019,7 +2019,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **jobSchema** (`src/features/jobs/types/job.schema.ts`, z.object):
   ```ts
-  { id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }
+  { id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), }
   ```
 - **jobFormSchema** (`src/features/jobs/types/job.schema.ts`, derivado de `jobSchema`, encadeia extend, omit):
   ```ts
@@ -3082,6 +3082,8 @@ _nenhum item encontrado_
 | Localização inválida. Use o formato Corredor (A-D) + Nível (1-4). Ex: A2 | `src/components/inventory/WarehouseMap.tsx` |
 | Não existem itens nesta posição para transferir | `src/components/inventory/WarehouseMap.tsx` |
 | O destino não pode ser igual à origem | `src/components/inventory/WarehouseMap.tsx` |
+| Informe o motivo do cancelamento. | `src/components/jobs/JobDetailsModal.tsx` |
+| O motivo do cancelamento deve ter no máximo 2000 caracteres. | `src/components/jobs/JobDetailsModal.tsx` |
 | Preencha a técnica e o título | `src/components/knowledge/TechnicalSheetEditor.tsx` |
 | Erro ao gerar PDF | `src/components/knowledge/TechnicalSheetViewer.tsx` |
 | , icon: AlertTriangle, label:  | `src/components/navigation/MobileQuickActions.tsx` |
@@ -3202,6 +3204,8 @@ _nenhum item encontrado_
 | Conflito de agendamento: máquina já possui job neste horário. | `src/features/jobs/hooks/useWeeklyDragDrop.ts` |
 | Erro ao mover agendamento | `src/features/jobs/hooks/useWeeklyDragDrop.ts` |
 | Transição inválida:  | `src/features/jobs/services/jobStateMachine.ts` |
+| Informe o motivo do cancelamento. | `src/features/jobs/services/jobsService.ts` |
+| O motivo do cancelamento deve ter no máximo 2000 caracteres. | `src/features/jobs/services/jobsService.ts` |
 | Erro ao alterar status | `src/features/maintenance/components/ChecklistManager.tsx` |
 | Erro ao salvar checklist | `src/features/maintenance/components/ChecklistManager.tsx` |
 | Selecione o tipo de manutenção | `src/features/maintenance/components/ChecklistManager.tsx` |
@@ -3254,11 +3258,7 @@ _nenhum item encontrado_
 | Sem permissão ou registro inexistente | `src/features/notifications/hooks/useNotifications.ts` |
 | Notificações bloqueadas | `src/features/notifications/hooks/usePushNotifications.ts` |
 | Notificações não suportadas | `src/features/notifications/hooks/usePushNotifications.ts` |
-| Erro ao ativar push notifications | `src/features/notifications/hooks/usePushSubscription.ts` |
-| Erro ao desativar push notifications | `src/features/notifications/hooks/usePushSubscription.ts` |
-| Erro ao enviar notificação | `src/features/notifications/hooks/usePushSubscription.ts` |
-| Erro ao enviar notificação de teste | `src/features/notifications/hooks/usePushSubscription.ts` |
-| … +246 linhas — lista completa em `context.json` | |
+| … +250 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3326,7 +3326,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1390 testes em 122 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1401 testes em 123 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3344,9 +3344,9 @@ _nenhum item encontrado_
 | `src/test/utils.test.ts` | 29 | merges class strings · removes falsy values · resolves Tailwind conflicts (last class wins) · handles conditional classes via object syntax … |
 | `src/test/authFlow.test.ts` | 27 | AuthService · signIn · calls supabase.auth.signInWithPassword with correct credentials · throws when Supabase returns an error … |
 | `src/test/webhookFuzz.test.ts` | 27 | Fuzz — webhook string injections in event field · Fuzz — webhook malformed source injections · Fuzz — webhook deeply nested / circular-like data · deeply nested object in data field → accepted … |
+| `src/test/jobsService.test.ts` | 26 | jobsService.getAll · returns an array of jobs on success · preserves cancel_reason of a cancelled job for the details panel · throws when Supabase returns an error … |
 | `src/test/exportRegression.test.ts` | 25 | inventoryExport — regressão de formato · gera cabeçalho canônico exato · mapeia tipos IN/OUT/TRANSFER/ADJUST para labels em pt-BR · faz fallback para full_name quando display_name está ausente … |
 | `src/test/sanitize.test.ts` | 24 | escapeHtml · escapes & < >  · leaves safe strings unchanged · stripTags … |
-| `src/test/jobsService.test.ts` | 22 | jobsService.getAll · returns an array of jobs on success · throws when Supabase returns an error · returns empty array when data is null … |
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
 | `src/features/auth/components/AuthProvider.test.tsx` | 18 | AuthContext · should initialize with loading state · should sign in successfully · should re-gate a Google session after a failed password sign-in (YTJ_) … |
@@ -3389,6 +3389,7 @@ _nenhum item encontrado_
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
+| `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 7 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/hooks/useOfflineSync.test.ts` | 7 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · drains a queue hydrated from localStorage on cold mount while online … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
