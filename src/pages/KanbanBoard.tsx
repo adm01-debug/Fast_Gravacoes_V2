@@ -252,20 +252,29 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-          // Exclusao uma a uma: o banco recusa OS com producao registrada
-          // (trigger da etapa 036), entao o lote pode ser parcial. As recusas sao
-          // mostradas e a lista e recarregada de qualquer forma, senao o Kanban
-          // continua exibindo as OS que ja sairam.
-      const results = await Promise.allSettled(Array.from(selectedJobs).map(id => jobsService.delete(id)));
-          const errors = results.filter(r => r.status === 'rejected').map(r => (r as PromiseRejectedResult).reason);
-          const removed = results.length - errors.length;
+      const ids = Array.from(selectedJobs);
+      try {
+        // Uma unica operacao para o lote: o banco revalida status/contadores no
+        // proprio DELETE e devolve as linhas que realmente sairam, entao a tela
+        // nao anuncia exclusao que a policy ou a promocao automatica impediram.
+        const { deleted, refused } = await jobsService.deleteMany(ids);
 
-          if (removed > 0) toast.success(`${removed} jobs excluídos permanentemente`);
-      if (errors.length > 0) {
-        toast.error(`Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
+        if (deleted.length > 0) {
+          toast.success(`${deleted.length} jobs excluídos permanentemente`);
+          setSelectedJobs(new Set(refused.map(item => item.id)));
+          handleJobsUpdate();
+        }
+        if (refused.length > 0) {
+          toast.error(
+            `${refused.length} job(s) não foram excluídos: ` +
+              refused.map(item => `${item.id.slice(0, 8)} — ${item.reason}`).join('; ')
+          );
+        }
+      } catch (error) {
+        // A recusa do banco chega em `refused`; este catch cobre a falha da API
+        // (rede/edge), que antes sumia como promessa rejeitada sem nenhum aviso.
+        toast.error(`Erro ao excluir jobs: ${error instanceof Error ? error.message : String(error)}`);
       }
-      setSelectedJobs(new Set());
-      handleJobsUpdate();
     }
   }, [selectedJobs, jobs, handleJobsUpdate]);
 

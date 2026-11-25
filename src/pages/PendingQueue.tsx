@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
-import { TablesUpdate } from '@/integrations/supabase/types';import { pendingStatuses, priorityOrder, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, selectBulkDeleteTargets, selectHiddenDeleteTargets, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { jobsService } from '@/features/jobs/services/jobsService';
 import { PendingJobsView } from '@/components/planning/pending-queue/PendingJobsView';
 import { SmartSuggestionsSection, type PendingQueueAISelection } from '@/components/planning/pending-queue/SmartSuggestionsSection';
 
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { JobDetailsModal } from "@/components/jobs/JobDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -28,7 +30,7 @@ import {
   Zap,
   LayoutGrid,
   List} from "lucide-react";
-import { useSchedulingData, jobsService } from "@/features/jobs";
+import { useSchedulingData } from "@/features/jobs";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -47,8 +49,6 @@ import type { LoadBalancingSuggestion } from "@/features/analytics";
 import { useAutoBufferPromotion } from "@/features/jobs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { isAfter, subHours } from "date-fns";
-
-
 
 export default function PendingQueue() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,6 +70,7 @@ export default function PendingQueue() {
     | null
   >(null);
   const [selectedJobs, setSelectedJobs] = useState<Set<string>>(new Set());
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
 
   const handleExplainSuggestion = (selection: PendingQueueAISelection) => {
     setSelectedAISuggestion(selection);
@@ -228,27 +229,60 @@ export default function PendingQueue() {
     }
   };
 
-  const handleBulkAction = async (action: 'production' | 'ready' | 'delete') => {
-    if (selectedJobs.size === 0) return;
+  // Usa a lista carregada inteira, nao a filtrada: a selecao sobrevive a troca de busca.
+    const bulkDeleteTargets = useMemo(
+      () => selectBulkDeleteTargets(jobs, selectedJobs),
+      [jobs, selectedJobs]
+  );
+  const bulkDeleteBlocked = useMemo(
+    () => bulkDeleteTargets
+      .map(job => ({ job, reason: bulkDeleteBlocker(job) }))
+      .filter((item): item is { job: DbJob; reason: string } => item.reason !== null),
+    [bulkDeleteTargets]
+  );
+  const bulkDeleteAllowed = useMemo(
+    () => bulkDeleteTargets.filter(job => bulkDeleteBlocker(job) === null),
+    [bulkDeleteTargets]
+  );
+  // Alvos que a busca/filtro atual esconde: continuam selecionados e serão
+  // apagados, então precisam aparecer no aviso antes da confirmação.
+  const bulkDeleteHidden = useMemo(
+    () => selectHiddenDeleteTargets(bulkDeleteAllowed, filteredJobs),
+    [bulkDeleteAllowed, filteredJobs]
+  );
+
+  const handleBulkDelete = async (ids: string[]) => {
+      setIsBulkDeleteOpen(false);
+      if (ids.length === 0) return;
 
     try {
-      if (action === 'delete') {
-        // Exclusao uma a uma: o banco recusa OS com producao registrada
-              // (trigger da etapa 036) e um delete em lote por `.in()` levaria a
-              // transacao inteira junto, sem excluir nem as OS permitidas.
-              const ids = Array.from(selectedJobs);
-              const results = await Promise.allSettled(ids.map(id => jobsService.delete(id)));
-              const failures = results.filter(r => r.status === 'rejected');
-              const removed = ids.length - failures.length;
+        const { deleted, refused } = await jobsService.deleteMany(ids);
 
-              if (removed > 0) toast.success(`${removed} jobs excluídos`);
-              if (failures.length > 0) {
-                const reasons = failures
-                  .map(r => (r as PromiseRejectedResult).reason)
-                  .map(e => (e && typeof e === 'object' && 'message' in e ? e.message : String(e)));
-                toast.error(`Não foi possível excluir ${failures.length} job(s): ${reasons.join('; ')}`);
-              }
-      } else {
+        if (deleted.length > 0) {
+          toast.success(`${deleted.length} OS excluídas`, {
+            description: refused.length > 0
+              ? `${refused.length} OS foram mantidas: ${refused.map(item => item.reason).join('; ')}.`
+              : undefined,
+          });
+          queryClient.invalidateQueries({ queryKey: ['jobs'] });
+        } else if (refused.length > 0) {
+          toast.error('Nenhuma OS foi excluída', {
+            description: refused.map(item => item.reason).join('; '),
+          });
+        }
+
+        // Só o que sobrou continua selecionado: o que saiu do banco não pode
+        // permanecer marcado na tela.
+        setSelectedJobs(new Set(refused.map(item => item.id)));
+      } catch (error) {
+        toast.error('Erro ao excluir as OS selecionadas');
+      }
+    };
+
+    const handleBulkAction = async (action: 'production' | 'ready') => {
+      if (selectedJobs.size === 0) return;
+
+      try {
         const targetStatus = action as JobStatus;
         const selectedJobsList = filteredJobs.filter(j => selectedJobs.has(j.id));
         const invalid = selectedJobsList.filter(j => !canTransition(j.status as JobStatus, targetStatus));
@@ -263,13 +297,12 @@ export default function PendingQueue() {
         };
         if (action === 'production') {
           updateData.actual_start_time = new Date().toISOString();
-        }
+      }
 
         await Promise.all(
           selectedJobsList.map(j => supabase.from('jobs').update(updateData).eq('id', j.id))
         );
         toast.success(`${selectedJobs.size} jobs movidos para "${action === 'production' ? 'Em Produção' : 'No Jeito'}"`);
-      }
 
       setSelectedJobs(new Set());
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
@@ -324,6 +357,64 @@ export default function PendingQueue() {
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         />
+
+                <AlertDialog open={isBulkDeleteOpen} onOpenChange={setIsBulkDeleteOpen}>
+                  {/* As listas de impedidas e de ocultas crescem: o limite de altura com
+                      rolagem mantem os botoes (inclusive Cancelar) ao alcance em telas baixas. */}
+                  <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {bulkDeleteAllowed.length === 0
+                          ? 'Nenhuma OS selecionada pode ser excluída'
+                          : `Excluir ${bulkDeleteAllowed.length} OS permanentemente?`}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription asChild>
+                        <div className="space-y-2 text-sm">
+                          <p>
+                            Esta ação não pode ser desfeita. Junto com a OS são apagados os registros ligados a ela:
+                                                      perdas de produção, expedições, tarefas de embalagem, histórico de leitura de QR, checklist
+                                                      de pré-produção, custos ABC e a trilha de auditoria de status.
+                          </p>
+                          {bulkDeleteBlocked.length > 0 && (
+                            <div className="rounded-md border border-warning/30 bg-warning/10 p-2">
+                              <p className="font-medium text-warning">
+                                {bulkDeleteBlocked.length} OS selecionada(s) não serão excluídas:
+                              </p>
+                              <ul className="list-disc pl-4 max-h-40 overflow-y-auto">
+                                                              {bulkDeleteBlocked.map(({ job, reason }) => (
+                                  <li key={job.id}>
+                                    {job.order_number} — {reason}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {bulkDeleteHidden.length > 0 && (
+                            <div className="rounded-md border border-border bg-muted/50 p-2">
+                              <p className="font-medium">
+                                {bulkDeleteHidden.length} OS selecionada(s) estão fora do filtro atual e também serão excluídas:
+                              </p>
+                              <ul className="list-disc pl-4 max-h-40 overflow-y-auto">
+                                {bulkDeleteHidden.map(job => (
+                                  <li key={job.id}>{job.order_number}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleBulkDelete(bulkDeleteAllowed.map(job => job.id))}
+                        disabled={bulkDeleteAllowed.length === 0}
+                      >
+                        Excluir {bulkDeleteAllowed.length} OS
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
 
         <AISuggestionDetails
           isOpen={isAISidePanelOpen}
@@ -507,9 +598,7 @@ export default function PendingQueue() {
             <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-warning/30 text-warning hover:bg-warning/10" onClick={() => handleBulkAction('ready')}>
               <Package className="h-3 w-3" /> Marcar No Jeito
             </Button>
-            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => {
-              if (window.confirm('Excluir permanentemente estes jobs?')) handleBulkAction('delete');
-            }}>
+            <Button size="sm" variant="outline" className="h-7 text-[10px] uppercase font-bold tracking-wider gap-1 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => setIsBulkDeleteOpen(true)}>
               <Trash2 className="h-3 w-3" /> Excluir
             </Button>
             <Button size="sm" variant="ghost" className="h-7 text-[10px] uppercase font-bold tracking-wider ml-auto text-muted-foreground" onClick={() => setSelectedJobs(new Set())}>
