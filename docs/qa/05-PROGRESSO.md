@@ -45,10 +45,10 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 034 — Impedir que o operador altere campos comerciais da OS — onda 1 — Média · **aprovação do dono**
 - [ ] 035 — Fazer o portão de qualidade falhar fechado — onda 1 — Média · **aprovação do dono**
 - [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
-- [ ] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta
+- [x] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta · implementada na #306
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
 - [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
-- [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
+- [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica · implementada na #306
 - [ ] 056 — Tirar `user_roles` e a trilha de auditoria da lista de tabelas do túnel de banco — onda 1 — Crítica · **aprovação do dono**
 - [ ] 057 — Decidir se o túnel genérico de banco deve continuar existindo — onda 1 — Alta · **aprovação do dono**
 - [ ] 058 — Impedir que qualquer pessoa bloqueie a conta de um operador — onda 1 — Crítica · **aprovação do dono**
@@ -411,3 +411,8 @@ Efeito: correção exige DDL (policy de UPDATE para `admin`) — não entra nest
 - **Etapa 122** — lista dos 28 arquivos acima de 500 linhas e a regra combinada.
 - **Etapa 296** — decisão do dono sobre a API do ERP.
 - **Etapa 300** — tabela antes / depois / pendente dos alertas do contexto gerado.
+
+### 037 / 040 — 2026-11-28
+Comando/consulta: `npx tsc --noEmit -p tsconfig.app.json` **e** `npx tsc --noEmit -p tsconfig.node.json` — o `--noEmit` sem `-p` não é equivalente: o repositório tem dois projetos e o comando solto deixa de checar o app; `npx vitest run src/pages/PendingQueue.test.tsx src/pages/KanbanBoard.test.tsx src/features/jobs/services/jobsService.test.ts src/test/jobsService.test.ts`; `npx eslint --max-warnings=0` nos 8 arquivos tocados. Tudo no worktree da branch da #306.
+Resultado: **40/40** (PendingQueue 11 + KanbanBoard 2 + jobsService 7 + legado 20); `tsc -p tsconfig.app.json` só com os 7 erros de baseline em `src/components/ui/resizable.tsx` e `resizable.test.tsx`; `tsc -p tsconfig.node.json` exit 0; `eslint --max-warnings=0` exit 0. A regra de exclusão passou a viver em `deleteJobsByIds` (`src/features/jobs/services/jobsService.ts`), que lê `status`, `produced_quantity` e `lost_pieces` antes de apagar, **reaparece os mesmos filtros no próprio `DELETE`** — a promoção automática (`auto-promote-jobs`) pode levar a OS de `queue` para `ready` entre a leitura e o `DELETE` — e faz **uma única mutação** para o lote, para não quebrar a cadeia do `process_audit_log_hashing`, com `select('id')` no fim, que é o que distingue "apagou" de "a policy de DELETE filtrou sem erro". `deleteMany` devolve `{ deleted, refused }`; `PendingQueue.handleBulkDelete` (`src/pages/PendingQueue.tsx`) e a ação de exclusão do Kanban (`src/pages/KanbanBoard.tsx`) mantêm selecionadas apenas as recusadas, invalidam `['jobs']` quando alguma linha saiu e informam o motivo real no toast. `selectHiddenDeleteTargets` (`src/features/jobs/lib/pending-queue.ts`) lista, no diálogo de confirmação, as OS selecionadas que o filtro esconde. O texto completo dos 8 arquivos tocados está na PR #306.
+PR: [#306](https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/306) · estado: aguardando CI

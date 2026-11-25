@@ -23,9 +23,13 @@ export const jobSchema = z.object({
   notes: z.string().max(2000, 'Observações muito longas').nullable().optional(),
   cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(),
   gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(),
+    // Precisam sobreviver ao safeParse do jobsService: o aviso de exclusao em massa
+    // usa esses numeros para impedir apagar OS com producao registrada.
+    produced_quantity: z.coerce.number().nullable().optional(),
+    lost_pieces: z.coerce.number().nullable().optional(),
 });
 
-export const jobFormSchema = jobSchema.omit({ id: true, status: true }).extend({
+  export const jobFormSchema = jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({
   quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'),
   estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60),
 });
