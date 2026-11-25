@@ -44,7 +44,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [ ] 033 — Restringir a leitura de defeitos de embalagem a quem tem relação com a tarefa — onda 1 — Baixa · **aprovação do dono**
 - [ ] 034 — Impedir que o operador altere campos comerciais da OS — onda 1 — Média · **aprovação do dono**
 - [ ] 035 — Fazer o portão de qualidade falhar fechado — onda 1 — Média · **aprovação do dono**
-- [ ] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · **aprovação do dono**
+- [x] 036 — Bloquear no banco a exclusão de OS que já teve produção — onda 1 — Crítica · `validate_job_delete_allowed()` + `trg_validate_job_delete_allowed BEFORE DELETE ON public.jobs` recusa OS com `produced_quantity`/`lost_pieces` e OS fora de `queue`/`scheduled`/`cancelled` (código `FG001`), liberado por `app.archiving_job='on'` para o arquivamento da etapa 038; migration `20261128100000` aplicada em produção em 25/11 e provada por transação (A–I); telas seguem a versão da #306, que já mostra as recusas parciais com o motivo; PR #303
 - [x] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta · implementada na #306
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
 - [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
