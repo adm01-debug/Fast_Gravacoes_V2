@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Bell, Wrench, Brain, Calendar, Search, Filter, RefreshCw, Wifi, WifiOff, CheckCircle2, Server } from 'lucide-react';
+import { Bell, Wrench, Brain, Calendar, Search, Filter, RefreshCw, Wifi, WifiOff, CheckCircle2 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { parseDateOnly } from '@/lib/dateUtils';
@@ -41,19 +41,10 @@ interface DailySummaryRecord {
 }
 
 type NotificationItem = {
-  id: string; type: 'maintenance' | 'prediction' | 'summary' | 'alert'; title: string; message: string;
+  id: string; type: 'maintenance' | 'prediction' | 'summary' | 'personal'; title: string; message: string;
   severity: 'critical' | 'warning' | 'info' | 'success'; timestamp: string;
   isRead?: boolean; isResolved?: boolean; metadata?: Record<string, unknown>;
 };
-
-interface PushNotificationRecord {
-  id: string; title: string; body: string; status: string; created_at: string;
-  data: Record<string, unknown> | null;
-}
-
-// `cron_email_sent` é marcador de dedupe do servidor (impede reenvio do e-mail),
-// não aviso ao usuário: contá-lo no sino deixava um badge que nunca aparecia aqui.
-const MARCADOR_INTERNO = 'cron_email_sent';
 
 const NotificationsPage = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -62,17 +53,18 @@ const NotificationsPage = () => {
   const [dateRange, setDateRange] = useState('7');
   const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
   const [newNotificationsCount, setNewNotificationsCount] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const { permission, requestPermission } = usePushNotifications();
   const { manualRefresh, isLoading: isSummaryLoading } = useDailySummaryNotifications();
   const { playSound, isEnabled: isSoundEnabled } = useNotificationSounds();
-  const { markAllAsRead } = useNotifications();
+  const {
+    notifications: personalNotifications,
+    isLoading: isLoadingPersonal,
+    markAllAsRead,
+  } = useNotifications({ limit: 100 });
 
-  // Escopo de conta: o cache do histórico de avisos pessoais não pode
-  // sobreviver a um logout/login no mesmo navegador — sem o id na chave o
-  // próximo usuário veria os avisos privados do anterior.
-  const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     let mounted = true;
     supabase.auth.getUser().then(({ data }) => { if (mounted) setUserId(data.user?.id ?? null); });
@@ -82,25 +74,27 @@ const NotificationsPage = () => {
     return () => { mounted = false; subscription.unsubscribe(); };
   }, []);
 
-  const handleNewNotification = useCallback((type: 'maintenance' | 'prediction' | 'summary') => {
+  const handleNewNotification = useCallback((type: 'maintenance' | 'prediction' | 'summary' | 'personal') => {
     setNewNotificationsCount(prev => prev + 1);
     if (isSoundEnabled()) playSound('alert');
-    toast.info('Nova notificação', { description: `Uma nova ${type === 'maintenance' ? 'manutenção' : type === 'prediction' ? 'predição' : 'resumo'} foi adicionada.` });
-    const key = type === 'maintenance' ? 'maintenance-alerts-history' : type === 'prediction' ? 'ml-predictions-history' : 'daily-summaries-history';
+    const label = type === 'maintenance' ? 'manutenção' : type === 'prediction' ? 'predição' : type === 'summary' ? 'resumo' : 'aviso';
+    toast.info('Nova notificação', { description: `Uma nova ${label} foi adicionada.` });
+    const key = type === 'maintenance' ? 'maintenance-alerts-history' : type === 'prediction' ? 'ml-predictions-history' : type === 'summary' ? 'daily-summaries-history' : 'notifications';
     queryClient.invalidateQueries({ queryKey: [key] });
   }, [queryClient, playSound, isSoundEnabled]);
 
   useEffect(() => {
-    const channel = supabase.channel('notifications-page-realtime')
+    if (!userId) return;
+    const channel = supabase.channel(`notifications-page-realtime-${userId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'maintenance_alerts' }, () => handleNewNotification('maintenance'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'machine_predictions' }, () => handleNewNotification('prediction'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_summaries' }, () => handleNewNotification('summary'))
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'push_notifications' }, () => queryClient.invalidateQueries({ queryKey: ['push-notifications-history'] }))
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'push_notifications', filter: `user_id=eq.${userId}` }, () => handleNewNotification('personal'))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'maintenance_alerts' }, () => queryClient.invalidateQueries({ queryKey: ['maintenance-alerts-history'] }))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'machine_predictions' }, () => queryClient.invalidateQueries({ queryKey: ['ml-predictions-history'] }))
       .subscribe((status) => setIsRealtimeConnected(status === 'SUBSCRIBED'));
     return () => { supabase.removeChannel(channel); };
-  }, [handleNewNotification, queryClient]);
+  }, [handleNewNotification, queryClient, userId]);
 
   const { data: maintenanceAlerts, isLoading: isLoadingAlerts, refetch: refetchAlerts } = useQuery({
     queryKey: ['maintenance-alerts-history', dateRange],
@@ -117,41 +111,29 @@ const NotificationsPage = () => {
     queryFn: async () => { const { data, error } = await supabase.from('daily_summaries').select('*').gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).order('created_at', { ascending: false }).limit(30); if (error) throw error; return data as DailySummaryRecord[]; },
   });
 
-    // `push_notifications` é a fonte dos avisos pessoais (inclui os alertas de
-    // rotina gravados por `cron-alert-email`). O contador de não lidas do sino lê
-    // esta tabela, então ela precisa estar listada aqui — sem isso o badge subia
-    // e a Central não mostrava nada.
-    const { data: pushes, isLoading: isLoadingPushes, refetch: refetchPushes } = useQuery({
-      queryKey: ['push-notifications-history', userId, dateRange],
-            enabled: !!userId,
-      queryFn: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return [];
-              // O mesmo filtro do contador de não lidas, aplicado ANTES do limite:
-              // filtrar depois fazia os marcadores de dedupe do e-mail ocuparem
-              // vagas das 100 linhas e esconder avisos reais do período.
-              const { data, error } = await supabase.from('push_notifications').select('*').eq('user_id', user.id).gte('created_at', subDays(new Date(), parseInt(dateRange, 10)).toISOString()).or('data->>type.is.null,data->>type.neq.cron_email_sent').is('data->>dismissed_at', null).order('created_at', { ascending: false }).limit(100);
-        if (error) throw error;
-        return data as PushNotificationRecord[];
-      },
-    });
-
   const notifications = useMemo((): NotificationItem[] => {
     const items: NotificationItem[] = [];
     (maintenanceAlerts || []).forEach(a => items.push({ id: `m-${a.id}`, type: 'maintenance', title: `Manutenção ${a.alert_type === 'critical' ? 'Crítica' : a.alert_type === 'overdue' ? 'Atrasada' : 'Pendente'}`, message: `${a.machines?.name || 'Máquina'}: ${a.message}`, severity: a.alert_type === 'critical' ? 'critical' : a.alert_type === 'overdue' ? 'warning' : 'info', timestamp: a.created_at, isRead: a.is_read, isResolved: a.is_resolved }));
     (predictions || []).forEach(p => items.push({ id: `p-${p.id}`, type: 'prediction', title: `Predição ${p.prediction_type === 'failure' ? 'de Falha' : 'de Manutenção'}`, message: `${p.machines?.name || 'Máquina'}: Risco ${p.risk_score}%${p.predicted_failure_date ? ` - Previsão: ${format(parseDateOnly(p.predicted_failure_date) ?? new Date(), 'dd/MM/yyyy')}` : ''}`, severity: p.risk_score >= 85 ? 'critical' : p.risk_score >= 70 ? 'warning' : 'info', timestamp: p.created_at, isRead: !!p.acknowledged_at, isResolved: !p.is_active }));
     (summaries || []).forEach(s => items.push({ id: `s-${s.id}`, type: 'summary', title: `Resumo Diário - ${format(parseDateOnly(s.date) ?? new Date(), "dd 'de' MMMM", { locale: ptBR })}`, message: s.data?.alerts?.has_critical ? `${s.data.alerts.total_attention_items} itens requerem atenção` : 'Nenhum item crítico', severity: s.data?.alerts?.has_critical ? 'warning' : 'success', timestamp: s.created_at }));
-        (pushes || []).forEach(n => {
-          const meta = n.data || {};
-          if (String(meta.type ?? '') === MARCADOR_INTERNO) return;
-          // Aviso dispensado pelo usuário: a linha fica no banco (dedupe da
-          // coleta) mas não volta para a lista.
-          if (meta.dismissed_at) return;
-          const sev = meta.severity === 'critical' ? 'critical' : meta.severity === 'warning' ? 'warning' : meta.severity === 'success' ? 'success' : 'info';
-          items.push({ id: `push-${n.id}`, type: 'alert', title: n.title, message: n.body, severity: sev, timestamp: n.created_at, isRead: n.status === 'read', metadata: meta });
-        });
-    return items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      }, [maintenanceAlerts, predictions, summaries, pushes]);
+    // Avisos pessoais (push_notifications): a fonte do sino e do contador.
+    // Sem entrarem aqui, o usuario via o contador subir e abria a Central sem
+    // encontrar o aviso (nem pelo botao Atualizar).
+    const since = subDays(new Date(), parseInt(dateRange, 10)).getTime();
+    (personalNotifications || []).forEach(n => items.push({
+      id: n.id,
+      type: 'personal',
+      title: n.title,
+      message: n.message,
+      severity: n.type === 'urgent' || n.type === 'error' ? 'critical' : n.type === 'warning' ? 'warning' : n.type === 'success' ? 'success' : 'info',
+      timestamp: n.created_at,
+      isRead: n.is_read,
+      metadata: { action_url: n.action_url, action_label: n.action_label, source_system: n.source_system, type: n.category },
+    }));
+    return items
+      .filter(item => new Date(item.timestamp).getTime() >= since)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }, [maintenanceAlerts, predictions, summaries, personalNotifications, dateRange]);
 
   const filteredNotifications = useMemo(() => {
     let filtered = notifications;
@@ -161,10 +143,10 @@ const NotificationsPage = () => {
     return filtered;
   }, [notifications, activeTab, severityFilter, searchQuery]);
 
-  const stats = useMemo(() => ({ total: notifications.length, critical: notifications.filter(n => n.severity === 'critical').length, warning: notifications.filter(n => n.severity === 'warning').length, unresolved: notifications.filter(n => !n.isResolved).length, maintenance: notifications.filter(n => n.type === 'maintenance').length, predictions: notifications.filter(n => n.type === 'prediction').length, summaries: notifications.filter(n => n.type === 'summary').length, alerts: notifications.filter(n => n.type === 'alert').length }), [notifications]);
+  const stats = useMemo(() => ({ total: notifications.length, critical: notifications.filter(n => n.severity === 'critical').length, warning: notifications.filter(n => n.severity === 'warning').length, unresolved: notifications.filter(n => !n.isResolved).length, maintenance: notifications.filter(n => n.type === 'maintenance').length, predictions: notifications.filter(n => n.type === 'prediction').length, summaries: notifications.filter(n => n.type === 'summary').length, personal: notifications.filter(n => n.type === 'personal').length }), [notifications]);
 
-    const isLoading = isLoadingAlerts || isLoadingPredictions || isLoadingSummaries || isLoadingPushes;
-    const handleRefreshAll = async () => { await Promise.all([refetchAlerts(), refetchPredictions(), refetchSummaries(), refetchPushes(), manualRefresh()]); };
+  const isLoading = isLoadingAlerts || isLoadingPredictions || isLoadingSummaries || isLoadingPersonal;
+  const handleRefreshAll = async () => { await Promise.all([refetchAlerts(), refetchPredictions(), refetchSummaries(), manualRefresh(), queryClient.invalidateQueries({ queryKey: ['notifications'] })]); };
 
   return (
     <MainLayout>
@@ -207,12 +189,12 @@ const NotificationsPage = () => {
         <Card>
           <CardHeader className="pb-3">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5">
                 <TabsTrigger value="all" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Todas</span><Badge variant="secondary" className="ml-1">{stats.total}</Badge></TabsTrigger>
+                <TabsTrigger value="personal" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Avisos</span><Badge variant="secondary" className="ml-1">{stats.personal}</Badge></TabsTrigger>
                 <TabsTrigger value="maintenance" className="gap-2"><Wrench className="h-4 w-4" /><span className="hidden sm:inline">Manutenção</span><Badge variant="secondary" className="ml-1">{stats.maintenance}</Badge></TabsTrigger>
                 <TabsTrigger value="prediction" className="gap-2"><Brain className="h-4 w-4" /><span className="hidden sm:inline">Predições</span><Badge variant="secondary" className="ml-1">{stats.predictions}</Badge></TabsTrigger>
                 <TabsTrigger value="summary" className="gap-2"><Calendar className="h-4 w-4" /><span className="hidden sm:inline">Resumos</span><Badge variant="secondary" className="ml-1">{stats.summaries}</Badge></TabsTrigger>
-                              <TabsTrigger value="alert" className="gap-2"><Server className="h-4 w-4" /><span className="hidden sm:inline">Sistema</span><Badge variant="secondary" className="ml-1">{stats.alerts}</Badge></TabsTrigger>
               </TabsList>
             </Tabs>
           </CardHeader>

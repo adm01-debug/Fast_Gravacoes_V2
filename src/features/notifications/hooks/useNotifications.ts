@@ -9,6 +9,27 @@ import { Notification } from '../types';
 
 const EMPTY_NOTIFICATIONS: Notification[] = [];
 
+// O hook e' chamado por varias instancias simultaneas (MainLayout, AppSidebar,
+// MobileNavigation, EfficiencyNotificationProvider, lista e pagina). Cada uma
+// recebe o mesmo INSERT pelo canal compartilhado, entao sem este guarda o mesmo
+// aviso abria um pop-up por instancia montada.
+const notifiedPushIds = new Set<string>();
+const NOTIFIED_PUSH_IDS_LIMIT = 200;
+
+function notifyPushOnce(id: string | undefined, title: string, body: string) {
+  if (!id) {
+    toast.info(title, { description: body });
+    return;
+  }
+  if (notifiedPushIds.has(id)) return;
+  notifiedPushIds.add(id);
+  if (notifiedPushIds.size > NOTIFIED_PUSH_IDS_LIMIT) {
+    const oldest = notifiedPushIds.values().next().value;
+    if (oldest) notifiedPushIds.delete(oldest);
+  }
+  toast.info(title, { description: body });
+}
+
 export function useNotifications(options?: { limit?: number; unreadOnly?: boolean }) {
   const { limit = 50, unreadOnly = false } = options ?? {};
   const queryClient = useQueryClient();
@@ -39,6 +60,14 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
           .from('push_notifications')
           .select('*')
           .eq('user_id', user.id)
+          // `cron_email_sent` é marcador de dedupe do servidor (impede o reenvio
+          // do e-mail), não aviso ao usuário; linhas sem `data` são avisos normais,
+          // por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita
+          // que os marcadores ocupem vagas das notificações reais do período.
+          .or('data->>type.is.null,data->>type.neq.cron_email_sent')
+          // Aviso dispensado pelo usuário continua no banco (dedupe da coleta),
+          // mas não volta para a lista.
+          .is('data->>dismissed_at', null)
           .order('created_at', { ascending: false })
           .limit(limit);
 
@@ -233,8 +262,8 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     userId ? [{ event: 'INSERT', schema: 'public', table: 'push_notifications', filter: `user_id=eq.${userId}` }] : [],
     (payload) => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      const notif = payload.new as { title: string; body: string };
-      toast.info(notif.title, { description: notif.body });
+      const notif = payload.new as { id?: string; title: string; body: string };
+      notifyPushOnce(notif.id, notif.title, notif.body);
     },
   );
 

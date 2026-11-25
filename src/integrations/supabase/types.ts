@@ -199,12 +199,14 @@ export type Database = {
           actual_end_time: string | null
           actual_start_time: string | null
           archived_at: string
+                    cancel_reason: string | null
           children: Json
           client: string
           created_at: string
           delay_reason: string | null
           end_time: string | null
           estimated_duration: number
+                    external_ref: string | null
           gravure_color: string | null
           id: string
           loss_category: string | null
@@ -234,12 +236,14 @@ export type Database = {
           actual_end_time?: string | null
           actual_start_time?: string | null
           archived_at?: string
+                    cancel_reason?: string | null
           children?: Json
           client: string
           created_at?: string
           delay_reason?: string | null
           end_time?: string | null
           estimated_duration?: number
+                    external_ref?: string | null
           gravure_color?: string | null
           id?: string
           loss_category?: string | null
@@ -269,12 +273,14 @@ export type Database = {
           actual_end_time?: string | null
           actual_start_time?: string | null
           archived_at?: string
+                  cancel_reason?: string | null
           children?: Json
           client?: string
           created_at?: string
           delay_reason?: string | null
           end_time?: string | null
           estimated_duration?: number
+                  external_ref?: string | null
           gravure_color?: string | null
           id?: string
           loss_category?: string | null
@@ -5995,6 +6001,10 @@ export type Database = {
         Returns: undefined
       }
       archive_finished_jobs: { Args: { p_older_than: string }; Returns: Json }
+      archive_jobs: {
+        Args: { p_older_than?: string; p_job_id?: string }
+        Returns: Json
+      }
       assign_packaging_task: { Args: { p_task_id: string }; Returns: undefined }
       auto_reassign_stale_packaging_tasks: { Args: never; Returns: undefined }
       calculate_audit_hash: {
@@ -6056,6 +6066,20 @@ export type Database = {
           last_run: string
           last_status: string
           schedule: string
+        }[]
+      }
+      get_finished_jobs_for_evolution: {
+        Args: { p_since: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          machine_id: string | null
+          operator_id: string | null
+          quantity: number
+          produced_quantity: number | null
+          lost_pieces: number | null
+          estimated_duration: number
+          actual_start_time: string | null
+          actual_end_time: string | null
         }[]
       }
       get_packaging_leaderboard: {

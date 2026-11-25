@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Bell, Wrench, Brain, Calendar, AlertTriangle, CheckCircle, Clock, BellOff, Trash2, Check, Server } from 'lucide-react';
+import { Bell, Wrench, Brain, Calendar, AlertTriangle, CheckCircle, Clock, BellOff, Trash2, Check } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -10,14 +10,14 @@ import { useNotifications } from '@/features/notifications/hooks/useNotification
 
 interface NotificationItem {
   id: string;
-  type: 'maintenance' | 'prediction' | 'summary' | 'alert';
+  type: 'maintenance' | 'prediction' | 'summary' | 'personal';
   title: string;
   message: string;
   severity: 'critical' | 'warning' | 'info' | 'success';
   timestamp: string;
   isRead?: boolean;
   isResolved?: boolean;
-    metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 function getSeverityIcon(severity: string) {
@@ -39,10 +39,17 @@ function getTypeIcon(type: string) {
     case 'maintenance': return <Wrench className="h-4 w-4" />;
     case 'prediction': return <Brain className="h-4 w-4" />;
     case 'summary': return <Calendar className="h-4 w-4" />;
-    case 'alert': return <Server className="h-4 w-4" />;
+    case 'personal': return <Bell className="h-4 w-4" />;
     default: return <Bell className="h-4 w-4" />;
   }
 }
+
+const TYPE_LABELS: Record<string, string> = {
+  maintenance: 'Manutenção',
+  prediction: 'ML',
+  summary: 'Resumo',
+  personal: 'Aviso',
+};
 
 interface NotificationsListProps {
   notifications: NotificationItem[];
@@ -79,7 +86,7 @@ export function NotificationsList({ notifications, isLoading }: NotificationsLis
                   <span className="font-medium">{notification.title}</span>
                   <Badge variant="outline" className="gap-1 text-xs">
                     {getTypeIcon(notification.type)}
-                                        {notification.type === 'maintenance' ? 'Manutenção' : notification.type === 'prediction' ? 'ML' : notification.type === 'alert' ? 'Sistema' : 'Resumo'}
+                    {TYPE_LABELS[notification.type] ?? 'Aviso'}
                   </Badge>
                   {notification.isResolved && <Badge variant="secondary" className="text-xs"><CheckCircle className="h-3 w-3 mr-1" />Resolvido</Badge>}
                 </div>
