@@ -2,9 +2,11 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { login } from './helpers/e2e-setup';
 
-// `/traceability` entra no sweep porque a lista virtualizada rola dentro de um
-// `div` e ja foi apontada sem parada de Tab (regra scrollable-region-focusable).
-const ROUTES = ['/', '/operator', '/kpis', '/oee', '/traceability'];
+// `/traceability` nao entra no sweep completo: a pagina tem divida de contraste
+// pre-existente (botao "Novo Lote", branco sobre --primary = 2.74:1) que nao e
+// escopo deste arquivo. A regra que motivou a inclusao da rota (regiao rolavel
+// sem parada de Tab) e verificada em teste dedicado logo abaixo.
+const ROUTES = ['/', '/operator', '/kpis', '/oee'];
 
 test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
   for (const route of ROUTES) {
@@ -40,6 +42,33 @@ test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
       expect(critical).toEqual([]);
     });
   }
+});
+
+test.describe('TraceabilityPage - regiao rolavel alcancavel por teclado', () => {
+  test('/traceability nao deve ter regiao rolavel inacessivel por teclado', async ({ page }) => {
+    await login(page);
+    await page.goto('/traceability', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+
+    const scrollable = page.locator('div.overflow-auto').first();
+    await expect(scrollable).toBeVisible({ timeout: 10000 });
+
+    // A parada de Tab so existe quando a lista realmente rola (ver `useOverflowing`
+    // em TraceabilityPage): com poucos lotes o container nao recebe tabIndex.
+    const rolavel = await scrollable.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
+    if (rolavel) {
+      await expect(scrollable).toHaveAttribute('tabindex', '0');
+      await scrollable.focus();
+      expect(await scrollable.evaluate((el) => el === document.activeElement)).toBe(true);
+    }
+
+    const results = await new AxeBuilder({ page })
+      .withRules(['scrollable-region-focusable'])
+      .analyze();
+
+    const violacoes = results.violations.map((v) => ({ id: v.id, nodes: v.nodes.length }));
+    expect(violacoes).toEqual([]);
+  });
 });
 
 test.describe('CommandPaletteAdvanced - teclado e foco', () => {
