@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6e755f1d45e89820eccca37865592060bb1f1086",
+  "sha": "3aaa14fe14b34cad5933bdc062d98140dc96ac6c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 15:41 UTC",
-  "files_total": 1615,
-  "code_files": 1419,
-  "code_lines": 211229
+  "generated_at": "2026-11-25 16:21 UTC",
+  "files_total": 1617,
+  "code_files": 1421,
+  "code_lines": 211301
  },
  "version": "1.3.2",
- "facts_hash": "e3148ef6c2f6bbc4",
+ "facts_hash": "a3c88f66d3c891df",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "languages": {
    ".tsx": 675,
    ".ts": 406,
-   ".sql": 271,
+   ".sql": 273,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19645,6 +19645,8 @@
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
+   "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
+   "supabase/migrations/20261128120000_fk_shipments_restrict.sql",
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "supabase/seed.sql",
@@ -30550,8 +30552,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 263,
-   "lines": 16653,
+   "files": 265,
+   "lines": 16725,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -98605,6 +98607,14 @@
    "path": "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
    "lines": 64
   },
+  "supabase/migrations/20261128110000_fk_production_losses_restrict.sql": {
+   "path": "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
+   "lines": 54
+  },
+  "supabase/migrations/20261128120000_fk_shipments_restrict.sql": {
+   "path": "supabase/migrations/20261128120000_fk_shipments_restrict.sql",
+   "lines": 18
+  },
   "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql": {
    "path": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "lines": 541,
@@ -99067,10 +99077,21 @@
   }
  },
  "git": {
-  "sha": "6e755f1d45e89820eccca37865592060bb1f1086",
+  "sha": "3aaa14fe14b34cad5933bdc062d98140dc96ac6c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3aaa14f",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
+     "supabase/migrations/20261128120000_fk_shipments_restrict.sql"
+    ]
+   },
    {
     "sha": "6e755f1",
     "date": "2026-11-25",
@@ -99415,26 +99436,12 @@
     "files": [
      "scripts/maintenance/maintenance.unit.mjs"
     ]
-   },
-   {
-    "sha": "8bee554",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: não reportar envio de notificação TPM sem provedor configurado (#278)",
-    "files": [
-     "docs/pendencias/F-011-canais-tpm-de-teste-falsos-whatsapp-email-.md",
-     "src/features/maintenance/components/TPMNotificationSettings.tsx",
-     "src/features/notifications/hooks/useTPMNotifications.test.ts",
-     "src/features/notifications/hooks/useTPMNotifications.ts",
-     "supabase/functions/send-loss-risk-alert/index.ts",
-     "supabase/functions/send-tpm-email/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    9
+    10
    ],
    [
     "src/features/jobs/services/jobsService.ts",
@@ -99489,6 +99496,14 @@
     2
    ],
    [
+    "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261128120000_fk_shipments_restrict.sql",
+    1
+   ],
+   [
     "src/features/production/hooks/useOperatorEvolution.ts",
     1
    ],
@@ -99502,14 +99517,6 @@
    ],
    [
     "src/features/notifications/components/NotificationsList.tsx",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useNotifications.test.ts",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useNotifications.ts",
     1
    ]
   ]

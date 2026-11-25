@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6e755f1d45e89820eccca37865592060bb1f1086",
+  "commit": "3aaa14fe14b34cad5933bdc062d98140dc96ac6c",
   "branch": "main",
-  "data_commit": "2026-11-25T12:39:03-03:00",
+  "data_commit": "2026-11-25T13:20:48-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3aaa14f",
+    "data": "2026-11-25",
+    "assunto": "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)"
+   },
    {
     "sha": "6e755f1",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "765030a",
     "data": "2026-11-24",
     "assunto": "ci: evita rodar E2E duas vezes para o mesmo tree (#282)"
-   },
-   {
-    "sha": "5bc2d12",
-    "data": "2026-11-24",
-    "assunto": "chore: lista public.techniques no db-admin inspect (#284)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 263,
+  "arquivos_mudados_7d": 265,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -215,15 +215,15 @@
     "mudancas": 17
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 11
+   },
+   {
     "arquivo": ".github/workflows/db-admin.yml",
     "mudancas": 10
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
     "mudancas": 10
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 157
+    "commits": 158
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,7 +327,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1617,
+  "arquivos_total": 1619,
   "arquivos_codigo": 1145,
   "linhas_codigo": 193920,
   "rotas": 58,
@@ -339,7 +339,7 @@
   "hooks": 197,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 263,
+  "migrations": 265,
   "cron_jobs": 5,
   "testes": 146,
   "workflows": 12,

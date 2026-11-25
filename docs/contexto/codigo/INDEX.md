@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6e755f1d45e89820eccca37865592060bb1f1086` (2026-11-25T12:39:03-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3aaa14fe14b34cad5933bdc062d98140dc96ac6c` (2026-11-25T13:20:48-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1081), SQL (271), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1081), SQL (273), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1617 |
+| arquivos_total | 1619 |
 | arquivos_codigo | 1145 |
 | linhas_codigo | 193920 |
 | rotas | 58 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 197 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 263 |
+| migrations | 265 |
 | cron_jobs | 5 |
 | testes | 146 |
 | workflows | 12 |
@@ -247,7 +247,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8547 nós · 32464 arestas · 401 comunidades · grafo do commit `6e755f1d`
+- 8549 nós · 32464 arestas · 403 comunidades · grafo do commit `3aaa14fe`
 - comunidades maiores: client.ts (216), CardContent (216), Label (175), ResponsiveContainer (163), Card (162), Badge (142), Button (137), react (127), package.json (119), button.tsx (112), generate.py (110), notifications/index.ts (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -257,9 +257,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
+- docs/qa/05-PROGRESSO.md (11)
 - .github/workflows/db-admin.yml (10)
 - AGENTS.md (10)
-- docs/qa/05-PROGRESSO.md (10)
 - .github/workflows/deploy.yml (9)
 - scripts/audit-gate.mjs (9)
 - .github/workflows/contexto.yml (7)
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `3aaa14f` fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)
 - 2026-11-25 `6e755f1` feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)
 - 2026-11-25 `e5435a5` feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)
 - 2026-11-25 `0351511` infra: publica push_notifications no realtime (#308)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `fc44f91` fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)
 - 2026-11-24 `fa8cd71` chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)
 - 2026-11-24 `1c4e616` fix: passa redirectTo explicito no pedido de recuperacao de senha (etapa 006) (#294)
-- 2026-11-24 `4779aa1` fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
