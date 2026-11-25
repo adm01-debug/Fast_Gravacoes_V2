@@ -4,7 +4,7 @@
 |---|---|
 | nome | image-optimizer |
 | status | ACTIVE |
-| versão | 190 |
+| versão | 192 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
