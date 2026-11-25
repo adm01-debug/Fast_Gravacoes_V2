@@ -60,6 +60,14 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
           .from('push_notifications')
           .select('*')
           .eq('user_id', user.id)
+          // `cron_email_sent` é marcador de dedupe do servidor (impede o reenvio
+          // do e-mail), não aviso ao usuário; linhas sem `data` são avisos normais,
+          // por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita
+          // que os marcadores ocupem vagas das notificações reais do período.
+          .or('data->>type.is.null,data->>type.neq.cron_email_sent')
+          // Aviso dispensado pelo usuário continua no banco (dedupe da coleta),
+          // mas não volta para a lista.
+          .is('data->>dismissed_at', null)
           .order('created_at', { ascending: false })
           .limit(limit);
 
@@ -108,7 +116,11 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
           .from('push_notifications')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .neq('status', 'read');
+                  .neq('status', 'read')
+                  // `cron_email_sent` só existe para impedir reenvio do e-mail; não é
+                  // aviso ao usuário e não aparece na Central. Linhas sem `data` são
+                  // avisos normais, por isso o `is.null` no `or`.
+                  .or('data->>type.is.null,data->>type.neq.cron_email_sent');
 
         return count || 0;
       } catch (error) {
@@ -154,6 +166,9 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.invalidateQueries({ queryKey: ['maintenance-alerts-history'] });
       queryClient.invalidateQueries({ queryKey: ['ml-predictions-history'] });
+            // A Central lista as mesmas linhas de `push_notifications`; sem esta
+            // invalidação o histórico por período fica com o estado anterior.
+            queryClient.invalidateQueries({ queryKey: ['push-notifications-history'] });
     },
     onError: (error) => {
       logger.error('Erro ao marcar notificação como lida', error, 'useNotifications');
@@ -174,6 +189,7 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
+            queryClient.invalidateQueries({ queryKey: ['push-notifications-history'] });
       toast.success('Todas as notificações marcadas como lidas');
     },
     onError: (error) => {
@@ -202,10 +218,40 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.invalidateQueries({ queryKey: ['maintenance-alerts-history'] });
       queryClient.invalidateQueries({ queryKey: ['ml-predictions-history'] });
+            queryClient.invalidateQueries({ queryKey: ['push-notifications-history'] });
     },
     onError: (error) => {
       logger.error('Erro ao excluir notificação', error, 'useNotifications');
       toast.error('Erro ao excluir notificação');
+    },
+  });
+
+  // Alertas de rotina (`cron_*`) também servem de registro de deduplicação para
+    // a coleta de saúde: apagar a linha faz o mesmo alerta voltar no próximo
+    // ciclo (a Central recria aviso já dispensado). Dispensar mantém o registro
+  // no banco e tira o item da lista e do contador.
+  const dismissNotification = useMutation({
+    mutationFn: async (payload: { id: string; metadata?: Record<string, unknown> | null }) => {
+      if (!payload.id.startsWith('push-')) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      const { error } = await supabase
+        .from('push_notifications')
+        .update({
+          status: 'read',
+          data: { ...(payload.metadata ?? {}), dismissed_at: new Date().toISOString() } as never,
+        })
+        .eq('id', payload.id.slice(5))
+        .eq('user_id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['push-notifications-history'] });
+    },
+    onError: (error) => {
+      logger.error('Erro ao dispensar notificação', error, 'useNotifications');
+            toast.error('Erro ao dispensar notificação');
     },
   });
 
@@ -225,6 +271,7 @@ export function useNotifications(options?: { limit?: number; unreadOnly?: boolea
     notifications, unreadCount, isLoading,
     markAsRead: markAsRead.mutate, markAllAsRead: markAllAsRead.mutate,
     deleteNotification: deleteNotification.mutate,
+        dismissNotification: dismissNotification.mutate,
   };
 }
 

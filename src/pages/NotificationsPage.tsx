@@ -128,7 +128,7 @@ const NotificationsPage = () => {
       severity: n.type === 'urgent' || n.type === 'error' ? 'critical' : n.type === 'warning' ? 'warning' : n.type === 'success' ? 'success' : 'info',
       timestamp: n.created_at,
       isRead: n.is_read,
-      metadata: { action_url: n.action_url, action_label: n.action_label, source_system: n.source_system },
+      metadata: { action_url: n.action_url, action_label: n.action_label, source_system: n.source_system, type: n.category },
     }));
     return items
       .filter(item => new Date(item.timestamp).getTime() >= since)

@@ -17,6 +17,7 @@ interface NotificationItem {
   timestamp: string;
   isRead?: boolean;
   isResolved?: boolean;
+  metadata?: Record<string, unknown>;
 }
 
 function getSeverityIcon(severity: string) {
@@ -27,6 +28,11 @@ function getSeverityIcon(severity: string) {
     default: return <Bell className="h-4 w-4 text-muted-foreground" />;
   }
 }
+
+// Alertas de rotina carregam o tipo `cron_*` em `data.type`. A coleta de saúde
+// usa a existência da linha para deduplicar, então a ação aqui é dispensar
+// (mantém a linha) e não apagar.
+const ALERTA_DE_ROTINA = /^cron_/;
 
 function getTypeIcon(type: string) {
   switch (type) {
@@ -51,7 +57,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ notifications, isLoading }: NotificationsListProps) {
-  const { markAsRead, deleteNotification } = useNotifications();
+  const { markAsRead, deleteNotification, dismissNotification } = useNotifications();
   return (
     <ScrollArea className="h-[500px]">
       {isLoading ? (
@@ -102,7 +108,14 @@ export function NotificationsList({ notifications, isLoading }: NotificationsLis
                         compartilhados: "excluir" não pode marcá-los como
                         resolvidos/inativos para toda a equipe. */}
                     {notification.id.startsWith('push-') && (
-                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={() => deleteNotification(notification.id)}>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive" onClick={() => {
+                        const tipo = String(notification.metadata?.type ?? '');
+                        if (ALERTA_DE_ROTINA.test(tipo)) {
+                          dismissNotification({ id: notification.id, metadata: notification.metadata ?? null });
+                        } else {
+                          deleteNotification(notification.id);
+                        }
+                      }}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     )}
