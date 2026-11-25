@@ -48,7 +48,7 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [x] 037 — Dizer ao usuário o que a exclusão em massa vai apagar junto — onda 1 — Alta · implementada na #306
 - [ ] 038 — Usar o arquivamento que já existe em vez de apagar OS concluída — onda 1 — Média · **aprovação do dono**
 - [ ] 039 — Revisar as exclusões em cascata que levam embora expedição e perdas — onda 1 — Alta · **aprovação do dono**
-- [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica
+- [ ] 040 — Fazer a regra de bloqueio de exclusão valer no serviço do aplicativo — onda 1 — Crítica · implementada na #306
 - [ ] 056 — Tirar `user_roles` e a trilha de auditoria da lista de tabelas do túnel de banco — onda 1 — Crítica · **aprovação do dono**
 - [ ] 057 — Decidir se o túnel genérico de banco deve continuar existindo — onda 1 — Alta · **aprovação do dono**
 - [ ] 058 — Impedir que qualquer pessoa bloqueie a conta de um operador — onda 1 — Crítica · **aprovação do dono**
@@ -411,3 +411,8 @@ Efeito: correção exige DDL (policy de UPDATE para `admin`) — não entra nest
 - **Etapa 122** — lista dos 28 arquivos acima de 500 linhas e a regra combinada.
 - **Etapa 296** — decisão do dono sobre a API do ERP.
 - **Etapa 300** — tabela antes / depois / pendente dos alertas do contexto gerado.
+
+### 037 / 040 — 2026-11-28
+Comando/consulta: `npx vitest run src/pages/PendingQueue.test.tsx src/features/jobs/services/jobsService.test.ts src/test/jobsService.test.ts` e `npx tsc --noEmit` no worktree da branch da #306.
+Resultado: **16/16** (PendingQueue 10 + jobsService 6) e **19/19** no arquivo legado `src/test/jobsService.test.ts`; `tsc` exit 0; `eslint --max-warnings=0` exit 0 nos 5 arquivos tocados. A regra de exclusão passou a viver em `jobsService.delete` (`src/features/jobs/services/jobsService.ts:128-142`), que busca `status`, `produced_quantity` e `lost_pieces` antes de apagar e recusa com "Esta OS nao pode ser excluida: ..."; `PendingQueue.handleBulkDelete` deixou de chamar o cliente PostgREST direto e passou a chamar o serviço (`src/pages/PendingQueue.tsx:253`); `KanbanBoard.tsx:255` já usava o serviço. O texto completo dos 5 arquivos tocados está na PR #306.
+PR: [#306](https://github.com/adm01-debug/Fast_Gravacoes_V2/pull/306) · estado: aguardando CI

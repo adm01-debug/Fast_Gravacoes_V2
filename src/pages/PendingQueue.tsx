@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/incompatible-library -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime). */
-import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { TablesUpdate } from '@/integrations/supabase/types';import { bulkDeleteBlocker, pendingStatuses, priorityOrder, selectBulkDeleteTargets, type SortField, type SortDirection } from '@/features/jobs/lib/pending-queue';
+import { jobsService } from '@/features/jobs/services/jobsService';
 import { PendingJobsView } from '@/components/planning/pending-queue/PendingJobsView';
 import { SmartSuggestionsSection, type PendingQueueAISelection } from '@/components/planning/pending-queue/SmartSuggestionsSection';
 
@@ -228,9 +229,10 @@ export default function PendingQueue() {
     }
   };
 
-  const bulkDeleteTargets = useMemo(
-    () => filteredJobs.filter(j => selectedJobs.has(j.id)),
-    [filteredJobs, selectedJobs]
+  // Usa a lista carregada inteira, nao a filtrada: a selecao sobrevive a troca de busca.
+    const bulkDeleteTargets = useMemo(
+      () => selectBulkDeleteTargets(jobs, selectedJobs),
+      [jobs, selectedJobs]
   );
   const bulkDeleteBlocked = useMemo(
     () => bulkDeleteTargets
@@ -248,8 +250,7 @@ export default function PendingQueue() {
       if (ids.length === 0) return;
 
     try {
-        const { error } = await supabase.from('jobs').delete().in('id', ids);
-        if (error) throw error;
+        await Promise.all(ids.map(id => jobsService.delete(id)));
         toast.success(`${ids.length} OS excluídas`, {
           description: bulkDeleteBlocked.length > 0
             ? `${bulkDeleteBlocked.length} OS foram mantidas: produção registrada ou status que não permite exclusão.`
@@ -353,24 +354,21 @@ export default function PendingQueue() {
                         <div className="space-y-2 text-sm">
                           <p>
                             Esta ação não pode ser desfeita. Junto com a OS são apagados os registros ligados a ela:
-                            perdas de produção, expedições, tarefas de embalagem, histórico de leitura de QR e a trilha
-                            de auditoria de status.
+                                                      perdas de produção, expedições, tarefas de embalagem, histórico de leitura de QR, checklist
+                                                      de pré-produção, custos ABC e a trilha de auditoria de status.
                           </p>
                           {bulkDeleteBlocked.length > 0 && (
                             <div className="rounded-md border border-warning/30 bg-warning/10 p-2">
                               <p className="font-medium text-warning">
                                 {bulkDeleteBlocked.length} OS selecionada(s) não serão excluídas:
                               </p>
-                              <ul className="list-disc pl-4">
-                                {bulkDeleteBlocked.slice(0, 5).map(({ job, reason }) => (
+                              <ul className="list-disc pl-4 max-h-40 overflow-y-auto">
+                                                              {bulkDeleteBlocked.map(({ job, reason }) => (
                                   <li key={job.id}>
                                     {job.order_number} — {reason}
                                   </li>
                                 ))}
                               </ul>
-                              {bulkDeleteBlocked.length > 5 && (
-                                <p>e mais {bulkDeleteBlocked.length - 5} OS no mesmo caso.</p>
-                              )}
                             </div>
                           )}
                         </div>

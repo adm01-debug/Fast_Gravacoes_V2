@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import PendingQueue from './PendingQueue';
-import { bulkDeleteBlocker } from '@/features/jobs/lib/pending-queue';
+import { bulkDeleteBlocker, selectBulkDeleteTargets } from '@/features/jobs/lib/pending-queue';
 
 const refetchAll = vi.fn();
 
@@ -70,14 +70,26 @@ vi.mock('@/components/jobs/JobDetailsModal', () => ({ JobDetailsModal: () => nul
 
 vi.mock('@/components/navigation/Breadcrumbs', () => ({ Breadcrumbs: () => null }));
 
-const { deleteIn } = vi.hoisted(() => ({ deleteIn: vi.fn() }));
+const { deleteIn, jobRows } = vi.hoisted(() => ({
+  deleteIn: vi.fn(),
+  jobRows: {} as Record<string, { status: string; produced_quantity: number; lost_pieces: number }>,
+}));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: () => ({
+      select: () => ({
+        eq: (_column: string, id: string) => ({
+          maybeSingle: () => ({ data: jobRows[id] ? { id, ...jobRows[id] } : null, error: null }),
+        }),
+      }),
       delete: () => ({
         in: (_column: string, ids: string[]) => {
           deleteIn(ids);
+          return Promise.resolve({ error: null });
+        },
+        eq: (_column: string, id: string) => {
+          deleteIn([id]);
           return Promise.resolve({ error: null });
         },
       }),
@@ -154,9 +166,21 @@ describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
       });
     });
 
+          describe('selectBulkDeleteTargets - seleção sobrevive ao filtro (etapa 037)', () => {
+            it('inclui OS marcadas que a busca atual escondeu', () => {
+              const jobs = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+              expect(selectBulkDeleteTargets(jobs, new Set(['a', 'c']))).toEqual([{ id: 'a' }, { id: 'c' }]);
+            });
+
+            it('ignora IDs que já não existem na lista carregada', () => {
+              expect(selectBulkDeleteTargets([{ id: 'a' }], new Set(['a', 'fantasma']))).toEqual([{ id: 'a' }]);
+            });
+          });
+
     describe('PendingQueue - aviso antes da exclusão em massa (etapa 037)', () => {
       beforeEach(() => {
         deleteIn.mockClear();
+        for (const key of Object.keys(jobRows)) delete jobRows[key];
         schedulingState.error = null;
         schedulingState.jobs = [];
       });
@@ -166,6 +190,8 @@ describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
           { id: 'sem-producao', order_number: 'PED-1', status: 'queue', priority: 'normal', technique_id: 't1', produced_quantity: 0, lost_pieces: 0 },
           { id: 'com-producao', order_number: 'PED-2', status: 'queue', priority: 'normal', technique_id: 't1', produced_quantity: 40, lost_pieces: 2 },
         ];
+        jobRows['sem-producao'] = { status: 'queue', produced_quantity: 0, lost_pieces: 0 };
+        jobRows['com-producao'] = { status: 'queue', produced_quantity: 40, lost_pieces: 2 };
         renderPage();
 
         fireEvent.click(screen.getByRole('button', { name: /selecionar todos/i }));

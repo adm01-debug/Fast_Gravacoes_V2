@@ -34,6 +34,18 @@ export function isJobStuck(job: Job): boolean {
 const DELETE_ALLOWED_STATUSES: readonly string[] = ['queue', 'scheduled', 'cancelled'];
 
 /**
+ * Alvos da exclusão em massa a partir da lista carregada inteira, e não da lista
+ * filtrada: a seleção sobrevive à troca de busca/filtro, então o que o operador
+ * marcou precisa continuar sendo considerado no aviso e na exclusão.
+ */
+export function selectBulkDeleteTargets<T extends { id: string }>(
+  jobs: T[],
+  selectedIds: ReadonlySet<string>
+): T[] {
+  return jobs.filter(job => selectedIds.has(job.id));
+}
+
+/**
  * Espelha o trigger trg_validate_job_delete_allowed (etapa 036): a exclusão só é
  * permitida sem produção registrada e com a OS em fila, agendada ou cancelada.
  * Devolve o motivo do impedimento, ou null quando a OS pode ser apagada.

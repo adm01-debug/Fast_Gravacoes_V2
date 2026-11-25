@@ -78,4 +78,61 @@ describe('jobsService', () => {
 
     await expect(jobsService.getAll()).rejects.toThrow('Erro de conexão');
   });
+
+      it('mantém produced_quantity e lost_pieces depois da validação do schema', async () => {
+        (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+          select: () => ({
+            order: () => ({
+              data: [{
+                id: '11111111-1111-4111-8111-111111111111',
+                order_number: 'PED-9', client: 'Cliente', product: 'Caneca', quantity: 10,
+                technique_id: '22222222-2222-4222-8222-222222222222',
+                priority: 'medium', status: 'queue', estimated_duration: 60,
+                produced_quantity: 40, lost_pieces: 2,
+              }],
+              error: null,
+            }),
+          }),
+        });
+
+        const [job] = await jobsService.getAll();
+        expect(job.produced_quantity).toBe(40);
+        expect(job.lost_pieces).toBe(2);
+      });
+
+      it('recusa a exclusao de OS com producao registrada no proprio servico', async () => {
+        const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
+        fromMock.mockReturnValueOnce({
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => ({
+                data: { id: '33333333-3333-4333-8333-333333333333', status: 'queue', produced_quantity: 12, lost_pieces: 0 },
+                error: null,
+              }),
+            }),
+          }),
+        });
+
+        await expect(jobsService.delete('33333333-3333-4333-8333-333333333333')).rejects.toThrow(/nao pode ser excluida/);
+      });
+
+      it('exclui a OS sem producao e com status permitido', async () => {
+        const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
+        const deleteSpy = vi.fn(() => ({ eq: () => ({ error: null }) }));
+        fromMock.mockReturnValueOnce({
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => ({
+                data: { id: '44444444-4444-4444-8444-444444444444', status: 'queue', produced_quantity: 0, lost_pieces: 0 },
+                error: null,
+              }),
+            }),
+          }),
+        });
+        fromMock.mockReturnValueOnce({ delete: deleteSpy });
+
+        await jobsService.delete('44444444-4444-4444-8444-444444444444');
+
+        expect(deleteSpy).toHaveBeenCalled();
+      });
 });

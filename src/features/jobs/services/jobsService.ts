@@ -3,6 +3,7 @@ import type { Database } from '@/integrations/supabase/types';
 import { logger } from '@/lib/logger';
 import { jobSchema, JobStatus, JobPriority } from '../types/job.schema';
 import { assertTransition } from './jobStateMachine';
+import { bulkDeleteBlocker } from '../lib/pending-queue';
 import { edgeFunctionFetch } from '@/lib/edgeFunctionFetch';
 
 export type { JobStatus, JobPriority };
@@ -126,8 +127,18 @@ export const jobsService = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('jobs').delete().eq('id', id);
+    const { data, error } = await supabase
+      .from('jobs')
+      .select('id, status, produced_quantity, lost_pieces')
+      .eq('id', id)
+      .maybeSingle();
     if (error) throw error;
+
+    const blocker = data ? bulkDeleteBlocker(data) : null;
+    if (blocker) throw new Error(`Esta OS nao pode ser excluida: ${blocker}.`);
+
+    const { error: deleteError } = await supabase.from('jobs').delete().eq('id', id);
+    if (deleteError) throw deleteError;
   },
 
   async getByDateRange(start: string, end: string): Promise<JobWithRelations[]> {
