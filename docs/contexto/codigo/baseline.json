@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "108f0a7ec082b42149ffe9b662b67a6c7c05ab8e",
+  "commit": "18240190fbbef08f2e4318ab993117987dd851fb",
   "branch": "main",
-  "data_commit": "2026-11-25T13:21:28-03:00",
+  "data_commit": "2026-11-25T13:42:26-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "1824019",
+    "data": "2026-11-25",
+    "assunto": "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)"
+   },
    {
     "sha": "108f0a7",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "3aafbf1",
     "data": "2026-11-24",
     "assunto": "fix: erp-api responde 400 (nao 500) em dado invalido (#280)"
-   },
-   {
-    "sha": "1b65d05",
-    "data": "2026-11-24",
-    "assunto": "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 272,
+  "arquivos_mudados_7d": 274,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -145,12 +145,12 @@
     "mudancas": 38
    },
    {
-    "pasta": "src/features/maintenance",
-    "mudancas": 27
+    "pasta": "src/features/notifications",
+    "mudancas": 29
    },
    {
-    "pasta": "src/features/notifications",
-    "mudancas": 26
+    "pasta": "src/features/maintenance",
+    "mudancas": 27
    },
    {
     "pasta": "src/features/auth",
@@ -165,6 +165,10 @@
     "mudancas": 19
    },
    {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 18
+   },
+   {
     "pasta": "package.json",
     "mudancas": 17
    },
@@ -174,10 +178,6 @@
    },
    {
     "pasta": "src/features/admin",
-    "mudancas": 16
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 16
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 159
+    "commits": 160
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1622,
-  "arquivos_codigo": 1147,
-  "linhas_codigo": 194132,
+  "arquivos_total": 1624,
+  "arquivos_codigo": 1149,
+  "linhas_codigo": 194590,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 266,
   "cron_jobs": 5,
-  "testes": 148,
+  "testes": 149,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 337,
-   "linhas": 48139
+   "linhas": 48256
   },
   "src/hooks": {
    "arquivos": 63,
@@ -540,8 +540,8 @@
    "linhas": 172
   },
   "supabase/functions": {
-   "arquivos": 54,
-   "linhas": 11381
+   "arquivos": 56,
+   "linhas": 11722
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

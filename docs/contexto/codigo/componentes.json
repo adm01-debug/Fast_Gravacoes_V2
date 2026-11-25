@@ -8511,7 +8511,7 @@
     "NotificationsList"
    ],
    "export_default": null,
-   "linhas": 119,
+   "linhas": 132,
    "dominio": "features/notifications",
    "hooks_locais": [
     "useNotifications"

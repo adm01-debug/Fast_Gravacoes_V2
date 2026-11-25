@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `108f0a7ec0` · branch `main` · 2026-11-25 16:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `18240190fb` · branch `main` · 2026-11-25 16:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-25T16:18:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-25T16:38:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -182,6 +182,7 @@
 | `ViewMode` (TS) | daily \| weekly \| kanban \| list \| occupancy \| alerts |  | `src/types/scheduling.ts` |
 | `AppRole` (TS) | admin \| manager \| coordinator \| operator |  | `supabase/functions/_shared/auth.ts` |
 | `Aal` (TS) | aal1 \| aal2 |  | `supabase/functions/_shared/auth.ts` |
+| `RegistroAlerta` (TS) | confirmado \| aviso_no_app \| nada |  | `supabase/functions/_shared/emailDelivery.ts` |
 | `LogLevel` (TS) | debug \| info \| warn \| error |  | `supabase/functions/_shared/logger.ts` |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)

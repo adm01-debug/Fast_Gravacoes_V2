@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "108f0a7ec082b42149ffe9b662b67a6c7c05ab8e",
+  "sha": "18240190fbbef08f2e4318ab993117987dd851fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 16:22 UTC",
-  "files_total": 1620,
-  "code_files": 1424,
-  "code_lines": 211600
+  "generated_at": "2026-11-25 16:44 UTC",
+  "files_total": 1622,
+  "code_files": 1426,
+  "code_lines": 212058
  },
  "version": "1.3.2",
- "facts_hash": "0e06d0b8b0e9ccb4",
+ "facts_hash": "021c9398db57d561",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 676,
-   ".ts": 407,
+   ".ts": 409,
    ".sql": 274,
    ".mjs": 50,
    ".py": 13,
@@ -25928,7 +25928,10 @@
     ],
     "invokes": [],
     "doc": "",
-    "errors": [],
+    "errors": [
+     ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: ",
+     ", dedupeSince),\n      marcadoresPorTipo("
+    ],
     "side_effects": [],
     "webhook_events": [],
     "idempotency": true
@@ -29375,7 +29378,7 @@
   {
    "module": "src/features/notifications",
    "files": 28,
-   "lines": 4569,
+   "lines": 4686,
    "tables": [
     "machine_predictions",
     "machines",
@@ -30430,8 +30433,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 54,
-   "lines": 11381,
+   "files": 56,
+   "lines": 11722,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -30486,6 +30489,7 @@
     "contracts.ts: ErrorResponseSchema, WebhookSourceSchema, WebhookPayloadSchema, WebhookResponseSchema, ERPJobRequestSchema, ERPJobResponseSchema",
     "cors.ts: ALLOWED_ORIGINS, pickAllowedOrigin, getCorsHeaders, handleCorsPreflight",
     "cronAuth.ts: requireCronSecret, requireUserOrCronSecret",
+    "emailDelivery.ts: EmailSendOutcome, MOTIVO_SEM_CREDENCIAL, classifyResendSend, classifyResendHttp, RegistroAlerta, decidirRegistroAlerta",
     "htmlEscape.ts: escapeHtml",
     "logger.ts: LogLevel, LogContext, Logger, getOrCreateRequestId, createLogger, withRequestId",
     "rateLimit.ts: RateLimitIdentity, RateLimitOptions, sanitizeIp, tooManyRequests, isRateLimitSaturated, checkRateLimit",
@@ -30500,9 +30504,9 @@
     "auth.test.ts: Testes do middleware comum (etapa 6) — cobrem ausência, fraude e sucesso de cada guarda. authenticate() é testado via injeção de dependência (offline).",
     "auth.ts: Etapa 6 do plano-mestre 10/10 — middleware comum de segurança Edge. Composição recomendada em toda function: const preflight = handleCorsPreflight(req); if (preflight) return preflight; const requestId = getOrCreateRequestId(req); const cors = withRequestId(getCorsHeaders(req), requestId); const aut …",
     "cors.ts: Shared CORS helper — single source of truth for allowed origins and headers across all edge functions. Prefer this over per-function duplication. Usage: import { getCorsHeaders, handleCorsPreflight } from \"../_shared/cors.ts\"; const preflight = handleCorsPreflight(req); if (preflight) return preflig …",
+    "emailDelivery.ts: Decisão de \"o e-mail realmente saiu?\" separada do envio. Existe porque `resend.emails.send()` não lança em erro de API: devolve `{ data: null, error }`. Código que só aguardava a promise gravava `email_sent: true` mesmo com 403/422/429 do provedor, então o histórico afirmava um contato que nunca aco …",
     "htmlEscape.ts: Escapes a value for safe interpolation into HTML email bodies. Values sourced from the database (alert messages, machine names, user-entered text) must never be interpolated raw into HTML — an attacker-controlled string like `<img src=x onerror=...>` would otherwise execute in the recipient's mail c …",
-    "logger.ts: Structured logger for Edge Functions. Emits single-line JSON so Supabase/Logflare can index fields (level, fn, requestId, latencyMs, etc.) instead of relying on free-text `console.log`. Usage: import { createLogger, getOrCreateRequestId } from \"../_shared/logger.ts\"; const requestId = getOrCreateReq …",
-    "rateLimit.ts: Ad-hoc rate limiter for Edge Functions. Uses the existing `public.rate_limit_logs` table as a shared counter store. This is a fixed-window limiter (not sliding) — good enough for abuse mitigation on public endpoints. For high-precision limits, migrate to a dedicated primitive later. Behavior:"
+    "logger.ts: Structured logger for Edge Functions. Emits single-line JSON so Supabase/Logflare can index fields (level, fn, requestId, latencyMs, etc.) instead of relying on free-text `console.log`. Usage: import { createLogger, getOrCreateRequestId } from \"../_shared/logger.ts\"; const requestId = getOrCreateReq …"
    ],
    "deps": [
     "https:",
@@ -30520,6 +30524,8 @@
     "supabase/functions/_shared/cors.ts",
     "supabase/functions/_shared/cronAuth.test.ts",
     "supabase/functions/_shared/cronAuth.ts",
+    "supabase/functions/_shared/emailDelivery.test.ts",
+    "supabase/functions/_shared/emailDelivery.ts",
     "supabase/functions/_shared/htmlEscape.ts",
     "supabase/functions/_shared/logger.test.ts",
     "supabase/functions/_shared/logger.ts",
@@ -34764,6 +34770,11 @@
     "values": "aal1 | aal2"
    },
    {
+    "file": "supabase/functions/_shared/emailDelivery.ts",
+    "name": "RegistroAlerta",
+    "values": "confirmado | aviso_no_app | nada"
+   },
+   {
     "file": "supabase/functions/_shared/logger.ts",
     "name": "LogLevel",
     "values": "debug | info | warn | error"
@@ -35952,6 +35963,10 @@
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
+    "msg": "Erro ao dispensar notificação"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
     "msg": "Erro ao excluir notificação"
    },
    {
@@ -36523,6 +36538,14 @@
     "msg": "Selecione pelo menos um lote"
    },
    {
+    "file": "supabase/functions/_shared/emailDelivery.ts",
+    "msg": " e os avisos "
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.ts",
+    "msg": ", que alimenta a central de notificações do aplicativo sem\n * afirmar envio de e-mail; "
+   },
+   {
     "file": "supabase/functions/_shared/webpushEncrypt.ts",
     "msg": "Payload push excede o record de ${recordSize} bytes (${plaintext.length})"
    },
@@ -36553,6 +36576,14 @@
    {
     "file": "supabase/functions/bitrix24-sync/index.ts",
     "msg": "Token refresh failed"
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "msg": ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: "
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "msg": ", dedupeSince),\n      marcadoresPorTipo("
    },
    {
     "file": "supabase/functions/erp-api/index.ts",
@@ -37640,6 +37671,10 @@
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
+    "text": "por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
     "text": ".select('id') expõe falha silenciosa de RLS (update sem permissão"
    },
    {
@@ -38000,7 +38035,23 @@
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
+    "text": "Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua."
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
     "text": "* Mantém apenas a coleta mais recente de cada rotina. */"
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "text": "2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada."
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "text": "Motivo pelo qual o e-mail não pode sair nesta rodada (null = pode)."
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "text": "Falta de credencial ou de e-mail não pode apagar o alerta: ele segue"
    },
    {
     "file": "supabase/functions/csp-report/index.ts",
@@ -43644,6 +43695,11 @@
     "value": "\"GET, POST, PATCH, PUT, DELETE, OPTIONS\""
    },
    {
+    "file": "supabase/functions/_shared/emailDelivery.ts",
+    "name": "MOTIVO_SEM_CREDENCIAL",
+    "value": "\"RESEND_API_KEY ausente\""
+   },
+   {
     "file": "supabase/functions/_shared/logger.ts",
     "name": "REQUEST_ID_HEADER",
     "value": "\"x-request-id\""
@@ -43687,6 +43743,11 @@
     "file": "supabase/functions/cron-alert-email/index.ts",
     "name": "DEDUPE_HOURS",
     "value": "6"
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "name": "STALE_DEDUPE_HOURS",
+    "value": "12"
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
@@ -48020,6 +48081,12 @@
     "file": "src/features/notifications/hooks/useNotifications.ts",
     "field": "status",
     "value": "read",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
+    "field": "status",
+    "value": "read",
     "kind": "compara"
    },
    {
@@ -49872,12 +49939,6 @@
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
-    "field": "type",
-    "value": "cron_email_sent",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/cron-alert-email/index.ts",
     "field": "role",
     "value": "coordinator",
     "kind": "filtra"
@@ -51027,6 +51088,10 @@
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
     "line": "const since = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();"
+   },
+   {
+    "file": "supabase/functions/cron-alert-email/index.ts",
+    "line": "const staleSince = new Date(Date.now() - STALE_DEDUPE_HOURS * 60 * 60 * 1000).toISOString();"
    },
    {
     "file": "supabase/functions/cron-cleanup/index.ts",
@@ -53263,6 +53328,10 @@
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
     "name": "should handle unread count"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.test.ts",
+    "name": "deve dispensar alerta de rotina sem apagar a linha do dedupe"
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
@@ -56613,6 +56682,70 @@
     "name": "requireUserOrCronSecret: Bearer não-usuário sem x-cron-secret rejeita 401"
    },
    {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "classifyResendSend: id presente conta como enviado"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "classifyResendSend: erro do provedor não conta como enviado"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "classifyResendSend: sem id e sem erro não conta como enviado"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "classifyResendSend: resposta ausente não conta como enviado"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "classifyResendHttp: 2xx é enviado, 4xx/5xx carrega o corpo"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "motivo da falta de credencial é explícito"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "rodada sem chave avisa no app e não grava marcador de e-mail"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "rodada seguinte sem avanço não repete o aviso no app"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "envio aceito grava o marcador mesmo com o app já avisado"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "agruparMarcadores: ignora linhas sem jobid e aceita user_id nulo"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "marcadorParaTodos: linha isolada não vale como aviso ao grupo"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "marcadorParaTodos: vale só com todos os destinatários ativos"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "marcadorParaTodos: sem destinatários ou sem marcador não avisa"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "destinatariosPendentes: quem entrou depois do envio é o único a receber"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "destinatariosPendentes: sem marcador, todos continuam pendentes"
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.test.ts",
+    "name": "destinatariosPendentes: marcador completo não deixa ninguém pendente"
+   },
+   {
     "file": "supabase/functions/_shared/logger.test.ts",
     "name": "getOrCreateRequestId reuses valid header"
    },
@@ -57559,6 +57692,10 @@
    {
     "file": "supabase/functions/_shared/cronAuth.ts",
     "call": "invoke("
+   },
+   {
+    "file": "supabase/functions/_shared/emailDelivery.ts",
+    "call": "resend.emails.send"
    },
    {
     "file": "supabase/functions/new-device-alert/index.ts",
@@ -63549,7 +63686,7 @@
    },
    {
     "file": "supabase/functions/cron-alert-email/index.ts",
-    "limit": "200"
+    "limit": "500"
    },
    {
     "file": "supabase/functions/erp-api/index.ts",
@@ -64405,9 +64542,6 @@
      ],
      "recovery": [
       "compara:src/pages/ResetPasswordPage.tsx"
-     ],
-     "cron_email_sent": [
-      "escreve:supabase/functions/cron-alert-email/index.ts"
      ],
      "new_device": [
       "escreve:supabase/functions/new-device-alert/index.ts"
@@ -85936,7 +86070,7 @@
   },
   "src/features/notifications/components/NotificationsList.tsx": {
    "path": "src/features/notifications/components/NotificationsList.tsx",
-   "lines": 119,
+   "lines": 132,
    "exports": [
     "function NotificationsList"
    ],
@@ -86356,18 +86490,23 @@
   },
   "src/features/notifications/hooks/useNotifications.test.ts": {
    "path": "src/features/notifications/hooks/useNotifications.test.ts",
-   "lines": 124,
+   "lines": 181,
    "is_test": true,
+   "errors": [
+    ");\n          expect(payload.data.jobid).toBe(",
+    ", jobid: "
+   ],
    "tests": [
     "useNotifications",
     "should fetch and transform notifications correctly",
     "should handle unread count",
+    "deve dispensar alerta de rotina sem apagar a linha do dedupe",
     "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT"
    ]
   },
   "src/features/notifications/hooks/useNotifications.ts": {
    "path": "src/features/notifications/hooks/useNotifications.ts",
-   "lines": 237,
+   "lines": 284,
    "exports": [
     "function useNotifications",
     "function notifyStatusChange"
@@ -86404,6 +86543,10 @@
     {
      "table": "push_notifications",
      "op": "delete"
+    },
+    {
+     "table": "push_notifications",
+     "op": "update"
     }
    ],
    "table_cols": {
@@ -86423,6 +86566,7 @@
     "NODE_ENV"
    ],
    "errors": [
+    "Erro ao dispensar notificação",
     "Erro ao excluir notificação",
     "Erro ao marcar notificação como lida",
     "Erro ao marcar notificações como lidas",
@@ -86436,6 +86580,11 @@
     }
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "read",
+     "kind": "escreve"
+    },
     {
      "field": "status",
      "value": "read",
@@ -86468,6 +86617,7 @@
     }
    ],
    "rule_comments": [
+    "por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita",
     ".select('id') expõe falha silenciosa de RLS (update sem permissão"
    ],
    "hooks": [
@@ -95093,6 +95243,68 @@
    ],
    "uses_service_role": true
   },
+  "supabase/functions/_shared/emailDelivery.test.ts": {
+   "path": "supabase/functions/_shared/emailDelivery.test.ts",
+   "lines": 114,
+   "is_test": true,
+   "rule_comments": [
+    "com isso ele não pode calar o aviso dos demais."
+   ],
+   "tests": [
+    "classifyResendSend: id presente conta como enviado",
+    "classifyResendSend: erro do provedor não conta como enviado",
+    "classifyResendSend: sem id e sem erro não conta como enviado",
+    "classifyResendSend: resposta ausente não conta como enviado",
+    "classifyResendHttp: 2xx é enviado, 4xx/5xx carrega o corpo",
+    "motivo da falta de credencial é explícito",
+    "rodada sem chave avisa no app e não grava marcador de e-mail",
+    "rodada seguinte sem avanço não repete o aviso no app",
+    "envio aceito grava o marcador mesmo com o app já avisado",
+    "agruparMarcadores: ignora linhas sem jobid e aceita user_id nulo",
+    "marcadorParaTodos: linha isolada não vale como aviso ao grupo",
+    "marcadorParaTodos: vale só com todos os destinatários ativos",
+    "marcadorParaTodos: sem destinatários ou sem marcador não avisa",
+    "destinatariosPendentes: quem entrou depois do envio é o único a receber",
+    "destinatariosPendentes: sem marcador, todos continuam pendentes",
+    "destinatariosPendentes: marcador completo não deixa ninguém pendente"
+   ]
+  },
+  "supabase/functions/_shared/emailDelivery.ts": {
+   "path": "supabase/functions/_shared/emailDelivery.ts",
+   "lines": 115,
+   "exports": [
+    "type EmailSendOutcome",
+    "const MOTIVO_SEM_CREDENCIAL",
+    "function classifyResendSend",
+    "function classifyResendHttp",
+    "type RegistroAlerta",
+    "function decidirRegistroAlerta",
+    "type MarcadorRow",
+    "function agruparMarcadores",
+    "function marcadorParaTodos",
+    "function destinatariosPendentes"
+   ],
+   "errors": [
+    " e os avisos ",
+    ", que alimenta a central de notificações do aplicativo sem\n * afirmar envio de e-mail; "
+   ],
+   "enums": [
+    {
+     "name": "RegistroAlerta",
+     "values": "confirmado | aviso_no_app | nada"
+    }
+   ],
+   "params": [
+    {
+     "name": "MOTIVO_SEM_CREDENCIAL",
+     "value": "\"RESEND_API_KEY ausente\""
+    }
+   ],
+   "doc": "Decisão de \"o e-mail realmente saiu?\" separada do envio. Existe porque `resend.emails.send()` não lança em erro de API: devolve `{ data: null, error }`. Código que só aguardava a promise gravava `email_sent: true` mesmo com 403/422/429 do provedor, então o histórico afirmava um contato que nunca aco …",
+   "side_effects": [
+    "resend.emails.send"
+   ]
+  },
   "supabase/functions/_shared/htmlEscape.ts": {
    "path": "supabase/functions/_shared/htmlEscape.ts",
    "lines": 16,
@@ -96070,7 +96282,7 @@
   },
   "supabase/functions/cron-alert-email/index.ts": {
    "path": "supabase/functions/cron-alert-email/index.ts",
-   "lines": 239,
+   "lines": 343,
    "tables": [
     {
      "table": "cron_health_history",
@@ -96118,7 +96330,8 @@
     ],
     "push_notifications": [
      "created_at",
-     "data"
+     "data",
+     "user_id"
     ]
    },
    "external_urls": [
@@ -96129,6 +96342,10 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
+   "errors": [
+    ",\n            jobid: row.jobid,\n            jobname: row.jobname,\n            kind,\n            route: ",
+    ", dedupeSince),\n      marcadoresPorTipo("
+   ],
    "params": [
     {
      "name": "FAILURE_THRESHOLD",
@@ -96137,6 +96354,10 @@
     {
      "name": "DEDUPE_HOURS",
      "value": "6"
+    },
+    {
+     "name": "STALE_DEDUPE_HOURS",
+     "value": "12"
     },
     {
      "name": "FROM",
@@ -96150,26 +96371,26 @@
      "kind": "escreve"
     },
     {
-     "field": "type",
-     "value": "cron_email_sent",
-     "kind": "escreve"
-    },
-    {
      "field": "role",
      "value": "coordinator",
      "kind": "filtra"
     }
    ],
    "rule_comments": [
-    "* Mantém apenas a coleta mais recente de cada rotina. */"
+    "Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua.",
+    "* Mantém apenas a coleta mais recente de cada rotina. */",
+    "2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada.",
+    "Motivo pelo qual o e-mail não pode sair nesta rodada (null = pode).",
+    "Falta de credencial ou de e-mail não pode apagar o alerta: ele segue"
    ],
    "temporal": [
     "const dedupeSince = new Date(Date.now() - DEDUPE_HOURS * 60 * 60 * 1000).toISOString();",
-    "const since = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();"
+    "const since = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();",
+    "const staleSince = new Date(Date.now() - STALE_DEDUPE_HOURS * 60 * 60 * 1000).toISOString();"
    ],
    "pagination": [
     "1000",
-    "200"
+    "500"
    ],
    "uses_service_role": true
   },
@@ -96896,7 +97117,7 @@
   },
   "supabase/functions/new-device-alert/index.ts": {
    "path": "supabase/functions/new-device-alert/index.ts",
-   "lines": 328,
+   "lines": 336,
    "tables": [
     {
      "table": "user_devices",
@@ -99167,10 +99388,26 @@
   }
  },
  "git": {
-  "sha": "108f0a7ec082b42149ffe9b662b67a6c7c05ab8e",
+  "sha": "18240190fbbef08f2e4318ab993117987dd851fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "1824019",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)",
+    "files": [
+     "src/features/notifications/components/NotificationsList.tsx",
+     "src/features/notifications/hooks/useNotifications.test.ts",
+     "src/features/notifications/hooks/useNotifications.ts",
+     "src/pages/NotificationsPage.tsx",
+     "supabase/functions/_shared/emailDelivery.test.ts",
+     "supabase/functions/_shared/emailDelivery.ts",
+     "supabase/functions/cron-alert-email/index.ts",
+     "supabase/functions/new-device-alert/index.ts"
+    ]
+   },
    {
     "sha": "108f0a7",
     "date": "2026-11-25",
@@ -99517,25 +99754,6 @@
     "files": [
      "supabase/migrations/20261125170000_restore_erp_api_keys.sql"
     ]
-   },
-   {
-    "sha": "bede01f",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: wire botao Aplicar Sequenciamento no EfficiencyDashboard (#271)",
-    "files": [
-     "src/components/kanban/KanbanFiltersBar.tsx",
-     "src/components/kanban/KanbanMetricsBar.tsx",
-     "src/features/analytics/components/efficiency/SequencingTab.test.tsx",
-     "src/features/analytics/components/efficiency/SequencingTab.tsx",
-     "src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx",
-     "src/features/jobs/hooks/useSmartSequencingWithActions.ts",
-     "src/features/jobs/types/sequencing.ts",
-     "src/integrations/supabase/types.ts",
-     "src/lib/dateUtils.test.ts",
-     "src/pages/EfficiencyDashboard.tsx",
-     "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -99548,16 +99766,28 @@
     3
    ],
    [
-    "src/integrations/supabase/types.ts",
-    3
-   ],
-   [
     "src/pages/PendingQueue.test.tsx",
     3
    ],
    [
     "src/pages/PendingQueue.tsx",
     3
+   ],
+   [
+    "src/features/notifications/components/NotificationsList.tsx",
+    2
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.test.ts",
+    2
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.ts",
+    2
+   ],
+   [
+    "src/pages/NotificationsPage.tsx",
+    2
    ],
    [
     "src/components/dashboard/AlertScheduleModal.test.tsx",
@@ -99588,6 +99818,10 @@
     2
    ],
    [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
     "supabase/functions/erp-api/index.ts",
     2
    ],
@@ -99602,22 +99836,6 @@
    [
     "docs/qa/03-ACHADOS.md",
     2
-   ],
-   [
-    "src/components/ui/scroll-area.tsx",
-    2
-   ],
-   [
-    "src/components/calendar/CalendarTimeline.test.tsx",
-    1
-   ],
-   [
-    "src/components/calendar/CalendarTimeline.tsx",
-    1
-   ],
-   [
-    "src/components/calendar/JobBlock.tsx",
-    1
    ]
   ]
  }

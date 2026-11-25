@@ -6169,6 +6169,7 @@
   "supabase/functions/cron-alert-email/index.ts": [
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/cronAuth.ts",
+   "supabase/functions/_shared/emailDelivery.ts",
    "supabase/functions/_shared/htmlEscape.ts"
   ],
   "supabase/functions/cron-cleanup/index.ts": [
@@ -6225,6 +6226,7 @@
   "supabase/functions/new-device-alert/index.ts": [
    "supabase/functions/_shared/auth.ts",
    "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/emailDelivery.ts",
    "supabase/functions/_shared/htmlEscape.ts",
    "supabase/functions/_shared/logger.ts"
   ],

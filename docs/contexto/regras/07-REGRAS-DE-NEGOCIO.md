@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `108f0a7ec0` · branch `main` · 2026-11-25 16:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `18240190fb` · branch `main` · 2026-11-25 16:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T16:18:47Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T16:38:19Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T16:18:47Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T16:38:19Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T16:18:47Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T16:38:19Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T16:18:47Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T16:38:19Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T16:18:47Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T16:38:19Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1734,7 +1734,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `cost` | escreve | `src/components/abc/AIFinancialAdvisor.tsx` |
 | `type` | `critical` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | `type` | `critical_failure` | escreve | `src/features/notifications/hooks/useMLPredictionNotifications.ts` |
-| `type` | `cron_email_sent` | escreve | `supabase/functions/cron-alert-email/index.ts` |
 | `type` | `danger` | compara, escreve | `src/features/analytics/components/bi/BIAIInsights.tsx` |
 | `type` | `degradation` | escreve | `src/components/design-system/hooks/PredictionHooksDemos.tsx` |
 | `type` | `delay` | compara, escreve | `src/features/analytics/components/bi/executive/KPIAlertsTab.tsx`<br>`src/features/analytics/hooks/useKPIs.ts` |
@@ -1966,6 +1965,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ViewMode | daily \| weekly \| kanban \| list \| occupancy \| alerts | `src/types/scheduling.ts` |
 | AppRole | admin \| manager \| coordinator \| operator | `supabase/functions/_shared/auth.ts` |
 | Aal | aal1 \| aal2 | `supabase/functions/_shared/auth.ts` |
+| RegistroAlerta | confirmado \| aviso_no_app \| nada | `supabase/functions/_shared/emailDelivery.ts` |
 | LogLevel | debug \| info \| warn \| error | `supabase/functions/_shared/logger.ts` |
 
 ## F. Validações de entrada
@@ -2736,6 +2736,7 @@ _nenhum item encontrado_
 | `START_HOUR` | `7` | `src/pages/DailyCalendar.tsx` |
 | `END_HOUR` | `21` | `src/pages/DailyCalendar.tsx` |
 | `DEFAULT_ALLOWED_METHODS` | `"GET, POST, PATCH, PUT, DELETE, OPTIONS"` | `supabase/functions/_shared/cors.ts` |
+| `MOTIVO_SEM_CREDENCIAL` | `"RESEND_API_KEY ausente"` | `supabase/functions/_shared/emailDelivery.ts` |
 | `REQUEST_ID_HEADER` | `"x-request-id"` | `supabase/functions/_shared/logger.ts` |
 | `BUFFER_TARGET` | `3` | `supabase/functions/auto-promote-jobs/index.ts` |
 | `PAGE_SIZE` | `5000` | `supabase/functions/backup-scheduler/index.ts` |
@@ -2745,6 +2746,7 @@ _nenhum item encontrado_
 | `BASE_LOCKOUT_MINUTES` | `1` | `supabase/functions/check-login-lockout/index.ts` |
 | `FAILURE_THRESHOLD` | `3` | `supabase/functions/cron-alert-email/index.ts` |
 | `DEDUPE_HOURS` | `6` | `supabase/functions/cron-alert-email/index.ts` |
+| `STALE_DEDUPE_HOURS` | `12` | `supabase/functions/cron-alert-email/index.ts` |
 | `FROM` | `"Fast Gravações <alertas@resend.dev>"` | `supabase/functions/cron-alert-email/index.ts` |
 | `MAX_BODY_BYTES` | `16` | `supabase/functions/csp-report/index.ts` |
 | `INBOUND_WINDOW_MS` | `60` | `supabase/functions/csp-report/index.ts` |
@@ -2897,6 +2899,7 @@ _nenhum item encontrado_
 | `const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);` | `supabase/functions/cleanup-security-logs/index.ts` |
 | `const dedupeSince = new Date(Date.now() - DEDUPE_HOURS * 60 * 60 * 1000).toISOString();` | `supabase/functions/cron-alert-email/index.ts` |
 | `const since = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();` | `supabase/functions/cron-alert-email/index.ts` |
+| `const staleSince = new Date(Date.now() - STALE_DEDUPE_HOURS * 60 * 60 * 1000).toISOString();` | `supabase/functions/cron-alert-email/index.ts` |
 | `const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();` | `supabase/functions/cron-cleanup/index.ts` |
 | `? Math.max(...overdueSchedules.map((s: any) => Math.floor((Date.now() - new Date(s.next_due_at).getTime()) / (1000 * 60 * 60 * 24))))` | `supabase/functions/ml-predictions/index.ts` |
 | `? new Date(Date.now() + prediction.predicted_days_to_failure * 24 * 60 * 60 * 1000).toISOString().split('T')[0]` | `supabase/functions/ml-predictions/index.ts` |
@@ -2959,7 +2962,7 @@ _nenhum item encontrado_
 | 1 | `supabase/functions/calculate-rankings/index.ts` |
 | 1 | `supabase/functions/check-login-lockout/index.ts` |
 | 1000 | `supabase/functions/cron-alert-email/index.ts` |
-| 200 | `supabase/functions/cron-alert-email/index.ts` |
+| 500 | `supabase/functions/cron-alert-email/index.ts` |
 | 1000 | `supabase/functions/erp-api/index.ts` |
 | 200 | `supabase/functions/ml-predictions/index.ts` |
 | 500 | `supabase/functions/ml-predictions/index.ts` |
@@ -3266,12 +3269,12 @@ _nenhum item encontrado_
 | Erro ao atualizar configurações | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | User not authenticated | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | ), [playSound]);    const setEnabled = useCallback((enabled: boolean) => {     isEnabledRef.current = enabled;     localStorage.setItem( | `src/features/notifications/hooks/useNotificationSounds.ts` |
+| Erro ao dispensar notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao excluir notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao marcar notificação como lida | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao marcar notificações como lidas | `src/features/notifications/hooks/useNotifications.ts` |
 | Not authenticated | `src/features/notifications/hooks/useNotifications.ts` |
-| Sem permissão ou registro inexistente | `src/features/notifications/hooks/useNotifications.ts` |
-| … +255 linhas — lista completa em `context.json` | |
+| … +260 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3339,7 +3342,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1458 testes em 129 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1475 testes em 130 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3367,6 +3370,7 @@ _nenhum item encontrado_
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
 | `src/test/rateLimiterAdvanced.test.ts` | 18 | RateLimiter — advanced scenarios · basic token consumption · allows requests up to maxTokens · rejects when tokens are exhausted … |
 | `src/pages/PendingQueue.test.tsx` | 16 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · depois da nova tentativa bem-sucedida a fila volta na mesma montagem · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro … |
+| `supabase/functions/_shared/emailDelivery.test.ts` | 16 | classifyResendSend: id presente conta como enviado · classifyResendSend: erro do provedor não conta como enviado · classifyResendSend: sem id e sem erro não conta como enviado · classifyResendSend: resposta ausente não conta como enviado … |
 | `src/features/inventory/services/traceabilityService.test.ts` | 15 | TraceabilityService · getLots · busca todos os lotes ordenados por data de criação quando nenhum jobId é informado · filtra lotes por job_id quando informado … |
 | `src/features/jobs/hooks/useSchedulingConflicts.test.tsx` | 15 | useSchedulingConflicts · retorna lista vazia enquanto jobs ou machines ainda não carregaram · não aponta conflito quando só há um job na máquina/data · detecta sobreposição de horário entre dois jobs na mesma máquina e data … |
 | `src/features/jobs/services/scheduling.test.ts` | 15 | findNextAvailableSlot · retorna o início do expediente quando não há jobs existentes · encontra um espaço antes do primeiro job quando ele é grande o suficiente · pula para depois do job quando o espaço antes dele é pequeno demais … |
@@ -3425,6 +3429,7 @@ _nenhum item encontrado_
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
 | `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
+| `src/features/notifications/hooks/useNotifications.test.ts` | 5 | useNotifications · should fetch and transform notifications correctly · should handle unread count · deve dispensar alerta de rotina sem apagar a linha do dedupe … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
 | `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico entre vercel.json e index.html · mantem o script-src identico entre vercel.json e index.html · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
@@ -3436,7 +3441,6 @@ _nenhum item encontrado_
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
 | `src/features/analytics/hooks/useRealtimeConnection.test.ts` | 4 | useRealtimeConnection · should connect to realtime channel on mount · should handle connection errors · should remove channel on unmount |
-| `src/features/notifications/hooks/useNotifications.test.ts` | 4 | useNotifications · should fetch and transform notifications correctly · should handle unread count · abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT |
 | `src/hooks/use-overflowing.test.tsx` | 4 | useOverflowing · detecta transbordo a partir do tamanho medido · nao marca conteudo que cabe · reavalia quando o conteudo cresce depois do mount |
 | `src/pages/InventoryPage.test.tsx` | 4 | InventoryPage - Skeletons e Estabilidade · deve exibir skeletons enquanto os itens do estoque estão carregando · deve manter o layout estável durante a transição de carregamento · deve filtrar itens corretamente |
 | `src/pages/KanbanBoard.test.tsx` | 4 | KanbanBoard - exclusao em massa (etapa 037) · mantem visivel e selecionada a OS que o banco recusou · nao anuncia exclusao quando o banco nao apaga nenhuma linha · avisa quando a chamada de exclusao falha na API |
@@ -3520,6 +3524,7 @@ _nenhum item encontrado_
 | `notifyStatusChange` | `src/pages/KioskPage.tsx` |
 | `notifyStatusChange` | `src/pages/OperatorView.tsx` |
 | `invoke(` | `supabase/functions/_shared/cronAuth.ts` |
+| `resend.emails.send` | `supabase/functions/_shared/emailDelivery.ts` |
 | `resend.emails.send` | `supabase/functions/new-device-alert/index.ts` |
 | `notify` | `supabase/functions/send-push-notification/index.ts` |
 | `notify_tpm_email` | `supabase/migrations/20260508115941_72493014-c1ac-4815-aab4-748637090416.sql` |
@@ -3645,6 +3650,7 @@ _nenhum item encontrado_
 | * Mostrar apenas uma vez por sessão */ | `src/features/notifications/components/PushNotificationPrompt.tsx` |
 | * Prompt flutuante para solicitar permissão de Push Notifications | `src/features/notifications/components/PushNotificationPrompt.tsx` |
 | - Permissão negada | `src/features/notifications/components/PushNotificationPrompt.tsx` |
+| por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita | `src/features/notifications/hooks/useNotifications.ts` |
 | .select('id') expõe falha silenciosa de RLS (update sem permissão | `src/features/notifications/hooks/useNotifications.ts` |
 | Request notification permission | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Pedir permissão | `src/features/notifications/hooks/useWebPushNotifications.ts` |
@@ -3735,7 +3741,11 @@ _nenhum item encontrado_
 | Clean up old rate limit logs | `supabase/functions/cleanup-security-logs/index.ts` |
 | Rate limit: 10 operator-creations per hour per requesting user. | `supabase/functions/create-operator/index.ts` |
 | Password policy — must match src/lib/passwordPolicy.ts (newPasswordSchema) | `supabase/functions/create-operator/index.ts` |
+| Opt-out de e-mail desliga apenas o e-mail: o aviso na central continua. | `supabase/functions/cron-alert-email/index.ts` |
 | * Mantém apenas a coleta mais recente de cada rotina. */ | `supabase/functions/cron-alert-email/index.ts` |
+| 2xx já é aceite do provedor: corpo ilegível não pode derrubar a rodada. | `supabase/functions/cron-alert-email/index.ts` |
+| Motivo pelo qual o e-mail não pode sair nesta rodada (null = pode). | `supabase/functions/cron-alert-email/index.ts` |
+| Falta de credencial ou de e-mail não pode apagar o alerta: ele segue | `supabase/functions/cron-alert-email/index.ts` |
 | defesa é: schema zod estrito + rate limit por IP + insert via service role | `supabase/functions/csp-report/index.ts` |
 | (schema mantido local e não em _shared/validation.ts para evitar conflito | `supabase/functions/csp-report/index.ts` |
 | pelo cliente e driblaria o rate limit por IP. | `supabase/functions/csp-report/index.ts` |

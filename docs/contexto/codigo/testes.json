@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 148,
+ "total": 149,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 123
+  "unit": 124
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 111
+   "arquivos": 112
   },
   {
    "padrao": "tests/",
@@ -681,12 +681,12 @@
   {
    "arquivo": "src/features/notifications/hooks/useNotifications.test.ts",
    "tipo": "unit",
-   "linhas": 124,
+   "linhas": 181,
    "testa": [
     "src/features/notifications/hooks/useNotifications.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 3,
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1321,6 +1321,16 @@
    "suporte": false
   },
   {
+   "arquivo": "supabase/functions/_shared/emailDelivery.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "supabase/functions/_shared/emailDelivery.ts"
+   ],
+   "casos": 16,
+   "suporte": false
+  },
+  {
    "arquivo": "supabase/functions/_shared/logger.test.ts",
    "tipo": "unit",
    "linhas": 61,
@@ -1662,6 +1672,7 @@
   "supabase/functions/_shared/auth.ts": 1,
   "supabase/functions/_shared/contracts.ts": 4,
   "supabase/functions/_shared/cronAuth.ts": 1,
+  "supabase/functions/_shared/emailDelivery.ts": 1,
   "supabase/functions/_shared/logger.ts": 1,
   "supabase/functions/_shared/rateLimit.ts": 1,
   "supabase/functions/_shared/test-utils.ts": 1,

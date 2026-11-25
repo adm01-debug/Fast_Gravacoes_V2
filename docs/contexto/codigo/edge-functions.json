@@ -16,6 +16,8 @@
   "supabase/functions/_shared/cors.ts",
   "supabase/functions/_shared/cronAuth.test.ts",
   "supabase/functions/_shared/cronAuth.ts",
+  "supabase/functions/_shared/emailDelivery.test.ts",
+  "supabase/functions/_shared/emailDelivery.ts",
   "supabase/functions/_shared/htmlEscape.ts",
   "supabase/functions/_shared/logger.test.ts",
   "supabase/functions/_shared/logger.ts",
@@ -370,7 +372,7 @@
    "nome": "cron-alert-email",
    "entrada": "supabase/functions/cron-alert-email/index.ts",
    "arquivos": 1,
-   "linhas": 239,
+   "linhas": 343,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -395,6 +397,7 @@
    "usa_shared": [
     "cors.ts",
     "cronAuth.ts",
+    "emailDelivery.ts",
     "htmlEscape.ts"
    ],
    "chamada_pelo_front": [],
@@ -767,7 +770,7 @@
    "nome": "new-device-alert",
    "entrada": "supabase/functions/new-device-alert/index.ts",
    "arquivos": 1,
-   "linhas": 328,
+   "linhas": 336,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [
@@ -789,6 +792,7 @@
    "usa_shared": [
     "auth.ts",
     "cors.ts",
+    "emailDelivery.ts",
     "htmlEscape.ts",
     "logger.ts"
    ],
