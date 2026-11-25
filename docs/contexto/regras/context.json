@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
+  "sha": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 20:34 UTC",
+  "generated_at": "2026-11-25 21:33 UTC",
   "files_total": 1625,
   "code_files": 1429,
-  "code_lines": 213283
+  "code_lines": 213469
  },
  "version": "1.3.2",
- "facts_hash": "f4be177421fdcc52",
+ "facts_hash": "90881f5c6c1a0da5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -29386,7 +29386,7 @@
   {
    "module": "src/features/notifications",
    "files": 28,
-   "lines": 4686,
+   "lines": 4816,
    "tables": [
     "machine_predictions",
     "machines",
@@ -30070,7 +30070,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 17944,
+   "lines": 18000,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -35928,6 +35928,14 @@
     "msg": "Tempo de parada muito alto (>8h) detectado. Certifique-se de que o valor está correto."
    },
    {
+    "file": "src/features/notifications/components/NotificationsList.tsx",
+    "msg": ": return <Server className="
+   },
+   {
+    "file": "src/features/notifications/components/NotificationsList.tsx",
+    "msg": ";\n  title: string;\n  message: string;\n  severity: "
+   },
+   {
     "file": "src/features/notifications/hooks/useDailySummaryNotifications.ts",
     "msg": ");\n    } else if (summary.alerts.total_attention_items > 0 && isEnabled()) {\n      playSound("
    },
@@ -36461,7 +36469,15 @@
    },
    {
     "file": "src/pages/NotificationsPage.tsx",
+    "msg": " className="
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
     "msg": ");\n    const label = type === "
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "msg": "; title: string; message: string;\n  severity: "
    },
    {
     "file": "src/pages/PackagingKioskPage.tsx",
@@ -37698,6 +37714,10 @@
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
     "text": "por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
+    "text": "coleta) mas nao pode inflar o sino, que o lista como lido."
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
@@ -43589,6 +43609,11 @@
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.ts",
+    "name": "MARCADOR_INTERNO",
+    "value": "'cron_email_sent'"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.ts",
     "name": "NOTIFIED_PUSH_IDS_LIMIT",
     "value": "200"
    },
@@ -43751,6 +43776,11 @@
     "file": "src/pages/DailyCalendar.tsx",
     "name": "END_HOUR",
     "value": "21"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "name": "MARCADOR_INTERNO",
+    "value": "'cron_email_sent'"
    },
    {
     "file": "supabase/functions/_shared/cors.ts",
@@ -47925,6 +47955,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/features/notifications/components/NotificationsList.tsx",
+    "field": "type",
+    "value": "alert",
+    "kind": "compara"
+   },
+   {
     "file": "src/features/notifications/components/PushNotificationPrompt.tsx",
     "field": "type",
     "value": "spring",
@@ -49487,12 +49523,6 @@
    {
     "file": "src/pages/NotificationsPage.tsx",
     "field": "type",
-    "value": "personal",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/NotificationsPage.tsx",
-    "field": "type",
     "value": "maintenance",
     "kind": "compara"
    },
@@ -49578,6 +49608,12 @@
     "file": "src/pages/NotificationsPage.tsx",
     "field": "type",
     "value": "personal",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/NotificationsPage.tsx",
+    "field": "type",
+    "value": "alert",
     "kind": "compara"
    },
    {
@@ -53450,11 +53486,19 @@
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
+    "name": "nao mostra avisos da conta anterior ao trocar de sessao"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.test.ts",
     "name": "deve dispensar alerta de rotina sem apagar a linha do dedupe"
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
     "name": "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT"
+   },
+   {
+    "file": "src/features/notifications/hooks/useNotifications.test.ts",
+    "name": "nao abre pop-up para o marcador interno de e-mail"
    },
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
@@ -54359,6 +54403,14 @@
    {
     "file": "src/pages/NotificationsPage.test.tsx",
     "name": "rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso"
+   },
+   {
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "name": "rotula alerta de rotina como Sistema, nao como Aviso"
+   },
+   {
+    "file": "src/pages/NotificationsPage.test.tsx",
+    "name": "nao lista aviso dispensado nem o marcador interno de e-mail"
    },
    {
     "file": "src/pages/PendingQueue.test.tsx",
@@ -64592,8 +64644,11 @@
      ],
      "personal": [
       "compara:src/features/notifications/components/NotificationsList.tsx",
-      "compara:src/pages/NotificationsPage.tsx",
-      "escreve:src/pages/NotificationsPage.tsx"
+      "compara:src/pages/NotificationsPage.tsx"
+     ],
+     "alert": [
+      "compara:src/features/notifications/components/NotificationsList.tsx",
+      "compara:src/pages/NotificationsPage.tsx"
      ],
      "promise": [
       "compara:src/features/notifications/components/ToastWithUndo.tsx"
@@ -86273,9 +86328,13 @@
   },
   "src/features/notifications/components/NotificationsList.tsx": {
    "path": "src/features/notifications/components/NotificationsList.tsx",
-   "lines": 132,
+   "lines": 134,
    "exports": [
     "function NotificationsList"
+   ],
+   "errors": [
+    ": return <Server className=",
+    ";\n  title: string;\n  message: string;\n  severity: "
    ],
    "status_values": [
     {
@@ -86301,6 +86360,11 @@
     {
      "field": "type",
      "value": "personal",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "alert",
      "kind": "compara"
     }
    ]
@@ -86693,23 +86757,29 @@
   },
   "src/features/notifications/hooks/useNotifications.test.ts": {
    "path": "src/features/notifications/hooks/useNotifications.test.ts",
-   "lines": 181,
+   "lines": 288,
    "is_test": true,
    "errors": [
-    ");\n          expect(payload.data.jobid).toBe(",
+    ");\n    expect(payload.data.jobid).toBe(",
     ", jobid: "
+   ],
+   "rule_comments": [
+    "lista segue com `.order()`/`.limit()`, e a do contador termina no proprio",
+    "Aviso dispensado fica no banco (dedupe) mas nao pode inflar o sino."
    ],
    "tests": [
     "useNotifications",
     "should fetch and transform notifications correctly",
     "should handle unread count",
+    "nao mostra avisos da conta anterior ao trocar de sessao",
     "deve dispensar alerta de rotina sem apagar a linha do dedupe",
-    "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT"
+    "abre um unico pop-up quando varias instancias do hook recebem o mesmo INSERT",
+    "nao abre pop-up para o marcador interno de e-mail"
    ]
   },
   "src/features/notifications/hooks/useNotifications.ts": {
    "path": "src/features/notifications/hooks/useNotifications.ts",
-   "lines": 284,
+   "lines": 303,
    "exports": [
     "function useNotifications",
     "function notifyStatusChange"
@@ -86778,6 +86848,10 @@
    ],
    "params": [
     {
+     "name": "MARCADOR_INTERNO",
+     "value": "'cron_email_sent'"
+    },
+    {
      "name": "NOTIFIED_PUSH_IDS_LIMIT",
      "value": "200"
     }
@@ -86821,6 +86895,7 @@
    ],
    "rule_comments": [
     "por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita",
+    "coleta) mas nao pode inflar o sino, que o lista como lido.",
     ".select('id') expõe falha silenciosa de RLS (update sem permissão"
    ],
    "hooks": [
@@ -87111,7 +87186,7 @@
   },
   "src/features/notifications/types/index.ts": {
    "path": "src/features/notifications/types/index.ts",
-   "lines": 31,
+   "lines": 33,
    "exports": [
     "interface Notification",
     "interface NotificationSettings"
@@ -93267,7 +93342,7 @@
   },
   "src/pages/NotificationsPage.test.tsx": {
    "path": "src/pages/NotificationsPage.test.tsx",
-   "lines": 129,
+   "lines": 166,
    "is_test": true,
    "errors": [
     ",\n  source_system: "
@@ -93275,12 +93350,14 @@
    "tests": [
     "NotificationsPage - avisos pessoais na Central",
     "lista o aviso pessoal que gerou o contador do sino",
-    "rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso"
+    "rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso",
+    "rotula alerta de rotina como Sistema, nao como Aviso",
+    "nao lista aviso dispensado nem o marcador interno de e-mail"
    ]
   },
   "src/pages/NotificationsPage.tsx": {
    "path": "src/pages/NotificationsPage.tsx",
-   "lines": 211,
+   "lines": 230,
    "exports": [
     "default NotificationsPage"
    ],
@@ -93302,7 +93379,15 @@
     "notifications-page-realtime-${userId}"
    ],
    "errors": [
-    ");\n    const label = type === "
+    " className=",
+    ");\n    const label = type === ",
+    "; title: string; message: string;\n  severity: "
+   ],
+   "params": [
+    {
+     "name": "MARCADOR_INTERNO",
+     "value": "'cron_email_sent'"
+    }
    ],
    "status_values": [
     {
@@ -93328,11 +93413,6 @@
     {
      "field": "type",
      "value": "summary",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "personal",
      "kind": "escreve"
     },
     {
@@ -93408,6 +93488,11 @@
     {
      "field": "type",
      "value": "personal",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "alert",
      "kind": "compara"
     }
    ],
@@ -99644,10 +99729,24 @@
   }
  },
  "git": {
-  "sha": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
+  "sha": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9d7e076",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)",
+    "files": [
+     "src/features/notifications/components/NotificationsList.tsx",
+     "src/features/notifications/hooks/useNotifications.test.ts",
+     "src/features/notifications/hooks/useNotifications.ts",
+     "src/features/notifications/types/index.ts",
+     "src/pages/NotificationsPage.test.tsx",
+     "src/pages/NotificationsPage.tsx"
+    ]
+   },
    {
     "sha": "8ca53f4",
     "date": "2026-11-25",
@@ -100013,22 +100112,28 @@
     "files": [
      "supabase/functions/erp-api/index.ts"
     ]
-   },
-   {
-    "sha": "1b65d05",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: viewport do ScrollArea focavel so quando ha rolagem (#286)",
-    "files": [
-     "src/components/ui/scroll-area.test.tsx",
-     "src/components/ui/scroll-area.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     15
+   ],
+   [
+    "src/features/notifications/components/NotificationsList.tsx",
+    3
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.test.ts",
+    3
+   ],
+   [
+    "src/features/notifications/hooks/useNotifications.ts",
+    3
+   ],
+   [
+    "src/pages/NotificationsPage.tsx",
+    3
    ],
    [
     "src/features/jobs/services/jobsService.ts",
@@ -100043,23 +100148,11 @@
     3
    ],
    [
+    "src/pages/NotificationsPage.test.tsx",
+    2
+   ],
+   [
     "supabase/functions/cron-alert-email/index.ts",
-    2
-   ],
-   [
-    "src/features/notifications/components/NotificationsList.tsx",
-    2
-   ],
-   [
-    "src/features/notifications/hooks/useNotifications.test.ts",
-    2
-   ],
-   [
-    "src/features/notifications/hooks/useNotifications.ts",
-    2
-   ],
-   [
-    "src/pages/NotificationsPage.tsx",
     2
    ],
    [
@@ -100100,10 +100193,6 @@
    ],
    [
     "src/features/jobs/types/job.schema.ts",
-    2
-   ],
-   [
-    "src/test/jobsService.test.ts",
     2
    ]
   ]

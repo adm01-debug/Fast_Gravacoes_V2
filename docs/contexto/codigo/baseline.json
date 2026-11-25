@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8ca53f45b7d12c3c9c507a802026a96a58080b08",
+  "commit": "9d7e07682e6b18ee55d67a145a90a4b72e7c25f2",
   "branch": "main",
-  "data_commit": "2026-11-25T20:33:57Z",
+  "data_commit": "2026-11-25T18:32:08-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9d7e076",
+    "data": "2026-11-25",
+    "assunto": "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)"
+   },
    {
     "sha": "8ca53f4",
     "data": "2026-11-25",
@@ -126,15 +131,10 @@
     "sha": "d5e8d2b",
     "data": "2026-11-24",
     "assunto": "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)"
-   },
-   {
-    "sha": "828487b",
-    "data": "2026-11-24",
-    "assunto": "fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 279,
+  "arquivos_mudados_7d": 280,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -146,7 +146,7 @@
    },
    {
     "pasta": "src/features/notifications",
-    "mudancas": 29
+    "mudancas": 33
    },
    {
     "pasta": "src/features/auth",
@@ -279,6 +279,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/pages/NotificationsPage.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/routes/AppRoutes.tsx",
     "mudancas": 6
    },
@@ -293,16 +297,12 @@
    {
     "arquivo": ".github/workflows/migration-repair.yml",
     "mudancas": 5
-   },
-   {
-    "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 164
+    "commits": 165
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1627,
   "arquivos_codigo": 1152,
-  "linhas_codigo": 195815,
+  "linhas_codigo": 196001,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 339,
-   "linhas": 48511
+   "linhas": 48641
   },
   "src/hooks": {
    "arquivos": 63,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 17944
+   "linhas": 18000
   },
   "src/providers": {
    "arquivos": 2,

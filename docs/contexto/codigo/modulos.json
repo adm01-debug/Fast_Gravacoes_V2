@@ -4486,7 +4486,7 @@
    "modulo": "features/notifications",
    "arquivos": 26,
    "testes": 2,
-   "linhas": 4363,
+   "linhas": 4386,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5935,7 +5935,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 7,
-   "linhas": 16801,
+   "linhas": 16820,
    "itens_menu": [
     "Agenda",
     "Alertas",

@@ -8514,7 +8514,7 @@
     "NotificationsList"
    ],
    "export_default": null,
-   "linhas": 132,
+   "linhas": 134,
    "dominio": "features/notifications",
    "hooks_locais": [
     "useNotifications"
@@ -9471,7 +9471,7 @@
     "NotificationsPage"
    ],
    "export_default": "NotificationsPage",
-   "linhas": 211,
+   "linhas": 230,
    "dominio": "pages",
    "hooks_locais": [
     "useDailySummaryNotifications",

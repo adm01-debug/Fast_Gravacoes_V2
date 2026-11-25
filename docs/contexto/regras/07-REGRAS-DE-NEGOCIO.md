@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ca53f45b7` · branch `main` · 2026-11-25 20:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d7e07682e` · branch `main` · 2026-11-25 21:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T20:14:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T20:38:32Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T20:14:00Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T20:38:32Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T20:14:00Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T20:38:32Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T20:14:00Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T20:38:32Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T20:14:00Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T20:38:32Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1719,6 +1719,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `SYNC_PENDING_ACTIONS` | compara, escreve | `public/sw.js`<br>`src/hooks/useOfflineSync.ts` |
 | `type` | `TRANSFER` | compara, escreve | `src/features/inventory/components/inventory-page/InventoryHistoryTable.tsx`<br>`src/features/inventory/hooks/useInventory.ts`<br>`src/hooks/utils/inventoryExport.ts` |
 | `type` | `UPDATE_TOAST` | compara, escreve | `src/hooks/use-toast.ts` |
+| `type` | `alert` | compara | `src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
 | `type` | `availability` | compara, escreve | `src/features/analytics/components/oee/OEERecommendations.tsx` |
 | `type` | `balancing` | escreve | `src/components/planning/AISuggestionDetails.tsx`<br>`src/components/planning/pending-queue/SmartSuggestionsSection.tsx`<br>`src/pages/PendingQueue.tsx` |
 | `type` | `basic` | compara | `public/sw.js` |
@@ -1787,7 +1788,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `patch` | compara | `src/components/design-system/sections/ChangelogSection.tsx` |
 | `type` | `performance` | compara, escreve | `src/features/analytics/components/oee/OEERecommendations.tsx`<br>`src/features/analytics/components/oee/PredictiveAlerts.tsx`<br>`src/features/production/hooks/useOEE.ts` |
 | `type` | `performance_degradation` | compara | `src/features/analytics/hooks/useMLPredictions.ts`<br>`src/features/notifications/hooks/useMLPredictionNotifications.ts` |
-| `type` | `personal` | compara, escreve | `src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
+| `type` | `personal` | compara | `src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
 | `type` | `pie` | compara | `src/components/loading/SkeletonLibrary.tsx` |
 | `type` | `pieces_produced` | compara | `src/components/operators/CreateGoalModal.tsx`<br>`src/components/operators/GoalAlertsWidget.tsx`<br>`src/components/operators/OperatorGoalsCard.tsx`<br>`src/components/operators/OperatorGoalsTab.tsx` |
 | `type` | `prediction` | compara, escreve | `src/features/notifications/components/NotificationCard.tsx`<br>`src/features/notifications/components/NotificationsList.tsx`<br>`src/pages/NotificationsPage.tsx` |
@@ -2703,6 +2704,7 @@ _nenhum item encontrado_
 | `CRITICAL_HOURS` | `24` | `src/features/jobs/hooks/useStuckJobsDetection.ts` |
 | `GLOBAL_TECHNIQUE_VALUE` | `'__global__'` | `src/features/maintenance/components/ChecklistManager.tsx` |
 | `DAILY_SUMMARY_HOUR` | `8` | `src/features/notifications/hooks/useDailySummaryNotifications.ts` |
+| `MARCADOR_INTERNO` | `'cron_email_sent'` | `src/features/notifications/hooks/useNotifications.ts` |
 | `NOTIFIED_PUSH_IDS_LIMIT` | `200` | `src/features/notifications/hooks/useNotifications.ts` |
 | `NONE_TECH` | `'__none__'` | `src/features/packaging/components/PackagingSlaOverridesManager.tsx` |
 | `SP_TIMEZONE` | `'America/Sao_Paulo'` | `src/features/production/hooks/useOEE.ts` |
@@ -2736,6 +2738,7 @@ _nenhum item encontrado_
 | `RETRY_BACKOFF_BASE_MS` | `3000` | `src/lib/offline/offlineQueue.ts` |
 | `START_HOUR` | `7` | `src/pages/DailyCalendar.tsx` |
 | `END_HOUR` | `21` | `src/pages/DailyCalendar.tsx` |
+| `MARCADOR_INTERNO` | `'cron_email_sent'` | `src/pages/NotificationsPage.tsx` |
 | `DEFAULT_ALLOWED_METHODS` | `"GET, POST, PATCH, PUT, DELETE, OPTIONS"` | `supabase/functions/_shared/cors.ts` |
 | `MOTIVO_SEM_CREDENCIAL` | `"RESEND_API_KEY ausente"` | `supabase/functions/_shared/emailDelivery.ts` |
 | `REQUEST_ID_HEADER` | `"x-request-id"` | `supabase/functions/_shared/logger.ts` |
@@ -3260,6 +3263,8 @@ _nenhum item encontrado_
 | Reprovação em ${failures.length} itens de qualidade exige justificativa técnica detalhada. | `src/features/maintenance/hooks/useTPMLifecycleMutations.ts` |
 | Snapshot do checklist inválido: estrutura de dados corrompida ou incompleta. | `src/features/maintenance/hooks/useTPMLifecycleMutations.ts` |
 | Tempo de parada muito alto (>8h) detectado. Certifique-se de que o valor está correto. | `src/features/maintenance/hooks/useTPMLifecycleMutations.ts` |
+| : return <Server className= | `src/features/notifications/components/NotificationsList.tsx` |
+| ;   title: string;   message: string;   severity:  | `src/features/notifications/components/NotificationsList.tsx` |
 | );     } else if (summary.alerts.total_attention_items > 0 && isEnabled()) {       playSound( | `src/features/notifications/hooks/useDailySummaryNotifications.ts` |
 | ${criticalCount} gargalo(s) crítico(s) detectado(s) | `src/features/notifications/hooks/useEfficiencyNotifications.ts` |
 | ${newAlerts} novo(s) alerta(s) de gargalo | `src/features/notifications/hooks/useEfficiencyNotifications.ts` |
@@ -3274,9 +3279,7 @@ _nenhum item encontrado_
 | Erro ao dispensar notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao excluir notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao marcar notificação como lida | `src/features/notifications/hooks/useNotifications.ts` |
-| Erro ao marcar notificações como lidas | `src/features/notifications/hooks/useNotifications.ts` |
-| Not authenticated | `src/features/notifications/hooks/useNotifications.ts` |
-| … +260 linhas — lista completa em `context.json` | |
+| … +264 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3344,7 +3347,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1502 testes em 133 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1506 testes em 133 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3413,6 +3416,7 @@ _nenhum item encontrado_
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
+| `src/features/notifications/hooks/useNotifications.test.ts` | 7 | useNotifications · should fetch and transform notifications correctly · should handle unread count · nao mostra avisos da conta anterior ao trocar de sessao … |
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
@@ -3433,9 +3437,9 @@ _nenhum item encontrado_
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
 | `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
-| `src/features/notifications/hooks/useNotifications.test.ts` | 5 | useNotifications · should fetch and transform notifications correctly · should handle unread count · deve dispensar alerta de rotina sem apagar a linha do dedupe … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
+| `src/pages/NotificationsPage.test.tsx` | 5 | NotificationsPage - avisos pessoais na Central · lista o aviso pessoal que gerou o contador do sino · rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso · rotula alerta de rotina como Sistema, nao como Aviso … |
 | `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico entre vercel.json e index.html · mantem o script-src identico entre vercel.json e index.html · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
 | `supabase/functions/_shared/contracts.test.ts` | 5 | Webhook Contract - Valid Payload · Webhook Contract - Invalid Source · ERP Job Contract - Valid Request · ERP Job Contract - Missing Required Field … |
 | `tests/e2e/accessibility.spec.ts` | 5 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · CommandPaletteAdvanced - teclado e foco · abre com Cmd+K, navega com setas e fecha com Escape … |
@@ -3468,7 +3472,6 @@ _nenhum item encontrado_
 | `src/features/production/hooks/useMachines.test.tsx` | 3 | useMachines · fetches active machines and caches the result · shares cache across multiple consumers (no duplicate queries) |
 | `src/features/production/hooks/useOperatorProductivity.test.ts` | 3 | useOperatorProductivity · should fetch and calculate productivity data · should handle errors gracefully |
 | `src/pages/LogisticsPage.test.tsx` | 3 | LogisticsPage - atalho  · primeira transicao grava actual_delivery · repetir o atalho em envio ja entregue e impossivel e preserva a data original |
-| `src/pages/NotificationsPage.test.tsx` | 3 | NotificationsPage - avisos pessoais na Central · lista o aviso pessoal que gerou o contador do sino · rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso |
 | `src/test/realtimeMock.test.ts` | 3 | createRealtimeMock — contrato de tabelas não assinadas · emitFor lança quando a tabela não tem handler registrado · não dispara callbacks de outras tabelas ao emitir para tabela não assinada |
 | `src/test/zodResolver.test.ts` | 3 | zodResolver + zod v4 · propaga a mensagem de cada campo invalido · retorna os valores ja coagidos quando tudo e valido |
 | `tests/e2e/dashboard.spec.ts` | 3 | Dashboard de KPIs · deve carregar o dashboard de KPIs e navegar entre abas · deve permitir alterar o período do dashboard |
@@ -3660,6 +3663,7 @@ _nenhum item encontrado_
 | * Prompt flutuante para solicitar permissão de Push Notifications | `src/features/notifications/components/PushNotificationPrompt.tsx` |
 | - Permissão negada | `src/features/notifications/components/PushNotificationPrompt.tsx` |
 | por isso o `is.null` no `or`. Filtrar no banco, antes do limite, evita | `src/features/notifications/hooks/useNotifications.ts` |
+| coleta) mas nao pode inflar o sino, que o lista como lido. | `src/features/notifications/hooks/useNotifications.ts` |
 | .select('id') expõe falha silenciosa de RLS (update sem permissão | `src/features/notifications/hooks/useNotifications.ts` |
 | Request notification permission | `src/features/notifications/hooks/usePushSubscription.ts` |
 | Pedir permissão | `src/features/notifications/hooks/useWebPushNotifications.ts` |

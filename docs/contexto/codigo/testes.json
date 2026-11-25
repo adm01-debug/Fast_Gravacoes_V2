@@ -712,12 +712,12 @@
   {
    "arquivo": "src/features/notifications/hooks/useNotifications.test.ts",
    "tipo": "unit",
-   "linhas": 181,
+   "linhas": 288,
    "testa": [
     "src/features/notifications/hooks/useNotifications.ts",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 4,
+   "casos": 6,
    "suporte": false
   },
   {
@@ -986,11 +986,11 @@
   {
    "arquivo": "src/pages/NotificationsPage.test.tsx",
    "tipo": "unit",
-   "linhas": 129,
+   "linhas": 166,
    "testa": [
     "src/pages/NotificationsPage.tsx"
    ],
-   "casos": 2,
+   "casos": 4,
    "suporte": false
   },
   {
