@@ -252,15 +252,21 @@ export default function KanbanBoard() {
       setSelectedJobs(new Set());
       handleJobsUpdate();
     } else if (action === 'delete') {
-      const results = await Promise.allSettled(Array.from(selectedJobs).map(id => jobsService.delete(id)));
+      const ids = Array.from(selectedJobs);
+      const results = await Promise.allSettled(ids.map(id => jobsService.delete(id)));
+      const deletedIds = ids.filter((_, index) => results[index].status === 'fulfilled');
       const errors = results.filter(r => r.status === 'rejected').map(r => r.reason);
+
+      // Seleção mista: o que o banco recusou continua selecionado e continua na
+      // tela; sem isso a OS recusada some da visão como se tivesse sido apagada.
+      if (deletedIds.length > 0) {
+        toast.success(`${deletedIds.length} jobs excluídos permanentemente`);
+        setSelectedJobs(new Set(ids.filter(id => !deletedIds.includes(id))));
+        handleJobsUpdate();
+      }
       if (errors.length > 0) {
         toast.error(`Erro ao excluir jobs: ${errors.map((e) => (e && typeof e === 'object' && 'message' in e ? e.message : String(e))).join('; ')}`);
-        return;
       }
-      toast.success(`${selectedJobs.size} jobs excluídos permanentemente`);
-      setSelectedJobs(new Set());
-      handleJobsUpdate();
     }
   }, [selectedJobs, jobs, handleJobsUpdate]);
 
