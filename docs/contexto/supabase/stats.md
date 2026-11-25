@@ -17,16 +17,16 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 |---|---|---|---|---|---|---|---|---|
 | public.error_logs | ~2.8M | 1.2 GB | 1.0 GB | 145.1 MB | ~200 | 1 | ~1.2k | 2026-11-24 |
 | public.cron_health_history | ~47.3k | 12.4 MB | 7.1 MB | 5.2 MB | ~20 | 3 | ~20.2k | 2026-11-23 |
-| public.telemetry_traces | ~5.3k | 2.9 MB | 1.4 MB | 1.5 MB | ~430 | 3 | ~70 | 2026-11-22 |
+| public.telemetry_traces | ~5.3k | 2.9 MB | 1.4 MB | 1.5 MB | ~750 | 3 | ~70 | 2026-11-22 |
 | public.audit_log | ~600 | 1.8 MB | 840.0 KB | 928.0 KB | ~50 | ~210 | ~356.8k | 2026-11-23 |
 | public.kpi_alerts | ~7.1k | 1.3 MB | 888.0 KB | 392.0 KB | 0 | 0 | 3 |  |
-| public.push_notifications | ~1.5k | 1.1 MB | 792.0 KB | 280.0 KB | ~160 | ~100 | ~86.8k | 2026-10-30 |
+| public.push_notifications | ~1.5k | 1.1 MB | 792.0 KB | 280.0 KB | ~160 | ~110 | ~86.8k | 2026-10-30 |
 | public.jobs | ~450 | 552.0 KB | 104.0 KB | 408.0 KB | ~80 | ~87.9k | ~549.4k | 2026-11-23 |
 | public.bitrix24_sync_history | ~500 | 240.0 KB | 128.0 KB | 80.0 KB | 0 | 3 | 1 |  |
-| public.cron_p95_daily | ~550 | 232.0 KB | 96.0 KB | 96.0 KB | ~60 | ~1.5k | ~32.6k | 2026-09-10 |
+| public.cron_p95_daily | ~550 | 232.0 KB | 96.0 KB | 96.0 KB | ~80 | ~1.5k | ~32.6k | 2026-09-10 |
 | public.efficiency_alert_history | 1 | 192.0 KB | 16.0 KB | 136.0 KB | 0 | ~61.9k | ~30.9k |  |
 | public.webhook_logs | 0 | 192.0 KB | 0 B | 88.0 KB | 0 | ~50 | ~50 | 2026-10-08 |
-| public.rate_limit_logs | ~310 | 160.0 KB | 40.0 KB | 88.0 KB | 4 | ~10 | ~660 |  |
+| public.rate_limit_logs | ~310 | 160.0 KB | 40.0 KB | 88.0 KB | ~40 | ~10 | ~660 |  |
 | public.csp_violation_reports | 0 | 136.0 KB | 56.0 KB | 48.0 KB | 0 | ~50 | ~110 |  |
 | public.role_permissions | ~170 | 136.0 KB | 24.0 KB | 80.0 KB | 1 | ~69.9k | ~170 |  |
 | public.archived_jobs | 0 | 128.0 KB | 0 B | 120.0 KB | 0 | ~20 | 0 |  |
@@ -73,7 +73,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.shift_pending_tasks | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | 4 | 2 |  |
 | public.spc_measurements | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | 3 | 2 |  |
 | public.tpm_notification_queue | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~10 | 0 |  |
-| app_private.runtime_config | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 9 | 1 | ~40.2k |  |
+| app_private.runtime_config | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 9 | 1 | ~40.3k |  |
 | public.abc_cost_pools | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~1.3k | 0 |  |
 | public.abc_job_costs | 0 | 32.0 KB | 0 B | 32.0 KB | 0 | ~1.3k | 5 |  |
 | public.energy_alerts | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 4 | 0 |  |
@@ -105,7 +105,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.bitrix24_field_mappings | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 3 | 0 |  |
 | public.dashboard_presets | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 3 | ~980 |  |
 | public.document_versions | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 4 | 0 |  |
-| public.edge_health_history | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 7 | ~500 |  |
+| public.edge_health_history | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 7 | ~510 |  |
 | public.energy_targets | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 4 | 0 |  |
 | public.lot_quality_inspections | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 3 | 0 |  |
 | public.machine_health_metrics | 0 | 24.0 KB | 0 B | 24.0 KB | 0 | 3 | 0 |  |
@@ -181,17 +181,17 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~8k | ~10.5M | 1306.05 | `select public.snapshot_cron_health()` |
+| postgres | ~8k | ~10.5M | 1307.00 | `select public.snapshot_cron_health()` |
 | authenticated | ~86.4k | ~8.4M | 97.09 | `WITH pgrst_source AS (INSERT INTO "public"."error_logs"("component_name", "message", "metadata", "stack", "url") SELECT "pgrst_body"."component_name", "pgrst_body"."message", "pgrst_body"."metadata", "pgrst_body"."stack"` |
 | authenticated | ~38k | ~5.2M | 137.36 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
 | authenticated | ~16k | ~2.7M | 171.05 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
 | authenticated | ~640 | ~2.5M | 3870.78 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM "public"."get_cron_health"() pgrst_call) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, coalesce(json_agg(_postgrest_t), $4) AS body,` |
-| postgres | ~760 | ~1.8M | 2415.16 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~760 | ~1.8M | 2412.34 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
 | authenticated | ~8.2k | ~1.6M | 200.09 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
 | authenticated | ~75.9k | ~1.4M | 18.47 | `WITH pgrst_source AS ( SELECT "public"."inventory_movements".*, row_to_json("inventory_movements_profiles_1".*)::jsonb AS "profiles", row_to_json("inventory_movements_inventory_items_1".*)::jsonb AS "inventory_items" FRO` |
 | authenticated | ~16.7k | ~1.4M | 82.90 | `WITH pgrst_source AS ( SELECT "public"."jobs".* FROM "public"."jobs" ORDER BY "public"."jobs"."created_at" DESC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, co` |
-| postgres | ~790 | ~1.4M | 1743.54 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
-| postgres | ~790 | ~1.4M | 1732.32 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| postgres | ~790 | ~1.4M | 1738.08 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| postgres | ~800 | ~1.4M | 1726.95 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
 | authenticated | ~360 | ~979k | 2757.84 | `WITH pgrst_source AS ( SELECT "public"."error_logs"."id", "public"."error_logs"."created_at", "public"."error_logs"."message", "public"."error_logs"."component_name", "public"."error_logs"."url" FROM "public"."error_logs` |
 | authenticated | ~3.8k | ~963.9k | 254.00 | `WITH pgrst_source AS ( SELECT "public"."jobs".*, row_to_json("jobs_machines_1".*)::jsonb AS "machines", row_to_json("jobs_techniques_1".*)::jsonb AS "techniques" FROM "public"."jobs" LEFT JOIN LATERAL ( SELECT "machines_` |
 | authenticated | ~63.1k | ~873.9k | 13.84 | `WITH pgrst_source AS ( SELECT "public"."inventory_items".* FROM "public"."inventory_items" ORDER BY "public"."inventory_items"."name" ASC , "public"."inventory_items"."id" ASC LIMIT $1 OFFSET $2 ) SELECT $3::bigint AS to` |
@@ -238,7 +238,7 @@ _nenhum_
       "connected_cluster": 0,
       "db_connected": false,
       "healthy": true,
-      "node": "realtime@2600:1f18:67fc:ac02:787e:9aa4:5647:c91c",
+      "node": "realtime@2600:1f18:67fc:ac01:15c3:60f7:93cc:af91",
       "region": "us-east-1",
       "replication_connected": false
     },
