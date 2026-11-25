@@ -334,7 +334,7 @@ export default function PendingQueue() {
           <EmptyState
             variant="error"
             title="Não foi possível carregar a fila"
-            description="A leitura dos jobs falhou, então a lista não representa a fila real. Nada foi alterado: tente novamente para recarregar."
+            description="A leitura da fila, das técnicas ou das máquinas falhou, então a lista não representa a fila real. Nada foi alterado: tente novamente para recarregar."
             action={{ label: "Tentar novamente", onClick: () => refetchAll(), icon: <RotateCcw className="h-4 w-4" /> }}
           />
         </div>
