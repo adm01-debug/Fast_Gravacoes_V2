@@ -110,12 +110,13 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn() },
 }));
 
-const renderPage = () =>
-  render(
-    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })}>
-      <PendingQueue />
-    </QueryClientProvider>
-  );
+const page = () => (
+  <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })}>
+    <PendingQueue />
+  </QueryClientProvider>
+);
+
+const renderPage = () => render(page());
 
 describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
   beforeEach(() => {
@@ -134,6 +135,25 @@ describe('PendingQueue - estado de erro da fila (etapa 260)', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Tentar novamente/i }));
     expect(refetchAll).toHaveBeenCalledTimes(1);
+  });
+
+  it('depois da nova tentativa bem-sucedida a fila volta na mesma montagem', () => {
+    schedulingState.error = new Error('falha de leitura');
+    const { rerender } = renderPage();
+
+    expect(screen.getByText('Não foi possível carregar a fila')).toBeInTheDocument();
+
+    refetchAll.mockImplementationOnce(() => {
+      schedulingState.error = null;
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Tentar novamente/i }));
+    expect(refetchAll).toHaveBeenCalledTimes(1);
+
+    rerender(page());
+
+    expect(screen.queryByText('Não foi possível carregar a fila')).not.toBeInTheDocument();
+    expect(screen.getByText('Fila de Produção')).toBeInTheDocument();
+    expect(screen.getByTestId('pending-jobs-view')).toBeInTheDocument();
   });
 
   it('sem erro e sem jobs mantém o estado vazio legítimo, não o de erro', () => {
