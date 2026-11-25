@@ -84,12 +84,12 @@ describe('AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053)'
   });
 
   it('usa o fim gravado na OS, e nao a estimativa, quando ele termina antes do horario escolhido', () => {
-    renderAndChooseTime([otherJob('finished', '09:15')]);
+      renderAndChooseTime([otherJob('production', '09:15')]);
     expect(screen.queryByText(/conflito/)).not.toBeInTheDocument();
   });
 
   it('avisa do conflito quando o fim gravado na OS invade o horario escolhido', () => {
-    renderAndChooseTime([otherJob('finished', '10:00')]);
+      renderAndChooseTime([otherJob('production', '10:00')]);
     expect(screen.getByText('1 conflito')).toBeInTheDocument();
   });
 
