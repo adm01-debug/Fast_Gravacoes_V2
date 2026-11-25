@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `970aef7d24` · branch `main` · 2026-11-25 14:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `760ed63904` · branch `main` · 2026-11-25 15:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-25T13:38:44Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-25T15:15:20Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -14,7 +14,7 @@
 | `abc_cost_pools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |
 | `abc_job_costs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | banco real |
 | `app_private.runtime_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | banco real |
-| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 33 colunas | banco real |
+| `archived_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 35 colunas | banco real |
 | `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | banco real |
 | `backup_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | banco real |
 | `bitrix24_field_mappings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | banco real |

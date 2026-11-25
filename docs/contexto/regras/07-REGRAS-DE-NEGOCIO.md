@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `970aef7d24` · branch `main` · 2026-11-25 14:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `760ed63904` · branch `main` · 2026-11-25 15:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T13:38:44Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T15:15:20Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T13:38:44Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T15:15:20Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T13:38:44Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T15:15:20Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1064,7 +1064,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `product_categories` | `created_at` | default now() |
 | `product_categories` | `updated_at` | default now() |
 | `production_losses` | `id` | PK; default gen_random_uuid() |
-| `production_losses` | `job_id` | obrigatório; FK → jobs.id on delete cascade |
+| `production_losses` | `job_id` | obrigatório; FK → jobs.id on delete restrict |
 | `production_losses` | `quantity` | default 1 |
 | `production_losses` | `operator_id` | FK → users.id |
 | `production_losses` | `created_at` | default now() |
@@ -1216,7 +1216,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `shift_pending_tasks` | `(tabela)` | constraint shift_pending_tasks_priority_check CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])) |
 | `shift_pending_tasks` | `(tabela)` | constraint shift_pending_tasks_status_check CHECK (status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])) |
 | `shipments` | `id` | PK; default gen_random_uuid() |
-| `shipments` | `job_id` | FK → jobs.id on delete cascade |
+| `shipments` | `job_id` | FK → jobs.id on delete restrict |
 | `shipments` | `provider_id` | FK → shipping_providers.id |
 | `shipments` | `status` | default 'pending'::text |
 | `shipments` | `created_at` | default now() |
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T13:38:44Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T15:15:20Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1532,6 +1532,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | trg_job_cancelled_hold_packaging | AFTER UPDATE OF status | `jobs` | `on_job_cancelled_hold_packaging` |  |
 | trg_on_job_finished_create_packaging_task | AFTER UPDATE | `jobs` | `on_job_finished_create_packaging_task` |  |
 | trg_validate_job_cancel_reason | BEFORE INSERT OR UPDATE OF status, cancel_reason | `jobs` | `validate_job_cancel_reason` |  |
+| trg_validate_job_delete_allowed | BEFORE DELETE | `jobs` | `validate_job_delete_allowed` |  |
 | trg_validate_job_rework_depth | BEFORE INSERT OR UPDATE OF parent_job_id | `jobs` | `validate_job_rework_depth` |  |
 | trigger_check_job_overlap | BEFORE INSERT OR UPDATE | `jobs` | `check_job_overlap` |  |
 | trigger_log_job_status_change | AFTER UPDATE | `jobs` | `log_job_status_change` |  |
@@ -1610,6 +1611,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Função | Mensagem | Origem |
 |---|---|---|
 | `approve_maintenance_record` | Registro já foi processado por outra aprovação/correção | `docs/contexto/supabase/functions/public/approve_maintenance_record__5db177f44d48f661.sql` |
+| `archive_jobs` | Apenas gerentes e administradores podem arquivar uma OS. | `docs/contexto/supabase/functions/public/archive_jobs__a1e6696f492fc266.sql` |
+| `archive_jobs` | Arquivar OS exige sessao com MFA verificado (aal2). | `docs/contexto/supabase/functions/public/archive_jobs__a1e6696f492fc266.sql` |
+| `archive_jobs` | OS com embalagem em andamento nao pode ser arquivada. | `docs/contexto/supabase/functions/public/archive_jobs__a1e6696f492fc266.sql` |
+| `archive_jobs` | OS com remessa em andamento nao pode ser arquivada. | `docs/contexto/supabase/functions/public/archive_jobs__a1e6696f492fc266.sql` |
 | `assign_packaging_task` | Não autenticado | `docs/contexto/supabase/functions/public/assign_packaging_task__6963602e5353aa3a.sql` |
 | `assign_packaging_task` | Usuário sem papel ativo | `docs/contexto/supabase/functions/public/assign_packaging_task__6963602e5353aa3a.sql` |
 | `assign_packaging_task` | Sem autorização para assumir esta tarefa | `docs/contexto/supabase/functions/public/assign_packaging_task__6963602e5353aa3a.sql` |
@@ -1619,6 +1624,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `complete_maintenance_record` | Registro de manutenção não encontrado, já concluído ou já aprovado. | `docs/contexto/supabase/functions/public/complete_maintenance_record__d2762f2fe9095c6b.sql` |
 | `enforce_packaging_checklist_before_ship` | Existem % item(ns) obrigatório(s) do checklist de conferência ainda não marcados. Conclua o checklist antes de liberar para envio. | `docs/contexto/supabase/functions/public/enforce_packaging_checklist_before_ship__12ae32cb1ec02d01.sql` |
 | `get_cron_health` | Access denied | `docs/contexto/supabase/functions/public/get_cron_health__12ae32cb1ec02d01.sql` |
+| `get_finished_jobs_for_evolution` | Apenas gerentes, administradores e coordenadores podem ver a evolucao da producao. | `docs/contexto/supabase/functions/public/get_finished_jobs_for_evolution__96e2d22335c352a6.sql` |
+| `get_finished_jobs_for_evolution` | Historico arquivado exige sessao com MFA verificado (aal2). | `docs/contexto/supabase/functions/public/get_finished_jobs_for_evolution__96e2d22335c352a6.sql` |
 | `get_system_status_summary` | Access denied | `docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql` |
 | `preventdefault_hold_shipment_update` | Envio retido pela embalagem em espera; use update_shipment_status | `docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql` |
 | `record_packaging_defect` | Não autenticado | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
@@ -1632,6 +1639,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `update_shipment_status` | Envio não encontrado | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
 | `validate_inventory_stock` | Estoque insuficiente para o item %: solicitado %, disponível % | `docs/contexto/supabase/functions/public/validate_inventory_stock__12ae32cb1ec02d01.sql` |
 | `validate_job_cancel_reason` | cancel_reason é obrigatório ao cancelar um job | `docs/contexto/supabase/functions/public/validate_job_cancel_reason__12ae32cb1ec02d01.sql` |
+| `validate_job_delete_allowed` | Nao e possivel excluir a OS %: ela ja tem producao registrada (% pecas produzidas, % pecas perdidas). | `docs/contexto/supabase/functions/public/validate_job_delete_allowed__12ae32cb1ec02d01.sql` |
+| `validate_job_delete_allowed` | Nao e possivel excluir a OS %: o status atual (%) so permite exclusao de OS em fila, agendada ou cancelada. | `docs/contexto/supabase/functions/public/validate_job_delete_allowed__12ae32cb1ec02d01.sql` |
 | `validate_job_rework_depth` | Cadeia de rework não pode ter mais de 2 níveis (pai já tem pai) | `docs/contexto/supabase/functions/public/validate_job_rework_depth__12ae32cb1ec02d01.sql` |
 | `validate_packaging_loss_reason` | loss_reason é obrigatório quando rejeição supera 5%% da quantidade recebida | `docs/contexto/supabase/functions/public/validate_packaging_loss_reason__12ae32cb1ec02d01.sql` |
 | `validate_stock_before_movement` | Saldo insuficiente em estoque para o item % | `docs/contexto/supabase/functions/public/validate_stock_before_movement__12ae32cb1ec02d01.sql` |
@@ -1639,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T13:38:44Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T15:15:20Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3326,7 +3335,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1436 testes em 126 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1437 testes em 126 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3353,11 +3362,11 @@ _nenhum item encontrado_
 | `src/features/inventory/hooks/useInventory.test.ts` | 18 | useInventoryMovements · não consulta quando não há usuário autenticado · busca todas as movimentações ordenadas por data quando nenhum item é informado · filtra movimentações por item_id quando um itemId é informado … |
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
 | `src/test/rateLimiterAdvanced.test.ts` | 18 | RateLimiter — advanced scenarios · basic token consumption · allows requests up to maxTokens · rejects when tokens are exhausted … |
+| `src/pages/PendingQueue.test.tsx` | 16 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · depois da nova tentativa bem-sucedida a fila volta na mesma montagem · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro … |
 | `src/features/inventory/services/traceabilityService.test.ts` | 15 | TraceabilityService · getLots · busca todos os lotes ordenados por data de criação quando nenhum jobId é informado · filtra lotes por job_id quando informado … |
 | `src/features/jobs/hooks/useSchedulingConflicts.test.tsx` | 15 | useSchedulingConflicts · retorna lista vazia enquanto jobs ou machines ainda não carregaram · não aponta conflito quando só há um job na máquina/data · detecta sobreposição de horário entre dois jobs na mesma máquina e data … |
 | `src/features/jobs/services/scheduling.test.ts` | 15 | findNextAvailableSlot · retorna o início do expediente quando não há jobs existentes · encontra um espaço antes do primeiro job quando ele é grande o suficiente · pula para depois do job quando o espaço antes dele é pequeno demais … |
 | `src/lib/calendarExports.test.ts` | 15 | calendarExports · exportElementToPdf · captures the element and saves a landscape PDF when width > height · uses portrait orientation when height >= width … |
-| `src/pages/PendingQueue.test.tsx` | 15 | PendingQueue - estado de erro da fila (etapa 260) · mostra bloco de erro com ação de tentar novamente no lugar da fila · sem erro e sem jobs mantém o estado vazio legítimo, não o de erro · com jobs renderiza a fila normal … |
 | `src/test/exportSimulation.test.ts` | 15 | inventoryExport — simulação de cenários · não lança erro em 300 movimentos aleatórios com dados sujos · retorna silenciosamente com array vazio · retorna silenciosamente com null/undefined … |
 | `src/test/validation.test.ts` | 15 | safeParse · returns success:true with parsed data for valid input · returns success:false with ZodError for invalid input · captures missing required fields … |
 | `tests/e2e/navigation.spec.ts` | 15 | Botão Voltar · volta uma entrada do histórico interno · deep-link sem histórico interno cai no fallback (home, não sai do app) · Alt+B navega para trás … |

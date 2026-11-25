@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)",
    "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)",
    "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)",
    "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)",
-   "infra: remove push em main do automation-local (recupera PR #229) (#298)",
-   "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)"
+   "infra: remove push em main do automation-local (recupera PR #229) (#298)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

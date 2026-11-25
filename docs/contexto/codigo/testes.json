@@ -933,12 +933,12 @@
   {
    "arquivo": "src/pages/PendingQueue.test.tsx",
    "tipo": "unit",
-   "linhas": 223,
+   "linhas": 243,
    "testa": [
     "src/features/jobs/lib/pending-queue.ts",
     "src/pages/PendingQueue.tsx"
    ],
-   "casos": 11,
+   "casos": 12,
    "suporte": false
   },
   {
