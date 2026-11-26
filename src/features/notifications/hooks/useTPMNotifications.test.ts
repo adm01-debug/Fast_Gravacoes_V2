@@ -84,12 +84,12 @@ describe('useTPMNotifications.sendTestNotification', () => {
     mocks.toastWarning.mockClear();
   });
 
-  it('registra falha em vez de sucesso quando o canal email não tem provedor', async () => {
+  it('registra canal sem provedor quando o email não tem provedor', async () => {
     const { result } = renderHook(() => useTPMNotifications());
 
     const res = await runTest(result, 'email', true);
 
-    expect(mocks.inserted[0]).toMatchObject({ channel: 'email', status: 'failure' });
+    expect(mocks.inserted[0]).toMatchObject({ channel: 'email', status: 'provider_not_configured' });
     expect(String(mocks.inserted[0].error_message)).toContain('email');
     expect(res.success).toBe(false);
     expect(res.reason).toBe('provider_not_configured');
@@ -97,12 +97,12 @@ describe('useTPMNotifications.sendTestNotification', () => {
     expect(mocks.sendNotification).not.toHaveBeenCalled();
   });
 
-  it('registra falha quando o canal whatsapp não tem provedor', async () => {
+  it('registra canal sem provedor quando o whatsapp não tem provedor', async () => {
     const { result } = renderHook(() => useTPMNotifications());
 
     const res = await runTest(result, 'whatsapp', true);
 
-    expect(mocks.inserted[0]).toMatchObject({ channel: 'whatsapp', status: 'failure' });
+    expect(mocks.inserted[0]).toMatchObject({ channel: 'whatsapp', status: 'provider_not_configured' });
     expect(res.success).toBe(false);
     expect(res.reason).toBe('provider_not_configured');
   });

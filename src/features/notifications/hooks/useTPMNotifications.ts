@@ -200,7 +200,10 @@ export const useTPMNotifications = () => {
 
       const { data: user } = await supabase.auth.getUser();
 
-      // Email e WhatsApp não têm provedor de envio: registrar falha em vez de 'success' falso.
+      // Email e WhatsApp não têm provedor de envio: registrar o mesmo status que
+      // a função tpm-notifications usa para canal sem provedor, em vez de
+      // 'failure' — é configuração ausente, não falha de entrega, e é esse valor
+      // que a tela de logs mostra como "Sem provedor".
       if (channel === 'email' || channel === 'whatsapp') {
         const { error: logError } = await supabase
           .from('tpm_notification_logs')
@@ -209,7 +212,7 @@ export const useTPMNotifications = () => {
             user_id: user.user?.id,
             channel,
             severity: 'critical',
-            status: 'failure',
+            status: 'provider_not_configured',
             error_message: `Canal ${channel} sem provedor de envio configurado`,
             recipient: `${recipients.length} destinatários`,
             payload: { test: true, machine_name: machine.name, recipients: recipients.map(r => r.user_id), reason: 'provider_not_configured' }
