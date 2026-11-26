@@ -8,9 +8,12 @@ import { createClient } from "npm:@supabase/supabase-js";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 import { createLogger, getOrCreateRequestId } from "../_shared/logger.ts";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
+import { toCheckStatus } from "../_shared/checkStatus.ts";
 
 interface HealthResponse {
-  status: "pass" | "warn" | "fail";
+  // O health-check responde healthy/degraded/unhealthy; chamadas antigas
+  // usavam pass/warn/fail. A conversao fica em _shared/checkStatus.ts.
+  status: string;
   checks?: Record<string, { status: string; observedValue?: unknown; output?: string }>;
 }
 
@@ -83,7 +86,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: false, error: "health fetch failed" }), { status: 502, headers: corsHeaders });
   }
 
-  const status = health?.status ?? "fail";
+  const status = toCheckStatus(health?.status);
   log.info("health_polled", { status, latencyMs });
 
   // Persistir a coleta para alimentar o resumo consolidado de /status.
@@ -100,16 +103,25 @@ Deno.serve(async (req) => {
 
   if (status !== "pass") {
     // Audit in security_events
+    // security_events nao possui description/metadata: as colunas reais sao
+    // severity (NOT NULL) e details. O insert anterior passava colunas
+    // inexistentes e a degradacao nunca era auditada.
     await supabase.from("security_events").insert({
       event_type: "HEALTH_DEGRADED",
-      description: `Edge functions health = ${status}`,
-      metadata: { checks: health?.checks ?? {}, requestId },
+      severity: status === "fail" ? "high" : "medium",
+      details: {
+        source: "health-monitor",
+        status,
+        latency_ms: latencyMs,
+        checks: health?.checks ?? {},
+        request_id: requestId,
+      },
     });
 
     // Forward to Sentry if DSN configured
     const dsn = Deno.env.get("SENTRY_DSN");
     if (dsn) {
-      await forwardToSentry(dsn, health as HealthResponse, requestId);
+      await forwardToSentry(dsn, { ...(health as HealthResponse), status }, requestId);
     }
   }
 

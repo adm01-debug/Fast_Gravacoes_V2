@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
+import { startOfOperationalDayUtc } from "../_shared/operationalDay.ts";
 
 serve(async (req) => {
   const unauthorized = requireCronSecret(req, { failClosed: true });
@@ -12,10 +13,11 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const now = new Date();
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayStartISO = todayStart.toISOString();
+    // Limites do dia no fuso operacional (America/Sao_Paulo) convertidos para
+    // UTC. O runtime da edge function roda em UTC: meia-noite calculada com
+    // setHours() viraria as 21h de Brasilia e a coleta descartaria a producao
+    // da noite.
+    const todayStartISO = startOfOperationalDayUtc(new Date()).toISOString();
     const metrics: Record<string, unknown> = {};
 
     // Jobs metrics
