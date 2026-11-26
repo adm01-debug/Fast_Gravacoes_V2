@@ -3740,8 +3740,8 @@
   {
    "modulo": "features/analytics",
    "arquivos": 74,
-   "testes": 6,
-   "linhas": 11637,
+   "testes": 7,
+   "linhas": 11690,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

@@ -1352,7 +1352,7 @@
    "hooks_exportados": [
     "useExecutiveDashboard"
    ],
-   "linhas": 330,
+   "linhas": 376,
    "dominio": "features/analytics",
    "tabelas": [
     "jobs",
@@ -1378,7 +1378,7 @@
     "src/lib/pdfExport.ts",
     "src/pages/ExecutiveDashboard.tsx"
    ],
-   "coberto_por_testes": 2
+   "coberto_por_testes": 3
   },
   {
    "arquivo": "src/features/analytics/hooks/useKPIs.ts",

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ebc953ffaf` · branch `main` · 2026-11-26 02:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2fac28ac0b` · branch `main` · 2026-11-26 14:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T02:19:24Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T13:39:59Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T02:19:24Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T13:39:59Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T02:19:24Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T13:39:59Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,13 +1502,14 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T02:19:24Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T13:39:59Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
 | update_abc_activities_updated_at | BEFORE UPDATE | `abc_activities` | `update_updated_at_column` |  |
 | update_abc_activity_rates_updated_at | BEFORE UPDATE | `abc_activity_rates` | `update_updated_at_column` |  |
 | update_abc_cost_pools_updated_at | BEFORE UPDATE | `abc_cost_pools` | `update_updated_at_column` |  |
+| trg_normalize_functions_base_url | BEFORE INSERT OR UPDATE | `app_private.runtime_config` | `app_private.normalize_functions_base_url` |  |
 | audit_log_no_delete | BEFORE DELETE | `audit_log` | `audit_log_immutable` |  |
 | audit_log_no_update | BEFORE UPDATE | `audit_log` | `audit_log_immutable` |  |
 | tr_audit_log_hashing | BEFORE INSERT | `audit_log` | `process_audit_log_hashing` |  |
@@ -1627,6 +1628,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `get_finished_jobs_for_evolution` | Apenas gerentes, administradores e coordenadores podem ver a evolucao da producao. | `docs/contexto/supabase/functions/public/get_finished_jobs_for_evolution__96e2d22335c352a6.sql` |
 | `get_finished_jobs_for_evolution` | Historico arquivado exige sessao com MFA verificado (aal2). | `docs/contexto/supabase/functions/public/get_finished_jobs_for_evolution__96e2d22335c352a6.sql` |
 | `get_system_status_summary` | Access denied | `docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql` |
+| `increment_job_lost_pieces` | nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita) | `docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql` |
 | `preventdefault_hold_shipment_update` | Envio retido pela embalagem em espera; use update_shipment_status | `docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql` |
 | `record_packaging_defect` | Não autenticado | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Quantidade deve ser positiva | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
@@ -1648,7 +1650,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T02:19:24Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T13:39:59Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2381,6 +2383,10 @@ _nenhum item encontrado_
   ```
   if (previous === 0) return current > 0 ? 100 : 0; return ((current - previous) / previous) * 100;
   ```
+- **maisAderente(candidata: MetricaSaudeMaquina, atual: MetricaSaudeMaquina)** — `src/features/analytics/hooks/useExecutiveDashboard.ts`
+  ```
+  if (cobre(candidata) !== cobre(atual)) return cobre(candidata); if (distancia(candidata) !== distancia(atual)) return distancia(candidata) < distancia(atual); return new Date(candidata.calculated_at).getTime() > new Date(atual.calculated_at).getTime();
+  ```
 - **calculateDailyTrend(jobs: Job[], prevJobs: Job[], dateRange: DateRange)** — `src/features/analytics/hooks/useExecutiveDashboard.ts`
   ```
   const days: Record<string, { produced: number; target: number; prevProduced: number }> = {}; const duration = differenceInDays(dateRange.end, dateRange.start) + 1; let current = new Date(dateRange.start); while (current <= dateRange.end) { const dateStr = format(current, 'dd/MM'); days[dateStr] = { produced: 0, target: 0, prevProduced: 0 }; current = subDays(current, -1); } jobs.forEach(job => { const date = format(new Date(job.created_at), 'dd/MM'); if (days[date]) { days[date].produced += job. …
@@ -2636,6 +2642,7 @@ _nenhum item encontrado_
 | `transition={{ delay: idx * 0.1 }}` | `src/features/analytics/components/energy/AIEnergyAdvisor.tsx` |
 | `recommendation: `Considere redistribuir ${scheduledJobs.length - Math.floor(scheduledJobs.length * 0.7)} jobs para outras datas ou técnicas alternativas`` | `src/features/analytics/hooks/useBottleneckPrediction.ts` |
 | `const carbonFootprintKg = totalConsumption * 0.088;` | `src/features/analytics/hooks/useEnergy.ts` |
+| `// grava NULL justamente para nao confundir ausencia de dado com 0% real.` | `src/features/analytics/hooks/useExecutiveDashboard.ts` |
 | `confidence: 0.9 - (i * 0.05)` | `src/features/analytics/hooks/useKPIs.ts` |
 | `const colorAdjustment = 1 + (colorCount - 1) * 0.15;` | `src/features/analytics/hooks/useKPIs.ts` |
 | `if (m.jobCount > 0 && (85 - (m.lossRate * 2)) < targets.occupancyRate * 0.7) {` | `src/features/analytics/hooks/useKPIs.ts` |
@@ -3351,7 +3358,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1527 testes em 136 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1532 testes em 137 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3441,6 +3448,7 @@ _nenhum item encontrado_
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
+| `src/features/analytics/hooks/useExecutiveDashboard.test.ts` | 5 | escolherRetratoDoPeriodo · escolhe o retrato do período pedido, não o mais recente · prefere a janela que contém o fim do período mesmo com fim mais distante · desempata pela apuração mais recente … |
 | `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |

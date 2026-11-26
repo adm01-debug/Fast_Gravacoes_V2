@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
+  "sha": "2fac28ac0bd3c57cd6bbf2bde1e887a0bc33d334",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 02:22 UTC",
-  "files_total": 1628,
-  "code_files": 1432,
-  "code_lines": 213828
+  "generated_at": "2026-11-26 14:06 UTC",
+  "files_total": 1631,
+  "code_files": 1435,
+  "code_lines": 214333
  },
  "version": "1.3.2",
- "facts_hash": "7e9202d54344cab3",
+ "facts_hash": "7ea7e6f9eb1eb232",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,8 +280,8 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 680,
-   ".ts": 411,
-   ".sql": 274,
+   ".ts": 412,
+   ".sql": 276,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -14153,6 +14153,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_normalize_functions_base_url",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "app_private.runtime_config",
+    "function": "app_private.normalize_functions_base_url",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "audit_log_no_delete",
     "when": "BEFORE DELETE",
     "table": "audit_log",
@@ -15018,6 +15027,17 @@
    }
   ],
   "functions": {
+   "app_private.functions_base_url": {
+    "args": "",
+    "returns": "text",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/app_private/functions_base_url__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT coalesce( nullif(btrim(app_private.runtime_config_get('functions_base_url')), ''), 'https://' || app_private.project_ref_from_key( app_private.runtime_config_get('service_role_key') ) || '.supabase.co/functions/v1' );",
+    "raises": [],
+    "tables": []
+   },
    "app_private.has_role": {
     "args": "_user_id uuid, _role app_role",
     "returns": "boolean",
@@ -15030,6 +15050,31 @@
     "tables": [
      "user_roles"
     ]
+   },
+   "app_private.normalize_functions_base_url": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/app_private/normalize_functions_base_url__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_ref text; BEGIN -- Rotacoes gravam URL e chave em ordem variavel. Quando a URL chega antes da -- chave, no INSERT dela o `ref` ainda nao pode ser derivado (project_ref -- nulo, valor mantido). Este ramo revisita a URL quando a chave chega depois, -- senao o host legado ficaria preso ate alguem rodar um UPDATE manual. IF NEW.key = 'service_role_key' THEN IF pg_trigger_depth() > 1 THEN RETURN NEW; END IF; v_ref := app_private.project_ref_from_key(NEW.value); IF coalesce(v_ref, '') <> '' AND EXISTS ( SELECT 1 FROM app_private.runtime_config WHERE key = 'functions_base_url' AND value ~ 'atomicabr' ) THEN UPDATE app_private.runtime_config SET value = 'https://' || v_ref || '.supabase.co …",
+    "raises": [],
+    "tables": [
+     "app_private",
+     "manual"
+    ]
+   },
+   "app_private.project_ref_from_key": {
+    "args": "p_key text",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/app_private/project_ref_from_key__8ddb4bac95115aff.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_payload text; BEGIN IF p_key IS NULL OR p_key = '' OR position('.' IN p_key) = 0 THEN RETURN NULL; END IF; v_payload := convert_from( decode( rpad( translate(split_part(p_key, '.', 2), '-_', '+/'), (ceil(length(translate(split_part(p_key, '.', 2), '-_', '+/')) / 4.0) * 4)::int, '=' ), 'base64' ), 'utf8' ); RETURN (v_payload::jsonb) ->> 'ref'; EXCEPTION WHEN others THEN RETURN NULL; END;",
+    "raises": [],
+    "tables": []
    },
    "app_private.runtime_config_get": {
     "args": "p_key text",
@@ -15376,6 +15421,34 @@
     "raises": [],
     "tables": []
    },
+   "count_active_operators_since": {
+    "args": "p_since timestamp with time zone",
+    "returns": "bigint",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/count_active_operators_since__4bb9774f03037199.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT COUNT(DISTINCT q.operator_id) FROM public.qr_scan_history q WHERE q.scanned_at >= p_since AND q.operator_id IS NOT NULL AND EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = q.operator_id AND ur.role = 'operator' AND ur.is_active = true );",
+    "raises": [],
+    "tables": [
+     "qr_scan_history",
+     "user_roles"
+    ]
+   },
+   "count_running_machines": {
+    "args": "",
+    "returns": "bigint",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/count_running_machines__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT COUNT(DISTINCT j.machine_id) FROM public.jobs j JOIN public.machines m ON m.id = j.machine_id WHERE j.status = 'production' AND j.machine_id IS NOT NULL AND m.is_active = true;",
+    "raises": [],
+    "tables": [
+     "jobs",
+     "machines"
+    ]
+   },
    "create_operator": {
     "args": "_email text, _password text, _full_name text, _phone text, _role text",
     "returns": "uuid",
@@ -15658,6 +15731,21 @@
     "raises": [],
     "tables": [
      "user_roles"
+    ]
+   },
+   "increment_job_lost_pieces": {
+    "args": "p_job_id uuid, p_amount integer",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN UPDATE public.jobs SET lost_pieces = COALESCE(lost_pieces, 0) + p_amount WHERE id = p_job_id; IF NOT FOUND THEN RAISE EXCEPTION 'nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)', p_job_id USING ERRCODE = 'P0002'; END IF; END;",
+    "raises": [
+     "nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)"
+    ],
+    "tables": [
+     "jobs"
     ]
    },
    "increment_sheet_view_count": {
@@ -16018,6 +16106,29 @@
      "packaging_tasks",
      "v_new_approved",
      "v_processed"
+    ]
+   },
+   "refresh_machine_health_metrics": {
+    "args": "p_days integer",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/refresh_machine_health_metrics__aa8f423a2caaa305.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhum job concluído (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
+    "raises": [],
+    "tables": [
+     "SET",
+     "base",
+     "business_config",
+     "jobs",
+     "jobs_periodo",
+     "machine_health_metrics",
+     "maintenance_records",
+     "maintenance_types",
+     "manutencao",
+     "scores",
+     "v_planejado_dia"
     ]
    },
    "refresh_operator_rankings": {
@@ -19650,6 +19761,8 @@
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+   "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
+   "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21523,6 +21636,62 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
    }
   ],
   "raises": [
@@ -21610,6 +21779,11 @@
     "function": "get_system_status_summary",
     "msg": "Access denied",
     "src": "docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql"
+   },
+   {
+    "function": "increment_job_lost_pieces",
+    "msg": "nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)",
+    "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql"
    },
    {
     "function": "preventdefault_hold_shipment_update",
@@ -28837,8 +29011,8 @@
   },
   {
    "module": "src/features/analytics",
-   "files": 80,
-   "lines": 12140,
+   "files": 81,
+   "lines": 12263,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -28997,6 +29171,7 @@
     "src/features/analytics/hooks/useEfficiencyAlertHistory.ts",
     "src/features/analytics/hooks/useEnergy.test.ts",
     "src/features/analytics/hooks/useEnergy.ts",
+    "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
     "src/features/analytics/hooks/useExecutiveDashboard.ts",
     "src/features/analytics/hooks/useKPIs.test.ts",
     "src/features/analytics/hooks/useKPIs.ts",
@@ -29008,8 +29183,7 @@
     "src/features/analytics/hooks/useRealtimeConnection.test.ts",
     "src/features/analytics/hooks/useRealtimeConnection.ts",
     "src/features/analytics/hooks/useSPC.ts",
-    "src/features/analytics/lib/oeeReportExport.ts",
-    "src/features/analytics/types/index.ts"
+    "src/features/analytics/lib/oeeReportExport.ts"
    ]
   },
   {
@@ -30587,8 +30761,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 266,
-   "lines": 16812,
+   "files": 268,
+   "lines": 17194,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -50403,6 +50577,12 @@
    },
    {
     "file": "src/features/analytics/hooks/useExecutiveDashboard.ts",
+    "name": "maisAderente",
+    "params": "candidata: MetricaSaudeMaquina, atual: MetricaSaudeMaquina",
+    "body": "if (cobre(candidata) !== cobre(atual)) return cobre(candidata); if (distancia(candidata) !== distancia(atual)) return distancia(candidata) < distancia(atual); return new Date(candidata.calculated_at).getTime() > new Date(atual.calculated_at).getTime();"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.ts",
     "name": "calculateDailyTrend",
     "params": "jobs: Job[], prevJobs: Job[], dateRange: DateRange",
     "body": "const days: Record<string, { produced: number; target: number; prevProduced: number }> = {}; const duration = differenceInDays(dateRange.end, dateRange.start) + 1; let current = new Date(dateRange.start); while (current <= dateRange.end) { const dateStr = format(current, 'dd/MM'); days[dateStr] = { produced: 0, target: 0, prevProduced: 0 }; current = subDays(current, -1); } jobs.forEach(job => { const date = format(new Date(job.created_at), 'dd/MM'); if (days[date]) { days[date].produced += job. …"
@@ -51610,6 +51790,10 @@
     "line": "const carbonFootprintKg = totalConsumption * 0.088;"
    },
    {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.ts",
+    "line": "// grava NULL justamente para nao confundir ausencia de dado com 0% real."
+   },
+   {
     "file": "src/features/analytics/hooks/useKPIs.ts",
     "line": "confidence: 0.9 - (i * 0.05)"
    },
@@ -52638,6 +52822,26 @@
    {
     "file": "src/features/analytics/hooks/useEnergy.test.ts",
     "name": "falha na consulta principal de consumo acende hasError"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+    "name": "escolherRetratoDoPeriodo"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+    "name": "escolhe o retrato do período pedido, não o mais recente"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+    "name": "prefere a janela que contém o fim do período mesmo com fim mais distante"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+    "name": "desempata pela apuração mais recente"
+   },
+   {
+    "file": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+    "name": "mantém uma entrada por máquina"
    },
    {
     "file": "src/features/analytics/hooks/useKPIs.test.ts",
@@ -61493,6 +61697,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_normalize_functions_base_url",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "app_private.runtime_config",
+    "function": "app_private.normalize_functions_base_url",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "audit_log_no_delete",
     "when": "BEFORE DELETE",
     "table": "audit_log",
@@ -62358,6 +62571,17 @@
    }
   ],
   "db_functions": {
+   "app_private.functions_base_url": {
+    "args": "",
+    "returns": "text",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/app_private/functions_base_url__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT coalesce( nullif(btrim(app_private.runtime_config_get('functions_base_url')), ''), 'https://' || app_private.project_ref_from_key( app_private.runtime_config_get('service_role_key') ) || '.supabase.co/functions/v1' );",
+    "raises": [],
+    "tables": []
+   },
    "app_private.has_role": {
     "args": "_user_id uuid, _role app_role",
     "returns": "boolean",
@@ -62370,6 +62594,31 @@
     "tables": [
      "user_roles"
     ]
+   },
+   "app_private.normalize_functions_base_url": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/app_private/normalize_functions_base_url__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_ref text; BEGIN -- Rotacoes gravam URL e chave em ordem variavel. Quando a URL chega antes da -- chave, no INSERT dela o `ref` ainda nao pode ser derivado (project_ref -- nulo, valor mantido). Este ramo revisita a URL quando a chave chega depois, -- senao o host legado ficaria preso ate alguem rodar um UPDATE manual. IF NEW.key = 'service_role_key' THEN IF pg_trigger_depth() > 1 THEN RETURN NEW; END IF; v_ref := app_private.project_ref_from_key(NEW.value); IF coalesce(v_ref, '') <> '' AND EXISTS ( SELECT 1 FROM app_private.runtime_config WHERE key = 'functions_base_url' AND value ~ 'atomicabr' ) THEN UPDATE app_private.runtime_config SET value = 'https://' || v_ref || '.supabase.co …",
+    "raises": [],
+    "tables": [
+     "app_private",
+     "manual"
+    ]
+   },
+   "app_private.project_ref_from_key": {
+    "args": "p_key text",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/app_private/project_ref_from_key__8ddb4bac95115aff.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_payload text; BEGIN IF p_key IS NULL OR p_key = '' OR position('.' IN p_key) = 0 THEN RETURN NULL; END IF; v_payload := convert_from( decode( rpad( translate(split_part(p_key, '.', 2), '-_', '+/'), (ceil(length(translate(split_part(p_key, '.', 2), '-_', '+/')) / 4.0) * 4)::int, '=' ), 'base64' ), 'utf8' ); RETURN (v_payload::jsonb) ->> 'ref'; EXCEPTION WHEN others THEN RETURN NULL; END;",
+    "raises": [],
+    "tables": []
    },
    "app_private.runtime_config_get": {
     "args": "p_key text",
@@ -62716,6 +62965,34 @@
     "raises": [],
     "tables": []
    },
+   "count_active_operators_since": {
+    "args": "p_since timestamp with time zone",
+    "returns": "bigint",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/count_active_operators_since__4bb9774f03037199.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT COUNT(DISTINCT q.operator_id) FROM public.qr_scan_history q WHERE q.scanned_at >= p_since AND q.operator_id IS NOT NULL AND EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = q.operator_id AND ur.role = 'operator' AND ur.is_active = true );",
+    "raises": [],
+    "tables": [
+     "qr_scan_history",
+     "user_roles"
+    ]
+   },
+   "count_running_machines": {
+    "args": "",
+    "returns": "bigint",
+    "lang": "sql",
+    "src": "docs/contexto/supabase/functions/public/count_running_machines__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT COUNT(DISTINCT j.machine_id) FROM public.jobs j JOIN public.machines m ON m.id = j.machine_id WHERE j.status = 'production' AND j.machine_id IS NOT NULL AND m.is_active = true;",
+    "raises": [],
+    "tables": [
+     "jobs",
+     "machines"
+    ]
+   },
    "create_operator": {
     "args": "_email text, _password text, _full_name text, _phone text, _role text",
     "returns": "uuid",
@@ -62998,6 +63275,21 @@
     "raises": [],
     "tables": [
      "user_roles"
+    ]
+   },
+   "increment_job_lost_pieces": {
+    "args": "p_job_id uuid, p_amount integer",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN UPDATE public.jobs SET lost_pieces = COALESCE(lost_pieces, 0) + p_amount WHERE id = p_job_id; IF NOT FOUND THEN RAISE EXCEPTION 'nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)', p_job_id USING ERRCODE = 'P0002'; END IF; END;",
+    "raises": [
+     "nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)"
+    ],
+    "tables": [
+     "jobs"
     ]
    },
    "increment_sheet_view_count": {
@@ -63358,6 +63650,29 @@
      "packaging_tasks",
      "v_new_approved",
      "v_processed"
+    ]
+   },
+   "refresh_machine_health_metrics": {
+    "args": "p_days integer",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/refresh_machine_health_metrics__aa8f423a2caaa305.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhum job concluído (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
+    "raises": [],
+    "tables": [
+     "SET",
+     "base",
+     "business_config",
+     "jobs",
+     "jobs_periodo",
+     "machine_health_metrics",
+     "maintenance_records",
+     "maintenance_types",
+     "manutencao",
+     "scores",
+     "v_planejado_dia"
     ]
    },
    "refresh_operator_rankings": {
@@ -63723,6 +64038,11 @@
     "function": "get_system_status_summary",
     "msg": "Access denied",
     "src": "docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql"
+   },
+   {
+    "function": "increment_job_lost_pieces",
+    "msg": "nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita)",
+    "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql"
    },
    {
     "function": "preventdefault_hold_shipment_update",
@@ -67598,10 +67918,14 @@
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
-   "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+   "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+   "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
+   "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
   ],
   "security_definer_fns": [
+   "app_private.functions_base_url",
    "app_private.has_role",
+   "app_private.normalize_functions_base_url",
    "app_private.runtime_config_get",
    "archive_finished_jobs",
    "archive_jobs",
@@ -67616,6 +67940,8 @@
    "auto_reassign_stale_packaging_tasks",
    "check_and_notify_kpi_alert",
    "check_job_overlap",
+   "count_active_operators_since",
+   "count_running_machines",
    "create_operator",
    "create_technical_sheet_version",
    "enforce_packaging_checklist_before_ship",
@@ -67648,6 +67974,7 @@
    "preventdefault_hold_shipment_update",
    "purge_old_logs",
    "record_packaging_defect",
+   "refresh_machine_health_metrics",
    "rollback_inventory_stock",
    "rollup_cron_p95_daily",
    "snapshot_cron_health",
@@ -69401,6 +69728,62 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_machine_health_metrics",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
    }
   ],
   "guards": [
@@ -70422,27 +70805,6 @@
     "msg": "`tpm_notification_templates_published`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
     "where": [
      "src/features/maintenance/components/TPMNotificationTemplates.tsx"
-    ]
-   },
-   {
-    "kind": "rpc",
-    "msg": "RPC `count_active_operators_since` chamada mas não definida no banco real (snapshot)",
-    "where": [
-     "supabase/functions/metrics-collector/index.ts"
-    ]
-   },
-   {
-    "kind": "rpc",
-    "msg": "RPC `count_running_machines` chamada mas não definida no banco real (snapshot)",
-    "where": [
-     "supabase/functions/metrics-collector/index.ts"
-    ]
-   },
-   {
-    "kind": "rpc",
-    "msg": "RPC `increment_job_lost_pieces` chamada mas não definida no banco real (snapshot)",
-    "where": [
-     "src/features/production/hooks/useProductionLosses.ts"
     ]
    },
    {
@@ -82221,7 +82583,7 @@
   },
   "src/features/analytics/components/executive/ExecutiveChartsRow2.tsx": {
    "path": "src/features/analytics/components/executive/ExecutiveChartsRow2.tsx",
-   "lines": 154,
+   "lines": 161,
    "exports": [
     "function ExecutiveChartsRow2"
    ]
@@ -82722,13 +83084,27 @@
     "50"
    ]
   },
+  "src/features/analytics/hooks/useExecutiveDashboard.test.ts": {
+   "path": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+   "lines": 70,
+   "is_test": true,
+   "tests": [
+    "escolherRetratoDoPeriodo",
+    "escolhe o retrato do período pedido, não o mais recente",
+    "prefere a janela que contém o fim do período mesmo com fim mais distante",
+    "desempata pela apuração mais recente",
+    "mantém uma entrada por máquina"
+   ]
+  },
   "src/features/analytics/hooks/useExecutiveDashboard.ts": {
    "path": "src/features/analytics/hooks/useExecutiveDashboard.ts",
-   "lines": 330,
+   "lines": 376,
    "exports": [
+    "type MetricaSaudeMaquina",
     "interface ExecutiveKPIs",
     "interface DateRange",
     "function useExecutiveDashboard",
+    "function escolherRetratoDoPeriodo",
     "function getDateRangePresets"
    ],
    "tables": [
@@ -82741,15 +83117,15 @@
      "op": "select"
     },
     {
+     "table": "machine_health_metrics",
+     "op": "select"
+    },
+    {
      "table": "machines",
      "op": "select"
     },
     {
      "table": "techniques",
-     "op": "select"
-    },
-    {
-     "table": "machine_health_metrics",
      "op": "select"
     },
     {
@@ -82763,6 +83139,10 @@
     ],
     "maintenance_records": [
      "created_at"
+    ],
+    "machine_health_metrics": [
+     "period_end",
+     "period_start"
     ]
    },
    "status_values": [
@@ -82780,6 +83160,11 @@
      "name": "calculateChange",
      "params": "current: number, previous: number",
      "body": "if (previous === 0) return current > 0 ? 100 : 0; return ((current - previous) / previous) * 100;"
+    },
+    {
+     "name": "maisAderente",
+     "params": "candidata: MetricaSaudeMaquina, atual: MetricaSaudeMaquina",
+     "body": "if (cobre(candidata) !== cobre(atual)) return cobre(candidata); if (distancia(candidata) !== distancia(atual)) return distancia(candidata) < distancia(atual); return new Date(candidata.calculated_at).getTime() > new Date(atual.calculated_at).getTime();"
     },
     {
      "name": "calculateDailyTrend",
@@ -82800,6 +83185,9 @@
    "temporal": [
     "{ label: 'Hoje', start: subDays(now, 0), end: now },",
     "{ label: 'Mês Passado', start: startOfMonth(subMonths(now, 1)), end: endOfMonth(subMonths(now, 1)) },"
+   ],
+   "percents": [
+    "// grava NULL justamente para nao confundir ausencia de dado com 0% real."
    ]
   },
   "src/features/analytics/hooks/useKPIs.test.ts": {
@@ -99430,6 +99818,16 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql": {
+   "path": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
+   "lines": 176,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql": {
+   "path": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
+   "lines": 206,
+   "uses_service_role": true
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 126,
@@ -99884,10 +100282,24 @@
   }
  },
  "git": {
-  "sha": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
+  "sha": "2fac28ac0bd3c57cd6bbf2bde1e887a0bc33d334",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "2fac28a",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: calcula e exibe OEE, MTBF e MTTR por maquina (painel executivo) (#323)",
+    "files": [
+     "src/features/analytics/components/executive/ExecutiveChartsRow2.tsx",
+     "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+     "src/features/analytics/hooks/useExecutiveDashboard.ts",
+     "src/lib/pdfExport.ts",
+     "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
+     "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+    ]
+   },
    {
     "sha": "ebc953f",
     "date": "2026-11-25",
@@ -100252,25 +100664,12 @@
      "scripts/graphify-local.mjs",
      "scripts/graphify-local.unit.mjs"
     ]
-   },
-   {
-    "sha": "828487b",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: grafico do simulador agrupa por cenario base (etapa 076) (#289)",
-    "files": [
-     "docs/qa/03-ACHADOS.md",
-     "docs/qa/05-PROGRESSO.md",
-     "src/lib/simulation.ts",
-     "src/pages/SimulationDashboard.tsx",
-     "src/test/simulationAggregation.test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    15
+    14
    ],
    [
     "src/features/jobs/services/jobsService.test.ts",

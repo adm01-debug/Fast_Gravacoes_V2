@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
+  "commit": "2fac28ac0bd3c57cd6bbf2bde1e887a0bc33d334",
   "branch": "main",
-  "data_commit": "2026-11-25T23:20:51-03:00",
+  "data_commit": "2026-11-26T10:56:33-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "2fac28a",
+    "data": "2026-11-26",
+    "assunto": "feat: calcula e exibe OEE, MTBF e MTTR por maquina (painel executivo) (#323)"
+   },
    {
     "sha": "ebc953f",
     "data": "2026-11-25",
@@ -126,19 +131,14 @@
     "sha": "fc44f91",
     "data": "2026-11-24",
     "assunto": "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)"
-   },
-   {
-    "sha": "fa8cd71",
-    "data": "2026-11-24",
-    "assunto": "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 288,
+  "arquivos_mudados_7d": 292,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
-    "mudancas": 45
+    "mudancas": 48
    },
    {
     "pasta": "src/features/jobs",
@@ -165,11 +165,11 @@
     "mudancas": 22
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 20
+    "pasta": "src/features/packaging",
+    "mudancas": 19
    },
    {
-    "pasta": "src/features/packaging",
+    "pasta": "supabase/functions/_shared",
     "mudancas": 19
    },
    {
@@ -181,15 +181,15 @@
     "mudancas": 16
    },
    {
-    "pasta": "src/components/navigation",
-    "mudancas": 16
-   },
-   {
     "pasta": "package-lock.json",
     "mudancas": 14
    },
    {
     "pasta": "src/components/jobs",
+    "mudancas": 14
+   },
+   {
+    "pasta": "src/components/navigation",
     "mudancas": 14
    },
    {
@@ -302,11 +302,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 169
+    "commits": 170
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 13
+    "commits": 12
    },
    {
     "autor": "dependabot[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1630,
-  "arquivos_codigo": 1155,
-  "linhas_codigo": 196360,
+  "arquivos_total": 1633,
+  "arquivos_codigo": 1156,
+  "linhas_codigo": 196483,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,9 +339,9 @@
   "hooks": 197,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 266,
-  "cron_jobs": 5,
-  "testes": 155,
+  "migrations": 268,
+  "cron_jobs": 6,
+  "testes": 156,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 341,
-   "linhas": 48842
+   "arquivos": 342,
+   "linhas": 48965
   },
   "src/hooks": {
    "arquivos": 63,

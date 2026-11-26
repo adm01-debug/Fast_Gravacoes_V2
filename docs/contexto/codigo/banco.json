@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 266,
+ "migrations": 268,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -103,6 +103,7 @@
   "rate_limit_check_and_record",
   "rate_limit_check_and_record_pair",
   "record_packaging_defect",
+  "refresh_machine_health_metrics",
   "refresh_operator_rankings",
   "rollback_inventory_stock",
   "rollup_cron_p95_daily",
@@ -768,6 +769,11 @@
    "nome": "purge-old-logs-daily",
    "agenda": "15 3 * * *",
    "migration": "20261002130000_csp_reports_retention.sql"
+  },
+  {
+   "nome": "refresh-machine-health-metrics",
+   "agenda": "10 4 * * *",
+   "migration": "20261129110000_refresh_machine_health_metrics.sql"
   },
   {
    "nome": "rollup-cron-p95-daily",

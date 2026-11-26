@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 155,
+ "total": 156,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 130
+  "unit": 131
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 118
+   "arquivos": 119
   },
   {
    "padrao": "tests/",
@@ -470,6 +470,16 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 3,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "src/features/analytics/hooks/useExecutiveDashboard.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1665,7 +1675,7 @@
   "src/features/analytics/components/bi/BIStatCard.tsx": 1,
   "src/features/analytics/components/efficiency/SequencingTab.tsx": 1,
   "src/features/analytics/hooks/useEnergy.ts": 1,
-  "src/features/analytics/hooks/useExecutiveDashboard.ts": 2,
+  "src/features/analytics/hooks/useExecutiveDashboard.ts": 3,
   "src/features/analytics/hooks/useKPIs.ts": 1,
   "src/features/analytics/hooks/useRealtimeConnection.ts": 1,
   "src/features/analytics/hooks/useSPC.ts": 1,
