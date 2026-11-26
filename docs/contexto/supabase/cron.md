@@ -10,7 +10,7 @@ Horários em UTC. Execuções recentes em `cron-runs.md`. O `command` de cada jo
 | 12 | auto-reassign-packaging-30min | `*/5 * * * *` | sim | postgres | postgres | `chama: public.auto_reassign_stale_packaging_tasks` |
 | 13 | auto-promote-jobs-fallback | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
 | 22 | archive-finished-jobs-daily | `7 4 * * *` | sim | postgres | postgres | `chama: public.archive_finished_jobs` |
-| 23 | cron-alert-email-every-30min | `*/30 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
-| 24 | health-monitor-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
-| 25 | metrics-collector-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
 | 28 | refresh-machine-health-metrics | `10 4 * * *` | sim | postgres | postgres | `chama: public.refresh_machine_health_metrics` |
+| 29 | cron-alert-email-every-30min | `*/30 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
+| 30 | health-monitor-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
+| 31 | metrics-collector-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |

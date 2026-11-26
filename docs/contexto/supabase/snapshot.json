@@ -24762,9 +24762,18 @@
         },
         {
           "active": true,
+          "command": "chama: public.refresh_machine_health_metrics",
+          "database": "postgres",
+          "jobid": 28,
+          "jobname": "refresh-machine-health-metrics",
+          "schedule": "10 4 * * *",
+          "username": "postgres"
+        },
+        {
+          "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 23,
+          "jobid": 29,
           "jobname": "cron-alert-email-every-30min",
           "schedule": "*/30 * * * *",
           "username": "postgres"
@@ -24773,7 +24782,7 @@
           "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 24,
+          "jobid": 30,
           "jobname": "health-monitor-every-5min",
           "schedule": "*/5 * * * *",
           "username": "postgres"
@@ -24782,18 +24791,9 @@
           "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 25,
+          "jobid": 31,
           "jobname": "metrics-collector-every-5min",
           "schedule": "*/5 * * * *",
-          "username": "postgres"
-        },
-        {
-          "active": true,
-          "command": "chama: public.refresh_machine_health_metrics",
-          "database": "postgres",
-          "jobid": 28,
-          "jobname": "refresh-machine-health-metrics",
-          "schedule": "10 4 * * *",
           "username": "postgres"
         }
       ]
@@ -24844,6 +24844,40 @@
     ],
     "foreign_servers": [],
     "functions": [
+      {
+        "args": "",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [
+            "29:cron-alert-email-every-30min",
+            "30:health-monitor-every-5min",
+            "31:metrics-collector-every-5min"
+          ],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=app_private, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "051054a0572ed1f9",
+        "execute_api_roles": null,
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "functions_base_url",
+        "owner": "postgres",
+        "returns": "text",
+        "schema": "app_private",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
       {
         "args": "_user_id uuid, _role app_role",
         "callers": {
@@ -25021,7 +25055,7 @@
           "search_path=app_private, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "8b0581aad309015a",
+        "definition_sha": "02dd4d757ef0b9dd",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -25043,6 +25077,7 @@
           "code_total_files": 0,
           "cron": [],
           "db": [
+            "app_private.functions_base_url",
             "app_private.normalize_functions_base_url"
           ],
           "triggers": [],
@@ -25084,6 +25119,7 @@
           "code_total_files": 2,
           "cron": [],
           "db": [
+            "app_private.functions_base_url",
             "public.notify_loss_risk",
             "public.trigger_auto_promotion",
             "public.trigger_send_tpm_email"
@@ -26060,7 +26096,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "7760e400d3fccdd0",
+        "definition_sha": "8258db89b61581df",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -26095,7 +26131,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "4523e0e91fd7b605",
+        "definition_sha": "674331a1612dbfab",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,

@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 11:38 UTC
+
+- **cron jobs** adicionado (3): `29:cron-alert-email-every-30min`, `30:health-monitor-every-5min`, `31:metrics-collector-every-5min`
+- **cron jobs** removido (3): `23:cron-alert-email-every-30min`, `24:health-monitor-every-5min`, `25:metrics-collector-every-5min`
+- **functions** adicionado (1): `app_private.functions_base_url()`
+- **functions** alterado (3): `app_private.normalize_functions_base_url()`, `public.count_active_operators_since(p_since timestamp with time zone)`, `public.count_running_machines()`
+
 ## 2026-11-26 11:13 UTC
 
 - **cron jobs** adicionado (1): `28:refresh-machine-health-metrics`

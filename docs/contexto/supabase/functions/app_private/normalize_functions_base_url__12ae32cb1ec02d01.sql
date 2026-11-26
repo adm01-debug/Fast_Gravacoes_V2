@@ -7,6 +7,31 @@ AS $function$
 DECLARE
   v_ref text;
 BEGIN
+  -- Rotacoes gravam URL e chave em ordem variavel. Quando a URL chega antes da
+  -- chave, no INSERT dela o `ref` ainda nao pode ser derivado (project_ref
+  -- nulo, valor mantido). Este ramo revisita a URL quando a chave chega depois,
+  -- senao o host legado ficaria preso ate alguem rodar um UPDATE manual.
+  IF NEW.key = 'service_role_key' THEN
+    IF pg_trigger_depth() > 1 THEN
+      RETURN NEW;
+    END IF;
+
+    v_ref := app_private.project_ref_from_key(NEW.value);
+
+    IF coalesce(v_ref, '') <> ''
+       AND EXISTS (
+         SELECT 1 FROM app_private.runtime_config
+          WHERE key = 'functions_base_url' AND value ~ 'atomicabr'
+       ) THEN
+      UPDATE app_private.runtime_config
+         SET value = 'https://' || v_ref || '.supabase.co/functions/v1'
+       WHERE key = 'functions_base_url';
+      RAISE NOTICE 'functions_base_url normalizado apos gravacao da chave: %', v_ref;
+    END IF;
+
+    RETURN NEW;
+  END IF;
+
   IF NEW.key <> 'functions_base_url' OR coalesce(NEW.value, '') = '' THEN
     RETURN NEW;
   END IF;
