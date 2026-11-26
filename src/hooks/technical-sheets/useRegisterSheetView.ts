@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 /**
  * Registra um acesso à ficha técnica (`technical_sheets.view_count`).
@@ -20,7 +21,11 @@ export const useRegisterSheetView = (sheetId: string | null) => {
       .rpc('increment_sheet_view_count', { sheet_id: sheetId })
       .then(({ error }) => {
         if (error) {
-          console.warn('[technical-sheets] acesso não registrado:', error.message);
+          logger.warn(
+            '[technical-sheets] acesso não registrado',
+            error.message,
+            'useRegisterSheetView',
+          );
         }
       });
   }, [sheetId]);
