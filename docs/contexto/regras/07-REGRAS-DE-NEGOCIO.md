@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d8b5a7248c` · branch `main` · 2026-11-26 21:18 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `12d2399f55` · branch `main` · 2026-11-26 21:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T20:39:56Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T21:39:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T20:39:56Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T21:39:41Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T20:39:56Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T21:39:41Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1413,7 +1413,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `tpm_notification_logs` | `status` | obrigatório |
 | `tpm_notification_logs` | `sent_at` | default now() |
 | `tpm_notification_logs` | `retry_attempts` | default 0 |
-| `tpm_notification_logs` | `(tabela)` | constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text])) |
+| `tpm_notification_logs` | `(tabela)` | constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text, 'provider_not_configured'::text])) |
 | `tpm_notification_queue` | `id` | PK; default gen_random_uuid() |
 | `tpm_notification_queue` | `machine_id` | FK → machines.id on delete cascade |
 | `tpm_notification_queue` | `template_id` | FK → tpm_notification_templates_published.id |
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T20:39:56Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T21:39:41Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1655,7 +1655,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T20:39:56Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T21:39:41Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1686,7 +1686,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `technical_sheets` | `status` | `draft`, `published`, `review_needed` | `draft` |
 | `telemetry_traces` | `status` | **livre (sem enum/CHECK)** |  |
 | `tpm_executions` | `status` | **livre (sem enum/CHECK)** | `in_progress` |
-| `tpm_notification_logs` | `status` | `failure`, `success` |  |
+| `tpm_notification_logs` | `status` | `failure`, `provider_not_configured`, `success` |  |
 | `tpm_notification_queue` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `tpm_notification_templates` | `status` | `draft`, `published` | `published` |
 
@@ -1871,7 +1871,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `error` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
 | `status` | `fail` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>`supabase/functions/health-monitor/index.ts` |
 | `status` | `failed` | compara, escreve | `src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`supabase/functions/tpm-notifications/index.ts` |
-| `status` | `failure` | escreve | `src/features/notifications/hooks/useTPMNotifications.ts` |
 | `status` | `finished` | compara, escreve, filtra | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/jobs/JobTraceabilityTab.tsx`<br>… +41 |
 | `status` | `fulfilled` | compara | `src/features/auth/components/AuthProvider.tsx`<br>`src/hooks/abc/useABCMutations.ts`<br>`supabase/functions/send-email-report/index.ts` |
 | `status` | `good` | escreve | `src/components/operator/ProductionTimer.tsx` |
@@ -1894,7 +1893,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `processing` | compara | `src/features/maintenance/components/TPMNotificationQueue.tsx` |
 | `status` | `producing` | compara | `src/components/dashboard/LiveMachineStatusPanel.tsx` |
 | `status` | `production` | compara, escreve, filtra | `src/components/calendar/AgendaView.tsx`<br>`src/components/calendar/JobQuickActions.tsx`<br>`src/components/dashboard/LiveMachineStatusPanel.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/digital-twin/FactoryFloorMap.tsx`<br>… +37 |
-| `status` | `provider_not_configured` | compara | `src/features/maintenance/components/TPMNotificationLogs.tsx` |
+| `status` | `provider_not_configured` | compara, escreve | `src/features/maintenance/components/TPMNotificationLogs.tsx`<br>`src/features/notifications/hooks/useTPMNotifications.ts` |
 | `status` | `published` | compara, escreve, filtra | `src/components/knowledge/KnowledgeStatusBadge.tsx`<br>`src/features/jobs/hooks/useJobInventoryCheck.ts`<br>`src/features/maintenance/components/TPMNotificationTemplates.tsx` |
 | `status` | `quarantine` | compara | `src/components/traceability/TraceabilityStatsCards.tsx` |
 | `status` | `queue` | compara, escreve, filtra | `src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/features/admin/hooks/useBIExport.ts`<br>`src/features/analytics/components/bi/FuturisticBI.tsx`<br>`src/features/jobs/hooks/useDuplicateJob.ts`<br>… +10 |
@@ -3463,7 +3462,7 @@ _nenhum item encontrado_
 | `src/features/admin/components/security/SecurityOverviewCard.test.tsx` | 6 | SecurityOverviewCard (etapa 066) · não dá pontos nem aprova itens sem verificação na conta nova · aprova e pontua só o que foi verificado de verdade · marca a verificação de senha como não verificada em qualquer conta … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/features/jobs/types/job.schema.test.ts` | 6 | jobSchema · valida a OS com a técnica textual usada no banco · recusa OS sem técnica · preserva as relações e os timestamps que a consulta traz … |
-| `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
+| `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra canal sem provedor quando o email não tem provedor · registra canal sem provedor quando o whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/hooks/technical-sheets/useRegisterSheetView.test.ts` | 6 | useRegisterSheetView · incrementa o contador da ficha aberta · conta uma vez por ficha, mesmo com re-render · conta de novo ao abrir outra ficha … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `src/lib/dateUtils.test.ts` | 6 | parseDateOnly · interpreta data pura como meia-noite local · devolve null para entrada vazia ou invalida · formatDateOnly … |

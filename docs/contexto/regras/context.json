@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
+  "sha": "12d2399f55ac5ace34c2427dd9457c0c029ef676",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 21:18 UTC",
+  "generated_at": "2026-11-26 21:48 UTC",
   "files_total": 1653,
   "code_files": 1457,
-  "code_lines": 216273
+  "code_lines": 216276
  },
  "version": "1.3.2",
- "facts_hash": "d30217d77118ddd8",
+ "facts_hash": "1cc1047f699231a9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -9935,7 +9935,7 @@
      }
     ],
     "constraints": [
-     "constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text]))"
+     "constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text, 'provider_not_configured'::text]))"
     ],
     "src": "docs/contexto/supabase/snapshot.json",
     "comment": "",
@@ -29794,7 +29794,7 @@
   {
    "module": "src/features/notifications",
    "files": 28,
-   "lines": 4816,
+   "lines": 4819,
    "tables": [
     "machine_predictions",
     "machines",
@@ -43487,7 +43487,7 @@
    {
     "table": "tpm_notification_logs",
     "column": "(tabela)",
-    "rule": "constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text]))"
+    "rule": "constraint tpm_notification_logs_status_check CHECK (status = ANY (ARRAY['success'::text, 'failure'::text, 'provider_not_configured'::text]))"
    },
    {
     "table": "tpm_notification_queue",
@@ -48756,7 +48756,7 @@
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.ts",
     "field": "status",
-    "value": "failure",
+    "value": "provider_not_configured",
     "kind": "escreve"
    },
    {
@@ -54201,11 +54201,11 @@
    },
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
-    "name": "registra falha em vez de sucesso quando o canal email não tem provedor"
+    "name": "registra canal sem provedor quando o email não tem provedor"
    },
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
-    "name": "registra falha quando o canal whatsapp não tem provedor"
+    "name": "registra canal sem provedor quando o whatsapp não tem provedor"
    },
    {
     "file": "src/features/notifications/hooks/useTPMNotifications.test.ts",
@@ -65224,6 +65224,7 @@
      "enum": "",
      "allowed": [
       "failure",
+      "provider_not_configured",
       "success"
      ],
      "default": "",
@@ -66307,7 +66308,8 @@
       "filtra:supabase/functions/tpm-notifications/index.ts"
      ],
      "provider_not_configured": [
-      "compara:src/features/maintenance/components/TPMNotificationLogs.tsx"
+      "compara:src/features/maintenance/components/TPMNotificationLogs.tsx",
+      "escreve:src/features/notifications/hooks/useTPMNotifications.ts"
      ],
      "processing": [
       "compara:src/features/maintenance/components/TPMNotificationQueue.tsx"
@@ -66331,9 +66333,6 @@
       "compara:src/features/notifications/hooks/useNotifications.ts",
       "escreve:src/features/notifications/hooks/useNotifications.ts",
       "filtra:src/features/notifications/hooks/useNotifications.ts"
-     ],
-     "failure": [
-      "escreve:src/features/notifications/hooks/useTPMNotifications.ts"
      ],
      "in_triage": [
       "compara:src/features/packaging/components/PackagingStatsCards.tsx",
@@ -71388,13 +71387,6 @@
      "compara:src/features/maintenance/components/ExecutionDetailsModal.tsx",
      "compara:src/features/maintenance/components/ExecutionRecordView.tsx",
      "escreve:src/features/maintenance/hooks/useTPMApprovalMutations.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `provider_not_configured` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/features/maintenance/components/TPMNotificationLogs.tsx"
     ]
    },
    {
@@ -88485,8 +88477,8 @@
    "is_test": true,
    "tests": [
     "useTPMNotifications.sendTestNotification",
-    "registra falha em vez de sucesso quando o canal email não tem provedor",
-    "registra falha quando o canal whatsapp não tem provedor",
+    "registra canal sem provedor quando o email não tem provedor",
+    "registra canal sem provedor quando o whatsapp não tem provedor",
     "registra sucesso quando o push é entregue ao navegador",
     "registra falha quando o push não é entregue",
     "sem confirmação apenas lista destinatários, sem enviar nem registrar log"
@@ -88497,7 +88489,7 @@
   },
   "src/features/notifications/hooks/useTPMNotifications.ts": {
    "path": "src/features/notifications/hooks/useTPMNotifications.ts",
-   "lines": 304,
+   "lines": 307,
    "exports": [
     "interface TPMNotificationPreferences",
     "const saveTPMNotificationPreferences",
@@ -88567,7 +88559,7 @@
     },
     {
      "field": "status",
-     "value": "failure",
+     "value": "provider_not_configured",
      "kind": "escreve"
     }
    ],
@@ -101303,10 +101295,21 @@
   }
  },
  "git": {
-  "sha": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
+  "sha": "12d2399f55ac5ace34c2427dd9457c0c029ef676",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "12d2399",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: o teste manual de notificacao TPM grava canal sem provedor, nao falha generica (#339)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/features/notifications/hooks/useTPMNotifications.test.ts",
+     "src/features/notifications/hooks/useTPMNotifications.ts"
+    ]
+   },
    {
     "sha": "d8b5a72",
     "date": "2026-11-26",
@@ -101666,34 +101669,12 @@
      "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
      "supabase/migrations/20261128120000_fk_shipments_restrict.sql"
     ]
-   },
-   {
-    "sha": "6e755f1",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-     "src/components/jobs/JobDetailsModal.tsx",
-     "src/features/jobs/hooks/useJobs.ts",
-     "src/features/jobs/services/jobsService.test.ts",
-     "src/features/jobs/services/jobsService.ts",
-     "src/features/production/hooks/useOperatorEvolution.ts",
-     "src/integrations/supabase/types.ts",
-     "supabase/functions/erp-api/index.ts",
-     "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     13
-   ],
-   [
-    "supabase/functions/erp-api/index.ts",
-    3
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101704,11 +101685,7 @@
     2
    ],
    [
-    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-    2
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.tsx",
+    "supabase/functions/erp-api/index.ts",
     2
    ],
    [
@@ -101721,10 +101698,6 @@
    ],
    [
     "src/components/calendar/CalendarTimeline.tsx",
-    2
-   ],
-   [
-    "src/features/jobs/services/jobsService.test.ts",
     2
    ],
    [
@@ -101748,6 +101721,14 @@
     2
    ],
    [
+    "src/features/notifications/hooks/useTPMNotifications.test.ts",
+    1
+   ],
+   [
+    "src/features/notifications/hooks/useTPMNotifications.ts",
+    1
+   ],
+   [
     "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
     1
    ],
@@ -101765,6 +101746,10 @@
    ],
    [
     "src/i18n/locales/en-US.json",
+    1
+   ],
+   [
+    "src/i18n/locales/pt-BR.json",
     1
    ]
   ]

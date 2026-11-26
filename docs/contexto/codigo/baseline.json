@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
+  "commit": "12d2399f55ac5ace34c2427dd9457c0c029ef676",
   "branch": "main",
-  "data_commit": "2026-11-26T18:11:14-03:00",
+  "data_commit": "2026-11-26T18:46:14-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "12d2399",
+    "data": "2026-11-26",
+    "assunto": "fix: o teste manual de notificacao TPM grava canal sem provedor, nao falha generica (#339)"
+   },
    {
     "sha": "d8b5a72",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "09d2554",
     "data": "2026-11-25",
     "assunto": "fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)"
-   },
-   {
-    "sha": "d6a4a95",
-    "data": "2026-11-25",
-    "assunto": "fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -146,7 +146,7 @@
    },
    {
     "pasta": "src/features/notifications",
-    "mudancas": 33
+    "mudancas": 35
    },
    {
     "pasta": "src/features/admin",
@@ -166,7 +166,7 @@
    },
    {
     "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -199,11 +199,11 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 22
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 23
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 22
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 186
+    "commits": 187
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1655,
   "arquivos_codigo": 1170,
-  "linhas_codigo": 197951,
+  "linhas_codigo": 197954,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 347,
-   "linhas": 49583
+   "linhas": 49586
   },
   "src/hooks": {
    "arquivos": 65,
