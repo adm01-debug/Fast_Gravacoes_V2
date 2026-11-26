@@ -33,7 +33,11 @@ export function inicioDoDiaOperacional(agora: Date = new Date()): string {
     valor("minute"),
     valor("second"),
   );
-  const deslocamentoMs = paredeComoUtc - agora.getTime();
+  // O horario de parede e reconstruido sem milissegundos; subtrair `agora`
+  // inteiro faria o deslocamento carregar esses milissegundos e o corte da
+  // meia-noite sairia como 03:00:00.123Z, perdendo a atividade do primeiro
+  // instante do dia.
+  const deslocamentoMs = paredeComoUtc - (agora.getTime() - agora.getMilliseconds());
   const meiaNoiteUtc = Date.UTC(valor("year"), valor("month") - 1, valor("day"), 0, 0, 0) - deslocamentoMs;
   return new Date(meiaNoiteUtc).toISOString();
 }

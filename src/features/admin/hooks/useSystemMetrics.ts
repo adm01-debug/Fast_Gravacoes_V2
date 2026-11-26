@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -57,10 +58,13 @@ export function ultimoSnapshot(
 }
 
 export function useSystemMetrics(limit = 20, refreshKey = 0) {
-  return useQuery<SystemMetricsSnapshot[]>({
-    // `refreshKey` entra na chave para que o botao "Atualizar" da pagina de
-    // monitoramento recarregue o cartao alem dos dados de `useMonitoringData`.
-    queryKey: ["system-metrics", limit, refreshKey],
+  const query = useQuery<SystemMetricsSnapshot[]>({
+    // A chave NAO inclui `refreshKey`: como a chave antiga fica no cache, voltar
+    // a pagina zerava o contador e o primeiro clique em "Atualizar" caia numa
+    // entrada ja fresca, sem consultar. A chave e estavel e o botao pede
+    // `refetch()` explicito.
+    queryKey: ["system-metrics", limit],
+    staleTime: 0,
     refetchInterval: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -75,4 +79,16 @@ export function useSystemMetrics(limit = 20, refreshKey = 0) {
     },
     retry: false,
   });
+
+  const refetch = query.refetch;
+  const primeiroRender = useRef(true);
+  useEffect(() => {
+    if (primeiroRender.current) {
+      primeiroRender.current = false;
+      return;
+    }
+    void refetch();
+  }, [refreshKey, refetch]);
+
+  return query;
 }
