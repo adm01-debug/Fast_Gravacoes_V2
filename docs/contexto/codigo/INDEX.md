@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0c881ddebe0ab5ec2cb7c220a6a94875153fab93` (2026-11-25T21:15:58-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4533b52f34fcd25c3f51e01e203f2ccdb6d39821` (2026-11-25T22:01:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1628 |
 | arquivos_codigo | 1153 |
-| linhas_codigo | 196201 |
+| linhas_codigo | 196236 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -247,7 +247,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8609 nós · 32635 arestas · 389 comunidades · grafo do commit `0c881dde`
+- 8609 nós · 32635 arestas · 389 comunidades · grafo do commit `4533b52f`
 - comunidades maiores: CardHeader (192), client.ts (184), date-fns (167), react (154), analytics/index.ts (154), cn (151), Button (150), utils.ts (148), DailyCalendar.tsx (146), Badge (139), package.json (134), SelectContent (128)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -370,6 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-25 `4533b52` fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)
 - 2026-11-25 `0c881dd` fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)
 - 2026-11-25 `8b6619f` fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)
 - 2026-11-25 `9d7e076` fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)
@@ -384,7 +385,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `e5435a5` feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)
 - 2026-11-25 `0351511` infra: publica push_notifications no realtime (#308)
 - 2026-11-25 `760ed63` fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)
-- 2026-11-25 `970aef7` feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

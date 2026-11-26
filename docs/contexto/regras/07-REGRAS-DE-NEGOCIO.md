@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0c881ddebe` · branch `main` · 2026-11-26 00:18 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4533b52f34` · branch `main` · 2026-11-26 01:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T23:14:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T00:37:52Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T23:14:08Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T00:37:52Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T23:14:08Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T00:37:52Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T23:14:08Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T00:37:52Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T23:14:08Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T00:37:52Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3351,7 +3351,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1516 testes em 134 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1518 testes em 134 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3414,6 +3414,7 @@ _nenhum item encontrado_
 | `src/test/circuitBreaker.test.ts` | 9 | CircuitBreaker · starts in closed state · opens after failureThreshold failures · throws CircuitOpenError immediately when open … |
 | `src/test/dateUtils.test.ts` | 9 | parseDateOnly · parses a date-only string at local midnight (no UTC shift) · keeps the calendar day stable regardless of timezone offset · delegates full timestamps to new Date() … |
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
+| `supabase/functions/_shared/cors.test.ts` | 9 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
@@ -3424,7 +3425,6 @@ _nenhum item encontrado_
 | `src/hooks/use-modal-param.test.tsx` | 7 | useModalParam · abre o modal quando a URL traz ?modal=<name> · está fechado sem o param ou com outro nome · setOpen(true) escreve o param e setOpen(false) remove … |
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
-| `supabase/functions/_shared/cors.test.ts` | 7 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
 | `tests/e2e/accessibility.spec.ts` | 7 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · TraceabilityPage - regiao rolavel alcancavel por teclado · /traceability nao deve ter regiao rolavel inacessivel por teclado … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)",
    "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)",
    "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)",
    "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)",
-   "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)",
-   "fix: limpa dados locais em toda saida de sessao (etapa 232) (#312)"
+   "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
