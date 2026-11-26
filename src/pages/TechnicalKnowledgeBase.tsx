@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Plus, Lightbulb } from 'lucide-react';
 import { useTechnicalSheets, useTechnicalSheetMutations, TechnicalSheet } from '@/hooks/useTechnicalSheets';
+import { useRegisterSheetView } from '@/hooks/technical-sheets/useRegisterSheetView';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTechniques } from '@/features/jobs';
@@ -35,6 +36,9 @@ const TechnicalKnowledgeBase = () => {
   const { createSheet } = useTechnicalSheetMutations();
 
   const { sheets, isLoadingSheets, categories, materials } = useTechnicalSheets();
+
+  // Contador de acessos da ficha (metricas "ACESSOS" do cabecalho e do resumo).
+  useRegisterSheetView(selectedSheet);
 
   const { data: techniques = [] } = useTechniques();
 
