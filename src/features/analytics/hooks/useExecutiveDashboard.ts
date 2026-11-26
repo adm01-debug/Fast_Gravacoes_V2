@@ -51,7 +51,7 @@ export interface ExecutiveKPIs {
   efficiencyTrend: { date: string; efficiency: number; prevEfficiency?: number }[];
   techniqueDistribution: { technique: string; count: number; color: string }[];
   topOperators: { name: string; produced: number; efficiency: number }[];
-  machinePerformance: { machine: string; utilization: number; oee: number }[];
+  machinePerformance: { machine: string; utilization: number; oee: number; mtbf?: number | null; mttr?: number | null }[];
 }
 
 export interface DateRange {
@@ -157,6 +157,8 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
             machine: m.code || m.name,
             utilization: Math.min(100, (runTimeMinutes / periodMinutes) * 100),
             oee: machineMetrics?.oee_score || 0,
+                      mtbf: machineMetrics?.avg_time_between_failures ?? null,
+                      mttr: machineMetrics?.avg_repair_time ?? null,
           };
         });
 
@@ -210,7 +212,14 @@ async function fetchPeriodData(startDate: string, endDate: string, filters?: { m
     // maintenance não alimenta os KPIs do painel: isola a falha para não
     // derrubar a carga inteira (comportamento anterior era `data || []`).
     fetchAllRows((o, l) => maintenanceQuery.range(o, o + l - 1)).catch(() => []),
-    supabase.from('machine_health_metrics').select('*'),
+    // Só a leitura mais recente por máquina importa (abaixo: `.find` no array).
+    // Ordenado desc + limit para não varrer o histórico inteiro nem depender da
+    // ordem física das linhas, que fazia o painel pegar uma janela antiga qualquer.
+    supabase
+      .from('machine_health_metrics')
+      .select('*')
+      .order('calculated_at', { ascending: false })
+      .limit(500),
     supabase.from('profiles').select('*'),
   ]);
 

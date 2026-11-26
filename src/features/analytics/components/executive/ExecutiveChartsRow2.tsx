@@ -142,6 +142,13 @@ export function ExecutiveChartsRow2({ kpis, techniques, machines, onTechniqueSel
                       </span>
                     </div>
                     <Progress value={m.utilization} className="h-2" />
+                    {(m.mtbf != null || m.mttr != null) && (
+                      <p className="text-xs text-muted-foreground">
+                        {m.mtbf != null && `MTBF ${m.mtbf.toFixed(0)} h`}
+                        {m.mtbf != null && m.mttr != null && ' · '}
+                        {m.mttr != null && `MTTR ${m.mttr.toFixed(1)} h`}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
