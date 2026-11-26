@@ -4,7 +4,7 @@
 |---|---|
 | nome | bitrix24-sync |
 | status | ACTIVE |
-| versão | 229 |
+| versão | 231 |
 | verify_jwt | não |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/bitrix24-sync/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

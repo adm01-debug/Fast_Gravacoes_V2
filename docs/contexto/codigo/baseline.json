@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "12113e068b2ecc1caec63f10a1bd43b475ad434a",
+  "commit": "d103b9e24acdd0268ad90f81634dfa37d5165c8c",
   "branch": "main",
-  "data_commit": "2026-11-26T11:29:52-03:00",
+  "data_commit": "2026-11-26T12:17:59-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d103b9e",
+    "data": "2026-11-26",
+    "assunto": "fix: cobra parada de Tab so em area rolavel sem foco interno (#326)"
+   },
    {
     "sha": "12113e0",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "cd834ba",
     "data": "2026-11-25",
     "assunto": "infra: remove push em main do automation-local (recupera PR #229) (#298)"
-   },
-   {
-    "sha": "d0cab10",
-    "data": "2026-11-25",
-    "assunto": "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -173,16 +173,12 @@
     "mudancas": 19
    },
    {
-    "pasta": "package.json",
-    "mudancas": 17
-   },
-   {
     "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 16
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 14
+    "pasta": "package.json",
+    "mudancas": 16
    },
    {
     "pasta": "src/components/jobs",
@@ -195,6 +191,10 @@
    {
     "pasta": "src/components/ui",
     "mudancas": 14
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 13
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -287,26 +287,26 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 6
-   },
-   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 5
    },
    {
     "arquivo": ".github/workflows/migration-repair.yml",
     "mudancas": 5
+   },
+   {
+    "arquivo": "docs/operacoes/openapi-edge-functions.yaml",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 173
+    "commits": 174
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 12
+    "commits": 10
    },
    {
     "autor": "dependabot[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1641,
   "arquivos_codigo": 1162,
-  "linhas_codigo": 197366,
+  "linhas_codigo": 197376,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -553,7 +553,7 @@
   },
   "tests/e2e": {
    "arquivos": 22,
-   "linhas": 1756
+   "linhas": 1766
   },
   "vite.config.ts": {
    "arquivos": 1,

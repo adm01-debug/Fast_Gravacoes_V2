@@ -4,7 +4,7 @@
 |---|---|
 | nome | health-monitor |
 | status | ACTIVE |
-| versão | 229 |
+| versão | 231 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
