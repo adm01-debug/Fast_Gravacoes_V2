@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "241116afa9381f82e96800bbdb4d5d5505416bdc",
+  "sha": "08b427a7208c8a85f65151067831337784a03661",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 15:54 UTC",
-  "files_total": 1646,
-  "code_files": 1450,
-  "code_lines": 215825
+  "generated_at": "2026-11-26 15:58 UTC",
+  "files_total": 1647,
+  "code_files": 1451,
+  "code_lines": 216011
  },
  "version": "1.3.2",
- "facts_hash": "7897d23cc4e67b26",
+ "facts_hash": "e8732fd222c24964",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 684,
+   ".tsx": 685,
    ".ts": 417,
    ".sql": 282,
    ".mjs": 50,
@@ -22413,7 +22413,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 309
+    "deps_count": 310
    },
    {
     "path": "",
@@ -22843,7 +22843,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 251
+    "deps_count": 252
    },
    {
     "path": "",
@@ -23515,7 +23515,7 @@
      "get_finished_jobs_for_evolution",
      "verify_audit_chain"
     ],
-    "deps_count": 271
+    "deps_count": 272
    },
    {
     "path": "",
@@ -23614,7 +23614,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 307
+    "deps_count": 308
    },
    {
     "path": "",
@@ -24710,7 +24710,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 245
+    "deps_count": 246
    },
    {
     "path": "",
@@ -24938,7 +24938,7 @@
      "get_finished_jobs_for_evolution",
      "verify_audit_chain"
     ],
-    "deps_count": 282
+    "deps_count": 283
    },
    {
     "path": "",
@@ -25043,7 +25043,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 313
+    "deps_count": 314
    },
    {
     "path": "",
@@ -25864,7 +25864,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 237
+    "deps_count": 238
    },
    {
     "path": "/rota-fantasma-que-nao-devia-contar",
@@ -27327,7 +27327,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 585,
+  "components_count": 586,
   "hooks": [
    {
     "name": "useContacts",
@@ -28694,8 +28694,8 @@
   },
   {
    "module": "src/components",
-   "files": 426,
-   "lines": 60089,
+   "files": 427,
+   "lines": 60273,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -29902,7 +29902,7 @@
   {
    "module": "src/features/production",
    "files": 31,
-   "lines": 3550,
+   "lines": 3552,
    "tables": [
     "jobs",
     "machine_downtime",
@@ -34738,6 +34738,11 @@
     "file": "src/components/design-system/sections/modals/SheetExamples.tsx",
     "field": "sheet-email",
     "rules": "type=email"
+   },
+   {
+    "file": "src/components/jobs/JobLossesTab.tsx",
+    "field": "loss-quantity",
+    "rules": "type=number, min=1, step=1"
    },
    {
     "file": "src/components/kanban/KanbanAIAdvisor.tsx",
@@ -77000,7 +77005,7 @@
   },
   "src/components/jobs/JobDetailsModal.cancel.test.tsx": {
    "path": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-   "lines": 243,
+   "lines": 244,
    "is_test": true,
    "tests": [
     "JobDetailsModal - cancelamento de OS",
@@ -77019,7 +77024,7 @@
   },
   "src/components/jobs/JobDetailsModal.tsx": {
    "path": "src/components/jobs/JobDetailsModal.tsx",
-   "lines": 632,
+   "lines": 642,
    "exports": [
     "function JobDetailsModal"
    ],
@@ -77073,6 +77078,19 @@
    "lines": 225,
    "exports": [
     "function JobInstructionsTab"
+   ]
+  },
+  "src/components/jobs/JobLossesTab.tsx": {
+   "path": "src/components/jobs/JobLossesTab.tsx",
+   "lines": 173,
+   "exports": [
+    "function JobLossesTab"
+   ],
+   "html_constraints": [
+    {
+     "field": "loss-quantity",
+     "rules": "type=number, min=1, step=1"
+    }
    ]
   },
   "src/components/jobs/JobQualityTab.tsx": {
@@ -90023,7 +90041,7 @@
   },
   "src/features/production/hooks/useProductionLosses.ts": {
    "path": "src/features/production/hooks/useProductionLosses.ts",
-   "lines": 119,
+   "lines": 121,
    "exports": [
     "interface ProductionLoss",
     "function useProductionLosses"
@@ -100996,10 +101014,22 @@
   }
  },
  "git": {
-  "sha": "241116afa9381f82e96800bbdb4d5d5505416bdc",
+  "sha": "08b427a7208c8a85f65151067831337784a03661",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "08b427a",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela para registrar perdas da OS e alimentar o OEE (#325)",
+    "files": [
+     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+     "src/components/jobs/JobDetailsModal.tsx",
+     "src/components/jobs/JobLossesTab.tsx",
+     "src/features/production/hooks/useProductionLosses.ts"
+    ]
+   },
    {
     "sha": "241116a",
     "date": "2026-11-26",
@@ -101391,21 +101421,20 @@
      "supabase/functions/external-db-bridge/index.ts",
      "supabase/functions/external-db-bridge/validate_contract.ts"
     ]
-   },
-   {
-    "sha": "fc44f91",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: dar nome acessivel aos setores do grafico de status em /kpis (#299)",
-    "files": [
-     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     12
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    3
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.tsx",
+    3
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101448,6 +101477,10 @@
     3
    ],
    [
+    "src/features/production/hooks/useProductionLosses.ts",
+    2
+   ],
+   [
     "supabase/functions/metrics-collector/index.ts",
     2
    ],
@@ -101469,18 +101502,6 @@
    ],
    [
     "src/components/dashboard/AlertScheduleModal.tsx",
-    2
-   ],
-   [
-    "src/constants/index.ts",
-    2
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-    2
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.tsx",
     2
    ]
   ]

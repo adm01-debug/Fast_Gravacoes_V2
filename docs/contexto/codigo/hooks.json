@@ -3566,7 +3566,7 @@
    "hooks_exportados": [
     "useProductionLosses"
    ],
-   "linhas": 119,
+   "linhas": 121,
    "dominio": "features/production",
    "tabelas": [
     "jobs",

@@ -6,7 +6,7 @@
    "src/pages (56)"
   ],
   "componentes": [
-   "src/components (403)",
+   "src/components (404)",
    "src/features (145)",
    "src/pages (56)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 20,
  "extensao_componentes": [
-  ".tsx (623)"
+  ".tsx (624)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: tela para registrar perdas da OS e alimentar o OEE (#325)",
    "fix: rotinas internas voltam a executar (URL canônica das functions) (#320)",
    "fix: cobra parada de Tab so em area rolavel sem foco interno (#326)",
    "fix: restaura a RPC atomica de pecas perdidas no banco (#322)",
-   "feat: tela de metricas do sistema (/monitoramento) (#321)",
-   "fix: regiao rolavel horizontal passa a ser alcancavel por teclado (#324)"
+   "feat: tela de metricas do sistema (/monitoramento) (#321)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

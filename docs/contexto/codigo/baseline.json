@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "241116afa9381f82e96800bbdb4d5d5505416bdc",
+  "commit": "08b427a7208c8a85f65151067831337784a03661",
   "branch": "main",
-  "data_commit": "2026-11-26T12:51:16-03:00",
+  "data_commit": "2026-11-26T12:51:34-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "08b427a",
+    "data": "2026-11-26",
+    "assunto": "feat: tela para registrar perdas da OS e alimentar o OEE (#325)"
+   },
    {
     "sha": "241116a",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "d139424",
     "data": "2026-11-25",
     "assunto": "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)"
-   },
-   {
-    "sha": "d0e7a1d",
-    "data": "2026-11-25",
-    "assunto": "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 298,
+  "arquivos_mudados_7d": 299,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -173,16 +173,16 @@
     "mudancas": 19
    },
    {
+    "pasta": "src/components/jobs",
+    "mudancas": 17
+   },
+   {
     "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 16
    },
    {
     "pasta": "package.json",
     "mudancas": 16
-   },
-   {
-    "pasta": "src/components/jobs",
-    "mudancas": 14
    },
    {
     "pasta": "src/components/navigation",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 175
+    "commits": 176
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,15 +327,15 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1648,
-  "arquivos_codigo": 1165,
-  "linhas_codigo": 197527,
+  "arquivos_total": 1649,
+  "arquivos_codigo": 1166,
+  "linhas_codigo": 197713,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
   "itens_menu": 70,
   "modulos": 75,
-  "componentes": 623,
+  "componentes": 624,
   "hooks": 198,
   "edge_functions": 33,
   "tabelas": 133,
@@ -480,8 +480,8 @@
    "linhas": 24
   },
   "src/components": {
-   "arquivos": 426,
-   "linhas": 60089
+   "arquivos": 427,
+   "linhas": 60273
   },
   "src/constants": {
    "arquivos": 2,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 346,
-   "linhas": 49504
+   "linhas": 49506
   },
   "src/hooks": {
    "arquivos": 63,
@@ -606,16 +606,16 @@
    "linhas": 805
   },
   {
+   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
+   "linhas": 642
+  },
+  {
    "arquivo": "src/components/ui/sidebar.tsx",
    "linhas": 639
   },
   {
    "arquivo": "src/pages/PendingQueue.tsx",
    "linhas": 634
-  },
-  {
-   "arquivo": "src/components/jobs/JobDetailsModal.tsx",
-   "linhas": 632
   },
   {
    "arquivo": "scripts/ci/github-settings-guard.mjs",

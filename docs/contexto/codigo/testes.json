@@ -330,7 +330,7 @@
   {
    "arquivo": "src/components/jobs/JobDetailsModal.cancel.test.tsx",
    "tipo": "unit",
-   "linhas": 243,
+   "linhas": 244,
    "testa": [
     "src/components/jobs/JobDetailsModal.tsx"
    ],

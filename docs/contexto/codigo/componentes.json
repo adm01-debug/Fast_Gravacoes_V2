@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 623,
+ "total": 624,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -2507,7 +2507,7 @@
     "JobDetailsModal"
    ],
    "export_default": null,
-   "linhas": 632,
+   "linhas": 642,
    "dominio": "components/jobs",
    "hooks_locais": [
     "useArchiveJob",
@@ -2565,6 +2565,22 @@
    "hooks_locais": [
     "useDocuments",
     "useTechnicalSheets"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/jobs/JobLossesTab.tsx",
+   "exports": [
+    "JobLossesTab"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "dominio": "components/jobs",
+   "hooks_locais": [
+    "useProductionLosses"
    ],
    "tabelas": [],
    "edges": [],
@@ -5454,7 +5470,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 279,
+   "usado_por": 280,
    "orfao": false
   },
   {
@@ -5509,7 +5525,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 308,
+   "usado_por": 309,
    "orfao": false
   },
   {
@@ -5544,7 +5560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 342,
+   "usado_por": 343,
    "orfao": false
   },
   {
@@ -5886,7 +5902,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 107,
+   "usado_por": 108,
    "orfao": false
   },
   {
@@ -5915,7 +5931,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 94,
+   "usado_por": 95,
    "orfao": false
   },
   {
@@ -6123,7 +6139,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 82,
+   "usado_por": 83,
    "orfao": false
   },
   {
@@ -6213,7 +6229,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 83,
+   "usado_por": 84,
    "orfao": false
   },
   {
@@ -6337,7 +6353,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 30,
+   "usado_por": 31,
    "orfao": false
   },
   {

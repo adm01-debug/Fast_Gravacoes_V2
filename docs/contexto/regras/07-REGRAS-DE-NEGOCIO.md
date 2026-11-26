@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `241116afa9` · branch `main` · 2026-11-26 15:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `08b427a720` · branch `main` · 2026-11-26 15:58 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T15:39:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -2274,6 +2274,7 @@ _nenhum item encontrado_
 | `textarea-disabled` | disabled, disabled | `src/components/design-system/sections/forms/FormsTextInputs.tsx` |
 | `modal-email` | type=email | `src/components/design-system/sections/modals/DialogExamples.tsx` |
 | `sheet-email` | type=email | `src/components/design-system/sections/modals/SheetExamples.tsx` |
+| `loss-quantity` | type=number, min=1, step=1 | `src/components/jobs/JobLossesTab.tsx` |
 | `high` | type=number | `src/components/kanban/KanbanAIAdvisor.tsx` |
 | `medium` | type=number | `src/components/kanban/KanbanAIAdvisor.tsx` |
 | `freight` | type=number, step=0.01 | `src/components/logistics/CreateShipmentModal.tsx` |
