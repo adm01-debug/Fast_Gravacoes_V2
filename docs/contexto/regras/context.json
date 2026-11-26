@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5f6a6c5591dc08baa79445ae7a396bffd9bf63d1",
+  "sha": "3aab3c40b0e3b80f5d2dbb71e7997616259408df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 22:07 UTC",
-  "files_total": 1657,
-  "code_files": 1461,
-  "code_lines": 216620
+  "generated_at": "2026-11-26 22:19 UTC",
+  "files_total": 1662,
+  "code_files": 1466,
+  "code_lines": 217084
  },
  "version": "1.3.2",
- "facts_hash": "b074fb60084d4de3",
+ "facts_hash": "9674e0ba719e92be",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,9 +279,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 688,
-   ".ts": 421,
-   ".sql": 285,
+   ".tsx": 690,
+   ".ts": 423,
+   ".sql": 286,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19861,6 +19861,7 @@
    "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
    "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
+   "supabase/migrations/20261129233000_login_lockouts_admin.sql",
    "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -21935,6 +21936,38 @@
     "objkind": "function",
     "roles": "anon, PUBLIC",
     "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "list_login_lockouts",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "release_login_lockout",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "list_login_lockouts",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "release_login_lockout",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
    }
   ],
   "raises": [
@@ -25358,7 +25391,7 @@
      "get_finished_jobs_for_evolution",
      "verify_audit_chain"
     ],
-    "deps_count": 214
+    "deps_count": 216
    },
    {
     "path": "",
@@ -27438,7 +27471,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 589,
+  "components_count": 591,
   "hooks": [
    {
     "name": "useContacts",
@@ -27671,6 +27704,10 @@
    {
     "name": "useToggleCountryRule",
     "file": "src/features/admin/hooks/useGeoBlocking.ts"
+   },
+   {
+    "name": "useLoginLockouts",
+    "file": "src/features/admin/hooks/useLoginLockouts.ts"
    },
    {
     "name": "useMonitoringData",
@@ -29093,8 +29130,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 62,
-   "lines": 7909,
+   "files": 66,
+   "lines": 8288,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -29138,6 +29175,7 @@
     "ActiveDevicesPanel.tsx: ActiveDevicesPanel",
     "BlockedIPsPanel.tsx: BlockedIPsPanel",
     "GeoBlockingSettings.tsx: GeoBlockingSettings",
+    "LoginLockoutsPanel.tsx: LoginLockoutsPanel",
     "MFAEnroll.tsx: MFAEnroll",
     "MFASettings.tsx: MFASettings",
     "PermissionManager.tsx: PermissionManager",
@@ -29162,8 +29200,7 @@
     "useDataExport.ts: ExportFormat, ExportOptions, AuditExportFilters, useDataExport",
     "useDataImport.ts: ImportColumn, ImportPreview, ImportResult, useDataImport",
     "useDetailedAuditTrail.ts: JobStatusAudit, MachineEventAudit, useDetailedAuditTrail",
-    "useFeatureFlags.ts: FeatureFlag, useFeatureFlags",
-    "useGeoBlocking.ts: GeoBlockingSettings, GeoBlockingRule, GeoBlockingLog, COMMON_COUNTRIES, useGeoBlockingSettings, useGeoBlockingRules"
+    "useFeatureFlags.ts: FeatureFlag, useFeatureFlags"
    ],
    "docs": [
     "ActiveDevicesPanel.tsx: eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -29213,6 +29250,8 @@
     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
     "src/features/admin/components/security/BlockedIPsPanel.tsx",
     "src/features/admin/components/security/GeoBlockingSettings.tsx",
+    "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    "src/features/admin/components/security/LoginLockoutsPanel.tsx",
     "src/features/admin/components/security/MFAEnroll.tsx",
     "src/features/admin/components/security/MFASettings.test.tsx",
     "src/features/admin/components/security/MFASettings.tsx",
@@ -29243,6 +29282,8 @@
     "src/features/admin/hooks/useDetailedAuditTrail.ts",
     "src/features/admin/hooks/useFeatureFlags.ts",
     "src/features/admin/hooks/useGeoBlocking.ts",
+    "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "src/features/admin/hooks/useLoginLockouts.ts",
     "src/features/admin/hooks/useMonitoringData.ts",
     "src/features/admin/hooks/useOrphanedDataDetection.ts",
     "src/features/admin/hooks/useRateLimitLogs.ts",
@@ -30504,7 +30545,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18070,
+   "lines": 18074,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -31023,8 +31064,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 277,
-   "lines": 17702,
+   "files": 278,
+   "lines": 17783,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -36139,6 +36180,14 @@
    {
     "file": "src/features/admin/hooks/useGeoBlocking.ts",
     "msg": "País já está na lista"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.ts",
+    "msg": "Não foi possível liberar o bloqueio: "
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.ts",
+    "msg": "registro de bloqueio nao encontrado"
    },
    {
     "file": "src/features/admin/hooks/useSecurityEvents.ts",
@@ -53050,6 +53099,22 @@
     "name": "mostra o vazio de coleta quando o administrador ainda não tem snapshot"
    },
    {
+    "file": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    "name": "LoginLockoutsPanel"
+   },
+   {
+    "file": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    "name": "mostra o estado vazio quando nao ha bloqueio"
+   },
+   {
+    "file": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    "name": "lista as linhas e libera a conta escolhida"
+   },
+   {
+    "file": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    "name": "exibe o erro da consulta"
+   },
+   {
     "file": "src/features/admin/components/security/MFASettings.test.tsx",
     "name": "MFASettings — remoção do segundo fator exige re-autenticação (etapa 233)"
    },
@@ -53144,6 +53209,26 @@
    {
     "file": "src/features/admin/hooks/useCronP95Daily.test.ts",
     "name": "retorna null quando a linha de base é zero"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "name": "useLoginLockouts"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "name": "lista os bloqueios e conta apenas os que estao valendo"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "name": "libera o bloqueio pela RPC e recarrega a lista"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "name": "avisa quando a liberacao falha"
+   },
+   {
+    "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
+    "name": "expoe o erro da listagem"
    },
    {
     "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
@@ -68486,6 +68571,7 @@
    "scripts/inventario/gerar-banco.mjs",
    "scripts/regras_negocio/generate.py",
    "scripts/supabase_snapshot/snapshot.py",
+   "src/features/admin/hooks/useLoginLockouts.ts",
    "supabase/create_operator_fn.sql",
    "supabase/functions/_shared/cronAuth.test.ts",
    "supabase/functions/_shared/cronAuth.ts",
@@ -68582,7 +68668,8 @@
    "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
    "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
    "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
-   "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
+   "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
+   "supabase/migrations/20261129233000_login_lockouts_admin.sql"
   ],
   "security_definer_fns": [
    "app_private.functions_base_url",
@@ -70594,6 +70681,38 @@
     "objkind": "function",
     "roles": "anon, PUBLIC",
     "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "list_login_lockouts",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "release_login_lockout",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "list_login_lockouts",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "release_login_lockout",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129233000_login_lockouts_admin.sql"
    }
   ],
   "guards": [
@@ -81770,6 +81889,24 @@
     ";\nimport {\n  Globe,\n  Plus,\n  Trash2,\n  ShieldCheck,\n  AlertTriangle,\n  History,\n  MapPin\n} from "
    ]
   },
+  "src/features/admin/components/security/LoginLockoutsPanel.test.tsx": {
+   "path": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+   "lines": 72,
+   "is_test": true,
+   "tests": [
+    "LoginLockoutsPanel",
+    "mostra o estado vazio quando nao ha bloqueio",
+    "lista as linhas e libera a conta escolhida",
+    "exibe o erro da consulta"
+   ]
+  },
+  "src/features/admin/components/security/LoginLockoutsPanel.tsx": {
+   "path": "src/features/admin/components/security/LoginLockoutsPanel.tsx",
+   "lines": 117,
+   "exports": [
+    "const LoginLockoutsPanel"
+   ]
+  },
   "src/features/admin/components/security/MFAEnroll.tsx": {
    "path": "src/features/admin/components/security/MFAEnroll.tsx",
    "lines": 118,
@@ -82611,6 +82748,35 @@
    "pagination": [
     "1"
    ]
+  },
+  "src/features/admin/hooks/useLoginLockouts.test.ts": {
+   "path": "src/features/admin/hooks/useLoginLockouts.test.ts",
+   "lines": 106,
+   "is_test": true,
+   "tests": [
+    "useLoginLockouts",
+    "lista os bloqueios e conta apenas os que estao valendo",
+    "libera o bloqueio pela RPC e recarrega a lista",
+    "avisa quando a liberacao falha",
+    "expoe o erro da listagem"
+   ]
+  },
+  "src/features/admin/hooks/useLoginLockouts.ts": {
+   "path": "src/features/admin/hooks/useLoginLockouts.ts",
+   "lines": 84,
+   "exports": [
+    "interface LoginLockout",
+    "interface LoginLockoutRow",
+    "const useLoginLockouts"
+   ],
+   "errors": [
+    "Não foi possível liberar o bloqueio: ",
+    "registro de bloqueio nao encontrado"
+   ],
+   "hooks": [
+    "useLoginLockouts"
+   ],
+   "uses_service_role": true
   },
   "src/features/admin/hooks/useMonitoringData.ts": {
    "path": "src/features/admin/hooks/useMonitoringData.ts",
@@ -95474,7 +95640,7 @@
   },
   "src/pages/SecurityDashboard.tsx": {
    "path": "src/pages/SecurityDashboard.tsx",
-   "lines": 262,
+   "lines": 266,
    "exports": [
     "function SecurityDashboard"
    ]
@@ -100970,6 +101136,11 @@
    "path": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
    "lines": 36
   },
+  "supabase/migrations/20261129233000_login_lockouts_admin.sql": {
+   "path": "supabase/migrations/20261129233000_login_lockouts_admin.sql",
+   "lines": 81,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql": {
    "path": "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
    "lines": 18
@@ -101430,10 +101601,24 @@
   }
  },
  "git": {
-  "sha": "5f6a6c5591dc08baa79445ae7a396bffd9bf63d1",
+  "sha": "3aab3c40b0e3b80f5d2dbb71e7997616259408df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "3aab3c4",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela para ver e liberar contas bloqueadas por tentativas de login (#329)",
+    "files": [
+     "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+     "src/features/admin/components/security/LoginLockoutsPanel.tsx",
+     "src/features/admin/hooks/useLoginLockouts.test.ts",
+     "src/features/admin/hooks/useLoginLockouts.ts",
+     "src/pages/SecurityDashboard.tsx",
+     "supabase/migrations/20261129233000_login_lockouts_admin.sql"
+    ]
+   },
    {
     "sha": "5f6a6c5",
     "date": "2026-11-26",
@@ -101787,31 +101972,12 @@
      "supabase/functions/cron-alert-email/index.ts",
      "supabase/functions/new-device-alert/index.ts"
     ]
-   },
-   {
-    "sha": "108f0a7",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/calendar/CalendarTimeline.test.tsx",
-     "src/components/calendar/CalendarTimeline.tsx",
-     "src/components/calendar/JobBlock.tsx",
-     "src/components/dashboard/AlertScheduleModal.test.tsx",
-     "src/components/dashboard/AlertScheduleModal.tsx",
-     "src/constants/index.ts",
-     "src/features/jobs/hooks/useDailyDragDrop.ts",
-     "src/features/jobs/hooks/useDragDrop.test.ts",
-     "src/features/jobs/hooks/useWeeklyDragDrop.ts",
-     "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    12
+    11
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101831,10 +101997,6 @@
    ],
    [
     "supabase/functions/metrics-collector/index.ts",
-    2
-   ],
-   [
-    "src/components/calendar/CalendarTimeline.tsx",
     2
    ],
    [
@@ -101858,6 +102020,30 @@
     2
    ],
    [
+    "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+    1
+   ],
+   [
+    "src/features/admin/components/security/LoginLockoutsPanel.tsx",
+    1
+   ],
+   [
+    "src/features/admin/hooks/useLoginLockouts.test.ts",
+    1
+   ],
+   [
+    "src/features/admin/hooks/useLoginLockouts.ts",
+    1
+   ],
+   [
+    "src/pages/SecurityDashboard.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261129233000_login_lockouts_admin.sql",
+    1
+   ],
+   [
     "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
     1
    ],
@@ -101867,26 +102053,6 @@
    ],
    [
     "src/features/analytics/hooks/useKPIAlerts.test.ts",
-    1
-   ],
-   [
-    "src/features/analytics/hooks/useKPIAlerts.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useTPMNotifications.test.ts",
-    1
-   ],
-   [
-    "src/features/notifications/hooks/useTPMNotifications.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
     1
    ]
   ]

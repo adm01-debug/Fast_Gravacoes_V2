@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5f6a6c5591dc08baa79445ae7a396bffd9bf63d1",
+  "commit": "3aab3c40b0e3b80f5d2dbb71e7997616259408df",
   "branch": "main",
-  "data_commit": "2026-11-26T18:59:55-03:00",
+  "data_commit": "2026-11-26T19:00:10-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "3aab3c4",
+    "data": "2026-11-26",
+    "assunto": "feat: tela para ver e liberar contas bloqueadas por tentativas de login (#329)"
+   },
    {
     "sha": "5f6a6c5",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "9d7e076",
     "data": "2026-11-25",
     "assunto": "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)"
-   },
-   {
-    "sha": "8ca53f4",
-    "data": "2026-11-25",
-    "assunto": "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 315,
+  "arquivos_mudados_7d": 321,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -150,7 +150,7 @@
    },
    {
     "pasta": "src/features/admin",
-    "mudancas": 30
+    "mudancas": 34
    },
    {
     "pasta": "src/features/maintenance",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 188
+    "commits": 189
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,21 +327,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1659,
-  "arquivos_codigo": 1173,
-  "linhas_codigo": 198262,
+  "arquivos_total": 1664,
+  "arquivos_codigo": 1177,
+  "linhas_codigo": 198645,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
   "itens_menu": 70,
   "modulos": 75,
-  "componentes": 625,
-  "hooks": 200,
+  "componentes": 626,
+  "hooks": 201,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 277,
+  "migrations": 278,
   "cron_jobs": 6,
-  "testes": 164,
+  "testes": 166,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 350,
-   "linhas": 49894
+   "arquivos": 354,
+   "linhas": 50273
   },
   "src/hooks": {
    "arquivos": 65,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 18070
+   "linhas": 18074
   },
   "src/providers": {
    "arquivos": 2,

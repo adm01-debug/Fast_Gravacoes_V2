@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 625,
+ "total": 626,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -5470,7 +5470,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 281,
+   "usado_por": 282,
    "orfao": false
   },
   {
@@ -5525,7 +5525,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 310,
+   "usado_por": 311,
    "orfao": false
   },
   {
@@ -5560,7 +5560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 344,
+   "usado_por": 345,
    "orfao": false
   },
   {
@@ -6102,7 +6102,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 59,
+   "usado_por": 60,
    "orfao": false
   },
   {
@@ -6321,7 +6321,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 31,
+   "usado_por": 32,
    "orfao": false
   },
   {
@@ -6914,6 +6914,22 @@
     "useGeoBlockingSettings",
     "useRemoveCountryRule",
     "useUpdateGeoSettings"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/features/admin/components/security/LoginLockoutsPanel.tsx",
+   "exports": [
+    "LoginLockoutsPanel"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "dominio": "features/admin",
+   "hooks_locais": [
+    "useLoginLockouts"
    ],
    "tabelas": [],
    "edges": [],
@@ -9758,7 +9774,7 @@
     "SecurityDashboard"
    ],
    "export_default": "SecurityDashboard",
-   "linhas": 262,
+   "linhas": 266,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

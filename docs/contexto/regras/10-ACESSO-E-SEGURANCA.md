@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f6a6c5591` · branch `main` · 2026-11-26 22:07 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3aab3c40b0` · branch `main` · 2026-11-26 22:19 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-26T21:39:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -155,7 +155,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 104 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 106 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -164,6 +164,7 @@
 - `scripts/inventario/gerar-banco.mjs`
 - `scripts/regras_negocio/generate.py`
 - `scripts/supabase_snapshot/snapshot.py`
+- `src/features/admin/hooks/useLoginLockouts.ts`
 - `supabase/create_operator_fn.sql`
 - `supabase/functions/_shared/cronAuth.test.ts`
 - `supabase/functions/_shared/cronAuth.ts`
@@ -261,6 +262,7 @@
 - `supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql`
 - `supabase/migrations/20261129200000_security_events_severidade_cliente.sql`
 - `supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql`
+- `supabase/migrations/20261129233000_login_lockouts_admin.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -354,7 +356,7 @@ Middleware matcher (Next.js): nenhum
 | grant | anon | execute | `app_private.has_role` |
 | grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
-| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +9 |
+| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +11 |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
 | grant | authenticated | select, insert, update, delete | `packaging_tasks`, `packaging_defects`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides` |
 | grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +15 |
@@ -371,7 +373,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon, authenticated | execute | `check_and_notify_kpi_alert`, `test_rls_policies`, `verify_audit_chain`, `verify_audit_chain`, `has_any_active_role`, `on_packaging_ready_create_shipment`, `on_packaging_defect_create_rework_job`, `enforce_packaging_checklist_before_ship`, `notify_packaging_task_created`, `notify_packaging_defect_critical`, `rollup_cron_p95_daily`, `rollup_cron_p95_daily`, `has_role` |
 | revoke | anon | all | `increment_job_lost_pieces`, `refresh_machine_health_metrics`, `refresh_machine_health_metrics`, `security_events_limita_severidade_do_cliente`, `production_losses_aplicar_contador` |
 | revoke | anon | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `get_system_status_summary`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair`, `get_packaging_manifest`, `get_packaging_leaderboard`, `get_system_status_summary`, `get_cron_health`, `auto_reassign_stale_packaging_tasks` |
-| revoke | anon, PUBLIC | execute | `resolve_kpi_alert` |
+| revoke | anon, PUBLIC | execute | `resolve_kpi_alert`, `list_login_lockouts`, `release_login_lockout` |
 | revoke | anon, authenticated, public | execute | `get_user_role`, `increment_sheet_view_count` |
 | revoke | authenticated | all | `refresh_machine_health_metrics`, `security_events_limita_severidade_do_cliente`, `production_losses_aplicar_contador` |
 | revoke | authenticated | execute | `purge_old_logs`, `on_job_finished_create_packaging_task`, `rate_limit_check_and_record`, `purge_old_logs`, `insert_csp_report_dedup`, `rate_limit_check_and_record_pair` |

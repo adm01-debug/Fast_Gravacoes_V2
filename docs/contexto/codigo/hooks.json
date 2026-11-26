@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 200,
+ "total": 201,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -1088,6 +1088,28 @@
     "src/features/admin/index.ts"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useLoginLockouts.ts",
+   "hooks_exportados": [
+    "useLoginLockouts"
+   ],
+   "linhas": 84,
+   "dominio": "features/admin",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/LoginLockoutsPanel.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/features/admin/hooks/useMonitoringData.ts",

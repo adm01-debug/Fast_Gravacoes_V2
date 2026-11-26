@@ -8161,6 +8161,7 @@
     "useJobsData",
     "useLayoutEffect",
     "useLocation",
+    "useLoginLockouts",
     "useMFA",
     "useMachinesData",
     "useMemo",
@@ -8243,6 +8244,7 @@
     "useIsTablet",
     "useIsTouch",
     "useJobsData",
+    "useLoginLockouts",
     "useMFA",
     "useMachinesData",
     "useModalParam",
@@ -8328,7 +8330,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 121,
+   "arquivos_puxados": 123,
    "diretos": {
     "tabelas": [
      "blocked_ips",

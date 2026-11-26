@@ -279,4 +279,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261129200000 | [security_events_severidade_cliente](migrations/20261129200000_security_events_severidade_cliente.sql) | 6 |
 | 20261129210000 | [production_losses_contador_atomico](migrations/20261129210000_production_losses_contador_atomico.sql) | 6 |
 | 20261129230000 | [restore_increment_sheet_view_count_execute](migrations/20261129230000_restore_increment_sheet_view_count_execute.sql) | 1 |
+| 20261129231500 | [kpi_alerts_resolve](migrations/20261129231500_kpi_alerts_resolve.sql) | 3 |
+| 20261129233000 | [login_lockouts_admin](migrations/20261129233000_login_lockouts_admin.sql) | 6 |
 | 20261129234500 | [tpm_log_status_provider_not_configured](migrations/20261129234500_tpm_log_status_provider_not_configured.sql) | 2 |

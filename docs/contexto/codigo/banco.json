@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 277,
+ "migrations": 278,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -84,6 +84,7 @@
   "increment_sheet_view_count",
   "increment_technical_sheet_version",
   "insert_csp_report_dedup",
+  "list_login_lockouts",
   "log_job_status_change",
   "log_security_violation",
   "log_technical_sheet_change",
@@ -106,6 +107,7 @@
   "record_packaging_defect",
   "refresh_machine_health_metrics",
   "refresh_operator_rankings",
+  "release_login_lockout",
   "resolve_kpi_alert",
   "rollback_inventory_stock",
   "rollup_cron_p95_daily",

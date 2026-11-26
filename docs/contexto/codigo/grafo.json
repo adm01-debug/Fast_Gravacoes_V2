@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1003,
- "arestas": 4629,
+ "nos": 1005,
+ "arestas": 4637,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 344
+   "importado_por": 345
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 310
+   "importado_por": 311
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 281
+   "importado_por": 282
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 193
+   "importado_por": 194
   },
   {
    "arquivo": "src/features/jobs/index.ts",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 60
+   "importado_por": 61
   },
   {
    "arquivo": "src/components/ui/progress.tsx",
@@ -106,7 +106,7 @@
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 31
+   "importado_por": 32
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",

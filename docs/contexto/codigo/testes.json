@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 164,
+ "total": 166,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 139
+  "unit": 141
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 127
+   "arquivos": 129
   },
   {
    "padrao": "tests/",
@@ -422,6 +422,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/features/admin/components/security/LoginLockoutsPanel.tsx",
+    "src/features/admin/hooks/useLoginLockouts.ts"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/admin/components/security/MFASettings.test.tsx",
    "tipo": "unit",
    "linhas": 66,
@@ -459,6 +470,16 @@
     "src/features/admin/hooks/useCronP95Daily.ts"
    ],
    "casos": 7,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useLoginLockouts.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/features/admin/hooks/useLoginLockouts.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1752,10 +1773,12 @@
   "src/contexts/ReauthContext.tsx": 1,
   "src/features/admin/components/audit/AuditEntryCard.tsx": 1,
   "src/features/admin/components/monitoring/SystemMetricsCard.tsx": 1,
+  "src/features/admin/components/security/LoginLockoutsPanel.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
+  "src/features/admin/hooks/useLoginLockouts.ts": 2,
   "src/features/admin/hooks/useSystemMetrics.ts": 2,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
   "src/features/admin/index.ts": 1,

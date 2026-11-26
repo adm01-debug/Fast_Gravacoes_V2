@@ -2882,6 +2882,14 @@
    "src/features/admin/hooks/useGeoBlocking.ts",
    "src/features/auth/index.ts"
   ],
+  "src/features/admin/components/security/LoginLockoutsPanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/table.tsx",
+   "src/features/admin/hooks/useLoginLockouts.ts"
+  ],
   "src/features/admin/components/security/MFAEnroll.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -3023,6 +3031,9 @@
   "src/features/admin/hooks/useGeoBlocking.ts": [
    "src/integrations/supabase/client.ts",
    "src/lib/errorHandling.ts"
+  ],
+  "src/features/admin/hooks/useLoginLockouts.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/features/admin/hooks/useMonitoringData.ts": [
    "src/integrations/supabase/client.ts"
@@ -5862,6 +5873,7 @@
    "src/features/admin/components/security/ActiveDevicesPanel.tsx",
    "src/features/admin/components/security/BlockedIPsPanel.tsx",
    "src/features/admin/components/security/GeoBlockingSettings.tsx",
+   "src/features/admin/components/security/LoginLockoutsPanel.tsx",
    "src/features/admin/components/security/MFASettings.tsx",
    "src/features/admin/components/security/PermissionManager.tsx",
    "src/features/admin/components/security/PermissionMatrix.tsx",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f6a6c5591` · branch `main` · 2026-11-26 22:07 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3aab3c40b0` · branch `main` · 2026-11-26 22:19 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T21:39:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -3224,6 +3224,8 @@ _nenhum item encontrado_
 | Nenhum arquivo selecionado | `src/features/admin/hooks/useDataImport.ts` |
 | Nenhuma coluna mapeada | `src/features/admin/hooks/useDataImport.ts` |
 | País já está na lista | `src/features/admin/hooks/useGeoBlocking.ts` |
+| Não foi possível liberar o bloqueio:  | `src/features/admin/hooks/useLoginLockouts.ts` |
+| registro de bloqueio nao encontrado | `src/features/admin/hooks/useLoginLockouts.ts` |
 | Alerta de Segurança: ${event.event_type} | `src/features/admin/hooks/useSecurityEvents.ts` |
 | Aviso de Segurança: ${event.event_type} | `src/features/admin/hooks/useSecurityEvents.ts` |
 | IP Bloqueado: ${block.ip_address} | `src/features/admin/hooks/useSecurityEvents.ts` |
@@ -3307,9 +3309,7 @@ _nenhum item encontrado_
 | Meta em alerta | `src/features/notifications/hooks/useGoalAlerts.ts` |
 | Meta em risco crítico! | `src/features/notifications/hooks/useGoalAlerts.ts` |
 | Erro ao atualizar configurações | `src/features/notifications/hooks/useNotificationSettings.ts` |
-| User not authenticated | `src/features/notifications/hooks/useNotificationSettings.ts` |
-| ), [playSound]);    const setEnabled = useCallback((enabled: boolean) => {     isEnabledRef.current = enabled;     localStorage.setItem( | `src/features/notifications/hooks/useNotificationSounds.ts` |
-| … +267 linhas — lista completa em `context.json` | |
+| … +269 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3377,7 +3377,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1581 testes em 145 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1590 testes em 147 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3472,6 +3472,7 @@ _nenhum item encontrado_
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
+| `src/features/admin/hooks/useLoginLockouts.test.ts` | 5 | useLoginLockouts · lista os bloqueios e conta apenas os que estao valendo · libera o bloqueio pela RPC e recarrega a lista · avisa quando a liberacao falha … |
 | `src/features/analytics/hooks/useExecutiveDashboard.test.ts` | 5 | escolherRetratoDoPeriodo · escolhe o retrato do período pedido, não o mais recente · prefere a janela que contém o fim do período mesmo com fim mais distante · desempata pela apuração mais recente … |
 | `src/features/analytics/hooks/useKPIAlerts.test.ts` | 5 | useKPIAlerts · lista os alertas abertos com o total exato · resolve um alerta pela RPC e recarrega a lista · expoe o erro da consulta … |
 | `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
@@ -3485,6 +3486,7 @@ _nenhum item encontrado_
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
 | `tests/e2e/production.spec.ts` | 5 | Production and Jobs Flow · should navigate to Kanban and verify jobs · should create a new job · should verify OEE Dashboard … |
 | `src/features/admin/components/audit/AuditEntryCard.test.tsx` | 4 | AuditEntryCard · mostra o novo status em UPDATE que trocou de status · nao mostra transicao quando o status nao mudou · nao mostra transicao em INSERT |
+| `src/features/admin/components/security/LoginLockoutsPanel.test.tsx` | 4 | LoginLockoutsPanel · mostra o estado vazio quando nao ha bloqueio · lista as linhas e libera a conta escolhida · exibe o erro da consulta |
 | `src/features/analytics/components/bi/BIStatCard.test.tsx` | 4 | BIStatCard · renders correctly with basic props · shows trend indicator when trend prop is provided · calls onClick when clicked |
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |
