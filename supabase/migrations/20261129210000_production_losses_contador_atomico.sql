@@ -6,13 +6,16 @@
 -- ja incrementado, e a nova tentativa do usuario incrementava outra vez.
 --
 -- O trigger roda no mesmo comando do insert: ou os dois valem, ou nenhum.
--- SECURITY DEFINER porque o contador e escrituracao do sistema, nao uma escrita
--- de usuario em public.jobs; a RLS de public.production_losses continua valendo
--- para quem registra a perda.
+-- SECURITY INVOKER de proposito: o UPDATE em public.jobs passa pelas politicas de
+-- RLS de jobs como passava o fallback, entao quem registra a perda so consegue
+-- mexer no contador de ordem que ja podia escrever (operador na propria maquina,
+-- coordenador ou gerente). Com SECURITY DEFINER o gatilho viraria caminho de
+-- escrita privilegiada: qualquer papel ativo inflaria perdidas de ordem de outra
+-- maquina so inserindo a linha em production_losses.
 CREATE OR REPLACE FUNCTION public.production_losses_aplicar_contador()
 RETURNS trigger
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = ''
 AS $fn$
 BEGIN
