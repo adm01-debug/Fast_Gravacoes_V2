@@ -4,9 +4,9 @@
 |---|---|
 | nome | external-db-bridge |
 | status | ACTIVE |
-| versão | 250 |
+| versão | 251 |
 | verify_jwt | sim |
-| entrypoint | file:///app/supabase/functions/external-db-bridge/index.ts |
+| entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/external-db-bridge/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
 | URL | https://uoujzvpecohinketylud.supabase.co/functions/v1/external-db-bridge |
 | fonte no repo | `supabase/functions/external-db-bridge/` |
