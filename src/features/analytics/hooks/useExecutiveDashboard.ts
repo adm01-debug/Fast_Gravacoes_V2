@@ -15,6 +15,7 @@ import type { Database } from '@/integrations/supabase/types';
 
 type Job = Database['public']['Tables']['jobs']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
+export type MetricaSaudeMaquina = Database['public']['Tables']['machine_health_metrics']['Row'];
 
 export interface ExecutiveKPIs {
   // Production KPIs
@@ -144,7 +145,7 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
         .slice(0, 10)
         .map(m => {
           const machineJobs = jobs.filter(j => j.machine_id === m.id);
-          const machineMetrics = healthMetrics.find(h => h.machine_id === m.id);
+          const machineMetrics = healthMetrics.get(m.id);
           // Sum actual run-time for jobs that have both timestamps; fall back to
           // estimated_duration for jobs missing real timestamps.
           const runTimeMinutes = machineJobs.reduce((sum, j) => {
@@ -196,6 +197,20 @@ async function fetchPeriodData(startDate: string, endDate: string, filters?: { m
 
   const maintenanceQuery = supabase.from('maintenance_records').select('*').gte('created_at', startDate).lte('created_at', endDate).order('id');
 
+  // refresh_machine_health_metrics grava uma janela móvel (30 dias por padrão),
+  // então cada máquina acumula um retrato por execução do cron. Antes vinha
+  // sempre o mais recente (independente do período) e só 500 linhas, o que
+  // mostrava o OEE do mês corrente em "Mês Passado" e podia omitir máquinas.
+  // Agora o filtro é a janela que cruza o período pedido, paginado sem teto.
+  const metricsQuery = supabase
+    .from('machine_health_metrics')
+    .select('*')
+    .gte('period_end', startDate.slice(0, 10))
+    .lte('period_start', endDate.slice(0, 10))
+    .order('calculated_at', { ascending: false })
+    .order('machine_id')
+    .order('period_start');
+
   const [
     jobs,
     machinesRes,
@@ -212,14 +227,7 @@ async function fetchPeriodData(startDate: string, endDate: string, filters?: { m
     // maintenance não alimenta os KPIs do painel: isola a falha para não
     // derrubar a carga inteira (comportamento anterior era `data || []`).
     fetchAllRows((o, l) => maintenanceQuery.range(o, o + l - 1)).catch(() => []),
-    // Só a leitura mais recente por máquina importa (abaixo: `.find` no array).
-    // Ordenado desc + limit para não varrer o histórico inteiro nem depender da
-    // ordem física das linhas, que fazia o painel pegar uma janela antiga qualquer.
-    supabase
-      .from('machine_health_metrics')
-      .select('*')
-      .order('calculated_at', { ascending: false })
-      .limit(500),
+    fetchAllRows((o, l) => metricsQuery.range(o, o + l - 1)).catch(() => [] as MetricaSaudeMaquina[]),
     supabase.from('profiles').select('*'),
   ]);
 
@@ -228,9 +236,36 @@ async function fetchPeriodData(startDate: string, endDate: string, filters?: { m
     machines: machinesRes.data || [],
     techniques: techniquesRes.data || [],
     maintenance,
-    healthMetrics: healthMetricsRes.data || [],
+    healthMetrics: escolherRetratoDoPeriodo(healthMetricsRes, endDate),
     profiles: profilesRes.data || [],
   };
+}
+
+/**
+ * Um retrato por máquina, o mais aderente ao período consultado: prioriza a
+ * janela que contém o fim do período e, entre elas, a de fim mais próximo (e a
+ * mais recente como desempate).
+ */
+export function escolherRetratoDoPeriodo(
+  metricas: MetricaSaudeMaquina[],
+  fimPeriodo: string,
+): Map<string, MetricaSaudeMaquina> {
+  const alvo = new Date(fimPeriodo).getTime();
+  const cobre = (m: MetricaSaudeMaquina) =>
+    new Date(m.period_start).getTime() <= alvo && new Date(m.period_end).getTime() >= alvo;
+  const distancia = (m: MetricaSaudeMaquina) => Math.abs(new Date(m.period_end).getTime() - alvo);
+  const maisAderente = (candidata: MetricaSaudeMaquina, atual: MetricaSaudeMaquina) => {
+    if (cobre(candidata) !== cobre(atual)) return cobre(candidata);
+    if (distancia(candidata) !== distancia(atual)) return distancia(candidata) < distancia(atual);
+    return new Date(candidata.calculated_at).getTime() > new Date(atual.calculated_at).getTime();
+  };
+
+  const escolhidas = new Map<string, MetricaSaudeMaquina>();
+  for (const metrica of metricas) {
+    const atual = escolhidas.get(metrica.machine_id);
+    if (!atual || maisAderente(metrica, atual)) escolhidas.set(metrica.machine_id, metrica);
+  }
+  return escolhidas;
 }
 
 function calculateDailyTrend(jobs: Job[], prevJobs: Job[], dateRange: DateRange) {
