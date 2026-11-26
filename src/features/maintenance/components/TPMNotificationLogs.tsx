@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CheckCircle2, XCircle, Search, FileSpreadsheet } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, XCircle, Search, FileSpreadsheet } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -139,6 +139,11 @@ export function TPMNotificationLogs() {
                       <div className="flex items-center text-success gap-1">
                         <CheckCircle2 className="h-4 w-4" />
                         <span>Sucesso</span>
+                      </div>
+                    ) : log.status === 'provider_not_configured' ? (
+                      <div className="flex items-center text-warning gap-1" title={log.error_message || undefined}>
+                        <AlertTriangle className="h-4 w-4" />
+                        <span>Sem provedor</span>
                       </div>
                     ) : (
                       <div className="flex items-center text-destructive gap-1" title={log.error_message || undefined}>

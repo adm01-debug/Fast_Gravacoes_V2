@@ -68,6 +68,10 @@ serve(async (req) => {
     for (const item of queueItems || []) {
       console.log(`Processando item da fila: ${item.id} (${item.channel})`)
 
+      // Estado registrado no log quando a tentativa nao entrega. Canal sem
+      // provedor e configuracao, nao falha de entrega (etapa 016 do plano de QA).
+      let logStatus = 'failure'
+
       try {
         if (item.channel === 'email' && resendApiKey) {
           // Envio real via Resend — mesmo padrão já usado e validado em send-tpm-email.
@@ -92,6 +96,7 @@ serve(async (req) => {
           // Sem provedor real de envio para este canal (ex.: whatsapp/push sem
           // integração implementada, ou email sem RESEND_API_KEY configurada) —
           // nunca marcar como enviado sem ter tentado enviar de verdade.
+          logStatus = 'provider_not_configured'
           throw new Error(`Canal '${item.channel}' sem provedor de envio configurado`)
         }
 
@@ -116,6 +121,18 @@ serve(async (req) => {
         console.error('Error processing TPM notification item:', item.id, e)
         const nextRetry = new Date()
         nextRetry.setMinutes(nextRetry.getMinutes() + Math.pow(2, item.retry_count + 1))
+
+        // Toda tentativa que nao entrega fica registrada com o motivo: antes so
+        // o envio bem-sucedido gerava linha, entao falha de entrega do provedor
+        // e canal sem provedor ficavam invisiveis no log (etapa 016).
+        await supabase.from('tpm_notification_logs').insert({
+          machine_id: item.machine_id,
+          channel: item.channel,
+          severity: item.severity,
+          recipient: item.recipient,
+          status: logStatus,
+          error_message: e instanceof Error ? e.message : String(e)
+        })
 
         await supabase
           .from('tpm_notification_queue')
