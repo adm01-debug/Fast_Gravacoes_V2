@@ -47,6 +47,7 @@ import { CronHealthCard } from "@/features/admin/components/monitoring/CronHealt
 import { CronHealthHistoryCard } from "@/features/admin/components/monitoring/CronHealthHistoryCard";
 import { CronEmailPreferenceCard } from "@/features/admin/components/monitoring/CronEmailPreferenceCard";
 import { CronP95TrendCard } from "@/features/admin/components/monitoring/CronP95TrendCard";
+import { SystemMetricsCard } from "@/features/admin/components/monitoring/SystemMetricsCard";
 
 function StatCard({
   title,
@@ -214,6 +215,8 @@ export default function SystemMonitoringPage() {
             Icon={GaugeIcon}
           />
         </div>
+
+        <SystemMetricsCard />
 
         <CronHealthCard />
 
