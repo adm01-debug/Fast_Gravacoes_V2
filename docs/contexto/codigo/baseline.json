@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
+  "commit": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
   "branch": "main",
-  "data_commit": "2026-11-26T13:26:07-03:00",
+  "data_commit": "2026-11-26T14:30:15-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "a8121c4",
+    "data": "2026-11-26",
+    "assunto": "fix: cancela o timer do ripple no unmount (CI vermelho por timer vazado) (#331)"
+   },
    {
     "sha": "bb7482f",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "760ed63",
     "data": "2026-11-25",
     "assunto": "fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)"
-   },
-   {
-    "sha": "970aef7",
-    "data": "2026-11-25",
-    "assunto": "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 303,
+  "arquivos_mudados_7d": 305,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -185,11 +185,11 @@
     "mudancas": 16
    },
    {
-    "pasta": "src/components/navigation",
-    "mudancas": 14
+    "pasta": "src/components/ui",
+    "mudancas": 16
    },
    {
-    "pasta": "src/components/ui",
+    "pasta": "src/components/navigation",
     "mudancas": 14
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 177
+    "commits": 178
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1652,
-  "arquivos_codigo": 1168,
-  "linhas_codigo": 197814,
+  "arquivos_total": 1653,
+  "arquivos_codigo": 1169,
+  "linhas_codigo": 197861,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 275,
   "cron_jobs": 6,
-  "testes": 161,
+  "testes": 162,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -480,8 +480,8 @@
    "linhas": 24
   },
   "src/components": {
-   "arquivos": 427,
-   "linhas": 60273
+   "arquivos": 428,
+   "linhas": 60320
   },
   "src/constants": {
    "arquivos": 2,

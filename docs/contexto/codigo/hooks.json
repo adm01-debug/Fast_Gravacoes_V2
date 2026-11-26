@@ -290,7 +290,7 @@
    "hooks_exportados": [
     "useRipple"
    ],
-   "linhas": 365,
+   "linhas": 377,
    "dominio": "components/ui",
    "tabelas": [],
    "rpcs": [],
@@ -308,7 +308,7 @@
     "src/components/layout/AppSidebar.tsx",
     "src/components/ui/button.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/components/ui/sidebar.tsx",

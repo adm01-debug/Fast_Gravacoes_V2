@@ -5947,7 +5947,7 @@
     "StaggeredList"
    ],
    "export_default": null,
-   "linhas": 365,
+   "linhas": 377,
    "dominio": "components/ui",
    "hooks_locais": [
     "useRipple"

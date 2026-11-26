@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (124)",
+   "co-localizado (*.test) (125)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: cancela o timer do ripple no unmount (CI vermelho por timer vazado) (#331)",
    "feat: registra acesso a ficha tecnica e alimenta o contador (#327)",
    "feat: tela para registrar perdas da OS e alimentar o OEE (#325)",
    "fix: rotinas internas voltam a executar (URL canônica das functions) (#320)",
-   "fix: cobra parada de Tab so em area rolavel sem foco interno (#326)",
-   "fix: restaura a RPC atomica de pecas perdidas no banco (#322)"
+   "fix: cobra parada de Tab so em area rolavel sem foco interno (#326)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

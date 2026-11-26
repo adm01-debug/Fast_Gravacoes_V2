@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
+  "sha": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 16:29 UTC",
-  "files_total": 1650,
-  "code_files": 1454,
-  "code_lines": 216118
+  "generated_at": "2026-11-26 17:35 UTC",
+  "files_total": 1651,
+  "code_files": 1455,
+  "code_lines": 216165
  },
  "version": "1.3.2",
- "facts_hash": "8076afc0e5791a81",
+ "facts_hash": "1afbb659aab68eb3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,7 +279,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 685,
+   ".tsx": 686,
    ".ts": 419,
    ".sql": 283,
    ".mjs": 50,
@@ -27419,7 +27419,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 586,
+  "components_count": 587,
   "hooks": [
    {
     "name": "useContacts",
@@ -28790,8 +28790,8 @@
   },
   {
    "module": "src/components",
-   "files": 427,
-   "lines": 60273,
+   "files": 428,
+   "lines": 60320,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -52888,6 +52888,14 @@
    {
     "file": "src/components/settings/TwoFactorSetup.test.tsx",
     "name": "remove fatores TOTP nao verificados antes de criar um novo (evita 422)"
+   },
+   {
+    "file": "src/components/ui/micro-interactions.test.tsx",
+    "name": "useRipple"
+   },
+   {
+    "file": "src/components/ui/micro-interactions.test.tsx",
+    "name": "cancela o timer pendente no unmount"
    },
    {
     "file": "src/components/ui/resizable.test.tsx",
@@ -80877,9 +80885,24 @@
    "path": "src/components/ui/label.tsx",
    "lines": 18
   },
+  "src/components/ui/micro-interactions.test.tsx": {
+   "path": "src/components/ui/micro-interactions.test.tsx",
+   "lines": 35,
+   "is_test": true,
+   "params": [
+    {
+     "name": "RIPPLE_MS",
+     "value": "424242"
+    }
+   ],
+   "tests": [
+    "useRipple",
+    "cancela o timer pendente no unmount"
+   ]
+  },
   "src/components/ui/micro-interactions.tsx": {
    "path": "src/components/ui/micro-interactions.tsx",
-   "lines": 365,
+   "lines": 377,
    "exports": [
     "function useRipple",
     "const Pressable",
@@ -101265,10 +101288,20 @@
   }
  },
  "git": {
-  "sha": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
+  "sha": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "a8121c4",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: cancela o timer do ripple no unmount (CI vermelho por timer vazado) (#331)",
+    "files": [
+     "src/components/ui/micro-interactions.test.tsx",
+     "src/components/ui/micro-interactions.tsx"
+    ]
+   },
    {
     "sha": "bb7482f",
     "date": "2026-11-26",
@@ -101662,16 +101695,6 @@
      "src/integrations/supabase/types.ts",
      "src/pages/PublicTrackingPage.tsx",
      "src/test/jobsService.test.ts"
-    ]
-   },
-   {
-    "sha": "5cc8d77",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)",
-    "files": [
-     "src/routes/AppRoutes.tsx",
-     "tests/e2e/rotas-protegidas.spec.ts"
     ]
    }
   ],
