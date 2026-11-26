@@ -3,7 +3,7 @@
    (URL params, localStorage, timers, subscriptions Supabase realtime,
    matchMedia, event listeners DOM, deep-linking) e não são estado
    derivado. A cascata é intencional para refletir mudanças externas. */
-import { memo, useCallback, useState, useEffect, ReactNode } from 'react';
+import { memo, useCallback, useRef, useState, useEffect, ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +16,16 @@ interface RippleProps {
 export function useRipple({ color = 'currentColor', duration = 600 }: RippleProps = {}) {
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
   const prefersReducedMotion = useReducedMotion();
+  const timersRef = useRef<number[]>([]);
+
+  // Sem isso o timer dispara depois do unmount (e, em teste, depois do teardown
+  // do jsdom) e o setState vira "window is not defined".
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach(timer => clearTimeout(timer));
+      timersRef.current = [];
+    };
+  }, []);
 
   const triggerRipple = useCallback((e: React.MouseEvent<HTMLElement>) => {
     if (prefersReducedMotion) return;
@@ -27,9 +37,11 @@ export function useRipple({ color = 'currentColor', duration = 600 }: RippleProp
 
     setRipples(prev => [...prev, { x, y, id }]);
 
-    setTimeout(() => {
+    const timer = window.setTimeout(() => {
+      timersRef.current = timersRef.current.filter(t => t !== timer);
       setRipples(prev => prev.filter(r => r.id !== id));
     }, duration);
+    timersRef.current.push(timer);
   }, [duration, prefersReducedMotion]);
 
   const RippleContainer = memo(function RippleContainer() {
