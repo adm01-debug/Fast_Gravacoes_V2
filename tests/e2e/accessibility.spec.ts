@@ -32,7 +32,13 @@ test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
         console.log(
           `[a11y ${route}] violações críticas:`,
           JSON.stringify(
-            critical.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+            critical.map((v) => ({
+              id: v.id,
+              impact: v.impact,
+              nodes: v.nodes.length,
+              // Sem os alvos a contagem nao diz qual container falhou.
+              targets: v.nodes.map((n) => n.target),
+            })),
             null,
             2,
           ),

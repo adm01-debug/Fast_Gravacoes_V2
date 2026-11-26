@@ -5,9 +5,13 @@ import { cn } from '@/lib/utils';
 import { formatDateOnly } from '@/lib/dateUtils';
 import { Map as MapIcon } from 'lucide-react';
 import { useSchedulingData, type DbMachine, type DbTechnique } from '@/features/jobs';
+import { useOverflowing } from '@/hooks/use-overflowing';
 
 export function FactoryHeatmap({ machines }: { machines: DbMachine[]; techniques: DbTechnique[] }) {
   const { jobs } = useSchedulingData();
+  // O mapa tem largura minima de 800px; a rolagem horizontal fica no CardContent,
+  // que so deve virar parada de Tab quando transbordar.
+  const { ref: mapScrollRef, overflowing: mapOverflowing } = useOverflowing<HTMLDivElement>();
 
   const getHeatColor = (machine: DbMachine) => {
     if (!machine.is_active) return 'bg-slate-200 dark:bg-slate-800 opacity-40';
@@ -61,7 +65,11 @@ export function FactoryHeatmap({ machines }: { machines: DbMachine[]; techniques
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-8 overflow-auto">
+        <CardContent
+          ref={mapScrollRef}
+          tabIndex={mapOverflowing ? 0 : undefined}
+          className="p-8 overflow-auto"
+        >
           <div className="min-w-[800px] relative aspect-[21/9] bg-muted/20 rounded-2xl border-4 border-dashed border-border/40 p-12 overflow-hidden">
              {/* Grid background */}
              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
