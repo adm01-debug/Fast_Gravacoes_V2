@@ -66,6 +66,39 @@ describe("useSystemMetrics", () => {
     rerender({ refreshKey: 2 });
     await waitFor(() => expect(limitMock).toHaveBeenCalledTimes(3));
   });
+
+  it("volta para a tela com o cache preenchido e o primeiro clique ainda consulta", async () => {
+    // Mesmo QueryClient nos dois mounts: e o cache que o usuario encontra ao voltar.
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false, staleTime: 0 } },
+    });
+    const wrapper = ({ children }: { children: React.ReactNode }) =>
+      React.createElement(QueryClientProvider, { client: queryClient }, children);
+
+    const primeiraVisita = renderHook(
+      ({ refreshKey }: { refreshKey: number }) => useSystemMetrics(20, refreshKey),
+      { wrapper, initialProps: { refreshKey: 0 } },
+    );
+    await waitFor(() => expect(primeiraVisita.result.current.isSuccess).toBe(true));
+    expect(limitMock).toHaveBeenCalledTimes(1);
+
+    // Sai da tela: o cache do mesmo key fica preenchido para a volta.
+    primeiraVisita.unmount();
+
+    const voltaParaTela = renderHook(
+      ({ refreshKey }: { refreshKey: number }) => useSystemMetrics(20, refreshKey),
+      { wrapper, initialProps: { refreshKey: 0 } },
+    );
+    await waitFor(() => expect(limitMock).toHaveBeenCalledTimes(2));
+
+    // A chave ja tem dado guardado: o clique nao pode se apoiar no cache.
+    expect(queryClient.getQueryData(["system-metrics", 20])).toEqual([snapshot]);
+
+    // Primeiro clique em "Atualizar" depois de voltar tem que ir ao banco — era
+    // essa a regressao.
+    voltaParaTela.rerender({ refreshKey: 1 });
+    await waitFor(() => expect(limitMock).toHaveBeenCalledTimes(3));
+  });
 });
 
 
