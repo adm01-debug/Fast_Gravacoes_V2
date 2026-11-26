@@ -1,13 +1,5 @@
 # Configuração do projeto (Management API, segredos redigidos)
 
-> ⚠️ Seção `api.network_restrictions` não pôde ser atualizada nesta coleta (ver errors.md); mostrando a versão anterior.
-
-> ⚠️ Seção `api.ssl_enforcement` não pôde ser atualizada nesta coleta (ver errors.md); mostrando a versão anterior.
-
-> ⚠️ Seção `api.custom_hostname` indisponível nesta coleta e sem versão anterior (ver errors.md).
-
-> ⚠️ Seção `api.branches` não pôde ser atualizada nesta coleta (ver errors.md); mostrando a versão anterior.
-
 | campo | valor |
 |---|---|
 | projeto | Fast_Gravacoes_V2 |
