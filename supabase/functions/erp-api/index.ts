@@ -50,12 +50,20 @@ async function validateApiKey(req: Request, supabase: any): Promise<boolean> {
       .eq('is_active', true)
       .maybeSingle();
     if (!error && data) {
-      // Auditoria de uso: best-effort. Uma falha ao gravar `last_used_at`
-      // nao pode invalidar uma chave que acabou de ser conferida.
-      await supabase
-        .from('erp_api_keys')
-        .update({ last_used_at: new Date().toISOString() })
-        .eq('id', data.id);
+      // Auditoria de uso: best-effort e fora do caminho critico. A rota nao
+      // espera essa gravacao (era uma ida extra ao banco em toda chamada) e
+      // uma falha ao registrar nao invalida uma chave ja conferida.
+      const audit = Promise.resolve(
+        supabase
+          .from('erp_api_keys')
+          .update({ last_used_at: new Date().toISOString() })
+          .eq('id', data.id),
+      ).catch(() => {});
+      const runtime = (globalThis as { EdgeRuntime?: { waitUntil(p: Promise<unknown>): void } })
+        .EdgeRuntime;
+      if (runtime?.waitUntil) {
+        runtime.waitUntil(audit);
+      }
       return true;
     }
   }
