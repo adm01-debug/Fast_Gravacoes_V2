@@ -125,7 +125,7 @@ serve(async (req) => {
         // Toda tentativa que nao entrega fica registrada com o motivo: antes so
         // o envio bem-sucedido gerava linha, entao falha de entrega do provedor
         // e canal sem provedor ficavam invisiveis no log (etapa 016).
-        await supabase.from('tpm_notification_logs').insert({
+        const { error: logError } = await supabase.from('tpm_notification_logs').insert({
           machine_id: item.machine_id,
           channel: item.channel,
           severity: item.severity,
@@ -133,6 +133,9 @@ serve(async (req) => {
           status: logStatus,
           error_message: e instanceof Error ? e.message : String(e)
         })
+        // Sem esta checagem, um insert recusado pelo banco (ex.: CHECK de status)
+        // deixava o log vazio sem nenhum rastro de que a gravacao falhou.
+        if (logError) console.error('Falha ao gravar o log de notificacao TPM:', item.id, logError.message)
 
         await supabase
           .from('tpm_notification_queue')
