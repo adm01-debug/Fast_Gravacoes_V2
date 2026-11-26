@@ -86,31 +86,10 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
         }
       }
 
-      // Incremento atômico antes do detalhe: sem permissão de escrita em jobs a
-      // RPC falha e nada é gravado, em vez de sobrar perda sem contador.
-      // RPC não presente nos tipos gerados; cast controlado via `never` do postgrest-js.
-      const { error: rpcError } = await supabase.rpc('increment_job_lost_pieces' as never, {
-        p_job_id: data.job_id,
-        p_amount: data.quantity,
-      } as never);
-
-      if (rpcError) {
-        // Fallback só quando a função ainda não existe no ambiente (banco antigo).
-        const funcaoAusente = rpcError.code === 'PGRST202' || rpcError.code === '42883';
-        if (!funcaoAusente) throw rpcError;
-
-        const { data: job } = await supabase
-          .from('jobs')
-          .select('lost_pieces')
-          .eq('id', data.job_id)
-          .single();
-        const { error: fallbackError } = await supabase
-          .from('jobs')
-          .update({ lost_pieces: (job?.lost_pieces || 0) + data.quantity })
-          .eq('id', data.job_id);
-        if (fallbackError) throw fallbackError;
-      }
-
+      // Detalhe e contador na mesma transação: o trigger
+      // trg_production_losses_contador (migration 20261129210000) chama
+      // public.increment_job_lost_pieces dentro deste INSERT. Se o insert falhar,
+      // jobs.lost_pieces não muda e a nova tentativa não conta em dobro.
       const { data: result, error } = await supabase
         .from('production_losses')
         .insert({ ...data, shift })
