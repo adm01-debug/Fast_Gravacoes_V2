@@ -37,7 +37,7 @@
 |---|---|---|---|---|---|
 | tpm_notification_logs_machine_id_fkey | FOREIGN KEY | `FOREIGN KEY (machine_id) REFERENCES machines(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | tpm_notification_logs_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
-| tpm_notification_logs_status_check | CHECK | `CHECK (status = ANY (ARRAY['success'::text, 'failure'::text]))` |  |  | sim |
+| tpm_notification_logs_status_check | CHECK | `CHECK (status = ANY (ARRAY['success'::text, 'failure'::text, 'provider_not_configured'::text]))` |  |  | sim |
 | tpm_notification_logs_user_id_fkey | FOREIGN KEY | `FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 
 
