@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3aab3c40b0e3b80f5d2dbb71e7997616259408df",
+  "sha": "39ac1a47981685feba7863b0f69656795e24602f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 22:19 UTC",
-  "files_total": 1662,
-  "code_files": 1466,
-  "code_lines": 217084
+  "generated_at": "2026-11-26 23:42 UTC",
+  "files_total": 1666,
+  "code_files": 1470,
+  "code_lines": 217577
  },
  "version": "1.3.2",
- "facts_hash": "9674e0ba719e92be",
+ "facts_hash": "0b74e12a570b833d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,8 +279,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 690,
-   ".ts": 423,
+   ".tsx": 692,
+   ".ts": 425,
    ".sql": 286,
    ".mjs": 50,
    ".py": 13,
@@ -25559,6 +25559,7 @@
     "tables_transitive": [
      "cron_health_history",
      "cron_p95_daily",
+     "edge_health_history",
      "efficiency_alert_history",
      "error_logs",
      "jobs",
@@ -25591,7 +25592,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 121
+    "deps_count": 123
    },
    {
     "path": "",
@@ -27471,7 +27472,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 591,
+  "components_count": 593,
   "hooks": [
    {
     "name": "useContacts",
@@ -27672,6 +27673,10 @@
    {
     "name": "useDetailedAuditTrail",
     "file": "src/features/admin/hooks/useDetailedAuditTrail.ts"
+   },
+   {
+    "name": "useEdgeHealthHistory",
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts"
    },
    {
     "name": "useFeatureFlags",
@@ -29130,8 +29135,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 66,
-   "lines": 8288,
+   "files": 70,
+   "lines": 8778,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -29143,6 +29148,7 @@
     "cron_p95_daily",
     "daily_summaries",
     "dashboard_presets",
+    "edge_health_history",
     "error_logs",
     "feature_flags",
     "geo_blocking_logs",
@@ -29171,6 +29177,7 @@
     "CronHealthCard.tsx: CronHealthCard",
     "CronHealthHistoryCard.tsx: CronHealthHistoryCard",
     "CronP95TrendCard.tsx: CronP95TrendCard",
+    "EdgeHealthCard.tsx: EdgeHealthCard",
     "SystemMetricsCard.tsx: SystemMetricsCard",
     "ActiveDevicesPanel.tsx: ActiveDevicesPanel",
     "BlockedIPsPanel.tsx: BlockedIPsPanel",
@@ -29199,8 +29206,7 @@
     "useDashboardSettings.ts: useDashboardSettings",
     "useDataExport.ts: ExportFormat, ExportOptions, AuditExportFilters, useDataExport",
     "useDataImport.ts: ImportColumn, ImportPreview, ImportResult, useDataImport",
-    "useDetailedAuditTrail.ts: JobStatusAudit, MachineEventAudit, useDetailedAuditTrail",
-    "useFeatureFlags.ts: FeatureFlag, useFeatureFlags"
+    "useDetailedAuditTrail.ts: JobStatusAudit, MachineEventAudit, useDetailedAuditTrail"
    ],
    "docs": [
     "ActiveDevicesPanel.tsx: eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -29245,6 +29251,8 @@
     "src/features/admin/components/monitoring/CronHealthCard.tsx",
     "src/features/admin/components/monitoring/CronHealthHistoryCard.tsx",
     "src/features/admin/components/monitoring/CronP95TrendCard.tsx",
+    "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
     "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
     "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
@@ -29280,6 +29288,8 @@
     "src/features/admin/hooks/useDataExport.ts",
     "src/features/admin/hooks/useDataImport.ts",
     "src/features/admin/hooks/useDetailedAuditTrail.ts",
+    "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "src/features/admin/hooks/useEdgeHealthHistory.ts",
     "src/features/admin/hooks/useFeatureFlags.ts",
     "src/features/admin/hooks/useGeoBlocking.ts",
     "src/features/admin/hooks/useLoginLockouts.test.ts",
@@ -30545,7 +30555,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18074,
+   "lines": 18077,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -31422,6 +31432,9 @@
     ]
    },
    "edge_health_history": {
+    "select": [
+     "src/features/admin/hooks/useEdgeHealthHistory.ts"
+    ],
     "insert": [
      "supabase/functions/health-monitor/index.ts"
     ]
@@ -32866,6 +32879,14 @@
    ],
    "document_versions": [
     "document_id"
+   ],
+   "edge_health_history": [
+    "captured_at",
+    "checks",
+    "id",
+    "latency_ms",
+    "source",
+    "status"
    ],
    "efficiency_alert_history": [
     "id"
@@ -34346,6 +34367,38 @@
     "name": "parsed",
     "kind": "array",
     "body": "cronP95DailyRowSchema",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    "name": "edgeCheckStatusSchema",
+    "kind": "enum",
+    "body": "[\"pass\", \"warn\", \"fail\"]",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    "name": "edgeCheckSchema",
+    "kind": "object",
+    "body": "{ status: z.unknown().optional(), time: z.string().optional(), observedUnit: z.string().nullish(), observedValue: z.number().nullish(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    "name": "edgeHealthRowSchema",
+    "kind": "object",
+    "body": "{ id: z.string(), status: z.unknown(), checks: z.record(z.string(), edgeCheckSchema).nullish(), latency_ms: z.number().nullish(), source: z.string(), captured_at: z.string(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    "name": "parsed",
+    "kind": "array",
+    "body": "edgeHealthRowSchema",
     "refines": [],
     "chain": []
    },
@@ -47281,6 +47334,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    "field": "status",
+    "value": "fail",
+    "kind": "compara"
+   },
+   {
     "file": "src/features/admin/hooks/useMonitoringData.ts",
     "field": "login_status",
     "value": "failed",
@@ -53063,6 +53122,22 @@
     "name": "nao mostra transicao em INSERT"
    },
    {
+    "file": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    "name": "EdgeHealthCard"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    "name": "explica a restricao de acesso quando a leitura falha"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    "name": "nao mostra status quando nunca houve coleta"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    "name": "mostra cada checagem com valor observado, estado e resumo da janela"
+   },
+   {
     "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
     "name": "SystemMetricsCard"
    },
@@ -53209,6 +53284,54 @@
    {
     "file": "src/features/admin/hooks/useCronP95Daily.test.ts",
     "name": "retorna null quando a linha de base é zero"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "toEdgeStatus"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "aceita os dois vocabularios (banco e health-check)"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "trata valor desconhecido como falha em vez de otimismo"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "formatObserved"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "mostra unidade apenas quando ela existe"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "traduz a contagem de segredos ausentes"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "summarizeEdgeChecks"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "usa o estado da coleta mais recente e conta as falhas da janela"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "preserva checagem desconhecida com o nome cru e ordena as conhecidas primeiro"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "summarizeEdgeHealth"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "nao depende da ordem recebida e resume a janela"
+   },
+   {
+    "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    "name": "devolve janela vazia sem inventar estado"
    },
    {
     "file": "src/features/admin/hooks/useLoginLockouts.test.ts",
@@ -66409,6 +66532,7 @@
      ],
      "fail": [
       "compara:src/features/admin/components/security/SecurityOverviewCard.tsx",
+      "compara:src/features/admin/hooks/useEdgeHealthHistory.ts",
       "compara:src/features/maintenance/hooks/useTPMLifecycleMutations.ts",
       "compara:src/pages/SimulationDashboard.tsx",
       "compara:supabase/functions/health-monitor/index.ts",
@@ -81823,6 +81947,24 @@
     "v === null ? \"bg-muted\" : v >= max * 0.8 ? \"bg-warning\" : \"bg-primary/60\","
    ]
   },
+  "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx": {
+   "path": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+   "lines": 81,
+   "is_test": true,
+   "tests": [
+    "EdgeHealthCard",
+    "explica a restricao de acesso quando a leitura falha",
+    "nao mostra status quando nunca houve coleta",
+    "mostra cada checagem com valor observado, estado e resumo da janela"
+   ]
+  },
+  "src/features/admin/components/monitoring/EdgeHealthCard.tsx": {
+   "path": "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
+   "lines": 136,
+   "exports": [
+    "function EdgeHealthCard"
+   ]
+  },
   "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx": {
    "path": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
    "lines": 147,
@@ -82640,6 +82782,100 @@
    "pagination": [
     "10",
     "20"
+   ]
+  },
+  "src/features/admin/hooks/useEdgeHealthHistory.test.ts": {
+   "path": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+   "lines": 105,
+   "is_test": true,
+   "tests": [
+    "toEdgeStatus",
+    "aceita os dois vocabularios (banco e health-check)",
+    "trata valor desconhecido como falha em vez de otimismo",
+    "formatObserved",
+    "mostra unidade apenas quando ela existe",
+    "traduz a contagem de segredos ausentes",
+    "summarizeEdgeChecks",
+    "usa o estado da coleta mais recente e conta as falhas da janela",
+    "preserva checagem desconhecida com o nome cru e ordena as conhecidas primeiro",
+    "summarizeEdgeHealth",
+    "nao depende da ordem recebida e resume a janela",
+    "devolve janela vazia sem inventar estado"
+   ]
+  },
+  "src/features/admin/hooks/useEdgeHealthHistory.ts": {
+   "path": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+   "lines": 168,
+   "exports": [
+    "const edgeCheckStatusSchema",
+    "type EdgeCheckStatus",
+    "function toEdgeStatus",
+    "const edgeHealthRowSchema",
+    "type EdgeHealthRow",
+    "const EDGE_CHECK_LABELS",
+    "function edgeCheckLabel",
+    "function formatObserved",
+    "interface EdgeCheckSummary",
+    "interface EdgeHealthSummary",
+    "function summarizeEdgeChecks",
+    "function summarizeEdgeHealth",
+    "function useEdgeHealthHistory"
+   ],
+   "tables": [
+    {
+     "table": "edge_health_history",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "edge_health_history": [
+     "captured_at",
+     "checks",
+     "id",
+     "latency_ms",
+     "source",
+     "status"
+    ]
+   },
+   "zod": [
+    {
+     "name": "edgeCheckStatusSchema",
+     "kind": "enum",
+     "body": "[\"pass\", \"warn\", \"fail\"]",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "edgeCheckSchema",
+     "kind": "object",
+     "body": "{ status: z.unknown().optional(), time: z.string().optional(), observedUnit: z.string().nullish(), observedValue: z.number().nullish(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "edgeHealthRowSchema",
+     "kind": "object",
+     "body": "{ id: z.string(), status: z.unknown(), checks: z.record(z.string(), edgeCheckSchema).nullish(), latency_ms: z.number().nullish(), source: z.string(), captured_at: z.string(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "parsed",
+     "kind": "array",
+     "body": "edgeHealthRowSchema",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "fail",
+     "kind": "compara"
+    }
+   ],
+   "hooks": [
+    "useEdgeHealthHistory"
    ]
   },
   "src/features/admin/hooks/useFeatureFlags.ts": {
@@ -95783,7 +96019,7 @@
   },
   "src/pages/SystemMonitoringPage.tsx": {
    "path": "src/pages/SystemMonitoringPage.tsx",
-   "lines": 435,
+   "lines": 438,
    "exports": [
     "function SystemMonitoringPage"
    ],
@@ -101601,10 +101837,23 @@
   }
  },
  "git": {
-  "sha": "3aab3c40b0e3b80f5d2dbb71e7997616259408df",
+  "sha": "39ac1a47981685feba7863b0f69656795e24602f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "39ac1a4",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: mostra a saude real das funcoes de servidor no monitoramento (#341)",
+    "files": [
+     "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+     "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
+     "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+     "src/features/admin/hooks/useEdgeHealthHistory.ts",
+     "src/pages/SystemMonitoringPage.tsx"
+    ]
+   },
    {
     "sha": "3aab3c4",
     "date": "2026-11-26",
@@ -101956,22 +102205,6 @@
      "docs/qa/05-PROGRESSO.md",
      "supabase/functions/cron-alert-email/index.ts"
     ]
-   },
-   {
-    "sha": "1824019",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)",
-    "files": [
-     "src/features/notifications/components/NotificationsList.tsx",
-     "src/features/notifications/hooks/useNotifications.test.ts",
-     "src/features/notifications/hooks/useNotifications.ts",
-     "src/pages/NotificationsPage.tsx",
-     "supabase/functions/_shared/emailDelivery.test.ts",
-     "supabase/functions/_shared/emailDelivery.ts",
-     "supabase/functions/cron-alert-email/index.ts",
-     "supabase/functions/new-device-alert/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -101982,6 +102215,10 @@
    [
     "tests/e2e/accessibility.spec.ts",
     3
+   ],
+   [
+    "src/pages/SystemMonitoringPage.tsx",
+    2
    ],
    [
     "supabase/functions/tpm-notifications/index.ts",
@@ -102000,24 +102237,20 @@
     2
    ],
    [
-    "src/features/notifications/components/NotificationsList.tsx",
-    2
+    "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+    1
    ],
    [
-    "src/features/notifications/hooks/useNotifications.test.ts",
-    2
+    "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
+    1
    ],
    [
-    "src/features/notifications/hooks/useNotifications.ts",
-    2
+    "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+    1
    ],
    [
-    "src/pages/NotificationsPage.tsx",
-    2
-   ],
-   [
-    "supabase/functions/cron-alert-email/index.ts",
-    2
+    "src/features/admin/hooks/useEdgeHealthHistory.ts",
+    1
    ],
    [
     "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",

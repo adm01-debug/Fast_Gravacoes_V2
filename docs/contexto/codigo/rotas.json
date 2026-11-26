@@ -486,6 +486,7 @@
     "useDevice",
     "useDirtyForm",
     "useDirtyGuard",
+    "useEdgeHealthHistory",
     "useEffect",
     "useHapticButton",
     "useHapticFeedback",
@@ -547,6 +548,7 @@
     "useDevice",
     "useDirtyForm",
     "useDirtyGuard",
+    "useEdgeHealthHistory",
     "useHapticButton",
     "useHapticFeedback",
     "useIsDesktop",
@@ -584,6 +586,7 @@
    "tabelas": [
     "cron_health_history",
     "cron_p95_daily",
+    "edge_health_history",
     "error_logs",
     "jobs",
     "login_audit",
@@ -617,7 +620,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 97,
+   "arquivos_puxados": 99,
    "diretos": {
     "tabelas": [
      "error_logs",

@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 166,
+ "total": 168,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 141
+  "unit": 143
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 129
+   "arquivos": 131
   },
   {
    "padrao": "tests/",
@@ -411,6 +411,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
+    "src/features/admin/hooks/useEdgeHealthHistory.ts"
+   ],
+   "casos": 3,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
    "tipo": "unit",
    "linhas": 147,
@@ -470,6 +481,16 @@
     "src/features/admin/hooks/useCronP95Daily.ts"
    ],
    "casos": 7,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
+   "tipo": "unit",
+   "linhas": 105,
+   "testa": [
+    "src/features/admin/hooks/useEdgeHealthHistory.ts"
+   ],
+   "casos": 8,
    "suporte": false
   },
   {
@@ -1772,12 +1793,14 @@
   "src/components/ui/tooltip.tsx": 1,
   "src/contexts/ReauthContext.tsx": 1,
   "src/features/admin/components/audit/AuditEntryCard.tsx": 1,
+  "src/features/admin/components/monitoring/EdgeHealthCard.tsx": 1,
   "src/features/admin/components/monitoring/SystemMetricsCard.tsx": 1,
   "src/features/admin/components/security/LoginLockoutsPanel.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
+  "src/features/admin/hooks/useEdgeHealthHistory.ts": 2,
   "src/features/admin/hooks/useLoginLockouts.ts": 2,
   "src/features/admin/hooks/useSystemMetrics.ts": 2,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,

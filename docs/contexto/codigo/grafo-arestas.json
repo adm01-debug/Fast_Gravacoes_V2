@@ -2835,6 +2835,13 @@
    "src/features/admin/hooks/useCronP95Daily.ts",
    "src/lib/utils.ts"
   ],
+  "src/features/admin/components/monitoring/EdgeHealthCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/features/admin/hooks/useEdgeHealthHistory.ts",
+   "src/lib/utils.ts"
+  ],
   "src/features/admin/components/monitoring/SystemMetricsCard.tsx": [
    "src/components/ui/alert.tsx",
    "src/components/ui/badge.tsx",
@@ -3023,6 +3030,9 @@
    "src/lib/errorHandling.ts"
   ],
   "src/features/admin/hooks/useDetailedAuditTrail.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/admin/hooks/useEdgeHealthHistory.ts": [
    "src/integrations/supabase/client.ts"
   ],
   "src/features/admin/hooks/useFeatureFlags.ts": [
@@ -5951,6 +5961,7 @@
    "src/features/admin/components/monitoring/CronHealthCard.tsx",
    "src/features/admin/components/monitoring/CronHealthHistoryCard.tsx",
    "src/features/admin/components/monitoring/CronP95TrendCard.tsx",
+   "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
    "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
    "src/features/admin/hooks/useMonitoringData.ts"
   ],

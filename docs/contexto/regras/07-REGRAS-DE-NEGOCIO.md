@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3aab3c40b0` · branch `main` · 2026-11-26 22:19 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39ac1a4798` · branch `main` · 2026-11-26 23:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T21:39:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T22:39:33Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T21:39:41Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T22:39:33Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T21:39:41Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T22:39:33Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T21:39:41Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T22:39:33Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1655,7 +1655,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T21:39:41Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T22:39:33Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1869,7 +1869,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `disconnected` | escreve | `src/components/integrations/IntegrationHub.tsx` |
 | `status` | `draft` | compara, escreve | `src/features/maintenance/components/TPMNotificationTemplates.tsx`<br>`src/hooks/technical-sheets/technicalSheetsTypes.ts` |
 | `status` | `error` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
-| `status` | `fail` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>`supabase/functions/health-monitor/index.ts` |
+| `status` | `fail` | compara, escreve | `src/features/admin/components/security/SecurityOverviewCard.tsx`<br>`src/features/admin/hooks/useEdgeHealthHistory.ts`<br>`src/features/maintenance/hooks/useTPMLifecycleMutations.ts`<br>`src/lib/simulation.ts`<br>`src/pages/SimulationDashboard.tsx`<br>… +1 |
 | `status` | `failed` | compara, escreve | `src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`supabase/functions/tpm-notifications/index.ts` |
 | `status` | `finished` | compara, escreve, filtra | `src/components/calendar/JobQuickActions.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobDetailsModal.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/components/jobs/JobTraceabilityTab.tsx`<br>… +41 |
 | `status` | `fulfilled` | compara | `src/features/auth/components/AuthProvider.tsx`<br>`src/hooks/abc/useABCMutations.ts`<br>`supabase/functions/send-email-report/index.ts` |
@@ -2016,6 +2016,22 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **parsed** (`src/features/admin/hooks/useCronP95Daily.ts`, z.array):
   ```ts
   cronP95DailyRowSchema
+  ```
+- **edgeCheckStatusSchema** (`src/features/admin/hooks/useEdgeHealthHistory.ts`, z.enum):
+  ```ts
+  ["pass", "warn", "fail"]
+  ```
+- **edgeCheckSchema** (`src/features/admin/hooks/useEdgeHealthHistory.ts`, z.object):
+  ```ts
+  { status: z.unknown().optional(), time: z.string().optional(), observedUnit: z.string().nullish(), observedValue: z.number().nullish(), }
+  ```
+- **edgeHealthRowSchema** (`src/features/admin/hooks/useEdgeHealthHistory.ts`, z.object):
+  ```ts
+  { id: z.string(), status: z.unknown(), checks: z.record(z.string(), edgeCheckSchema).nullish(), latency_ms: z.number().nullish(), source: z.string(), captured_at: z.string(), }
+  ```
+- **parsed** (`src/features/admin/hooks/useEdgeHealthHistory.ts`, z.array):
+  ```ts
+  edgeHealthRowSchema
   ```
 - **systemMetricsSnapshotSchema** (`src/features/admin/hooks/useSystemMetrics.ts`, z.object):
   ```ts
@@ -3377,7 +3393,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1590 testes em 147 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1606 testes em 149 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3424,6 +3440,7 @@ _nenhum item encontrado_
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 12 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
+| `src/features/admin/hooks/useEdgeHealthHistory.test.ts` | 12 | toEdgeStatus · aceita os dois vocabularios (banco e health-check) · trata valor desconhecido como falha em vez de otimismo · formatObserved … |
 | `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053) · nao avisa conflito para OS concluida, que o banco libera desde a etapa 053 · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
@@ -3486,6 +3503,7 @@ _nenhum item encontrado_
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
 | `tests/e2e/production.spec.ts` | 5 | Production and Jobs Flow · should navigate to Kanban and verify jobs · should create a new job · should verify OEE Dashboard … |
 | `src/features/admin/components/audit/AuditEntryCard.test.tsx` | 4 | AuditEntryCard · mostra o novo status em UPDATE que trocou de status · nao mostra transicao quando o status nao mudou · nao mostra transicao em INSERT |
+| `src/features/admin/components/monitoring/EdgeHealthCard.test.tsx` | 4 | EdgeHealthCard · explica a restricao de acesso quando a leitura falha · nao mostra status quando nunca houve coleta · mostra cada checagem com valor observado, estado e resumo da janela |
 | `src/features/admin/components/security/LoginLockoutsPanel.test.tsx` | 4 | LoginLockoutsPanel · mostra o estado vazio quando nao ha bloqueio · lista as linhas e libera a conta escolhida · exibe o erro da consulta |
 | `src/features/analytics/components/bi/BIStatCard.test.tsx` | 4 | BIStatCard · renders correctly with basic props · shows trend indicator when trend prop is provided · calls onClick when clicked |
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 201,
+ "total": 202,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -1032,6 +1032,26 @@
     "src/features/admin/index.ts"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useEdgeHealthHistory.ts",
+   "hooks_exportados": [
+    "useEdgeHealthHistory"
+   ],
+   "linhas": 168,
+   "dominio": "features/admin",
+   "tabelas": [
+    "edge_health_history"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/EdgeHealthCard.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/features/admin/hooks/useFeatureFlags.ts",

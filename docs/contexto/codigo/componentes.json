@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 626,
+ "total": 627,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -5470,7 +5470,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 282,
+   "usado_por": 283,
    "orfao": false
   },
   {
@@ -5560,7 +5560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 345,
+   "usado_por": 346,
    "orfao": false
   },
   {
@@ -6229,7 +6229,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 85,
+   "usado_por": 86,
    "orfao": false
   },
   {
@@ -6839,6 +6839,22 @@
    "dominio": "features/admin",
    "hooks_locais": [
     "useCronP95Daily"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/features/admin/components/monitoring/EdgeHealthCard.tsx",
+   "exports": [
+    "EdgeHealthCard"
+   ],
+   "export_default": null,
+   "linhas": 136,
+   "dominio": "features/admin",
+   "hooks_locais": [
+    "useEdgeHealthHistory"
    ],
    "tabelas": [],
    "edges": [],
@@ -9870,7 +9886,7 @@
     "SystemMonitoringPage"
    ],
    "export_default": "SystemMonitoringPage",
-   "linhas": 435,
+   "linhas": 438,
    "dominio": "pages",
    "hooks_locais": [
     "useMonitoringData"
