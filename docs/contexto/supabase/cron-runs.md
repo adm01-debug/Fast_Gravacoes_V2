@@ -7,9 +7,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-26 21:30:00 | succeeded | 2.94 | 1 row |
 | 2026-11-26 21:15:00 | succeeded | 3.56 | 1 row |
 | 2026-11-26 21:00:00 | succeeded | 7.71 | 1 row |
-| 2026-11-26 20:45:00 | succeeded | 3.17 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -34,18 +34,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 21:20:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 21:15:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 21:10:00 | succeeded | 0.02 | 1 row |
+| 2026-11-26 21:35:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 21:30:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 21:25:00 | succeeded | 0.02 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 21:20:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 21:15:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 21:10:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 21:35:00 | succeeded | 0.05 | 1 row |
+| 2026-11-26 21:30:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 21:25:00 | succeeded | 0.04 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
@@ -64,24 +64,24 @@ _nenhum_
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-26 21:30:00 | succeeded | 0.04 | 1 row |
 | 2026-11-26 21:00:00 | succeeded | 0.05 | 1 row |
 | 2026-11-26 20:30:00 | succeeded | 0.04 | 1 row |
-| 2026-11-26 20:00:00 | succeeded | 0.03 | 1 row |
 
 
 ## 40 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 21:20:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 21:15:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 21:10:00 | succeeded | 0.05 | 1 row |
+| 2026-11-26 21:35:00 | succeeded | 0.05 | 1 row |
+| 2026-11-26 21:30:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 21:25:00 | succeeded | 0.04 | 1 row |
 
 
 ## 41 · metrics-collector-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 21:20:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 21:15:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 21:10:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 21:35:00 | succeeded | 0.05 | 1 row |
+| 2026-11-26 21:30:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 21:25:00 | succeeded | 0.04 | 1 row |

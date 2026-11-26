@@ -4,9 +4,9 @@
 |---|---|
 | nome | backup-scheduler |
 | status | ACTIVE |
-| versão | 253 |
+| versão | 254 |
 | verify_jwt | sim |
-| entrypoint | file:///app/supabase/functions/backup-scheduler/index.ts |
+| entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/backup-scheduler/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
 | URL | https://uoujzvpecohinketylud.supabase.co/functions/v1/backup-scheduler |
 | fonte no repo | `supabase/functions/backup-scheduler/` |
