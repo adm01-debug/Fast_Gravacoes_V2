@@ -49,7 +49,15 @@ async function validateApiKey(req: Request, supabase: any): Promise<boolean> {
       .eq('key_hash', await hashKey(apiKey))
       .eq('is_active', true)
       .maybeSingle();
-    if (!error && data) return true;
+    if (!error && data) {
+      // Auditoria de uso: best-effort. Uma falha ao gravar `last_used_at`
+      // nao pode invalidar uma chave que acabou de ser conferida.
+      await supabase
+        .from('erp_api_keys')
+        .update({ last_used_at: new Date().toISOString() })
+        .eq('id', data.id);
+      return true;
+    }
   }
 
   return false;
