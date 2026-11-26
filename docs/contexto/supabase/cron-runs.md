@@ -7,9 +7,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 11:30:00 | succeeded | 6.52 | 1 row |
-| 2026-11-26 11:15:00 | succeeded | 3.74 | 1 row |
-| 2026-11-26 11:00:02 | succeeded | 6.75 | 1 row |
+| 2026-11-26 12:30:00 | succeeded | 4.14 | 1 row |
+| 2026-11-26 12:15:00 | succeeded | 3.04 | 1 row |
+| 2026-11-26 12:00:00 | succeeded | 3.24 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -34,18 +34,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 11:35:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 11:30:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 11:25:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 12:40:00 | succeeded | 0.02 | 1 row |
+| 2026-11-26 12:35:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 12:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 11:35:00 | succeeded | 0.08 | 1 row |
-| 2026-11-26 11:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 11:25:00 | succeeded | 0.10 | 1 row |
+| 2026-11-26 12:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:35:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:30:00 | succeeded | 0.06 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
@@ -64,6 +64,8 @@ _nenhum_
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-26 12:30:00 | succeeded | 0.05 | 1 row |
+| 2026-11-26 12:00:00 | succeeded | 0.03 | 1 row |
 | 2026-11-26 11:30:00 | succeeded | 0.07 | 1 row |
 
 
@@ -71,15 +73,15 @@ _nenhum_
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 11:35:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 11:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 11:25:00 | succeeded | 0.09 | 1 row |
+| 2026-11-26 12:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:35:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 31 · metrics-collector-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 11:35:00 | succeeded | 0.09 | 1 row |
-| 2026-11-26 11:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 11:25:00 | succeeded | 0.09 | 1 row |
+| 2026-11-26 12:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:35:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 12:30:00 | succeeded | 0.05 | 1 row |
