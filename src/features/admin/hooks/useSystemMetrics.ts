@@ -12,7 +12,7 @@ import { z } from "zod";
 export const systemMetricsSnapshotSchema = z.object({
   id: z.string(),
   collected_at: z.string(),
-  metrics: z.record(z.unknown()).default({}),
+  metrics: z.record(z.string(), z.unknown()).default({}),
 });
 
 export type SystemMetricsSnapshot = z.infer<typeof systemMetricsSnapshotSchema>;
