@@ -16,7 +16,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.bitrix24_oauth_states](tables/public/bitrix24_oauth_states.md) | table | sim | 1 | 2 | não |  |
 | [public.bitrix24_oauth_tokens](tables/public/bitrix24_oauth_tokens.md) | table | sim | 1 | 6 | não |  |
 | [public.bitrix24_sync_history](tables/public/bitrix24_sync_history.md) | table | sim | 3 | 10 | não |  |
-| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 2 | 11 | não |  |
+| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 2 | 11 | sim |  |
 | [public.business_config](tables/public/business_config.md) | table | sim | 3 | 5 | não |  |
 | [public.chat_messages](tables/public/chat_messages.md) | table | sim | 3 | 7 | não |  |
 | [public.cron_health_history](tables/public/cron_health_history.md) | table | sim | 1 | 14 | não |  |
@@ -93,7 +93,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.reward_redemptions](tables/public/reward_redemptions.md) | table | sim | 2 | 6 | não |  |
 | [public.rls_test_results](tables/public/rls_test_results.md) | table | sim | 1 | 8 | não |  |
 | [public.role_permissions](tables/public/role_permissions.md) | table | sim | 2 | 9 | não |  |
-| [public.security_events](tables/public/security_events.md) | table | sim | 2 | 9 | não |  |
+| [public.security_events](tables/public/security_events.md) | table | sim | 2 | 9 | sim |  |
 | [public.shift_checklist_templates](tables/public/shift_checklist_templates.md) | table | sim | 2 | 10 | não |  |
 | [public.shift_handover_checklist](tables/public/shift_handover_checklist.md) | table | sim | 3 | 8 | não |  |
 | [public.shift_handovers](tables/public/shift_handovers.md) | table | sim | 3 | 13 | não |  |

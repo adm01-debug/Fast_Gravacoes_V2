@@ -7,9 +7,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 15:30:00 | succeeded | 9.09 | 1 row |
-| 2026-11-26 15:15:01 | succeeded | 22.41 | 1 row |
-| 2026-11-26 15:00:00 | succeeded | 4.71 | 1 row |
+| 2026-11-26 16:15:00 | succeeded | 5.77 | 1 row |
+| 2026-11-26 16:00:00 | succeeded | 4.70 | 1 row |
+| 2026-11-26 15:45:01 | succeeded | 8.59 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -34,18 +34,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 15:35:04 | succeeded | 0.07 | 1 row |
-| 2026-11-26 15:30:00 | succeeded | 0.03 | 1 row |
-| 2026-11-26 15:25:05 | succeeded | 0.14 | 1 row |
+| 2026-11-26 16:15:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 16:10:00 | succeeded | 0.01 | 1 row |
+| 2026-11-26 16:05:00 | succeeded | 0.02 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 15:35:04 | succeeded | 0.24 | 1 row |
-| 2026-11-26 15:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 15:25:05 | succeeded | 0.32 | 1 row |
+| 2026-11-26 16:15:00 | succeeded | 0.08 | 1 row |
+| 2026-11-26 16:10:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 16:05:00 | succeeded | 0.04 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
@@ -55,33 +55,31 @@
 | 2026-11-26 04:07:00 | succeeded | 0.15 | 1 row |
 
 
-## 29 · cron-alert-email-every-30min
-
-| início (UTC) | status | duração (s) | mensagem |
-|---|---|---|---|
-| 2026-11-26 15:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 15:00:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 14:30:00 | succeeded | 0.08 | 1 row |
-
-
-## 30 · health-monitor-every-5min
-
-| início (UTC) | status | duração (s) | mensagem |
-|---|---|---|---|
-| 2026-11-26 15:35:04 | succeeded | 0.31 | 1 row |
-| 2026-11-26 15:30:00 | succeeded | 0.10 | 1 row |
-| 2026-11-26 15:25:05 | succeeded | 0.33 | 1 row |
-
-
-## 31 · metrics-collector-every-5min
-
-| início (UTC) | status | duração (s) | mensagem |
-|---|---|---|---|
-| 2026-11-26 15:35:04 | succeeded | 0.24 | 1 row |
-| 2026-11-26 15:30:00 | succeeded | 0.08 | 1 row |
-| 2026-11-26 15:25:05 | succeeded | 0.37 | 1 row |
-
-
 ## 35 · refresh-machine-health-metrics
 
 _nenhum_
+
+
+## 39 · cron-alert-email-every-30min
+
+| início (UTC) | status | duração (s) | mensagem |
+|---|---|---|---|
+| 2026-11-26 16:00:00 | succeeded | 0.06 | 1 row |
+
+
+## 40 · health-monitor-every-5min
+
+| início (UTC) | status | duração (s) | mensagem |
+|---|---|---|---|
+| 2026-11-26 16:15:00 | succeeded | 0.08 | 1 row |
+| 2026-11-26 16:10:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 16:05:00 | succeeded | 0.05 | 1 row |
+
+
+## 41 · metrics-collector-every-5min
+
+| início (UTC) | status | duração (s) | mensagem |
+|---|---|---|---|
+| 2026-11-26 16:15:00 | succeeded | 0.09 | 1 row |
+| 2026-11-26 16:10:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 16:05:00 | succeeded | 0.05 | 1 row |

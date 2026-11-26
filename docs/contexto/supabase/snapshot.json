@@ -299,9 +299,9 @@
         "name": "approve-password-reset",
         "slug": "approve-password-reset",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379406199,
@@ -311,9 +311,9 @@
         "name": "auto-promote-jobs",
         "slug": "auto-promote-jobs",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379407600,
@@ -323,9 +323,9 @@
         "name": "backup-scheduler",
         "slug": "backup-scheduler",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379395547,
@@ -335,9 +335,9 @@
         "name": "bitrix24-sync",
         "slug": "bitrix24-sync",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": false,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379404067,
@@ -347,9 +347,9 @@
         "name": "calculate-inventory-intelligence",
         "slug": "calculate-inventory-intelligence",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379379734,
@@ -359,9 +359,9 @@
         "name": "calculate-rankings",
         "slug": "calculate-rankings",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379387034,
@@ -371,9 +371,9 @@
         "name": "check-login-lockout",
         "slug": "check-login-lockout",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379382183,
@@ -383,9 +383,9 @@
         "name": "cleanup-security-logs",
         "slug": "cleanup-security-logs",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379380426,
@@ -395,9 +395,9 @@
         "name": "create-operator",
         "slug": "create-operator",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379403284,
@@ -407,9 +407,9 @@
         "name": "cron-alert-email",
         "slug": "cron-alert-email",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379391021,
@@ -419,9 +419,9 @@
         "name": "cron-cleanup",
         "slug": "cron-cleanup",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379394898,
@@ -431,9 +431,9 @@
         "name": "csp-report",
         "slug": "csp-report",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": false,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379382723,
@@ -443,9 +443,9 @@
         "name": "daily-maintenance-summary",
         "slug": "daily-maintenance-summary",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379398594,
@@ -455,9 +455,9 @@
         "name": "erp-api",
         "slug": "erp-api",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379391931,
@@ -467,9 +467,9 @@
         "name": "excel-export",
         "slug": "excel-export",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379385545,
@@ -479,9 +479,9 @@
         "name": "external-db-bridge",
         "slug": "external-db-bridge",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 229
+        "version": 233
       },
       {
         "created_at": 1791379381627,
@@ -491,9 +491,9 @@
         "name": "health-check",
         "slug": "health-check",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379381034,
@@ -503,9 +503,9 @@
         "name": "health-monitor",
         "slug": "health-monitor",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379408255,
@@ -515,9 +515,9 @@
         "name": "image-optimizer",
         "slug": "image-optimizer",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708638535,
         "verify_jwt": true,
-        "version": 220
+        "version": 222
       },
       {
         "created_at": 1791379393018,
@@ -527,9 +527,9 @@
         "name": "metrics-collector",
         "slug": "metrics-collector",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 232
+        "version": 236
       },
       {
         "created_at": 1791379400193,
@@ -539,9 +539,9 @@
         "name": "ml-predictions",
         "slug": "ml-predictions",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379401186,
@@ -551,9 +551,9 @@
         "name": "new-device-alert",
         "slug": "new-device-alert",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 238
+        "version": 242
       },
       {
         "created_at": 1791379393997,
@@ -563,9 +563,9 @@
         "name": "pdf-generator",
         "slug": "pdf-generator",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 229
+        "version": 233
       },
       {
         "created_at": 1791379399176,
@@ -575,9 +575,9 @@
         "name": "security-alert",
         "slug": "security-alert",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379406866,
@@ -587,9 +587,9 @@
         "name": "send-email-report",
         "slug": "send-email-report",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 232
+        "version": 236
       },
       {
         "created_at": 1791379396879,
@@ -599,9 +599,9 @@
         "name": "send-loss-risk-alert",
         "slug": "send-loss-risk-alert",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379405390,
@@ -611,9 +611,9 @@
         "name": "send-push-notification",
         "slug": "send-push-notification",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379388973,
@@ -623,9 +623,9 @@
         "name": "send-tpm-email",
         "slug": "send-tpm-email",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379397843,
@@ -635,9 +635,9 @@
         "name": "technical-assistant",
         "slug": "technical-assistant",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379384889,
@@ -647,9 +647,9 @@
         "name": "tpm-notifications",
         "slug": "tpm-notifications",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 230
+        "version": 234
       },
       {
         "created_at": 1791379384221,
@@ -659,9 +659,9 @@
         "name": "update-operator",
         "slug": "update-operator",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 229
+        "version": 233
       },
       {
         "created_at": 1791379383546,
@@ -671,9 +671,9 @@
         "name": "validate-login-ip",
         "slug": "validate-login-ip",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       },
       {
         "created_at": 1791379386183,
@@ -683,9 +683,9 @@
         "name": "webhook-handler",
         "slug": "webhook-handler",
         "status": "ACTIVE",
-        "updated_at": 1795706718422,
+        "updated_at": 1795708954392,
         "verify_jwt": true,
-        "version": 231
+        "version": 235
       }
     ],
     "enabled": true,
@@ -24762,9 +24762,18 @@
         },
         {
           "active": true,
+          "command": "chama: public.refresh_machine_health_metrics",
+          "database": "postgres",
+          "jobid": 35,
+          "jobname": "refresh-machine-health-metrics",
+          "schedule": "10 4 * * *",
+          "username": "postgres"
+        },
+        {
+          "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 29,
+          "jobid": 39,
           "jobname": "cron-alert-email-every-30min",
           "schedule": "*/30 * * * *",
           "username": "postgres"
@@ -24773,7 +24782,7 @@
           "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 30,
+          "jobid": 40,
           "jobname": "health-monitor-every-5min",
           "schedule": "*/5 * * * *",
           "username": "postgres"
@@ -24782,18 +24791,9 @@
           "active": true,
           "command": "chama: net.http_post",
           "database": "postgres",
-          "jobid": 31,
+          "jobid": 41,
           "jobname": "metrics-collector-every-5min",
           "schedule": "*/5 * * * *",
-          "username": "postgres"
-        },
-        {
-          "active": true,
-          "command": "chama: public.refresh_machine_health_metrics",
-          "database": "postgres",
-          "jobid": 35,
-          "jobname": "refresh-machine-health-metrics",
-          "schedule": "10 4 * * *",
           "username": "postgres"
         }
       ]
@@ -24847,12 +24847,25 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 3,
           "cron": [
-            "29:cron-alert-email-every-30min",
-            "30:health-monitor-every-5min",
-            "31:metrics-collector-every-5min"
+            "39:cron-alert-email-every-30min",
+            "40:health-monitor-every-5min",
+            "41:metrics-collector-every-5min"
           ],
           "db": [],
           "triggers": [],
@@ -25011,7 +25024,10 @@
             "public.get_cron_health",
             "public.get_finished_jobs_for_evolution",
             "public.has_permission",
+            "public.list_login_lockouts",
             "public.record_packaging_defect",
+            "public.release_login_lockout",
+            "public.resolve_kpi_alert",
             "public.update_shipment_status",
             "public.verify_audit_chain"
           ],
@@ -25041,8 +25057,13 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [
@@ -25055,7 +25076,7 @@
           "search_path=app_private, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "02dd4d757ef0b9dd",
+        "definition_sha": "10ad2b45798aab0d",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -25073,8 +25094,17 @@
       {
         "args": "p_key text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
+              "hits": 5
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "app_private.functions_base_url",
@@ -25114,9 +25144,13 @@
             {
               "file": "supabase/migrations/20261019140000_validation_hardening.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "app_private.functions_base_url",
@@ -26096,7 +26130,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "8258db89b61581df",
+        "definition_sha": "7760e400d3fccdd0",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -26131,7 +26165,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "674331a1612dbfab",
+        "definition_sha": "4523e0e91fd7b605",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -27012,7 +27046,10 @@
             "public.get_cron_health",
             "public.get_finished_jobs_for_evolution",
             "public.has_permission",
+            "public.list_login_lockouts",
             "public.record_packaging_defect",
+            "public.release_login_lockout",
+            "public.resolve_kpi_alert",
             "public.update_shipment_status",
             "public.verify_audit_chain"
           ],
@@ -27214,6 +27251,36 @@
         "security_definer": true,
         "strict": false,
         "volatility": "stable"
+      },
+      {
+        "args": "p_limit integer",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "fd71d974252d8a90",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "list_login_lockouts",
+        "owner": "postgres",
+        "returns": "TABLE(id uuid, identifier text, identifier_type text, failed_attempts integer, last_failed_at timestamp with time zone, locked_until timestamp with time zone, lockout_count integer)",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
       },
       {
         "args": "",
@@ -28096,6 +28163,66 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_identifier text, p_identifier_type text",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "b250eef35bd2239a",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "release_login_lockout",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_alert_id uuid",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "cee346a9809a018f",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "resolve_kpi_alert",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -28207,6 +28334,43 @@
         "returns": "trigger",
         "schema": "public",
         "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.security_events.security_events_limita_severidade_do_cliente"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": null,
+        "definition_sha": "94dfb898d59d8c16",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "security_events_limita_severidade_do_cliente",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
         "strict": false,
         "volatility": "volatile"
       },
@@ -37667,6 +37831,12 @@
       {
         "code": "realtime_replica_identity",
         "detail": "Publicada no Realtime sem REPLICA IDENTITY FULL: eventos de UPDATE/DELETE não trazem `old` completo.",
+        "object": "public.blocked_ips",
+        "severity": "INFO"
+      },
+      {
+        "code": "realtime_replica_identity",
+        "detail": "Publicada no Realtime sem REPLICA IDENTITY FULL: eventos de UPDATE/DELETE não trazem `old` completo.",
         "object": "public.packaging_defects",
         "severity": "INFO"
       },
@@ -37674,6 +37844,12 @@
         "code": "realtime_replica_identity",
         "detail": "Publicada no Realtime sem REPLICA IDENTITY FULL: eventos de UPDATE/DELETE não trazem `old` completo.",
         "object": "public.packaging_tasks",
+        "severity": "INFO"
+      },
+      {
+        "code": "realtime_replica_identity",
+        "detail": "Publicada no Realtime sem REPLICA IDENTITY FULL: eventos de UPDATE/DELETE não trazem `old` completo.",
+        "object": "public.security_events",
         "severity": "INFO"
       },
       {
@@ -39309,6 +39485,18 @@
         "version": "20261126110000"
       },
       {
+        "name": "restore_internal_cron_calls",
+        "statements": 11,
+        "statements_sha": "f26e1345fdf5b974",
+        "version": "20261126120000"
+      },
+      {
+        "name": "normalize_functions_base_url",
+        "statements": 4,
+        "statements_sha": "46669913f837b91c",
+        "version": "20261126130000"
+      },
+      {
         "name": "isolate_public_has_role",
         "statements": 5,
         "statements_sha": "a375f4be8f994f95",
@@ -39361,6 +39549,18 @@
         "statements": 5,
         "statements_sha": "77027d99c4adf3ad",
         "version": "20261129160000"
+      },
+      {
+        "name": "realtime_seguranca_e_crons_por_url_derivada",
+        "statements": 2,
+        "statements_sha": "636bdbfb1a95c4f9",
+        "version": "20261129190000"
+      },
+      {
+        "name": "security_events_severidade_cliente",
+        "statements": 6,
+        "statements_sha": "340b4b13b7da2e9c",
+        "version": "20261129200000"
       },
       {
         "name": "production_losses_contador_atomico",
@@ -43444,6 +43644,11 @@
         {
           "publication": "supabase_realtime",
           "schema": "public",
+          "table": "blocked_ips"
+        },
+        {
+          "publication": "supabase_realtime",
+          "schema": "public",
           "table": "packaging_defects"
         },
         {
@@ -43455,6 +43660,11 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "push_notifications"
+        },
+        {
+          "publication": "supabase_realtime",
+          "schema": "public",
+          "table": "security_events"
         }
       ]
     },
@@ -46514,6 +46724,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "role_permissions",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER security_events_limita_severidade_do_cliente BEFORE INSERT ON security_events FOR EACH ROW EXECUTE FUNCTION security_events_limita_severidade_do_cliente()",
+        "events": "INSERT",
+        "function": "public.security_events_limita_severidade_do_cliente",
+        "level": "ROW",
+        "name": "security_events_limita_severidade_do_cliente",
+        "schema": "public",
+        "status": "enabled",
+        "table": "security_events",
         "timing": "BEFORE"
       },
       {

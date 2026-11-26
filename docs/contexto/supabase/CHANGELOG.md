@@ -2,6 +2,18 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 16:18 UTC
+
+- **cron jobs** adicionado (3): `39:cron-alert-email-every-30min`, `40:health-monitor-every-5min`, `41:metrics-collector-every-5min`
+- **cron jobs** removido (3): `29:cron-alert-email-every-30min`, `30:health-monitor-every-5min`, `31:metrics-collector-every-5min`
+- **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
+- **functions** adicionado (4): `public.list_login_lockouts(p_limit integer)`, `public.release_login_lockout(p_identifier text, p_identifier_type text)`, `public.resolve_kpi_alert(p_alert_id uuid)`, `public.security_events_limita_severidade_do_cliente()`
+- **functions** alterado (3): `app_private.normalize_functions_base_url()`, `public.count_active_operators_since(p_since timestamp with time zone)`, `public.count_running_machines()`
+- **lints** adicionado (2): `realtime_replica_identity:public.blocked_ips`, `realtime_replica_identity:public.security_events`
+- **migrations** adicionado (4): `20261126120000_restore_internal_cron_calls`, `20261126130000_normalize_functions_base_url`, `20261129190000_realtime_seguranca_e_crons_por_url_derivada`, `20261129200000_security_events_severidade_cliente`
+- **realtime** adicionado (2): `supabase_realtime:public.blocked_ips`, `supabase_realtime:public.security_events`
+- **triggers** adicionado (1): `public.security_events.security_events_limita_severidade_do_cliente`
+
 ## 2026-11-26 15:39 UTC
 
 - **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`

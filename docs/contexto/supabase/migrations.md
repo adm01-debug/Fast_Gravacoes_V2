@@ -263,6 +263,8 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261125170000 | [restore_erp_api_keys](migrations/20261125170000_restore_erp_api_keys.sql) | 5 |
 | 20261126100000 | [f011_rpc_apply_job_sequence](migrations/20261126100000_f011_rpc_apply_job_sequence.sql) | 3 |
 | 20261126110000 | [restore_public_has_role_execute](migrations/20261126110000_restore_public_has_role_execute.sql) | 1 |
+| 20261126120000 | [restore_internal_cron_calls](migrations/20261126120000_restore_internal_cron_calls.sql) | 11 |
+| 20261126130000 | [normalize_functions_base_url](migrations/20261126130000_normalize_functions_base_url.sql) | 4 |
 | 20261127120000 | [isolate_public_has_role](migrations/20261127120000_isolate_public_has_role.sql) | 5 |
 | 20261128100000 | [block_delete_job_with_production](migrations/20261128100000_block_delete_job_with_production.sql) | 0 |
 | 20261128110000 | [fk_production_losses_restrict](migrations/20261128110000_fk_production_losses_restrict.sql) | 0 |
@@ -273,4 +275,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261129100000 | [restore_increment_job_lost_pieces](migrations/20261129100000_restore_increment_job_lost_pieces.sql) | 5 |
 | 20261129110000 | [refresh_machine_health_metrics](migrations/20261129110000_refresh_machine_health_metrics.sql) | 7 |
 | 20261129160000 | [maquina_sem_os_e_arquivadas](migrations/20261129160000_maquina_sem_os_e_arquivadas.sql) | 5 |
+| 20261129190000 | [realtime_seguranca_e_crons_por_url_derivada](migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql) | 2 |
+| 20261129200000 | [security_events_severidade_cliente](migrations/20261129200000_security_events_severidade_cliente.sql) | 6 |
 | 20261129210000 | [production_losses_contador_atomico](migrations/20261129210000_production_losses_contador_atomico.sql) | 6 |

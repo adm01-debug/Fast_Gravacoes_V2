@@ -11,9 +11,11 @@
 
 | publication | tabela | replica identity |
 |---|---|---|
+| supabase_realtime | public.blocked_ips | default |
 | supabase_realtime | public.packaging_defects | default |
 | supabase_realtime | public.packaging_tasks | default |
 | supabase_realtime | public.push_notifications | full |
+| supabase_realtime | public.security_events | default |
 
 ## Broadcast / Presence (policies em realtime.messages)
 

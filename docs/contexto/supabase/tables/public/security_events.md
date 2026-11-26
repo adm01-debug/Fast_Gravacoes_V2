@@ -7,7 +7,7 @@
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
 | policies | 2 |
-| realtime (publication) | não |
+| realtime (publication) | sim |
 | replica identity | default |
 | vem de extensão | não |
 
@@ -72,7 +72,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| security_events_limita_severidade_do_cliente | BEFORE | INSERT | ROW | enabled | public.security_events_limita_severidade_do_cliente |
 
 
 ## Grants
