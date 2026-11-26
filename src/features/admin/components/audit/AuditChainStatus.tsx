@@ -10,6 +10,10 @@ export function AuditChainStatus() {
   const { data, isFetching, refetch } = useAuditChainVerification(enabled);
 
   const ok = data ? data.broken === 0 : null;
+  // verify_audit_chain conta os registros historicos sem hash em total_records,
+  // mas nao os verifica nem os marca como quebrados: sem explicitar isso, o
+  // painel anunciava sucesso com parte da cadeia nunca conferida.
+  const semHash = data ? Math.max(0, data.total_records - data.verified - data.broken) : 0;
 
   return (
     <Card className="p-4 flex items-center justify-between gap-4 border-border bg-card">
@@ -24,14 +28,19 @@ export function AuditChainStatus() {
         <div>
           <p className="font-medium text-sm">Integridade da cadeia hash</p>
           {data ? (
-            <p className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground">
               {data.verified}/{data.total_records} verificados
               {data.broken > 0 && (
                 <Badge variant="destructive" className="ml-2">
                   {data.broken} quebrado(s)
                 </Badge>
               )}
-            </p>
+                            {semHash > 0 && (
+                              <Badge variant="outline" className="ml-2">
+                                {semHash} sem hash no lote
+                              </Badge>
+                            )}
+                      </div>
           ) : (
             <p className="text-xs text-muted-foreground">Clique em verificar para auditar a cadeia</p>
           )}
