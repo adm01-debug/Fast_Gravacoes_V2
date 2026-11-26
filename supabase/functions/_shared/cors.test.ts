@@ -85,3 +85,28 @@ Deno.test("handleCorsPreflight: responde 204 só a OPTIONS, com os mesmos header
   assertEquals(res?.headers.get("Access-Control-Allow-Origin"), getCorsHeaders(preflightReq)["Access-Control-Allow-Origin"]);
   assertEquals(handleCorsPreflight(req("https://fastgravacoes.com.br", "GET")), null);
 });
+
+Deno.test("pickAllowedOrigin: devolve o proprio origin para servidores locais (localhost/127.0.0.1)", async () => {
+  const { pickAllowedOrigin } = await loadCors({ APP_URL: "https://fastgravacoes.com.br" });
+  for (const origin of [
+    "http://127.0.0.1:8090",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://localhost",
+    "http://[::1]:8090",
+  ]) {
+    assertEquals(pickAllowedOrigin(req(origin)), origin, origin);
+  }
+});
+
+Deno.test("pickAllowedOrigin: dominio que apenas imita loopback continua fora da allowlist", async () => {
+  const { pickAllowedOrigin, ALLOWED_ORIGINS } = await loadCors({ APP_URL: "https://fastgravacoes.com.br" });
+  for (const origin of [
+    "http://localhost.evil.example",
+    "http://127.0.0.1.evil.example",
+    "http://notlocalhost",
+    "http://localhost:8090@evil.example",
+  ]) {
+    assertEquals(pickAllowedOrigin(req(origin)), ALLOWED_ORIGINS[0], origin);
+  }
+});
