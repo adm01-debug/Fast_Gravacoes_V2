@@ -4,7 +4,7 @@
 |---|---|
 | nome | pdf-generator |
 | status | ACTIVE |
-| versão | 233 |
+| versão | 235 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/pdf-generator/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |

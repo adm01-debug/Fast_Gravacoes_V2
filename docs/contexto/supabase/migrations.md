@@ -278,3 +278,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261129190000 | [realtime_seguranca_e_crons_por_url_derivada](migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql) | 2 |
 | 20261129200000 | [security_events_severidade_cliente](migrations/20261129200000_security_events_severidade_cliente.sql) | 6 |
 | 20261129210000 | [production_losses_contador_atomico](migrations/20261129210000_production_losses_contador_atomico.sql) | 6 |
+| 20261129230000 | [restore_increment_sheet_view_count_execute](migrations/20261129230000_restore_increment_sheet_view_count_execute.sql) | 1 |
