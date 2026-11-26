@@ -28,7 +28,7 @@ export function AuditChainStatus() {
         <div>
           <p className="font-medium text-sm">Integridade da cadeia hash</p>
           {data ? (
-            <p className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground">
               {data.verified}/{data.total_records} verificados
               {data.broken > 0 && (
                 <Badge variant="destructive" className="ml-2">
@@ -37,10 +37,10 @@ export function AuditChainStatus() {
               )}
                             {semHash > 0 && (
                               <Badge variant="outline" className="ml-2">
-                                {semHash} sem hash (histórico)
+                                {semHash} sem hash no lote
                               </Badge>
                             )}
-            </p>
+                      </div>
           ) : (
             <p className="text-xs text-muted-foreground">Clique em verificar para auditar a cadeia</p>
           )}
