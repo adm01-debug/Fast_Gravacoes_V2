@@ -1,7 +1,7 @@
 # Graph Report - Fast_Gravacoes_V2  (2026-11-26)
 
 ## Corpus Check
-- 1509 files · ~866,237 words
+- 1509 files · ~866,239 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 25 file(s) not represented in the graph (top: (none) 13, .toml 5, .csv 2)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fef2887b`
+- Built from commit: `91020090`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

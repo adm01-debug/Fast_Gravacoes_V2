@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fef2887bbdc535322436db553dc516c7f0ead7bb",
+  "sha": "9102009000ef90416305ea8f264f4122471b11fe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 19:05 UTC",
+  "generated_at": "2026-11-26 19:20 UTC",
   "files_total": 1651,
   "code_files": 1455,
-  "code_lines": 216157
+  "code_lines": 216158
  },
  "version": "1.3.2",
- "facts_hash": "6fbfe978d4f2f0c3",
+ "facts_hash": "e4ab294ebf271409",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -30850,7 +30850,7 @@
   {
    "module": "supabase/functions",
    "files": 58,
-   "lines": 11861,
+   "lines": 11862,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -99035,7 +99035,7 @@
   },
   "supabase/functions/send-email-report/index.ts": {
    "path": "supabase/functions/send-email-report/index.ts",
-   "lines": 413,
+   "lines": 414,
    "tables": [
     {
      "table": "jobs",
@@ -101250,10 +101250,20 @@
   }
  },
  "git": {
-  "sha": "fef2887bbdc535322436db553dc516c7f0ead7bb",
+  "sha": "9102009000ef90416305ea8f264f4122471b11fe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "9102009",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: relatorio por e-mail declara a recusa quando falta a chave do provedor (#336)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/send-email-report/index.ts"
+    ]
+   },
    {
     "sha": "fef2887",
     "date": "2026-11-26",
@@ -101623,24 +101633,6 @@
      "src/pages/PendingQueue.test.tsx",
      "src/pages/PendingQueue.tsx"
     ]
-   },
-   {
-    "sha": "970aef7",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/features/jobs/lib/pending-queue.ts",
-     "src/features/jobs/services/jobsService.test.ts",
-     "src/features/jobs/services/jobsService.ts",
-     "src/features/jobs/types/job.schema.ts",
-     "src/pages/KanbanBoard.test.tsx",
-     "src/pages/KanbanBoard.tsx",
-     "src/pages/PendingQueue.test.tsx",
-     "src/pages/PendingQueue.tsx",
-     "src/test/jobsService.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -101654,10 +101646,6 @@
    ],
    [
     "tests/e2e/accessibility.spec.ts",
-    3
-   ],
-   [
-    "src/features/jobs/services/jobsService.test.ts",
     3
    ],
    [
@@ -101697,7 +101685,7 @@
     2
    ],
    [
-    "src/features/jobs/types/job.schema.ts",
+    "src/features/jobs/services/jobsService.test.ts",
     2
    ],
    [
@@ -101709,19 +101697,23 @@
     2
    ],
    [
-    "src/features/jobs/services/jobsService.ts",
-    2
-   ],
-   [
-    "src/pages/PendingQueue.test.tsx",
-    2
-   ],
-   [
-    "src/pages/PendingQueue.tsx",
-    2
+    "supabase/functions/send-email-report/index.ts",
+    1
    ],
    [
     "src/i18n/locales/en-US.json",
+    1
+   ],
+   [
+    "src/i18n/locales/pt-BR.json",
+    1
+   ],
+   [
+    "src/pages/GamificationPage.tsx",
+    1
+   ],
+   [
+    "supabase/functions/calculate-rankings/index.ts",
     1
    ]
   ]

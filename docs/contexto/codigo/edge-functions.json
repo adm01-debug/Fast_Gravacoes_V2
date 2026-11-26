@@ -874,7 +874,7 @@
    "nome": "send-email-report",
    "entrada": "supabase/functions/send-email-report/index.ts",
    "arquivos": 1,
-   "linhas": 413,
+   "linhas": 414,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [

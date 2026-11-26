@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fef2887bbdc535322436db553dc516c7f0ead7bb",
+  "commit": "9102009000ef90416305ea8f264f4122471b11fe",
   "branch": "main",
-  "data_commit": "2026-11-26T16:04:58-03:00",
+  "data_commit": "2026-11-26T16:15:38-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "9102009",
+    "data": "2026-11-26",
+    "assunto": "fix: relatorio por e-mail declara a recusa quando falta a chave do provedor (#336)"
+   },
    {
     "sha": "fef2887",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "108f0a7",
     "data": "2026-11-25",
     "assunto": "feat: concluir OS libera a maquina para novo agendamento (etapa 053) (#307)"
-   },
-   {
-    "sha": "3aaa14f",
-    "data": "2026-11-25",
-    "assunto": "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 309,
+  "arquivos_mudados_7d": 306,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -169,12 +169,12 @@
     "mudancas": 21
    },
    {
-    "pasta": "src/features/packaging",
+    "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 19
    },
    {
-    "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 18
+    "pasta": "src/features/packaging",
+    "mudancas": 19
    },
    {
     "pasta": "src/components/jobs",
@@ -212,7 +212,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "deno.lock",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 182
+    "commits": 183
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1653,
   "arquivos_codigo": 1169,
-  "linhas_codigo": 197853,
+  "linhas_codigo": 197854,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 58,
-   "linhas": 11861
+   "linhas": 11862
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,
