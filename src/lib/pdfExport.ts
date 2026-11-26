@@ -240,7 +240,7 @@ export async function exportExecutiveDashboardPDF(options: PDFExportOptions): Pr
     const performanceData = kpis.machinePerformance.map(m => [
       m.machine,
       `${m.utilization.toFixed(1)}%`,
-      `${m.oee.toFixed(1)}%`,
+          m.oee == null ? '—' : `${m.oee.toFixed(1)}%`,
     ]);
 
     autoTable(doc, {

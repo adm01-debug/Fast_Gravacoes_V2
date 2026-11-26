@@ -47,6 +47,7 @@ import { CronHealthCard } from "@/features/admin/components/monitoring/CronHealt
 import { CronHealthHistoryCard } from "@/features/admin/components/monitoring/CronHealthHistoryCard";
 import { CronEmailPreferenceCard } from "@/features/admin/components/monitoring/CronEmailPreferenceCard";
 import { CronP95TrendCard } from "@/features/admin/components/monitoring/CronP95TrendCard";
+import { SystemMetricsCard } from "@/features/admin/components/monitoring/SystemMetricsCard";
 
 function StatCard({
   title,
@@ -79,6 +80,7 @@ export default function SystemMonitoringPage() {
   const [windowKey, setWindowKey] = useState<MonitoringWindow>("24h");
   const [thresholds, setThresholds] = useState<AlertThresholds>(DEFAULT_THRESHOLDS);
   const [draft, setDraft] = useState<AlertThresholds>(DEFAULT_THRESHOLDS);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { data, isLoading, refetch, isFetching } = useMonitoringData(windowKey);
 
   useEffect(() => {
@@ -129,7 +131,16 @@ export default function SystemMonitoringPage() {
                 <TabsTrigger value="7d">7d</TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button variant="outline" size="icon" onClick={() => refetch()} disabled={isFetching} aria-label="Atualizar">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                refetch();
+                setRefreshKey((atual) => atual + 1);
+              }}
+              disabled={isFetching}
+              aria-label="Atualizar"
+            >
               <RefreshCwIcon className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
             </Button>
             <Popover>
@@ -214,6 +225,8 @@ export default function SystemMonitoringPage() {
             Icon={GaugeIcon}
           />
         </div>
+
+        <SystemMetricsCard refreshKey={refreshKey} />
 
         <CronHealthCard />
 

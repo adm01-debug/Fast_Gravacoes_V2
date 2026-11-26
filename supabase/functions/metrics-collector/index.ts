@@ -34,7 +34,13 @@ serve(async (req) => {
     // Operators metrics. The profiles table has no "status" column, so an
     // operator is considered "active" when they scanned a job today. Distinct
     // count is done in SQL (RPC) to avoid the PostgREST row cap undercounting.
-    const { count: totalOperators } = await supabase.from("profiles").select("*", { count: "exact", head: true });
+    // O total sai de `user_roles` (role = operator), nao de `profiles`: remover
+    // um operador apaga a linha de papel mas mantem o perfil, entao contar
+    // perfis incluiria operadores removidos (14 perfis x 11 operadores reais).
+    const { count: totalOperators } = await supabase
+      .from("user_roles")
+      .select("*", { count: "exact", head: true })
+      .eq("role", "operator");
     const { data: activeOperatorsRpc, error: activeOperatorsError } = await supabase.rpc("count_active_operators_since", { p_since: todayStartISO });
     if (activeOperatorsError) {
       console.error("metrics-collector: count_active_operators_since failed:", activeOperatorsError.message);

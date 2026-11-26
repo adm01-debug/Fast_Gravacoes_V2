@@ -86,6 +86,10 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
         }
       }
 
+      // Detalhe e contador na mesma transação: o trigger
+      // trg_production_losses_contador (migration 20261129210000) chama
+      // public.increment_job_lost_pieces dentro deste INSERT. Se o insert falhar,
+      // jobs.lost_pieces não muda e a nova tentativa não conta em dobro.
       const { data: result, error } = await supabase
         .from('production_losses')
         .insert({ ...data, shift })
@@ -93,26 +97,6 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
         .single();
 
       if (error) throw error;
-
-      // Use atomic SQL increment to avoid lost-update race condition
-      // RPC não presente nos tipos gerados; cast controlado via `never` do postgrest-js.
-      const { error: rpcError } = await supabase.rpc('increment_job_lost_pieces' as never, {
-        p_job_id: data.job_id,
-        p_amount: data.quantity,
-      } as never);
-
-      if (rpcError) {
-        // Fallback: read-modify-write (less safe under concurrency)
-        const { data: job } = await supabase
-          .from('jobs')
-          .select('lost_pieces')
-          .eq('id', data.job_id)
-          .single();
-        await supabase
-          .from('jobs')
-          .update({ lost_pieces: (job?.lost_pieces || 0) + data.quantity })
-          .eq('id', data.job_id);
-      }
 
       return result;
     },

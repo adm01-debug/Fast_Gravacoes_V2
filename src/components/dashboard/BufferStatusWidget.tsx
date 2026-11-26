@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { useBufferStatus, BufferTechniqueStatus } from '@/features/jobs';
 import { useAutoBufferPromotion } from '@/features/jobs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useOverflowing } from '@/hooks/use-overflowing';
 
 const BUFFER_TARGET = 3;
 
@@ -114,6 +115,9 @@ BufferRow.displayName = 'BufferRow';
 
 function BufferStatusWidgetComponent() {
   const { bufferByTechnique, isLoading } = useBufferStatus();
+  // A lista de tecnicas rola na vertical (max-h-280px): sem tabIndex o teclado nao
+  // alcanca a area rolavel quando ela transborda (axe scrollable-region-focusable).
+  const { ref: listaRef, overflowing: listaOverflowing } = useOverflowing<HTMLDivElement>();
   const { triggerPromotion, promoteForTechnique, isPromoting } = useAutoBufferPromotion({
     showToasts: true
   });
@@ -192,7 +196,11 @@ function BufferStatusWidgetComponent() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-2 px-3 pb-3 max-h-[280px] overflow-y-auto scrollbar-thin">
+      <CardContent
+        ref={listaRef}
+        tabIndex={listaOverflowing ? 0 : undefined}
+        className="space-y-2 px-3 pb-3 max-h-[280px] overflow-y-auto scrollbar-thin"
+      >
         {bufferByTechnique.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground">
             <Package className="h-8 w-8 mx-auto mb-1 opacity-30" />

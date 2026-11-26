@@ -11,6 +11,7 @@ import { JobDetailsModal } from '@/components/jobs/JobDetailsModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useOverflowing } from '@/hooks/use-overflowing';
 
 interface JobRowProps {
   job: DbJob;
@@ -65,6 +66,9 @@ function RecentJobsTableComponent() {
   const [selectedJob, setSelectedJob] = useState<DbJob | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingJobId, setLoadingJobId] = useState<string | null>(null);
+  // A tabela tem largura minima de 700px: em telas estreitas quem rola e o
+  // CardContent, que precisa virar parada de Tab so quando houver transbordo.
+  const { ref: scrollRef, overflowing } = useOverflowing<HTMLDivElement>();
 
   const recentJobs = useMemo(() => jobs.slice(0, 10), [jobs]);
 
@@ -124,7 +128,11 @@ function RecentJobsTableComponent() {
         <CardHeader className="pb-2">
           <CardTitle className="text-title gradient-text">{t('dashboard.recentJobs', 'Jobs Recentes')}</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
+        <CardContent
+          ref={scrollRef}
+          tabIndex={overflowing ? 0 : undefined}
+          className="overflow-x-auto"
+        >
           <div className="min-w-[700px]">
             <Table>
               <TableHeader>

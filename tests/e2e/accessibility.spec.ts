@@ -32,7 +32,13 @@ test.describe('Acessibilidade - Sweep axe-core WCAG 2.2 AA', () => {
         console.log(
           `[a11y ${route}] violações críticas:`,
           JSON.stringify(
-            critical.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+            critical.map((v) => ({
+              id: v.id,
+              impact: v.impact,
+              nodes: v.nodes.length,
+              // Sem os alvos a contagem nao diz qual container falhou.
+              targets: v.nodes.map((n) => n.target),
+            })),
             null,
             2,
           ),
@@ -69,6 +75,72 @@ test.describe('TraceabilityPage - regiao rolavel alcancavel por teclado', () => 
     const violacoes = results.violations.map((v) => ({ id: v.id, nodes: v.nodes.length }));
     expect(violacoes).toEqual([]);
   });
+});
+
+test.describe('Calendario diario e maquinas - regiao rolavel alcancavel por teclado', () => {
+  // `/machines` abre na aba Lista e o mapa de calor fica numa aba separada: sem
+  // trocar de aba a varredura nunca via o container do FactoryHeatmap.
+  const cenarios = [
+    { rota: '/calendar/daily', abas: [] as string[] },
+    { rota: '/machines', abas: ['Heatmap'] },
+  ];
+
+  for (const cenario of cenarios) {
+    test(`${cenario.rota} nao deve ter regiao rolavel inacessivel por teclado`, async ({ page }) => {
+      await login(page);
+      await page.goto(cenario.rota, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(1500);
+
+      for (const aba of [null, ...cenario.abas]) {
+        if (aba) {
+          await page.getByRole('tab', { name: aba }).click();
+          await page.waitForTimeout(1500);
+        }
+
+        const results = await new AxeBuilder({ page })
+          .withRules(['scrollable-region-focusable'])
+          .analyze();
+
+        const violacoes = results.violations.map((v) => ({
+          id: v.id,
+          targets: v.nodes.map((n) => n.target),
+        }));
+        expect(violacoes).toEqual([]);
+
+        // Conta no navegador as areas que realmente transbordam: e delas que a
+        // WCAG 2.1.1 cobra parada de Tab (o guard so marca quem transborda).
+        const transbordando = await page.evaluate(() => {
+          const rola = (v: string) => v === 'auto' || v === 'scroll' || v === 'overlay';
+          return Array.from(document.querySelectorAll<HTMLElement>('[class*="overflow"]')).filter((el) => {
+            const s = getComputedStyle(el);
+            return (
+              (rola(s.overflowX) && el.scrollWidth > el.clientWidth + 1) ||
+              (rola(s.overflowY) && el.scrollHeight > el.clientHeight + 1)
+            );
+          }).length;
+        });
+
+        // Se ha area rolando, o teclado tem que chegar nela: Tab de verdade, sem
+        // focus() por fora (que provaria apenas a existencia do tabindex).
+        if (transbordando > 0) {
+          await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+          let alcancouRegiao = false;
+          for (let i = 0; i < 150 && !alcancouRegiao; i += 1) {
+            await page.keyboard.press('Tab');
+            alcancouRegiao = await page.evaluate(() => {
+              const el = document.activeElement as HTMLElement | null;
+              if (!el || el === document.body) return false;
+              if (el.getAttribute('data-scroll-focus-guard') === 'true') return true;
+              const rola = (v: string) => v === 'auto' || v === 'scroll' || v === 'overlay';
+              const s = getComputedStyle(el);
+              return el.tabIndex === 0 && (rola(s.overflowX) || rola(s.overflowY));
+            });
+          }
+          expect(alcancouRegiao, `${transbordando} area(s) rolavel(is) em ${cenario.rota}: Tab deve alcancar uma`).toBe(true);
+        }
+      }
+    });
+  }
 });
 
 test.describe('CommandPaletteAdvanced - teclado e foco', () => {
