@@ -36,6 +36,7 @@ vi.mock('./JobTraceabilityTab', () => ({ JobTraceabilityTab: () => null }));
 vi.mock('./JobQualityTab', () => ({ JobQualityTab: () => null }));
 vi.mock('./JobInstructionsTab', () => ({ JobInstructionsTab: () => null }));
 vi.mock('./JobInfoGrid', () => ({ JobInfoGrid: () => null }));
+vi.mock('./JobLossesTab', () => ({ JobLossesTab: () => null }));
 
 // O gancho real entre as quick actions e o diálogo de cancelamento.
 vi.mock('./JobQuickActions', () => ({

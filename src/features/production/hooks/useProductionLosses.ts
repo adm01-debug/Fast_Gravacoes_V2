@@ -114,5 +114,7 @@ export function useProductionLosses(jobId?: string, filters?: { shift?: string; 
     losses,
     isLoading,
     recordLoss: recordLoss.mutate,
+      recordLossAsync: recordLoss.mutateAsync,
+      isRecording: recordLoss.isPending,
   };
 }

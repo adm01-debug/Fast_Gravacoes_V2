@@ -20,6 +20,7 @@ import {
   History,
   DollarSign,
   Activity,
+  TrendingDown,
   Pencil,
   Trash2,
   Save,
@@ -38,6 +39,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { JobCostsTab } from "./JobCostsTab";
 import { JobTraceabilityTab } from "./JobTraceabilityTab";
 import { JobQualityTab } from "./JobQualityTab";
+import { JobLossesTab } from "./JobLossesTab";
 import { JobInstructionsTab } from "./JobInstructionsTab";
 import { JobInfoGrid } from "./JobInfoGrid";
 import { JobQuickActions } from "./JobQuickActions";
@@ -315,7 +317,7 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
                 )}
 
         <Tabs defaultValue="details" className="mt-4">
-          <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 h-auto">
+          <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8 h-auto">
             <TabsTrigger value="details" className="text-[10px] sm:text-xs">{t('common.details')}</TabsTrigger>
             <TabsTrigger value="instructions" className="flex items-center gap-1 text-[10px] sm:text-xs">
               <FileText className="h-3 w-3" />
@@ -324,6 +326,10 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
             <TabsTrigger value="quality" className="flex items-center gap-1 text-[10px] sm:text-xs">
               <Activity className="h-3 w-3" />
               {t('common.quality')}
+            </TabsTrigger>
+            <TabsTrigger value="losses" className="flex items-center gap-1 text-[10px] sm:text-xs">
+              <TrendingDown className="h-3 w-3" />
+              Perdas
             </TabsTrigger>
             <TabsTrigger value="photos" className="flex items-center gap-1 text-[10px] sm:text-xs">
               <Camera className="h-3 w-3" />
@@ -505,6 +511,10 @@ export function JobDetailsModal({ job, open, onOpenChange, onStatusChange }: Job
 
           <TabsContent value="quality">
             <JobQualityTab jobId={job.id} techniqueId={job.technique_id} machineId={job.machine_id} />
+          </TabsContent>
+
+          <TabsContent value="losses">
+            <JobLossesTab jobId={job.id} />
           </TabsContent>
 
           <TabsContent value="photos" className="mt-4">
