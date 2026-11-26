@@ -18,8 +18,18 @@ const FOCAVEIS =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 const MARCA = 'data-scroll-focus-guard';
 
+// `overflow-hidden` recorta decoracao (gradientes do login, formas do
+// reset de senha) e `overflow-visible` nao rola: nenhum dos dois e area
+// rolavel pelo usuario, entao nao devem virar parada de Tab.
+function rolaPor(eixo: string): boolean {
+  return eixo === 'auto' || eixo === 'scroll' || eixo === 'overlay';
+}
+
 function transborda(el: HTMLElement): boolean {
-  return el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1;
+  const estilo = getComputedStyle(el);
+  const horizontal = rolaPor(estilo.overflowX) && el.scrollWidth > el.clientWidth + 1;
+  const vertical = rolaPor(estilo.overflowY) && el.scrollHeight > el.clientHeight + 1;
+  return horizontal || vertical;
 }
 
 function sincronizar(el: HTMLElement): void {

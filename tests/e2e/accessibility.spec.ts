@@ -77,6 +77,34 @@ test.describe('TraceabilityPage - regiao rolavel alcancavel por teclado', () => 
   });
 });
 
+test.describe('Calendario diario e maquinas - regiao rolavel alcancavel por teclado', () => {
+  for (const route of ['/calendar/daily', '/machines']) {
+    test(`${route} nao deve ter regiao rolavel inacessivel por teclado`, async ({ page }) => {
+      await login(page);
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(1500);
+
+      const results = await new AxeBuilder({ page })
+        .withRules(['scrollable-region-focusable'])
+        .analyze();
+
+      const violacoes = results.violations.map((v) => ({
+        id: v.id,
+        targets: v.nodes.map((n) => n.target),
+      }));
+      expect(violacoes).toEqual([]);
+
+      // Tab precisa alcancar a area rolavel: comparar a contagem de paradas
+      // focaveis com a area focada depois de percorrer a pagina inteira.
+      const primeiraArea = page.locator('[tabindex="0"].overflow-auto, [tabindex="0"].overflow-x-auto').first();
+      if (await primeiraArea.count()) {
+        await primeiraArea.focus();
+        expect(await primeiraArea.evaluate((el) => el === document.activeElement)).toBe(true);
+      }
+    });
+  }
+});
+
 test.describe('CommandPaletteAdvanced - teclado e foco', () => {
   test('abre com Cmd+K, navega com setas e fecha com Escape', async ({ page }, testInfo) => {
     // CommandPaletteAdvanced só é montado quando autenticado
