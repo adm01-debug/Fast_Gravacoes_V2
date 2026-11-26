@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1001,
- "arestas": 4618,
+ "arestas": 4621,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/features/auth/index.ts",
-   "importado_por": 88
+   "importado_por": 89
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
@@ -129,6 +129,10 @@
    "importado_por": 23
   },
   {
+   "arquivo": "supabase/functions/_shared/logger.ts",
+   "importado_por": 22
+  },
+  {
    "arquivo": "src/components/ui/checkbox.tsx",
    "importado_por": 21
   },
@@ -138,10 +142,6 @@
   },
   {
    "arquivo": "src/lib/queryConfig.ts",
-   "importado_por": 21
-  },
-  {
-   "arquivo": "supabase/functions/_shared/logger.ts",
    "importado_por": 21
   },
   {

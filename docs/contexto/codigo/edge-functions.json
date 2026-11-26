@@ -224,7 +224,7 @@
    "nome": "calculate-rankings",
    "entrada": "supabase/functions/calculate-rankings/index.ts",
    "arquivos": 1,
-   "linhas": 386,
+   "linhas": 339,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -233,8 +233,7 @@
     "jobs",
     "operator_achievements",
     "operator_machines",
-    "operator_rankings",
-    "user_roles"
+    "operator_rankings"
    ],
    "rpcs": [],
    "env": [
@@ -247,8 +246,10 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "auth.ts",
     "cors.ts",
-    "cronAuth.ts"
+    "cronAuth.ts",
+    "logger.ts"
    ],
    "chamada_pelo_front": [
     "src/hooks/useGamification.ts"

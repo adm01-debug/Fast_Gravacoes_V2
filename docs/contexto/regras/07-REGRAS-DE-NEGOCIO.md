@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a8121c4de4` · branch `main` · 2026-11-26 17:35 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c0d5d7d218` · branch `main` · 2026-11-26 18:01 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T16:40:51Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T17:40:32Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T16:40:51Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T17:40:32Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T16:40:51Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T17:40:32Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T16:40:51Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T17:40:32Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1655,7 +1655,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T16:40:51Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T17:40:32Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1838,7 +1838,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `warning` | compara, escreve | `src/components/dashboard/AlertsWidget.tsx`<br>`src/components/feedback/FeedbackProvider.tsx`<br>`src/components/knowledge/TechnicalSheetTab.tsx`<br>`src/components/operators/AIWorkforceAdvisor.tsx`<br>`src/features/analytics/components/bi/AIInsights.tsx`<br>… +9 |
 | `type` | `webhook` | compara | `src/components/integrations/Bitrix24SyncHistory.tsx` |
 | `type` | `window` | escreve | `public/sw.js` |
-| `role` | `admin` | compara, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/admin/components/security/PermissionMatrix.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +4 |
+| `role` | `admin` | compara, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/admin/components/security/PermissionMatrix.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +3 |
 | `role` | `assistant` | compara, escreve | `src/components/assistant/TechnicalAssistant.tsx`<br>`src/components/technical-assistant/ChatArea.tsx`<br>`src/components/technical-assistant/ChatMessage.tsx`<br>`src/pages/TechnicalAssistantPage.tsx` |
 | `role` | `coordinator` | compara, escreve, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +5 |
 | `role` | `manager` | compara | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/components/navigation/MobileQuickActions.tsx`<br>`src/features/auth/components/AuthProvider.tsx` |
@@ -2994,7 +2994,6 @@ _nenhum item encontrado_
 | 20 | `supabase/functions/auto-promote-jobs/index.ts` |
 | 1 | `supabase/functions/bitrix24-sync/index.ts` |
 | 1 | `supabase/functions/calculate-inventory-intelligence/index.ts` |
-| 1 | `supabase/functions/calculate-rankings/index.ts` |
 | 1 | `supabase/functions/check-login-lockout/index.ts` |
 | 1000 | `supabase/functions/cron-alert-email/index.ts` |
 | 500 | `supabase/functions/cron-alert-email/index.ts` |
@@ -3794,8 +3793,6 @@ _nenhum item encontrado_
 | A backend failure must not be silently reported as an authorization denial. | `supabase/functions/bitrix24-sync/index.ts` |
 | Fail-closed: BITRIX24_WEBHOOK_TOKEN must be configured before webhooks work. | `supabase/functions/bitrix24-sync/index.ts` |
 | inventory and must not be callable by any signed-in user. | `supabase/functions/calculate-inventory-intelligence/index.ts` |
-| padrão dual-header (service_role) não resolve usuário e não deve ser | `supabase/functions/calculate-rankings/index.ts` |
-| so an unconfigured deployment must never run it unauthenticated. | `supabase/functions/calculate-rankings/index.ts` |
 | Teto total entre os dois providers: um provedor fora do ar não pode | `supabase/functions/check-login-lockout/index.ts` |
 | Hard block FIRST: IP em blocked_ips (painel admin / rate-limit) nunca | `supabase/functions/check-login-lockout/index.ts` |
 | chega a tentar login nem consome o bucket de rate limit. Checa antes do | `supabase/functions/check-login-lockout/index.ts` |

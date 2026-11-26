@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
+  "sha": "c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 17:35 UTC",
+  "generated_at": "2026-11-26 18:01 UTC",
   "files_total": 1651,
   "code_files": 1455,
-  "code_lines": 216165
+  "code_lines": 216141
  },
  "version": "1.3.2",
- "facts_hash": "1afbb659aab68eb3",
+ "facts_hash": "857f17dfe21266ab",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -30477,7 +30477,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18047,
+   "lines": 18070,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -30850,7 +30850,7 @@
   {
    "module": "supabase/functions",
    "files": 58,
-   "lines": 11892,
+   "lines": 11845,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -32681,7 +32681,6 @@
      "supabase/functions/auto-promote-jobs/index.ts",
      "supabase/functions/bitrix24-sync/index.ts",
      "supabase/functions/calculate-inventory-intelligence/index.ts",
-     "supabase/functions/calculate-rankings/index.ts",
      "supabase/functions/cron-alert-email/index.ts",
      "supabase/functions/erp-api/index.ts",
      "supabase/functions/metrics-collector/index.ts",
@@ -38535,14 +38534,6 @@
    {
     "file": "supabase/functions/calculate-inventory-intelligence/index.ts",
     "text": "inventory and must not be callable by any signed-in user."
-   },
-   {
-    "file": "supabase/functions/calculate-rankings/index.ts",
-    "text": "padrão dual-header (service_role) não resolve usuário e não deve ser"
-   },
-   {
-    "file": "supabase/functions/calculate-rankings/index.ts",
-    "text": "so an unconfigured deployment must never run it unauthenticated."
    },
    {
     "file": "supabase/functions/check-login-lockout/index.ts",
@@ -50505,12 +50496,6 @@
     "file": "supabase/functions/calculate-inventory-intelligence/index.ts",
     "field": "type",
     "value": "OUT",
-    "kind": "filtra"
-   },
-   {
-    "file": "supabase/functions/calculate-rankings/index.ts",
-    "field": "role",
-    "value": "admin",
     "kind": "filtra"
    },
    {
@@ -64898,10 +64883,6 @@
     "limit": "1"
    },
    {
-    "file": "supabase/functions/calculate-rankings/index.ts",
-    "limit": "1"
-   },
-   {
     "file": "supabase/functions/check-login-lockout/index.ts",
     "limit": "1"
    },
@@ -65803,7 +65784,6 @@
       "compara:src/features/auth/components/AuthProvider.tsx",
       "compara:src/features/auth/hooks/useRBAC.tsx",
       "filtra:supabase/functions/calculate-inventory-intelligence/index.ts",
-      "filtra:supabase/functions/calculate-rankings/index.ts",
       "filtra:supabase/functions/send-push-notification/index.ts"
      ],
      "manager": [
@@ -94311,7 +94291,7 @@
   },
   "src/pages/GamificationPage.tsx": {
    "path": "src/pages/GamificationPage.tsx",
-   "lines": 429,
+   "lines": 452,
    "exports": [
     "function GamificationPage"
    ],
@@ -97818,16 +97798,8 @@
   },
   "supabase/functions/calculate-rankings/index.ts": {
    "path": "supabase/functions/calculate-rankings/index.ts",
-   "lines": 386,
+   "lines": 339,
    "tables": [
-    {
-     "table": "user_roles",
-     "op": "select"
-    },
-    {
-     "table": "user_roles",
-     "op": "select"
-    },
     {
      "table": "jobs",
      "op": "select"
@@ -97858,11 +97830,6 @@
     }
    ],
    "table_cols": {
-    "user_roles": [
-     "is_active",
-     "role",
-     "user_id"
-    ],
     "jobs": [
      "actual_end_time",
      "id",
@@ -97899,25 +97866,13 @@
    ],
    "status_values": [
     {
-     "field": "role",
-     "value": "admin",
-     "kind": "filtra"
-    },
-    {
      "field": "status",
      "value": "finished",
      "kind": "filtra"
     }
    ],
-   "rule_comments": [
-    "padrão dual-header (service_role) não resolve usuário e não deve ser",
-    "so an unconfigured deployment must never run it unauthenticated."
-   ],
    "percents": [
     "// Quality Master achievement (>99% quality)"
-   ],
-   "pagination": [
-    "1"
    ],
    "uses_service_role": true
   },
@@ -101288,10 +101243,23 @@
   }
  },
  "git": {
-  "sha": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
+  "sha": "c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "c0d5d7d",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: recalculo de ranking volta a gravar e ganha botao na tela (#330)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/i18n/locales/en-US.json",
+     "src/i18n/locales/pt-BR.json",
+     "src/pages/GamificationPage.tsx",
+     "supabase/functions/calculate-rankings/index.ts"
+    ]
+   },
    {
     "sha": "a8121c4",
     "date": "2026-11-26",
@@ -101677,25 +101645,6 @@
      "scripts/automation.mjs",
      "scripts/automation.unit.mjs"
     ]
-   },
-   {
-    "sha": "d0cab10",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-     "src/components/jobs/JobDetailsModal.tsx",
-     "src/components/jobs/JobQuickActions.tsx",
-     "src/features/jobs/hooks/useJobs.ts",
-     "src/features/jobs/services/jobsService.ts",
-     "src/features/jobs/types/job.schema.ts",
-     "src/features/packaging/services/packagingService.ts",
-     "src/integrations/supabase/types.ts",
-     "src/pages/PublicTrackingPage.tsx",
-     "src/test/jobsService.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -101704,23 +101653,11 @@
     12
    ],
    [
-    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
-    3
-   ],
-   [
-    "src/components/jobs/JobDetailsModal.tsx",
-    3
-   ],
-   [
     "tests/e2e/accessibility.spec.ts",
     3
    ],
    [
     "src/features/jobs/services/jobsService.test.ts",
-    3
-   ],
-   [
-    "src/features/jobs/types/job.schema.ts",
     3
    ],
    [
@@ -101740,16 +101677,20 @@
     3
    ],
    [
-    "src/features/jobs/services/jobsService.ts",
-    3
-   ],
-   [
     "src/pages/PendingQueue.test.tsx",
     3
    ],
    [
     "src/pages/PendingQueue.tsx",
     3
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.cancel.test.tsx",
+    2
+   ],
+   [
+    "src/components/jobs/JobDetailsModal.tsx",
+    2
    ],
    [
     "src/features/production/hooks/useProductionLosses.ts",
@@ -101761,6 +101702,10 @@
    ],
    [
     "src/components/calendar/CalendarTimeline.tsx",
+    2
+   ],
+   [
+    "src/features/jobs/types/job.schema.ts",
     2
    ],
    [
@@ -101777,6 +101722,10 @@
    ],
    [
     "src/components/dashboard/AlertScheduleModal.tsx",
+    2
+   ],
+   [
+    "src/constants/index.ts",
     2
    ]
   ]

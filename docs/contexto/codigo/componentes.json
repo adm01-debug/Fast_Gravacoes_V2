@@ -9220,9 +9220,10 @@
     "GamificationPage"
    ],
    "export_default": "GamificationPage",
-   "linhas": 429,
+   "linhas": 452,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useGamification"
    ],
    "tabelas": [],

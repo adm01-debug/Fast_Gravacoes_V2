@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a8121c4de42167a886364cbe1e3cf49f86aced9d",
+  "commit": "c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833",
   "branch": "main",
-  "data_commit": "2026-11-26T14:30:15-03:00",
+  "data_commit": "2026-11-26T15:00:38-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "c0d5d7d",
+    "data": "2026-11-26",
+    "assunto": "fix: recalculo de ranking volta a gravar e ganha botao na tela (#330)"
+   },
    {
     "sha": "a8121c4",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "0351511",
     "data": "2026-11-25",
     "assunto": "infra: publica push_notifications no realtime (#308)"
-   },
-   {
-    "sha": "760ed63",
-    "data": "2026-11-25",
-    "assunto": "fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 305,
+  "arquivos_mudados_7d": 309,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -173,12 +173,12 @@
     "mudancas": 19
    },
    {
-    "pasta": "src/components/jobs",
+    "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 17
    },
    {
-    "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 16
+    "pasta": "src/components/jobs",
+    "mudancas": 17
    },
    {
     "pasta": "package.json",
@@ -216,7 +216,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": ".github/workflows/db-admin.yml",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 178
+    "commits": 179
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1653,
   "arquivos_codigo": 1169,
-  "linhas_codigo": 197861,
+  "linhas_codigo": 197837,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 18047
+   "linhas": 18070
   },
   "src/providers": {
    "arquivos": 2,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 58,
-   "linhas": 11892
+   "linhas": 11845
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

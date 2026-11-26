@@ -5293,6 +5293,7 @@
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tabs.tsx",
    "src/components/voice/VoiceCommands.tsx",
+   "src/features/auth/index.ts",
    "src/hooks/useGamification.ts",
    "src/lib/utils.ts"
   ],
@@ -6185,8 +6186,10 @@
    "supabase/functions/_shared/cronAuth.ts"
   ],
   "supabase/functions/calculate-rankings/index.ts": [
+   "supabase/functions/_shared/auth.ts",
    "supabase/functions/_shared/cors.ts",
-   "supabase/functions/_shared/cronAuth.ts"
+   "supabase/functions/_shared/cronAuth.ts",
+   "supabase/functions/_shared/logger.ts"
   ],
   "supabase/functions/check-login-lockout/index.ts": [
    "supabase/functions/_shared/cors.ts",
