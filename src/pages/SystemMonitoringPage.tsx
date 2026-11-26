@@ -48,6 +48,7 @@ import { CronHealthHistoryCard } from "@/features/admin/components/monitoring/Cr
 import { CronEmailPreferenceCard } from "@/features/admin/components/monitoring/CronEmailPreferenceCard";
 import { CronP95TrendCard } from "@/features/admin/components/monitoring/CronP95TrendCard";
 import { SystemMetricsCard } from "@/features/admin/components/monitoring/SystemMetricsCard";
+import { EdgeHealthCard } from "@/features/admin/components/monitoring/EdgeHealthCard";
 
 function StatCard({
   title,
@@ -229,6 +230,8 @@ export default function SystemMonitoringPage() {
         <SystemMetricsCard refreshKey={refreshKey} />
 
         <CronHealthCard />
+
+        <EdgeHealthCard />
 
         <CronHealthHistoryCard />
         <CronP95TrendCard />
