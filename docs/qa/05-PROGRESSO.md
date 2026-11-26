@@ -399,7 +399,8 @@ Comando/consulta: transação com `ROLLBACK` na Management API do projeto `uoujz
 Resultado: o alvo de conflito de **três** colunas devolveu `42P10 there is no unique or exclusion constraint matching the ON CONFLICT specification` — é o que o PostgREST converte em 400 e fazia a função lançar antes de gravar qualquer linha; o de **quatro** colunas passou e gravou 1 linha. Depois do `ROLLBACK`, `operator_rankings` continua com **0** linhas, ou seja, nenhum dado de prova ficou no banco. `deno check`, `tsc` e `eslint` terminaram sem erro.
 Limite conhecido (não mascarar): o caminho de escrita **não** pôde ser exercitado de ponta a ponta. Produção tem 6 OS `finished`: 5 são semente sem `operator_id` e a única real (`b5b4f9b2-0812-463a-b341-7bbf363e87ad`) tem `actual_end_time` nulo, fora do filtro de período. Sem linha no período o upsert é pulado (`if (rankings.length > 0)`) e a chamada devolve `rankings_count: 0`, exatamente o que mascarava o defeito. A prova acima é do ponto exato que quebrava.
 Como a tela dispara: `src/pages/GamificationPage.tsx` ganhou o botão Recalcular (visível para admin/coordenador) ligado a `calculateRankings` do `useGamification` — a mutation existia no hook e nenhuma tela chamava.
-PR: #330 · estado: aguardando CI
+PR: #330 · estado: mergeada (c0d5d7d2) e deploy confirmado
+Depois do deploy: chamada em produção pelo `net.http_post` com `service_role_key` + `x-cron-secret` devolveu **200** `{"success":true,"rankings_count":0,"achievements_awarded":0,"period":{"type":"weekly","start":"2026-11-23T00:00:00.000Z","end":"2026-11-30T00:00:00.000Z"}}`; sem credencial devolveu **401** `UNAUTHORIZED_NO_AUTH_HEADER`. O botão Recalcular está no bundle servido em produção (`/assets/index-D3qXpSo-.js` contém a chave `recalculateHint`).
 
 ---
 
