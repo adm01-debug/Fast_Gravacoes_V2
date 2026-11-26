@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8ae695bd20ba8e9648e6096a1e4bfc3928e47bda",
+  "commit": "267f1a5b0ebc9f3ace4f7763decd532ac25a32cf",
   "branch": "main",
-  "data_commit": "2026-11-26T16:26:36-03:00",
+  "data_commit": "2026-11-26T17:17:12-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "267f1a5",
+    "data": "2026-11-26",
+    "assunto": "fix: o log de notificacao TPM distingue canal sem provedor de falha de entrega (#337)"
+   },
    {
     "sha": "8ae695b",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "14b0499",
     "data": "2026-11-25",
     "assunto": "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)"
-   },
-   {
-    "sha": "1824019",
-    "data": "2026-11-25",
-    "assunto": "fix: alerta de novo dispositivo nao registra e-mail que nao saiu (#300)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 306,
+  "arquivos_mudados_7d": 309,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -153,11 +153,11 @@
     "mudancas": 30
    },
    {
-    "pasta": "src/features/auth",
-    "mudancas": 27
+    "pasta": "src/features/maintenance",
+    "mudancas": 29
    },
    {
-    "pasta": "src/features/maintenance",
+    "pasta": "src/features/auth",
     "mudancas": 27
    },
    {
@@ -165,12 +165,12 @@
     "mudancas": 24
    },
    {
-    "pasta": "supabase/functions/_shared",
+    "pasta": "docs/qa/05-PROGRESSO.md",
     "mudancas": 21
    },
    {
-    "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 20
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 21
    },
    {
     "pasta": "src/features/packaging",
@@ -203,16 +203,16 @@
     "mudancas": 22
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 21
+   },
+   {
     "arquivo": "package-lock.json",
     "mudancas": 21
    },
    {
     "arquivo": "package.json",
     "mudancas": 21
-   },
-   {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 20
    },
    {
     "arquivo": "deno.lock",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 184
+    "commits": 185
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1653,
-  "arquivos_codigo": 1169,
-  "linhas_codigo": 197854,
+  "arquivos_total": 1654,
+  "arquivos_codigo": 1170,
+  "linhas_codigo": 197948,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 275,
   "cron_jobs": 6,
-  "testes": 162,
+  "testes": 163,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 346,
-   "linhas": 49506
+   "arquivos": 347,
+   "linhas": 49583
   },
   "src/hooks": {
    "arquivos": 65,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 58,
-   "linhas": 11862
+   "linhas": 11879
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

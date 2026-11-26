@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (125)",
+   "co-localizado (*.test) (126)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: o log de notificacao TPM distingue canal sem provedor de falha de entrega (#337)",
    "chore: comprova o botao Recalcular pelo chunk de producao, nao pelo i18n (#335)",
    "fix: relatorio por e-mail declara a recusa quando falta a chave do provedor (#336)",
    "fix: auditoria de uso do erp-api sai do caminho critico da requisicao (#334)",
-   "fix: erp-api grava last_used_at ao aceitar uma chave (#333)",
-   "chore: registra o deploy e a chamada real do recalculo de ranking (#332)"
+   "fix: erp-api grava last_used_at ao aceitar uma chave (#333)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

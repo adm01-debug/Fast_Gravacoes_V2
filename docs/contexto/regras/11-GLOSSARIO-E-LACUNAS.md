@@ -1,9 +1,9 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ae695bd20` · branch `main` · 2026-11-26 19:39 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `267f1a5b0e` · branch `main` · 2026-11-26 20:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-26T19:12:24Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Tabelas do glossário e schema usado na auditoria código × schema: **banco real, snapshot de 2026-11-26T20:20:23Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Glossário do domínio (entidades do sistema)
 
@@ -226,6 +226,7 @@
 | status | valor `string` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/analytics/hooks/useBottleneckPrediction.ts`<br>`compara:src/features/analytics/hooks/useKPIs.ts`<br>`compara:src/features/analytics/hooks/useLoadBalancing.ts`<br>`compara:src/features/jobs/hooks/useSmartSequencing.ts` |
 | status | valor `fulfilled` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/auth/components/AuthProvider.tsx`<br>`compara:src/hooks/abc/useABCMutations.ts`<br>`compara:supabase/functions/send-email-report/index.ts` |
 | status | valor `correction_requested` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/maintenance/components/ExecutionDetailsModal.tsx`<br>`compara:src/features/maintenance/components/ExecutionRecordView.tsx`<br>`escreve:src/features/maintenance/hooks/useTPMApprovalMutations.ts` |
+| status | valor `provider_not_configured` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/maintenance/components/TPMNotificationLogs.tsx` |
 | status | valor `processing` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/maintenance/components/TPMNotificationQueue.tsx` |
 | status | valor `failed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`escreve:supabase/functions/tpm-notifications/index.ts` |
 | status | valor `sent` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/features/maintenance/components/TPMNotificationQueue.tsx`<br>`escreve:supabase/functions/cron-alert-email/index.ts`<br>`escreve:supabase/functions/send-email-report/index.ts`<br>`escreve:supabase/functions/tpm-notifications/index.ts` |

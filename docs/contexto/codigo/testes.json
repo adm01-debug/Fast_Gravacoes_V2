@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 162,
+ "total": 163,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 137
+  "unit": 138
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 125
+   "arquivos": 126
   },
   {
    "padrao": "tests/",
@@ -780,6 +780,16 @@
     "src/features/jobs/types/job.schema.ts"
    ],
    "casos": 5,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/maintenance/components/TPMNotificationLogs.test.tsx",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/features/maintenance/components/TPMNotificationLogs.tsx"
+   ],
+   "casos": 1,
    "suporte": false
   },
   {
@@ -1773,6 +1783,7 @@
   "src/features/jobs/services/jobsService.ts": 3,
   "src/features/jobs/services/scheduling.ts": 1,
   "src/features/jobs/types/job.schema.ts": 1,
+  "src/features/maintenance/components/TPMNotificationLogs.tsx": 1,
   "src/features/notifications/hooks/useNotifications.ts": 1,
   "src/features/notifications/hooks/useTPMNotifications.ts": 1,
   "src/features/production/hooks/useMachines.ts": 2,

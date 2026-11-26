@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ae695bd20` · branch `main` · 2026-11-26 19:39 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `267f1a5b0e` · branch `main` · 2026-11-26 20:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T19:12:24Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T20:20:23Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T19:12:24Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T20:20:23Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T19:12:24Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T20:20:23Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T19:12:24Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T20:20:23Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1655,7 +1655,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T19:12:24Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T20:20:23Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1894,6 +1894,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `processing` | compara | `src/features/maintenance/components/TPMNotificationQueue.tsx` |
 | `status` | `producing` | compara | `src/components/dashboard/LiveMachineStatusPanel.tsx` |
 | `status` | `production` | compara, escreve, filtra | `src/components/calendar/AgendaView.tsx`<br>`src/components/calendar/JobQuickActions.tsx`<br>`src/components/dashboard/LiveMachineStatusPanel.tsx`<br>`src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/digital-twin/FactoryFloorMap.tsx`<br>… +37 |
+| `status` | `provider_not_configured` | compara | `src/features/maintenance/components/TPMNotificationLogs.tsx` |
 | `status` | `published` | compara, escreve, filtra | `src/components/knowledge/KnowledgeStatusBadge.tsx`<br>`src/features/jobs/hooks/useJobInventoryCheck.ts`<br>`src/features/maintenance/components/TPMNotificationTemplates.tsx` |
 | `status` | `quarantine` | compara | `src/components/traceability/TraceabilityStatsCards.tsx` |
 | `status` | `queue` | compara, escreve, filtra | `src/components/design-system/sections/tables/InteractiveTables.tsx`<br>`src/components/jobs/JobQuickActions.tsx`<br>`src/features/admin/hooks/useBIExport.ts`<br>`src/features/analytics/components/bi/FuturisticBI.tsx`<br>`src/features/jobs/hooks/useDuplicateJob.ts`<br>… +10 |
@@ -3376,7 +3377,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1574 testes em 143 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1576 testes em 144 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3517,6 +3518,7 @@ _nenhum item encontrado_
 | `tests/e2e/maintenance.spec.ts` | 3 | Dashboard de Manutenção (TPM) · deve carregar o dashboard de TPM · deve navegar para a aba de alertas |
 | `src/components/ui/micro-interactions.test.tsx` | 2 | useRipple · cancela o timer pendente no unmount |
 | `src/features/analytics/hooks/useOEE.test.ts` | 2 | useOEE · should calculate OEE components correctly |
+| `src/features/maintenance/components/TPMNotificationLogs.test.tsx` | 2 | TPMNotificationLogs · distingue canal sem provedor de falha de entrega |
 | `src/pages/AdminTelemetriaPage.test.tsx` | 2 | Painel de Telemetria (Lite) · deve carregar dados de telemetria e exibir na tabela |
 | `supabase/functions/_shared/webpushEncrypt.test.ts` | 2 | encryptPushPayload produz corpo aes128gcm descriptografável (RFC 8291/8188) · encryptPushPayload aceita p256dh/auth em base64url |
 | `tests/e2e/offline.spec.ts` | 2 | Offline Syncing and Persistence · should queue actions offline and show sync indicators |
