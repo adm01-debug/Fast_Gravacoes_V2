@@ -107,36 +107,46 @@ test.describe('Calendario diario e maquinas - regiao rolavel alcancavel por tecl
         }));
         expect(violacoes).toEqual([]);
 
-        // Conta no navegador as areas que realmente transbordam: e delas que a
-        // WCAG 2.1.1 cobra parada de Tab (o guard so marca quem transborda).
-        const transbordando = await page.evaluate(() => {
+        // Regioes que a WCAG 2.1.1 cobra parada de Tab: transbordam e nao tem
+        // nenhum elemento focavel dentro (quem tem filho focavel ja e alcancavel).
+        // O guard global marca exatamente esse conjunto com tabindex=0.
+        const semFocoDentro = await page.evaluate(() => {
           const rola = (v: string) => v === 'auto' || v === 'scroll' || v === 'overlay';
-          return Array.from(document.querySelectorAll<HTMLElement>('[class*="overflow"]')).filter((el) => {
+          const FOCAVEL =
+            'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]),[contenteditable="true"]';
+          const marcadas: string[] = [];
+          let indice = 0;
+          for (const el of Array.from(document.querySelectorAll<HTMLElement>('[class*="overflow"]'))) {
             const s = getComputedStyle(el);
-            return (
+            const transborda =
               (rola(s.overflowX) && el.scrollWidth > el.clientWidth + 1) ||
-              (rola(s.overflowY) && el.scrollHeight > el.clientHeight + 1)
-            );
-          }).length;
+              (rola(s.overflowY) && el.scrollHeight > el.clientHeight + 1);
+            if (!transborda) continue;
+            if (el.querySelector(FOCAVEL)) continue;
+            indice += 1;
+            el.setAttribute('data-e2e-scroll-alvo', String(indice));
+            marcadas.push(el.tagName.toLowerCase() + '[' + indice + '] tabindex=' + el.getAttribute('tabindex'));
+          }
+          return marcadas;
         });
 
-        // Se ha area rolando, o teclado tem que chegar nela: Tab de verdade, sem
-        // focus() por fora (que provaria apenas a existencia do tabindex).
-        if (transbordando > 0) {
+        // O guard global precisa ter dado parada de Tab a todas elas.
+        expect(semFocoDentro.filter((m) => !m.endsWith('tabindex=0')), 'sem parada de Tab em ' + cenario.rota).toEqual([]);
+
+        // E o teclado tem que chegar de fato: Tab de verdade, sem focus() por fora.
+        if (semFocoDentro.length > 0) {
           await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
           let alcancouRegiao = false;
           for (let i = 0; i < 150 && !alcancouRegiao; i += 1) {
             await page.keyboard.press('Tab');
-            alcancouRegiao = await page.evaluate(() => {
-              const el = document.activeElement as HTMLElement | null;
-              if (!el || el === document.body) return false;
-              if (el.getAttribute('data-scroll-focus-guard') === 'true') return true;
-              const rola = (v: string) => v === 'auto' || v === 'scroll' || v === 'overlay';
-              const s = getComputedStyle(el);
-              return el.tabIndex === 0 && (rola(s.overflowX) || rola(s.overflowY));
-            });
+            alcancouRegiao = await page.evaluate(() =>
+              Boolean((document.activeElement as HTMLElement | null)?.getAttribute('data-e2e-scroll-alvo')),
+            );
           }
-          expect(alcancouRegiao, `${transbordando} area(s) rolavel(is) em ${cenario.rota}: Tab deve alcancar uma`).toBe(true);
+          expect(
+            alcancouRegiao,
+            semFocoDentro.length + ' area(s) rolavel(is) em ' + cenario.rota + ': Tab deve alcancar uma',
+          ).toBe(true);
         }
       }
     });
