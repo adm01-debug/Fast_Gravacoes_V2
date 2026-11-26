@@ -1,8 +1,33 @@
 {
-  "carried": [],
+  "carried": [
+    "api.branches",
+    "api.network_restrictions",
+    "api.ssl_enforcement"
+  ],
   "entrada": "README.md",
-  "erros": [],
-  "gerado_em": "2026-11-26T03:40:12Z",
+  "erros": [
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/network-restrictions: error code: 502",
+      "section": "api.network_restrictions"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/ssl-enforcement: error code: 502",
+      "section": "api.ssl_enforcement"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/custom-hostname: error code: 502",
+      "section": "api.custom_hostname"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/branches: error code: 502",
+      "section": "api.branches"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/health?services=auth,db,pooler,realtime,rest,storage: error code: 502",
+      "section": "api.health"
+    }
+  ],
+  "gerado_em": "2026-11-26T04:38:24Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

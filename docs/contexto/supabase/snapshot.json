@@ -793,7 +793,11 @@
     },
     "url": "https://uoujzvpecohinketylud.supabase.co"
   },
-  "carried": [],
+  "carried": [
+    "api.branches",
+    "api.network_restrictions",
+    "api.ssl_enforcement"
+  ],
   "db": {
     "columns": [
       {
@@ -46575,6 +46579,27 @@
     "views": [],
     "webhooks": []
   },
-  "errors": [],
+  "errors": [
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/network-restrictions: error code: 502",
+      "section": "api.network_restrictions"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/ssl-enforcement: error code: 502",
+      "section": "api.ssl_enforcement"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/custom-hostname: error code: 502",
+      "section": "api.custom_hostname"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/branches: error code: 502",
+      "section": "api.branches"
+    },
+    {
+      "error": "HTTP 502 em /projects/uoujzvpecohinketylud/health?services=auth,db,pooler,realtime,rest,storage: error code: 502",
+      "section": "api.health"
+    }
+  ],
   "format_version": 3
 }
