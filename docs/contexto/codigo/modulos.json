@@ -3527,7 +3527,7 @@
    "modulo": "features/admin",
    "arquivos": 54,
    "testes": 8,
-   "linhas": 7237,
+   "linhas": 7260,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6832,7 +6832,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 31,
+   "testes": 32,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

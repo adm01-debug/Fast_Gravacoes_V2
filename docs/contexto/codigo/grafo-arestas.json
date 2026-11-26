@@ -6228,6 +6228,7 @@
    "supabase/functions/_shared/logger.ts"
   ],
   "supabase/functions/health-monitor/index.ts": [
+   "supabase/functions/_shared/checkStatus.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/cronAuth.ts",
    "supabase/functions/_shared/logger.ts"
@@ -6236,7 +6237,8 @@
    "supabase/functions/_shared/cors.ts"
   ],
   "supabase/functions/metrics-collector/index.ts": [
-   "supabase/functions/_shared/cronAuth.ts"
+   "supabase/functions/_shared/cronAuth.ts",
+   "supabase/functions/_shared/operationalDay.ts"
   ],
   "supabase/functions/ml-predictions/index.ts": [
    "supabase/functions/_shared/auth.ts",

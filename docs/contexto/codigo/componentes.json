@@ -7029,7 +7029,7 @@
     "SecurityEventsLog"
    ],
    "export_default": null,
-   "linhas": 144,
+   "linhas": 159,
    "dominio": "features/admin",
    "hooks_locais": [
     "useRealtimeSecurityEvents",

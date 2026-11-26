@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d103b9e24a` · branch `main` · 2026-11-26 15:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `241116afa9` · branch `main` · 2026-11-26 15:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T14:44:50Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T15:39:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T14:44:50Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T15:39:00Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T14:44:50Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T15:39:00Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T14:44:50Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T15:39:00Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1651,7 +1651,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T14:44:50Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T15:39:00Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -1969,6 +1969,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ViewMode | daily \| weekly \| kanban \| list \| occupancy \| alerts | `src/types/scheduling.ts` |
 | AppRole | admin \| manager \| coordinator \| operator | `supabase/functions/_shared/auth.ts` |
 | Aal | aal1 \| aal2 | `supabase/functions/_shared/auth.ts` |
+| CheckStatus | pass \| warn \| fail | `supabase/functions/_shared/checkStatus.ts` |
 | RegistroAlerta | confirmado \| aviso_no_app \| nada | `supabase/functions/_shared/emailDelivery.ts` |
 | LogLevel | debug \| info \| warn \| error | `supabase/functions/_shared/logger.ts` |
 
@@ -2544,10 +2545,6 @@ _nenhum item encontrado_
   ```
   valid: boolean; error?: string; data?: { action: string; table?: string; rpc?: string; params?: Record<string, unknown>; };
   ```
-- **valor(tipo: string)** — `supabase/functions/metrics-collector/index.ts`
-  ```
-  Number(partes.find((p) => p.type === tipo)?.value ?? "0");
-  ```
 - **generateJobReport(data: any, options: any)** — `supabase/functions/pdf-generator/index.ts`
   ```
   const content = `Job Report\n\nGenerated: ${new Date().toISOString()}\n\nData: ${JSON.stringify(data, null, 2)}`; return new TextEncoder().encode(content);
@@ -2769,6 +2766,7 @@ _nenhum item encontrado_
 | `DEFAULT_ALLOWED_METHODS` | `"GET, POST, PATCH, PUT, DELETE, OPTIONS"` | `supabase/functions/_shared/cors.ts` |
 | `MOTIVO_SEM_CREDENCIAL` | `"RESEND_API_KEY ausente"` | `supabase/functions/_shared/emailDelivery.ts` |
 | `REQUEST_ID_HEADER` | `"x-request-id"` | `supabase/functions/_shared/logger.ts` |
+| `OPERATIONAL_TIMEZONE` | `"America/Sao_Paulo"` | `supabase/functions/_shared/operationalDay.ts` |
 | `BUFFER_TARGET` | `3` | `supabase/functions/auto-promote-jobs/index.ts` |
 | `PAGE_SIZE` | `5000` | `supabase/functions/backup-scheduler/index.ts` |
 | `MAX_PAGES` | `20` | `supabase/functions/backup-scheduler/index.ts` |
@@ -2783,7 +2781,6 @@ _nenhum item encontrado_
 | `INBOUND_WINDOW_MS` | `60` | `supabase/functions/csp-report/index.ts` |
 | `SP_TIMEZONE` | `'America/Sao_Paulo'` | `supabase/functions/daily-maintenance-summary/index.ts` |
 | `EXPORT_ROW_LIMIT` | `20000` | `supabase/functions/excel-export/index.ts` |
-| `FUSO_OPERACIONAL` | `"America/Sao_Paulo"` | `supabase/functions/metrics-collector/index.ts` |
 | `MAX_BATCH_SIZE` | `10` | `supabase/functions/ml-predictions/index.ts` |
 | `RESEND_MAX_RECIPIENTS` | `50` | `supabase/functions/send-loss-risk-alert/index.ts` |
 | `MAX_MESSAGES` | `40` | `supabase/functions/technical-assistant/index.ts` |
@@ -3375,7 +3372,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1558 testes em 140 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1566 testes em 141 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3446,6 +3443,7 @@ _nenhum item encontrado_
 | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
 | `src/test/i18nRuntime.test.ts` | 8 | i18n runtime (i18next 27 / react-i18next 18) · resolve traducao padrao pt-BR · interpola variaveis · troca de idioma em runtime … |
+| `src/test/internalRoutinesContracts.test.ts` | 8 | toCheckStatus · traduz o vocabulario do health-check para o CHECK da tabela · aceita o vocabulario antigo e tolera caixa/espacos · trata valor desconhecido ou ausente como fail, nunca como pass … |
 | `supabase/functions/_shared/cronAuth.test.ts` | 8 | aceita header x-cron-secret correto · aceita Authorization: Bearer com o segredo · rejeita segredo incorreto com 401 e CORS · rejeita ausência total de credencial quando o segredo existe … |
 | `scripts/ci/session-start.test.mjs` | 7 | fora da nuvem não faz nada · primeira sessão: declara async, instala, constrói e carimba o commit · grafo já carimbado e árvore limpa: nada a fazer · edição não commitada invalida a marca: reconstrói … |
 | `src/features/notifications/hooks/useNotifications.test.ts` | 7 | useNotifications · should fetch and transform notifications correctly · should handle unread count · nao mostra avisos da conta anterior ao trocar de sessao … |
@@ -3650,6 +3648,7 @@ _nenhum item encontrado_
 | apenas por coordenadores/gestores (RLS). | `src/features/admin/hooks/useCronHealthHistory.ts` |
 | degradação de longo prazo, além da janela de 90 dias do histórico bruto. | `src/features/admin/hooks/useCronP95Daily.ts` |
 | limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes. | `src/features/admin/hooks/useDataExport.ts` |
+| INSERT apenas: desbloquear um IP e um UPDATE (unblocked_at) e o monitor | `src/features/admin/hooks/useSecurityEvents.ts` |
 | Função SECURITY DEFINER que exige apenas um papel ativo — devolve somente | `src/features/admin/hooks/useSystemStatusSummary.ts` |
 | Data validation helpers | `src/features/analytics/hooks/useBottleneckPrediction.ts` |
 | false desativa as consultas (ex.: sem permissao energy:read o RLS | `src/features/analytics/hooks/useEnergy.ts` |

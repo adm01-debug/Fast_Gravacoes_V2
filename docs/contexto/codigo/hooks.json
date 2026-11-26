@@ -1202,7 +1202,7 @@
     "useRealtimeBlockedIPs",
     "useRealtimeSecurityEvents"
    ],
-   "linhas": 61,
+   "linhas": 69,
    "dominio": "features/admin",
    "tabelas": [
     "security_events"

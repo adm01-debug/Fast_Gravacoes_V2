@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d103b9e24acdd0268ad90f81634dfa37d5165c8c",
+  "commit": "241116afa9381f82e96800bbdb4d5d5505416bdc",
   "branch": "main",
-  "data_commit": "2026-11-26T12:17:59-03:00",
+  "data_commit": "2026-11-26T12:51:16-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "241116a",
+    "data": "2026-11-26",
+    "assunto": "fix: rotinas internas voltam a executar (URL canônica das functions) (#320)"
+   },
    {
     "sha": "d103b9e",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "d0e7a1d",
     "data": "2026-11-25",
     "assunto": "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)"
-   },
-   {
-    "sha": "cd834ba",
-    "data": "2026-11-25",
-    "assunto": "infra: remove push em main do automation-local (recupera PR #229) (#298)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 308,
+  "arquivos_mudados_7d": 298,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -150,7 +150,7 @@
    },
    {
     "pasta": "src/features/admin",
-    "mudancas": 28
+    "mudancas": 30
    },
    {
     "pasta": "src/features/auth",
@@ -165,11 +165,11 @@
     "mudancas": 24
    },
    {
-    "pasta": "src/features/packaging",
-    "mudancas": 19
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 21
    },
    {
-    "pasta": "supabase/functions/_shared",
+    "pasta": "src/features/packaging",
     "mudancas": 19
    },
    {
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 174
+    "commits": 175
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1641,
-  "arquivos_codigo": 1162,
-  "linhas_codigo": 197376,
+  "arquivos_total": 1648,
+  "arquivos_codigo": 1165,
+  "linhas_codigo": 197527,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,9 +339,9 @@
   "hooks": 198,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 270,
+  "migrations": 274,
   "cron_jobs": 6,
-  "testes": 159,
+  "testes": 160,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 346,
-   "linhas": 49481
+   "linhas": 49504
   },
   "src/hooks": {
    "arquivos": 63,
@@ -532,16 +532,16 @@
    "linhas": 23
   },
   "src/test": {
-   "arquivos": 31,
-   "linhas": 4645
+   "arquivos": 32,
+   "linhas": 4700
   },
   "src/types": {
    "arquivos": 2,
    "linhas": 172
   },
   "supabase/functions": {
-   "arquivos": 56,
-   "linhas": 11819
+   "arquivos": 58,
+   "linhas": 11892
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

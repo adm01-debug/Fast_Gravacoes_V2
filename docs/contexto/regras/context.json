@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d103b9e24acdd0268ad90f81634dfa37d5165c8c",
+  "sha": "241116afa9381f82e96800bbdb4d5d5505416bdc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 15:38 UTC",
-  "files_total": 1639,
-  "code_files": 1443,
-  "code_lines": 215295
+  "generated_at": "2026-11-26 15:54 UTC",
+  "files_total": 1646,
+  "code_files": 1450,
+  "code_lines": 215825
  },
  "version": "1.3.2",
- "facts_hash": "93b810852a5e8b52",
+ "facts_hash": "7897d23cc4e67b26",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,8 +280,8 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 684,
-   ".ts": 414,
-   ".sql": 278,
+   ".ts": 417,
+   ".sql": 282,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19777,6 +19777,8 @@
    "supabase/migrations/20261125170000_restore_erp_api_keys.sql",
    "supabase/migrations/20261126100000_f011_rpc_apply_job_sequence.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
+   "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+   "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "supabase/migrations/20261128100000_block_delete_job_with_production.sql",
    "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
@@ -19787,6 +19789,8 @@
    "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
    "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
    "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
+   "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
+   "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
    "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -21568,6 +21572,46 @@
    },
    {
     "kind": "revoke",
+    "privs": "all",
+    "object": "app_private.functions_base_url",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "count_running_machines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "count_active_operators_since",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "count_running_machines",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "count_active_operators_since",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
     "privs": "execute",
     "object": "has_role",
     "objkind": "function",
@@ -21749,6 +21793,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
    },
    {
     "kind": "revoke",
@@ -22125,6 +22193,10 @@
    },
    {
     "src": "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
+    "count": 1
+   },
+   {
+    "src": "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
     "count": 1
    }
   ],
@@ -28903,7 +28975,7 @@
   {
    "module": "src/features/admin",
    "files": 62,
-   "lines": 7886,
+   "lines": 7909,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -30557,8 +30629,8 @@
   },
   {
    "module": "src/test",
-   "files": 32,
-   "lines": 4652,
+   "files": 33,
+   "lines": 4707,
    "tables": [
     "jobs"
    ],
@@ -30572,7 +30644,7 @@
     "erpApiContracts.test.ts: ERP API Contract Tests Validates all request/response schemas, simulates handler routing, and covers 400+ scenarios across all ERP endpoints.",
     "exportRegression.test.ts: Regressão automatizada dos fluxos de exportação. Foco: correção do CSV gerado, escapamento, cabeçalhos, integração com DOM e validação de tipos (sem uso de `any`).",
     "exportSimulation.test.ts: Simulação massiva de cenários de exportação (oeeExport + inventoryExport). Cobre: dados vazios, nulos, strings maliciosas (CSV injection / quotes / newlines), datas inválidas, unicode, volumes grandes, tipos desconhecidos, campos faltantes.",
-    "loadStress.test.ts: Load & Stress Tests Simulates concurrent requests against pure-logic modules, measuring latency, error rates, and stability under load. These run entirely in-process — no network required."
+    "internalRoutinesContracts.test.ts: Contratos das rotinas internas de monitoramento. Cobre os dois defeitos que impediam o monitor de saude de gravar qualquer coisa e a coleta de metricas de contar o dia errado: - health-check responde healthy/degraded/unhealthy, mas a tabela edge_health_history tem CHECK ('pass','warn','fail'); - a c …"
    ],
    "deps": [
     "@hookform/resolvers",
@@ -30608,6 +30680,7 @@
     "src/test/exportRegression.test.ts",
     "src/test/exportSimulation.test.ts",
     "src/test/i18nRuntime.test.ts",
+    "src/test/internalRoutinesContracts.test.ts",
     "src/test/jobStateMachine.test.ts",
     "src/test/jobsService.test.ts",
     "src/test/loadStress.test.ts",
@@ -30678,8 +30751,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 56,
-   "lines": 11819,
+   "files": 58,
+   "lines": 11892,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -30731,28 +30804,29 @@
    ],
    "exports": [
     "auth.ts: AppRole, ELEVATED_ROLES, Aal, AuthContext, AuthResult, EnvelopeOptions",
+    "checkStatus.ts: CheckStatus, toCheckStatus",
     "contracts.ts: ErrorResponseSchema, WebhookSourceSchema, WebhookPayloadSchema, WebhookResponseSchema, ERPJobRequestSchema, ERPJobResponseSchema",
     "cors.ts: ALLOWED_ORIGINS, pickAllowedOrigin, getCorsHeaders, handleCorsPreflight",
     "cronAuth.ts: requireCronSecret, requireUserOrCronSecret",
     "emailDelivery.ts: EmailSendOutcome, MOTIVO_SEM_CREDENCIAL, classifyResendSend, classifyResendHttp, RegistroAlerta, decidirRegistroAlerta",
     "htmlEscape.ts: escapeHtml",
     "logger.ts: LogLevel, LogContext, Logger, getOrCreateRequestId, createLogger, withRequestId",
+    "operationalDay.ts: OPERATIONAL_TIMEZONE, ZonedParts, zonedParts, localMidnightToUtc, startOfOperationalDayUtc",
     "rateLimit.ts: RateLimitIdentity, RateLimitOptions, sanitizeIp, tooManyRequests, isRateLimitSaturated, checkRateLimit",
     "test-utils.ts: testContract",
     "validate.ts: ParseContext, ParseResult, parseOrError",
     "validation.ts: webhookPayloadSchema, WebhookPayload, bitrix24DataSchema, stripeDataSchema, mlPredictionPayloadSchema, MLPredictionPayload",
     "webpushEncrypt.ts: encryptPushPayload",
     "index.ts: classifySeverity, buildTelemetryPayload, emitTelemetry, validateColumns, ALLOWED_TABLES, WRITE_ACTIONS",
-    "index.ts: inicioDoDiaOperacional",
     "index.ts: handler"
    ],
    "docs": [
     "auth.test.ts: Testes do middleware comum (etapa 6) — cobrem ausência, fraude e sucesso de cada guarda. authenticate() é testado via injeção de dependência (offline).",
     "auth.ts: Etapa 6 do plano-mestre 10/10 — middleware comum de segurança Edge. Composição recomendada em toda function: const preflight = handleCorsPreflight(req); if (preflight) return preflight; const requestId = getOrCreateRequestId(req); const cors = withRequestId(getCorsHeaders(req), requestId); const aut …",
+    "checkStatus.ts: Vocabulario de status aceito pelo banco. `public.edge_health_history.status` tem CHECK ('pass','warn','fail'), mas o `health-check` responde 'healthy' | 'degraded' | 'unhealthy'. Quem grava precisa converter: sem isso o insert e rejeitado pelo CHECK e o valor nunca chega a `get_system_status_summary …",
     "cors.ts: Shared CORS helper — single source of truth for allowed origins and headers across all edge functions. Prefer this over per-function duplication. Usage: import { getCorsHeaders, handleCorsPreflight } from \"../_shared/cors.ts\"; const preflight = handleCorsPreflight(req); if (preflight) return preflig …",
     "emailDelivery.ts: Decisão de \"o e-mail realmente saiu?\" separada do envio. Existe porque `resend.emails.send()` não lança em erro de API: devolve `{ data: null, error }`. Código que só aguardava a promise gravava `email_sent: true` mesmo com 403/422/429 do provedor, então o histórico afirmava um contato que nunca aco …",
-    "htmlEscape.ts: Escapes a value for safe interpolation into HTML email bodies. Values sourced from the database (alert messages, machine names, user-entered text) must never be interpolated raw into HTML — an attacker-controlled string like `<img src=x onerror=...>` would otherwise execute in the recipient's mail c …",
-    "logger.ts: Structured logger for Edge Functions. Emits single-line JSON so Supabase/Logflare can index fields (level, fn, requestId, latencyMs, etc.) instead of relying on free-text `console.log`. Usage: import { createLogger, getOrCreateRequestId } from \"../_shared/logger.ts\"; const requestId = getOrCreateReq …"
+    "htmlEscape.ts: Escapes a value for safe interpolation into HTML email bodies. Values sourced from the database (alert messages, machine names, user-entered text) must never be interpolated raw into HTML — an attacker-controlled string like `<img src=x onerror=...>` would otherwise execute in the recipient's mail c …"
    ],
    "deps": [
     "https:",
@@ -30764,6 +30838,7 @@
    "file_list": [
     "supabase/functions/_shared/auth.test.ts",
     "supabase/functions/_shared/auth.ts",
+    "supabase/functions/_shared/checkStatus.ts",
     "supabase/functions/_shared/contracts.test.ts",
     "supabase/functions/_shared/contracts.ts",
     "supabase/functions/_shared/cors.test.ts",
@@ -30775,6 +30850,7 @@
     "supabase/functions/_shared/htmlEscape.ts",
     "supabase/functions/_shared/logger.test.ts",
     "supabase/functions/_shared/logger.ts",
+    "supabase/functions/_shared/operationalDay.ts",
     "supabase/functions/_shared/rateLimit.test.ts",
     "supabase/functions/_shared/rateLimit.ts",
     "supabase/functions/_shared/test-utils.ts",
@@ -30822,8 +30898,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 270,
-   "lines": 17263,
+   "files": 274,
+   "lines": 17642,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -35046,6 +35122,11 @@
     "values": "aal1 | aal2"
    },
    {
+    "file": "supabase/functions/_shared/checkStatus.ts",
+    "name": "CheckStatus",
+    "values": "pass | warn | fail"
+   },
+   {
     "file": "supabase/functions/_shared/emailDelivery.ts",
     "name": "RegistroAlerta",
     "values": "confirmado | aviso_no_app | nada"
@@ -37792,6 +37873,10 @@
    {
     "file": "src/features/admin/hooks/useDataExport.ts",
     "text": "limit(10000) era inútil: o servidor trunca em max-rows (~1000) antes."
+   },
+   {
+    "file": "src/features/admin/hooks/useSecurityEvents.ts",
+    "text": "INSERT apenas: desbloquear um IP e um UPDATE (unblocked_at) e o monitor"
    },
    {
     "file": "src/features/admin/hooks/useSystemStatusSummary.ts",
@@ -44103,6 +44188,11 @@
     "value": "\"x-request-id\""
    },
    {
+    "file": "supabase/functions/_shared/operationalDay.ts",
+    "name": "OPERATIONAL_TIMEZONE",
+    "value": "\"America/Sao_Paulo\""
+   },
+   {
     "file": "supabase/functions/auto-promote-jobs/index.ts",
     "name": "BUFFER_TARGET",
     "value": "3"
@@ -44171,11 +44261,6 @@
     "file": "supabase/functions/excel-export/index.ts",
     "name": "EXPORT_ROW_LIMIT",
     "value": "20000"
-   },
-   {
-    "file": "supabase/functions/metrics-collector/index.ts",
-    "name": "FUSO_OPERACIONAL",
-    "value": "\"America/Sao_Paulo\""
    },
    {
     "file": "supabase/functions/ml-predictions/index.ts",
@@ -50386,12 +50471,6 @@
     "file": "supabase/functions/health-monitor/index.ts",
     "field": "status",
     "value": "pass",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/health-monitor/index.ts",
-    "field": "status",
-    "value": "pass",
     "kind": "compara"
    },
    {
@@ -50404,6 +50483,12 @@
     "file": "supabase/functions/health-monitor/index.ts",
     "field": "status",
     "value": "pass",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/health-monitor/index.ts",
+    "field": "status",
+    "value": "fail",
     "kind": "compara"
    },
    {
@@ -50929,12 +51014,6 @@
     "name": "validateBridgeRequest",
     "params": "body: any",
     "body": "valid: boolean; error?: string; data?: { action: string; table?: string; rpc?: string; params?: Record<string, unknown>; };"
-   },
-   {
-    "file": "supabase/functions/metrics-collector/index.ts",
-    "name": "valor",
-    "params": "tipo: string",
-    "body": "Number(partes.find((p) => p.type === tipo)?.value ?? \"0\");"
    },
    {
     "file": "supabase/functions/pdf-generator/index.ts",
@@ -55735,6 +55814,38 @@
    {
     "file": "src/test/i18nRuntime.test.ts",
     "name": "mantem o idioma pt-BR ao fim da suite"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "toCheckStatus"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "traduz o vocabulario do health-check para o CHECK da tabela"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "aceita o vocabulario antigo e tolera caixa/espacos"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "trata valor desconhecido ou ausente como fail, nunca como pass"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "startOfOperationalDayUtc"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "usa a meia-noite de Brasilia, nao a de UTC"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "mantem a producao da noite no dia anterior ate a meia-noite local"
+   },
+   {
+    "file": "src/test/internalRoutinesContracts.test.ts",
+    "name": "localMidnightToUtc devolve o instante UTC da meia-noite local"
    },
    {
     "file": "src/test/jobStateMachine.test.ts",
@@ -65921,8 +66032,7 @@
       "escreve:src/features/maintenance/components/MaintenanceExecutionModal.tsx",
       "escreve:src/features/maintenance/hooks/types.ts",
       "escreve:src/lib/simulation.ts",
-      "escreve:supabase/functions/health-check/index.ts",
-      "escreve:supabase/functions/health-monitor/index.ts"
+      "escreve:supabase/functions/health-check/index.ts"
      ],
      "warn": [
       "compara:src/features/admin/components/security/SecurityOverviewCard.tsx",
@@ -68177,12 +68287,16 @@
    "supabase/migrations/20261121110000_fix_audit_triggers_old_values.sql",
    "supabase/migrations/20261123000000_enforce_energy_read_permission_rls.sql",
    "supabase/migrations/20261126110000_restore_public_has_role_execute.sql",
+   "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+   "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
    "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
    "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
-   "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
+   "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
+   "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
   ],
   "security_definer_fns": [
    "app_private.functions_base_url",
@@ -69897,6 +70011,46 @@
    },
    {
     "kind": "revoke",
+    "privs": "all",
+    "object": "app_private.functions_base_url",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "count_running_machines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "count_active_operators_since",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "count_running_machines",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "count_active_operators_since",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql"
+   },
+   {
+    "kind": "revoke",
     "privs": "execute",
     "object": "has_role",
     "objkind": "function",
@@ -70078,6 +70232,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "security_events_limita_severidade_do_cliente",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
    },
    {
     "kind": "revoke",
@@ -81402,7 +81580,7 @@
   },
   "src/features/admin/components/security/SecurityEventsLog.tsx": {
    "path": "src/features/admin/components/security/SecurityEventsLog.tsx",
-   "lines": 144,
+   "lines": 159,
    "exports": [
     "function SecurityEventsLog"
    ]
@@ -82311,7 +82489,7 @@
   },
   "src/features/admin/hooks/useSecurityEvents.ts": {
    "path": "src/features/admin/hooks/useSecurityEvents.ts",
-   "lines": 61,
+   "lines": 69,
    "exports": [
     "function useRealtimeSecurityEvents",
     "function useRealtimeBlockedIPs",
@@ -82327,6 +82505,9 @@
     "Alerta de Segurança: ${event.event_type}",
     "Aviso de Segurança: ${event.event_type}",
     "IP Bloqueado: ${block.ip_address}"
+   ],
+   "rule_comments": [
+    "INSERT apenas: desbloquear um IP e um UPDATE (unblocked_at) e o monitor"
    ],
    "hooks": [
     "useRealtimeSecurityEvents",
@@ -95550,6 +95731,22 @@
     "mantem o idioma pt-BR ao fim da suite"
    ]
   },
+  "src/test/internalRoutinesContracts.test.ts": {
+   "path": "src/test/internalRoutinesContracts.test.ts",
+   "lines": 55,
+   "is_test": true,
+   "doc": "Contratos das rotinas internas de monitoramento. Cobre os dois defeitos que impediam o monitor de saude de gravar qualquer coisa e a coleta de metricas de contar o dia errado: - health-check responde healthy/degraded/unhealthy, mas a tabela edge_health_history tem CHECK ('pass','warn','fail'); - a c …",
+   "tests": [
+    "toCheckStatus",
+    "traduz o vocabulario do health-check para o CHECK da tabela",
+    "aceita o vocabulario antigo e tolera caixa/espacos",
+    "trata valor desconhecido ou ausente como fail, nunca como pass",
+    "startOfOperationalDayUtc",
+    "usa a meia-noite de Brasilia, nao a de UTC",
+    "mantem a producao da noite no dia anterior ate a meia-noite local",
+    "localMidnightToUtc devolve o instante UTC da meia-noite local"
+   ]
+  },
   "src/test/jobStateMachine.test.ts": {
    "path": "src/test/jobStateMachine.test.ts",
    "lines": 162,
@@ -96397,6 +96594,21 @@
    ],
    "doc": "Etapa 6 do plano-mestre 10/10 — middleware comum de segurança Edge. Composição recomendada em toda function: const preflight = handleCorsPreflight(req); if (preflight) return preflight; const requestId = getOrCreateRequestId(req); const cors = withRequestId(getCorsHeaders(req), requestId); const aut …"
   },
+  "supabase/functions/_shared/checkStatus.ts": {
+   "path": "supabase/functions/_shared/checkStatus.ts",
+   "lines": 27,
+   "exports": [
+    "type CheckStatus",
+    "function toCheckStatus"
+   ],
+   "enums": [
+    {
+     "name": "CheckStatus",
+     "values": "pass | warn | fail"
+    }
+   ],
+   "doc": "Vocabulario de status aceito pelo banco. `public.edge_health_history.status` tem CHECK ('pass','warn','fail'), mas o `health-check` responde 'healthy' | 'degraded' | 'unhealthy'. Quem grava precisa converter: sem isso o insert e rejeitado pelo CHECK e o valor nunca chega a `get_system_status_summary …"
+  },
   "supabase/functions/_shared/contracts.test.ts": {
    "path": "supabase/functions/_shared/contracts.test.ts",
    "lines": 72,
@@ -96678,6 +96890,24 @@
     }
    ],
    "doc": "Structured logger for Edge Functions. Emits single-line JSON so Supabase/Logflare can index fields (level, fn, requestId, latencyMs, etc.) instead of relying on free-text `console.log`. Usage: import { createLogger, getOrCreateRequestId } from \"../_shared/logger.ts\"; const requestId = getOrCreateReq …"
+  },
+  "supabase/functions/_shared/operationalDay.ts": {
+   "path": "supabase/functions/_shared/operationalDay.ts",
+   "lines": 67,
+   "exports": [
+    "const OPERATIONAL_TIMEZONE",
+    "interface ZonedParts",
+    "function zonedParts",
+    "function localMidnightToUtc",
+    "function startOfOperationalDayUtc"
+   ],
+   "params": [
+    {
+     "name": "OPERATIONAL_TIMEZONE",
+     "value": "\"America/Sao_Paulo\""
+    }
+   ],
+   "doc": "Limites do dia no fuso operacional. As edge functions rodam com o relogio em UTC: `setHours(0,0,0,0)` produz meia-noite UTC, que no Brasil (UTC-3) cai as 21h do dia anterior — a janela \"hoje\" pulava as tres ultimas horas de producao e reiniciava antes da meia noite real. Aqui a meia-noite local e co …"
   },
   "supabase/functions/_shared/rateLimit.test.ts": {
    "path": "supabase/functions/_shared/rateLimit.test.ts",
@@ -98222,7 +98452,7 @@
   },
   "supabase/functions/health-monitor/index.ts": {
    "path": "supabase/functions/health-monitor/index.ts",
-   "lines": 118,
+   "lines": 132,
    "tables": [
     {
      "table": "edge_health_history",
@@ -98242,11 +98472,6 @@
     {
      "field": "status",
      "value": "pass",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pass",
      "kind": "compara"
     },
     {
@@ -98257,6 +98482,11 @@
     {
      "field": "status",
      "value": "pass",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "fail",
      "kind": "compara"
     }
    ],
@@ -98281,10 +98511,7 @@
   },
   "supabase/functions/metrics-collector/index.ts": {
    "path": "supabase/functions/metrics-collector/index.ts",
-   "lines": 116,
-   "exports": [
-    "function inicioDoDiaOperacional"
-   ],
+   "lines": 81,
    "tables": [
     {
      "table": "jobs",
@@ -98331,12 +98558,6 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
-   "params": [
-    {
-     "name": "FUSO_OPERACIONAL",
-     "value": "\"America/Sao_Paulo\""
-    }
-   ],
    "status_values": [
     {
      "field": "status",
@@ -98352,13 +98573,6 @@
      "field": "role",
      "value": "operator",
      "kind": "filtra"
-    }
-   ],
-   "calc_fns": [
-    {
-     "name": "valor",
-     "params": "tipo: string",
-     "body": "Number(partes.find((p) => p.type === tipo)?.value ?? \"0\");"
     }
    ],
    "uses_service_role": true
@@ -100243,6 +100457,16 @@
    "lines": 18,
    "uses_service_role": true
   },
+  "supabase/migrations/20261126120000_restore_internal_cron_calls.sql": {
+   "path": "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+   "lines": 175,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126130000_normalize_functions_base_url.sql": {
+   "path": "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
+   "lines": 97,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261127120000_isolate_public_has_role.sql": {
    "path": "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "lines": 145,
@@ -100300,6 +100524,16 @@
   "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql": {
    "path": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
    "lines": 206,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql": {
+   "path": "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
+   "lines": 78,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129200000_security_events_severidade_cliente.sql": {
+   "path": "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
+   "lines": 29,
    "uses_service_role": true
   },
   "supabase/migrations/20261129210000_production_losses_contador_atomico.sql": {
@@ -100762,10 +100996,30 @@
   }
  },
  "git": {
-  "sha": "d103b9e24acdd0268ad90f81634dfa37d5165c8c",
+  "sha": "241116afa9381f82e96800bbdb4d5d5505416bdc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "241116a",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: rotinas internas voltam a executar (URL canônica das functions) (#320)",
+    "files": [
+     "src/features/admin/components/security/SecurityEventsLog.tsx",
+     "src/features/admin/hooks/useSecurityEvents.ts",
+     "src/test/internalRoutinesContracts.test.ts",
+     "supabase/functions/REGISTRY.md",
+     "supabase/functions/_shared/checkStatus.ts",
+     "supabase/functions/_shared/operationalDay.ts",
+     "supabase/functions/health-monitor/index.ts",
+     "supabase/functions/metrics-collector/index.ts",
+     "supabase/migrations/20261126120000_restore_internal_cron_calls.sql",
+     "supabase/migrations/20261126130000_normalize_functions_base_url.sql",
+     "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
+     "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+    ]
+   },
    {
     "sha": "d103b9e",
     "date": "2026-11-26",
@@ -101146,21 +101400,12 @@
     "files": [
      "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx"
     ]
-   },
-   {
-    "sha": "fa8cd71",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore: registra etapas 001-003 do plano de QA com a evidência de cada uma (#293)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    12
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101203,6 +101448,10 @@
     3
    ],
    [
+    "supabase/functions/metrics-collector/index.ts",
+    2
+   ],
+   [
     "src/components/calendar/CalendarTimeline.tsx",
     2
    ],
@@ -101232,10 +101481,6 @@
    ],
    [
     "src/components/jobs/JobDetailsModal.tsx",
-    2
-   ],
-   [
-    "src/features/jobs/hooks/useJobs.ts",
     2
    ]
   ]

@@ -10,6 +10,7 @@
  "shared": [
   "supabase/functions/_shared/auth.test.ts",
   "supabase/functions/_shared/auth.ts",
+  "supabase/functions/_shared/checkStatus.ts",
   "supabase/functions/_shared/contracts.test.ts",
   "supabase/functions/_shared/contracts.ts",
   "supabase/functions/_shared/cors.test.ts",
@@ -21,6 +22,7 @@
   "supabase/functions/_shared/htmlEscape.ts",
   "supabase/functions/_shared/logger.test.ts",
   "supabase/functions/_shared/logger.ts",
+  "supabase/functions/_shared/operationalDay.ts",
   "supabase/functions/_shared/rateLimit.test.ts",
   "supabase/functions/_shared/rateLimit.ts",
   "supabase/functions/_shared/test-utils.ts",
@@ -640,7 +642,7 @@
    "nome": "health-monitor",
    "entrada": "supabase/functions/health-monitor/index.ts",
    "arquivos": 1,
-   "linhas": 118,
+   "linhas": 132,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [
@@ -659,6 +661,7 @@
    ],
    "hosts_externos": [],
    "usa_shared": [
+    "checkStatus.ts",
     "cors.ts",
     "cronAuth.ts",
     "logger.ts"
@@ -695,7 +698,7 @@
    "nome": "metrics-collector",
    "entrada": "supabase/functions/metrics-collector/index.ts",
    "arquivos": 1,
-   "linhas": 116,
+   "linhas": 81,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [
@@ -716,7 +719,8 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
-    "cronAuth.ts"
+    "cronAuth.ts",
+    "operationalDay.ts"
    ],
    "chamada_pelo_front": [],
    "chamada_por_edges": [],

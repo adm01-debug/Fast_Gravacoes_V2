@@ -6,12 +6,12 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 270,
+ "migrations": 274,
  "seeds": [
   "supabase/seed.sql"
  ],
  "avisos": [
-  "30 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "31 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -109,6 +109,7 @@
   "rollback_inventory_stock",
   "rollup_cron_p95_daily",
   "save_tpm_checklist_snapshot",
+  "security_events_limita_severidade_do_cliente",
   "snapshot_cron_health",
   "trigger_auto_promotion",
   "trigger_send_tpm_email",
@@ -145,6 +146,13 @@
    "evento": "update",
    "tabela": "abc_cost_pools",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_normalize_functions_base_url",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "app_private.runtime_config",
+   "funcao": "app_private"
   },
   {
    "nome": "audit_log_no_delete",
@@ -600,6 +608,13 @@
    "evento": "insert or update of is_default",
    "tabela": "saved_filters",
    "funcao": "ensure_single_default_filter"
+  },
+  {
+   "nome": "security_events_limita_severidade_do_cliente",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "security_events",
+   "funcao": "security_events_limita_severidade_do_cliente"
   },
   {
    "nome": "update_shift_checklist_templates_updated_at",
@@ -1278,7 +1293,9 @@
    "criada_em": "20261008160000_runtime_config_edge_auth.sql",
    "usada_no_front": 0,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "trg_normalize_functions_base_url"
+   ],
    "sem_rls": false,
    "nao_usada": true
   },
@@ -12182,7 +12199,9 @@
     "health-monitor",
     "security-alert"
    ],
-   "triggers": [],
+   "triggers": [
+    "security_events_limita_severidade_do_cliente"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
