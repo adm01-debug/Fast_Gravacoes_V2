@@ -41,6 +41,14 @@ export const AuditEntryCard = memo(function AuditEntryCard({ entry }: AuditEntry
   const ActionIcon = cfg.icon;
   const date = new Date(entry.created_at);
 
+  // O trigger grava transicao de status como UPDATE (audit_log_action_check so
+  // aceita INSERT/UPDATE/DELETE), entao 'status_change' nunca aparece.
+  const novoStatus = (entry.new_values as { status?: string } | null)?.status;
+  const statusAnterior = (entry.old_values as { status?: string } | null)?.status;
+  const transicaoDeStatus =
+    Boolean(novoStatus) &&
+    (entry.action === 'status_change' || (entry.action === 'UPDATE' && novoStatus !== statusAnterior));
+
   // Helper to get status color
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -65,11 +73,11 @@ export const AuditEntryCard = memo(function AuditEntryCard({ entry }: AuditEntry
               </span>
             </div>
             
-            {entry.action === 'status_change' && (
+            {transicaoDeStatus && (
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-xs text-muted-foreground italic">Alterado para:</span>
-                <Badge variant="outline" className={cn("text-[10px] uppercase font-bold", getStatusColor(String((entry.new_values as { status?: string } | null)?.status || '')))}>
-                  {String((entry.new_values as { status?: string } | null)?.status || 'status')}
+                            <Badge variant="outline" className={cn("text-[10px] uppercase font-bold", getStatusColor(String(novoStatus)))}>
+                              {String(novoStatus)}
                 </Badge>
               </div>
             )}
