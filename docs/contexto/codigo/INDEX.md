@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `12d2399f55ac5ace34c2427dd9457c0c029ef676` (2026-11-26T18:46:14-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5f6a6c5591dc08baa79445ae7a396bffd9bf63d1` (2026-11-26T18:59:55-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1106), SQL (284), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1109), SQL (285), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1655 |
-| arquivos_codigo | 1170 |
-| linhas_codigo | 197954 |
+| arquivos_total | 1659 |
+| arquivos_codigo | 1173 |
+| linhas_codigo | 198262 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
 | itens_menu | 70 |
 | modulos | 75 |
-| componentes | 624 |
-| hooks | 199 |
+| componentes | 625 |
+| hooks | 200 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 276 |
+| migrations | 277 |
 | cron_jobs | 6 |
-| testes | 163 |
+| testes | 164 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 108 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
-- componentes: src/components (404), src/features (145), src/pages (56)
-- hooks: src/features (114), src/hooks (55), src/components (15)
+- componentes: src/components (404), src/features (146), src/pages (56)
+- hooks: src/features (115), src/hooks (55), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (126), tests/ (19), outro (18)
+- testes: co-localizado (*.test) (127), tests/ (19), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -94,7 +94,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ui | 0 | 0 | 61 | 12 | 0 | 1 |
 | contexts | 0 | 0 | 14 | 22 | 0 | 7 |
 | features/admin | 0 | 0 | 54 | 64 | 2 | 37 |
-| features/analytics | 0 | 0 | 74 | 55 | 3 | 39 |
+| features/analytics | 0 | 0 | 76 | 56 | 3 | 40 |
 | features/auth | 0 | 0 | 12 | 8 | 2 | 4 |
 | features/inventory | 0 | 0 | 9 | 13 | 1 | 9 |
 | features/jobs | 0 | 0 | 26 | 32 | 3 | 12 |
@@ -105,7 +105,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 0 | 0 | 45 | 62 | 3 | 36 |
 | hooks/abc | 0 | 0 | 5 | 6 | 0 | 7 |
 | lib | 0 | 0 | 38 | 15 | 2 | 15 |
-| pages | 67 | 56 | 56 | 209 | 13 | 110 |
+| pages | 67 | 56 | 56 | 210 | 13 | 111 |
 
 ## Rotas (url → arquivo)
 - `/` [tela] → src/pages/Index.tsx (protegida)
@@ -248,8 +248,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8704 nós · 32939 arestas · 427 comunidades · grafo do commit `12d2399f`
-- comunidades maiores: Card (256), Input (202), react (196), CardHeader (185), analytics/index.ts (180), DialogContent (157), package.json (132), Table (129), MainLayout (123), Button (119), AppProviders.tsx (115), generate.py (113)
+- 8722 nós · 32998 arestas · 422 comunidades · grafo do commit `5f6a6c55`
+- comunidades maiores: CardHeader (182), analytics/index.ts (177), Button (168), client.ts (166), react (161), Input (140), Card (132), Table (130), package.json (126), jobs/index.ts (124), snapshot.py (117), 20260619153319_86ec4a52-99e8-4ebd-827e-e0b4f6403846.sql (116)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -371,6 +371,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-26 `5f6a6c5` feat: cria tela e acao para os alertas de kpi persistidos (#328)
 - 2026-11-26 `12d2399` fix: o teste manual de notificacao TPM grava canal sem provedor, nao falha generica (#339)
 - 2026-11-26 `d8b5a72` fix: o log de TPM aceita o status de canal sem provedor e nao falha em silencio (#338)
 - 2026-11-26 `267f1a5` fix: o log de notificacao TPM distingue canal sem provedor de falha de entrega (#337)
@@ -385,7 +386,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `08b427a` feat: tela para registrar perdas da OS e alimentar o OEE (#325)
 - 2026-11-26 `241116a` fix: rotinas internas voltam a executar (URL canônica das functions) (#320)
 - 2026-11-26 `d103b9e` fix: cobra parada de Tab so em area rolavel sem foco interno (#326)
-- 2026-11-26 `12113e0` fix: restaura a RPC atomica de pecas perdidas no banco (#322)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

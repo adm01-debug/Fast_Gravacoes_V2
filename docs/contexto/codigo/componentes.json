@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 624,
+ "total": 625,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -5470,7 +5470,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 280,
+   "usado_por": 281,
    "orfao": false
   },
   {
@@ -5525,7 +5525,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 309,
+   "usado_por": 310,
    "orfao": false
   },
   {
@@ -5560,7 +5560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 343,
+   "usado_por": 344,
    "orfao": false
   },
   {
@@ -6229,7 +6229,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 84,
+   "usado_por": 85,
    "orfao": false
   },
   {
@@ -7296,7 +7296,7 @@
     "KPIAlertsTab"
    ],
    "export_default": null,
-   "linhas": 202,
+   "linhas": 205,
    "dominio": "features/analytics",
    "hooks_locais": [
     "useDetailedAuditTrail"
@@ -7343,6 +7343,22 @@
    "linhas": 371,
    "dominio": "features/analytics",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
+   "exports": [
+    "PersistedKPIAlerts"
+   ],
+   "export_default": null,
+   "linhas": 103,
+   "dominio": "features/analytics",
+   "hooks_locais": [
+    "useKPIAlerts"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,

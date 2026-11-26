@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 199,
+ "total": 200,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -1402,6 +1402,30 @@
     "src/pages/ExecutiveDashboard.tsx"
    ],
    "coberto_por_testes": 3
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts",
+   "hooks_exportados": [
+    "useKPIAlerts"
+   ],
+   "linhas": 86,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "kpi_alerts"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx"
+   ],
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/features/analytics/hooks/useKPIs.ts",

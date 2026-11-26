@@ -4747,6 +4747,7 @@
     "useIsTablet",
     "useIsTouch",
     "useJobsData",
+    "useKPIAlerts",
     "useKPIs",
     "useLayoutEffect",
     "useLocation",
@@ -4817,6 +4818,7 @@
     "useIsTablet",
     "useIsTouch",
     "useJobsData",
+    "useKPIAlerts",
     "useKPIs",
     "useMachinesData",
     "useModalParam",
@@ -4857,6 +4859,7 @@
     "error_logs",
     "job_status_audit",
     "jobs",
+    "kpi_alerts",
     "machine_event_audit",
     "machine_health_metrics",
     "machine_predictions",
@@ -4888,7 +4891,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 118,
+   "arquivos_puxados": 120,
    "diretos": {
     "tabelas": [
      "operator_machines",

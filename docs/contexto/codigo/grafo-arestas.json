@@ -3199,6 +3199,7 @@
    "src/components/ui/card.tsx",
    "src/components/ui/progress.tsx",
    "src/features/admin/index.ts",
+   "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
    "src/features/analytics/hooks/useKPIs.ts",
    "src/lib/utils.ts"
   ],
@@ -3224,6 +3225,14 @@
    "src/components/ui/progress.tsx",
    "src/features/analytics/hooks/useKPIs.ts",
    "src/lib/recharts.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/features/analytics/hooks/useKPIAlerts.ts",
    "src/lib/utils.ts"
   ],
   "src/features/analytics/components/bi/losses/LossesTable.tsx": [
@@ -3509,6 +3518,9 @@
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts",
    "src/lib/fetchAllRows.ts"
+  ],
+  "src/features/analytics/hooks/useKPIAlerts.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/features/analytics/hooks/useKPIs.ts": [
    "src/features/admin/index.ts",

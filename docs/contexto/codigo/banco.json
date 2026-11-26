@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 276,
+ "migrations": 277,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -106,6 +106,7 @@
   "record_packaging_defect",
   "refresh_machine_health_metrics",
   "refresh_operator_rankings",
+  "resolve_kpi_alert",
   "rollback_inventory_stock",
   "rollup_cron_p95_daily",
   "save_tpm_checklist_snapshot",
@@ -5711,11 +5712,11 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "login_audit": {
    "colunas": {

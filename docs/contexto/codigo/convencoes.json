@@ -7,11 +7,11 @@
   ],
   "componentes": [
    "src/components (404)",
-   "src/features (145)",
+   "src/features (146)",
    "src/pages (56)"
   ],
   "hooks": [
-   "src/features (114)",
+   "src/features (115)",
    "src/hooks (55)",
    "src/components (15)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (126)",
+   "co-localizado (*.test) (127)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 20,
  "extensao_componentes": [
-  ".tsx (624)"
+  ".tsx (625)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: cria tela e acao para os alertas de kpi persistidos (#328)",
    "fix: o teste manual de notificacao TPM grava canal sem provedor, nao falha generica (#339)",
    "fix: o log de TPM aceita o status de canal sem provedor e nao falha em silencio (#338)",
    "fix: o log de notificacao TPM distingue canal sem provedor de falha de entrega (#337)",
-   "chore: comprova o botao Recalcular pelo chunk de producao, nao pelo i18n (#335)",
-   "fix: relatorio por e-mail declara a recusa quando falta a chave do provedor (#336)"
+   "chore: comprova o botao Recalcular pelo chunk de producao, nao pelo i18n (#335)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

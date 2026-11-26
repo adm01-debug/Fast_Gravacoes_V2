@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `12d2399f55` · branch `main` · 2026-11-26 21:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f6a6c5591` · branch `main` · 2026-11-26 22:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T21:39:41Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -2968,6 +2968,7 @@ _nenhum item encontrado_
 | 200 | `src/features/admin/hooks/useMonitoringData.ts` |
 | 50 | `src/features/admin/services/integrationsService.ts` |
 | 50 | `src/features/analytics/hooks/useEnergy.ts` |
+| 20 | `src/features/analytics/hooks/useKPIAlerts.ts` |
 | 200 | `src/features/analytics/hooks/useMLPredictions.ts` |
 | 1 | `src/features/analytics/hooks/useSPC.ts` |
 | 100 | `src/features/analytics/hooks/useSPC.ts` |
@@ -3226,7 +3227,9 @@ _nenhum item encontrado_
 | Alerta de Segurança: ${event.event_type} | `src/features/admin/hooks/useSecurityEvents.ts` |
 | Aviso de Segurança: ${event.event_type} | `src/features/admin/hooks/useSecurityEvents.ts` |
 | IP Bloqueado: ${block.ip_address} | `src/features/admin/hooks/useSecurityEvents.ts` |
+| .  * Sem esta superficie a tabela  | `src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx` |
 | ; import { AlertTriangle, ShieldCheck, ArrowDownRight, Wrench } from  | `src/features/analytics/components/oee/PredictiveAlerts.tsx` |
+| Não foi possível resolver o alerta:  | `src/features/analytics/hooks/useKPIAlerts.ts` |
 | Créditos insuficientes. Adicione créditos ao workspace. | `src/features/analytics/hooks/useMLPredictions.ts` |
 | Erro ao gerar previsões. Tente novamente. | `src/features/analytics/hooks/useMLPredictions.ts` |
 | Limite de requisições excedido. Tente novamente em alguns minutos. | `src/features/analytics/hooks/useMLPredictions.ts` |
@@ -3306,9 +3309,7 @@ _nenhum item encontrado_
 | Erro ao atualizar configurações | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | User not authenticated | `src/features/notifications/hooks/useNotificationSettings.ts` |
 | ), [playSound]);    const setEnabled = useCallback((enabled: boolean) => {     isEnabledRef.current = enabled;     localStorage.setItem( | `src/features/notifications/hooks/useNotificationSounds.ts` |
-| Erro ao dispensar notificação | `src/features/notifications/hooks/useNotifications.ts` |
-| Erro ao excluir notificação | `src/features/notifications/hooks/useNotifications.ts` |
-| … +265 linhas — lista completa em `context.json` | |
+| … +267 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3376,7 +3377,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1576 testes em 144 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1581 testes em 145 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3472,6 +3473,7 @@ _nenhum item encontrado_
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
 | `src/features/analytics/hooks/useExecutiveDashboard.test.ts` | 5 | escolherRetratoDoPeriodo · escolhe o retrato do período pedido, não o mais recente · prefere a janela que contém o fim do período mesmo com fim mais distante · desempata pela apuração mais recente … |
+| `src/features/analytics/hooks/useKPIAlerts.test.ts` | 5 | useKPIAlerts · lista os alertas abertos com o total exato · resolve um alerta pela RPC e recarrega a lista · expoe o erro da consulta … |
 | `src/features/jobs/hooks/useDragDrop.test.ts` | 5 | horarios livres ao arrastar uma OS (etapa 053) · ignora OS concluida na maquina de destino, no calendario do dia · ignora OS concluida na maquina de destino, no calendario da semana · continua empurrando a OS para depois de uma OS que ainda produz, no calendario do dia … |
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |

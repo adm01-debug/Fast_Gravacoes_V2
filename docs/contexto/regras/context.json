@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "12d2399f55ac5ace34c2427dd9457c0c029ef676",
+  "sha": "5f6a6c5591dc08baa79445ae7a396bffd9bf63d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 21:48 UTC",
-  "files_total": 1653,
-  "code_files": 1457,
-  "code_lines": 216276
+  "generated_at": "2026-11-26 22:07 UTC",
+  "files_total": 1657,
+  "code_files": 1461,
+  "code_lines": 216620
  },
  "version": "1.3.2",
- "facts_hash": "1cc1047f699231a9",
+ "facts_hash": "b074fb60084d4de3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,9 +279,9 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 687,
-   ".ts": 419,
-   ".sql": 284,
+   ".tsx": 688,
+   ".ts": 421,
+   ".sql": 285,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19860,6 +19860,7 @@
    "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
    "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
+   "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
    "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
@@ -21918,6 +21919,22 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "resolve_kpi_alert",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "resolve_kpi_alert",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
    }
   ],
   "raises": [
@@ -23469,6 +23486,7 @@
      "job_status_audit",
      "job_status_history",
      "jobs",
+     "kpi_alerts",
      "lot_components",
      "lot_movements",
      "lot_quality_inspections",
@@ -23527,7 +23545,7 @@
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 218
+    "deps_count": 220
    },
    {
     "path": "",
@@ -27420,7 +27438,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 588,
+  "components_count": 589,
   "hooks": [
    {
     "name": "useContacts",
@@ -27741,6 +27759,10 @@
    {
     "name": "useExecutiveDashboard",
     "file": "src/features/analytics/hooks/useExecutiveDashboard.ts"
+   },
+   {
+    "name": "useKPIAlerts",
+    "file": "src/features/analytics/hooks/useKPIAlerts.ts"
    },
    {
     "name": "useKPIs",
@@ -29240,8 +29262,8 @@
   },
   {
    "module": "src/features/analytics",
-   "files": 81,
-   "lines": 12265,
+   "files": 84,
+   "lines": 12573,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -29249,6 +29271,7 @@
     "energy_targets",
     "error_logs",
     "jobs",
+    "kpi_alerts",
     "machine_health_metrics",
     "machine_predictions",
     "machines",
@@ -29284,6 +29307,7 @@
     "KPIMachinesTab.tsx: KPIMachinesTab",
     "KPIOperatorsTab.tsx: KPIOperatorsTab",
     "KPIOverviewTab.tsx: KPIOverviewTab",
+    "PersistedKPIAlerts.tsx: PersistedKPIAlerts",
     "LossesTable.tsx: LossesTable",
     "Bitrix24MappingDialog.tsx: Bitrix24MappingDialog",
     "BalancingTab.tsx: BalancingTab",
@@ -29300,8 +29324,7 @@
     "MaterialEfficiencyChart.tsx: MaterialEfficiencyChart",
     "OEEAuditPanel.tsx: OEEAuditPanel",
     "OEEBenchmarkTooltip.tsx: OEEBenchmarkTooltip",
-    "OEECalculationAudit.tsx: OEECalculationAudit",
-    "OEEGaugeCard.tsx: OEEGaugeCard"
+    "OEECalculationAudit.tsx: OEECalculationAudit"
    ],
    "docs": [
     "useRealtimeConnection.ts: eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime)."
@@ -29357,6 +29380,7 @@
     "src/features/analytics/components/bi/executive/KPIMachinesTab.tsx",
     "src/features/analytics/components/bi/executive/KPIOperatorsTab.tsx",
     "src/features/analytics/components/bi/executive/KPIOverviewTab.tsx",
+    "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
     "src/features/analytics/components/bi/losses/LossesTable.tsx",
     "src/features/analytics/components/bitrix24/Bitrix24MappingDialog.tsx",
     "src/features/analytics/components/efficiency/BalancingTab.tsx",
@@ -29402,6 +29426,8 @@
     "src/features/analytics/hooks/useEnergy.ts",
     "src/features/analytics/hooks/useExecutiveDashboard.test.ts",
     "src/features/analytics/hooks/useExecutiveDashboard.ts",
+    "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "src/features/analytics/hooks/useKPIAlerts.ts",
     "src/features/analytics/hooks/useKPIs.test.ts",
     "src/features/analytics/hooks/useKPIs.ts",
     "src/features/analytics/hooks/useLoadBalancing.ts",
@@ -29409,10 +29435,7 @@
     "src/features/analytics/hooks/useMLPredictions.ts",
     "src/features/analytics/hooks/useOEE.test.ts",
     "src/features/analytics/hooks/useOEEDashboardFilters.ts",
-    "src/features/analytics/hooks/useRealtimeConnection.test.ts",
-    "src/features/analytics/hooks/useRealtimeConnection.ts",
-    "src/features/analytics/hooks/useSPC.ts",
-    "src/features/analytics/lib/oeeReportExport.ts"
+    "src/features/analytics/hooks/useRealtimeConnection.test.ts"
    ]
   },
   {
@@ -31000,8 +31023,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 276,
-   "lines": 17666,
+   "files": 277,
+   "lines": 17702,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -31620,6 +31643,11 @@
     ],
     "delete": [
      "src/features/jobs/services/jobsService.ts"
+    ]
+   },
+   "kpi_alerts": {
+    "select": [
+     "src/features/analytics/hooks/useKPIAlerts.ts"
     ]
    },
    "login_audit": {
@@ -32888,6 +32916,9 @@
     "status",
     "technique_id",
     "updated_at"
+   ],
+   "kpi_alerts": [
+    "is_resolved"
    ],
    "login_audit": [
     "created_at",
@@ -34195,7 +34226,6 @@
   ],
   "tables_only_in_schema": [
    "csp_violation_reports",
-   "kpi_alerts",
    "rls_test_results",
    "runtime_config",
    "technical_sheet_audit_logs",
@@ -36123,8 +36153,16 @@
     "msg": "IP Bloqueado: ${block.ip_address}"
    },
    {
+    "file": "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
+    "msg": ".\n * Sem esta superficie a tabela "
+   },
+   {
     "file": "src/features/analytics/components/oee/PredictiveAlerts.tsx",
     "msg": ";\nimport { AlertTriangle, ShieldCheck, ArrowDownRight, Wrench } from "
+   },
+   {
+    "file": "src/features/analytics/hooks/useKPIAlerts.ts",
+    "msg": "Não foi possível resolver o alerta: "
    },
    {
     "file": "src/features/analytics/hooks/useMLPredictions.ts",
@@ -53264,6 +53302,26 @@
     "name": "mantém uma entrada por máquina"
    },
    {
+    "file": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "name": "useKPIAlerts"
+   },
+   {
+    "file": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "name": "lista os alertas abertos com o total exato"
+   },
+   {
+    "file": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "name": "resolve um alerta pela RPC e recarrega a lista"
+   },
+   {
+    "file": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "name": "expoe o erro da consulta"
+   },
+   {
+    "file": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    "name": "avisa quando a resolucao falha"
+   },
+   {
     "file": "src/features/analytics/hooks/useKPIs.test.ts",
     "name": "useKPIs"
    },
@@ -64800,6 +64858,10 @@
     "limit": "50"
    },
    {
+    "file": "src/features/analytics/hooks/useKPIAlerts.ts",
+    "limit": "20"
+   },
+   {
     "file": "src/features/analytics/hooks/useMLPredictions.ts",
     "limit": "200"
    },
@@ -70516,6 +70578,22 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "resolve_kpi_alert",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "resolve_kpi_alert",
+    "objkind": "function",
+    "roles": "anon, PUBLIC",
+    "src": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
    }
   ],
   "guards": [
@@ -83338,7 +83416,7 @@
   },
   "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx": {
    "path": "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
-   "lines": 202,
+   "lines": 205,
    "exports": [
     "const KPIAlertsTab"
    ],
@@ -83374,6 +83452,16 @@
    "lines": 371,
    "exports": [
     "const KPIOverviewTab"
+   ]
+  },
+  "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx": {
+   "path": "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
+   "lines": 103,
+   "exports": [
+    "const PersistedKPIAlerts"
+   ],
+   "errors": [
+    ".\n * Sem esta superficie a tabela "
    ]
   },
   "src/features/analytics/components/bi/losses/LossesTable.tsx": {
@@ -84090,6 +84178,49 @@
    ],
    "percents": [
     "// grava NULL justamente para nao confundir ausencia de dado com 0% real."
+   ]
+  },
+  "src/features/analytics/hooks/useKPIAlerts.test.ts": {
+   "path": "src/features/analytics/hooks/useKPIAlerts.test.ts",
+   "lines": 116,
+   "is_test": true,
+   "errors": [
+    ", { p_alert_id: "
+   ],
+   "tests": [
+    "useKPIAlerts",
+    "lista os alertas abertos com o total exato",
+    "resolve um alerta pela RPC e recarrega a lista",
+    "expoe o erro da consulta",
+    "avisa quando a resolucao falha"
+   ]
+  },
+  "src/features/analytics/hooks/useKPIAlerts.ts": {
+   "path": "src/features/analytics/hooks/useKPIAlerts.ts",
+   "lines": 86,
+   "exports": [
+    "interface PersistedKPIAlert",
+    "const useKPIAlerts"
+   ],
+   "tables": [
+    {
+     "table": "kpi_alerts",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "kpi_alerts": [
+     "is_resolved"
+    ]
+   },
+   "errors": [
+    "Não foi possível resolver o alerta: "
+   ],
+   "hooks": [
+    "useKPIAlerts"
+   ],
+   "pagination": [
+    "20"
    ]
   },
   "src/features/analytics/hooks/useKPIs.test.ts": {
@@ -100835,6 +100966,10 @@
    "lines": 6,
    "uses_service_role": true
   },
+  "supabase/migrations/20261129231500_kpi_alerts_resolve.sql": {
+   "path": "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
+   "lines": 36
+  },
   "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql": {
    "path": "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
    "lines": 18
@@ -101295,10 +101430,23 @@
   }
  },
  "git": {
-  "sha": "12d2399f55ac5ace34c2427dd9457c0c029ef676",
+  "sha": "5f6a6c5591dc08baa79445ae7a396bffd9bf63d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "5f6a6c5",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: cria tela e acao para os alertas de kpi persistidos (#328)",
+    "files": [
+     "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
+     "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
+     "src/features/analytics/hooks/useKPIAlerts.test.ts",
+     "src/features/analytics/hooks/useKPIAlerts.ts",
+     "supabase/migrations/20261129231500_kpi_alerts_resolve.sql"
+    ]
+   },
    {
     "sha": "12d2399",
     "date": "2026-11-26",
@@ -101658,23 +101806,12 @@
      "src/features/jobs/hooks/useWeeklyDragDrop.ts",
      "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql"
     ]
-   },
-   {
-    "sha": "3aaa14f",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/migrations/20261128110000_fk_production_losses_restrict.sql",
-     "supabase/migrations/20261128120000_fk_shipments_restrict.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    12
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101721,6 +101858,26 @@
     2
    ],
    [
+    "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
+    1
+   ],
+   [
+    "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
+    1
+   ],
+   [
+    "src/features/analytics/hooks/useKPIAlerts.test.ts",
+    1
+   ],
+   [
+    "src/features/analytics/hooks/useKPIAlerts.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261129231500_kpi_alerts_resolve.sql",
+    1
+   ],
+   [
     "src/features/notifications/hooks/useTPMNotifications.test.ts",
     1
    ],
@@ -101730,26 +101887,6 @@
    ],
    [
     "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
-    1
-   ],
-   [
-    "src/features/maintenance/components/TPMNotificationLogs.test.tsx",
-    1
-   ],
-   [
-    "src/features/maintenance/components/TPMNotificationLogs.tsx",
-    1
-   ],
-   [
-    "supabase/functions/send-email-report/index.ts",
-    1
-   ],
-   [
-    "src/i18n/locales/en-US.json",
-    1
-   ],
-   [
-    "src/i18n/locales/pt-BR.json",
     1
    ]
   ]
