@@ -37,9 +37,17 @@ const DEFAULT_ALLOWED_HEADERS =
 
 const DEFAULT_ALLOWED_METHODS = "GET, POST, PATCH, PUT, DELETE, OPTIONS";
 
+// Servidores locais (Vite em loopback, E2E do Playwright) tambem precisam ler
+// a resposta: sem eles o browser bloqueia a chamada, o cliente reporta
+// FunctionsFetchError e o login local segue sem avaliacao de lockout.
+// A fronteira de autenticacao continua sendo o JWT do gateway, nao o CORS.
+const LOOPBACK_ORIGIN = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/;
+
 export function pickAllowedOrigin(req: Request): string {
   const origin = req.headers.get("origin") ?? "";
-  return ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  if (ALLOWED_ORIGINS.includes(origin)) return origin;
+  if (LOOPBACK_ORIGIN.test(origin)) return origin;
+  return ALLOWED_ORIGINS[0];
 }
 
 export function getCorsHeaders(
