@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useBlockedIPs, useRateLimitLogs, useSecurityEvents } from '@/features/admin';
 import { BlockedIPsPanel } from '@/features/admin/components/security/BlockedIPsPanel';
+import { LoginLockoutsPanel } from '@/features/admin/components/security/LoginLockoutsPanel';
 import { RateLimitSettings } from '@/features/admin/components/security/RateLimitSettings';
 import { SecurityEventsLog } from '@/features/admin/components/security/SecurityEventsLog';
 import { PermissionMatrix } from '@/features/admin/components/security/PermissionMatrix';
@@ -233,6 +234,9 @@ export default function SecurityDashboard() {
           <div className="grid gap-6 lg:grid-cols-2">
             <BlockedIPsPanel />
             <IPAllowlist />
+          </div>
+          <div className="mt-6">
+            <LoginLockoutsPanel />
           </div>
         </TabsContent>
 
