@@ -107,9 +107,9 @@ Totais: 300 etapas · 12 Críticas · 121 Altas · 125 Médias · 42 Baixas · 1
 - [A] 053 — OS concluída deixa de ocupar a máquina (função `check_job_overlap` + `MACHINE_BLOCKING_STATUSES`) — onda 2 — Média · implementada na #307: migration `20261128140000_f053_os_concluida_nao_ocupa_maquina.sql` reescreve `check_job_overlap` (deixa de ocupar em `cancelled` e `finished`, e revalida a reabertura `finished -> production`), `MACHINE_BLOCKING_STATUSES` sem `finished` e teste `nao avisa conflito para OS concluida, que o banco libera desde a etapa 053`
 - [ ] 054 — Corrigir o tipo de técnica no esquema de validação de OS — onda 2 — Média
 - [ ] 055 — Unificar os três esquemas concorrentes de OS — onda 2 — Média
-- [ ] 059 — Corrigir o cálculo de ranking que falha em toda execução — onda 2 — Alta
-- [ ] 060 — Fazer a limpeza de rankings obsoletos realmente apagar algo — onda 2 — Média
-- [ ] 061 — Deixar um único critério de papel no cálculo de ranking — onda 2 — Média
+- [x] 059 — Corrigir o cálculo de ranking que falha em toda execução — onda 2 — Alta · `onConflict` passou a listar `period_end`; produção recusava a lista de três colunas com `42P10` (evidência abaixo) · PR #330
+- [x] 060 — Fazer a limpeza de rankings obsoletos realmente apagar algo — onda 2 — Média · `.lt("period_end", ...)` → `.eq("period_end", ...)`; o `.lt()` era falso para as próprias linhas do período, então a limpeza nunca apagava nada · PR #330
+- [x] 061 — Deixar um único critério de papel no cálculo de ranking — onda 2 — Média · `authenticate()` + `requireRole(admin, coordinator)` do `_shared/auth.ts` (que filtra `is_active`) no lugar dos dois blocos divergentes, que aceitavam `manager` e papel revogado · PR #330
 - [ ] 062 — Resolver a autenticação da API do ERP, que aponta para uma tabela inexistente — onda 2 — Alta · **aprovação do dono**
 - [ ] 063 — Agendar de verdade as rotinas que hoje não têm quem as dispare — onda 2 — Alta · **aprovação do dono**
 - [ ] 067 — Tirar do ar os indicadores inventados do quiosque de fábrica — onda 2 — Alta
@@ -394,6 +394,13 @@ Resultado:
 - **Corrida com a logística** — tabela filha com trigger `BEFORE DELETE` (`pg_sleep(3)`) para manter a janela aberta dentro da função. **Com** o `FOR UPDATE`: o `INSERT INTO shipments` concorrente esperou **2.459 ms** e falhou em `shipments_job_id_fkey` (sqlstate `23503`); a OS foi arquivada e nenhuma remessa ficou órfã. **Sem** o lock (mesma ordem antiga: lê filhos → dorme → `DELETE`): o `INSERT` concorrente **teve sucesso** e a linha desapareceu no `ON DELETE CASCADE` — `shipments` terminou com 0 linhas e nenhum erro para o usuário. É exatamente a perda silenciosa que a thread apontou.
 PR: #305 · estado: aguardando o dono (DDL)
 
+### 059 / 060 / 061 — 2026-11-26
+Comando/consulta: transação com `ROLLBACK` na Management API do projeto `uoujzvpecohinketylud` contra `public.operator_rankings` de produção, inserindo a mesma linha com `on conflict (operator_id, ranking_type, period_start)` e depois com `on conflict (operator_id, ranking_type, period_start, period_end)`; em seguida `deno check supabase/functions/calculate-rankings/index.ts`, `tsc --noEmit -p tsconfig.app.json` e `eslint src/pages/GamificationPage.tsx --max-warnings 0`.
+Resultado: o alvo de conflito de **três** colunas devolveu `42P10 there is no unique or exclusion constraint matching the ON CONFLICT specification` — é o que o PostgREST converte em 400 e fazia a função lançar antes de gravar qualquer linha; o de **quatro** colunas passou e gravou 1 linha. Depois do `ROLLBACK`, `operator_rankings` continua com **0** linhas, ou seja, nenhum dado de prova ficou no banco. `deno check`, `tsc` e `eslint` terminaram sem erro.
+Limite conhecido (não mascarar): o caminho de escrita **não** pôde ser exercitado de ponta a ponta. Produção tem 6 OS `finished`: 5 são semente sem `operator_id` e a única real (`b5b4f9b2-0812-463a-b341-7bbf363e87ad`) tem `actual_end_time` nulo, fora do filtro de período. Sem linha no período o upsert é pulado (`if (rankings.length > 0)`) e a chamada devolve `rankings_count: 0`, exatamente o que mascarava o defeito. A prova acima é do ponto exato que quebrava.
+Como a tela dispara: `src/pages/GamificationPage.tsx` ganhou o botão Recalcular (visível para admin/coordenador) ligado a `calculateRankings` do `useGamification` — a mutation existia no hook e nenhuma tela chamava.
+PR: #330 · estado: aguardando CI
+
 ---
 
 ## Achados novos durante a execução
@@ -417,6 +424,12 @@ Onde: `public.jobs` (policies de UPDATE), `src/features/jobs/services/jobsServic
 O que acontece: as únicas policies de UPDATE são `Coordinators and managers can update jobs` (coordinator/manager) e `Operators can update jobs on assigned machines` (operator da máquina). O app libera o Kanban para quem tem `editJobs` (`src/features/auth/permissions.ts`), o que inclui `admin`, mas o UPDATE não atinge nenhuma linha e `jobsService.update` falha em `.single()` com "no rows returned" — a edição/cancelamento por admin nunca grava. Confirmado no banco de produção por `select policyname, cmd, roles, qual from pg_policies where tablename='jobs'`.
 Como foi notado: revisão automatizada da PR do cancelamento de OS (#297), verificada contra `pg_policies`.
 Efeito: correção exige DDL (policy de UPDATE para `admin`) — não entra nesta PR de front.
+
+### 2026-11-26 — OS `finished` sem `actual_end_time` (e semente sem `operator_id`) deixa o ranking vazio
+Onde: `supabase/functions/calculate-rankings/index.ts:111-113` (filtro `status = 'finished'` + `actual_end_time` no período) e `src/hooks/useGamification.ts:277-283` (mesmo filtro no cálculo local)
+O que acontece: a OS `b5b4f9b2-0812-463a-b341-7bbf363e87ad` está `finished`, com `operator_id` preenchido e `actual_end_time` **nulo** — nenhum dos dois cálculos a enxerga. As outras 5 OS `finished` são semente (`a1111111-…`, julho/2026) e não têm `operator_id`, então o cálculo do servidor descarta todas (linha 144: `operator_id` nulo → `continue`). Em produção, hoje, o ranking persistido não tem como produzir linha: a tela só mostra algo pelo cálculo local, que atribui por `operator_machines` em vez de `operator_id` — duas regras de atribuição diferentes para a mesma pergunta, uma no backend e outra no navegador.
+Como foi notado: durante a prova da etapa 059, ao tentar exercitar o caminho de escrita.
+Efeito: decidir qual regra vale (operador que executou × máquina atribuída) e o que fazer com OS concluída sem `actual_end_time` é decisão de negócio — não entra nesta PR.
 
 ---
 

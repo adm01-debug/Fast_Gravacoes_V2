@@ -13,8 +13,9 @@ import { FavoriteButton, FavoritesDropdown } from '@/components/navigation/Favor
 import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
 import { VoiceButton } from '@/components/voice/VoiceCommands';
 import { useGamification } from '@/hooks/useGamification';
+import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
-import { Trophy, Medal, Star, Target, Zap, Award, Crown, TrendingUp, Command, Package, Loader2, History } from 'lucide-react';
+import { Trophy, Medal, Star, Target, Zap, Award, Crown, TrendingUp, Command, Package, Loader2, History, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR, enUS, es } from 'date-fns/locale';
@@ -46,8 +47,13 @@ export default function GamificationPage() {
     periodStart,
     periodEnd,
     redeemReward,
-    redemptionsQuery
+    redemptionsQuery,
+    calculateRankings,
+    isCalculating
   } = useGamification(period);
+
+  const { isAdmin, isCoordinator } = useAuth();
+  const canRecalculateRankings = isAdmin || isCoordinator;
 
   const handleRedeem = (reward: Reward) => {
     if (balance >= reward.cost_points) {
@@ -111,6 +117,23 @@ export default function GamificationPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {canRecalculateRankings && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-xl"
+                disabled={isCalculating}
+                onClick={() => calculateRankings()}
+                title={t('gamification.recalculateHint')}
+              >
+                {isCalculating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                {t('gamification.recalculate')}
+              </Button>
+            )}
             <VoiceButton />
             <FavoritesDropdown onNavigate={(url) => navigate(url)} />
             <Badge variant="outline" className="gap-1 text-xs hidden sm:flex">

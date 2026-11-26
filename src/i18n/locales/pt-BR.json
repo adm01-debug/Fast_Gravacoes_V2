@@ -431,6 +431,8 @@
     "insufficientBalance": "Saldo de pontos insuficiente",
     "pointsNeeded": "Faltam {{points}} pts",
     "sufficientBalance": "Saldo Suficiente",
+    "recalculate": "Recalcular",
+    "recalculateHint": "Recalcula o ranking do período com as ordens de serviço atuais",
     "stock": "Estoque: {{stock}}",
     "infiniteStock": "Estoque: ∞",
     "noRanking": "Nenhum dado de ranking para este período",

@@ -430,6 +430,8 @@
     "insufficientBalance": "Insufficient points balance",
     "pointsNeeded": "{{points}} pts needed",
     "sufficientBalance": "Sufficient Balance",
+    "recalculate": "Recalculate",
+    "recalculateHint": "Recalculates this period ranking from the current work orders",
     "stock": "Stock: {{stock}}",
     "infiniteStock": "Stock: ∞",
     "noRanking": "No ranking data for this period",
