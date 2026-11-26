@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "267f1a5b0ebc9f3ace4f7763decd532ac25a32cf",
+  "sha": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 20:33 UTC",
-  "files_total": 1652,
-  "code_files": 1456,
-  "code_lines": 216252
+  "generated_at": "2026-11-26 21:18 UTC",
+  "files_total": 1653,
+  "code_files": 1457,
+  "code_lines": 216273
  },
  "version": "1.3.2",
- "facts_hash": "87fb06a46888f8d9",
+ "facts_hash": "d30217d77118ddd8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "languages": {
    ".tsx": 687,
    ".ts": 419,
-   ".sql": 283,
+   ".sql": 284,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -19860,6 +19860,7 @@
    "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
    "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
+   "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -30853,7 +30854,7 @@
   {
    "module": "supabase/functions",
    "files": 58,
-   "lines": 11879,
+   "lines": 11882,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -30999,8 +31000,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 275,
-   "lines": 17648,
+   "files": 276,
+   "lines": 17666,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -99366,7 +99367,7 @@
   },
   "supabase/functions/tpm-notifications/index.ts": {
    "path": "supabase/functions/tpm-notifications/index.ts",
-   "lines": 161,
+   "lines": 164,
    "tables": [
     {
      "table": "maintenance_schedules",
@@ -100842,6 +100843,10 @@
    "lines": 6,
    "uses_service_role": true
   },
+  "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql": {
+   "path": "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
+   "lines": 18
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 208,
@@ -101298,10 +101303,21 @@
   }
  },
  "git": {
-  "sha": "267f1a5b0ebc9f3ace4f7763decd532ac25a32cf",
+  "sha": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "d8b5a72",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: o log de TPM aceita o status de canal sem provedor e nao falha em silencio (#338)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/tpm-notifications/index.ts",
+     "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql"
+    ]
+   },
    {
     "sha": "267f1a5",
     "date": "2026-11-26",
@@ -101668,16 +101684,6 @@
      "supabase/functions/erp-api/index.ts",
      "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql"
     ]
-   },
-   {
-    "sha": "e5435a5",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: bloqueia no banco a exclusao de OS que ja teve producao (etapa 036) (#303)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/migrations/20261128100000_block_delete_job_with_production.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -101692,6 +101698,10 @@
    [
     "tests/e2e/accessibility.spec.ts",
     3
+   ],
+   [
+    "supabase/functions/tpm-notifications/index.ts",
+    2
    ],
    [
     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
@@ -101738,6 +101748,10 @@
     2
    ],
    [
+    "supabase/migrations/20261129234500_tpm_log_status_provider_not_configured.sql",
+    1
+   ],
+   [
     "src/features/maintenance/components/TPMNotificationLogs.test.tsx",
     1
    ],
@@ -101746,19 +101760,11 @@
     1
    ],
    [
-    "supabase/functions/tpm-notifications/index.ts",
-    1
-   ],
-   [
     "supabase/functions/send-email-report/index.ts",
     1
    ],
    [
     "src/i18n/locales/en-US.json",
-    1
-   ],
-   [
-    "src/i18n/locales/pt-BR.json",
     1
    ]
   ]

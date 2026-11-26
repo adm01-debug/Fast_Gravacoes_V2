@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "267f1a5b0ebc9f3ace4f7763decd532ac25a32cf",
+  "commit": "d8b5a7248c500f84cc4586793e13282d1fd0343c",
   "branch": "main",
-  "data_commit": "2026-11-26T17:17:12-03:00",
+  "data_commit": "2026-11-26T18:11:14-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "d8b5a72",
+    "data": "2026-11-26",
+    "assunto": "fix: o log de TPM aceita o status de canal sem provedor e nao falha em silencio (#338)"
+   },
    {
     "sha": "267f1a5",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "d6a4a95",
     "data": "2026-11-25",
     "assunto": "fix: exige senha para desativar 2FA e gerenciar usuarios e papeis (etapa 233) (#313)"
-   },
-   {
-    "sha": "14b0499",
-    "data": "2026-11-25",
-    "assunto": "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 309,
+  "arquivos_mudados_7d": 310,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -166,7 +166,7 @@
    },
    {
     "pasta": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -204,7 +204,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": "package-lock.json",
@@ -302,11 +302,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 185
+    "commits": 186
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 9
+    "commits": 8
    },
    {
     "autor": "dependabot[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1654,
+  "arquivos_total": 1655,
   "arquivos_codigo": 1170,
-  "linhas_codigo": 197948,
+  "linhas_codigo": 197951,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "hooks": 199,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 275,
+  "migrations": 276,
   "cron_jobs": 6,
   "testes": 163,
   "workflows": 12,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 58,
-   "linhas": 11879
+   "linhas": 11882
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

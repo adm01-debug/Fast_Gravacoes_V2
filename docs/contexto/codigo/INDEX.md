@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `267f1a5b0ebc9f3ace4f7763decd532ac25a32cf` (2026-11-26T17:17:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d8b5a7248c500f84cc4586793e13282d1fd0343c` (2026-11-26T18:11:14-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1106), SQL (283), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1106), SQL (284), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1654 |
+| arquivos_total | 1655 |
 | arquivos_codigo | 1170 |
-| linhas_codigo | 197948 |
+| linhas_codigo | 197951 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 199 |
 | edge_functions | 33 |
 | tabelas | 133 |
-| migrations | 275 |
+| migrations | 276 |
 | cron_jobs | 6 |
 | testes | 163 |
 | workflows | 12 |
@@ -248,14 +248,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8703 nós · 32939 arestas · 426 comunidades · grafo do commit `267f1a5b`
+- 8704 nós · 32939 arestas · 427 comunidades · grafo do commit `d8b5a724`
 - comunidades maiores: Card (256), Input (202), react (196), CardHeader (185), analytics/index.ts (180), DialogContent (157), package.json (132), Table (129), MainLayout (123), Button (119), AppProviders.tsx (115), generate.py (113)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/ci.yml (22)
-- docs/qa/05-PROGRESSO.md (21)
+- docs/qa/05-PROGRESSO.md (22)
 - package-lock.json (21)
 - package.json (21)
 - deno.lock (17)
@@ -371,6 +371,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-26 `d8b5a72` fix: o log de TPM aceita o status de canal sem provedor e nao falha em silencio (#338)
 - 2026-11-26 `267f1a5` fix: o log de notificacao TPM distingue canal sem provedor de falha de entrega (#337)
 - 2026-11-26 `8ae695b` chore: comprova o botao Recalcular pelo chunk de producao, nao pelo i18n (#335)
 - 2026-11-26 `9102009` fix: relatorio por e-mail declara a recusa quando falta a chave do provedor (#336)
@@ -385,7 +386,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `d103b9e` fix: cobra parada de Tab so em area rolavel sem foco interno (#326)
 - 2026-11-26 `12113e0` fix: restaura a RPC atomica de pecas perdidas no banco (#322)
 - 2026-11-26 `f4d13d8` feat: tela de metricas do sistema (/monitoramento) (#321)
-- 2026-11-26 `d149b8b` fix: regiao rolavel horizontal passa a ser alcancavel por teclado (#324)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
