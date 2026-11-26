@@ -40,6 +40,19 @@ const severityConfig: Record<string, {
     variant: 'destructive',
     className: 'text-red-700'
   },
+  // Aliases do vocabulario gravado por algumas edge functions
+  // (check-login-lockout grava 'high'). Sem eles o evento cai no fallback e
+  // aparece como informativo.
+  high: {
+    icon: AlertCircle,
+    variant: 'destructive',
+    className: 'text-red-500'
+  },
+  medium: {
+    icon: AlertTriangle,
+    variant: 'outline',
+    className: 'text-warning'
+  },
 };
 
 const eventTypeLabels: Record<string, string> = {
@@ -55,6 +68,8 @@ const eventTypeLabels: Record<string, string> = {
   suspicious_activity: 'Atividade suspeita',
   permission_denied: 'Permissão negada',
   account_locked: 'Conta bloqueada',
+  HEALTH_DEGRADED: 'Saude do sistema degradada',
+  login_lockout: 'Bloqueio por tentativas de login',
 };
 
 export function SecurityEventsLog() {

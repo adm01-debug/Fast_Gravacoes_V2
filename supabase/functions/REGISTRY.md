@@ -42,9 +42,9 @@ Complementa `README.md` (inventário da camada 2 de autenticação).
 | excel-export | **órfã** — frontend usa `src/lib/excelExport.ts` (geração client-side); esta function não tem chamador | — | própria |
 | external-db-bridge | **órfã** — ponte SQL genérica, sem chamador em `src/`; provável uso por ERP/script externo. Confirmar antes de remover. | — | `_shared` |
 | health-check | interno (`health-monitor`) + monitoramento externo | `health-monitor/index.ts` | n/a (GET stub) |
-| health-monitor | pg_cron **(painel — não versionado; README histórico diz */5min)** | — | própria |
+| health-monitor | pg_cron versionado `health-monitor-every-5min` (`20261126120000`) — a cada 5 min | — | própria |
 | image-optimizer | nenhum — stub 501 por design | — | n/a |
-| metrics-collector | pg_cron **(painel — não versionado)** | — | própria |
+| metrics-collector | pg_cron versionado `metrics-collector-every-5min` (`20261126120000`) — a cada 5 min; tela em `SystemMetricsCard` | `src/features/admin/hooks/useSystemMetrics.ts` | própria |
 | ml-predictions | frontend | `src/` | `_shared` |
 | new-device-alert | frontend (pós-login) | `src/` | própria |
 | pdf-generator | frontend | `src/` | própria |
@@ -65,11 +65,15 @@ Versionados em `supabase/migrations/`:
 - `rollup-cron-p95-daily` (`20260726161334`) — SQL interno, sem function.
 - `auto-promote-jobs-fallback` (`20260512110942`, reagendado com URL corrigida
   em `20261001143100`) — */5min → `auto-promote-jobs`.
+- `health-monitor-every-5min`, `metrics-collector-every-5min` e
+  `cron-alert-email-every-30min` (`20261126120000`) — o comando do job chama
+  `app_private.functions_base_url()` e o secret é lido de
+  `app_private.runtime_config` **na execução**, não no agendamento: nem a
+  rotação de `CRON_SECRET` nem a troca de host exigem reagendar.
 - `purge-old-logs-daily` (`20261002130000`) — diário → `purge_old_logs()` (SQL).
 
-**Todos os demais crons (backup-scheduler, health-monitor, metrics-collector,
-cron-alert-email, cron-cleanup, cleanup-security-logs, security-alert,
-send-email-report, tpm-notifications, daily-maintenance-summary,
+**Os demais crons (backup-scheduler, cron-cleanup, cleanup-security-logs,
+security-alert, send-email-report, tpm-notifications, daily-maintenance-summary,
 calculate-rankings, calculate-inventory-intelligence) vivem só no painel do
 Supabase.** Não há fonte de verdade versionada — documentar schedules aqui ou
 migrá-los para `cron.schedule` em migrations futuras.
