@@ -24717,24 +24717,6 @@
         },
         {
           "active": true,
-          "command": "chama: net.http_post",
-          "database": "postgres",
-          "jobid": 5,
-          "jobname": "cron-alert-email-every-30min",
-          "schedule": "*/30 * * * *",
-          "username": "postgres"
-        },
-        {
-          "active": true,
-          "command": "chama: net.http_post",
-          "database": "postgres",
-          "jobid": 6,
-          "jobname": "health-monitor-every-5min",
-          "schedule": "*/5 * * * *",
-          "username": "postgres"
-        },
-        {
-          "active": true,
           "command": "chama: public.purge_old_logs",
           "database": "postgres",
           "jobid": 7,
@@ -24776,6 +24758,33 @@
           "jobid": 22,
           "jobname": "archive-finished-jobs-daily",
           "schedule": "7 4 * * *",
+          "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "chama: net.http_post",
+          "database": "postgres",
+          "jobid": 23,
+          "jobname": "cron-alert-email-every-30min",
+          "schedule": "*/30 * * * *",
+          "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "chama: net.http_post",
+          "database": "postgres",
+          "jobid": 24,
+          "jobname": "health-monitor-every-5min",
+          "schedule": "*/5 * * * *",
+          "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "chama: net.http_post",
+          "database": "postgres",
+          "jobid": 25,
+          "jobname": "metrics-collector-every-5min",
+          "schedule": "*/5 * * * *",
           "username": "postgres"
         }
       ]
@@ -25957,6 +25966,76 @@
         "security_definer": false,
         "strict": false,
         "volatility": "immutable"
+      },
+      {
+        "args": "p_since timestamp with time zone",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/metrics-collector/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "7760e400d3fccdd0",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "count_active_operators_since",
+        "owner": "postgres",
+        "returns": "bigint",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/metrics-collector/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "4523e0e91fd7b605",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "count_running_machines",
+        "owner": "postgres",
+        "returns": "bigint",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
       },
       {
         "args": "_email text, _password text, _full_name text, _phone text, _role text",
