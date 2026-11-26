@@ -52,7 +52,9 @@ export interface ExecutiveKPIs {
   efficiencyTrend: { date: string; efficiency: number; prevEfficiency?: number }[];
   techniqueDistribution: { technique: string; count: number; color: string }[];
   topOperators: { name: string; produced: number; efficiency: number }[];
-  machinePerformance: { machine: string; utilization: number; oee: number; mtbf?: number | null; mttr?: number | null }[];
+  // `oee` e null quando a maquina nao teve producao medida no periodo: o banco
+  // grava NULL justamente para nao confundir ausencia de dado com 0% real.
+  machinePerformance: { machine: string; utilization: number; oee: number | null; mtbf?: number | null; mttr?: number | null }[];
 }
 
 export interface DateRange {
@@ -157,7 +159,7 @@ export function useExecutiveDashboard(dateRange: DateRange, filters?: { machineI
           return {
             machine: m.code || m.name,
             utilization: Math.min(100, (runTimeMinutes / periodMinutes) * 100),
-            oee: machineMetrics?.oee_score || 0,
+            oee: machineMetrics?.oee_score ?? null,
                       mtbf: machineMetrics?.avg_time_between_failures ?? null,
                       mttr: machineMetrics?.avg_repair_time ?? null,
           };

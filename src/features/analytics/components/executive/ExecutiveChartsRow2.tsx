@@ -138,7 +138,7 @@ export function ExecutiveChartsRow2({ kpis, techniques, machines, onTechniqueSel
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">{m.machine}</span>
                       <span className="text-muted-foreground">
-                        OEE: {m.oee.toFixed(0)}%
+                                              OEE: {m.oee == null ? '—' : `${m.oee.toFixed(0)}%`}
                       </span>
                     </div>
                     <Progress value={m.utilization} className="h-2" />
