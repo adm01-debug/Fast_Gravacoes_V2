@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 13:18 UTC
+
+- **edge functions** alterado (1): `metrics-collector`
+
 ## 2026-11-26 11:38 UTC
 
 - **cron jobs** adicionado (3): `29:cron-alert-email-every-30min`, `30:health-monitor-every-5min`, `31:metrics-collector-every-5min`

@@ -23,7 +23,7 @@ URL base: `https://uoujzvpecohinketylud.supabase.co/functions/v1/<slug>`. Metada
 | health-check | health-check | ACTIVE | 223 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-check/index.ts |
 | health-monitor | health-monitor | ACTIVE | 223 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/health-monitor/index.ts |
 | image-optimizer | image-optimizer | ACTIVE | 214 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/image-optimizer/index.ts |
-| metrics-collector | metrics-collector | ACTIVE | 222 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts |
+| metrics-collector | metrics-collector | ACTIVE | 223 | sim | file:///tmp/user_fn_uoujzvpecohinketylud_dd0c0fc2-8976-4dbb-8696-432661fe14f0_223/source/supabase/functions/metrics-collector/index.ts |
 | ml-predictions | ml-predictions | ACTIVE | 223 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/ml-predictions/index.ts |
 | new-device-alert | new-device-alert | ACTIVE | 230 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/new-device-alert/index.ts |
 | pdf-generator | pdf-generator | ACTIVE | 221 | sim | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/pdf-generator/index.ts |

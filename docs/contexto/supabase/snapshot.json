@@ -521,15 +521,15 @@
       },
       {
         "created_at": 1791379393018,
-        "entrypoint_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/metrics-collector/index.ts",
-        "import_map": null,
-        "import_map_path": "file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json",
+        "entrypoint_path": "file:///tmp/user_fn_uoujzvpecohinketylud_dd0c0fc2-8976-4dbb-8696-432661fe14f0_223/source/supabase/functions/metrics-collector/index.ts",
+        "import_map": true,
+        "import_map_path": "file:///tmp/user_fn_uoujzvpecohinketylud_dd0c0fc2-8976-4dbb-8696-432661fe14f0_223/source/supabase/functions/import_map.json",
         "name": "metrics-collector",
         "slug": "metrics-collector",
         "status": "ACTIVE",
-        "updated_at": 1795660297123,
+        "updated_at": 1795698660774,
         "verify_jwt": true,
-        "version": 222
+        "version": 223
       },
       {
         "created_at": 1791379400193,
