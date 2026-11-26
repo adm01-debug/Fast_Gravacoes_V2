@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
+  "sha": "0c881ddebe0ab5ec2cb7c220a6a94875153fab93",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-25 22:49 UTC",
-  "files_total": 1625,
-  "code_files": 1429,
-  "code_lines": 213530
+  "generated_at": "2026-11-26 00:18 UTC",
+  "files_total": 1626,
+  "code_files": 1430,
+  "code_lines": 213669
  },
  "version": "1.3.2",
- "facts_hash": "e77dfc529cf8ff9f",
+ "facts_hash": "91b32af26b316d40",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,7 +280,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 679,
-   ".ts": 409,
+   ".ts": 410,
    ".sql": 274,
    ".mjs": 50,
    ".py": 13,
@@ -29138,8 +29138,8 @@
   },
   {
    "module": "src/features/jobs",
-   "files": 36,
-   "lines": 4247,
+   "files": 37,
+   "lines": 4386,
    "tables": [
     "job_status_history",
     "jobs",
@@ -29238,6 +29238,7 @@
     "src/features/jobs/services/scheduling.test.ts",
     "src/features/jobs/services/scheduling.ts",
     "src/features/jobs/services/techniquesService.ts",
+    "src/features/jobs/types/job.schema.test.ts",
     "src/features/jobs/types/job.schema.ts",
     "src/features/jobs/types/lot.schema.ts",
     "src/features/jobs/types/sequencing.ts"
@@ -33895,9 +33896,17 @@
    },
    {
     "file": "src/features/jobs/types/job.schema.ts",
-    "name": "jobSchema",
+    "name": "uuidDoBanco",
+    "kind": "string",
+    "body": "",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.ts",
+    "name": "jobCamposBase",
     "kind": "object",
-    "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
+    "body": "{ id: uuidDoBanco, order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().min(1, 'Técnica é obrigatória'), machine_id: uuidDoBanco.nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -33905,8 +33914,8 @@
     "file": "src/features/jobs/types/job.schema.ts",
     "name": "jobFormSchema",
     "kind": "derived",
-    "base": "jobSchema",
-    "body": "jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
+    "base": "jobCamposBase",
+    "body": "jobCamposBase.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
     "refines": [],
     "chain": [
      "extend",
@@ -37642,6 +37651,10 @@
    {
     "file": "src/features/jobs/services/techniquesService.ts",
     "text": "Throw instead of swallowing: a connectivity/RLS failure must not be"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.ts",
+    "text": ".loose() apenas na schema de leitura: a consulta de jobs traz relacoes"
    },
    {
     "file": "src/features/maintenance/components/BatchApprovalPreviewModal.tsx",
@@ -53402,6 +53415,14 @@
    },
    {
     "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "devolve a OS com a técnica textual e as relações da consulta"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
+    "name": "avisa quando a tecnica esta ausente na linha do banco"
+   },
+   {
+    "file": "src/features/jobs/services/jobsService.test.ts",
     "name": "recusa a exclusao de OS com producao registrada no proprio servico"
    },
    {
@@ -53471,6 +53492,30 @@
    {
     "file": "src/features/jobs/services/scheduling.test.ts",
     "name": "retorna null quando um job com horário inválido bloqueia o cálculo do espaço final"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "jobSchema"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "valida a OS com a técnica textual usada no banco"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "recusa OS sem técnica"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "preserva as relações e os timestamps que a consulta traz"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "aceita os ids fora do padrão RFC-4122 que o seed usa"
+   },
+   {
+    "file": "src/features/jobs/types/job.schema.test.ts",
+    "name": "o schema do formulario segue descartando os campos fora do contrato"
    },
    {
     "file": "src/features/notifications/hooks/useNotifications.test.ts",
@@ -84860,9 +84905,11 @@
   },
   "src/features/jobs/services/jobsService.test.ts": {
    "path": "src/features/jobs/services/jobsService.test.ts",
-   "lines": 211,
+   "lines": 275,
    "is_test": true,
    "rule_comments": [
+    "(o fallback devolve a row crua), entao o aviso de validacao e a prova de",
+    "que a validacao realmente passou.",
     "Operador sem permissao de exclusao: a policy filtra as linhas, o DELETE"
    ],
    "tests": [
@@ -84875,6 +84922,8 @@
     "preserva o motivo de negócio quando o arquivamento é recusado",
     "não trata erro de infraestrutura como recusa de negócio",
     "mantém produced_quantity e lost_pieces depois da validação do schema",
+    "devolve a OS com a técnica textual e as relações da consulta",
+    "avisa quando a tecnica esta ausente na linha do banco",
     "recusa a exclusao de OS com producao registrada no proprio servico",
     "exclui a OS sem producao e com status permitido",
     "nao anuncia exclusao quando o banco nao apaga nenhuma linha"
@@ -85055,9 +85104,22 @@
     "Throw instead of swallowing: a connectivity/RLS failure must not be"
    ]
   },
+  "src/features/jobs/types/job.schema.test.ts": {
+   "path": "src/features/jobs/types/job.schema.test.ts",
+   "lines": 60,
+   "is_test": true,
+   "tests": [
+    "jobSchema",
+    "valida a OS com a técnica textual usada no banco",
+    "recusa OS sem técnica",
+    "preserva as relações e os timestamps que a consulta traz",
+    "aceita os ids fora do padrão RFC-4122 que o seed usa",
+    "o schema do formulario segue descartando os campos fora do contrato"
+   ]
+  },
   "src/features/jobs/types/job.schema.ts": {
    "path": "src/features/jobs/types/job.schema.ts",
-   "lines": 38,
+   "lines": 53,
    "exports": [
     "const jobStatusSchema",
     "type JobStatus",
@@ -85082,23 +85144,33 @@
      "chain": []
     },
     {
-     "name": "jobSchema",
+     "name": "uuidDoBanco",
+     "kind": "string",
+     "body": "",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "jobCamposBase",
      "kind": "object",
-     "body": "{ id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
+     "body": "{ id: uuidDoBanco, order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().min(1, 'Técnica é obrigatória'), machine_id: uuidDoBanco.nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }",
      "refines": [],
      "chain": []
     },
     {
      "name": "jobFormSchema",
      "kind": "derived",
-     "base": "jobSchema",
-     "body": "jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
+     "base": "jobCamposBase",
+     "body": "jobCamposBase.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })",
      "refines": [],
      "chain": [
       "extend",
       "omit"
      ]
     }
+   ],
+   "rule_comments": [
+    ".loose() apenas na schema de leitura: a consulta de jobs traz relacoes"
    ]
   },
   "src/features/jobs/types/lot.schema.ts": {
@@ -99741,10 +99813,21 @@
   }
  },
  "git": {
-  "sha": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
+  "sha": "0c881ddebe0ab5ec2cb7c220a6a94875153fab93",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "0c881dd",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)",
+    "files": [
+     "src/features/jobs/services/jobsService.test.ts",
+     "src/features/jobs/types/job.schema.test.ts",
+     "src/features/jobs/types/job.schema.ts"
+    ]
+   },
    {
     "sha": "8b6619f",
     "date": "2026-11-25",
@@ -100118,21 +100201,20 @@
      "scripts/graphify/requirements.lock",
      "scripts/graphify/tests/test_integration.py"
     ]
-   },
-   {
-    "sha": "81d45ca",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: restabelece EXECUTE de public.has_role para authenticated (#285)",
-    "files": [
-     "supabase/migrations/20261126110000_restore_public_has_role_execute.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     15
+   ],
+   [
+    "src/features/jobs/services/jobsService.test.ts",
+    3
+   ],
+   [
+    "src/features/jobs/types/job.schema.ts",
+    3
    ],
    [
     "src/features/notifications/components/NotificationsList.tsx",
@@ -100195,15 +100277,7 @@
     2
    ],
    [
-    "src/features/jobs/services/jobsService.test.ts",
-    2
-   ],
-   [
     "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/features/jobs/types/job.schema.ts",
     2
    ],
    [

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8b6619f85fdfd3519519e4524ea9d2a88dfd8a3a",
+  "commit": "0c881ddebe0ab5ec2cb7c220a6a94875153fab93",
   "branch": "main",
-  "data_commit": "2026-11-25T19:47:03-03:00",
+  "data_commit": "2026-11-25T21:15:58-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "0c881dd",
+    "data": "2026-11-25",
+    "assunto": "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)"
+   },
    {
     "sha": "8b6619f",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "4779aa1",
     "data": "2026-11-24",
     "assunto": "fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)"
-   },
-   {
-    "sha": "03ce70b",
-    "data": "2026-11-24",
-    "assunto": "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -142,7 +142,7 @@
    },
    {
     "pasta": "src/features/jobs",
-    "mudancas": 38
+    "mudancas": 41
    },
    {
     "pasta": "src/features/notifications",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 166
+    "commits": 167
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1627,
-  "arquivos_codigo": 1152,
-  "linhas_codigo": 196062,
+  "arquivos_total": 1628,
+  "arquivos_codigo": 1153,
+  "linhas_codigo": 196201,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -341,7 +341,7 @@
   "tabelas": 133,
   "migrations": 266,
   "cron_jobs": 5,
-  "testes": 152,
+  "testes": 153,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 339,
-   "linhas": 48641
+   "arquivos": 340,
+   "linhas": 48780
   },
   "src/hooks": {
    "arquivos": 63,

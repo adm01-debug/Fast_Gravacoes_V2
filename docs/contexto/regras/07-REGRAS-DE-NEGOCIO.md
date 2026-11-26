@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8b6619f85f` · branch `main` · 2026-11-25 22:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0c881ddebe` · branch `main` · 2026-11-26 00:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T22:38:14Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-25T23:14:08Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T22:38:14Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-25T23:14:08Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T22:38:14Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-25T23:14:08Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T22:38:14Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-25T23:14:08Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T22:38:14Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-25T23:14:08Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2029,13 +2029,17 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```ts
   ['low', 'medium', 'high', 'urgent']
   ```
-- **jobSchema** (`src/features/jobs/types/job.schema.ts`, z.object):
+- **uuidDoBanco** (`src/features/jobs/types/job.schema.ts`, z.string):
   ```ts
-  { id: z.string().uuid(), order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().uuid('Técnica é obrigatória'), machine_id: z.string().uuid().nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }
+  
   ```
-- **jobFormSchema** (`src/features/jobs/types/job.schema.ts`, derivado de `jobSchema`, encadeia extend, omit):
+- **jobCamposBase** (`src/features/jobs/types/job.schema.ts`, z.object):
   ```ts
-  jobSchema.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })
+  { id: uuidDoBanco, order_number: z.string().min(1, 'Número do pedido é obrigatório').max(100, 'Número do pedido muito longo'), client: z.string().min(1, 'Cliente é obrigatório').max(200, 'Nome do cliente muito longo'), product: z.string().min(1, 'Produto é obrigatório').max(200, 'Nome do produto muito longo'), quantity: z.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), technique_id: z.string().min(1, 'Técnica é obrigatória'), machine_id: uuidDoBanco.nullable().optional(), priority: jobPrioritySchema.catch('medium'), status: jobStatusSchema.catch('queue'), estimated_duration: z.number().positive().max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), scheduled_date: z.string().nullable().optional(), start_time: z.string().nullable().optional(), end_time: z.string().nullable().optional(), notes: z.string().max(2000, 'Observações muito longas').nullable().optional(), cancel_reason: z.string().max(2000, 'Motivo do cancelamento muito longo').nullable().optional(), gravure_color: z.string().max(50, 'Cor muito longa').nullable().optional(), produced_quantity: z.coerce.number().nullable().optional(), lost_pieces: z.coerce.number().nullable().optional(), }
+  ```
+- **jobFormSchema** (`src/features/jobs/types/job.schema.ts`, derivado de `jobCamposBase`, encadeia extend, omit):
+  ```ts
+  jobCamposBase.omit({ id: true, status: true, produced_quantity: true, lost_pieces: true }).extend({ quantity: z.coerce.number().int().positive('Quantidade deve ser positiva').max(1_000_000, 'Quantidade muito alta'), estimated_duration: z.coerce.number().positive('Duração estimada deve ser positiva').max(43_200, 'Duração estimada não pode exceder 30 dias').default(60), })
   ```
 - **lotSchema** (`src/features/jobs/types/lot.schema.ts`, z.object):
   ```ts
@@ -3347,7 +3351,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1508 testes em 133 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1516 testes em 134 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3385,6 +3389,7 @@ _nenhum item encontrado_
 | `src/test/validation.test.ts` | 15 | safeParse · returns success:true with parsed data for valid input · returns success:false with ZodError for invalid input · captures missing required fields … |
 | `tests/e2e/navigation.spec.ts` | 15 | Botão Voltar · volta uma entrada do histórico interno · deep-link sem histórico interno cai no fallback (home, não sai do app) · Alt+B navega para trás … |
 | `src/features/auth/hooks/useRBAC.test.tsx` | 14 | useRBAC - permissoes do banco (F-007) · usa permissoes do banco como fonte primaria · faz fallback para o mapa estatico quando a consulta falha · banco autoritativo: permissao presente no mapa estatico mas ausente no banco e negada (revogacao F-007) … |
+| `src/features/jobs/services/jobsService.test.ts` | 14 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
 | `scripts/audit-gate.test.mjs` | 13 | advisory isento passa · source renumerado pelo npm com a mesma GHSA continua isento · GHSA em caixa diferente na URL continua isenta · GHSA nova em pacote isento reprova … |
 | `src/features/admin/hooks/useSystemStatusSummary.test.ts` | 13 | deriveCronStatus · retorna  · retorna  · retorna  … |
 | `src/features/inventory/hooks/useLogistics.test.ts` | 13 | useLogistics · busca apenas transportadoras ativas, ordenadas por nome · busca envios com transportadora e job vinculados, mais recentes primeiro · cria um envio removendo campos de relação (provider/job) antes de inserir e sincroniza o job vinculado … |
@@ -3393,7 +3398,6 @@ _nenhum item encontrado_
 | `src/test/circuitBreakerAdvanced.test.ts` | 13 | CircuitBreaker — advanced scenarios · stays CLOSED on success · opens after failureThreshold consecutive failures · throws CircuitOpenError when circuit is OPEN … |
 | `scripts/check-any-baseline.test.mjs` | 12 | conta todo any em posição de tipo · não conta a palavra fora de posição de tipo · linhas reportadas são 1-based e na ordem do arquivo · seleção de arquivos … |
 | `src/components/jobs/JobDetailsModal.cancel.test.tsx` | 12 | JobDetailsModal - cancelamento de OS · shows the cancel reason of a cancelled job · keeps the confirmation disabled while the reason is empty · sends the trimmed reason and closes the dialog on confirmation … |
-| `src/features/jobs/services/jobsService.test.ts` | 12 | jobsService · deve chamar select ao buscar todos os jobs · deve criar um novo job com sucesso · deve lidar com erros na busca de jobs … |
 | `src/components/dashboard/AlertScheduleModal.test.tsx` | 11 | AlertScheduleModal - quais status ocupam a maquina (etapas 052 e 053) · nao avisa conflito para OS concluida, que o banco libera desde a etapa 053 · nao avisa conflito para OS cancelada, que o banco libera · avisa do conflito com OS em producao, comportamento que ja existia … |
 | `src/lib/utils.test.ts` | 11 | merges tailwind classes and dedupes conflicts · safeParseInt · parses common integer strings · returns fallback for invalid/empty input … |
 | `src/pages/AuthPage.mfaBlocked.test.tsx` | 11 | AuthPage: 2FA sem desafio possivel (etapa 032) · mostra saida explicita em vez de navegar quando nao ha fator TOTP verificado · mostra saida explicita quando a consulta de fatores falha · tentar novamente reconsulta pelo hook compartilhado … |
@@ -3428,6 +3432,7 @@ _nenhum item encontrado_
 | `src/contexts/ReauthContext.test.tsx` | 6 | ReauthProvider · não prossegue com senha incorreta (etapa 233) · confere a senha sem trocar a sessão do cliente compartilhado (etapa 233) · mantém a confirmação para o mesmo operador sem novo login (etapa 233) … |
 | `src/features/admin/components/security/SecurityOverviewCard.test.tsx` | 6 | SecurityOverviewCard (etapa 066) · não dá pontos nem aprova itens sem verificação na conta nova · aprova e pontua só o que foi verificado de verdade · marca a verificação de senha como não verificada em qualquer conta … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
+| `src/features/jobs/types/job.schema.test.ts` | 6 | jobSchema · valida a OS com a técnica textual usada no banco · recusa OS sem técnica · preserva as relações e os timestamps que a consulta traz … |
 | `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `src/lib/dateUtils.test.ts` | 6 | parseDateOnly · interpreta data pura como meia-noite local · devolve null para entrada vazia ou invalida · formatDateOnly … |
@@ -3645,6 +3650,7 @@ _nenhum item encontrado_
 | coordenador/manager não pode roubar a produção do operador | `src/features/jobs/services/jobsService.ts` |
 | Recusa de negocio vem do banco com o motivo exato (FG002 embalagem, | `src/features/jobs/services/jobsService.ts` |
 | Throw instead of swallowing: a connectivity/RLS failure must not be | `src/features/jobs/services/techniquesService.ts` |
+| .loose() apenas na schema de leitura: a consulta de jobs traz relacoes | `src/features/jobs/types/job.schema.ts` |
 | so "foto obrigatória ausente" (the same rule approveBatch enforces | `src/features/maintenance/components/BatchApprovalPreviewModal.tsx` |
 | Validation Feedback */} | `src/features/maintenance/components/ExecutionRecordView.tsx` |
 | Real-time parameter validation | `src/features/maintenance/components/MaintenanceExecutionModal.tsx` |

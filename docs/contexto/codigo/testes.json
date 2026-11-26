@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 152,
+ "total": 153,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 127
+  "unit": 128
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 115
+   "arquivos": 116
   },
   {
    "padrao": "tests/",
@@ -681,12 +681,13 @@
   {
    "arquivo": "src/features/jobs/services/jobsService.test.ts",
    "tipo": "unit",
-   "linhas": 211,
+   "linhas": 275,
    "testa": [
     "src/features/jobs/services/jobsService.ts",
-    "src/integrations/supabase/client.ts"
+    "src/integrations/supabase/client.ts",
+    "src/lib/logger.ts"
    ],
-   "casos": 11,
+   "casos": 13,
    "suporte": false
   },
   {
@@ -707,6 +708,16 @@
     "src/features/jobs/services/scheduling.ts"
    ],
    "casos": 14,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/jobs/types/job.schema.test.ts",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/features/jobs/types/job.schema.ts"
+   ],
+   "casos": 5,
    "suporte": false
   },
   {
@@ -1662,6 +1673,7 @@
   "src/features/jobs/services/jobStateMachine.ts": 2,
   "src/features/jobs/services/jobsService.ts": 3,
   "src/features/jobs/services/scheduling.ts": 1,
+  "src/features/jobs/types/job.schema.ts": 1,
   "src/features/notifications/hooks/useNotifications.ts": 1,
   "src/features/notifications/hooks/useTPMNotifications.ts": 1,
   "src/features/production/hooks/useMachines.ts": 2,
@@ -1682,7 +1694,7 @@
   "src/lib/errorHandling.ts": 1,
   "src/lib/excel.ts": 2,
   "src/lib/excelExport.ts": 1,
-  "src/lib/logger.ts": 1,
+  "src/lib/logger.ts": 2,
   "src/lib/navHistory.ts": 1,
   "src/lib/oeeExport.ts": 3,
   "src/lib/offline/offlineQueue.ts": 1,

@@ -61,11 +61,11 @@
    "importado_por": 62
   },
   {
-   "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 60
+   "arquivo": "src/lib/logger.ts",
+   "importado_por": 61
   },
   {
-   "arquivo": "src/lib/logger.ts",
+   "arquivo": "src/components/ui/scroll-area.tsx",
    "importado_por": 60
   },
   {
