@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9102009000` · branch `main` · 2026-11-26 19:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ae695bd20` · branch `main` · 2026-11-26 19:39 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T19:12:24Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.

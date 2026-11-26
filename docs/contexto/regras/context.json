@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9102009000ef90416305ea8f264f4122471b11fe",
+  "sha": "8ae695bd20ba8e9648e6096a1e4bfc3928e47bda",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 19:20 UTC",
+  "generated_at": "2026-11-26 19:39 UTC",
   "files_total": 1651,
   "code_files": 1455,
   "code_lines": 216158
@@ -101250,10 +101250,19 @@
   }
  },
  "git": {
-  "sha": "9102009000ef90416305ea8f264f4122471b11fe",
+  "sha": "8ae695bd20ba8e9648e6096a1e4bfc3928e47bda",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8ae695b",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "chore: comprova o botao Recalcular pelo chunk de producao, nao pelo i18n (#335)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "9102009",
     "date": "2026-11-26",
@@ -101623,22 +101632,12 @@
      "src/pages/NotificationsPage.tsx",
      "supabase/migrations/20261128140000_realtime_push_notifications.sql"
     ]
-   },
-   {
-    "sha": "760ed63",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: aviso de erro da fila cobre tecnicas e maquinas e teste prova a volta da fila (etapa 260) (#309)",
-    "files": [
-     "src/pages/PendingQueue.test.tsx",
-     "src/pages/PendingQueue.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    11
+    12
    ],
    [
     "supabase/functions/erp-api/index.ts",

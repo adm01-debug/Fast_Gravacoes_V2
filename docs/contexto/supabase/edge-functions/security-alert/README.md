@@ -4,7 +4,7 @@
 |---|---|
 | nome | security-alert |
 | status | ACTIVE |
-| versão | 246 |
+| versão | 250 |
 | verify_jwt | sim |
 | entrypoint | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/security-alert/index.ts |
 | import_map | file:///home/runner/work/Fast_Gravacoes_V2/Fast_Gravacoes_V2/supabase/functions/import_map.json |
