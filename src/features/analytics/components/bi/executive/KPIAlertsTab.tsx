@@ -8,6 +8,7 @@ import { useDetailedAuditTrail } from '@/features/admin';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { KPIData } from '@/features/analytics/hooks/useKPIs';
+import { PersistedKPIAlerts } from './PersistedKPIAlerts';
 
 interface KPIAlertsTabProps {
   goalAlerts: Array<{
@@ -27,6 +28,8 @@ const KPIAlertsTabComponent = ({
 
   return (
     <div className="space-y-6">
+      <PersistedKPIAlerts />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Goals Alerts */}
         <div className="space-y-6">
