@@ -21,6 +21,12 @@ vi.mock("@/features/admin/hooks/useSystemMetrics", async () => {
   return { ...actual, useSystemMetrics: () => ({ ...estado }) };
 });
 
+const papeis = { isManager: true, isAdmin: false };
+
+vi.mock("@/features/auth", () => ({
+  useAuth: () => ({ ...papeis }),
+}));
+
 const agora = () => new Date();
 const minutosAtras = (minutos: number) =>
   new Date(agora().getTime() - minutos * 60_000).toISOString();
@@ -37,6 +43,8 @@ const snapshotCompleto = (): Snapshot => ({
 
 describe("SystemMetricsCard", () => {
   beforeEach(() => {
+    papeis.isManager = true;
+    papeis.isAdmin = false;
     estado.data = [];
     estado.isLoading = false;
     estado.error = null;
@@ -115,5 +123,24 @@ describe("SystemMetricsCard", () => {
       screen.getByText(/A leitura é restrita a gestores e admins/),
     ).toBeInTheDocument();
     expect(screen.queryByText("Nenhuma coleta registrada")).toBeNull();
+  });
+
+  it("explica que a leitura é restrita quando o usuário não é gestor", () => {
+    papeis.isManager = false;
+    papeis.isAdmin = false;
+
+    render(<SystemMetricsCard />);
+
+    expect(screen.getByText("Sem permissão para ver as métricas")).toBeInTheDocument();
+    expect(screen.queryByText("Nenhuma coleta registrada")).toBeNull();
+  });
+
+  it("mostra o vazio de coleta quando o administrador ainda não tem snapshot", () => {
+    papeis.isManager = false;
+    papeis.isAdmin = true;
+
+    render(<SystemMetricsCard />);
+
+    expect(screen.getByText("Nenhuma coleta registrada")).toBeInTheDocument();
   });
 });

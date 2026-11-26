@@ -14,6 +14,8 @@ import {
   type SystemMetricsSnapshot,
 } from "@/features/admin/hooks/useSystemMetrics";
 
+import { useAuth } from "@/features/auth";
+
 interface Indicador {
   rotulo: string;
   valor: number | null;
@@ -60,9 +62,15 @@ function DetalheIndicador({ item }: { item: Indicador }) {
 /**
  * Telemetria do `metrics-collector` (pg_cron, 5 min). Sem esta tela o coletor
  * escrevia em `system_metrics` sem nenhum leitor no sistema.
+ *
+ * A policy de leitura de `system_metrics` exige papel `manager` ou `admin`, mas
+ * a rota atende coordenador tambem: com lista vazia o cartao precisa dizer que
+ * falta permissao, e nao diagnosticar (falsamente) coleta parada.
  */
-export function SystemMetricsCard() {
-  const { data, isLoading, error } = useSystemMetrics();
+export function SystemMetricsCard({ refreshKey = 0 }: { refreshKey?: number }) {
+  const { isManager, isAdmin } = useAuth();
+  const podeLerMetricas = isManager || isAdmin;
+  const { data, isLoading, error } = useSystemMetrics(20, refreshKey);
   const snapshot = ultimoSnapshot(data ?? []);
   const desatualizado = estaDesatualizada(snapshot?.collected_at);
 
@@ -87,7 +95,17 @@ export function SystemMetricsCard() {
           </p>
         )}
 
-        {!isLoading && !error && !snapshot && (
+        {!isLoading && !error && !snapshot && !podeLerMetricas && (
+          <Alert>
+            <AlertTitle>Sem permissão para ver as métricas</AlertTitle>
+            <AlertDescription>
+              A leitura de <code>system_metrics</code> é restrita a gestores e administradores. A
+              coleta continua rodando; peça a um gestor para acompanhar os números.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {!isLoading && !error && !snapshot && podeLerMetricas && (
           <Alert>
             <AlertTitle>Nenhuma coleta registrada</AlertTitle>
             <AlertDescription>

@@ -56,9 +56,11 @@ export function ultimoSnapshot(
   );
 }
 
-export function useSystemMetrics(limit = 20) {
+export function useSystemMetrics(limit = 20, refreshKey = 0) {
   return useQuery<SystemMetricsSnapshot[]>({
-    queryKey: ["system-metrics", limit],
+    // `refreshKey` entra na chave para que o botao "Atualizar" da pagina de
+    // monitoramento recarregue o cartao alem dos dados de `useMonitoringData`.
+    queryKey: ["system-metrics", limit, refreshKey],
     refetchInterval: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
