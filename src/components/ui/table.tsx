@@ -1,13 +1,21 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useOverflowing } from "@/hooks/use-overflowing";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-  ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto">
-      <table ref={ref} className={cn("w-full caption-bottom text-sm table-zebra", className)} {...props} />
-    </div>
-  ),
+  ({ className, ...props }, ref) => {
+    // O wrapper rola horizontalmente quando a tabela transborda. Sem descendente
+    // focavel isso viola scrollable-region-focusable (axe/WCAG 2.2). Mesma
+    // solucao do ScrollArea: vira parada de tab apenas quando ha transbordo.
+    const { ref: wrapperRef, overflowing } = useOverflowing<HTMLDivElement>();
+    return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable)
+      <div ref={wrapperRef} tabIndex={overflowing ? 0 : undefined} className="relative w-full overflow-auto">
+        <table ref={ref} className={cn("w-full caption-bottom text-sm table-zebra", className)} {...props} />
+      </div>
+    );
+  },
 );
 Table.displayName = "Table";
 
