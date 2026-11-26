@@ -2,6 +2,46 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 
+const FUSO_OPERACIONAL = "America/Sao_Paulo";
+
+/**
+ * Inicio do dia operacional em America/Sao_Paulo, em UTC.
+ *
+ * O runtime do Deno roda em UTC, entao `setHours(0,0,0,0)` produzia meia-noite
+ * UTC: no horario de Brasilia a contagem de "hoje" reiniciava as 21h e a
+ * atividade da noite entrava no dia seguinte.
+ */
+export function inicioDoDiaOperacional(agora: Date = new Date()): string {
+  const partes = new Intl.DateTimeFormat("en-CA", {
+    timeZone: FUSO_OPERACIONAL,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(agora);
+  const valor = (tipo: string) => Number(partes.find((p) => p.type === tipo)?.value ?? "0");
+  // Deslocamento do fuso no instante atual (Brasilia hoje = UTC-3, mas derivado
+  // em vez de fixado, para nao quebrar se o horario de verao voltar).
+  const paredeComoUtc = Date.UTC(
+    valor("year"),
+    valor("month") - 1,
+    valor("day"),
+    valor("hour") % 24,
+    valor("minute"),
+    valor("second"),
+  );
+  // O horario de parede e reconstruido sem milissegundos; subtrair `agora`
+  // inteiro faria o deslocamento carregar esses milissegundos e o corte da
+  // meia-noite sairia como 03:00:00.123Z, perdendo a atividade do primeiro
+  // instante do dia.
+  const deslocamentoMs = paredeComoUtc - (agora.getTime() - agora.getMilliseconds());
+  const meiaNoiteUtc = Date.UTC(valor("year"), valor("month") - 1, valor("day"), 0, 0, 0) - deslocamentoMs;
+  return new Date(meiaNoiteUtc).toISOString();
+}
+
 serve(async (req) => {
   const unauthorized = requireCronSecret(req, { failClosed: true });
   if (unauthorized) return unauthorized;
@@ -12,10 +52,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const now = new Date();
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayStartISO = todayStart.toISOString();
+    const todayStartISO = inicioDoDiaOperacional();
     const metrics: Record<string, unknown> = {};
 
     // Jobs metrics
@@ -32,7 +69,13 @@ serve(async (req) => {
     // Operators metrics. The profiles table has no "status" column, so an
     // operator is considered "active" when they scanned a job today. Distinct
     // count is done in SQL (RPC) to avoid the PostgREST row cap undercounting.
-    const { count: totalOperators } = await supabase.from("profiles").select("*", { count: "exact", head: true });
+    // O total sai de `user_roles` (role = operator), nao de `profiles`: remover
+    // um operador apaga a linha de papel mas mantem o perfil, entao contar
+    // perfis incluiria operadores removidos (14 perfis x 11 operadores reais).
+    const { count: totalOperators } = await supabase
+      .from("user_roles")
+      .select("*", { count: "exact", head: true })
+      .eq("role", "operator");
     const { data: activeOperatorsRpc, error: activeOperatorsError } = await supabase.rpc("count_active_operators_since", { p_since: todayStartISO });
     if (activeOperatorsError) {
       console.error("metrics-collector: count_active_operators_since failed:", activeOperatorsError.message);

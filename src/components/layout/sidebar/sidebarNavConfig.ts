@@ -106,6 +106,7 @@ export const navGroups: NavGroup[] = [
 ];
 
 export const adminNavItems: NavItem[] = [
+  { icon: Gauge, label: 'Monitoramento', href: '/admin/monitoring', allowedRoles: STAFF_ONLY },
   { icon: Code2, label: 'Qualidade de Código', href: '/code-quality', allowedRoles: STAFF_ONLY },
   { icon: Activity, label: 'Telemetria e Performance', href: '/admin/telemetria', allowedRoles: STAFF_ONLY },
   { icon: RefreshCw, label: 'Bitrix24', href: '/integrations/bitrix24', allowedRoles: COORD_ONLY },
