@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f4d13d80774ecb33452a9875ecef122bcca32b89",
+  "commit": "12113e068b2ecc1caec63f10a1bd43b475ad434a",
   "branch": "main",
-  "data_commit": "2026-11-26T11:10:00-03:00",
+  "data_commit": "2026-11-26T11:29:52-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "12113e0",
+    "data": "2026-11-26",
+    "assunto": "fix: restaura a RPC atomica de pecas perdidas no banco (#322)"
+   },
    {
     "sha": "f4d13d8",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "d0cab10",
     "data": "2026-11-25",
     "assunto": "feat: cancelar OS com motivo obrigatorio e tipos do banco regenerados (etapas 046/047) (#297)"
-   },
-   {
-    "sha": "5cc8d77",
-    "data": "2026-11-25",
-    "assunto": "fix: fecha /design-system para visitante (SEG-01, etapa 011) (#296)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 305,
+  "arquivos_mudados_7d": 308,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 172
+    "commits": 173
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,9 +327,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1639,
+  "arquivos_total": 1641,
   "arquivos_codigo": 1162,
-  "linhas_codigo": 197382,
+  "linhas_codigo": 197366,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "hooks": 198,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 268,
+  "migrations": 270,
   "cron_jobs": 6,
   "testes": 159,
   "workflows": 12,
@@ -493,7 +493,7 @@
   },
   "src/features": {
    "arquivos": 346,
-   "linhas": 49497
+   "linhas": 49481
   },
   "src/hooks": {
    "arquivos": 63,

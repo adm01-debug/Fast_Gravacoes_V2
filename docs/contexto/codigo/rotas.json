@@ -6390,8 +6390,7 @@
    ],
    "rpcs": [
     "archive_jobs",
-    "check_and_notify_kpi_alert",
-    "increment_job_lost_pieces"
+    "check_and_notify_kpi_alert"
    ],
    "edges": [
     "bitrix24-sync"
@@ -6412,8 +6411,7 @@
      "production_losses"
     ],
     "rpcs": [
-     "check_and_notify_kpi_alert",
-     "increment_job_lost_pieces"
+     "check_and_notify_kpi_alert"
     ],
     "edges": []
    }

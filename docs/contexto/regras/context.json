@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f4d13d80774ecb33452a9875ecef122bcca32b89",
+  "sha": "12113e068b2ecc1caec63f10a1bd43b475ad434a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 14:20 UTC",
-  "files_total": 1637,
-  "code_files": 1441,
-  "code_lines": 215232
+  "generated_at": "2026-11-26 14:33 UTC",
+  "files_total": 1639,
+  "code_files": 1443,
+  "code_lines": 215285
  },
  "version": "1.3.2",
- "facts_hash": "cd3f08fd5eafeec5",
+ "facts_hash": "b9703f4a7c6648bf",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -281,7 +281,7 @@
   "languages": {
    ".tsx": 684,
    ".ts": 414,
-   ".sql": 276,
+   ".sql": 278,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -14675,6 +14675,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_production_losses_contador",
+    "when": "AFTER INSERT",
+    "table": "production_losses",
+    "function": "production_losses_aplicar_contador",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_production_lots_updated_at",
     "when": "BEFORE UPDATE",
     "table": "production_lots",
@@ -16032,6 +16041,17 @@
     "raises": [],
     "tables": []
    },
+   "production_losses_aplicar_contador": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/production_losses_aplicar_contador__12ae32cb1ec02d01.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN PERFORM public.increment_job_lost_pieces(NEW.job_id, NEW.quantity); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
+   },
    "purge_old_logs": {
     "args": "",
     "returns": "TABLE(table_name text, deleted_count bigint)",
@@ -16115,10 +16135,11 @@
     "src": "docs/contexto/supabase/functions/public/refresh_machine_health_metrics__aa8f423a2caaa305.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhum job concluído (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
+    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhuma OS concluída (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
     "raises": [],
     "tables": [
      "SET",
+     "archived_jobs",
      "base",
      "business_config",
      "jobs",
@@ -16127,6 +16148,8 @@
      "maintenance_records",
      "maintenance_types",
      "manutencao",
+     "maquinas",
+     "producao",
      "scores",
      "v_planejado_dia"
     ]
@@ -19761,8 +19784,10 @@
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128140000_realtime_push_notifications.sql",
    "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+   "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
    "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
    "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
+   "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21640,6 +21665,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "refresh_machine_health_metrics",
     "objkind": "function",
     "roles": "PUBLIC",
@@ -21692,6 +21749,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
    }
   ],
   "raises": [
@@ -22257,7 +22338,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -22333,7 +22413,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 192
@@ -22463,7 +22542,6 @@
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -22595,7 +22673,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 188
@@ -22691,7 +22768,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -22939,7 +23015,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23060,7 +23135,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23286,7 +23360,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23368,7 +23441,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 271
@@ -23467,7 +23539,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23549,7 +23620,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23706,8 +23776,7 @@
      "apply_job_sequence",
      "archive_jobs",
      "check_and_notify_kpi_alert",
-     "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces"
+     "get_finished_jobs_for_evolution"
     ],
     "deps_count": 164
    },
@@ -23790,7 +23859,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -23890,7 +23958,6 @@
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24046,7 +24113,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24133,7 +24199,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24228,8 +24293,7 @@
      "apply_job_sequence",
      "archive_jobs",
      "check_and_notify_kpi_alert",
-     "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces"
+     "get_finished_jobs_for_evolution"
     ],
     "deps_count": 165
    },
@@ -24317,7 +24381,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 271
@@ -24401,7 +24464,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24477,7 +24539,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 197
@@ -24574,7 +24635,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24661,7 +24721,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -24805,7 +24864,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 282
@@ -24910,7 +24968,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -25117,7 +25174,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 214
@@ -25194,7 +25250,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 214
@@ -25430,8 +25485,7 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "complete_maintenance_record",
-     "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces"
+     "get_finished_jobs_for_evolution"
     ],
     "deps_count": 217
    },
@@ -25556,7 +25610,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -25640,7 +25693,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -25737,7 +25789,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "update_shipment_status",
      "verify_audit_chain"
     ],
@@ -25818,7 +25869,6 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
-     "increment_job_lost_pieces",
      "verify_audit_chain"
     ],
     "deps_count": 209
@@ -29780,7 +29830,7 @@
   {
    "module": "src/features/production",
    "files": 31,
-   "lines": 3566,
+   "lines": 3550,
    "tables": [
     "jobs",
     "machine_downtime",
@@ -30772,8 +30822,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 268,
-   "lines": 17194,
+   "files": 270,
+   "lines": 17263,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -31376,7 +31426,6 @@
      "src/features/jobs/hooks/usePriorityEscalation.ts",
      "src/features/jobs/hooks/useWeeklyDragDrop.ts",
      "src/features/jobs/services/jobsService.ts",
-     "src/features/production/hooks/useProductionLosses.ts",
      "src/hooks/useOfflineSync.ts",
      "src/hooks/useSmartDelayAlerts.ts",
      "src/lib/offline/replayPendingAction.ts",
@@ -33574,9 +33623,6 @@
    "ghost_rpc": [
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/regras_negocio/test_generate.py"
-   ],
-   "increment_job_lost_pieces": [
-    "src/features/production/hooks/useProductionLosses.ts"
    ],
    "insert_csp_report_dedup": [
     "supabase/functions/csp-report/index.ts"
@@ -62410,6 +62456,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "trg_production_losses_contador",
+    "when": "AFTER INSERT",
+    "table": "production_losses",
+    "function": "production_losses_aplicar_contador",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_production_lots_updated_at",
     "when": "BEFORE UPDATE",
     "table": "production_lots",
@@ -63767,6 +63822,17 @@
     "raises": [],
     "tables": []
    },
+   "production_losses_aplicar_contador": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/production_losses_aplicar_contador__12ae32cb1ec02d01.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN PERFORM public.increment_job_lost_pieces(NEW.job_id, NEW.quantity); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
+   },
    "purge_old_logs": {
     "args": "",
     "returns": "TABLE(table_name text, deleted_count bigint)",
@@ -63850,10 +63916,11 @@
     "src": "docs/contexto/supabase/functions/public/refresh_machine_health_metrics__aa8f423a2caaa305.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhum job concluído (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
+    "body": "DECLARE v_days integer := GREATEST(1, LEAST(365, COALESCE(p_days, 30))); v_fim date := (now() AT TIME ZONE 'America/Sao_Paulo')::date; v_ini date := v_fim - (v_days - 1); v_ini_ts timestamptz := (v_ini::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_fim_ts timestamptz := ((v_fim + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo'); v_planejado_dia numeric; v_total integer := 0; BEGIN -- Janela sem nenhuma OS concluída (base histórica ou recém-instalada) não pode -- produzir zero linhas: sem linha, o painel executivo volta a exibir 0% como se -- fosse medição. Nesse caso agrega todo o histórico disponível da máquina. IF NOT EXISTS ( SELECT 1 FROM public.jobs j WHERE j.status = 'finished' AND j.a …",
     "raises": [],
     "tables": [
      "SET",
+     "archived_jobs",
      "base",
      "business_config",
      "jobs",
@@ -63862,6 +63929,8 @@
      "maintenance_records",
      "maintenance_types",
      "manutencao",
+     "maquinas",
+     "producao",
      "scores",
      "v_planejado_dia"
     ]
@@ -68111,6 +68180,7 @@
    "supabase/migrations/20261127120000_isolate_public_has_role.sql",
    "supabase/migrations/20261128130000_f038_arquivar_os_concluida.sql",
    "supabase/migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql",
+   "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
    "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
    "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
   ],
@@ -69924,6 +69994,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_job_lost_pieces",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "refresh_machine_health_metrics",
     "objkind": "function",
     "roles": "PUBLIC",
@@ -69976,6 +70078,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "production_losses_aplicar_contador",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
    }
   ],
   "guards": [
@@ -89716,7 +89842,7 @@
   },
   "src/features/production/hooks/useProductionLosses.ts": {
    "path": "src/features/production/hooks/useProductionLosses.ts",
-   "lines": 135,
+   "lines": 119,
    "exports": [
     "interface ProductionLoss",
     "function useProductionLosses"
@@ -89733,27 +89859,15 @@
     {
      "table": "production_losses",
      "op": "insert,select"
-    },
-    {
-     "table": "jobs",
-     "op": "select"
-    },
-    {
-     "table": "jobs",
-     "op": "update"
     }
    ],
    "table_cols": {
     "jobs": [
      "actual_start_time",
      "id",
-     "lost_pieces",
      "start_time"
     ]
    },
-   "rpc": [
-    "increment_job_lost_pieces"
-   ],
    "errors": [
     "Erro ao registrar perda. Tente novamente."
    ],
@@ -100173,6 +100287,11 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql": {
+   "path": "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
+   "lines": 34,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql": {
    "path": "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
    "lines": 176,
@@ -100182,6 +100301,10 @@
    "path": "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
    "lines": 206,
    "uses_service_role": true
+  },
+  "supabase/migrations/20261129210000_production_losses_contador_atomico.sql": {
+   "path": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
+   "lines": 35
   },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
@@ -100640,10 +100763,21 @@
   }
  },
  "git": {
-  "sha": "f4d13d80774ecb33452a9875ecef122bcca32b89",
+  "sha": "12113e068b2ecc1caec63f10a1bd43b475ad434a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "12113e0",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: restaura a RPC atomica de pecas perdidas no banco (#322)",
+    "files": [
+     "src/features/production/hooks/useProductionLosses.ts",
+     "supabase/migrations/20261129100000_restore_increment_job_lost_pieces.sql",
+     "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+    ]
+   },
    {
     "sha": "f4d13d8",
     "date": "2026-11-26",
@@ -101022,15 +101156,6 @@
     "files": [
      "src/features/auth/services/authService.test.ts",
      "src/features/auth/services/authService.ts"
-    ]
-   },
-   {
-    "sha": "4779aa1",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: isola public.has_role e revoga EXECUTE de anon/authenticated (#292)",
-    "files": [
-     "supabase/migrations/20261127120000_isolate_public_has_role.sql"
     ]
    }
   ],

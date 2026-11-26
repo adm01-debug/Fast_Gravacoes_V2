@@ -3566,15 +3566,13 @@
    "hooks_exportados": [
     "useProductionLosses"
    ],
-   "linhas": 135,
+   "linhas": 119,
    "dominio": "features/production",
    "tabelas": [
     "jobs",
     "production_losses"
    ],
-   "rpcs": [
-    "increment_job_lost_pieces"
-   ],
+   "rpcs": [],
    "edges": [],
    "hooks_internos": [
     "useMutation",

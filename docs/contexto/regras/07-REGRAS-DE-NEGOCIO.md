@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f4d13d8077` · branch `main` · 2026-11-26 14:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `12113e068b` · branch `main` · 2026-11-26 14:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T13:39:59Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T14:22:48Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T13:39:59Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T14:22:48Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T13:39:59Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T14:22:48Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T13:39:59Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T14:22:48Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1567,6 +1567,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | trg_packaging_tasks_updated_at | BEFORE UPDATE | `packaging_tasks` | `update_updated_at_column` |  |
 | trg_validate_packaging_loss_reason | BEFORE INSERT OR UPDATE OF rejected_quantity, received_quantity, loss_reason | `packaging_tasks` | `validate_packaging_loss_reason` |  |
 | update_product_categories_updated_at | BEFORE UPDATE | `product_categories` | `update_updated_at_column` |  |
+| trg_production_losses_contador | AFTER INSERT | `production_losses` | `production_losses_aplicar_contador` |  |
 | update_production_lots_updated_at | BEFORE UPDATE | `production_lots` | `update_updated_at_column` |  |
 | tr_audit_profile_change | AFTER UPDATE | `profiles` | `audit_profile_change` |  |
 | update_profiles_updated_at | BEFORE UPDATE | `profiles` | `update_updated_at_column` |  |
@@ -1650,7 +1651,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T13:39:59Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T14:22:48Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|

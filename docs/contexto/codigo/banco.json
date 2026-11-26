@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 268,
+ "migrations": 270,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -99,6 +99,7 @@
   "preventDefault_hold_shipment_update",
   "process_audit_log_hashing",
   "process_tpm_notifications_cron",
+  "production_losses_aplicar_contador",
   "purge_old_logs",
   "rate_limit_check_and_record",
   "rate_limit_check_and_record_pair",
@@ -536,6 +537,13 @@
    "evento": "update",
    "tabela": "product_categories",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_production_losses_contador",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "production_losses",
+   "funcao": "production_losses_aplicar_contador"
   },
   {
    "nome": "update_production_lots_updated_at",
@@ -10546,7 +10554,9 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "trg_production_losses_contador"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
@@ -17963,11 +17973,6 @@
   },
   {
    "nome": "get_public_tracking",
-   "definida": true,
-   "usada_em": 1
-  },
-  {
-   "nome": "increment_job_lost_pieces",
    "definida": true,
    "usada_em": 1
   },
