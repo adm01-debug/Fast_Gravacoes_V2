@@ -2,6 +2,16 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 14:22 UTC
+
+- **cron jobs** adicionado (1): `35:refresh-machine-health-metrics`
+- **cron jobs** removido (1): `28:refresh-machine-health-metrics`
+- **edge functions** alterado (33): `approve-password-reset`, `auto-promote-jobs`, `backup-scheduler`, `bitrix24-sync`, `calculate-inventory-intelligence`, `calculate-rankings`, `check-login-lockout`, `cleanup-security-logs`, `create-operator`, `cron-alert-email`, `cron-cleanup`, `csp-report`, `daily-maintenance-summary`, `erp-api`, `excel-export`, `external-db-bridge`, `health-check`, `health-monitor`, `image-optimizer`, `metrics-collector`, `ml-predictions`, `new-device-alert`, `pdf-generator`, `security-alert`, `send-email-report`, `send-loss-risk-alert`, `send-push-notification`, `send-tpm-email`, `technical-assistant`, `tpm-notifications`, `update-operator`, `validate-login-ip`, `webhook-handler`
+- **functions** adicionado (1): `public.production_losses_aplicar_contador()`
+- **functions** alterado (1): `public.refresh_machine_health_metrics(p_days integer)`
+- **migrations** adicionado (2): `20261129110000_refresh_machine_health_metrics`, `20261129160000_maquina_sem_os_e_arquivadas`
+- **triggers** adicionado (1): `public.production_losses.trg_production_losses_contador`
+
 ## 2026-11-26 13:39 UTC
 
 - **functions** alterado (1): `public.increment_job_lost_pieces(p_job_id uuid, p_amount integer)`

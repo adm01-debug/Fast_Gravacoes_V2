@@ -270,3 +270,5 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261128130000 | [f038_arquivar_os_concluida](migrations/20261128130000_f038_arquivar_os_concluida.sql) | 0 |
 | 20261128140000 | [realtime_push_notifications](migrations/20261128140000_realtime_push_notifications.sql) | 0 |
 | 20261128150000 | [f053_os_concluida_nao_ocupa_maquina](migrations/20261128150000_f053_os_concluida_nao_ocupa_maquina.sql) | 0 |
+| 20261129110000 | [refresh_machine_health_metrics](migrations/20261129110000_refresh_machine_health_metrics.sql) | 7 |
+| 20261129160000 | [maquina_sem_os_e_arquivadas](migrations/20261129160000_maquina_sem_os_e_arquivadas.sql) | 5 |

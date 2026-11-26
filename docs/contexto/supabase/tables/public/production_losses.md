@@ -71,7 +71,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| trg_production_losses_contador | AFTER | INSERT | ROW | enabled | public.production_losses_aplicar_contador |
 
 
 ## Grants
