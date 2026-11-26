@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "79ca796533a3c2cfc2a2ddaeda98a2896979fbb3",
+  "commit": "fef2887bbdc535322436db553dc516c7f0ead7bb",
   "branch": "main",
-  "data_commit": "2026-11-26T15:35:10-03:00",
+  "data_commit": "2026-11-26T16:04:58-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "fef2887",
+    "data": "2026-11-26",
+    "assunto": "fix: auditoria de uso do erp-api sai do caminho critico da requisicao (#334)"
+   },
    {
     "sha": "79ca796",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "3aaa14f",
     "data": "2026-11-25",
     "assunto": "fix: tira perdas de producao e expedicao da cascata de exclusao da OS (etapa 039) (#304)"
-   },
-   {
-    "sha": "6e755f1",
-    "data": "2026-11-25",
-    "assunto": "feat: arquivar OS concluida em vez de apagar (etapa 038) (#305)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
@@ -255,6 +255,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "supabase/functions/erp-api/index.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "tests/e2e/offline.spec.ts",
     "mudancas": 7
    },
@@ -287,10 +291,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/erp-api/index.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 5
    },
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 181
+    "commits": 182
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -329,7 +329,7 @@
  "contagens": {
   "arquivos_total": 1653,
   "arquivos_codigo": 1169,
-  "linhas_codigo": 197845,
+  "linhas_codigo": 197853,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
@@ -541,7 +541,7 @@
   },
   "supabase/functions": {
    "arquivos": 58,
-   "linhas": 11853
+   "linhas": 11861
   },
   "supabase/seed-users.mjs": {
    "arquivos": 1,

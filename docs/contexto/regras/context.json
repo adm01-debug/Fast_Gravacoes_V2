@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "79ca796533a3c2cfc2a2ddaeda98a2896979fbb3",
+  "sha": "fef2887bbdc535322436db553dc516c7f0ead7bb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 18:36 UTC",
+  "generated_at": "2026-11-26 19:05 UTC",
   "files_total": 1651,
   "code_files": 1455,
-  "code_lines": 216149
+  "code_lines": 216157
  },
  "version": "1.3.2",
- "facts_hash": "2da338d25985ab9b",
+ "facts_hash": "6fbfe978d4f2f0c3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -30850,7 +30850,7 @@
   {
    "module": "supabase/functions",
    "files": 58,
-   "lines": 11853,
+   "lines": 11861,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -38621,10 +38621,6 @@
    {
     "file": "supabase/functions/csp-report/index.ts",
     "text": "público sustentado não pode virar volume de escrita em rate_limit_logs —"
-   },
-   {
-    "file": "supabase/functions/erp-api/index.ts",
-    "text": "nao pode invalidar uma chave que acabou de ser conferida."
    },
    {
     "file": "supabase/functions/erp-api/index.ts",
@@ -98311,7 +98307,7 @@
   },
   "supabase/functions/erp-api/index.ts": {
    "path": "supabase/functions/erp-api/index.ts",
-   "lines": 387,
+   "lines": 395,
    "tables": [
     {
      "table": "user_roles",
@@ -98464,7 +98460,6 @@
     }
    ],
    "rule_comments": [
-    "nao pode invalidar uma chave que acabou de ser conferida.",
     "Clamp limit to [1, 200] so zero/negative values can't break .range().",
     "').order('created_at', { ascending: false }).limit(limit);"
    ],
@@ -101255,10 +101250,19 @@
   }
  },
  "git": {
-  "sha": "79ca796533a3c2cfc2a2ddaeda98a2896979fbb3",
+  "sha": "fef2887bbdc535322436db553dc516c7f0ead7bb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "fef2887",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: auditoria de uso do erp-api sai do caminho critico da requisicao (#334)",
+    "files": [
+     "supabase/functions/erp-api/index.ts"
+    ]
+   },
    {
     "sha": "79ca796",
     "date": "2026-11-26",
@@ -101637,25 +101641,16 @@
      "src/pages/PendingQueue.tsx",
      "src/test/jobsService.test.ts"
     ]
-   },
-   {
-    "sha": "d139424",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/dashboard/AlertScheduleModal.test.tsx",
-     "src/components/dashboard/AlertScheduleModal.tsx",
-     "src/constants/index.ts",
-     "src/features/jobs/hooks/useSchedulingConflicts.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    12
+    11
+   ],
+   [
+    "supabase/functions/erp-api/index.ts",
+    3
    ],
    [
     "tests/e2e/accessibility.spec.ts",
@@ -101680,10 +101675,6 @@
    [
     "src/pages/NotificationsPage.tsx",
     3
-   ],
-   [
-    "supabase/functions/erp-api/index.ts",
-    2
    ],
    [
     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
@@ -101718,20 +101709,20 @@
     2
    ],
    [
-    "src/components/dashboard/AlertScheduleModal.test.tsx",
-    2
-   ],
-   [
-    "src/components/dashboard/AlertScheduleModal.tsx",
-    2
-   ],
-   [
-    "src/constants/index.ts",
-    2
-   ],
-   [
     "src/features/jobs/services/jobsService.ts",
     2
+   ],
+   [
+    "src/pages/PendingQueue.test.tsx",
+    2
+   ],
+   [
+    "src/pages/PendingQueue.tsx",
+    2
+   ],
+   [
+    "src/i18n/locales/en-US.json",
+    1
    ]
   ]
  }
