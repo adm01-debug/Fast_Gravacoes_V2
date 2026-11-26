@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833` (2026-11-26T15:00:38-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `79ca796533a3c2cfc2a2ddaeda98a2896979fbb3` (2026-11-26T15:35:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1653 |
 | arquivos_codigo | 1169 |
-| linhas_codigo | 197837 |
+| linhas_codigo | 197845 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
@@ -248,7 +248,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8700 nós · 32931 arestas · 438 comunidades · grafo do commit `c0d5d7d2`
+- 8700 nós · 32931 arestas · 438 comunidades · grafo do commit `79ca7965`
 - comunidades maiores: Button (193), react (174), client.ts (168), package.json (129), Card (120), date-fns (117), ScrollArea (113), 20260619153319_86ec4a52-99e8-4ebd-827e-e0b4f6403846.sql (111), generate.py (110), cn (102), gerar.mjs (99), MainLayout.tsx (99)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), Skeleton() (src/components/ui/skeleton.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -257,8 +257,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/ci.yml (22)
 - package-lock.json (21)
 - package.json (21)
+- docs/qa/05-PROGRESSO.md (18)
 - deno.lock (17)
-- docs/qa/05-PROGRESSO.md (17)
 - .github/workflows/db-admin.yml (10)
 - AGENTS.md (10)
 - .github/workflows/deploy.yml (9)
@@ -371,6 +371,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-26 `79ca796` fix: erp-api grava last_used_at ao aceitar uma chave (#333)
+- 2026-11-26 `21a4427` chore: registra o deploy e a chamada real do recalculo de ranking (#332)
 - 2026-11-26 `c0d5d7d` fix: recalculo de ranking volta a gravar e ganha botao na tela (#330)
 - 2026-11-26 `a8121c4` fix: cancela o timer do ripple no unmount (CI vermelho por timer vazado) (#331)
 - 2026-11-26 `bb7482f` feat: registra acesso a ficha tecnica e alimenta o contador (#327)
@@ -384,8 +386,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `ebc953f` fix: trilha de auditoria deixa de descartar todos os registros (#319)
 - 2026-11-25 `4533b52` fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)
 - 2026-11-25 `0c881dd` fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)
-- 2026-11-25 `8b6619f` fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)
-- 2026-11-25 `9d7e076` fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833",
+  "sha": "79ca796533a3c2cfc2a2ddaeda98a2896979fbb3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 18:01 UTC",
+  "generated_at": "2026-11-26 18:36 UTC",
   "files_total": 1651,
   "code_files": 1455,
-  "code_lines": 216141
+  "code_lines": 216149
  },
  "version": "1.3.2",
- "facts_hash": "857f17dfe21266ab",
+ "facts_hash": "2da338d25985ab9b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -30850,7 +30850,7 @@
   {
    "module": "supabase/functions",
    "files": 58,
-   "lines": 11845,
+   "lines": 11853,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -31403,6 +31403,9 @@
    },
    "erp_api_keys": {
     "select": [
+     "supabase/functions/erp-api/index.ts"
+    ],
+    "update": [
      "supabase/functions/erp-api/index.ts"
     ]
    },
@@ -38618,6 +38621,10 @@
    {
     "file": "supabase/functions/csp-report/index.ts",
     "text": "público sustentado não pode virar volume de escrita em rate_limit_logs —"
+   },
+   {
+    "file": "supabase/functions/erp-api/index.ts",
+    "text": "nao pode invalidar uma chave que acabou de ser conferida."
    },
    {
     "file": "supabase/functions/erp-api/index.ts",
@@ -98304,7 +98311,7 @@
   },
   "supabase/functions/erp-api/index.ts": {
    "path": "supabase/functions/erp-api/index.ts",
-   "lines": 379,
+   "lines": 387,
    "tables": [
     {
      "table": "user_roles",
@@ -98313,6 +98320,10 @@
     {
      "table": "erp_api_keys",
      "op": "select"
+    },
+    {
+     "table": "erp_api_keys",
+     "op": "update"
     },
     {
      "table": "jobs",
@@ -98453,6 +98464,7 @@
     }
    ],
    "rule_comments": [
+    "nao pode invalidar uma chave que acabou de ser conferida.",
     "Clamp limit to [1, 200] so zero/negative values can't break .range().",
     "').order('created_at', { ascending: false }).limit(limit);"
    ],
@@ -101243,10 +101255,28 @@
   }
  },
  "git": {
-  "sha": "c0d5d7d2182b6469cffc7ecd69d8ff0e516e6833",
+  "sha": "79ca796533a3c2cfc2a2ddaeda98a2896979fbb3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "79ca796",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: erp-api grava last_used_at ao aceitar uma chave (#333)",
+    "files": [
+     "supabase/functions/erp-api/index.ts"
+    ]
+   },
+   {
+    "sha": "21a4427",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "chore: registra o deploy e a chamada real do recalculo de ranking (#332)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "c0d5d7d",
     "date": "2026-11-26",
@@ -101620,31 +101650,6 @@
      "src/constants/index.ts",
      "src/features/jobs/hooks/useSchedulingConflicts.ts"
     ]
-   },
-   {
-    "sha": "d0e7a1d",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: mostra erro com tentar novamente na fila de pendentes (etapa 260) (#301)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/pages/PendingQueue.test.tsx",
-     "src/pages/PendingQueue.tsx"
-    ]
-   },
-   {
-    "sha": "cd834ba",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "infra: remove push em main do automation-local (recupera PR #229) (#298)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     "docs/AUTOMACAO_LOCAL.md",
-     "docs/ci/README.md",
-     "scripts/automation.config.json",
-     "scripts/automation.mjs",
-     "scripts/automation.unit.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -101677,12 +101682,8 @@
     3
    ],
    [
-    "src/pages/PendingQueue.test.tsx",
-    3
-   ],
-   [
-    "src/pages/PendingQueue.tsx",
-    3
+    "supabase/functions/erp-api/index.ts",
+    2
    ],
    [
     "src/components/jobs/JobDetailsModal.cancel.test.tsx",
@@ -101726,6 +101727,10 @@
    ],
    [
     "src/constants/index.ts",
+    2
+   ],
+   [
+    "src/features/jobs/services/jobsService.ts",
     2
    ]
   ]
