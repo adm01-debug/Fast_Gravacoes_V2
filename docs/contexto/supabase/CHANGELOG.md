@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 13:39 UTC
+
+- **functions** alterado (1): `public.increment_job_lost_pieces(p_job_id uuid, p_amount integer)`
+
 ## 2026-11-26 13:18 UTC
 
 - **edge functions** alterado (1): `metrics-collector`
