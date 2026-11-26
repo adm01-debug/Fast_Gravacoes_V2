@@ -3,6 +3,12 @@ import { createClient } from "npm:@supabase/supabase-js";
 import { requireCronSecret } from "../_shared/cronAuth.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { getOrCreateRequestId } from "../_shared/logger.ts";
+import { authenticate, requireRole, type AppRole } from "../_shared/auth.ts";
+
+// Papeis que podem disparar o recalculo. Fonte unica: a lista mais restritiva
+// das duas que a funcao tinha (a que exigia is_active e nao aceitava manager).
+const ALLOWED_RANKING_ROLES: readonly AppRole[] = ["admin", "coordinator"];
 
 interface RankingResult {
   operator_id: string;
@@ -20,96 +26,42 @@ serve(async (req: Request): Promise<Response> => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-  // Accept CRON_API_KEY (scheduled jobs) or valid user JWT (frontend)
+  const requestId = getOrCreateRequestId(req);
+  const corsHeaders = getCorsHeaders(req);
+
+  // Duas portas: segredo de cron (execucao agendada) ou sessao de usuario com
+  // papel ativo. O criterio de papel e unico e vem do middleware comum
+  // (_shared/auth.ts) — antes havia duas verificacoes com listas diferentes na
+  // mesma funcao, e a primeira aceitava papel revogado (sem is_active).
   const cronApiKey = Deno.env.get("CRON_API_KEY");
   const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
   const providedKey = req.headers.get("x-api-key") || authHeader?.match(/^Bearer\s+(.+)$/i)?.[1];
-  const isCronKey = cronApiKey && providedKey === cronApiKey;
-  // Chamadas de cron no padrão dual-header (Bearer service_role +
-  // x-cron-secret) não resolvem usuário — o segredo precisa ser avaliado
-  // ANTES do getUser, senão o Bearer service_role vira 401 abaixo e o
-  // x-cron-secret nunca é consultado.
+  const isCronKey = !!cronApiKey && providedKey === cronApiKey;
+  // Chamadas de cron no padrao dual-header (Bearer service_role +
+  // x-cron-secret) nao resolvem usuario — o segredo precisa ser avaliado ANTES
+  // do getUser, senao o Bearer service_role vira 401 e o x-cron-secret nunca e
+  // consultado.
   const isCron = isCronKey ||
-    !requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) });
-  const hasBearer = authHeader?.startsWith("Bearer ");
+    !requireCronSecret(req, { failClosed: true, corsHeaders });
 
-  if (!isCron && !hasBearer) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+  if (!isCron) {
+    const auth = await authenticate(req, {
+      supabaseUrl,
+      supabaseAnonKey: Deno.env.get("SUPABASE_ANON_KEY")!,
+      requestId,
+      corsHeaders,
     });
-  }
+    if (!auth.ok) return auth.response;
 
-  if (!isCron && hasBearer) {
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const userClient = createClient(supabaseUrl, anonKey);
-    const { data: { user }, error: authError } = await userClient.auth.getUser(
-      authHeader!.match(/^Bearer\s+(.+)$/i)?.[1]
-    );
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    // Restrict to admin, manager, or coordinator role
-    const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: roleRows, error: roleError } = await serviceClient.from('user_roles')
-      .select('role').eq('user_id', user.id).in('role', ['admin', 'manager', 'coordinator']).limit(1);
-    if (roleError) {
-      console.error('[calculate-rankings] Role query error:', roleError.message);
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-    if (!roleRows || roleRows.length === 0) {
-      return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
-        status: 403,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
+    const forbidden = requireRole(auth.ctx, ALLOWED_RANKING_ROLES, { requestId, corsHeaders });
+    if (forbidden) return forbidden;
   }
 
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // isCron já autenticou via x-api-key ou x-cron-secret — o Bearer do
-    // padrão dual-header (service_role) não resolve usuário e não deve ser
-    // re-checado aqui.
-    const authHeader = req.headers.get("Authorization");
-    if (authHeader && !isCron) {
-      const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-        global: { headers: { Authorization: authHeader } },
-      });
-      const { data: { user } } = await userClient.auth.getUser();
-      if (!user) {
-        return new Response(JSON.stringify({ error: "Não autorizado" }), {
-          status: 401,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
-      }
-      const { data: roleRows } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("is_active", true);
-      const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
-      if (!roles.some((role) => ["coordinator", "admin"].includes(role))) {
-        return new Response(JSON.stringify({ error: "Sem permissão" }), {
-          status: 403,
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
-      }
-    } else {
-      // A missing Authorization header no longer implies "trusted cron" —
-      // require the shared cron secret. failClosed=true because this function
-      // does a destructive delete+rewrite of operator_rankings/achievements,
-      // so an unconfigured deployment must never run it unauthenticated.
-      const unauthorized = requireCronSecret(req, { failClosed: true, corsHeaders: getCorsHeaders(req) });
-      if (unauthorized) return unauthorized;
-    }
+    // A autorizacao ja foi resolvida no gate acima (segredo de cron ou
+    // authenticate + requireRole) — nada de re-checagem de papel aqui.
 
     const body = await req.json().catch(() => ({}));
     const rankingType: string = body.ranking_type || "weekly";
@@ -249,12 +201,13 @@ serve(async (req: Request): Promise<Response> => {
     console.log(`Calculated ${rankings.length} rankings`);
 
     // Upsert new rankings first so the table is never left empty.
-    // The UNIQUE constraint on (operator_id, ranking_type, period_start) makes
-    // this safe for concurrent runs — the second upsert simply overwrites.
+    // The UNIQUE constraint is on (operator_id, ranking_type, period_start,
+    // period_end) — period_end has to be listed here, otherwise PostgREST
+    // rejects the ON CONFLICT with 400 and nothing is ever written.
     if (rankings.length > 0) {
       const { error: upsertError } = await supabase
         .from("operator_rankings")
-        .upsert(rankings, { onConflict: "operator_id,ranking_type,period_start" });
+        .upsert(rankings, { onConflict: "operator_id,ranking_type,period_start,period_end" });
 
       if (upsertError) {
         console.error("Error upserting rankings:", upsertError);
@@ -270,7 +223,7 @@ serve(async (req: Request): Promise<Response> => {
       .delete()
       .eq("ranking_type", rankingType)
       .gte("period_start", periodStart.toISOString())
-      .lt("period_end", periodEnd.toISOString());
+      .eq("period_end", periodEnd.toISOString());
     if (rankings.length > 0) {
       staleDelete = staleDelete.not(
         "operator_id", "in",
@@ -292,7 +245,7 @@ serve(async (req: Request): Promise<Response> => {
         .eq("operator_id", topOperator.operator_id)
         .eq("achievement_type", `top_${rankingType}`)
         .gte("period_start", periodStart.toISOString())
-        .lt("period_end", periodEnd.toISOString())
+        .eq("period_end", periodEnd.toISOString())
         .maybeSingle();
 
       if (!existing) {
