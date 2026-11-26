@@ -13,12 +13,12 @@ export function useRealtimeSecurityEvents() {
     if (!isCoordinator && !isManager) return;
     const event = payload.new as SecurityEvent;
     setNewEvents(prev => [event, ...prev].slice(0, 50));
-    if (event.severity === 'critical' || event.severity === 'error') {
+    if (event.severity === 'critical' || event.severity === 'error' || event.severity === 'high') {
       toast.error(`Alerta de Segurança: ${event.event_type}`, {
         description: (event.details?.message as string | undefined) || 'Verifique o painel de segurança',
         duration: 10000,
       });
-    } else if (event.severity === 'warning') {
+    } else if (event.severity === 'warning' || event.severity === 'medium') {
       toast.warning(`Aviso de Segurança: ${event.event_type}`, {
         description: event.details?.message as string | undefined,
         duration: 5000,

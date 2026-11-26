@@ -66,9 +66,10 @@ Versionados em `supabase/migrations/`:
 - `auto-promote-jobs-fallback` (`20260512110942`, reagendado com URL corrigida
   em `20261001143100`) — */5min → `auto-promote-jobs`.
 - `health-monitor-every-5min`, `metrics-collector-every-5min` e
-  `cron-alert-email-every-30min` (`20261126120000`) — leem URL e secret de
-  `app_private.runtime_config`, então a rotação de `CRON_SECRET` não exige
-  reagendar nada.
+  `cron-alert-email-every-30min` (`20261126120000`) — o comando do job chama
+  `app_private.functions_base_url()` e o secret é lido de
+  `app_private.runtime_config` **na execução**, não no agendamento: nem a
+  rotação de `CRON_SECRET` nem a troca de host exigem reagendar.
 - `purge-old-logs-daily` (`20261002130000`) — diário → `purge_old_logs()` (SQL).
 
 **Os demais crons (backup-scheduler, cron-cleanup, cleanup-security-logs,

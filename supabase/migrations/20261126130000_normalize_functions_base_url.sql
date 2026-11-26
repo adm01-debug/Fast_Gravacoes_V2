@@ -11,43 +11,8 @@
 -- `functions_base_url` e reescrito para o endpoint canonico derivado do `ref`
 -- do proprio service_role_key — sem hardcode de projeto.
 --
--- 1) Extrai o `ref` do payload do JWT (mesma derivacao da migracao anterior,
---    agora reutilizavel).
-
-CREATE OR REPLACE FUNCTION app_private.project_ref_from_key(p_key text)
-RETURNS text
-LANGUAGE plpgsql
-IMMUTABLE
-SET search_path = pg_catalog, pg_temp
-AS $fn$
-DECLARE
-  v_payload text;
-BEGIN
-  IF p_key IS NULL OR p_key = '' OR position('.' IN p_key) = 0 THEN
-    RETURN NULL;
-  END IF;
-
-  v_payload := convert_from(
-    decode(
-      rpad(
-        translate(split_part(p_key, '.', 2), '-_', '+/'),
-        (ceil(length(translate(split_part(p_key, '.', 2), '-_', '+/')) / 4.0) * 4)::int,
-        '='
-      ),
-      'base64'
-    ),
-    'utf8'
-  );
-
-  RETURN (v_payload::jsonb) ->> 'ref';
-EXCEPTION
-  WHEN others THEN
-    RETURN NULL;
-END;
-$fn$;
-
-COMMENT ON FUNCTION app_private.project_ref_from_key(text) IS
-  'Deriva o project ref do Supabase a partir da chave JWT (service_role). Usado para montar a URL interna das edge functions sem hardcode.';
+-- 1) `app_private.project_ref_from_key()` e `app_private.functions_base_url()`
+--    sao criadas em 20261126120000 (os cron jobs dependem delas).
 
 -- 2) Trigger de normalizacao: nenhuma escrita pode deixar o host legado.
 
@@ -60,6 +25,31 @@ AS $fn$
 DECLARE
   v_ref text;
 BEGIN
+  -- Rotacoes gravam URL e chave em ordem variavel. Quando a URL chega antes da
+  -- chave, no INSERT dela o `ref` ainda nao pode ser derivado (project_ref
+  -- nulo, valor mantido). Este ramo revisita a URL quando a chave chega depois,
+  -- senao o host legado ficaria preso ate alguem rodar um UPDATE manual.
+  IF NEW.key = 'service_role_key' THEN
+    IF pg_trigger_depth() > 1 THEN
+      RETURN NEW;
+    END IF;
+
+    v_ref := app_private.project_ref_from_key(NEW.value);
+
+    IF coalesce(v_ref, '') <> ''
+       AND EXISTS (
+         SELECT 1 FROM app_private.runtime_config
+          WHERE key = 'functions_base_url' AND value ~ 'atomicabr'
+       ) THEN
+      UPDATE app_private.runtime_config
+         SET value = 'https://' || v_ref || '.supabase.co/functions/v1'
+       WHERE key = 'functions_base_url';
+      RAISE NOTICE 'functions_base_url normalizado apos gravacao da chave: %', v_ref;
+    END IF;
+
+    RETURN NEW;
+  END IF;
+
   IF NEW.key <> 'functions_base_url' OR coalesce(NEW.value, '') = '' THEN
     RETURN NEW;
   END IF;

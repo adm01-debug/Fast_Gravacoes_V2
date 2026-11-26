@@ -108,7 +108,9 @@ Deno.serve(async (req) => {
     // inexistentes e a degradacao nunca era auditada.
     await supabase.from("security_events").insert({
       event_type: "HEALTH_DEGRADED",
-      severity: status === "fail" ? "high" : "medium",
+      // severidade no vocabulario aceito por `SecurityEventsLog` (high/medium seriam
+      // renderizados como "info" e sem toast)
+      severity: status === "fail" ? "error" : "warning",
       details: {
         source: "health-monitor",
         status,

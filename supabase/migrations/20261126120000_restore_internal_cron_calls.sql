@@ -30,10 +30,64 @@ UPDATE app_private.runtime_config rc
    AND (SELECT project_ref FROM ref) IS NOT NULL
    AND rc.value ~ 'atomicabr';
 
--- 2) Crons de edge function. Os dois jobs existentes carregavam host legado e um
+-- 2) Helper único de endereço interno: lê a URL de runtime_config em tempo de
+--    execução (com fallback derivado do service_role_key), para que trocar a URL
+--    na configuração redirecione também os cron jobs já agendados — antes a URL
+--    ficava fixa no texto do job e a configuração virava decoração.
+
+CREATE OR REPLACE FUNCTION app_private.project_ref_from_key(p_key text)
+RETURNS text
+LANGUAGE plpgsql
+IMMUTABLE
+SET search_path = pg_catalog, pg_temp
+AS $fn$
+DECLARE
+  v_payload text;
+BEGIN
+  IF p_key IS NULL OR p_key = '' OR position('.' IN p_key) = 0 THEN
+    RETURN NULL;
+  END IF;
+
+  v_payload := convert_from(
+    decode(
+      rpad(
+        translate(split_part(p_key, '.', 2), '-_', '+/'),
+        (ceil(length(translate(split_part(p_key, '.', 2), '-_', '+/')) / 4.0) * 4)::int,
+        '='
+      ),
+      'base64'
+    ),
+    'utf8'
+  );
+
+  RETURN (v_payload::jsonb) ->> 'ref';
+EXCEPTION
+  WHEN others THEN
+    RETURN NULL;
+END;
+$fn$;
+
+CREATE OR REPLACE FUNCTION app_private.functions_base_url()
+RETURNS text
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = app_private, pg_temp
+AS $fn$
+  SELECT coalesce(
+           nullif(btrim(app_private.runtime_config_get('functions_base_url')), ''),
+           'https://' || app_private.project_ref_from_key(
+                          app_private.runtime_config_get('service_role_key')
+                        ) || '.supabase.co/functions/v1'
+         );
+$fn$;
+
+REVOKE ALL ON FUNCTION app_private.functions_base_url() FROM PUBLIC;
+
+-- 3) Crons de edge function. Os dois jobs existentes carregavam host legado e um
 --    `x-cron-secret` fixo que não casa com o `cron_secret` atual do projeto;
 --    `metrics-collector` nunca foi agendado (system_metrics com 0 linhas).
---    Todos passam a ler URL e secret de `app_private.runtime_config`.
+--    Todos leem URL e secret de `app_private.runtime_config` em tempo de execução.
 
 DO $$
 DECLARE
@@ -66,18 +120,18 @@ BEGIN
       v_novo.jobname,
       v_novo.schedule,
       format(
-        'SELECT net.http_post(url := %L, headers := jsonb_build_object('
+        'SELECT net.http_post(url := app_private.functions_base_url() || %L, headers := jsonb_build_object('
         '''Content-Type'', ''application/json'', '
         '''x-cron-secret'', coalesce((SELECT value FROM app_private.runtime_config WHERE key = ''cron_secret''), ''''), '
         '''Authorization'', ''Bearer '' || coalesce((SELECT value FROM app_private.runtime_config WHERE key = ''service_role_key''), '''')'
         '), body := ''{}''::jsonb)',
-        v_base_url || v_novo.path
+        v_novo.path
       )
     );
   END LOOP;
 END $$;
 
--- 3) Contagens distintas usadas pelo metrics-collector. A migration de origem
+-- 4) Contagens distintas usadas pelo metrics-collector. A migration de origem
 --    (20260614000001) consta como aplicada, mas as funções não existem no banco —
 --    sem elas o collector grava `null` em operadores/máquinas ativos.
 
