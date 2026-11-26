@@ -747,7 +747,7 @@
     "useAuditTrail",
     "useEntityAuditTrail"
    ],
-   "linhas": 107,
+   "linhas": 108,
    "dominio": "features/admin",
    "tabelas": [
     "audit_log"

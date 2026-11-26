@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (116)",
+   "co-localizado (*.test) (118)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: trilha de auditoria deixa de descartar todos os registros (#319)",
    "fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)",
    "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)",
    "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)",
-   "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)",
-   "fix: painel de seguranca so pontua o que foi verificado (etapa 066) (#314)"
+   "fix: central de notificacoes recupera escopo por conta, dispensa e alertas de rotina (#315)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

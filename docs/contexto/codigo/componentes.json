@@ -6693,7 +6693,7 @@
     "AuditChainStatus"
    ],
    "export_default": null,
-   "linhas": 59,
+   "linhas": 68,
    "dominio": "features/admin",
    "hooks_locais": [
     "useAuditChainVerification"
@@ -6709,7 +6709,7 @@
     "AuditEntryCard"
    ],
    "export_default": null,
-   "linhas": 111,
+   "linhas": 119,
    "dominio": "features/admin",
    "hooks_locais": [],
    "tabelas": [],

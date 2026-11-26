@@ -3496,8 +3496,8 @@
   {
    "modulo": "features/admin",
    "arquivos": 52,
-   "testes": 5,
-   "linhas": 6977,
+   "testes": 6,
+   "linhas": 6995,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5865,8 +5865,8 @@
   {
    "modulo": "lib/schemas",
    "arquivos": 1,
-   "testes": 0,
-   "linhas": 48,
+   "testes": 1,
+   "linhas": 62,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

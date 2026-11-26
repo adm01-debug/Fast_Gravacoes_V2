@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4533b52f34` · branch `main` · 2026-11-26 01:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ebc953ffaf` · branch `main` · 2026-11-26 02:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T00:37:52Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T02:19:24Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T00:37:52Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T02:19:24Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T00:37:52Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T02:19:24Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T00:37:52Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T02:19:24Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1648,7 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T00:37:52Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T02:19:24Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -2133,7 +2133,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **auditLogEntrySchema** (`src/lib/schemas/auditLog.ts`, z.object):
   ```ts
-  { id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }
+  { id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string().nullable(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }
   ```
 - **auditChainVerificationSchema** (`src/lib/schemas/auditLog.ts`, z.object):
   ```ts
@@ -3351,7 +3351,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1518 testes em 134 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1527 testes em 136 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3445,11 +3445,13 @@ _nenhum item encontrado_
 | `src/features/jobs/hooks/useSmartSequencingWithActions.test.tsx` | 5 | useSmartSequencingWithActions · agrupa por maquina e dia usando a data local do calendario · aplica a sequencia via RPC transacional com os horarios calculados · usa o tamanho do lote quando o banco nao retorna a contagem … |
 | `src/features/production/services/oeeCalculations.test.ts` | 5 | calculateRealOEE · treats a finished job with unrecorded production (produced_quantity=null) as zero produced, not as the full ordered quantity · counts a recorded produced_quantity normally, including recorded losses · ignores non-finished jobs entirely … |
 | `src/hooks/use-smart-back.test.tsx` | 5 | useSmartBack · reporta canGoBack=false em deep-link (primeira entrada  · vai para o fallback quando não há entrada interna · usa fallbackTo customizado quando não há entrada interna … |
+| `src/lib/schemas/auditLog.test.ts` | 5 | auditLogEntrySchema · descarta a linha crua do banco (old_data/new_data) — era a causa da trilha vazia · aceita a linha apos a troca de colunas e expoe os dados em new_values · aceita registro historico sem hash (41 linhas em producao) … |
 | `src/pages/NotificationsPage.test.tsx` | 5 | NotificationsPage - avisos pessoais na Central · lista o aviso pessoal que gerou o contador do sino · rotula o aviso pessoal com a aba Avisos e o badge de tipo Aviso · rotula alerta de rotina como Sistema, nao como Aviso … |
 | `src/test/cspSync.test.ts` | 5 | CSP · mantem o connect-src identico entre vercel.json e index.html · mantem o script-src identico entre vercel.json e index.html · libera o Google Fonts no connect-src (o service worker refaz o pedido via fetch) … |
 | `supabase/functions/_shared/contracts.test.ts` | 5 | Webhook Contract - Valid Payload · Webhook Contract - Invalid Source · ERP Job Contract - Valid Request · ERP Job Contract - Missing Required Field … |
 | `tests/e2e/admin.spec.ts` | 5 | Admin and Settings Flow · should verify settings page structure · should navigate to Admin Telemetry · should navigate to Audit Trail … |
 | `tests/e2e/production.spec.ts` | 5 | Production and Jobs Flow · should navigate to Kanban and verify jobs · should create a new job · should verify OEE Dashboard … |
+| `src/features/admin/components/audit/AuditEntryCard.test.tsx` | 4 | AuditEntryCard · mostra o novo status em UPDATE que trocou de status · nao mostra transicao quando o status nao mudou · nao mostra transicao em INSERT |
 | `src/features/analytics/components/bi/BIStatCard.test.tsx` | 4 | BIStatCard · renders correctly with basic props · shows trend indicator when trend prop is provided · calls onClick when clicked |
 | `src/features/analytics/components/efficiency/SequencingTab.test.tsx` | 4 | SequencingTab · identifica o dia da sugestao no cartao · omite o dia quando a sugestao nao tem data · envia a sugestao do cartao ao aplicar |
 | `src/features/analytics/hooks/useEnergy.test.ts` | 4 | useEnergy (F-007 contrato) · enabled=false oculta dados ja carregados do cache e nao refaz fetch · falha em alerts/targets nao acende hasError nem esconde o consumo real · falha na consulta principal de consumo acende hasError |

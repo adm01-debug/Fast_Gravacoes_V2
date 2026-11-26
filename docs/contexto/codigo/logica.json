@@ -1641,10 +1641,11 @@
     "auditActionSchema",
     "auditChainVerificationSchema",
     "auditFiltersSchema",
-    "auditLogEntrySchema"
+    "auditLogEntrySchema",
+    "auditRowFromDb"
    ],
    "export_default": null,
-   "linhas": 48,
+   "linhas": 62,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1661,7 +1662,7 @@
     "pages",
     "schemas"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {

@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 153,
+ "total": 155,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 128
+  "unit": 130
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 116
+   "arquivos": 118
   },
   {
    "padrao": "tests/",
@@ -377,6 +377,17 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 5,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "src/features/admin/components/audit/AuditEntryCard.tsx",
+    "src/lib/schemas/auditLog.ts"
+   ],
+   "casos": 3,
    "suporte": false
   },
   {
@@ -919,6 +930,16 @@
     "src/lib/pdfExport.ts"
    ],
    "casos": 13,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/lib/schemas/auditLog.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "src/lib/schemas/auditLog.ts"
+   ],
+   "casos": 4,
    "suporte": false
   },
   {
@@ -1634,6 +1655,7 @@
   "src/components/ui/scroll-area.tsx": 1,
   "src/components/ui/tooltip.tsx": 1,
   "src/contexts/ReauthContext.tsx": 1,
+  "src/features/admin/components/audit/AuditEntryCard.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
@@ -1704,6 +1726,7 @@
   "src/lib/rateLimiter.ts": 4,
   "src/lib/retryWithBackoff.ts": 3,
   "src/lib/sanitize.ts": 3,
+  "src/lib/schemas/auditLog.ts": 2,
   "src/lib/simulation.ts": 1,
   "src/lib/spcExport.ts": 1,
   "src/lib/utils.ts": 2,

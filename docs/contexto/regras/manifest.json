@@ -2,8 +2,8 @@
  "produtor": "ai-context-sync",
  "versao": "1.3.2",
  "perfil": "regras",
- "gerado_em": "2026-11-26 01:06 UTC",
- "commit": "4533b52f34fcd25c3f51e01e203f2ccdb6d39821",
+ "gerado_em": "2026-11-26 02:22 UTC",
+ "commit": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
  "fonte": "código + banco real (snapshot) + manual/ (regras de negócio)",
  "entrada": "07-REGRAS-DE-NEGOCIO.md",
  "arquivos": [
@@ -14,7 +14,7 @@
  ],
  "schema_real_em": "docs/contexto/supabase",
  "fonte_schema": "snapshot",
- "snapshot_gerado_em": "2026-11-26T00:37:52Z",
+ "snapshot_gerado_em": "2026-11-26T02:19:24Z",
  "erros": [],
  "avisos": [
   "`docs/qa/04-PLANO.md` ignorado: 616398 bytes > limite de 600000"

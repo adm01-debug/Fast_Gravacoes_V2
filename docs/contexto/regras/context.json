@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4533b52f34fcd25c3f51e01e203f2ccdb6d39821",
+  "sha": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 01:06 UTC",
-  "files_total": 1626,
-  "code_files": 1430,
-  "code_lines": 213704
+  "generated_at": "2026-11-26 02:22 UTC",
+  "files_total": 1628,
+  "code_files": 1432,
+  "code_lines": 213828
  },
  "version": "1.3.2",
- "facts_hash": "090fd4c794a44613",
+ "facts_hash": "7e9202d54344cab3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,8 +279,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 679,
-   ".ts": 410,
+   ".tsx": 680,
+   ".ts": 411,
    ".sql": 274,
    ".mjs": 50,
    ".py": 13,
@@ -27030,7 +27030,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 580,
+  "components_count": 581,
   "hooks": [
    {
     "name": "useContacts",
@@ -28673,8 +28673,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 57,
-   "lines": 7294,
+   "files": 58,
+   "lines": 7356,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -28778,6 +28778,7 @@
     "src/features/admin/index.ts",
     "src/features/admin/components/audit/AuditAIAdvisor.tsx",
     "src/features/admin/components/audit/AuditChainStatus.tsx",
+    "src/features/admin/components/audit/AuditEntryCard.test.tsx",
     "src/features/admin/components/audit/AuditEntryCard.tsx",
     "src/features/admin/components/audit/AuditFilters.tsx",
     "src/features/admin/components/audit/AuditTrailDrawer.tsx",
@@ -29926,8 +29927,8 @@
   },
   {
    "module": "src/lib",
-   "files": 53,
-   "lines": 6790,
+   "files": 54,
+   "lines": 6852,
    "tables": [
     "audit_log",
     "error_logs",
@@ -30064,6 +30065,7 @@
     "src/lib/validation.ts",
     "src/lib/offline/offlineQueue.ts",
     "src/lib/offline/replayPendingAction.ts",
+    "src/lib/schemas/auditLog.test.ts",
     "src/lib/schemas/auditLog.ts",
     "src/lib/transitions/index.ts"
    ]
@@ -34122,7 +34124,7 @@
     "file": "src/lib/schemas/auditLog.ts",
     "name": "auditLogEntrySchema",
     "kind": "object",
-    "body": "{ id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }",
+    "body": "{ id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string().nullable(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }",
     "refines": [],
     "chain": []
    },
@@ -52426,6 +52428,22 @@
     "name": "não empresta a confirmação para outra conta na mesma aba (etapa 233)"
    },
    {
+    "file": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+    "name": "AuditEntryCard"
+   },
+   {
+    "file": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+    "name": "mostra o novo status em UPDATE que trocou de status"
+   },
+   {
+    "file": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+    "name": "nao mostra transicao quando o status nao mudou"
+   },
+   {
+    "file": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+    "name": "nao mostra transicao em INSERT"
+   },
+   {
     "file": "src/features/admin/components/security/MFASettings.test.tsx",
     "name": "MFASettings — remoção do segundo fator exige re-autenticação (etapa 233)"
    },
@@ -54340,6 +54358,26 @@
    {
     "file": "src/lib/utils.test.ts",
     "name": "passes through finite numbers"
+   },
+   {
+    "file": "src/lib/schemas/auditLog.test.ts",
+    "name": "auditLogEntrySchema"
+   },
+   {
+    "file": "src/lib/schemas/auditLog.test.ts",
+    "name": "descarta a linha crua do banco (old_data/new_data) — era a causa da trilha vazia"
+   },
+   {
+    "file": "src/lib/schemas/auditLog.test.ts",
+    "name": "aceita a linha apos a troca de colunas e expoe os dados em new_values"
+   },
+   {
+    "file": "src/lib/schemas/auditLog.test.ts",
+    "name": "aceita registro historico sem hash (41 linhas em producao)"
+   },
+   {
+    "file": "src/lib/schemas/auditLog.test.ts",
+    "name": "nao sobrescreve old_values/new_values quando ja vieram normalizados"
    },
    {
     "file": "src/pages/AdminTelemetriaPage.test.tsx",
@@ -80297,14 +80335,25 @@
   },
   "src/features/admin/components/audit/AuditChainStatus.tsx": {
    "path": "src/features/admin/components/audit/AuditChainStatus.tsx",
-   "lines": 59,
+   "lines": 68,
    "exports": [
     "function AuditChainStatus"
    ]
   },
+  "src/features/admin/components/audit/AuditEntryCard.test.tsx": {
+   "path": "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+   "lines": 44,
+   "is_test": true,
+   "tests": [
+    "AuditEntryCard",
+    "mostra o novo status em UPDATE que trocou de status",
+    "nao mostra transicao quando o status nao mudou",
+    "nao mostra transicao em INSERT"
+   ]
+  },
   "src/features/admin/components/audit/AuditEntryCard.tsx": {
    "path": "src/features/admin/components/audit/AuditEntryCard.tsx",
-   "lines": 111,
+   "lines": 119,
    "exports": [
     "const AuditEntryCard"
    ],
@@ -80699,7 +80748,7 @@
   },
   "src/features/admin/hooks/useAuditTrail.ts": {
    "path": "src/features/admin/hooks/useAuditTrail.ts",
-   "lines": 107,
+   "lines": 108,
    "exports": [
     "function useAuditTrail",
     "function useEntityAuditTrail",
@@ -92368,9 +92417,21 @@
     }
    ]
   },
+  "src/lib/schemas/auditLog.test.ts": {
+   "path": "src/lib/schemas/auditLog.test.ts",
+   "lines": 48,
+   "is_test": true,
+   "tests": [
+    "auditLogEntrySchema",
+    "descarta a linha crua do banco (old_data/new_data) — era a causa da trilha vazia",
+    "aceita a linha apos a troca de colunas e expoe os dados em new_values",
+    "aceita registro historico sem hash (41 linhas em producao)",
+    "nao sobrescreve old_values/new_values quando ja vieram normalizados"
+   ]
+  },
   "src/lib/schemas/auditLog.ts": {
    "path": "src/lib/schemas/auditLog.ts",
-   "lines": 48,
+   "lines": 62,
    "exports": [
     "const auditActionSchema",
     "type AuditAction",
@@ -92392,7 +92453,7 @@
     {
      "name": "auditLogEntrySchema",
      "kind": "object",
-     "body": "{ id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }",
+     "body": "{ id: z.string().uuid(), entity_type: z.string(), entity_id: z.string(), action: auditActionSchema, actor_id: z.string().uuid().nullable(), actor_email: z.string().nullable(), old_values: z.unknown().nullable(), new_values: z.unknown().nullable(), changed_fields: z.array(z.string()).nullable(), hash: z.string().nullable(), previous_hash: z.string().nullable(), metadata: z.unknown().nullable(), created_at: z.string(), }",
      "refines": [],
      "chain": []
     },
@@ -99823,10 +99884,24 @@
   }
  },
  "git": {
-  "sha": "4533b52f34fcd25c3f51e01e203f2ccdb6d39821",
+  "sha": "ebc953ffafeab4542bccc5f8656397a1d376c1c3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "ebc953f",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: trilha de auditoria deixa de descartar todos os registros (#319)",
+    "files": [
+     "src/features/admin/components/audit/AuditChainStatus.tsx",
+     "src/features/admin/components/audit/AuditEntryCard.test.tsx",
+     "src/features/admin/components/audit/AuditEntryCard.tsx",
+     "src/features/admin/hooks/useAuditTrail.ts",
+     "src/lib/schemas/auditLog.test.ts",
+     "src/lib/schemas/auditLog.ts"
+    ]
+   },
    {
     "sha": "4533b52",
     "date": "2026-11-25",
@@ -100189,20 +100264,6 @@
      "src/lib/simulation.ts",
      "src/pages/SimulationDashboard.tsx",
      "src/test/simulationAggregation.test.ts"
-    ]
-   },
-   {
-    "sha": "3a296f2",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: stack trace rolavel acessivel por teclado (useOverflowing) (#288)",
-    "files": [
-     "src/components/error/StackTrace.test.tsx",
-     "src/components/error/StackTrace.tsx",
-     "src/components/ui/scroll-area.tsx",
-     "src/hooks/use-overflowing.test.tsx",
-     "src/hooks/use-overflowing.ts",
-     "src/pages/AdminTelemetriaPage.tsx"
     ]
    }
   ],
