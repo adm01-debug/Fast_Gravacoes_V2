@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 11:13 UTC
+
+- **cron jobs** adicionado (1): `28:refresh-machine-health-metrics`
+- **functions** adicionado (2): `public.increment_job_lost_pieces(p_job_id uuid, p_amount integer)`, `public.refresh_machine_health_metrics(p_days integer)`
+
 ## 2026-11-26 10:38 UTC
 
 - **functions** adicionado (2): `app_private.normalize_functions_base_url()`, `app_private.project_ref_from_key(p_key text)`

@@ -7,9 +7,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-26 11:00:02 | succeeded | 6.75 | 1 row |
+| 2026-11-26 10:45:00 | succeeded | 3.95 | 1 row |
 | 2026-11-26 10:30:00 | succeeded | 2.52 | 1 row |
-| 2026-11-26 10:15:00 | succeeded | 3.32 | 1 row |
-| 2026-11-26 10:00:00 | succeeded | 3.58 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -34,18 +34,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 10:35:00 | succeeded | 0.02 | 1 row |
-| 2026-11-26 10:30:00 | succeeded | 0.05 | 1 row |
-| 2026-11-26 10:25:00 | succeeded | 0.04 | 1 row |
+| 2026-11-26 11:10:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 11:05:00 | succeeded | 0.03 | 1 row |
+| 2026-11-26 11:00:02 | succeeded | 0.01 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 10:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-26 10:30:00 | succeeded | 0.06 | 1 row |
-| 2026-11-26 10:25:00 | succeeded | 0.07 | 1 row |
+| 2026-11-26 11:10:00 | succeeded | 0.07 | 1 row |
+| 2026-11-26 11:05:00 | succeeded | 0.12 | 1 row |
+| 2026-11-26 11:00:02 | succeeded | 0.02 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
@@ -59,6 +59,7 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-26 11:00:02 | succeeded | 0.05 | 1 row |
 | 2026-11-26 10:30:00 | succeeded | 0.08 | 1 row |
 
 
@@ -66,15 +67,20 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 10:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-26 10:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 10:25:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 11:10:00 | succeeded | 0.08 | 1 row |
+| 2026-11-26 11:05:00 | succeeded | 0.11 | 1 row |
+| 2026-11-26 11:00:02 | succeeded | 0.02 | 1 row |
 
 
 ## 25 · metrics-collector-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-26 10:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-26 10:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-26 10:25:00 | succeeded | 0.06 | 1 row |
+| 2026-11-26 11:10:00 | succeeded | 0.07 | 1 row |
+| 2026-11-26 11:05:00 | succeeded | 0.12 | 1 row |
+| 2026-11-26 11:00:02 | succeeded | 0.03 | 1 row |
+
+
+## 28 · refresh-machine-health-metrics
+
+_nenhum_

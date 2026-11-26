@@ -24786,6 +24786,15 @@
           "jobname": "metrics-collector-every-5min",
           "schedule": "*/5 * * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "chama: public.refresh_machine_health_metrics",
+          "database": "postgres",
+          "jobid": 28,
+          "jobname": "refresh-machine-health-metrics",
+          "schedule": "10 4 * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -26995,6 +27004,41 @@
         "volatility": "stable"
       },
       {
+        "args": "p_job_id uuid, p_amount integer",
+        "callers": {
+          "code": [
+            {
+              "file": "src/features/production/hooks/useProductionLosses.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=\"\""
+        ],
+        "definition": null,
+        "definition_sha": "4f96f8a03aa8a566",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "increment_job_lost_pieces",
+        "owner": "postgres",
+        "returns": "void",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "sheet_id uuid",
         "callers": {
           "code": [
@@ -27904,6 +27948,38 @@
         "name": "record_packaging_defect",
         "owner": "postgres",
         "returns": "void",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_days integer",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [
+            "28:refresh-machine-health-metrics"
+          ],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=\"\""
+        ],
+        "definition": null,
+        "definition_sha": "1e8286a07ff701da",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "refresh_machine_health_metrics",
+        "owner": "postgres",
+        "returns": "integer",
         "schema": "public",
         "security_definer": true,
         "strict": false,

@@ -13,3 +13,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`. O `command` de cada jo
 | 23 | cron-alert-email-every-30min | `*/30 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
 | 24 | health-monitor-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
 | 25 | metrics-collector-every-5min | `*/5 * * * *` | sim | postgres | postgres | `chama: net.http_post` |
+| 28 | refresh-machine-health-metrics | `10 4 * * *` | sim | postgres | postgres | `chama: public.refresh_machine_health_metrics` |
