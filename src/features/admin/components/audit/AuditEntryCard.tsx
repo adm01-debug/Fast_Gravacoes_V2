@@ -97,7 +97,7 @@ export const AuditEntryCard = memo(function AuditEntryCard({ entry }: AuditEntry
 
       <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground/60 border-t border-border pt-2">
         <HashIcon className="h-3 w-3" aria-hidden />
-        <span title={entry.hash}>{shortHash(entry.hash)}</span>
+        <span title={entry.hash ?? undefined}>{shortHash(entry.hash)}</span>
         {entry.previous_hash && (
           <>
             <span>←</span>

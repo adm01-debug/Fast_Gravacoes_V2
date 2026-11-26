@@ -17,13 +17,27 @@ export const auditLogEntrySchema = z.object({
   old_values: z.unknown().nullable(),
   new_values: z.unknown().nullable(),
   changed_fields: z.array(z.string()).nullable(),
-  hash: z.string(),
+    // 41 registros historicos da tabela chegaram sem hash; recusar a linha
+    // esconderia o evento inteiro da trilha (integridade ja e checada por
+    // verify_audit_chain).
+    hash: z.string().nullable(),
   previous_hash: z.string().nullable(),
   metadata: z.unknown().nullable(),
   created_at: z.string(),
 });
 
 export type AuditLogEntry = z.infer<typeof auditLogEntrySchema>;
+
+  // public.audit_log guarda as colunas como old_data/new_data, enquanto o schema
+  // (e o AuditEntryCard) leem old_values/new_values. Sem a troca, TODO registro
+  // falhava no safeParse e a trilha renderizava vazia (useAuditTrail).
+  export function auditRowFromDb(row: Record<string, unknown>): Record<string, unknown> {
+    return {
+      ...row,
+      old_values: row.old_values ?? row.old_data ?? null,
+      new_values: row.new_values ?? row.new_data ?? null,
+    };
+  }
 
 export const auditChainVerificationSchema = z.object({
   total_records: z.coerce.number(),

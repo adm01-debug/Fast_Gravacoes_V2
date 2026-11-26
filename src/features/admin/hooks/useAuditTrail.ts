@@ -4,6 +4,7 @@ import { logger } from '@/lib/logger';
 import {
   auditLogEntrySchema,
   auditChainVerificationSchema,
+  auditRowFromDb,
   type AuditLogEntry,
   type AuditChainVerification,
   type AuditFilters,
@@ -46,7 +47,7 @@ async function fetchAuditEntries(filters: AuditFilters): Promise<AuditLogEntry[]
   type AuditRow = Record<string, unknown> & { actor_email?: string | null; actor_name?: string };
   const rows = (data ?? []) as AuditRow[];
   const parsed = rows.map((row) => {
-    const result = auditLogEntrySchema.safeParse(row);
+      const result = auditLogEntrySchema.safeParse(auditRowFromDb(row));
     if (!result.success) {
       logger.warn('Audit row failed validation', result.error.flatten(), CONTEXT);
       return null;
