@@ -2,6 +2,7 @@
 import { useMemo, useState, Fragment, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/lib/utils';
+import { useOverflowing } from '@/hooks/use-overflowing';
 import { ChevronDown, ChevronRight as ChevronRightIcon, Sparkles } from 'lucide-react';
 import { DbJob, DbMachine, DbTechnique, useUpdateJobStatus } from '@/features/jobs';
 import { JobBlock } from './JobBlock';
@@ -284,6 +285,9 @@ export function CalendarTimeline({
   }, [machines, groupBy, groupedMachines, collapsed, jobsByMachine]);
 
   const parentRef = useRef<HTMLDivElement>(null);
+  // O conteudo tem largura minima de 1200px: em telas estreitas o container rola
+  // na horizontal e precisa ser alcancavel por teclado (axe scrollable-region-focusable).
+  const { overflowing: timelineOverflowing } = useOverflowing(parentRef);
   const rowVirtualizer = useVirtualizer({
     count: flattenedRows.length,
     getScrollElement: () => parentRef.current,
@@ -332,10 +336,8 @@ export function CalendarTimeline({
       </div>
 
       {/* Virtualized Rows Container */}
-      <div
-        ref={parentRef}
-        className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-border"
-      >
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- regiao rolavel precisa ser alcancavel por teclado (axe scrollable-region-focusable) */}
+      <div ref={parentRef} tabIndex={timelineOverflowing ? 0 : undefined} className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-border">
         <div
           className="min-w-[1200px] relative"
           style={{ height: `${rowVirtualizer.getTotalSize()}px` }}

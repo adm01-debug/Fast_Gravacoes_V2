@@ -173,8 +173,10 @@ export const OEEMachineTable = memo(function OEEMachineTable({ machines }: OEEMa
       </CardHeader>
 
       <CardContent className="p-0 sm:p-6">
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável focável (WCAG scrollable-region-focusable) */}
-        <div className="rounded-md border-x sm:border overflow-x-auto" role="region" aria-label="Tabela de OEE por máquina" tabIndex={0}>
+        {/* A rolagem horizontal fica no wrapper da propria Table (tabIndex so quando
+            transborda); manter overflow + tabIndex aqui criaria uma segunda parada
+            de Tab para a mesma tabela. */}
+        <div className="rounded-md border-x sm:border" role="region" aria-label="Tabela de OEE por máquina">
           <Table className="min-w-[800px] sm:min-w-full">
             <TableHeader>
               <TableRow>
