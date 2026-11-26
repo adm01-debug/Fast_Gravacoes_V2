@@ -42,7 +42,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| trg_normalize_functions_base_url | BEFORE | INSERT OR UPDATE | ROW | enabled | app_private.normalize_functions_base_url |
 
 
 ## Grants

@@ -24996,6 +24996,70 @@
         "volatility": "stable"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "app_private.runtime_config.trg_normalize_functions_base_url"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=app_private, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "8b0581aad309015a",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "normalize_functions_base_url",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "app_private",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_key text",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [
+            "app_private.normalize_functions_base_url"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Deriva o project ref do Supabase a partir da chave JWT (service_role). Usado para montar a URL interna das edge functions sem hardcode.",
+        "config": [
+          "search_path=pg_catalog, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "1aa511289ca93bf7",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "project_ref_from_key",
+        "owner": "postgres",
+        "returns": "text",
+        "schema": "app_private",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
+      },
+      {
         "args": "p_key text",
         "callers": {
           "code": [
@@ -45524,6 +45588,17 @@
       }
     ],
     "triggers": [
+      {
+        "definition": "CREATE TRIGGER trg_normalize_functions_base_url BEFORE INSERT OR UPDATE ON app_private.runtime_config FOR EACH ROW EXECUTE FUNCTION app_private.normalize_functions_base_url()",
+        "events": "INSERT OR UPDATE",
+        "function": "app_private.normalize_functions_base_url",
+        "level": "ROW",
+        "name": "trg_normalize_functions_base_url",
+        "schema": "app_private",
+        "status": "enabled",
+        "table": "runtime_config",
+        "timing": "BEFORE"
+      },
       {
         "definition": "CREATE TRIGGER update_abc_activities_updated_at BEFORE UPDATE ON abc_activities FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
         "events": "UPDATE",

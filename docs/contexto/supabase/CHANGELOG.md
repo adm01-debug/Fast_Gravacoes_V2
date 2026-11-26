@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 10:38 UTC
+
+- **functions** adicionado (2): `app_private.normalize_functions_base_url()`, `app_private.project_ref_from_key(p_key text)`
+- **triggers** adicionado (1): `app_private.runtime_config.trg_normalize_functions_base_url`
+
 ## 2026-11-26 10:15 UTC
 
 - **cron jobs** adicionado (3): `23:cron-alert-email-every-30min`, `24:health-monitor-every-5min`, `25:metrics-collector-every-5min`

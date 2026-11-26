@@ -2,6 +2,7 @@
 
 | tabela | trigger | timing | eventos | nível | status | função | definição |
 |---|---|---|---|---|---|---|---|
+| app_private.runtime_config | trg_normalize_functions_base_url | BEFORE | INSERT OR UPDATE | ROW | enabled | app_private.normalize_functions_base_url | `CREATE TRIGGER trg_normalize_functions_base_url BEFORE INSERT OR UPDATE ON app_private.runtime_config FOR EACH ROW EXECUTE FUNCTION app_private.normalize_functions_base_url()` |
 | public.abc_activities | update_abc_activities_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column | `CREATE TRIGGER update_abc_activities_updated_at BEFORE UPDATE ON abc_activities FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()` |
 | public.abc_activity_rates | update_abc_activity_rates_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column | `CREATE TRIGGER update_abc_activity_rates_updated_at BEFORE UPDATE ON abc_activity_rates FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()` |
 | public.abc_cost_pools | update_abc_cost_pools_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column | `CREATE TRIGGER update_abc_cost_pools_updated_at BEFORE UPDATE ON abc_cost_pools FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()` |
