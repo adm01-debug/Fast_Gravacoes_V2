@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 994,
- "arestas": 4589,
+ "nos": 997,
+ "arestas": 4603,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 341
+   "importado_por": 342
   },
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -14,7 +14,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 278
+   "importado_por": 279
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 189
+   "importado_por": 190
   },
   {
    "arquivo": "src/features/jobs/index.ts",
@@ -38,14 +38,14 @@
   },
   {
    "arquivo": "src/features/auth/index.ts",
-   "importado_por": 87
-  },
-  {
-   "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 82
+   "importado_por": 88
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 83
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
    "importado_por": 82
   },
   {
@@ -324,7 +324,7 @@
   {
    "modulo": "hooks",
    "depende_de": 14,
-   "importado_por": 32
+   "importado_por": 33
   },
   {
    "modulo": "integrations/supabase",

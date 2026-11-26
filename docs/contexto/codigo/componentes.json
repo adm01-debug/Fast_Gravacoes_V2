@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 622,
+ "total": 623,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -36,7 +36,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 22,
+   "linhas": 24,
    "dominio": null,
    "hooks_locais": [],
    "tabelas": [],
@@ -541,10 +541,11 @@
     "CalendarTimeline"
    ],
    "export_default": null,
-   "linhas": 425,
+   "linhas": 427,
    "dominio": "components/calendar",
    "hooks_locais": [
     "useDailyDragDrop",
+    "useOverflowing",
     "useUpdateJobStatus"
    ],
    "tabelas": [],
@@ -774,7 +775,7 @@
     "BufferStatusWidget"
    ],
    "export_default": null,
-   "linhas": 218,
+   "linhas": 226,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useAutoBufferPromotion",
@@ -1123,7 +1124,7 @@
     "RecentJobsTable"
    ],
    "export_default": null,
-   "linhas": 179,
+   "linhas": 187,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useOperatorDashboardData"
@@ -3274,7 +3275,7 @@
     "FactoryHeatmap"
    ],
    "export_default": null,
-   "linhas": 115,
+   "linhas": 123,
    "dominio": "components/machines",
    "hooks_locais": [
     "useSchedulingData"
@@ -5422,7 +5423,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -5453,7 +5454,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 278,
+   "usado_por": 279,
    "orfao": false
   },
   {
@@ -5543,7 +5544,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 341,
+   "usado_por": 342,
    "orfao": false
   },
   {
@@ -6212,7 +6213,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 82,
+   "usado_por": 83,
    "orfao": false
   },
   {
@@ -6299,7 +6300,7 @@
     "TableRow"
    ],
    "export_default": null,
-   "linhas": 76,
+   "linhas": 84,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -6822,6 +6823,23 @@
    "dominio": "features/admin",
    "hooks_locais": [
     "useCronP95Daily"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
+   "exports": [
+    "SystemMetricsCard"
+   ],
+   "export_default": null,
+   "linhas": 148,
+   "dominio": "features/admin",
+   "hooks_locais": [
+    "useAuth",
+    "useSystemMetrics"
    ],
    "tabelas": [],
    "edges": [],
@@ -7654,7 +7672,7 @@
     "OEEMachineTable"
    ],
    "export_default": null,
-   "linhas": 341,
+   "linhas": 343,
    "dominio": "features/analytics",
    "hooks_locais": [
     "useFuseSearch"
@@ -9803,7 +9821,7 @@
     "SystemMonitoringPage"
    ],
    "export_default": "SystemMonitoringPage",
-   "linhas": 422,
+   "linhas": 435,
    "dominio": "pages",
    "hooks_locais": [
     "useMonitoringData"

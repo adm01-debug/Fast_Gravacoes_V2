@@ -6,7 +6,7 @@
   "urls": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
-  "itens_menu": 69,
+  "itens_menu": 70,
   "lazy": 117
  },
  "urls": [
@@ -453,7 +453,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 99,
+   "arquivos_puxados": 100,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -531,6 +531,7 @@
     "useState",
     "useSwipeGesture",
     "useSyncExternalStore",
+    "useSystemMetrics",
     "useTechniquesData",
     "useTheme",
     "useThemeSound",
@@ -576,6 +577,7 @@
     "useSessionTimeout",
     "useSmartBack",
     "useSwipeGesture",
+    "useSystemMetrics",
     "useTechniquesData",
     "useThemeSound"
    ],
@@ -597,6 +599,7 @@
     "qr_scan_history",
     "query_telemetry",
     "security_events",
+    "system_metrics",
     "techniques",
     "user_notification_settings"
    ],
@@ -614,7 +617,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 95,
+   "arquivos_puxados": 97,
    "diretos": {
     "tabelas": [
      "error_logs",
@@ -2628,7 +2631,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 171,
+   "arquivos_puxados": 172,
    "diretos": {
     "tabelas": [],
     "rpcs": [],
@@ -7397,7 +7400,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 126,
+   "arquivos_puxados": 127,
    "diretos": {
     "tabelas": [
      "packaging_settings"
@@ -9008,7 +9011,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 90,
+   "arquivos_puxados": 91,
    "diretos": {
     "tabelas": [
      "spc_alerts",
@@ -10340,6 +10343,19 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarNavConfig.ts",
    "resolve_para": "src/pages/MasterAPIPage.tsx"
+  },
+  {
+   "rotulo": "Monitoramento",
+   "destino": "/admin/monitoring",
+   "grupo": "Sistema",
+   "papeis": [
+    "admin",
+    "coordinator",
+    "manager"
+   ],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarNavConfig.ts",
+   "resolve_para": "src/pages/SystemMonitoringPage.tsx"
   },
   {
    "rotulo": "Qualidade de Código",

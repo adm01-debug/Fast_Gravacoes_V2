@@ -7,11 +7,11 @@
   ],
   "componentes": [
    "src/components (403)",
-   "src/features (144)",
+   "src/features (145)",
    "src/pages (56)"
   ],
   "hooks": [
-   "src/features (113)",
+   "src/features (114)",
    "src/hooks (54)",
    "src/components (15)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (3)"
   ],
   "testes": [
-   "co-localizado (*.test) (119)",
+   "co-localizado (*.test) (122)",
    "tests/ (19)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 20,
  "extensao_componentes": [
-  ".tsx (622)"
+  ".tsx (623)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: tela de metricas do sistema (/monitoramento) (#321)",
+   "fix: regiao rolavel horizontal passa a ser alcancavel por teclado (#324)",
    "feat: calcula e exibe OEE, MTBF e MTTR por maquina (painel executivo) (#323)",
    "fix: trilha de auditoria deixa de descartar todos os registros (#319)",
-   "fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)",
-   "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)",
-   "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)"
+   "fix: CORS aceita servidores locais para o lockout valer em dev e E2E (#318)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

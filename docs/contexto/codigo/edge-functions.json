@@ -695,14 +695,14 @@
    "nome": "metrics-collector",
    "entrada": "supabase/functions/metrics-collector/index.ts",
    "arquivos": 1,
-   "linhas": 73,
+   "linhas": 116,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [
     "jobs",
     "machines",
-    "profiles",
-    "system_metrics"
+    "system_metrics",
+    "user_roles"
    ],
    "rpcs": [
     "count_active_operators_since",

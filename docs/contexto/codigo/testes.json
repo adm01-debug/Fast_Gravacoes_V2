@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 156,
+ "total": 159,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 131
+  "unit": 134
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 119
+   "arquivos": 122
   },
   {
    "padrao": "tests/",
@@ -287,6 +287,16 @@
    "suporte": false
   },
   {
+   "arquivo": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/components/a11y/ScrollableRegionFocusGuard.tsx"
+   ],
+   "casos": 5,
+   "suporte": false
+  },
+  {
    "arquivo": "src/components/calendar/CalendarTimeline.test.tsx",
    "tipo": "unit",
    "linhas": 84,
@@ -391,6 +401,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
+    "src/features/admin/hooks/useSystemMetrics.ts"
+   ],
+   "casos": 8,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/admin/components/security/MFASettings.test.tsx",
    "tipo": "unit",
    "linhas": 66,
@@ -426,6 +447,16 @@
    "linhas": 36,
    "testa": [
     "src/features/admin/hooks/useCronP95Daily.ts"
+   ],
+   "casos": 7,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSystemMetrics.test.ts",
+   "tipo": "unit",
+   "linhas": 141,
+   "testa": [
+    "src/features/admin/hooks/useSystemMetrics.ts"
    ],
    "casos": 7,
    "suporte": false
@@ -1455,9 +1486,9 @@
   {
    "arquivo": "tests/e2e/accessibility.spec.ts",
    "tipo": "e2e",
-   "linhas": 126,
+   "linhas": 198,
    "testa": [],
-   "casos": 4,
+   "casos": 5,
    "suporte": false
   },
   {
@@ -1655,6 +1686,7 @@
   "scripts/regras_negocio/indice.py": 1,
   "scripts/rls-regression.mjs": 1,
   "scripts/supabase_snapshot/snapshot.py": 1,
+  "src/components/a11y/ScrollableRegionFocusGuard.tsx": 1,
   "src/components/calendar/CalendarTimeline.tsx": 1,
   "src/components/dashboard/AlertScheduleModal.tsx": 1,
   "src/components/error/StackTrace.tsx": 1,
@@ -1666,10 +1698,12 @@
   "src/components/ui/tooltip.tsx": 1,
   "src/contexts/ReauthContext.tsx": 1,
   "src/features/admin/components/audit/AuditEntryCard.tsx": 1,
+  "src/features/admin/components/monitoring/SystemMetricsCard.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
+  "src/features/admin/hooks/useSystemMetrics.ts": 2,
   "src/features/admin/hooks/useSystemStatusSummary.ts": 1,
   "src/features/admin/index.ts": 1,
   "src/features/analytics/components/bi/BIStatCard.tsx": 1,

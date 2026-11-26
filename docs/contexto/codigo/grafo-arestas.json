@@ -21,6 +21,7 @@
    "scripts/maintenance/lib.mjs"
   ],
   "src/App.tsx": [
+   "src/components/a11y/ScrollableRegionFocusGuard.tsx",
    "src/components/error/GlobalErrorBoundary.tsx",
    "src/components/offline/NetworkStatusToaster.tsx",
    "src/components/ui/sonner.tsx",
@@ -236,6 +237,7 @@
    "src/components/ui/button.tsx",
    "src/constants/index.ts",
    "src/features/jobs/index.ts",
+   "src/hooks/use-overflowing.ts",
    "src/lib/a11y.ts",
    "src/lib/utils.ts"
   ],
@@ -351,6 +353,7 @@
    "src/components/ui/progress.tsx",
    "src/components/ui/skeleton.tsx",
    "src/features/jobs/index.ts",
+   "src/hooks/use-overflowing.ts",
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/CompactTimeline.tsx": [
@@ -507,6 +510,7 @@
    "src/components/ui/table.tsx",
    "src/features/jobs/index.ts",
    "src/features/production/index.ts",
+   "src/hooks/use-overflowing.ts",
    "src/integrations/supabase/client.ts",
    "src/types/scheduling.ts"
   ],
@@ -1459,6 +1463,7 @@
    "src/components/ui/card.tsx",
    "src/components/ui/tooltip.tsx",
    "src/features/jobs/index.ts",
+   "src/hooks/use-overflowing.ts",
    "src/lib/dateUtils.ts",
    "src/lib/utils.ts"
   ],
@@ -2693,6 +2698,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/table.tsx": [
+   "src/hooks/use-overflowing.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/tabs.tsx": [
@@ -2816,6 +2822,14 @@
    "src/components/ui/skeleton.tsx",
    "src/features/admin/hooks/useCronP95Daily.ts",
    "src/lib/utils.ts"
+  ],
+  "src/features/admin/components/monitoring/SystemMetricsCard.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/features/admin/hooks/useSystemMetrics.ts",
+   "src/features/auth/index.ts"
   ],
   "src/features/admin/components/security/ActiveDevicesPanel.tsx": [
    "src/components/ui/alert-dialog.tsx",
@@ -3015,6 +3029,9 @@
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts",
    "src/lib/realtimeChannel.ts"
+  ],
+  "src/features/admin/hooks/useSystemMetrics.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/features/admin/hooks/useSystemStatusSummary.ts": [
    "src/integrations/supabase/client.ts"
@@ -5893,6 +5910,7 @@
    "src/features/admin/components/monitoring/CronHealthCard.tsx",
    "src/features/admin/components/monitoring/CronHealthHistoryCard.tsx",
    "src/features/admin/components/monitoring/CronP95TrendCard.tsx",
+   "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
    "src/features/admin/hooks/useMonitoringData.ts"
   ],
   "src/pages/SystemStatusPage.tsx": [

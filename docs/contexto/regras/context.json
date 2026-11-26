@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2fac28ac0bd3c57cd6bbf2bde1e887a0bc33d334",
+  "sha": "f4d13d80774ecb33452a9875ecef122bcca32b89",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 14:06 UTC",
-  "files_total": 1631,
-  "code_files": 1435,
-  "code_lines": 214333
+  "generated_at": "2026-11-26 14:20 UTC",
+  "files_total": 1637,
+  "code_files": 1441,
+  "code_lines": 215232
  },
  "version": "1.3.2",
- "facts_hash": "7ea7e6f9eb1eb232",
+ "facts_hash": "cd3f08fd5eafeec5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,8 +279,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 680,
-   ".ts": 412,
+   ".tsx": 684,
+   ".ts": 414,
    ".sql": 276,
    ".mjs": 50,
    ".py": 13,
@@ -22092,7 +22092,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 125
+    "deps_count": 126
    },
    {
     "path": "",
@@ -22730,7 +22730,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -24710,7 +24710,7 @@
      "get_packaging_leaderboard",
      "record_packaging_defect"
     ],
-    "deps_count": 159
+    "deps_count": 160
    },
    {
     "path": "",
@@ -25041,7 +25041,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 117
+    "deps_count": 118
    },
    {
     "path": "",
@@ -25307,6 +25307,7 @@
      "query_telemetry",
      "role_permissions",
      "security_events",
+     "system_metrics",
      "techniques",
      "tpm_notification_logs",
      "user_notification_settings",
@@ -25320,7 +25321,7 @@
      "send-push-notification"
     ],
     "rpc_transitive": [],
-    "deps_count": 119
+    "deps_count": 121
    },
    {
     "path": "",
@@ -26336,8 +26337,8 @@
     "tables": [
      "jobs",
      "machines",
-     "profiles",
-     "system_metrics"
+     "system_metrics",
+     "user_roles"
     ],
     "env": [
      "SUPABASE_SERVICE_ROLE_KEY",
@@ -27204,7 +27205,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 581,
+  "components_count": 585,
   "hooks": [
    {
     "name": "useContacts",
@@ -27497,6 +27498,10 @@
    {
     "name": "useRealtimeBlockedIPs",
     "file": "src/features/admin/hooks/useSecurityEvents.ts"
+   },
+   {
+    "name": "useSystemMetrics",
+    "file": "src/features/admin/hooks/useSystemMetrics.ts"
    },
    {
     "name": "useSystemStatusSummary",
@@ -28535,7 +28540,7 @@
   {
    "module": "src",
    "files": 3,
-   "lines": 108,
+   "lines": 110,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -28567,8 +28572,8 @@
   },
   {
    "module": "src/components",
-   "files": 424,
-   "lines": 59884,
+   "files": 426,
+   "lines": 60089,
    "tables": [
     "chat_messages",
     "error_logs",
@@ -28589,6 +28594,7 @@
     "user_roles"
    ],
    "exports": [
+    "ScrollableRegionFocusGuard.tsx: ScrollableRegionFocusGuard",
     "ABCActivityRatesCard.tsx: ABCActivityRatesCard",
     "ABCCostBreakdownChart.tsx: ABCCostBreakdownChart",
     "ABCCostPoolsCard.tsx: ABCCostPoolsCard",
@@ -28627,8 +28633,7 @@
     "CalendarToolbar.tsx: CalendarToolbar",
     "ConflictResolutionPanel.tsx: ConflictResolutionPanel",
     "DensityMinimap.tsx: DensityMinimap",
-    "JobBlock.tsx: JobBlock",
-    "JobQuickActions.tsx: JobQuickActionsProps, JobQuickActions"
+    "JobBlock.tsx: JobBlock"
    ],
    "docs": [
     "ActivityLog.tsx: eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -28684,6 +28689,8 @@
     "src/types"
    ],
    "file_list": [
+    "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "src/components/a11y/ScrollableRegionFocusGuard.tsx",
     "src/components/abc/ABCActivityRatesCard.tsx",
     "src/components/abc/ABCCostBreakdownChart.tsx",
     "src/components/abc/ABCCostPoolsCard.tsx",
@@ -28761,9 +28768,7 @@
     "src/components/dashboard/RecentJobsTable.tsx",
     "src/components/dashboard/ShiftHandoverWidget.tsx",
     "src/components/dashboard/SmartSequencingWidget.tsx",
-    "src/components/dashboard/SortableWidgetSection.tsx",
-    "src/components/dashboard/StatsCard.tsx",
-    "src/components/design-system/HooksExamplesSection.tsx"
+    "src/components/dashboard/SortableWidgetSection.tsx"
    ]
   },
   {
@@ -28847,8 +28852,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 58,
-   "lines": 7356,
+   "files": 62,
+   "lines": 7886,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -28874,7 +28879,8 @@
     "rate_limit_logs",
     "rate_limit_settings",
     "role_permissions",
-    "security_events"
+    "security_events",
+    "system_metrics"
    ],
    "exports": [
     "AuditAIAdvisor.tsx: AuditAIAdvisor",
@@ -28887,6 +28893,7 @@
     "CronHealthCard.tsx: CronHealthCard",
     "CronHealthHistoryCard.tsx: CronHealthHistoryCard",
     "CronP95TrendCard.tsx: CronP95TrendCard",
+    "SystemMetricsCard.tsx: SystemMetricsCard",
     "ActiveDevicesPanel.tsx: ActiveDevicesPanel",
     "BlockedIPsPanel.tsx: BlockedIPsPanel",
     "GeoBlockingSettings.tsx: GeoBlockingSettings",
@@ -28915,8 +28922,7 @@
     "useDataImport.ts: ImportColumn, ImportPreview, ImportResult, useDataImport",
     "useDetailedAuditTrail.ts: JobStatusAudit, MachineEventAudit, useDetailedAuditTrail",
     "useFeatureFlags.ts: FeatureFlag, useFeatureFlags",
-    "useGeoBlocking.ts: GeoBlockingSettings, GeoBlockingRule, GeoBlockingLog, COMMON_COUNTRIES, useGeoBlockingSettings, useGeoBlockingRules",
-    "useMonitoringData.ts: MonitoringWindow, MonitoringSnapshot, useMonitoringData, AlertThresholds, DEFAULT_THRESHOLDS, loadThresholds"
+    "useGeoBlocking.ts: GeoBlockingSettings, GeoBlockingRule, GeoBlockingLog, COMMON_COUNTRIES, useGeoBlockingSettings, useGeoBlockingRules"
    ],
    "docs": [
     "ActiveDevicesPanel.tsx: eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -28961,6 +28967,8 @@
     "src/features/admin/components/monitoring/CronHealthCard.tsx",
     "src/features/admin/components/monitoring/CronHealthHistoryCard.tsx",
     "src/features/admin/components/monitoring/CronP95TrendCard.tsx",
+    "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
     "src/features/admin/components/security/BlockedIPsPanel.tsx",
     "src/features/admin/components/security/GeoBlockingSettings.tsx",
@@ -28999,6 +29007,8 @@
     "src/features/admin/hooks/useRateLimitLogs.ts",
     "src/features/admin/hooks/useSavedFilters.ts",
     "src/features/admin/hooks/useSecurityEvents.ts",
+    "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "src/features/admin/hooks/useSystemMetrics.ts",
     "src/features/admin/hooks/useSystemStatusSummary.test.ts",
     "src/features/admin/hooks/useSystemStatusSummary.ts",
     "src/features/admin/hooks/useVersionHistory.ts",
@@ -29012,7 +29022,7 @@
   {
    "module": "src/features/analytics",
    "files": 81,
-   "lines": 12263,
+   "lines": 12265,
    "tables": [
     "efficiency_alert_history",
     "energy_alerts",
@@ -29880,7 +29890,7 @@
   {
    "module": "src/hooks",
    "files": 63,
-   "lines": 8476,
+   "lines": 8508,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -30247,7 +30257,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18030,
+   "lines": 18043,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -30619,7 +30629,7 @@
   {
    "module": "supabase/functions",
    "files": 56,
-   "lines": 11776,
+   "lines": 11819,
    "tables": [
     "archived_jobs",
     "backup_logs",
@@ -30683,6 +30693,7 @@
     "validation.ts: webhookPayloadSchema, WebhookPayload, bitrix24DataSchema, stripeDataSchema, mlPredictionPayloadSchema, MLPredictionPayload",
     "webpushEncrypt.ts: encryptPushPayload",
     "index.ts: classifySeverity, buildTelemetryPayload, emitTelemetry, validateColumns, ALLOWED_TABLES, WRITE_ACTIONS",
+    "index.ts: inicioDoDiaOperacional",
     "index.ts: handler"
    ],
    "docs": [
@@ -30854,7 +30865,7 @@
   {
    "module": "tests",
    "files": 22,
-   "lines": 1684,
+   "lines": 1756,
    "tables": [],
    "exports": [
     "credentials.ts: E2E_EMAIL, E2E_PASSWORD, E2E_TOTP_SECRET, E2E_OPERATOR_EMAIL, E2E_OPERATOR_PASSWORD",
@@ -31822,8 +31833,7 @@
      "src/pages/SettingsPage.tsx",
      "supabase/functions/approve-password-reset/index.ts",
      "supabase/functions/erp-api/index.ts",
-     "supabase/functions/health-check/index.ts",
-     "supabase/functions/metrics-collector/index.ts"
+     "supabase/functions/health-check/index.ts"
     ],
     "update": [
      "src/components/settings/UserManagement.tsx",
@@ -32106,6 +32116,9 @@
     ]
    },
    "system_metrics": {
+    "select": [
+     "src/features/admin/hooks/useSystemMetrics.ts"
+    ],
     "insert": [
      "supabase/functions/metrics-collector/index.ts"
     ]
@@ -32448,6 +32461,7 @@
      "supabase/functions/calculate-rankings/index.ts",
      "supabase/functions/cron-alert-email/index.ts",
      "supabase/functions/erp-api/index.ts",
+     "supabase/functions/metrics-collector/index.ts",
      "supabase/functions/send-push-notification/index.ts"
     ],
     "insert": [
@@ -32911,6 +32925,11 @@
     "mean_value",
     "parameter_id",
     "range_value"
+   ],
+   "system_metrics": [
+    "collected_at",
+    "id",
+    "metrics"
    ],
    "t": [
     "id"
@@ -34027,6 +34046,22 @@
     "name": "parsed",
     "kind": "array",
     "body": "cronP95DailyRowSchema",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.ts",
+    "name": "systemMetricsSnapshotSchema",
+    "kind": "object",
+    "body": "{ id: z.string(), collected_at: z.string(), metrics: z.record(z.string(), z.unknown()).default({}), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.ts",
+    "name": "parsed",
+    "kind": "array",
+    "body": "systemMetricsSnapshotSchema",
     "refines": [],
     "chain": []
    },
@@ -35754,6 +35789,10 @@
    },
    {
     "file": "src/features/admin/components/monitoring/CronHealthCard.tsx",
+    "msg": ";\nimport { Skeleton } from "
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
     "msg": ";\nimport { Skeleton } from "
    },
    {
@@ -37497,6 +37536,10 @@
     "text": "Performance Monitoring (Web Vitals → Sentry apenas quando habilitado)"
    },
    {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.tsx",
+    "text": "rolavel. Corrigir caso a caso deixava a regra dependente de alguem lembrar"
+   },
+   {
     "file": "src/components/auth/AuthErrorBoundary.tsx",
     "text": "Persistir o log de erro é best-effort; nunca deve mascarar o erro original."
    },
@@ -37535,6 +37578,10 @@
    {
     "file": "src/components/logistics/EditShipmentModal.tsx",
     "text": "rastreio/frete de um envio já entregue não pode sobrescrever a data"
+   },
+   {
+    "file": "src/components/machines/FactoryHeatmap.tsx",
+    "text": "que so deve virar parada de Tab quando transbordar."
    },
    {
     "file": "src/components/ml/MLNotificationSettings.tsx",
@@ -37633,6 +37680,10 @@
     "text": "descendente focavel ele viola a regra axe scrollable-region-focusable."
    },
    {
+    "file": "src/components/ui/table.tsx",
+    "text": "solucao do ScrollArea: vira parada de tab apenas quando ha transbordo."
+   },
+   {
     "file": "src/contexts/DirtyFormContext.tsx",
     "text": "e não pode ser cancelado — a confirmação pendente apontaria para a"
    },
@@ -37655,6 +37706,10 @@
    {
     "file": "src/features/admin/components/monitoring/CronP95TrendCard.tsx",
     "text": "* Tendência de longo prazo (até 365 dias) do p95 de duração por rotina,"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
+    "text": "falta permissao, e nao diagnosticar (falsamente) coleta parada."
    },
    {
     "file": "src/features/admin/components/security/PermissionManager.tsx",
@@ -43637,6 +43692,16 @@
   ],
   "params": [
    {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.tsx",
+    "name": "CANDIDATOS",
+    "value": "'[class*=\""
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.tsx",
+    "name": "MARCA",
+    "value": "'data-scroll-focus-guard'"
+   },
+   {
     "file": "src/components/dashboard/AlertScheduleModal.tsx",
     "name": "WORK_DAY_MINUTES",
     "value": "13"
@@ -43735,6 +43800,11 @@
     "file": "src/features/admin/hooks/useDataExport.ts",
     "name": "MAX_EXPORT_ROWS",
     "value": "10000"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.ts",
+    "name": "METRICS_STALE_AFTER_MINUTES",
+    "value": "30"
    },
    {
     "file": "src/features/admin/hooks/useVersionHistory.ts",
@@ -44055,6 +44125,11 @@
     "file": "supabase/functions/excel-export/index.ts",
     "name": "EXPORT_ROW_LIMIT",
     "value": "20000"
+   },
+   {
+    "file": "supabase/functions/metrics-collector/index.ts",
+    "name": "FUSO_OPERACIONAL",
+    "value": "\"America/Sao_Paulo\""
    },
    {
     "file": "supabase/functions/ml-predictions/index.ts",
@@ -50304,6 +50379,12 @@
     "kind": "filtra"
    },
    {
+    "file": "supabase/functions/metrics-collector/index.ts",
+    "field": "role",
+    "value": "operator",
+    "kind": "filtra"
+   },
+   {
     "file": "supabase/functions/ml-predictions/index.ts",
     "field": "role",
     "value": "system",
@@ -50802,6 +50883,12 @@
     "name": "validateBridgeRequest",
     "params": "body: any",
     "body": "valid: boolean; error?: string; data?: { action: string; table?: string; rpc?: string; params?: Record<string, unknown>; };"
+   },
+   {
+    "file": "supabase/functions/metrics-collector/index.ts",
+    "name": "valor",
+    "params": "tipo: string",
+    "body": "Number(partes.find((p) => p.type === tipo)?.value ?? \"0\");"
    },
    {
     "file": "supabase/functions/pdf-generator/index.ts",
@@ -52408,6 +52495,30 @@
     "name": "build que falha não carimba (a próxima sessão refaz)"
    },
    {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "ScrollableRegionFocusGuard"
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "torna a regiao rolavel alcancavel por teclado quando ela transborda"
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "nao adiciona parada de Tab quando existe filho focavel na lista"
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "nao sobrescreve um tabIndex definido pelo componente"
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "remove a parada de Tab quando a lista deixa de transbordar"
+   },
+   {
+    "file": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+    "name": "nao cria parada de Tab em decoracao recortada por overflow-hidden"
+   },
+   {
     "file": "src/components/calendar/CalendarTimeline.test.tsx",
     "name": "ordem de desenho dos cartoes na linha do tempo (etapa 053)"
    },
@@ -52628,6 +52739,42 @@
     "name": "nao mostra transicao em INSERT"
    },
    {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "SystemMetricsCard"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "mostra as contagens do coletor quando o snapshot está fresco"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "usa traço em vez de zero quando o coletor não conseguiu contar"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "alerta quando o snapshot mais recente é anterior ao intervalo do coletor"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "escolhe o snapshot mais recente quando a lista vem desordenada"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "diz que não houve coleta em vez de mostrar números vazios"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "mostra o motivo quando a leitura é negada pela RLS"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "explica que a leitura é restrita quando o usuário não é gestor"
+   },
+   {
+    "file": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+    "name": "mostra o vazio de coleta quando o administrador ainda não tem snapshot"
+   },
+   {
     "file": "src/features/admin/components/security/MFASettings.test.tsx",
     "name": "MFASettings — remoção do segundo fator exige re-autenticação (etapa 233)"
    },
@@ -52722,6 +52869,42 @@
    {
     "file": "src/features/admin/hooks/useCronP95Daily.test.ts",
     "name": "retorna null quando a linha de base é zero"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "useSystemMetrics"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "busca uma vez na montagem, sem refetch extra do primeiro render"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "pede nova consulta ao mudar o refreshKey mesmo com o cache preenchido"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "volta para a tela com o cache preenchido e o primeiro clique ainda consulta"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "systemMetricsSnapshotSchema"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "aceita o snapshot gravado pelo collector"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "assume métricas vazias quando a coluna vem nula"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "recusa snapshot sem collected_at"
+   },
+   {
+    "file": "src/features/admin/hooks/useSystemMetrics.test.ts",
+    "name": "recusa metrics que não seja objeto"
    },
    {
     "file": "src/features/admin/hooks/useSystemStatusSummary.test.ts",
@@ -57650,6 +57833,14 @@
    {
     "file": "tests/e2e/accessibility.spec.ts",
     "name": "/traceability nao deve ter regiao rolavel inacessivel por teclado"
+   },
+   {
+    "file": "tests/e2e/accessibility.spec.ts",
+    "name": "Calendario diario e maquinas - regiao rolavel alcancavel por teclado"
+   },
+   {
+    "file": "tests/e2e/accessibility.spec.ts",
+    "name": "${cenario.rota} nao deve ter regiao rolavel inacessivel por teclado"
    },
    {
     "file": "tests/e2e/accessibility.spec.ts",
@@ -65246,7 +65437,8 @@
       "escreve:supabase/seed-users.mjs",
       "filtra:src/features/production/hooks/useOperatorEvolution.ts",
       "filtra:src/features/production/hooks/useOperatorProductivity.ts",
-      "filtra:src/features/production/hooks/useOperators.ts"
+      "filtra:src/features/production/hooks/useOperators.ts",
+      "filtra:supabase/functions/metrics-collector/index.ts"
      ],
      "system": [
       "escreve:supabase/functions/ml-predictions/index.ts",
@@ -73549,7 +73741,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 22,
+   "lines": 24,
    "exports": [
     "default App"
    ]
@@ -73572,6 +73764,39 @@
    "path": "src/vite-env.d.ts",
    "lines": 2,
    "doc": "/ <reference types=\"vite/client\" />"
+  },
+  "src/components/a11y/ScrollableRegionFocusGuard.test.tsx": {
+   "path": "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+   "lines": 81,
+   "is_test": true,
+   "tests": [
+    "ScrollableRegionFocusGuard",
+    "torna a regiao rolavel alcancavel por teclado quando ela transborda",
+    "nao adiciona parada de Tab quando existe filho focavel na lista",
+    "nao sobrescreve um tabIndex definido pelo componente",
+    "remove a parada de Tab quando a lista deixa de transbordar",
+    "nao cria parada de Tab em decoracao recortada por overflow-hidden"
+   ]
+  },
+  "src/components/a11y/ScrollableRegionFocusGuard.tsx": {
+   "path": "src/components/a11y/ScrollableRegionFocusGuard.tsx",
+   "lines": 89,
+   "exports": [
+    "function ScrollableRegionFocusGuard"
+   ],
+   "params": [
+    {
+     "name": "CANDIDATOS",
+     "value": "'[class*=\""
+    },
+    {
+     "name": "MARCA",
+     "value": "'data-scroll-focus-guard'"
+    }
+   ],
+   "rule_comments": [
+    "rolavel. Corrigir caso a caso deixava a regra dependente de alguem lembrar"
+   ]
   },
   "src/components/abc/ABCActivityRatesCard.tsx": {
    "path": "src/components/abc/ABCActivityRatesCard.tsx",
@@ -74100,7 +74325,7 @@
   },
   "src/components/calendar/CalendarTimeline.tsx": {
    "path": "src/components/calendar/CalendarTimeline.tsx",
-   "lines": 425,
+   "lines": 427,
    "exports": [
     "function CalendarTimeline"
    ],
@@ -74495,7 +74720,7 @@
   },
   "src/components/dashboard/BufferStatusWidget.tsx": {
    "path": "src/components/dashboard/BufferStatusWidget.tsx",
-   "lines": 218,
+   "lines": 226,
    "exports": [
     "const BufferStatusWidget"
    ],
@@ -74744,7 +74969,7 @@
   },
   "src/components/dashboard/RecentJobsTable.tsx": {
    "path": "src/components/dashboard/RecentJobsTable.tsx",
-   "lines": 179,
+   "lines": 187,
    "exports": [
     "const RecentJobsTable"
    ],
@@ -77139,7 +77364,7 @@
   },
   "src/components/layout/sidebar/sidebarNavConfig.ts": {
    "path": "src/components/layout/sidebar/sidebarNavConfig.ts",
-   "lines": 115,
+   "lines": 116,
    "exports": [
     "const navGroups",
     "const adminNavItems"
@@ -77283,7 +77508,7 @@
   },
   "src/components/machines/FactoryHeatmap.tsx": {
    "path": "src/components/machines/FactoryHeatmap.tsx",
-   "lines": 115,
+   "lines": 123,
    "exports": [
     "function FactoryHeatmap"
    ],
@@ -77303,6 +77528,9 @@
      "value": "finished",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "que so deve virar parada de Tab quando transbordar."
    ],
    "percents": [
     "transition={{ delay: i * 0.01 }}"
@@ -80303,7 +80531,10 @@
   },
   "src/components/ui/table.tsx": {
    "path": "src/components/ui/table.tsx",
-   "lines": 76
+   "lines": 84,
+   "rule_comments": [
+    "solucao do ScrollArea: vira parada de tab apenas quando ha transbordo."
+   ]
   },
   "src/components/ui/tabs.tsx": {
    "path": "src/components/ui/tabs.tsx",
@@ -80825,6 +81056,35 @@
    ],
    "percents": [
     "v === null ? \"bg-muted\" : v >= max * 0.8 ? \"bg-warning\" : \"bg-primary/60\","
+   ]
+  },
+  "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx": {
+   "path": "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+   "lines": 147,
+   "is_test": true,
+   "tests": [
+    "SystemMetricsCard",
+    "mostra as contagens do coletor quando o snapshot está fresco",
+    "usa traço em vez de zero quando o coletor não conseguiu contar",
+    "alerta quando o snapshot mais recente é anterior ao intervalo do coletor",
+    "escolhe o snapshot mais recente quando a lista vem desordenada",
+    "diz que não houve coleta em vez de mostrar números vazios",
+    "mostra o motivo quando a leitura é negada pela RLS",
+    "explica que a leitura é restrita quando o usuário não é gestor",
+    "mostra o vazio de coleta quando o administrador ainda não tem snapshot"
+   ]
+  },
+  "src/features/admin/components/monitoring/SystemMetricsCard.tsx": {
+   "path": "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
+   "lines": 148,
+   "exports": [
+    "function SystemMetricsCard"
+   ],
+   "errors": [
+    ";\nimport { Skeleton } from "
+   ],
+   "rule_comments": [
+    "falta permissao, e nao diagnosticar (falsamente) coleta parada."
    ]
   },
   "src/features/admin/components/security/ActiveDevicesPanel.tsx": {
@@ -81947,6 +82207,77 @@
     "useRealtimeBlockedIPs"
    ]
   },
+  "src/features/admin/hooks/useSystemMetrics.test.ts": {
+   "path": "src/features/admin/hooks/useSystemMetrics.test.ts",
+   "lines": 141,
+   "is_test": true,
+   "rule_comments": [
+    "A chave ja tem dado guardado: o clique nao pode se apoiar no cache."
+   ],
+   "tests": [
+    "useSystemMetrics",
+    "busca uma vez na montagem, sem refetch extra do primeiro render",
+    "pede nova consulta ao mudar o refreshKey mesmo com o cache preenchido",
+    "volta para a tela com o cache preenchido e o primeiro clique ainda consulta",
+    "systemMetricsSnapshotSchema",
+    "aceita o snapshot gravado pelo collector",
+    "assume métricas vazias quando a coluna vem nula",
+    "recusa snapshot sem collected_at",
+    "recusa metrics que não seja objeto"
+   ]
+  },
+  "src/features/admin/hooks/useSystemMetrics.ts": {
+   "path": "src/features/admin/hooks/useSystemMetrics.ts",
+   "lines": 94,
+   "exports": [
+    "const systemMetricsSnapshotSchema",
+    "type SystemMetricsSnapshot",
+    "const METRICS_STALE_AFTER_MINUTES",
+    "function lerContagem",
+    "function formatarContagem",
+    "function estaDesatualizada",
+    "function ultimoSnapshot",
+    "function useSystemMetrics"
+   ],
+   "tables": [
+    {
+     "table": "system_metrics",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "system_metrics": [
+     "collected_at",
+     "id",
+     "metrics"
+    ]
+   },
+   "zod": [
+    {
+     "name": "systemMetricsSnapshotSchema",
+     "kind": "object",
+     "body": "{ id: z.string(), collected_at: z.string(), metrics: z.record(z.string(), z.unknown()).default({}), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "parsed",
+     "kind": "array",
+     "body": "systemMetricsSnapshotSchema",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "params": [
+    {
+     "name": "METRICS_STALE_AFTER_MINUTES",
+     "value": "30"
+    }
+   ],
+   "hooks": [
+    "useSystemMetrics"
+   ]
+  },
   "src/features/admin/hooks/useSystemStatusSummary.test.ts": {
    "path": "src/features/admin/hooks/useSystemStatusSummary.test.ts",
    "lines": 72,
@@ -82746,7 +83077,7 @@
   },
   "src/features/analytics/components/oee/OEEMachineTable.tsx": {
    "path": "src/features/analytics/components/oee/OEEMachineTable.tsx",
-   "lines": 341,
+   "lines": 343,
    "exports": [
     "const OEEMachineTable"
    ]
@@ -89817,7 +90148,7 @@
   },
   "src/hooks/use-overflowing.ts": {
    "path": "src/hooks/use-overflowing.ts",
-   "lines": 29,
+   "lines": 61,
    "exports": [
     "function useOverflowing"
    ],
@@ -94553,7 +94884,7 @@
   },
   "src/pages/SystemMonitoringPage.tsx": {
    "path": "src/pages/SystemMonitoringPage.tsx",
-   "lines": 422,
+   "lines": 435,
    "exports": [
     "function SystemMonitoringPage"
    ],
@@ -97836,7 +98167,10 @@
   },
   "supabase/functions/metrics-collector/index.ts": {
    "path": "supabase/functions/metrics-collector/index.ts",
-   "lines": 73,
+   "lines": 116,
+   "exports": [
+    "function inicioDoDiaOperacional"
+   ],
    "tables": [
     {
      "table": "jobs",
@@ -97851,7 +98185,7 @@
      "op": "select"
     },
     {
-     "table": "profiles",
+     "table": "user_roles",
      "op": "select"
     },
     {
@@ -97868,6 +98202,9 @@
      "actual_end_time",
      "status"
     ],
+    "user_roles": [
+     "role"
+    ],
     "machines": [
      "is_active"
     ]
@@ -97880,6 +98217,12 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
+   "params": [
+    {
+     "name": "FUSO_OPERACIONAL",
+     "value": "\"America/Sao_Paulo\""
+    }
+   ],
    "status_values": [
     {
      "field": "status",
@@ -97890,6 +98233,18 @@
      "field": "status",
      "value": "finished",
      "kind": "filtra"
+    },
+    {
+     "field": "role",
+     "value": "operator",
+     "kind": "filtra"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "valor",
+     "params": "tipo: string",
+     "body": "Number(partes.find((p) => p.type === tipo)?.value ?? \"0\");"
     }
    ],
    "uses_service_role": true
@@ -99830,10 +100185,11 @@
   },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
-   "lines": 126,
+   "lines": 198,
    "is_test": true,
    "rule_comments": [
     "escopo deste arquivo. A regra que motivou a inclusao da rota (regiao rolavel",
+    "focus() por fora (que provaria apenas a existencia do tabindex).",
     "Deve existir apenas um paleta montada no DOM"
    ],
    "temporal": [
@@ -99846,6 +100202,8 @@
     "rota ${route} não deve apresentar violações críticas",
     "TraceabilityPage - regiao rolavel alcancavel por teclado",
     "/traceability nao deve ter regiao rolavel inacessivel por teclado",
+    "Calendario diario e maquinas - regiao rolavel alcancavel por teclado",
+    "${cenario.rota} nao deve ter regiao rolavel inacessivel por teclado",
     "CommandPaletteAdvanced - teclado e foco",
     "abre com Cmd+K, navega com setas e fecha com Escape",
     "reabre corretamente e não duplica listeners (Cmd+K duas vezes)"
@@ -100282,10 +100640,44 @@
   }
  },
  "git": {
-  "sha": "2fac28ac0bd3c57cd6bbf2bde1e887a0bc33d334",
+  "sha": "f4d13d80774ecb33452a9875ecef122bcca32b89",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "f4d13d8",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela de metricas do sistema (/monitoramento) (#321)",
+    "files": [
+     "src/components/layout/sidebar/sidebarNavConfig.ts",
+     "src/features/admin/components/monitoring/SystemMetricsCard.test.tsx",
+     "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
+     "src/features/admin/hooks/useSystemMetrics.test.ts",
+     "src/features/admin/hooks/useSystemMetrics.ts",
+     "src/pages/SystemMonitoringPage.tsx",
+     "supabase/functions/metrics-collector/index.ts"
+    ]
+   },
+   {
+    "sha": "d149b8b",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: regiao rolavel horizontal passa a ser alcancavel por teclado (#324)",
+    "files": [
+     "src/App.tsx",
+     "src/components/a11y/ScrollableRegionFocusGuard.test.tsx",
+     "src/components/a11y/ScrollableRegionFocusGuard.tsx",
+     "src/components/calendar/CalendarTimeline.tsx",
+     "src/components/dashboard/BufferStatusWidget.tsx",
+     "src/components/dashboard/RecentJobsTable.tsx",
+     "src/components/machines/FactoryHeatmap.tsx",
+     "src/components/ui/table.tsx",
+     "src/features/analytics/components/oee/OEEMachineTable.tsx",
+     "src/hooks/use-overflowing.ts",
+     "tests/e2e/accessibility.spec.ts"
+    ]
+   },
    {
     "sha": "2fac28a",
     "date": "2026-11-26",
@@ -100640,36 +101032,12 @@
     "files": [
      "supabase/migrations/20261127120000_isolate_public_has_role.sql"
     ]
-   },
-   {
-    "sha": "03ce70b",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: encerra o laco entre /auth e / quando o 2FA nao pode ser desafiado (#291)",
-    "files": [
-     "docs/qa/03-ACHADOS.md",
-     "docs/qa/05-PROGRESSO.md",
-     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx",
-     "src/features/auth/hooks/useAuthenticatorAssuranceLevel.ts",
-     "src/pages/AuthPage.mfaBlocked.test.tsx",
-     "src/pages/AuthPage.tsx"
-    ]
-   },
-   {
-    "sha": "d5e8d2b",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: install do graphify repara ambiente divergente do pin em vez de reprovar (#290)",
-    "files": [
-     "scripts/graphify-local.mjs",
-     "scripts/graphify-local.unit.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    14
+    13
    ],
    [
     "src/features/jobs/services/jobsService.test.ts",
@@ -100708,6 +101076,14 @@
     3
    ],
    [
+    "src/components/calendar/CalendarTimeline.tsx",
+    2
+   ],
+   [
+    "tests/e2e/accessibility.spec.ts",
+    2
+   ],
+   [
     "src/pages/NotificationsPage.test.tsx",
     2
    ],
@@ -100737,14 +101113,6 @@
    ],
    [
     "src/features/jobs/hooks/useJobs.ts",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/test/jobsService.test.ts",
     2
    ]
   ]

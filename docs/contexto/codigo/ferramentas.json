@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1092)",
+   "TypeScript (1098)",
    "SQL (276)",
    "Markdown (108)",
    "JavaScript (54)",
@@ -1266,6 +1266,14 @@
    },
    {
     "rotulo": "Master API Hub",
+    "papeis": [
+     "admin",
+     "coordinator",
+     "manager"
+    ]
+   },
+   {
+    "rotulo": "Monitoramento",
     "papeis": [
      "admin",
      "coordinator",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2fac28ac0b` · branch `main` · 2026-11-26 14:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f4d13d8077` · branch `main` · 2026-11-26 14:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T13:39:59Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -1837,7 +1837,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `role` | `assistant` | compara, escreve | `src/components/assistant/TechnicalAssistant.tsx`<br>`src/components/technical-assistant/ChatArea.tsx`<br>`src/components/technical-assistant/ChatMessage.tsx`<br>`src/pages/TechnicalAssistantPage.tsx` |
 | `role` | `coordinator` | compara, escreve, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/documents/DocumentsList.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/features/auth/components/AuthProvider.tsx`<br>… +5 |
 | `role` | `manager` | compara | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/components/navigation/MobileQuickActions.tsx`<br>`src/features/auth/components/AuthProvider.tsx` |
-| `role` | `operator` | compara, escreve, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/layout/OperatorMachinesIndicator.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/components/navigation/MobileQuickActions.tsx`<br>… +6 |
+| `role` | `operator` | compara, escreve, filtra | `src/components/auth/ProtectedRoute.tsx`<br>`src/components/layout/AppSidebar.tsx`<br>`src/components/layout/OperatorMachinesIndicator.tsx`<br>`src/components/navigation/MobileNavigation.tsx`<br>`src/components/navigation/MobileQuickActions.tsx`<br>… +7 |
 | `role` | `system` | escreve | `supabase/functions/ml-predictions/index.ts`<br>`supabase/functions/technical-assistant/index.ts` |
 | `role` | `user` | compara, escreve | `src/components/assistant/TechnicalAssistant.tsx`<br>`src/components/technical-assistant/ChatArea.tsx`<br>`src/components/technical-assistant/ChatMessage.tsx`<br>`src/hooks/useTechnicalConversations.ts`<br>`src/pages/TechnicalAssistantPage.tsx`<br>… +2 |
 | `status` | `Bom` | escreve | `src/components/design-system/sections/code-quality/CodeQualityPerformanceTab.tsx` |
@@ -2010,6 +2010,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **parsed** (`src/features/admin/hooks/useCronP95Daily.ts`, z.array):
   ```ts
   cronP95DailyRowSchema
+  ```
+- **systemMetricsSnapshotSchema** (`src/features/admin/hooks/useSystemMetrics.ts`, z.object):
+  ```ts
+  { id: z.string(), collected_at: z.string(), metrics: z.record(z.string(), z.unknown()).default({}), }
+  ```
+- **parsed** (`src/features/admin/hooks/useSystemMetrics.ts`, z.array):
+  ```ts
+  systemMetricsSnapshotSchema
   ```
 - **overallStatusSchema** (`src/features/admin/hooks/useSystemStatusSummary.ts`, z.enum):
   ```ts
@@ -2535,6 +2543,10 @@ _nenhum item encontrado_
   ```
   valid: boolean; error?: string; data?: { action: string; table?: string; rpc?: string; params?: Record<string, unknown>; };
   ```
+- **valor(tipo: string)** — `supabase/functions/metrics-collector/index.ts`
+  ```
+  Number(partes.find((p) => p.type === tipo)?.value ?? "0");
+  ```
 - **generateJobReport(data: any, options: any)** — `supabase/functions/pdf-generator/index.ts`
   ```
   const content = `Job Report\n\nGenerated: ${new Date().toISOString()}\n\nData: ${JSON.stringify(data, null, 2)}`; return new TextEncoder().encode(content);
@@ -2683,6 +2695,8 @@ _nenhum item encontrado_
 
 | Constante | Valor | Arquivo |
 |---|---|---|
+| `CANDIDATOS` | `'[class*="` | `src/components/a11y/ScrollableRegionFocusGuard.tsx` |
+| `MARCA` | `'data-scroll-focus-guard'` | `src/components/a11y/ScrollableRegionFocusGuard.tsx` |
 | `WORK_DAY_MINUTES` | `13` | `src/components/dashboard/AlertScheduleModal.tsx` |
 | `WORK_START` | `7` | `src/components/dashboard/AlertScheduleModal.tsx` |
 | `WORK_START` | `7` | `src/components/dashboard/AlertScheduleModal.tsx` |
@@ -2703,6 +2717,7 @@ _nenhum item encontrado_
 | `CRON_FAILURE_ALERT_THRESHOLD` | `3` | `src/features/admin/hooks/useCronHealth.ts` |
 | `MIN_SAMPLES` | `3` | `src/features/admin/hooks/useCronHealthHistory.ts` |
 | `MAX_EXPORT_ROWS` | `10000` | `src/features/admin/hooks/useDataExport.ts` |
+| `METRICS_STALE_AFTER_MINUTES` | `30` | `src/features/admin/hooks/useSystemMetrics.ts` |
 | `MAX_VERSIONS` | `50` | `src/features/admin/hooks/useVersionHistory.ts` |
 | `DAILY_CAPACITY_MINUTES` | `11` | `src/features/analytics/hooks/useBottleneckPrediction.ts` |
 | `DAYS_AHEAD` | `14` | `src/features/analytics/hooks/useBottleneckPrediction.ts` |
@@ -2767,6 +2782,7 @@ _nenhum item encontrado_
 | `INBOUND_WINDOW_MS` | `60` | `supabase/functions/csp-report/index.ts` |
 | `SP_TIMEZONE` | `'America/Sao_Paulo'` | `supabase/functions/daily-maintenance-summary/index.ts` |
 | `EXPORT_ROW_LIMIT` | `20000` | `supabase/functions/excel-export/index.ts` |
+| `FUSO_OPERACIONAL` | `"America/Sao_Paulo"` | `supabase/functions/metrics-collector/index.ts` |
 | `MAX_BATCH_SIZE` | `10` | `supabase/functions/ml-predictions/index.ts` |
 | `RESEND_MAX_RECIPIENTS` | `50` | `supabase/functions/send-loss-risk-alert/index.ts` |
 | `MAX_MESSAGES` | `40` | `supabase/functions/technical-assistant/index.ts` |
@@ -3185,6 +3201,7 @@ _nenhum item encontrado_
 | useUserPreferences must be used within UserPreferencesProvider | `src/contexts/UserPreferencesContext.tsx` |
 | useWebSocketContext must be used within WebSocketProvider | `src/contexts/WebSocketContext.tsx` |
 | ; import { Skeleton } from  | `src/features/admin/components/monitoring/CronHealthCard.tsx` |
+| ; import { Skeleton } from  | `src/features/admin/components/monitoring/SystemMetricsCard.tsx` |
 | ; import {   Globe,   Plus,   Trash2,   ShieldCheck,   AlertTriangle,   History,   MapPin } from  | `src/features/admin/components/security/GeoBlockingSettings.tsx` |
 | O código deve ter 6 dígitos | `src/features/admin/components/security/MFAEnroll.tsx` |
 | Falha ao gerar exportação. | `src/features/admin/hooks/useBIExport.ts` |
@@ -3289,8 +3306,7 @@ _nenhum item encontrado_
 | ), [playSound]);    const setEnabled = useCallback((enabled: boolean) => {     isEnabledRef.current = enabled;     localStorage.setItem( | `src/features/notifications/hooks/useNotificationSounds.ts` |
 | Erro ao dispensar notificação | `src/features/notifications/hooks/useNotifications.ts` |
 | Erro ao excluir notificação | `src/features/notifications/hooks/useNotifications.ts` |
-| Erro ao marcar notificação como lida | `src/features/notifications/hooks/useNotifications.ts` |
-| … +264 linhas — lista completa em `context.json` | |
+| … +265 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -3358,7 +3374,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1532 testes em 137 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1558 testes em 140 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3416,12 +3432,15 @@ _nenhum item encontrado_
 | `tests/e2e/jobs.spec.ts` | 10 | Jobs — CRUD and state transitions · calendar page loads with job blocks · quick job drawer opens and closes · job priority filter changes visible jobs … |
 | `tests/e2e/packaging.spec.ts` | 10 | Packaging — Acesso anônimo · redireciona para /auth ao acessar /packaging sem sessão · sub-rota inexistente de /packaging sem sessão não expõe conteúdo protegido · Packaging — Abertura via sidebar … |
 | `scripts/rls-regression.test.mjs` | 9 | signInWithRetry: sucesso de primeira não espera nem repete · signInWithRetry: falha transitória (ex.:  · signInWithRetry: falha em todas as tentativas retorna null (não lança) · signInWithRetry: resposta sem user e sem error também conta como falha … |
+| `src/features/admin/components/monitoring/SystemMetricsCard.test.tsx` | 9 | SystemMetricsCard · mostra as contagens do coletor quando o snapshot está fresco · usa traço em vez de zero quando o coletor não conseguiu contar · alerta quando o snapshot mais recente é anterior ao intervalo do coletor … |
 | `src/features/admin/hooks/useCronP95Daily.test.ts` | 9 | median · retorna null para amostra vazia · calcula mediana ímpar e par · computeDrift … |
+| `src/features/admin/hooks/useSystemMetrics.test.ts` | 9 | useSystemMetrics · busca uma vez na montagem, sem refetch extra do primeiro render · pede nova consulta ao mudar o refreshKey mesmo com o cache preenchido · volta para a tela com o cache preenchido e o primeiro clique ainda consulta … |
 | `src/lib/excelExport.test.ts` | 9 | excelExport · builds the 3 documented sheets in order: Resumo, Tendência de Produção, Performance Máquinas · Resumo sheet contains the KPI rows with formatted percentages · Tendência de Produção sheet header + one row per productionTrend entry … |
 | `src/test/circuitBreaker.test.ts` | 9 | CircuitBreaker · starts in closed state · opens after failureThreshold failures · throws CircuitOpenError immediately when open … |
 | `src/test/dateUtils.test.ts` | 9 | parseDateOnly · parses a date-only string at local midnight (no UTC shift) · keeps the calendar day stable regardless of timezone offset · delegates full timestamps to new Date() … |
 | `src/test/oeeCalculations.test.ts` | 9 | calculateRealOEE · returns 100% quality when no jobs · calculates standard metrics correctly · floors goodPieces at 0 when lost > produced (data quality issue) … |
 | `supabase/functions/_shared/cors.test.ts` | 9 | pickAllowedOrigin: retorna o próprio origin quando está na allowlist · pickAllowedOrigin: origin fora da allowlist cai para o primeiro permitido, nunca * · pickAllowedOrigin: ausência de header Origin cai para o primeiro permitido · EXTRA_ALLOWED_ORIGINS: entradas extras são aceitas quando presentes na env … |
+| `tests/e2e/accessibility.spec.ts` | 9 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · TraceabilityPage - regiao rolavel alcancavel por teclado · /traceability nao deve ter regiao rolavel inacessivel por teclado … |
 | `scripts/ci/check-claude-md-integrity.test.mjs` | 8 | estado íntegro passa, com e sem base explícita, e de qualquer cwd · AGENTS.md ausente ou sem seção obrigatória reprova · wipe do conjunto ou de um arquivo reprova · doc apagado ou esvaziado reprova, inclusive com espaço, acento e .MD no nome … |
 | `src/features/auth/hooks/useAuthenticatorAssuranceLevel.test.tsx` | 8 | useAuthenticatorAssuranceLevel - decisao compartilhada de 2FA (etapa 032) · expoe o fator TOTP verificado que a tela de login sabe desafiar · sem TOTP verificado nao ha fator desafiavel, mas a conta tem fator · erro em listFactors nao vira  … |
 | `src/lib/spcExport.test.ts` | 8 | spcExport · renders parameter details, capability indices and measurement history when capability is provided · skips the capability section entirely when capability is null · flags out-of-control measurements with the  … |
@@ -3433,9 +3452,9 @@ _nenhum item encontrado_
 | `src/lib/excel.test.ts` | 7 | excel helper · objectsToRows · emits a header row followed by data rows in key order · coerces missing/undefined values to null … |
 | `src/test/rateLimiter.test.ts` | 7 | RateLimiter · allows requests up to max tokens · refills tokens over time · does not exceed maxTokens on refill … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 7 | checkRateLimit returns null when under limit · checkRateLimit returns 429 when at/over limit · checkRateLimit fails open on infra error · checkRateLimit atomic path: allows under limit without legacy insert … |
-| `tests/e2e/accessibility.spec.ts` | 7 | Acessibilidade - Sweep axe-core WCAG 2.2 AA · rota ${route} não deve apresentar violações críticas · TraceabilityPage - regiao rolavel alcancavel por teclado · /traceability nao deve ter regiao rolavel inacessivel por teclado … |
 | `tests/e2e/critical-flows.spec.ts` | 7 | Authentication and Authorization Flow · User Login and Dashboard Access · Protected Route Enforcement · User Logout Flow … |
 | `scripts/seed-users.test.mjs` | 6 | falha fechado sem token, sem ref ou com ref fora da lista · trava de produção vale mesmo com espaço ou maiúscula no ref · todos criados ou já existentes: sai 0 · qualquer usuário com erro faz o seed sair 1 … |
+| `src/components/a11y/ScrollableRegionFocusGuard.test.tsx` | 6 | ScrollableRegionFocusGuard · torna a regiao rolavel alcancavel por teclado quando ela transborda · nao adiciona parada de Tab quando existe filho focavel na lista · nao sobrescreve um tabIndex definido pelo componente … |
 | `src/contexts/ReauthContext.test.tsx` | 6 | ReauthProvider · não prossegue com senha incorreta (etapa 233) · confere a senha sem trocar a sessão do cliente compartilhado (etapa 233) · mantém a confirmação para o mesmo operador sem novo login (etapa 233) … |
 | `src/features/admin/components/security/SecurityOverviewCard.test.tsx` | 6 | SecurityOverviewCard (etapa 066) · não dá pontos nem aprova itens sem verificação na conta nova · aprova e pontua só o que foi verificado de verdade · marca a verificação de senha como não verificada em qualquer conta … |
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
@@ -3577,6 +3596,7 @@ _nenhum item encontrado_
 | Background Sync — tag must match registerBackgroundSync() in | `public/sw.js` |
 | Env validation must precede every other import — see envGuard.ts. | `src/main.tsx` |
 | Performance Monitoring (Web Vitals → Sentry apenas quando habilitado) | `src/main.tsx` |
+| rolavel. Corrigir caso a caso deixava a regra dependente de alguem lembrar | `src/components/a11y/ScrollableRegionFocusGuard.tsx` |
 | Persistir o log de erro é best-effort; nunca deve mascarar o erro original. | `src/components/auth/AuthErrorBoundary.tsx` |
 | Hook for password validation | `src/components/auth/PasswordStrengthIndicator.tsx` |
 | precisam de um fator MFA VERIFICADO — não apenas do desafio de login. | `src/components/auth/ProtectedRoute.tsx` |
@@ -3587,6 +3607,7 @@ _nenhum item encontrado_
 | deve pedir confirmação de descarte do formulário atr��s dele. | `src/components/layout/MainLayout.tsx` |
 | Hooks must be called before any conditional returns | `src/components/layout/QuickFavoritesBar.tsx` |
 | rastreio/frete de um envio já entregue não pode sobrescrever a data | `src/components/logistics/EditShipmentModal.tsx` |
+| que so deve virar parada de Tab quando transbordar. | `src/components/machines/FactoryHeatmap.tsx` |
 | Permission Status */} | `src/components/ml/MLNotificationSettings.tsx` |
 | Máximo de itens visíveis antes de colapsar em "..." | `src/components/navigation/Breadcrumbs.tsx` |
 | Pai sem rota própria: texto apagado — não pode parecer | `src/components/navigation/Breadcrumbs.tsx` |
@@ -3611,12 +3632,14 @@ _nenhum item encontrado_
 | best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
 | Persistir o log de erro é best-effort; nunca deve mascarar o erro original. | `src/components/ui/error-boundary.tsx` |
 | descendente focavel ele viola a regra axe scrollable-region-focusable. | `src/components/ui/scroll-area.tsx` |
+| solucao do ScrollArea: vira parada de tab apenas quando ha transbordo. | `src/components/ui/table.tsx` |
 | e não pode ser cancelado — a confirmação pendente apontaria para a | `src/contexts/DirtyFormContext.tsx` |
 | (popstate) não pode ser cancelado; formulários com rascunho | `src/contexts/DirtyFormContext.tsx` |
 | Deve ser chamado dentro do provider (MainLayout). | `src/contexts/DirtyFormContext.tsx` |
 | troca de conta na mesma aba (quiosque) a janela de 5 minutos não pode | `src/contexts/ReauthContext.tsx` |
 | realtime WS is reachable. The handler must be stable (useCallback) so | `src/contexts/WebSocketContext.tsx` |
 | * Tendência de longo prazo (até 365 dias) do p95 de duração por rotina, | `src/features/admin/components/monitoring/CronP95TrendCard.tsx` |
+| falta permissao, e nao diagnosticar (falsamente) coleta parada. | `src/features/admin/components/monitoring/SystemMetricsCard.tsx` |
 | Permission Groups */} | `src/features/admin/components/security/PermissionManager.tsx` |
 | parte do catálogo estático (ex.: admin:all, ou uma permissão cadastrada | `src/features/admin/components/security/PermissionMatrix.tsx` |
 | Mesma fonte do hasPermission: com fallback estatico, permissao presente | `src/features/admin/components/security/PermissionMatrix.tsx` |

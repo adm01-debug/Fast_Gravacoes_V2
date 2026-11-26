@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 197,
+ "total": 198,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -1221,6 +1221,29 @@
     "src/features/admin/index.ts"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useSystemMetrics.ts",
+   "hooks_exportados": [
+    "useSystemMetrics"
+   ],
+   "linhas": 94,
+   "dominio": "features/admin",
+   "tabelas": [
+    "system_metrics"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/monitoring/SystemMetricsCard.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/features/admin/hooks/useSystemStatusSummary.ts",
@@ -3968,7 +3991,7 @@
    "hooks_exportados": [
     "useOverflowing"
    ],
-   "linhas": 29,
+   "linhas": 61,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -3978,10 +4001,15 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 9,
    "usado_por_arquivos": [
+    "src/components/calendar/CalendarTimeline.tsx",
+    "src/components/dashboard/BufferStatusWidget.tsx",
+    "src/components/dashboard/RecentJobsTable.tsx",
     "src/components/error/StackTrace.tsx",
+    "src/components/machines/FactoryHeatmap.tsx",
     "src/components/ui/scroll-area.tsx",
+    "src/components/ui/table.tsx",
     "src/pages/OEEDashboard.tsx",
     "src/pages/TraceabilityPage.tsx"
    ],
