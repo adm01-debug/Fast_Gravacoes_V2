@@ -394,6 +394,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({
           success: true,
+          sent: false,
           preview: true,
           message: 'Email não enviado - RESEND_API_KEY não configurada',
           html: htmlContent,
