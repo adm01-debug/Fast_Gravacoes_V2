@@ -1,7 +1,8 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { jobsService, ArchiveRefusedError } from './jobsService';
 import { supabase } from '@/integrations/supabase/client';
 import { JobInsert } from './jobsService';
+import { logger } from '@/lib/logger';
 
 // Mock Supabase
 const { rpcMock } = vi.hoisted(() => ({ rpcMock: vi.fn() }));
@@ -45,8 +46,17 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 describe('jobsService', () => {
+  let warnSpy: { mockRestore: () => void } | null = null;
+
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Sem isso, uma assercao que falha deixa o logger silenciado
+    // (clearAllMocks limpa o historico, mas nao restaura o spy).
+    warnSpy?.mockRestore();
+    warnSpy = null;
   });
 
   it('deve chamar select ao buscar todos os jobs', async () => {
@@ -133,6 +143,60 @@ describe('jobsService', () => {
         const [job] = await jobsService.getAll();
         expect(job.produced_quantity).toBe(40);
         expect(job.lost_pieces).toBe(2);
+      });
+
+      it('devolve a OS com a técnica textual e as relações da consulta', async () => {
+        (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+          select: () => ({
+            order: () => ({
+              data: [{
+                id: '66666666-6666-4666-8666-666666666666',
+                order_number: 'PED-11', client: 'Cliente', product: 'Caneca', quantity: 10,
+                technique_id: 'bordado', machine_id: null,
+                priority: 'medium', status: 'queue', estimated_duration: 520,
+                created_at: '2026-11-25T12:00:00.000Z',
+                machines: { name: 'Bordado 1', code: 'BRD1' },
+                techniques: { id: 'bordado', name: 'Bordado' },
+              }],
+              error: null,
+            }),
+          }),
+        });
+
+        warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
+        const [job] = await jobsService.getAll();
+        const linha = job as unknown as Record<string, unknown>;
+        expect(linha.technique_id).toBe('bordado');
+        expect(linha.machines).toEqual({ name: 'Bordado 1', code: 'BRD1' });
+        expect(linha.techniques).toEqual({ id: 'bordado', name: 'Bordado' });
+        // A linha original tambem passaria no teste acima quando o safeParse falha
+        // (o fallback devolve a row crua), entao o aviso de validacao e a prova de
+        // que a validacao realmente passou.
+        expect(warnSpy).not.toHaveBeenCalled();
+      });
+
+      it('avisa quando a tecnica esta ausente na linha do banco', async () => {
+        (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+          select: () => ({
+            order: () => ({
+              data: [{
+                id: '77777777-7777-4777-8777-777777777777',
+                order_number: 'PED-12', client: 'Cliente', product: 'Caneca', quantity: 10,
+                technique_id: '', machine_id: null,
+                priority: 'medium', status: 'queue', estimated_duration: 60,
+              }],
+              error: null,
+            }),
+          }),
+        });
+
+        warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
+        await jobsService.getAll();
+        expect(warnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Job validation failed for ID 77777777'),
+          expect.anything(),
+          'jobsService',
+        );
       });
 
       it('recusa a exclusao de OS com producao registrada no proprio servico', async () => {
