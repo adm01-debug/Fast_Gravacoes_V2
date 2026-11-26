@@ -5426,9 +5426,9 @@
   },
   {
    "modulo": "hooks/technical-sheets",
-   "arquivos": 3,
-   "testes": 0,
-   "linhas": 606,
+   "arquivos": 4,
+   "testes": 1,
+   "linhas": 638,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5439,6 +5439,7 @@
     "useToast"
    ],
    "hooks_definidos": [
+    "useRegisterSheetView",
     "useTechnicalSheetMutations",
     "useTechnicalSheetAudit",
     "useTechnicalSheetDetails",
@@ -5447,6 +5448,7 @@
    ],
    "edges": [],
    "tabelas": [
+    "error_logs",
     "materials",
     "product_categories",
     "technical_sheet_audit",
@@ -5456,10 +5458,14 @@
     "technical_sheet_tips",
     "technical_sheets"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "increment_sheet_view_count"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
+    "DEV",
+    "VITE_ALERT_WEBHOOK_URL",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
    ],
@@ -5477,12 +5483,15 @@
      "technical_sheet_tips",
      "technical_sheets"
     ],
-    "rpcs": []
+    "rpcs": [
+     "increment_sheet_view_count"
+    ]
    },
    "importado_por_outros_modulos": [
     "components/jobs",
     "components/knowledge",
-    "hooks"
+    "hooks",
+    "pages"
    ],
    "depende_de_modulos": [
     "hooks",
@@ -5975,7 +5984,7 @@
    "modulo": "pages",
    "arquivos": 56,
    "testes": 7,
-   "linhas": 16863,
+   "linhas": 16867,
    "itens_menu": [
     "Agenda",
     "Alertas",
@@ -6252,6 +6261,7 @@
     "useRealtimeChannel",
     "useRealtimeSecurityEvents",
     "useReauth",
+    "useRegisterSheetView",
     "useRemoveCountryRule",
     "useRipple",
     "useRolePermissions",
@@ -6453,6 +6463,7 @@
     "get_finished_jobs_for_evolution",
     "get_packaging_leaderboard",
     "get_public_tracking",
+    "increment_sheet_view_count",
     "record_packaging_defect",
     "update_shipment_status",
     "verify_audit_chain"
@@ -6566,6 +6577,7 @@
     "features/packaging",
     "features/production",
     "hooks",
+    "hooks/technical-sheets",
     "integrations/lovable",
     "integrations/supabase",
     "lib",

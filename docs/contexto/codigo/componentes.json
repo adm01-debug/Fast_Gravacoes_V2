@@ -9888,11 +9888,12 @@
     "TechnicalKnowledgeBase"
    ],
    "export_default": "TechnicalKnowledgeBase",
-   "linhas": 248,
+   "linhas": 252,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
     "useFuseSearch",
+    "useRegisterSheetView",
     "useTechnicalSheetMutations",
     "useTechnicalSheets",
     "useTechniques"

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 274,
+ "migrations": 275,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -17992,6 +17992,11 @@
   },
   {
    "nome": "get_public_tracking",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "increment_sheet_view_count",
    "definida": true,
    "usada_em": 1
   },

@@ -1,9 +1,9 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `08b427a720` · branch `main` · 2026-11-26 15:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bb7482f807` · branch `main` · 2026-11-26 16:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T15:39:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T16:18:42Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
 
@@ -107,7 +107,7 @@ Status: **aguardando dono (DDL)**.
 **R5.5 — Sem lógica de preço na embalagem**
 Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 
-## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T15:39:00Z)
+## B. Quem pode ver/alterar o quê (RLS — banco real, snapshot de 2026-11-26T16:18:42Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -453,7 +453,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `user_roles` | AAL2 required for user_roles deletes | DELETE | authenticated | **RESTRICTIVE (E obrigatório)** | `(COALESCE((auth.jwt() ->> 'aal'::text), 'aal1'::text) = 'aal2'::text)` |  |
 | `webhook_logs` | Managers can view webhook logs | SELECT | authenticated | permissive | `app_private.has_role(( SELECT auth.uid() AS uid), 'manager'::app_role)` |  |
 
-## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T15:39:00Z)
+## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada — banco real, snapshot de 2026-11-26T16:18:42Z)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
@@ -1502,7 +1502,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | `webhook_logs` | `event` | obrigatório |
 | `webhook_logs` | `created_at` | default now() |
 
-## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T15:39:00Z)
+## D. Automações no banco (triggers e funções — regras que rodam sozinhas; banco real, snapshot de 2026-11-26T16:18:42Z)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
@@ -1574,6 +1574,7 @@ Nenhuma coluna de preço adicionada; regra confirmada como não-escopo.
 | update_push_subscriptions_updated_at | BEFORE UPDATE | `push_subscriptions` | `update_updated_at_column` |  |
 | update_report_templates_updated_at | BEFORE UPDATE | `report_templates` | `update_updated_at_column` |  |
 | update_role_permissions_updated_at | BEFORE UPDATE | `role_permissions` | `update_updated_at_column` |  |
+| security_events_limita_severidade_do_cliente | BEFORE INSERT | `security_events` | `security_events_limita_severidade_do_cliente` |  |
 | update_shift_checklist_templates_updated_at | BEFORE UPDATE | `shift_checklist_templates` | `update_updated_at_column` |  |
 | update_shift_handovers_updated_at | BEFORE UPDATE | `shift_handovers` | `update_updated_at_column` |  |
 | update_shift_pending_tasks_updated_at | BEFORE UPDATE | `shift_pending_tasks` | `update_updated_at_column` |  |
@@ -1630,6 +1631,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `get_finished_jobs_for_evolution` | Historico arquivado exige sessao com MFA verificado (aal2). | `docs/contexto/supabase/functions/public/get_finished_jobs_for_evolution__96e2d22335c352a6.sql` |
 | `get_system_status_summary` | Access denied | `docs/contexto/supabase/functions/public/get_system_status_summary__12ae32cb1ec02d01.sql` |
 | `increment_job_lost_pieces` | nenhuma linha de public.jobs atualizada para o job % (inexistente ou sem permissao de escrita) | `docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql` |
+| `list_login_lockouts` | sem permissao para consultar bloqueios de login | `docs/contexto/supabase/functions/public/list_login_lockouts__392a67ea4728569f.sql` |
 | `preventdefault_hold_shipment_update` | Envio retido pela embalagem em espera; use update_shipment_status | `docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql` |
 | `record_packaging_defect` | Não autenticado | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Quantidade deve ser positiva | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
@@ -1637,6 +1639,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `record_packaging_defect` | Sem autorização para registrar defeito nesta tarefa | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Rejeição excede a quantidade recebida (restante: %) | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
 | `record_packaging_defect` | Sem autorização para registrar defeito nesta tarefa | `docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql` |
+| `release_login_lockout` | sem permissao para liberar contas bloqueadas | `docs/contexto/supabase/functions/public/release_login_lockout__1d5042eb17707e16.sql` |
+| `resolve_kpi_alert` | sem permissao para resolver alertas de KPI | `docs/contexto/supabase/functions/public/resolve_kpi_alert__fd9014f885470e4d.sql` |
 | `update_shipment_status` | Não autenticado | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
 | `update_shipment_status` | Sem permissão para alterar envio | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
 | `update_shipment_status` | Envio não encontrado | `docs/contexto/supabase/functions/public/update_shipment_status__8b78382b7537b10e.sql` |
@@ -1651,7 +1655,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ## E. Estados, máquinas de estado e transições
 
-### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T15:39:00Z)
+### E.1 Colunas de status no banco (banco real, snapshot de 2026-11-26T16:18:42Z)
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
@@ -3373,7 +3377,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1566 testes em 141 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1572 testes em 142 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3460,6 +3464,7 @@ _nenhum item encontrado_
 | `src/features/admin/hooks/useCronHealthHistory.test.ts` | 6 | percentile (R-7) · retorna null para amostra vazia · retorna o único valor quando há uma amostra · interpola linearmente entre posições … |
 | `src/features/jobs/types/job.schema.test.ts` | 6 | jobSchema · valida a OS com a técnica textual usada no banco · recusa OS sem técnica · preserva as relações e os timestamps que a consulta traz … |
 | `src/features/notifications/hooks/useTPMNotifications.test.ts` | 6 | useTPMNotifications.sendTestNotification · registra falha em vez de sucesso quando o canal email não tem provedor · registra falha quando o canal whatsapp não tem provedor · registra sucesso quando o push é entregue ao navegador … |
+| `src/hooks/technical-sheets/useRegisterSheetView.test.ts` | 6 | useRegisterSheetView · incrementa o contador da ficha aberta · conta uma vez por ficha, mesmo com re-render · conta de novo ao abrir outra ficha … |
 | `src/lib/csvSafety.test.ts` | 6 | sanitizeCsvCell · prefixes a leading = with a quote (formula injection) · prefixes a leading + - @ with a quote · prefixes a leading tab or carriage return (used to smuggle a formula past naive checks) … |
 | `src/lib/dateUtils.test.ts` | 6 | parseDateOnly · interpreta data pura como meia-noite local · devolve null para entrada vazia ou invalida · formatDateOnly … |
 | `src/test/simulationAggregation.test.ts` | 6 | aggregateScenarioResults · soma variantes e vetores de fuzz no mesmo cenário base · não perde resultado: a soma dos grupos é o total de resultados · devolve as categorias zeradas quando não há resultado … |

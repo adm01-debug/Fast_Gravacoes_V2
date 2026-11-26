@@ -4722,6 +4722,10 @@
    "src/hooks/shift-handover/shiftHandoverTypes.ts",
    "src/integrations/supabase/client.ts"
   ],
+  "src/hooks/technical-sheets/useRegisterSheetView.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/logger.ts"
+  ],
   "src/hooks/technical-sheets/useTechnicalSheetMutations.ts": [
    "src/hooks/technical-sheets/technicalSheetsTypes.ts",
    "src/hooks/use-toast.ts",
@@ -5984,6 +5988,7 @@
    "src/components/ui/card.tsx",
    "src/features/auth/index.ts",
    "src/features/jobs/index.ts",
+   "src/hooks/technical-sheets/useRegisterSheetView.ts",
    "src/hooks/useFuseSearch.ts",
    "src/hooks/useTechnicalSheets.ts",
    "src/integrations/supabase/client.ts"

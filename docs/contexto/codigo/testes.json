@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 160,
+ "total": 161,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 135
+  "unit": 136
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 123
+   "arquivos": 124
   },
   {
    "padrao": "tests/",
@@ -834,6 +834,17 @@
     "src/features/production/services/oeeCalculations.ts"
    ],
    "casos": 4,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/hooks/technical-sheets/useRegisterSheetView.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 5,
    "suporte": false
   },
   {
@@ -1757,13 +1768,14 @@
   "src/features/production/hooks/useOperatorProductivity.ts": 1,
   "src/features/production/index.ts": 1,
   "src/features/production/services/oeeCalculations.ts": 2,
+  "src/hooks/technical-sheets/useRegisterSheetView.ts": 1,
   "src/hooks/use-modal-param.ts": 1,
   "src/hooks/use-overflowing.ts": 1,
   "src/hooks/use-smart-back.ts": 1,
   "src/hooks/useOfflineSync.ts": 1,
   "src/hooks/utils/inventoryExport.ts": 2,
   "src/i18n/index.ts": 1,
-  "src/integrations/supabase/client.ts": 14,
+  "src/integrations/supabase/client.ts": 15,
   "src/lib/calendarExports.ts": 1,
   "src/lib/circuitBreaker.ts": 3,
   "src/lib/csvSafety.ts": 1,

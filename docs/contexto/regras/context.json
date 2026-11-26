@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "08b427a7208c8a85f65151067831337784a03661",
+  "sha": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 15:58 UTC",
-  "files_total": 1647,
-  "code_files": 1451,
-  "code_lines": 216011
+  "generated_at": "2026-11-26 16:29 UTC",
+  "files_total": 1650,
+  "code_files": 1454,
+  "code_lines": 216118
  },
  "version": "1.3.2",
- "facts_hash": "e8732fd222c24964",
+ "facts_hash": "8076afc0e5791a81",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -280,8 +280,8 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 685,
-   ".ts": 417,
-   ".sql": 282,
+   ".ts": 419,
+   ".sql": 283,
    ".mjs": 50,
    ".py": 13,
    ".js": 4
@@ -14738,6 +14738,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "security_events_limita_severidade_do_cliente",
+    "when": "BEFORE INSERT",
+    "table": "security_events",
+    "function": "security_events_limita_severidade_do_cliente",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_shift_checklist_templates_updated_at",
     "when": "BEFORE UPDATE",
     "table": "shift_checklist_templates",
@@ -15814,6 +15823,21 @@
      "user_roles"
     ]
    },
+   "list_login_lockouts": {
+    "args": "p_limit integer",
+    "returns": "TABLE(id uuid, identifier text, identifier_type text, failed_attempts integer, last_failed_at timestamp with time zone, locked_until timestamp with time zone, lockout_count integer)",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/list_login_lockouts__392a67ea4728569f.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT ( app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) ) THEN RAISE EXCEPTION 'sem permissao para consultar bloqueios de login' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT l.id, l.identifier, l.identifier_type, l.failed_attempts, l.last_failed_at, l.locked_until, l.lockout_count FROM public.login_lockouts l ORDER BY (l.locked_until > now()) DESC, l.last_failed_at DESC NULLS LAST LIMIT greatest(1, least(coalesce(p_limit, 50), 200)); END;",
+    "raises": [
+     "sem permissao para consultar bloqueios de login"
+    ],
+    "tables": [
+     "login_lockouts"
+    ]
+   },
    "log_job_status_change": {
     "args": "",
     "returns": "trigger",
@@ -16165,6 +16189,38 @@
     "raises": [],
     "tables": []
    },
+   "release_login_lockout": {
+    "args": "p_identifier text, p_identifier_type text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/release_login_lockout__1d5042eb17707e16.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT ( app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) ) THEN RAISE EXCEPTION 'sem permissao para liberar contas bloqueadas' USING ERRCODE = '42501'; END IF; UPDATE public.login_lockouts SET failed_attempts = 0, locked_until = NULL, updated_at = now() WHERE identifier = p_identifier AND identifier_type = p_identifier_type; RETURN FOUND; END;",
+    "raises": [
+     "sem permissao para liberar contas bloqueadas"
+    ],
+    "tables": [
+     "login_lockouts"
+    ]
+   },
+   "resolve_kpi_alert": {
+    "args": "p_alert_id uuid",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/resolve_kpi_alert__fd9014f885470e4d.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_autorizado boolean; BEGIN SELECT app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) INTO v_autorizado; IF coalesce(v_autorizado, false) = false THEN RAISE EXCEPTION 'sem permissao para resolver alertas de KPI' USING ERRCODE = '42501'; END IF; UPDATE public.kpi_alerts SET is_resolved = true WHERE id = p_alert_id AND is_resolved IS DISTINCT FROM true; RETURN FOUND; END;",
+    "raises": [
+     "sem permissao para resolver alertas de KPI"
+    ],
+    "tables": [
+     "kpi_alerts",
+     "true",
+     "v_autorizado"
+    ]
+   },
    "rollback_inventory_stock": {
     "args": "",
     "returns": "trigger",
@@ -16211,6 +16267,17 @@
      "maintenance_checklist_items",
      "maintenance_checklists"
     ]
+   },
+   "security_events_limita_severidade_do_cliente": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/security_events_limita_severidade_do_cliente__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF auth.uid() IS NOT NULL AND NEW.severity NOT IN ('info', 'warning') THEN NEW.severity := 'warning'; END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": []
    },
    "snapshot_cron_health": {
     "args": "",
@@ -19792,6 +19859,7 @@
    "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
    "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
    "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
+   "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
    "supabase/seed.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -21841,6 +21909,14 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_sheet_view_count",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
    }
   ],
   "raises": [
@@ -21935,6 +22011,11 @@
     "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql"
    },
    {
+    "function": "list_login_lockouts",
+    "msg": "sem permissao para consultar bloqueios de login",
+    "src": "docs/contexto/supabase/functions/public/list_login_lockouts__392a67ea4728569f.sql"
+   },
+   {
     "function": "preventdefault_hold_shipment_update",
     "msg": "Envio retido pela embalagem em espera; use update_shipment_status",
     "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql"
@@ -21968,6 +22049,16 @@
     "function": "record_packaging_defect",
     "msg": "Sem autorização para registrar defeito nesta tarefa",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "release_login_lockout",
+    "msg": "sem permissao para liberar contas bloqueadas",
+    "src": "docs/contexto/supabase/functions/public/release_login_lockout__1d5042eb17707e16.sql"
+   },
+   {
+    "function": "resolve_kpi_alert",
+    "msg": "sem permissao para resolver alertas de KPI",
+    "src": "docs/contexto/supabase/functions/public/resolve_kpi_alert__fd9014f885470e4d.sql"
    },
    {
     "function": "update_shipment_status",
@@ -25682,10 +25773,11 @@
      "archive_jobs",
      "check_and_notify_kpi_alert",
      "get_finished_jobs_for_evolution",
+     "increment_sheet_view_count",
      "update_shipment_status",
      "verify_audit_chain"
     ],
-    "deps_count": 224
+    "deps_count": 225
    },
    {
     "path": "",
@@ -28110,6 +28202,10 @@
     "file": "src/hooks/shift-handover/useShiftHandoverQueries.ts"
    },
    {
+    "name": "useRegisterSheetView",
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.ts"
+   },
+   {
     "name": "useTechnicalSheetMutations",
     "file": "src/hooks/technical-sheets/useTechnicalSheetMutations.ts"
    },
@@ -30011,8 +30107,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 63,
-   "lines": 8508,
+   "files": 65,
+   "lines": 8605,
    "tables": [
     "abc_activities",
     "abc_activity_rates",
@@ -30180,6 +30276,8 @@
     "src/hooks/shift-handover/useShiftHandoverMutations.ts",
     "src/hooks/shift-handover/useShiftHandoverQueries.ts",
     "src/hooks/technical-sheets/technicalSheetsTypes.ts",
+    "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "src/hooks/technical-sheets/useRegisterSheetView.ts",
     "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
     "src/hooks/technical-sheets/useTechnicalSheetsQueries.ts",
     "src/hooks/utils/focus.ts",
@@ -30379,7 +30477,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18043,
+   "lines": 18047,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -30898,8 +30996,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 274,
-   "lines": 17642,
+   "files": 275,
+   "lines": 17648,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -33699,6 +33797,9 @@
    "ghost_rpc": [
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/regras_negocio/test_generate.py"
+   ],
+   "increment_sheet_view_count": [
+    "src/hooks/technical-sheets/useRegisterSheetView.ts"
    ],
    "insert_csp_report_dedup": [
     "supabase/functions/csp-report/index.ts"
@@ -54297,6 +54398,30 @@
     "name": "preserva ação enfileirada depois do saldo do lote e descarta as já resolvidas (thread nova 1)"
    },
    {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "useRegisterSheetView"
+   },
+   {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "incrementa o contador da ficha aberta"
+   },
+   {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "conta uma vez por ficha, mesmo com re-render"
+   },
+   {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "conta de novo ao abrir outra ficha"
+   },
+   {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "não conta sem ficha selecionada"
+   },
+   {
+    "file": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+    "name": "não quebra o fluxo quando a RPC falha"
+   },
+   {
     "file": "src/lib/calendarExports.test.ts",
     "name": "calendarExports"
    },
@@ -62635,6 +62760,15 @@
     "src": "docs/contexto/supabase/snapshot.json"
    },
    {
+    "name": "security_events_limita_severidade_do_cliente",
+    "when": "BEFORE INSERT",
+    "table": "security_events",
+    "function": "security_events_limita_severidade_do_cliente",
+    "condition": "",
+    "each": "row",
+    "src": "docs/contexto/supabase/snapshot.json"
+   },
+   {
     "name": "update_shift_checklist_templates_updated_at",
     "when": "BEFORE UPDATE",
     "table": "shift_checklist_templates",
@@ -63711,6 +63845,21 @@
      "user_roles"
     ]
    },
+   "list_login_lockouts": {
+    "args": "p_limit integer",
+    "returns": "TABLE(id uuid, identifier text, identifier_type text, failed_attempts integer, last_failed_at timestamp with time zone, locked_until timestamp with time zone, lockout_count integer)",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/list_login_lockouts__392a67ea4728569f.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT ( app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) ) THEN RAISE EXCEPTION 'sem permissao para consultar bloqueios de login' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT l.id, l.identifier, l.identifier_type, l.failed_attempts, l.last_failed_at, l.locked_until, l.lockout_count FROM public.login_lockouts l ORDER BY (l.locked_until > now()) DESC, l.last_failed_at DESC NULLS LAST LIMIT greatest(1, least(coalesce(p_limit, 50), 200)); END;",
+    "raises": [
+     "sem permissao para consultar bloqueios de login"
+    ],
+    "tables": [
+     "login_lockouts"
+    ]
+   },
    "log_job_status_change": {
     "args": "",
     "returns": "trigger",
@@ -64062,6 +64211,38 @@
     "raises": [],
     "tables": []
    },
+   "release_login_lockout": {
+    "args": "p_identifier text, p_identifier_type text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/release_login_lockout__1d5042eb17707e16.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT ( app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) ) THEN RAISE EXCEPTION 'sem permissao para liberar contas bloqueadas' USING ERRCODE = '42501'; END IF; UPDATE public.login_lockouts SET failed_attempts = 0, locked_until = NULL, updated_at = now() WHERE identifier = p_identifier AND identifier_type = p_identifier_type; RETURN FOUND; END;",
+    "raises": [
+     "sem permissao para liberar contas bloqueadas"
+    ],
+    "tables": [
+     "login_lockouts"
+    ]
+   },
+   "resolve_kpi_alert": {
+    "args": "p_alert_id uuid",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/resolve_kpi_alert__fd9014f885470e4d.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_autorizado boolean; BEGIN SELECT app_private.has_role(auth.uid(), 'admin'::app_role) OR app_private.has_role(auth.uid(), 'manager'::app_role) INTO v_autorizado; IF coalesce(v_autorizado, false) = false THEN RAISE EXCEPTION 'sem permissao para resolver alertas de KPI' USING ERRCODE = '42501'; END IF; UPDATE public.kpi_alerts SET is_resolved = true WHERE id = p_alert_id AND is_resolved IS DISTINCT FROM true; RETURN FOUND; END;",
+    "raises": [
+     "sem permissao para resolver alertas de KPI"
+    ],
+    "tables": [
+     "kpi_alerts",
+     "true",
+     "v_autorizado"
+    ]
+   },
    "rollback_inventory_stock": {
     "args": "",
     "returns": "trigger",
@@ -64108,6 +64289,17 @@
      "maintenance_checklist_items",
      "maintenance_checklists"
     ]
+   },
+   "security_events_limita_severidade_do_cliente": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "docs/contexto/supabase/functions/public/security_events_limita_severidade_do_cliente__12ae32cb1ec02d01.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF auth.uid() IS NOT NULL AND NEW.severity NOT IN ('info', 'warning') THEN NEW.severity := 'warning'; END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": []
    },
    "snapshot_cron_health": {
     "args": "",
@@ -64421,6 +64613,11 @@
     "src": "docs/contexto/supabase/functions/public/increment_job_lost_pieces__77e4a0e80d908dca.sql"
    },
    {
+    "function": "list_login_lockouts",
+    "msg": "sem permissao para consultar bloqueios de login",
+    "src": "docs/contexto/supabase/functions/public/list_login_lockouts__392a67ea4728569f.sql"
+   },
+   {
     "function": "preventdefault_hold_shipment_update",
     "msg": "Envio retido pela embalagem em espera; use update_shipment_status",
     "src": "docs/contexto/supabase/functions/public/preventdefault_hold_shipment_update__12ae32cb1ec02d01.sql"
@@ -64454,6 +64651,16 @@
     "function": "record_packaging_defect",
     "msg": "Sem autorização para registrar defeito nesta tarefa",
     "src": "docs/contexto/supabase/functions/public/record_packaging_defect__2c05d738693b43c4.sql"
+   },
+   {
+    "function": "release_login_lockout",
+    "msg": "sem permissao para liberar contas bloqueadas",
+    "src": "docs/contexto/supabase/functions/public/release_login_lockout__1d5042eb17707e16.sql"
+   },
+   {
+    "function": "resolve_kpi_alert",
+    "msg": "sem permissao para resolver alertas de KPI",
+    "src": "docs/contexto/supabase/functions/public/resolve_kpi_alert__fd9014f885470e4d.sql"
    },
    {
     "function": "update_shipment_status",
@@ -68301,7 +68508,8 @@
    "supabase/migrations/20261129110000_refresh_machine_health_metrics.sql",
    "supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql",
    "supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql",
-   "supabase/migrations/20261129200000_security_events_severidade_cliente.sql"
+   "supabase/migrations/20261129200000_security_events_severidade_cliente.sql",
+   "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
   ],
   "security_definer_fns": [
    "app_private.functions_base_url",
@@ -68341,6 +68549,7 @@
    "has_role",
    "increment_sheet_view_count",
    "is_staff",
+   "list_login_lockouts",
    "log_job_status_change",
    "log_role_changes",
    "log_security_violation",
@@ -68356,8 +68565,11 @@
    "purge_old_logs",
    "record_packaging_defect",
    "refresh_machine_health_metrics",
+   "release_login_lockout",
+   "resolve_kpi_alert",
    "rollback_inventory_stock",
    "rollup_cron_p95_daily",
+   "security_events_limita_severidade_do_cliente",
    "snapshot_cron_health",
    "trigger_auto_promotion",
    "trigger_send_tpm_email",
@@ -70285,6 +70497,14 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_sheet_view_count",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
    }
   ],
   "guards": [
@@ -92015,6 +92235,32 @@
     }
    ]
   },
+  "src/hooks/technical-sheets/useRegisterSheetView.test.ts": {
+   "path": "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+   "lines": 65,
+   "is_test": true,
+   "tests": [
+    "useRegisterSheetView",
+    "incrementa o contador da ficha aberta",
+    "conta uma vez por ficha, mesmo com re-render",
+    "conta de novo ao abrir outra ficha",
+    "não conta sem ficha selecionada",
+    "não quebra o fluxo quando a RPC falha"
+   ]
+  },
+  "src/hooks/technical-sheets/useRegisterSheetView.ts": {
+   "path": "src/hooks/technical-sheets/useRegisterSheetView.ts",
+   "lines": 32,
+   "exports": [
+    "const useRegisterSheetView"
+   ],
+   "rpc": [
+    "increment_sheet_view_count"
+   ],
+   "hooks": [
+    "useRegisterSheetView"
+   ]
+  },
   "src/hooks/technical-sheets/useTechnicalSheetMutations.ts": {
    "path": "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
    "lines": 276,
@@ -95273,7 +95519,7 @@
   },
   "src/pages/TechnicalKnowledgeBase.tsx": {
    "path": "src/pages/TechnicalKnowledgeBase.tsx",
-   "lines": 248,
+   "lines": 252,
    "exports": [
     "default TechnicalKnowledgeBase"
    ],
@@ -100558,6 +100804,11 @@
    "path": "supabase/migrations/20261129210000_production_losses_contador_atomico.sql",
    "lines": 35
   },
+  "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql": {
+   "path": "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql",
+   "lines": 6,
+   "uses_service_role": true
+  },
   "tests/e2e/accessibility.spec.ts": {
    "path": "tests/e2e/accessibility.spec.ts",
    "lines": 208,
@@ -101014,10 +101265,22 @@
   }
  },
  "git": {
-  "sha": "08b427a7208c8a85f65151067831337784a03661",
+  "sha": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "bb7482f",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: registra acesso a ficha tecnica e alimenta o contador (#327)",
+    "files": [
+     "src/hooks/technical-sheets/useRegisterSheetView.test.ts",
+     "src/hooks/technical-sheets/useRegisterSheetView.ts",
+     "src/pages/TechnicalKnowledgeBase.tsx",
+     "supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql"
+    ]
+   },
    {
     "sha": "08b427a",
     "date": "2026-11-26",
@@ -101409,17 +101672,6 @@
     "files": [
      "src/routes/AppRoutes.tsx",
      "tests/e2e/rotas-protegidas.spec.ts"
-    ]
-   },
-   {
-    "sha": "d592aac",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: fecha a escalada de privilegio no external-db-bridge (etapa 056 / SEG-04) (#295)",
-    "files": [
-     "docs/ARCHITECTURE.md",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/validate_contract.ts"
     ]
    }
   ],

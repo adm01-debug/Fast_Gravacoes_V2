@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1000,
- "arestas": 4615,
+ "nos": 1001,
+ "arestas": 4618,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 190
+   "importado_por": 192
   },
   {
    "arquivo": "src/features/jobs/index.ts",
@@ -62,7 +62,7 @@
   },
   {
    "arquivo": "src/lib/logger.ts",
-   "importado_por": 61
+   "importado_por": 62
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
@@ -313,7 +313,7 @@
   },
   {
    "modulo": "pages",
-   "depende_de": 56,
+   "depende_de": 57,
    "importado_por": 3
   },
   {

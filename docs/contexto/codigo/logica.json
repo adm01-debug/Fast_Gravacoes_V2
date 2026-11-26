@@ -453,7 +453,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 176,
+   "usado_por": 177,
    "usado_por_modulos": [
     "components/auth",
     "components/calendar",
@@ -489,7 +489,7 @@
     "lib/offline",
     "pages"
    ],
-   "coberto_por_testes": 14,
+   "coberto_por_testes": 15,
    "orfao": false
   },
   {
@@ -1006,7 +1006,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 59,
+   "usado_por": 60,
    "usado_por_modulos": [
     "components/auth",
     "components/chat",
@@ -1027,6 +1027,7 @@
     "features/production",
     "hooks",
     "hooks/abc",
+    "hooks/technical-sheets",
     "integrations/supabase",
     "lib",
     "lib/offline",

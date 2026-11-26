@@ -1,9 +1,9 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `08b427a720` · branch `main` · 2026-11-26 15:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bb7482f807` · branch `main` · 2026-11-26 16:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
-> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-26T15:39:00Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
+> Matriz RLS, funções `SECURITY DEFINER` e colunas (tenant, soft delete, PII, dinheiro): **banco real, snapshot de 2026-11-26T16:18:42Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
 
 ## Perfis / roles identificados
 
@@ -14,7 +14,7 @@
 - Claims do JWT usados em políticas/funções: `aal`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `docs/contexto/supabase/`): `has_any_active_role`, `has_permission`, `has_role`, `is_staff`
 
-## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-26T15:39:00Z)
+## Matriz tabela × operação → quem pode (políticas RLS — banco real, snapshot de 2026-11-26T16:18:42Z)
 
 > Como ler: políticas **permissive** da mesma tabela e comando somam-se com **OU**; cada **RESTRICTIVE** é um **E** obrigatório por cima delas (sozinha não libera nada). `USING` filtra a linha existente (SELECT/UPDATE/DELETE); `WITH CHECK` valida a linha nova (INSERT/UPDATE). Em `ALL`/`UPDATE` sem `WITH CHECK` o Postgres usa o `USING` também como `WITH CHECK`.
 
@@ -155,7 +155,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo. Célula só com **E AINDA EXIGE (RESTRICTIVE)** = ninguém passa (restritiva não concede).
 
-## Onde o RLS é IGNORADO (service_role) — 103 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 104 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -260,6 +260,7 @@
 - `supabase/migrations/20261129160000_maquina_sem_os_e_arquivadas.sql`
 - `supabase/migrations/20261129190000_realtime_seguranca_e_crons_por_url_derivada.sql`
 - `supabase/migrations/20261129200000_security_events_severidade_cliente.sql`
+- `supabase/migrations/20261129230000_restore_increment_sheet_view_count_execute.sql`
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -300,6 +301,7 @@
 - `has_role`
 - `increment_sheet_view_count`
 - `is_staff`
+- `list_login_lockouts`
 - `log_job_status_change`
 - `log_role_changes`
 - `log_security_violation`
@@ -315,8 +317,11 @@
 - `purge_old_logs`
 - `record_packaging_defect`
 - `refresh_machine_health_metrics`
+- `release_login_lockout`
+- `resolve_kpi_alert`
 - `rollback_inventory_stock`
 - `rollup_cron_p95_daily`
+- `security_events_limita_severidade_do_cliente`
 - `snapshot_cron_health`
 - `trigger_auto_promotion`
 - `trigger_send_tpm_email`
@@ -349,7 +354,7 @@ Middleware matcher (Next.js): nenhum
 | grant | anon | execute | `app_private.has_role` |
 | grant | anon, authenticated | execute | `get_public_tracking`, `get_public_tracking`, `get_public_tracking` |
 | grant | authenticated | all | `packaging_waste` |
-| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +7 |
+| grant | authenticated | execute | `has_role`, `get_user_role`, `verify_audit_chain`, `verify_audit_chain`, `increment_sheet_view_count`, `refresh_operator_rankings`, `calculate_days_of_supply`, `has_role`, `get_cron_health`, `get_system_status_summary`, `get_system_status_summary`, `get_packaging_leaderboard`, `get_packaging_manifest`, `approve_maintenance_record`, `record_packaging_defect` … +8 |
 | grant | authenticated | select | `packaging_settings`, `cron_health_history`, `cron_p95_daily`, `edge_health_history`, `packaging_equipment` |
 | grant | authenticated | select, insert, update, delete | `packaging_tasks`, `packaging_defects`, `packaging_checklist_items`, `packaging_task_checklist`, `packaging_sla_overrides` |
 | grant | authenticated, service_role | execute | `audit_logistics_changes`, `audit_technical_sheet_changes`, `audit_tpm_execution_changes`, `check_job_overlap`, `create_technical_sheet_version`, `handle_new_user`, `log_role_changes`, `log_security_violation`, `log_technical_sheet_change`, `notify_loss_risk`, `notify_tpm_email`, `trigger_auto_promotion`, `update_inventory_stock`, `validate_inventory_stock`, `verify_audit_chain` … +15 |

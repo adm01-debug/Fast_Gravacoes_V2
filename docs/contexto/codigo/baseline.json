@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "08b427a7208c8a85f65151067831337784a03661",
+  "commit": "bb7482f807f85b9a8a8893c022c1116d6b80c23c",
   "branch": "main",
-  "data_commit": "2026-11-26T12:51:34-03:00",
+  "data_commit": "2026-11-26T13:26:07-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "bb7482f",
+    "data": "2026-11-26",
+    "assunto": "feat: registra acesso a ficha tecnica e alimenta o contador (#327)"
+   },
    {
     "sha": "08b427a",
     "data": "2026-11-26",
@@ -126,15 +131,10 @@
     "sha": "970aef7",
     "data": "2026-11-25",
     "assunto": "feat: avisa o que a exclusao em massa apaga e quais OS estao impedidas (etapa 037) (#306)"
-   },
-   {
-    "sha": "d139424",
-    "data": "2026-11-25",
-    "assunto": "feat: centraliza quais status ocupam a maquina no agendamento (etapa 052) (#302)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 299,
+  "arquivos_mudados_7d": 303,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
@@ -302,11 +302,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 176
+    "commits": 177
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 10
+    "commits": 9
    },
    {
     "autor": "dependabot[bot]",
@@ -327,21 +327,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1649,
-  "arquivos_codigo": 1166,
-  "linhas_codigo": 197713,
+  "arquivos_total": 1652,
+  "arquivos_codigo": 1168,
+  "linhas_codigo": 197814,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
   "itens_menu": 70,
   "modulos": 75,
   "componentes": 624,
-  "hooks": 198,
+  "hooks": 199,
   "edge_functions": 33,
   "tabelas": 133,
-  "migrations": 274,
+  "migrations": 275,
   "cron_jobs": 6,
-  "testes": 160,
+  "testes": 161,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -496,8 +496,8 @@
    "linhas": 49506
   },
   "src/hooks": {
-   "arquivos": 63,
-   "linhas": 8508
+   "arquivos": 65,
+   "linhas": 8605
   },
   "src/i18n": {
    "arquivos": 1,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 18043
+   "linhas": 18047
   },
   "src/providers": {
    "arquivos": 2,

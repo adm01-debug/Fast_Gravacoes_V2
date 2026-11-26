@@ -4583,6 +4583,7 @@
     "useRealtimeChannel",
     "useReducedMotion",
     "useRef",
+    "useRegisterSheetView",
     "useRipple",
     "useSchedulingData",
     "useSearchParams",
@@ -4638,6 +4639,7 @@
     "usePrefersReducedMotion",
     "usePresenceChannel",
     "useRealtimeChannel",
+    "useRegisterSheetView",
     "useRipple",
     "useSchedulingData",
     "useSessionTimeout",
@@ -4679,7 +4681,8 @@
     "techniques"
    ],
    "rpcs": [
-    "archive_jobs"
+    "archive_jobs",
+    "increment_sheet_view_count"
    ],
    "edges": [
     "bitrix24-sync",
@@ -4693,12 +4696,14 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 117,
+   "arquivos_puxados": 118,
    "diretos": {
     "tabelas": [
      "machines"
     ],
-    "rpcs": [],
+    "rpcs": [
+     "increment_sheet_view_count"
+    ],
     "edges": []
    }
   },

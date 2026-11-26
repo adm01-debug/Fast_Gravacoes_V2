@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 198,
+ "total": 199,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -3737,6 +3737,28 @@
     "src/hooks/useShiftHandover.ts"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/technical-sheets/useRegisterSheetView.ts",
+   "hooks_exportados": [
+    "useRegisterSheetView"
+   ],
+   "linhas": 32,
+   "dominio": "hooks/technical-sheets",
+   "tabelas": [],
+   "rpcs": [
+    "increment_sheet_view_count"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/TechnicalKnowledgeBase.tsx"
+   ],
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/technical-sheets/useTechnicalSheetMutations.ts",
