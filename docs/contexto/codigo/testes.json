@@ -5,18 +5,18 @@
   "vitest",
   "playwright"
  ],
- "total": 168,
+ "total": 170,
  "suporte_total": 6,
  "por_tipo": {
   "contrato": 1,
   "e2e": 19,
   "pytest": 5,
-  "unit": 143
+  "unit": 145
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 131
+   "arquivos": 133
   },
   {
    "padrao": "tests/",
@@ -433,6 +433,17 @@
    "suporte": false
   },
   {
+   "arquivo": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/features/admin/components/security/CspViolationsPanel.tsx",
+    "src/features/admin/hooks/useCspViolationReports.ts"
+   ],
+   "casos": 4,
+   "suporte": false
+  },
+  {
    "arquivo": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
    "tipo": "unit",
    "linhas": 72,
@@ -481,6 +492,16 @@
     "src/features/admin/hooks/useCronP95Daily.ts"
    ],
    "casos": 7,
+   "suporte": false
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCspViolationReports.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/features/admin/hooks/useCspViolationReports.ts"
+   ],
+   "casos": 12,
    "suporte": false
   },
   {
@@ -1795,11 +1816,13 @@
   "src/features/admin/components/audit/AuditEntryCard.tsx": 1,
   "src/features/admin/components/monitoring/EdgeHealthCard.tsx": 1,
   "src/features/admin/components/monitoring/SystemMetricsCard.tsx": 1,
+  "src/features/admin/components/security/CspViolationsPanel.tsx": 1,
   "src/features/admin/components/security/LoginLockoutsPanel.tsx": 1,
   "src/features/admin/components/security/MFASettings.tsx": 1,
   "src/features/admin/components/security/SecurityOverviewCard.tsx": 1,
   "src/features/admin/hooks/useCronHealthHistory.ts": 1,
   "src/features/admin/hooks/useCronP95Daily.ts": 1,
+  "src/features/admin/hooks/useCspViolationReports.ts": 2,
   "src/features/admin/hooks/useEdgeHealthHistory.ts": 2,
   "src/features/admin/hooks/useLoginLockouts.ts": 2,
   "src/features/admin/hooks/useSystemMetrics.ts": 2,

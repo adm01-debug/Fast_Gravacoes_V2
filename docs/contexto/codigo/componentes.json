@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 627,
+ "total": 628,
  "orfaos": 30,
  "nomes_duplicados": {
   "AdjustmentParameters": [
@@ -5470,7 +5470,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 283,
+   "usado_por": 284,
    "orfao": false
   },
   {
@@ -5560,7 +5560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 346,
+   "usado_por": 347,
    "orfao": false
   },
   {
@@ -6102,7 +6102,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 60,
+   "usado_por": 61,
    "orfao": false
   },
   {
@@ -6321,7 +6321,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "orfao": false
   },
   {
@@ -6908,6 +6908,22 @@
     "useBlockedIPsHistory",
     "useRealtimeBlockedIPs",
     "useUnblockIP"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/features/admin/components/security/CspViolationsPanel.tsx",
+   "exports": [
+    "CspViolationsPanel"
+   ],
+   "export_default": null,
+   "linhas": 160,
+   "dominio": "features/admin",
+   "hooks_locais": [
+    "useCspViolationReports"
    ],
    "tabelas": [],
    "edges": [],
@@ -9790,7 +9806,7 @@
     "SecurityDashboard"
    ],
    "export_default": "SecurityDashboard",
-   "linhas": 266,
+   "linhas": 275,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

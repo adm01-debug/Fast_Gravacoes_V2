@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "39ac1a47981685feba7863b0f69656795e24602f",
+  "commit": "8335b0288f888f49ec99339e70a26e1bc34df358",
   "branch": "main",
-  "data_commit": "2026-11-26T20:40:55-03:00",
+  "data_commit": "2026-11-26T21:13:39-03:00",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "ultimos_commits": [
+   {
+    "sha": "8335b02",
+    "data": "2026-11-26",
+    "assunto": "feat: tela de violacoes de CSP no painel de seguranca (#342)"
+   },
    {
     "sha": "39ac1a4",
     "data": "2026-11-26",
@@ -126,27 +131,22 @@
     "sha": "0c881dd",
     "data": "2026-11-25",
     "assunto": "fix: OS com tecnica textual deixa de falhar na validacao do schema (#317)"
-   },
-   {
-    "sha": "8b6619f",
-    "data": "2026-11-25",
-    "assunto": "fix: regioes rolaveis de rastreabilidade e presets aceitam Tab (#316)"
    }
   ],
   "janelas_relativas_a": "data do commit HEAD",
-  "arquivos_mudados_7d": 314,
+  "arquivos_mudados_7d": 317,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/features/analytics",
     "mudancas": 53
    },
    {
-    "pasta": "src/features/jobs",
-    "mudancas": 41
+    "pasta": "src/features/admin",
+    "mudancas": 42
    },
    {
-    "pasta": "src/features/admin",
-    "mudancas": 38
+    "pasta": "src/features/jobs",
+    "mudancas": 41
    },
    {
     "pasta": "src/features/notifications",
@@ -302,7 +302,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 190
+    "commits": 191
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -327,21 +327,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1668,
-  "arquivos_codigo": 1181,
-  "linhas_codigo": 199138,
+  "arquivos_total": 1672,
+  "arquivos_codigo": 1185,
+  "linhas_codigo": 199693,
   "rotas": 58,
   "rotas_http_backend": 0,
   "vistas_por_id": 0,
   "itens_menu": 70,
   "modulos": 75,
-  "componentes": 627,
-  "hooks": 202,
+  "componentes": 628,
+  "hooks": 203,
   "edge_functions": 33,
   "tabelas": 133,
   "migrations": 278,
   "cron_jobs": 6,
-  "testes": 168,
+  "testes": 170,
   "workflows": 12,
   "scripts": 41,
   "docs_md": 108
@@ -492,8 +492,8 @@
    "linhas": 1341
   },
   "src/features": {
-   "arquivos": 358,
-   "linhas": 50763
+   "arquivos": 362,
+   "linhas": 51309
   },
   "src/hooks": {
    "arquivos": 65,
@@ -517,7 +517,7 @@
   },
   "src/pages": {
    "arquivos": 63,
-   "linhas": 18077
+   "linhas": 18086
   },
   "src/providers": {
    "arquivos": 2,

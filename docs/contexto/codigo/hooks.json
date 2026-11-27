@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 202,
+ "total": 203,
  "hooks": [
   {
    "arquivo": "src/components/accessibility/AccessibilityProvider.tsx",
@@ -917,6 +917,26 @@
     "src/features/admin/components/monitoring/CronP95TrendCard.tsx"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/admin/hooks/useCspViolationReports.ts",
+   "hooks_exportados": [
+    "useCspViolationReports"
+   ],
+   "linhas": 173,
+   "dominio": "features/admin",
+   "tabelas": [
+    "csp_violation_reports"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/admin/components/security/CspViolationsPanel.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/features/admin/hooks/useDashboardPresets.ts",

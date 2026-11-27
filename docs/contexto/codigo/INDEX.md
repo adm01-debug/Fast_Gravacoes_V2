@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `39ac1a47981685feba7863b0f69656795e24602f` (2026-11-26T20:40:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8335b0288f888f49ec99339e70a26e1bc34df358` (2026-11-26T21:13:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges, transitivo por import estático; `diretos` = só a tela e seus imports de 1º nível; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1117), SQL (286), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
+- linguagens: TypeScript (1121), SQL (286), Markdown (108), JavaScript (54), JSON (33), YAML (15), Python (13), Shell (6)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1668 |
-| arquivos_codigo | 1181 |
-| linhas_codigo | 199138 |
+| arquivos_total | 1672 |
+| arquivos_codigo | 1185 |
+| linhas_codigo | 199693 |
 | rotas | 58 |
 | rotas_http_backend | 0 |
 | vistas_por_id | 0 |
 | itens_menu | 70 |
 | modulos | 75 |
-| componentes | 627 |
-| hooks | 202 |
+| componentes | 628 |
+| hooks | 203 |
 | edge_functions | 33 |
 | tabelas | 133 |
 | migrations | 278 |
 | cron_jobs | 6 |
-| testes | 168 |
+| testes | 170 |
 | workflows | 12 |
 | scripts | 41 |
 | docs_md | 108 |
 
 ## Onde ficam as coisas
 - telas: src/pages (56)
-- componentes: src/components (404), src/features (148), src/pages (56)
-- hooks: src/features (117), src/hooks (55), src/components (15)
+- componentes: src/components (404), src/features (149), src/pages (56)
+- hooks: src/features (118), src/hooks (55), src/components (15)
 - servicos_logica: src/lib (42), scripts/graphify (5), src/integrations (3)
-- testes: co-localizado (*.test) (131), tests/ (19), outro (18)
+- testes: co-localizado (*.test) (133), tests/ (19), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (6), scripts/graphify (5), scripts/inventario (5)
@@ -93,7 +93,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/traceability | 0 | 0 | 13 | 18 | 1 | 8 |
 | components/ui | 0 | 0 | 61 | 12 | 0 | 1 |
 | contexts | 0 | 0 | 14 | 22 | 0 | 7 |
-| features/admin | 0 | 0 | 58 | 66 | 2 | 38 |
+| features/admin | 0 | 0 | 60 | 67 | 2 | 39 |
 | features/analytics | 0 | 0 | 76 | 56 | 3 | 40 |
 | features/auth | 0 | 0 | 12 | 8 | 2 | 4 |
 | features/inventory | 0 | 0 | 9 | 13 | 1 | 9 |
@@ -105,7 +105,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 0 | 0 | 45 | 62 | 3 | 36 |
 | hooks/abc | 0 | 0 | 5 | 6 | 0 | 7 |
 | lib | 0 | 0 | 38 | 15 | 2 | 15 |
-| pages | 67 | 56 | 56 | 212 | 13 | 112 |
+| pages | 67 | 56 | 56 | 213 | 13 | 113 |
 
 ## Rotas (url → arquivo)
 - `/` [tela] → src/pages/Index.tsx (protegida)
@@ -248,8 +248,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 0
 
 ## Grafo de código (graphify)
-- 8773 nós · 33156 arestas · 404 comunidades · grafo do commit `39ac1a47`
-- comunidades maiores: Card (227), vitest (163), analytics/index.ts (159), Button (151), Input (142), lucide-react (142), client.ts (128), package.json (120), cn (117), PendingQueue.tsx (117), @tanstack/react-query (114), generate.py (113)
+- 8798 nós · 33253 arestas · 412 comunidades · grafo do commit `8335b028`
+- comunidades maiores: Card (249), ResponsiveContainer (164), client.ts (160), Input (153), Badge (150), Button (149), vitest (136), cn (128), package.json (127), snapshot.py (120), MainLayout.tsx (114), generate.py (111)
 - símbolos mais chamados: cn() (src/lib/utils.ts), Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Button (src/components/ui/button.tsx), Badge (src/components/ui/badge.tsx), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), CardDescription (src/components/ui/card.tsx), Input (src/components/ui/input.tsx), Skeleton() (src/components/ui/skeleton.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -371,6 +371,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-26 `8335b02` feat: tela de violacoes de CSP no painel de seguranca (#342)
 - 2026-11-26 `39ac1a4` feat: mostra a saude real das funcoes de servidor no monitoramento (#341)
 - 2026-11-26 `3aab3c4` feat: tela para ver e liberar contas bloqueadas por tentativas de login (#329)
 - 2026-11-26 `5f6a6c5` feat: cria tela e acao para os alertas de kpi persistidos (#328)
@@ -385,7 +386,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `c0d5d7d` fix: recalculo de ranking volta a gravar e ganha botao na tela (#330)
 - 2026-11-26 `a8121c4` fix: cancela o timer do ripple no unmount (CI vermelho por timer vazado) (#331)
 - 2026-11-26 `bb7482f` feat: registra acesso a ficha tecnica e alimenta o contador (#327)
-- 2026-11-26 `08b427a` feat: tela para registrar perdas da OS e alimentar o OEE (#325)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

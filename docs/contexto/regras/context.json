@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "39ac1a47981685feba7863b0f69656795e24602f",
+  "sha": "8335b0288f888f49ec99339e70a26e1bc34df358",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
-  "generated_at": "2026-11-26 23:42 UTC",
-  "files_total": 1666,
-  "code_files": 1470,
-  "code_lines": 217577
+  "generated_at": "2026-11-27 00:23 UTC",
+  "files_total": 1670,
+  "code_files": 1474,
+  "code_lines": 218132
  },
  "version": "1.3.2",
- "facts_hash": "0b74e12a570b833d",
+ "facts_hash": "2faabee454804fbc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -279,8 +279,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 692,
-   ".ts": 425,
+   ".tsx": 694,
+   ".ts": 427,
    ".sql": 286,
    ".mjs": 50,
    ".py": 13,
@@ -25326,6 +25326,7 @@
      "bitrix24_sync_history",
      "blocked_ips",
      "business_config",
+     "csp_violation_reports",
      "daily_summaries",
      "dashboard_presets",
      "efficiency_alert_history",
@@ -25391,7 +25392,7 @@
      "get_finished_jobs_for_evolution",
      "verify_audit_chain"
     ],
-    "deps_count": 216
+    "deps_count": 218
    },
    {
     "path": "",
@@ -27472,7 +27473,7 @@
     "file": ".github/workflows/settings-guard.yml"
    }
   ],
-  "components_count": 593,
+  "components_count": 595,
   "hooks": [
    {
     "name": "useContacts",
@@ -27653,6 +27654,10 @@
    {
     "name": "useCronP95Daily",
     "file": "src/features/admin/hooks/useCronP95Daily.ts"
+   },
+   {
+    "name": "useCspViolationReports",
+    "file": "src/features/admin/hooks/useCspViolationReports.ts"
    },
    {
     "name": "useDashboardPresets",
@@ -29135,8 +29140,8 @@
   },
   {
    "module": "src/features/admin",
-   "files": 70,
-   "lines": 8778,
+   "files": 74,
+   "lines": 9324,
    "tables": [
     "abc_job_costs",
     "audit_log",
@@ -29146,6 +29151,7 @@
     "business_config",
     "cron_health_history",
     "cron_p95_daily",
+    "csp_violation_reports",
     "daily_summaries",
     "dashboard_presets",
     "edge_health_history",
@@ -29181,6 +29187,7 @@
     "SystemMetricsCard.tsx: SystemMetricsCard",
     "ActiveDevicesPanel.tsx: ActiveDevicesPanel",
     "BlockedIPsPanel.tsx: BlockedIPsPanel",
+    "CspViolationsPanel.tsx: CspViolationsPanel",
     "GeoBlockingSettings.tsx: GeoBlockingSettings",
     "LoginLockoutsPanel.tsx: LoginLockoutsPanel",
     "MFAEnroll.tsx: MFAEnroll",
@@ -29202,11 +29209,10 @@
     "useCronHealth.ts: cronHealthRowSchema, CronHealthRow, CRON_FAILURE_ALERT_THRESHOLD, useCronHealth, isCronCritical",
     "useCronHealthHistory.ts: cronHealthHistoryRowSchema, CronHealthHistoryRow, CronHealthTrend, percentile, useCronHealthHistory",
     "useCronP95Daily.ts: cronP95DailyRowSchema, CronP95DailyRow, CronP95DailySeries, median, computeDrift, useCronP95Daily",
+    "useCspViolationReports.ts: cspReportSchema, CspReport, CSP_SELECT, CSP_DIRECTIVE_LABELS, CSP_INLINE_SOURCES, cspDirective",
     "useDashboardPresets.ts: DashboardPreset, useDashboardPresets",
     "useDashboardSettings.ts: useDashboardSettings",
-    "useDataExport.ts: ExportFormat, ExportOptions, AuditExportFilters, useDataExport",
-    "useDataImport.ts: ImportColumn, ImportPreview, ImportResult, useDataImport",
-    "useDetailedAuditTrail.ts: JobStatusAudit, MachineEventAudit, useDetailedAuditTrail"
+    "useDataExport.ts: ExportFormat, ExportOptions, AuditExportFilters, useDataExport"
    ],
    "docs": [
     "ActiveDevicesPanel.tsx: eslint-disable react-hooks/purity -- Padrões intencionais: sync com sistemas externos, memoização manual por performance, integração com libs (dnd-kit, framer-motion, supabase realtime).",
@@ -29257,6 +29263,8 @@
     "src/features/admin/components/monitoring/SystemMetricsCard.tsx",
     "src/features/admin/components/security/ActiveDevicesPanel.tsx",
     "src/features/admin/components/security/BlockedIPsPanel.tsx",
+    "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "src/features/admin/components/security/CspViolationsPanel.tsx",
     "src/features/admin/components/security/GeoBlockingSettings.tsx",
     "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
     "src/features/admin/components/security/LoginLockoutsPanel.tsx",
@@ -29283,6 +29291,8 @@
     "src/features/admin/hooks/useCronHealthHistory.ts",
     "src/features/admin/hooks/useCronP95Daily.test.ts",
     "src/features/admin/hooks/useCronP95Daily.ts",
+    "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "src/features/admin/hooks/useCspViolationReports.ts",
     "src/features/admin/hooks/useDashboardPresets.ts",
     "src/features/admin/hooks/useDashboardSettings.ts",
     "src/features/admin/hooks/useDataExport.ts",
@@ -30555,7 +30565,7 @@
   {
    "module": "src/pages",
    "files": 63,
-   "lines": 18077,
+   "lines": 18086,
    "tables": [
     "daily_summaries",
     "error_logs",
@@ -31385,6 +31395,11 @@
    "cron_p95_daily": {
     "select": [
      "src/features/admin/hooks/useCronP95Daily.ts"
+    ]
+   },
+   "csp_violation_reports": {
+    "select": [
+     "src/features/admin/hooks/useCspViolationReports.ts"
     ]
    },
    "daily_summaries": {
@@ -34287,7 +34302,6 @@
    "backups"
   ],
   "tables_only_in_schema": [
-   "csp_violation_reports",
    "rls_test_results",
    "runtime_config",
    "technical_sheet_audit_logs",
@@ -34367,6 +34381,22 @@
     "name": "parsed",
     "kind": "array",
     "body": "cronP95DailyRowSchema",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.ts",
+    "name": "cspReportSchema",
+    "kind": "object",
+    "body": "{ id: z.string(), document_uri: z.string().nullish(), violated_directive: z.string().nullish(), effective_directive: z.string().nullish(), blocked_uri: z.string().nullish(), source_file: z.string().nullish(), line_number: z.number().nullish(), disposition: z.string().nullish(), created_at: z.string(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.ts",
+    "name": "parsed",
+    "kind": "array",
+    "body": "cspReportSchema",
     "refines": [],
     "chain": []
    },
@@ -44147,6 +44177,11 @@
     "value": "\"cron_alerts_off\""
    },
    {
+    "file": "src/features/admin/components/security/CspViolationsPanel.tsx",
+    "name": "VISIBLE_ROWS",
+    "value": "12"
+   },
+   {
     "file": "src/features/admin/hooks/useAuditTrail.ts",
     "name": "CONTEXT",
     "value": "'useAuditTrail'"
@@ -53174,6 +53209,26 @@
     "name": "mostra o vazio de coleta quando o administrador ainda não tem snapshot"
    },
    {
+    "file": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "name": "CspViolationsPanel"
+   },
+   {
+    "file": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "name": "explica o modo Report-Only quando nao ha relato"
+   },
+   {
+    "file": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "name": "mostra o erro com o motivo do acesso restrito"
+   },
+   {
+    "file": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "name": "resume os relatos e lista as linhas"
+   },
+   {
+    "file": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    "name": "avisa enquanto carrega"
+   },
+   {
     "file": "src/features/admin/components/security/LoginLockoutsPanel.test.tsx",
     "name": "LoginLockoutsPanel"
    },
@@ -53284,6 +53339,78 @@
    {
     "file": "src/features/admin/hooks/useCronP95Daily.test.ts",
     "name": "retorna null quando a linha de base é zero"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "cspDirective"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "prefere a diretiva efetiva e cai na violada"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "usa "
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "cspDirectiveLabel"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "traduz as diretivas conhecidas e mantém as desconhecidas"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "cspResource"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "mostra o host de uma URL"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "mantém as marcas de código inline"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "encurta origem que não é URL e trata ausência"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "cspPage"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "mostra caminho e âncora, sem domínio"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "devolve travessão quando a página não foi informada"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "formatCspTime"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "formata em horário de Brasília"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "não inventa data inválida"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "summarizeCspReports"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "conta relatos, separa report-only de bloqueio efetivo e ordena reincidências"
+   },
+   {
+    "file": "src/features/admin/hooks/useCspViolationReports.test.ts",
+    "name": "resume lista vazia sem inventar valores"
    },
    {
     "file": "src/features/admin/hooks/useEdgeHealthHistory.test.ts",
@@ -82021,6 +82148,31 @@
     ": new Date(Date.now() + parseInt(expiresHours, 10) * 60 * 60 * 1000).toISOString();"
    ]
   },
+  "src/features/admin/components/security/CspViolationsPanel.test.tsx": {
+   "path": "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+   "lines": 99,
+   "is_test": true,
+   "tests": [
+    "CspViolationsPanel",
+    "explica o modo Report-Only quando nao ha relato",
+    "mostra o erro com o motivo do acesso restrito",
+    "resume os relatos e lista as linhas",
+    "avisa enquanto carrega"
+   ]
+  },
+  "src/features/admin/components/security/CspViolationsPanel.tsx": {
+   "path": "src/features/admin/components/security/CspViolationsPanel.tsx",
+   "lines": 160,
+   "exports": [
+    "const CspViolationsPanel"
+   ],
+   "params": [
+    {
+     "name": "VISIBLE_ROWS",
+     "value": "12"
+    }
+   ]
+  },
   "src/features/admin/components/security/GeoBlockingSettings.tsx": {
    "path": "src/features/admin/components/security/GeoBlockingSettings.tsx",
    "lines": 368,
@@ -82631,6 +82783,77 @@
    ],
    "pagination": [
     "5000"
+   ]
+  },
+  "src/features/admin/hooks/useCspViolationReports.test.ts": {
+   "path": "src/features/admin/hooks/useCspViolationReports.test.ts",
+   "lines": 114,
+   "is_test": true,
+   "tests": [
+    "cspDirective",
+    "prefere a diretiva efetiva e cai na violada",
+    "usa ",
+    "cspDirectiveLabel",
+    "traduz as diretivas conhecidas e mantém as desconhecidas",
+    "cspResource",
+    "mostra o host de uma URL",
+    "mantém as marcas de código inline",
+    "encurta origem que não é URL e trata ausência",
+    "cspPage",
+    "mostra caminho e âncora, sem domínio",
+    "devolve travessão quando a página não foi informada",
+    "formatCspTime",
+    "formata em horário de Brasília",
+    "não inventa data inválida",
+    "summarizeCspReports",
+    "conta relatos, separa report-only de bloqueio efetivo e ordena reincidências",
+    "resume lista vazia sem inventar valores"
+   ]
+  },
+  "src/features/admin/hooks/useCspViolationReports.ts": {
+   "path": "src/features/admin/hooks/useCspViolationReports.ts",
+   "lines": 173,
+   "exports": [
+    "const cspReportSchema",
+    "type CspReport",
+    "const CSP_SELECT",
+    "const CSP_DIRECTIVE_LABELS",
+    "const CSP_INLINE_SOURCES",
+    "function cspDirective",
+    "function cspDirectiveLabel",
+    "function cspResource",
+    "function cspPage",
+    "function cspSource",
+    "function formatCspTime",
+    "interface CspCounter",
+    "interface CspSummary",
+    "function summarizeCspReports",
+    "function useCspViolationReports"
+   ],
+   "tables": [
+    {
+     "table": "csp_violation_reports",
+     "op": "select"
+    }
+   ],
+   "zod": [
+    {
+     "name": "cspReportSchema",
+     "kind": "object",
+     "body": "{ id: z.string(), document_uri: z.string().nullish(), violated_directive: z.string().nullish(), effective_directive: z.string().nullish(), blocked_uri: z.string().nullish(), source_file: z.string().nullish(), line_number: z.number().nullish(), disposition: z.string().nullish(), created_at: z.string(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "parsed",
+     "kind": "array",
+     "body": "cspReportSchema",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "hooks": [
+    "useCspViolationReports"
    ]
   },
   "src/features/admin/hooks/useDashboardPresets.ts": {
@@ -95876,7 +96099,7 @@
   },
   "src/pages/SecurityDashboard.tsx": {
    "path": "src/pages/SecurityDashboard.tsx",
-   "lines": 266,
+   "lines": 275,
    "exports": [
     "function SecurityDashboard"
    ]
@@ -101837,10 +102060,23 @@
   }
  },
  "git": {
-  "sha": "39ac1a47981685feba7863b0f69656795e24602f",
+  "sha": "8335b0288f888f49ec99339e70a26e1bc34df358",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fast_Gravacoes_V2",
   "commits": [
+   {
+    "sha": "8335b02",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela de violacoes de CSP no painel de seguranca (#342)",
+    "files": [
+     "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+     "src/features/admin/components/security/CspViolationsPanel.tsx",
+     "src/features/admin/hooks/useCspViolationReports.test.ts",
+     "src/features/admin/hooks/useCspViolationReports.ts",
+     "src/pages/SecurityDashboard.tsx"
+    ]
+   },
    {
     "sha": "39ac1a4",
     "date": "2026-11-26",
@@ -102195,26 +102431,20 @@
      "src/features/admin/components/security/MFASettings.test.tsx",
      "src/features/admin/components/security/MFASettings.tsx"
     ]
-   },
-   {
-    "sha": "14b0499",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: alerta de rotina registra se o e-mail saiu e conta as recusas (#311)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/functions/cron-alert-email/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    11
+    10
    ],
    [
     "tests/e2e/accessibility.spec.ts",
     3
+   ],
+   [
+    "src/pages/SecurityDashboard.tsx",
+    2
    ],
    [
     "src/pages/SystemMonitoringPage.tsx",
@@ -102235,6 +102465,22 @@
    [
     "supabase/functions/metrics-collector/index.ts",
     2
+   ],
+   [
+    "src/features/admin/components/security/CspViolationsPanel.test.tsx",
+    1
+   ],
+   [
+    "src/features/admin/components/security/CspViolationsPanel.tsx",
+    1
+   ],
+   [
+    "src/features/admin/hooks/useCspViolationReports.test.ts",
+    1
+   ],
+   [
+    "src/features/admin/hooks/useCspViolationReports.ts",
+    1
    ],
    [
     "src/features/admin/components/monitoring/EdgeHealthCard.test.tsx",
@@ -102266,26 +102512,6 @@
    ],
    [
     "src/features/admin/hooks/useLoginLockouts.ts",
-    1
-   ],
-   [
-    "src/pages/SecurityDashboard.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261129233000_login_lockouts_admin.sql",
-    1
-   ],
-   [
-    "src/features/analytics/components/bi/executive/KPIAlertsTab.tsx",
-    1
-   ],
-   [
-    "src/features/analytics/components/bi/executive/PersistedKPIAlerts.tsx",
-    1
-   ],
-   [
-    "src/features/analytics/hooks/useKPIAlerts.test.ts",
     1
    ]
   ]

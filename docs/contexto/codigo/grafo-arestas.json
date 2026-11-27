@@ -2874,6 +2874,13 @@
    "src/features/admin/hooks/useRateLimitLogs.ts",
    "src/features/admin/hooks/useSecurityEvents.ts"
   ],
+  "src/features/admin/components/security/CspViolationsPanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/table.tsx",
+   "src/features/admin/hooks/useCspViolationReports.ts"
+  ],
   "src/features/admin/components/security/GeoBlockingSettings.tsx": [
    "src/components/ui/alert.tsx",
    "src/components/ui/badge.tsx",
@@ -3008,6 +3015,9 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/features/admin/hooks/useCronP95Daily.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/admin/hooks/useCspViolationReports.ts": [
    "src/integrations/supabase/client.ts"
   ],
   "src/features/admin/hooks/useDashboardPresets.ts": [
@@ -5882,6 +5892,7 @@
    "src/components/voice/VoiceCommands.tsx",
    "src/features/admin/components/security/ActiveDevicesPanel.tsx",
    "src/features/admin/components/security/BlockedIPsPanel.tsx",
+   "src/features/admin/components/security/CspViolationsPanel.tsx",
    "src/features/admin/components/security/GeoBlockingSettings.tsx",
    "src/features/admin/components/security/LoginLockoutsPanel.tsx",
    "src/features/admin/components/security/MFASettings.tsx",

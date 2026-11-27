@@ -8145,6 +8145,7 @@
     "useCallback",
     "useContext",
     "useCreateRateLimitSetting",
+    "useCspViolationReports",
     "useDeepLinkFocus",
     "useDeleteRateLimitSetting",
     "useDevice",
@@ -8231,6 +8232,7 @@
     "useBreadcrumbContext",
     "useBreadcrumbLabel",
     "useCreateRateLimitSetting",
+    "useCspViolationReports",
     "useDeepLinkFocus",
     "useDeleteRateLimitSetting",
     "useDevice",
@@ -8292,6 +8294,7 @@
    ],
    "tabelas": [
     "blocked_ips",
+    "csp_violation_reports",
     "error_logs",
     "geo_blocking_logs",
     "geo_blocking_rules",
@@ -8333,7 +8336,7 @@
     "manager",
     "operator"
    ],
-   "arquivos_puxados": 123,
+   "arquivos_puxados": 125,
    "diretos": {
     "tabelas": [
      "blocked_ips",

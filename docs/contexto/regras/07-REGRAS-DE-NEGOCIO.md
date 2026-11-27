@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39ac1a4798` · branch `main` · 2026-11-26 23:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8335b0288f` · branch `main` · 2026-11-27 00:23 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 > Seções B, C, D e E.1 (RLS, restrições, triggers e colunas de status): **banco real, snapshot de 2026-11-26T22:39:33Z**. Detalhe por tabela/função em `docs/contexto/supabase/`.
@@ -2017,6 +2017,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```ts
   cronP95DailyRowSchema
   ```
+- **cspReportSchema** (`src/features/admin/hooks/useCspViolationReports.ts`, z.object):
+  ```ts
+  { id: z.string(), document_uri: z.string().nullish(), violated_directive: z.string().nullish(), effective_directive: z.string().nullish(), blocked_uri: z.string().nullish(), source_file: z.string().nullish(), line_number: z.number().nullish(), disposition: z.string().nullish(), created_at: z.string(), }
+  ```
+- **parsed** (`src/features/admin/hooks/useCspViolationReports.ts`, z.array):
+  ```ts
+  cspReportSchema
+  ```
 - **edgeCheckStatusSchema** (`src/features/admin/hooks/useEdgeHealthHistory.ts`, z.enum):
   ```ts
   ["pass", "warn", "fail"]
@@ -2730,6 +2738,7 @@ _nenhum item encontrado_
 | `SIDEBAR_WIDTH_MOBILE` | `"18rem"` | `src/components/ui/sidebar.tsx` |
 | `REAUTH_VALIDITY_MINUTES` | `5` | `src/contexts/ReauthContext.tsx` |
 | `OPT_OUT_FLAG` | `"cron_alerts_off"` | `src/features/admin/components/monitoring/CronEmailPreferenceCard.tsx` |
+| `VISIBLE_ROWS` | `12` | `src/features/admin/components/security/CspViolationsPanel.tsx` |
 | `CONTEXT` | `'useAuditTrail'` | `src/features/admin/hooks/useAuditTrail.ts` |
 | `MAX_RETRIES` | `3` | `src/features/admin/hooks/useBitrix24Sync.ts` |
 | `RETRY_DELAY_MS` | `1000` | `src/features/admin/hooks/useBitrix24Sync.ts` |
@@ -3393,7 +3402,7 @@ _nenhum item encontrado_
 | `operator` | `supabase/migrations/20261122150000_f010_v3_shipment_hold_e_qtde.sql` |
 | `g` | `supabase/migrations/20261127120000_isolate_public_has_role.sql` |
 
-## K. Testes como especificação (1606 testes em 149 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1629 testes em 151 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -3417,6 +3426,7 @@ _nenhum item encontrado_
 | `src/test/loadStress.test.ts` | 21 | Load — RateLimiter (10 000 requests) · correctly tracks allowed vs throttled across 10k requests · multiple limiters in parallel do not interfere · completes 10k tryAcquire calls in < 50ms … |
 | `src/features/auth/components/AuthProvider.test.tsx` | 19 | AuthContext · should initialize with loading state · should sign in successfully · should re-gate a Google session after a failed password sign-in (YTJ_) … |
 | `supabase/functions/_shared/auth.test.ts` | 19 | jsonOk: envelope {ok:true,data,meta.requestId} · jsonError: envelope {ok:false,error{code,message},meta} · requireRole: sucesso quando papel está na allowlist · requireRole: 403 FORBIDDEN com papéis exigidos em details … |
+| `src/features/admin/hooks/useCspViolationReports.test.ts` | 18 | cspDirective · prefere a diretiva efetiva e cai na violada · usa  · cspDirectiveLabel … |
 | `src/features/inventory/hooks/useInventory.test.ts` | 18 | useInventoryMovements · não consulta quando não há usuário autenticado · busca todas as movimentações ordenadas por data quando nenhum item é informado · filtra movimentações por item_id quando um itemId é informado … |
 | `src/hooks/useOfflineSync.test.ts` | 18 | useOfflineSync · should queue actions when offline · should sync actions when coming back online · drains a queue hydrated from localStorage on cold mount while online … |
 | `src/lib/pdfExport.test.ts` | 18 | pdfExport · exportExecutiveDashboardPDF · renders one autoTable section per KPI group present in the data · skips the Top Operadores/Técnica/Performance sections when those arrays are empty … |
@@ -3489,6 +3499,7 @@ _nenhum item encontrado_
 | `scripts/graphify.test.mjs` | 5 | fixa PYTHONHASHSEED=0 para o build ser determinístico; respeita valor explícito · repassa argumentos intactos, sem shell · propaga o código de saída do Python · interpretador apontado com versão errada ou inexistente falha com mensagem clara … |
 | `src/components/ui/resizable.test.tsx` | 5 | resizable (react-resizable-panels v4) · renderiza paineis e divisor sem quebrar · grupo vertical marca o divisor como aria-orientation=horizontal · grupo horizontal marca o divisor como aria-orientation=vertical … |
 | `src/components/ui/scroll-area.test.tsx` | 5 | ScrollArea (axe scrollable-region-focusable) · nao cria parada de Tab quando o conteudo cabe no viewport · torna a regiao focavel quando o conteudo transborda · torna a regiao focavel mesmo sem ResizeObserver … |
+| `src/features/admin/components/security/CspViolationsPanel.test.tsx` | 5 | CspViolationsPanel · explica o modo Report-Only quando nao ha relato · mostra o erro com o motivo do acesso restrito · resume os relatos e lista as linhas … |
 | `src/features/admin/hooks/useLoginLockouts.test.ts` | 5 | useLoginLockouts · lista os bloqueios e conta apenas os que estao valendo · libera o bloqueio pela RPC e recarrega a lista · avisa quando a liberacao falha … |
 | `src/features/analytics/hooks/useExecutiveDashboard.test.ts` | 5 | escolherRetratoDoPeriodo · escolhe o retrato do período pedido, não o mais recente · prefere a janela que contém o fim do período mesmo com fim mais distante · desempata pela apuração mais recente … |
 | `src/features/analytics/hooks/useKPIAlerts.test.ts` | 5 | useKPIAlerts · lista os alertas abertos com o total exato · resolve um alerta pela RPC e recarrega a lista · expoe o erro da consulta … |
