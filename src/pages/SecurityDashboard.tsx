@@ -23,6 +23,7 @@ import { BlockedIPsPanel } from '@/features/admin/components/security/BlockedIPs
 import { LoginLockoutsPanel } from '@/features/admin/components/security/LoginLockoutsPanel';
 import { RateLimitSettings } from '@/features/admin/components/security/RateLimitSettings';
 import { SecurityEventsLog } from '@/features/admin/components/security/SecurityEventsLog';
+import { CspViolationsPanel } from '@/features/admin/components/security/CspViolationsPanel';
 import { PermissionMatrix } from '@/features/admin/components/security/PermissionMatrix';
 import { PermissionManager } from '@/features/admin/components/security/PermissionManager';
 import { MFASettings } from '@/features/admin/components/security/MFASettings';
@@ -156,7 +157,7 @@ export default function SecurityDashboard() {
 
       {/* Main Content */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid grid-cols-10 w-full">
+        <TabsList className="grid grid-cols-11 w-full">
           <TabsTrigger value="overview" className="gap-2">
             <LayoutDashboard className="h-4 w-4" />
             <span className="hidden md:inline">Visão Geral</span>
@@ -196,6 +197,10 @@ export default function SecurityDashboard() {
           <TabsTrigger value="audit" className="gap-2">
             <Lock className="h-4 w-4" />
             <span className="hidden md:inline">Auditoria</span>
+          </TabsTrigger>
+          <TabsTrigger value="csp" className="gap-2">
+            <ShieldAlert className="h-4 w-4" />
+            <span className="hidden md:inline">CSP</span>
           </TabsTrigger>
         </TabsList>
 
@@ -257,6 +262,10 @@ export default function SecurityDashboard() {
 
         <TabsContent value="audit">
           <LoginAuditLog />
+        </TabsContent>
+
+        <TabsContent value="csp">
+          <CspViolationsPanel />
         </TabsContent>
       </Tabs>
       </div>
