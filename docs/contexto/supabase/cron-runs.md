@@ -7,9 +7,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-28 05:30:00 | succeeded | 3.12 | 1 row |
-| 2026-11-28 05:15:00 | succeeded | 0.52 | 1 row |
-| 2026-11-28 05:00:00 | succeeded | 3.47 | 1 row |
+| 2026-11-28 06:30:00 | succeeded | 3.70 | 1 row |
+| 2026-11-28 06:15:00 | succeeded | 3.42 | 1 row |
+| 2026-11-28 06:00:00 | succeeded | 3.24 | 1 row |
 
 
 ## 7 · purge-old-logs-daily
@@ -34,18 +34,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-28 05:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-28 05:30:00 | succeeded | 0.05 | 1 row |
-| 2026-11-28 05:25:00 | succeeded | 0.11 | 1 row |
+| 2026-11-28 06:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:35:00 | succeeded | 0.05 | 1 row |
+| 2026-11-28 06:30:00 | succeeded | 0.01 | 1 row |
 
 
 ## 13 · auto-promote-jobs-fallback
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-28 05:35:00 | succeeded | 0.04 | 1 row |
-| 2026-11-28 05:30:00 | succeeded | 0.04 | 1 row |
-| 2026-11-28 05:25:00 | succeeded | 0.11 | 1 row |
+| 2026-11-28 06:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:35:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 22 · archive-finished-jobs-daily
@@ -69,24 +69,24 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-28 06:30:00 | succeeded | 0.03 | 1 row |
+| 2026-11-28 06:00:00 | succeeded | 0.02 | 1 row |
 | 2026-11-28 05:30:00 | succeeded | 0.02 | 1 row |
-| 2026-11-28 05:00:00 | succeeded | 0.06 | 1 row |
-| 2026-11-28 04:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 40 · health-monitor-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-28 05:35:00 | succeeded | 0.04 | 1 row |
-| 2026-11-28 05:30:00 | succeeded | 0.04 | 1 row |
-| 2026-11-28 05:25:00 | succeeded | 0.10 | 1 row |
+| 2026-11-28 06:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:35:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:30:00 | succeeded | 0.03 | 1 row |
 
 
 ## 41 · metrics-collector-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-28 05:35:00 | succeeded | 0.05 | 1 row |
-| 2026-11-28 05:30:00 | succeeded | 0.09 | 1 row |
-| 2026-11-28 05:25:00 | succeeded | 0.09 | 1 row |
+| 2026-11-28 06:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-28 06:35:00 | succeeded | 0.05 | 1 row |
+| 2026-11-28 06:30:00 | succeeded | 0.02 | 1 row |
